@@ -45,9 +45,11 @@ export default function FortunePage() {
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
   const [isCalendarSheetOpen, setIsCalendarSheetOpen] = React.useState(false);
   const [clientReady, setClientReady] = useState(false);
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
 
   useEffect(() => {
     setClientReady(true);
+    setCurrentYear(new Date().getFullYear());
   }, []);
 
   const { toast } = useToast();
@@ -172,7 +174,7 @@ export default function FortunePage() {
                             <SheetTitle>생년월일 선택</SheetTitle>
                             <SheetDescription>달력에서 날짜를 선택해주세요.</SheetDescription>
                           </SheetHeader>
-                          {clientReady ? (
+                          {clientReady && currentYear ? (
                             <Calendar
                               mode="single"
                               selected={field.value}
@@ -186,7 +188,7 @@ export default function FortunePage() {
                               initialFocus
                               captionLayout="dropdown-buttons"
                               fromYear={1900}
-                              toYear={new Date().getFullYear()}
+                              toYear={currentYear}
                               className="pt-2 pb-4"
                             />
                           ) : (
@@ -208,7 +210,7 @@ export default function FortunePage() {
                     <FormItem>
                       <FormLabel>MBTI</FormLabel>
                       <FormControl>
-                        <Input placeholder="예: INFJ" {...field} />
+                        <Input type="text" placeholder="예: INFJ" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -343,8 +345,8 @@ export default function FortunePage() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
-        {clientReady ? (
-          <p>&copy; {new Date().getFullYear()} Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p>
+        {clientReady && currentYear ? (
+          <p>&copy; {currentYear} Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p>
         ) : (
           <p>&copy; Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p> 
         )}
@@ -353,3 +355,4 @@ export default function FortunePage() {
     </div>
   );
 }
+
