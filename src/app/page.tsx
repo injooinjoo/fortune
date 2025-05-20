@@ -23,7 +23,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
+// import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon'; // Removed for new theme
 
 const fortuneIconMapping: Record<FortuneType, React.ElementType> = {
   "사주팔자": Wand2,
@@ -44,12 +44,20 @@ export default function FortunePage() {
   const [error, setError] = useState<string | null>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
   const [isCalendarSheetOpen, setIsCalendarSheetOpen] = React.useState(false);
+  
+  // For client-side only rendering of date-dependent components
   const [clientReady, setClientReady] = useState(false);
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear()); // Initial server value, updated on client
+  const [minCalendarDate, setMinCalendarDate] = useState<Date>(new Date("1900-01-01"));
+  const [maxCalendarDate, setMaxCalendarDate] = useState<Date>(new Date());
+
 
   useEffect(() => {
     setClientReady(true);
-    setCurrentYear(new Date().getFullYear());
+    const now = new Date();
+    setCurrentYear(now.getFullYear());
+    setMaxCalendarDate(now);
+    setMinCalendarDate(new Date("1900-01-01"));
   }, []);
 
   const { toast } = useToast();
@@ -122,23 +130,24 @@ export default function FortunePage() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-br from-background to-purple-100 dark:from-gray-900 dark:to-indigo-900">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8"> {/* Removed gradient */}
       <header className="mb-10 text-center">
         <div className="flex items-center justify-center mb-2">
-          <FortuneCompassIcon className="h-16 w-16 text-primary" />
+          {/* <FortuneCompassIcon className="h-16 w-16 text-primary" /> Replaced/removed for new theme */}
+           <Sparkles className="h-16 w-16 text-primary" /> {/* Placeholder icon */}
           <h1 className="ml-3 text-5xl font-bold tracking-tight text-primary">
-            Fortune Compass
+            운세 탐험
           </h1>
         </div>
         <p className="text-xl text-muted-foreground">
-          AI가 밝혀주는 당신의 미래, 지금 바로 확인하세요.
+          당신의 운명을 탐험하고 새로운 가능성을 발견하세요.
         </p>
       </header>
 
       <main className="w-full max-w-2xl">
         <Card className="shadow-2xl">
           <CardHeader>
-            <CardTitle className="text-2xl">나의 운세 알아보기</CardTitle>
+            <CardTitle className="text-2xl">나의 운세 정보 입력</CardTitle>
             <CardDescription>생년월일, MBTI, 그리고 원하는 운세 종류를 선택해주세요.</CardDescription>
           </CardHeader>
           <CardContent>
@@ -174,7 +183,7 @@ export default function FortunePage() {
                             <SheetTitle>생년월일 선택</SheetTitle>
                             <SheetDescription>달력에서 날짜를 선택해주세요.</SheetDescription>
                           </SheetHeader>
-                          {clientReady && currentYear ? (
+                          {clientReady ? (
                             <Calendar
                               mode="single"
                               selected={field.value}
@@ -183,11 +192,11 @@ export default function FortunePage() {
                                 setIsCalendarSheetOpen(false);
                               }}
                               disabled={(date) =>
-                                date > new Date() || date < new Date("1900-01-01")
+                                date > maxCalendarDate || date < minCalendarDate
                               }
                               initialFocus
                               captionLayout="dropdown-buttons"
-                              fromYear={1900}
+                              fromYear={minCalendarDate.getFullYear()}
                               toYear={currentYear}
                               className="pt-2 pb-4"
                             />
@@ -345,14 +354,13 @@ export default function FortunePage() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
-        {clientReady && currentYear ? (
-          <p>&copy; {currentYear} Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p>
+        {clientReady ? (
+          <p>&copy; {currentYear} 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p>
         ) : (
-          <p>&copy; Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p> 
+          <p>&copy; 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p> 
         )}
         <p className="mt-1">본 운세 내용은 재미를 위한 참고 자료로만 활용해주세요.</p>
       </footer>
     </div>
   );
 }
-
