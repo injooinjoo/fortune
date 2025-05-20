@@ -1,3 +1,4 @@
+
 "use server";
 
 import { generateFortuneInsights, type GenerateFortuneInsightsInput, type GenerateFortuneInsightsOutput } from "@/ai/flows/generate-fortune-insights";
@@ -19,6 +20,8 @@ export async function getFortuneAction(
     const aiInput: GenerateFortuneInsightsInput = {
       birthdate: birthdateString,
       mbti: values.mbti.toUpperCase(),
+      gender: values.gender,
+      birthTime: values.birthTime,
       fortuneTypes: values.fortuneTypes,
     };
 
@@ -30,14 +33,12 @@ export async function getFortuneAction(
 
     // Ensure all requested types have some insight, even if it's a default message
     const validatedInsights: Record<string, string> = {};
-    let allInsightsPresent = true;
     for (const type of values.fortuneTypes) {
       if (result.insights[type]) {
         validatedInsights[type] = result.insights[type];
       } else {
         // AI might not return a key if it can't generate insight for it. Add a placeholder.
         validatedInsights[type] = "현재 이 운세 종류에 대한 정보를 가져올 수 없습니다.";
-        allInsightsPresent = false;
       }
     }
     

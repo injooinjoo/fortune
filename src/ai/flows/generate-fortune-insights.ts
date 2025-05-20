@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -16,6 +17,8 @@ const GenerateFortuneInsightsInputSchema = z.object({
     .string()
     .describe('The user birthdate in ISO format (YYYY-MM-DD).'),
   mbti: z.string().describe('The user MBTI type.'),
+  gender: z.string().describe('User gender (e.g., 남성, 여성, 선택 안함).'),
+  birthTime: z.string().describe('User birth time (e.g., 자시 (23:30 ~ 01:29), 모름).'),
   fortuneTypes: z
     .array(z.string())
     .describe(
@@ -49,10 +52,12 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateFortuneInsightsOutputSchema},
   prompt: `You are an expert fortune teller specializing in 사주팔자, MBTI, 띠운세, 별운세, 연애운, 결혼운, and 취업운.
 
-You will use the user's birthdate and MBTI to generate personalized fortune insights for the requested fortune types.
+You will use the user's birthdate, MBTI, gender, and birth time to generate personalized fortune insights for the requested fortune types.
 
 Birthdate: {{{birthdate}}}
 MBTI: {{{mbti}}}
+Gender: {{{gender}}}
+Birth Time: {{{birthTime}}}
 
 Fortune Types: {{#each fortuneTypes}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 
