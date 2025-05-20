@@ -1,3 +1,4 @@
+
 export const FORTUNE_TYPES = [
   "사주팔자", // Saju Palja (Four Pillars of Destiny)
   "MBTI 운세", // MBTI Fortune
@@ -11,3 +12,12 @@ export const FORTUNE_TYPES = [
 ] as const;
 
 export type FortuneType = typeof FORTUNE_TYPES[number];
+
+export const MBTI_TYPES = [
+  "ISTJ", "ISFJ", "INFJ", "INTJ",
+  "ISTP", "ISFP", "INFP", "INTP",
+  "ESTP", "ESFP", "ENFP", "ENTP",
+  "ESTJ", "ESFJ", "ENFJ", "ENTJ"
+] as const;
+
+export type MbtiType = typeof MBTI_TYPES[number];
