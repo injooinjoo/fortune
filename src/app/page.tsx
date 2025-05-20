@@ -4,7 +4,7 @@
 import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock, CalendarDays } from 'lucide-react';
+import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock } from 'lucide-react';
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
 import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
@@ -13,7 +13,6 @@ import type { GenerateFortuneInsightsOutput } from "@/ai/flows/generate-fortune-
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -53,29 +52,29 @@ const mbtiDimensionDetails = {
   ei: {
     label: "에너지 방향",
     options: [
-      { value: 'E', name: "외향", description: "외부 세계와 활동에서 에너지 얻음" },
-      { value: 'I', name: "내향", description: "내면 세계와 성찰에서 에너지 얻음" },
+      { value: 'E', name: "외향", description: "외부 세계와 활동" },
+      { value: 'I', name: "내향", description: "내면 세계와 성찰" },
     ],
   },
   sn: {
     label: "인식 방식",
     options: [
-      { value: 'S', name: "감각형", description: "오감과 실제 경험을 통해 정보 수집" },
-      { value: 'N', name: "직관형", description: "통찰과 가능성을 통해 정보 수집" },
+      { value: 'S', name: "감각형", description: "오감과 실제 경험" },
+      { value: 'N', name: "직관형", description: "통찰과 가능성" },
     ],
   },
   tf: {
     label: "판단 기준",
     options: [
-      { value: 'T', name: "사고형", description: "논리와 분석을 바탕으로 결정" },
-      { value: 'F', name: "감정형", description: "관계와 조화를 고려하여 결정" },
+      { value: 'T', name: "사고형", description: "논리와 분석" },
+      { value: 'F', name: "감정형", description: "관계와 조화" },
     ],
   },
   jp: {
     label: "생활 양식",
     options: [
-      { value: 'J', name: "판단형", description: "체계적이고 계획적인 생활 선호" },
-      { value: 'P', name: "인식형", description: "자율적이고 융통성 있는 생활 선호" },
+      { value: 'J', name: "판단형", description: "체계적이고 계획적" },
+      { value: 'P', name: "인식형", description: "자율적이고 융통성" },
     ],
   },
 } as const;
@@ -103,7 +102,7 @@ export default function FortunePage() {
     setClientReady(true);
     const now = new Date();
     setCurrentYear(now.getFullYear());
-    setMinCalendarDate(new Date("1900-01-01"));
+    setMinCalendarDate(new Date(now.getFullYear() - 100, 0, 1)); // 100 years ago
     setMaxCalendarDate(now);
   }, []);
 
@@ -122,7 +121,6 @@ export default function FortunePage() {
 
   const watchedBirthdate = form.watch('birthdate');
 
-  // Effect to sync form's birthdate TO local Y/M/D select states
   useEffect(() => {
     if (!clientReady) return;
 
@@ -135,15 +133,12 @@ export default function FortunePage() {
       if (selectedMonth !== formMonth) setSelectedMonth(formMonth);
       if (selectedDay !== formDay) setSelectedDay(formDay);
     } else {
-      // If form's birthdate is null/undefined, clear local select states
-      // This handles form resets or when Y/M/D becomes incomplete.
       if (selectedYear !== undefined) setSelectedYear(undefined);
       if (selectedMonth !== undefined) setSelectedMonth(undefined);
       if (selectedDay !== undefined) setSelectedDay(undefined);
     }
-  }, [watchedBirthdate, clientReady]); // Only depends on watchedBirthdate and clientReady
+  }, [watchedBirthdate, clientReady]); 
 
-  // Effect to sync local Y/M/D select states TO form's birthdate
   useEffect(() => {
     if (!clientReady) return;
 
@@ -163,7 +158,6 @@ export default function FortunePage() {
         }
       }
     } else {
-      // If Y/M/D is incomplete, ensure form's birthdate is also undefined.
       if (watchedBirthdate) {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
@@ -206,8 +200,6 @@ export default function FortunePage() {
   }, [isMbtiSheetOpen, form]);
 
   useEffect(() => {
-    // This effect should only run when the sheet is open and mbtiParts change.
-    // It should not clear the form's mbti value if the sheet is closed.
     if (isMbtiSheetOpen) { 
       const { ei, sn, tf, jp } = mbtiParts;
       if (ei && sn && tf && jp) {
@@ -215,12 +207,6 @@ export default function FortunePage() {
         if (form.getValues('mbti') !== fullMbti) {
           form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
         }
-      } else {
-        // If not all parts are selected while sheet is open, reflect this in the form potentially
-        // However, we might want to only set form 'mbti' to '' if user explicitly clears it
-        // or if they close the sheet without full selection.
-        // For now, let's not clear it aggressively here to avoid data loss if user reopens sheet.
-        // The form.setValue('mbti', '') was commented out earlier for this reason.
       }
     }
   }, [mbtiParts, form, isMbtiSheetOpen]);
@@ -383,7 +369,7 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="mbti"
-                  render={({ field }) => (  // Pass field to use field.value and field.onChange if needed for direct binding
+                  render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>MBTI</FormLabel>
                       <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
@@ -397,26 +383,26 @@ export default function FortunePage() {
                           <SheetHeader className="p-4 border-b">
                             <SheetTitle>MBTI 유형 선택</SheetTitle>
                           </SheetHeader>
-                          <div className="flex-grow overflow-y-auto p-4 space-y-6">
+                          <div className="flex-grow overflow-y-auto p-4 space-y-4">
                             {(Object.keys(mbtiDimensionDetails) as MbtiPart[]).map((partKey) => {
                               const dimension = mbtiDimensionDetails[partKey];
                               return (
                                 <div key={partKey}>
-                                  <FormLabel className="text-base font-medium text-foreground mb-2 block">
+                                  <FormLabel className="text-sm font-medium text-foreground mb-1.5 block">
                                     {dimension.label}
                                   </FormLabel>
-                                  <div className="grid grid-cols-2 gap-3">
+                                  <div className="grid grid-cols-2 gap-2">
                                     {dimension.options.map(option => (
                                       <Button
                                         key={option.value}
                                         variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
-                                        className="h-auto aspect-square flex flex-col justify-center items-center p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
+                                        className="h-auto flex flex-col justify-center items-center p-2.5 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
                                         onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
-                                        type="button" // Important: prevent form submission
+                                        type="button"
                                       >
-                                        <span className="text-3xl font-bold">{option.value}</span>
-                                        <span className="mt-1 text-sm font-semibold">{option.name}</span>
-                                        <span className="mt-1 text-xs text-muted-foreground leading-tight">{option.description}</span>
+                                        <span className="text-xl font-bold">{option.value}</span>
+                                        <span className="mt-0.5 text-xs font-semibold">{option.name}</span>
+                                        <span className="mt-0.5 text-[10px] text-muted-foreground leading-tight">{option.description}</span>
                                       </Button>
                                     ))}
                                   </div>
@@ -428,9 +414,8 @@ export default function FortunePage() {
                               <Button 
                                 type="button" 
                                 variant="ghost" 
-                                className="mt-auto border-t rounded-none w-full py-4"
+                                className="mt-auto border-t rounded-none w-full py-3"
                                 onClick={() => {
-                                  // Optionally, ensure full MBTI is set on explicit close if all parts selected
                                   const { ei, sn, tf, jp } = mbtiParts;
                                   if (ei && sn && tf && jp) {
                                     const fullMbti = `${ei}${sn}${tf}${jp}`;
@@ -438,8 +423,6 @@ export default function FortunePage() {
                                       form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
                                     }
                                   } else if (form.getValues('mbti') !== '') {
-                                    // If not all parts are selected, clear the MBTI in the form upon closing.
-                                    // This addresses the case where a user opens, makes partial selection, and closes.
                                     form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
                                   }
                                 }}
@@ -449,7 +432,7 @@ export default function FortunePage() {
                            </SheetClose>
                         </SheetContent>
                       </Sheet>
-                       <FormMessage /> {/* This will show validation errors for field.name */}
+                       <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -509,7 +492,7 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="fortuneTypes"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <div className="mb-4">
                         <FormLabel className="text-base">운세 종류 선택</FormLabel>
@@ -517,39 +500,23 @@ export default function FortunePage() {
                           알고 싶은 운세를 모두 선택하세요.
                         </FormDescription>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                         {FORTUNE_TYPES.map((item) => (
-                          <FormField
+                          <Button
                             key={item}
-                            control={form.control}
-                            name="fortuneTypes"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  key={item}
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(item)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([...(field.value || []), item])
-                                          : field.onChange(
-                                              (field.value || []).filter(
-                                                (value) => value !== item
-                                              )
-                                            );
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    {item}
-                                  </FormLabel>
-                                </FormItem>
-                              );
+                            type="button"
+                            variant={field.value?.includes(item) ? "default" : "outline"}
+                            onClick={() => {
+                              const currentSelection = field.value || [];
+                              const newSelection = currentSelection.includes(item)
+                                ? currentSelection.filter((i) => i !== item)
+                                : [...currentSelection, item];
+                              field.onChange(newSelection);
                             }}
-                          />
+                            className="w-full h-auto py-3 text-sm justify-center"
+                          >
+                            {item}
+                          </Button>
                         ))}
                       </div>
                       <FormMessage />
@@ -620,7 +587,7 @@ export default function FortunePage() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-6 pt-2 text-base leading-relaxed bg-background/50">
-                      {insight.split('\\n').map((paragraph, index) => ( // Handle escaped newlines
+                      {insight.split('\\n').map((paragraph, index) => ( 
                         <p key={index} className="mb-2 last:mb-0">{paragraph}</p>
                       ))}
                     </AccordionContent>
@@ -643,6 +610,3 @@ export default function FortunePage() {
     </div>
   );
 }
-
-
-    
