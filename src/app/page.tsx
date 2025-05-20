@@ -1,12 +1,12 @@
 
 "use client";
 
-import React, { useState, useTransition, useEffect } from 'react';
+import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
-import { CalendarIcon, Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw } from 'lucide-react';
+// import { format } from 'date-fns'; // No longer needed for displaying date in button
+// import { ko } from 'date-fns/locale'; // No longer needed
+import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw } from 'lucide-react'; // CalendarIcon removed
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
 import { FORTUNE_TYPES, type FortuneType } from '@/lib/fortune-data';
@@ -14,16 +14,18 @@ import { getFortuneAction, type ActionResult } from './actions';
 import type { GenerateFortuneInsightsOutput } from "@/ai/flows/generate-fortune-insights";
 
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+// Calendar component and Sheet components are no longer needed for date picking
+// import { Calendar } from '@/components/ui/calendar';
+// import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-// import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon'; // Removed for new theme
+
 
 const fortuneIconMapping: Record<FortuneType, React.ElementType> = {
   "사주팔자": Wand2,
@@ -43,21 +45,24 @@ export default function FortunePage() {
   const [fortuneResult, setFortuneResult] = useState<GenerateFortuneInsightsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
-  const [isCalendarSheetOpen, setIsCalendarSheetOpen] = React.useState(false);
   
-  // For client-side only rendering of date-dependent components
   const [clientReady, setClientReady] = useState(false);
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear()); // Initial server value, updated on client
+  const [currentYear, setCurrentYear] = useState<number>(2024); 
   const [minCalendarDate, setMinCalendarDate] = useState<Date>(new Date("1900-01-01"));
-  const [maxCalendarDate, setMaxCalendarDate] = useState<Date>(new Date());
+  // maxCalendarDate is no longer directly used by selects, currentYear is used for year range.
+
+  // States for individual year, month, day selects
+  const [selectedYear, setSelectedYear] = useState<number | undefined>();
+  const [selectedMonth, setSelectedMonth] = useState<number | undefined>(); // 1-indexed
+  const [selectedDay, setSelectedDay] = useState<number | undefined>();
 
 
   useEffect(() => {
     setClientReady(true);
     const now = new Date();
     setCurrentYear(now.getFullYear());
-    setMaxCalendarDate(now);
     setMinCalendarDate(new Date("1900-01-01"));
+    // setMaxCalendarDate(now); // Not directly used by selects anymore
   }, []);
 
   const { toast } = useToast();
@@ -70,6 +75,72 @@ export default function FortunePage() {
       fortuneTypes: [],
     },
   });
+
+  // Effect to sync individual select states from form's birthdate value
+  const birthdateFromForm = form.watch('birthdate');
+  useEffect(() => {
+    if (birthdateFromForm instanceof Date) {
+      if (birthdateFromForm.getFullYear() !== selectedYear ||
+          birthdateFromForm.getMonth() + 1 !== selectedMonth ||
+          birthdateFromForm.getDate() !== selectedDay) {
+        setSelectedYear(birthdateFromForm.getFullYear());
+        setSelectedMonth(birthdateFromForm.getMonth() + 1);
+        setSelectedDay(birthdateFromForm.getDate());
+      }
+    } else if (birthdateFromForm === undefined) {
+      if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
+        setSelectedYear(undefined);
+        setSelectedMonth(undefined);
+        setSelectedDay(undefined);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [birthdateFromForm]); // Dependencies carefully chosen to avoid loops with the next effect
+
+
+  // Effect to update form's birthdate from individual select states
+  useEffect(() => {
+    if (selectedYear !== undefined && selectedMonth !== undefined && selectedDay !== undefined) {
+      const daysInMonthValue = new Date(selectedYear, selectedMonth, 0).getDate();
+      const dayToUse = Math.min(selectedDay, daysInMonthValue);
+
+      // If the selected day was invalid for the month and got clamped, update the selectedDay state.
+      // This will re-trigger this effect with the corrected day.
+      if (dayToUse !== selectedDay) {
+        setSelectedDay(dayToUse);
+        return; 
+      }
+      
+      const newDate = new Date(selectedYear, selectedMonth - 1, dayToUse);
+      const currentFormDate = form.getValues("birthdate");
+
+      if (!currentFormDate || currentFormDate.getTime() !== newDate.getTime()) {
+        form.setValue("birthdate", newDate, { shouldValidate: true, shouldDirty: true });
+      }
+    } else {
+      // If any part of year/month/day is not selected, set birthdate in form to undefined
+      const currentFormDate = form.getValues("birthdate");
+      if (currentFormDate !== undefined) {
+        form.setValue("birthdate", undefined, { shouldValidate: true, shouldDirty: true });
+      }
+    }
+  }, [selectedYear, selectedMonth, selectedDay, form]);
+
+  const years = useMemo(() => {
+    if (!clientReady) return [];
+    return Array.from({ length: currentYear - minCalendarDate.getFullYear() + 1 }, (_, i) => minCalendarDate.getFullYear() + i).reverse();
+  }, [clientReady, currentYear, minCalendarDate]);
+
+  const months = useMemo(() => {
+    if (!clientReady) return [];
+    return Array.from({ length: 12 }, (_, i) => i + 1);
+  }, [clientReady]);
+
+  const days = useMemo(() => {
+    if (!clientReady || !selectedYear || !selectedMonth) return [];
+    return Array.from({ length: new Date(selectedYear, selectedMonth, 0).getDate() }, (_, i) => i + 1);
+  }, [clientReady, selectedYear, selectedMonth]);
+
 
   const onSubmit = (values: FortuneFormValues) => {
     setError(null);
@@ -130,11 +201,10 @@ export default function FortunePage() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8"> {/* Removed gradient */}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-background">
       <header className="mb-10 text-center">
         <div className="flex items-center justify-center mb-2">
-          {/* <FortuneCompassIcon className="h-16 w-16 text-primary" /> Replaced/removed for new theme */}
-           <Sparkles className="h-16 w-16 text-primary" /> {/* Placeholder icon */}
+           <Sparkles className="h-16 w-16 text-primary" />
           <h1 className="ml-3 text-5xl font-bold tracking-tight text-primary">
             운세 탐험
           </h1>
@@ -156,57 +226,53 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="birthdate"
-                  render={({ field }) => (
+                  render={({ field }) => ( // field is still useful for error state etc.
                     <FormItem className="flex flex-col">
                       <FormLabel>생년월일</FormLabel>
-                      <Sheet open={isCalendarSheetOpen} onOpenChange={setIsCalendarSheetOpen}>
-                        <SheetTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP", { locale: ko })
-                              ) : (
-                                <span>날짜를 선택하세요</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </SheetTrigger>
-                        <SheetContent side="bottom" className="p-0 flex flex-col items-center h-auto">
-                          <SheetHeader className="pt-4">
-                            <SheetTitle>생년월일 선택</SheetTitle>
-                            <SheetDescription>달력에서 날짜를 선택해주세요.</SheetDescription>
-                          </SheetHeader>
-                          {clientReady ? (
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={(date) => {
-                                field.onChange(date);
-                                setIsCalendarSheetOpen(false);
-                              }}
-                              disabled={(date) =>
-                                date > maxCalendarDate || date < minCalendarDate
-                              }
-                              initialFocus
-                              captionLayout="dropdown-buttons"
-                              fromYear={minCalendarDate.getFullYear()}
-                              toYear={currentYear}
-                              className="pt-2 pb-4"
-                            />
-                          ) : (
-                            <div className="pt-2 pb-4 flex justify-center items-center h-[300px]">
-                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            </div>
-                          )}
-                        </SheetContent>
-                      </Sheet>
+                      <div className="flex space-x-2">
+                        <Select
+                          value={selectedYear ? String(selectedYear) : undefined}
+                          onValueChange={(value) => setSelectedYear(value ? parseInt(value) : undefined)}
+                          disabled={!clientReady}
+                        >
+                          <SelectTrigger className="w-[120px]">
+                            <SelectValue placeholder="연도" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map(year => (
+                              <SelectItem key={year} value={String(year)}>{year}년</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={selectedMonth ? String(selectedMonth) : undefined}
+                          onValueChange={(value) => setSelectedMonth(value ? parseInt(value) : undefined)}
+                          disabled={!clientReady}
+                        >
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="월" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map(month => (
+                              <SelectItem key={month} value={String(month)}>{month}월</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={selectedDay ? String(selectedDay) : undefined}
+                          onValueChange={(value) => setSelectedDay(value ? parseInt(value) : undefined)}
+                          disabled={!clientReady || !selectedYear || !selectedMonth}
+                        >
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="일" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {days.map(day => (
+                              <SelectItem key={day} value={String(day)}>{day}일</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
