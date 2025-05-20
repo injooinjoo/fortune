@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
@@ -28,10 +28,10 @@ import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
 const fortuneIconMapping: Record<FortuneType, React.ElementType> = {
   "사주팔자": Wand2,
   "MBTI 운세": Users,
-  "띠운세": Sparkles, // Could use a specific animal icon if available or desired
+  "띠운세": Sparkles,
   "별자리운세": Star,
   "연애운": Heart,
-  "결혼운": Heart, // Could differentiate if specific icons exist
+  "결혼운": Heart,
   "취업운": Briefcase,
   "오늘의 총운": Lightbulb,
   "금전운": Coins,
@@ -44,6 +44,11 @@ export default function FortunePage() {
   const [error, setError] = useState<string | null>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
   const [isCalendarSheetOpen, setIsCalendarSheetOpen] = React.useState(false);
+  const [clientReady, setClientReady] = useState(false);
+
+  useEffect(() => {
+    setClientReady(true);
+  }, []);
 
   const { toast } = useToast();
 
@@ -91,7 +96,7 @@ export default function FortunePage() {
     
     const todayFortuneType: FortuneType = "오늘의 총운";
     const dailyInsight = fortuneResult.insights[todayFortuneType] || 
-                         Object.values(fortuneResult.insights)[0]; // Fallback to first insight
+                         Object.values(fortuneResult.insights)[0]; 
 
     if (!dailyInsight) return null;
 
@@ -167,22 +172,28 @@ export default function FortunePage() {
                             <SheetTitle>생년월일 선택</SheetTitle>
                             <SheetDescription>달력에서 날짜를 선택해주세요.</SheetDescription>
                           </SheetHeader>
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={(date) => {
-                              field.onChange(date);
-                              setIsCalendarSheetOpen(false);
-                            }}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                            captionLayout="dropdown-buttons"
-                            fromYear={1900}
-                            toYear={new Date().getFullYear()}
-                            className="pt-2 pb-4"
-                          />
+                          {clientReady ? (
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={(date) => {
+                                field.onChange(date);
+                                setIsCalendarSheetOpen(false);
+                              }}
+                              disabled={(date) =>
+                                date > new Date() || date < new Date("1900-01-01")
+                              }
+                              initialFocus
+                              captionLayout="dropdown-buttons"
+                              fromYear={1900}
+                              toYear={new Date().getFullYear()}
+                              className="pt-2 pb-4"
+                            />
+                          ) : (
+                            <div className="pt-2 pb-4 flex justify-center items-center h-[300px]">
+                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                            </div>
+                          )}
                         </SheetContent>
                       </Sheet>
                       <FormMessage />
@@ -332,11 +343,13 @@ export default function FortunePage() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p>
+        {clientReady ? (
+          <p>&copy; {new Date().getFullYear()} Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p>
+        ) : (
+          <p>&copy; Fortune Compass. 모든 운명은 당신의 선택에 달려있습니다.</p> 
+        )}
         <p className="mt-1">본 운세 내용은 재미를 위한 참고 자료로만 활용해주세요.</p>
       </footer>
     </div>
   );
 }
-
-    
