@@ -4,7 +4,7 @@
 import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, CalendarDays, User, Clock } from 'lucide-react';
+import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock } from 'lucide-react';
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
 import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
@@ -18,13 +18,9 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+// import { Input } from '@/components/ui/input'; // No longer used for MBTI directly
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
 
 
 const fortuneIconMapping: Record<FortuneType, React.ElementType> = {
@@ -92,13 +88,16 @@ export default function FortunePage() {
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
   
   const [clientReady, setClientReady] = useState(false);
-  const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
-  const [minCalendarDate, setMinCalendarDate] = useState<Date>(new Date("1900-01-01"));
-  const [maxCalendarDate, setMaxCalendarDate] = useState<Date>(new Date());
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [minCalendarDate, setMinCalendarDate] = useState<Date | null>(null);
+  const [maxCalendarDate, setMaxCalendarDate] = useState<Date | null>(null);
   
-  const [isBirthdateSheetOpen, setIsBirthdateSheetOpen] = useState(false);
   const [isMbtiSheetOpen, setIsMbtiSheetOpen] = useState(false);
   const [mbtiParts, setMbtiParts] = useState<MbtiPartsState>({ ei: null, sn: null, tf: null, jp: null });
+
+  const [selectedYear, setSelectedYear] = useState<number | undefined>();
+  const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
+  const [selectedDay, setSelectedDay] = useState<number | undefined>();
 
   useEffect(() => {
     setClientReady(true);
@@ -115,13 +114,75 @@ export default function FortunePage() {
     defaultValues: {
       birthdate: undefined,
       mbti: '',
-      gender: GENDERS[2].value, // Default to "선택 안함"
-      birthTime: BIRTH_TIMES[0].value, // Default to "모름"
+      gender: GENDERS[2].value, 
+      birthTime: BIRTH_TIMES[0].value, 
       fortuneTypes: [],
     },
   });
 
-  // Effect to initialize mbtiParts when sheet opens
+  const watchedBirthdate = form.watch('birthdate');
+
+  useEffect(() => {
+    if (watchedBirthdate) {
+      if (selectedYear !== watchedBirthdate.getFullYear() ||
+          selectedMonth !== watchedBirthdate.getMonth() + 1 ||
+          selectedDay !== watchedBirthdate.getDate()) {
+        setSelectedYear(watchedBirthdate.getFullYear());
+        setSelectedMonth(watchedBirthdate.getMonth() + 1);
+        setSelectedDay(watchedBirthdate.getDate());
+      }
+    } else if (selectedYear || selectedMonth || selectedDay) {
+      // If form date is cleared, clear selects
+      setSelectedYear(undefined);
+      setSelectedMonth(undefined);
+      setSelectedDay(undefined);
+    }
+  }, [watchedBirthdate, selectedYear, selectedMonth, selectedDay]);
+  
+  useEffect(() => {
+    if (clientReady && selectedYear && selectedMonth && selectedDay) {
+      const newDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
+      // Validate if the constructed date is valid (e.g. not Feb 30)
+      if (
+        newDate.getFullYear() === selectedYear &&
+        newDate.getMonth() === selectedMonth - 1 &&
+        newDate.getDate() === selectedDay
+      ) {
+        // Only update if the date actually changed to avoid infinite loops
+        if (!watchedBirthdate || newDate.getTime() !== watchedBirthdate.getTime()) {
+          form.setValue('birthdate', newDate, { shouldValidate: true, shouldDirty: true });
+        }
+      } else {
+        // If date is invalid (e.g. Feb 30 was selected), clear the form field
+        if (watchedBirthdate) {
+         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
+        }
+      }
+    } else if (clientReady && (!selectedYear || !selectedMonth || !selectedDay) && watchedBirthdate) {
+      // If any part of Y/M/D is cleared, clear the main birthdate field
+      form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
+    }
+  }, [selectedYear, selectedMonth, selectedDay, form, clientReady, watchedBirthdate]);
+
+
+  const yearOptions = useMemo(() => {
+    if (!minCalendarDate || !maxCalendarDate) return [];
+    const startYear = minCalendarDate.getFullYear();
+    const endYear = maxCalendarDate.getFullYear();
+    return Array.from({ length: endYear - startYear + 1 }, (_, i) => endYear - i);
+  }, [minCalendarDate, maxCalendarDate]);
+
+  const monthOptions = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => i + 1);
+  }, []);
+
+  const dayOptions = useMemo(() => {
+    if (!selectedYear || !selectedMonth) return [];
+    const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    return Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
+  }, [selectedYear, selectedMonth]);
+
+
   useEffect(() => {
     if (isMbtiSheetOpen) {
       const currentMbti = form.getValues('mbti');
@@ -138,7 +199,6 @@ export default function FortunePage() {
     }
   }, [isMbtiSheetOpen, form]);
 
-  // Effect to update form mbti value when mbtiParts changes
   useEffect(() => {
     if (isMbtiSheetOpen) { 
       const { ei, sn, tf, jp } = mbtiParts;
@@ -148,8 +208,10 @@ export default function FortunePage() {
           form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
         }
       } else {
+        // If not all parts are selected, clear the MBTI in the form
+        // This handles the case where a user deselects a part
         if (form.getValues('mbti') !== '') {
-          form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
+          // form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
         }
       }
     }
@@ -191,8 +253,6 @@ export default function FortunePage() {
   };
   
   const mbtiValueFromForm = form.watch('mbti');
-  const birthdateValueFromForm = form.watch('birthdate');
-
 
   const DailyFortuneSnippet = () => {
     if (!fortuneResult || !fortuneResult.insights) return null;
@@ -223,7 +283,7 @@ export default function FortunePage() {
 
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-background">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-background text-foreground">
       <header className="mb-10 text-center">
         <h1 className="text-5xl font-bold tracking-tight text-primary">
           운세 탐험
@@ -245,48 +305,70 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="birthdate"
-                  render={({ field }) => (
+                  render={() => ( // field is implicitly available via form.watch or controlled by selects
                     <FormItem className="flex flex-col">
                       <FormLabel>생년월일</FormLabel>
-                       <Sheet open={isBirthdateSheetOpen} onOpenChange={setIsBirthdateSheetOpen}>
-                        <SheetTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarDays className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, "PPP", { locale: ko }) : <span>날짜를 선택해주세요</span>}
-                          </Button>
-                        </SheetTrigger>
-                        <SheetContent side="bottom" className="h-auto p-0">
-                           <SheetHeader className="p-4 border-b">
-                            <SheetTitle>생년월일 선택</SheetTitle>
-                          </SheetHeader>
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={(date) => {
-                              field.onChange(date);
-                              setIsBirthdateSheetOpen(false);
-                            }}
-                            disabled={(date) =>
-                              !clientReady || date > maxCalendarDate || date < minCalendarDate
+                      <div className="grid grid-cols-3 gap-2">
+                        <Select
+                          value={selectedYear?.toString()}
+                          onValueChange={(value) => {
+                            const year = parseInt(value);
+                            setSelectedYear(year);
+                            // If day becomes invalid for new year (e.g. leap day), clear it
+                            if (selectedMonth && selectedDay && new Date(year, selectedMonth -1, selectedDay).getMonth() !== selectedMonth -1) {
+                                setSelectedDay(undefined);
                             }
-                            initialFocus
-                            defaultMonth={field.value || maxCalendarDate}
-                            fromYear={clientReady ? minCalendarDate.getFullYear() : undefined}
-                            toYear={clientReady ? maxCalendarDate.getFullYear() : undefined}
-                            captionLayout="dropdown-buttons"
-                            locale={ko}
-                          />
-                          <SheetClose asChild>
-                            <Button type="button" variant="ghost" className="mt-auto border-t rounded-none w-full py-4">닫기</Button>
-                          </SheetClose>
-                        </SheetContent>
-                      </Sheet>
+                          }}
+                          disabled={!clientReady}
+                        >
+                          <SelectTrigger><SelectValue placeholder="년" /></SelectTrigger>
+                          <SelectContent>
+                            {yearOptions.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>
+                                {year}년
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                         <Select
+                          value={selectedMonth?.toString()}
+                          onValueChange={(value) => {
+                            const month = parseInt(value);
+                            setSelectedMonth(month);
+                            // If day becomes invalid for new month, clear it
+                             if (selectedYear && selectedDay && new Date(selectedYear, month - 1, selectedDay).getMonth() !== month -1) {
+                                setSelectedDay(undefined);
+                            }
+                          }}
+                          disabled={!clientReady || !selectedYear}
+                        >
+                          <SelectTrigger><SelectValue placeholder="월" /></SelectTrigger>
+                          <SelectContent>
+                            {monthOptions.map((month) => (
+                              <SelectItem key={month} value={month.toString()}>
+                                {month}월
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={selectedDay?.toString()}
+                          onValueChange={(value) => setSelectedDay(parseInt(value))}
+                          disabled={!clientReady || !selectedYear || !selectedMonth}
+                        >
+                          <SelectTrigger><SelectValue placeholder="일" /></SelectTrigger>
+                          <SelectContent>
+                            {dayOptions.map((day) => (
+                              <SelectItem key={day} value={day.toString()}>
+                                {day}일
+                              </SelectItem>
+                            ))}
+                            {dayOptions.length === 0 && selectedYear && selectedMonth && (
+                               <SelectItem value="-" disabled>날짜 없음</SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -337,7 +419,9 @@ export default function FortunePage() {
                             })}
                           </div>
                            <SheetClose asChild>
-                              <Button type="button" variant="ghost" className="mt-auto border-t rounded-none w-full py-4">닫기</Button>
+                              <Button type="button" variant="ghost" className="mt-auto border-t rounded-none w-full py-4">
+                                {mbtiValueFromForm && mbtiValueFromForm.length === 4 ? '완료' : '닫기'}
+                              </Button>
                            </SheetClose>
                         </SheetContent>
                       </Sheet>
@@ -525,7 +609,7 @@ export default function FortunePage() {
       </main>
 
       <footer className="mt-16 text-center text-sm text-muted-foreground">
-        {clientReady ? (
+        {clientReady && currentYear ? (
           <p>&copy; {currentYear} 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p>
         ) : (
           <p>&copy; 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p> 
