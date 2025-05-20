@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown } from 'lucide-react';
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
-import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, type MbtiType } from '@/lib/fortune-data';
+import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, type MbtiType } from '@/lib/fortune-data'; // MBTI_TYPES is no longer directly used for generation
 import { getFortuneAction, type ActionResult } from './actions';
 import type { GenerateFortuneInsightsOutput } from "@/ai/flows/generate-fortune-insights";
 
@@ -34,6 +34,51 @@ const fortuneIconMapping: Record<FortuneType, React.ElementType> = {
   "금전운": Coins,
 };
 
+type MbtiPart = 'ei' | 'sn' | 'tf' | 'jp';
+type MbtiLetter<T extends MbtiPart> = 
+  T extends 'ei' ? 'E' | 'I' :
+  T extends 'sn' ? 'S' | 'N' :
+  T extends 'tf' ? 'T' | 'F' :
+  'J' | 'P';
+
+interface MbtiPartsState {
+  ei: MbtiLetter<'ei'> | null;
+  sn: MbtiLetter<'sn'> | null;
+  tf: MbtiLetter<'tf'> | null;
+  jp: MbtiLetter<'jp'> | null;
+}
+
+const mbtiDimensionDetails = {
+  ei: {
+    label: "에너지 방향",
+    options: [
+      { value: 'E', name: "외향", description: "외부 세계와 활동에서 에너지 얻음" },
+      { value: 'I', name: "내향", description: "내면 세계와 성찰에서 에너지 얻음" },
+    ],
+  },
+  sn: {
+    label: "인식 방식",
+    options: [
+      { value: 'S', name: "감각형", description: "오감과 실제 경험을 통해 정보 수집" },
+      { value: 'N', name: "직관형", description: "통찰과 가능성을 통해 정보 수집" },
+    ],
+  },
+  tf: {
+    label: "판단 기준",
+    options: [
+      { value: 'T', name: "사고형", description: "논리와 분석을 바탕으로 결정" },
+      { value: 'F', name: "감정형", description: "관계와 조화를 고려하여 결정" },
+    ],
+  },
+  jp: {
+    label: "생활 양식",
+    options: [
+      { value: 'J', name: "판단형", description: "체계적이고 계획적인 생활 선호" },
+      { value: 'P', name: "인식형", description: "자율적이고 융통성 있는 생활 선호" },
+    ],
+  },
+} as const;
+
 
 export default function FortunePage() {
   const [isPending, startTransition] = useTransition();
@@ -48,8 +93,9 @@ export default function FortunePage() {
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
   const [selectedDay, setSelectedDay] = useState<number | undefined>();
+  
   const [isMbtiSheetOpen, setIsMbtiSheetOpen] = useState(false);
-
+  const [mbtiParts, setMbtiParts] = useState<MbtiPartsState>({ ei: null, sn: null, tf: null, jp: null });
 
   useEffect(() => {
     setClientReady(true);
@@ -129,6 +175,41 @@ export default function FortunePage() {
     return Array.from({ length: new Date(selectedYear, selectedMonth, 0).getDate() }, (_, i) => i + 1);
   }, [clientReady, selectedYear, selectedMonth]);
 
+  // Effect to initialize mbtiParts when sheet opens
+  useEffect(() => {
+    if (isMbtiSheetOpen) {
+      const currentMbti = form.getValues('mbti');
+      if (currentMbti && currentMbti.length === 4) {
+        setMbtiParts({
+          ei: currentMbti[0] as MbtiLetter<'ei'>,
+          sn: currentMbti[1] as MbtiLetter<'sn'>,
+          tf: currentMbti[2] as MbtiLetter<'tf'>,
+          jp: currentMbti[3] as MbtiLetter<'jp'>,
+        });
+      } else {
+        setMbtiParts({ ei: null, sn: null, tf: null, jp: null });
+      }
+    }
+  }, [isMbtiSheetOpen, form]);
+
+  // Effect to update form mbti value when mbtiParts changes
+  useEffect(() => {
+    if (isMbtiSheetOpen) { // Only update form if user is actively selecting in the sheet
+      const { ei, sn, tf, jp } = mbtiParts;
+      if (ei && sn && tf && jp) {
+        const fullMbti = `${ei}${sn}${tf}${jp}`;
+        if (form.getValues('mbti') !== fullMbti) {
+          form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
+        }
+      } else {
+        // If parts are incomplete and form has a value, clear it
+        if (form.getValues('mbti') !== '') {
+          form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
+        }
+      }
+    }
+  }, [mbtiParts, form, isMbtiSheetOpen]);
+
 
   const onSubmit = (values: FortuneFormValues) => {
     setError(null);
@@ -160,10 +241,11 @@ export default function FortunePage() {
     }
   };
 
-  const handleMbtiSelect = (mbti: MbtiType) => {
-    form.setValue('mbti', mbti, { shouldValidate: true, shouldDirty: true });
-    setIsMbtiSheetOpen(false);
+  const handleMbtiPartSelect = (part: MbtiPart, value: MbtiLetter<typeof part>) => {
+    setMbtiParts(prev => ({ ...prev, [part]: value }));
   };
+  
+  const mbtiValueFromForm = form.watch('mbti');
 
   const DailyFortuneSnippet = () => {
     if (!fortuneResult || !fortuneResult.insights) return null;
@@ -271,36 +353,48 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="mbti"
-                  render={({ field }) => (
+                  render={({ field }) => ( // field is watched by mbtiValueFromForm
                     <FormItem className="flex flex-col">
                       <FormLabel>MBTI</FormLabel>
                       <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
                         <SheetTrigger asChild>
                           <Button variant="outline" className="w-full justify-between">
-                            {field.value || "MBTI 선택"}
+                            {mbtiValueFromForm || "MBTI 선택"}
                             <ChevronDown className="h-4 w-4 opacity-50" />
                           </Button>
                         </SheetTrigger>
-                        <SheetContent side="bottom" className="h-[70vh] flex flex-col">
-                          <SheetHeader>
+                        <SheetContent side="bottom" className="h-[70vh] flex flex-col p-0">
+                          <SheetHeader className="p-4 border-b">
                             <SheetTitle>MBTI 유형 선택</SheetTitle>
                           </SheetHeader>
-                          <div className="flex-grow overflow-y-auto p-4">
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                              {MBTI_TYPES.map((mbtiType) => (
-                                <Button
-                                  key={mbtiType}
-                                  variant={field.value === mbtiType ? "default" : "outline"}
-                                  onClick={() => handleMbtiSelect(mbtiType)}
-                                  className="text-lg p-6"
-                                >
-                                  {mbtiType}
-                                </Button>
-                              ))}
-                            </div>
+                          <div className="flex-grow overflow-y-auto p-4 space-y-6">
+                            {(Object.keys(mbtiDimensionDetails) as MbtiPart[]).map((partKey) => {
+                              const dimension = mbtiDimensionDetails[partKey];
+                              return (
+                                <div key={partKey}>
+                                  <FormLabel className="text-base font-medium text-foreground mb-2 block">
+                                    {dimension.label}
+                                  </FormLabel>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    {dimension.options.map(option => (
+                                      <Button
+                                        key={option.value}
+                                        variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
+                                        className="h-auto aspect-square flex flex-col justify-center items-center p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
+                                        onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
+                                      >
+                                        <span className="text-3xl font-bold">{option.value}</span>
+                                        <span className="mt-1 text-sm font-semibold">{option.name}</span>
+                                        <span className="mt-1 text-xs text-muted-foreground leading-tight">{option.description}</span>
+                                      </Button>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                            <SheetClose asChild>
-                              <Button type="button" variant="ghost" className="mt-4">닫기</Button>
+                              <Button type="button" variant="ghost" className="mt-auto border-t rounded-none w-full py-4">닫기</Button>
                            </SheetClose>
                         </SheetContent>
                       </Sheet>
@@ -368,7 +462,6 @@ export default function FortunePage() {
                     </>
                   ) : (
                     <>
-                      <Sparkles className="mr-2 h-4 w-4" />
                       운세 보기
                     </>
                   )}
@@ -448,3 +541,4 @@ export default function FortunePage() {
     </div>
   );
 }
+
