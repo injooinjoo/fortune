@@ -4,7 +4,7 @@
 import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock } from 'lucide-react';
+import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock, CalendarDays } from 'lucide-react';
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
 import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
@@ -18,7 +18,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-// import { Input } from '@/components/ui/input'; // No longer used for MBTI directly
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -122,47 +122,53 @@ export default function FortunePage() {
 
   const watchedBirthdate = form.watch('birthdate');
 
+  // Effect to sync form's birthdate TO local Y/M/D select states
   useEffect(() => {
+    if (!clientReady) return;
+
     if (watchedBirthdate) {
-      if (selectedYear !== watchedBirthdate.getFullYear() ||
-          selectedMonth !== watchedBirthdate.getMonth() + 1 ||
-          selectedDay !== watchedBirthdate.getDate()) {
-        setSelectedYear(watchedBirthdate.getFullYear());
-        setSelectedMonth(watchedBirthdate.getMonth() + 1);
-        setSelectedDay(watchedBirthdate.getDate());
-      }
-    } else if (selectedYear || selectedMonth || selectedDay) {
-      // If form date is cleared, clear selects
-      setSelectedYear(undefined);
-      setSelectedMonth(undefined);
-      setSelectedDay(undefined);
+      const formYear = watchedBirthdate.getFullYear();
+      const formMonth = watchedBirthdate.getMonth() + 1;
+      const formDay = watchedBirthdate.getDate();
+
+      if (selectedYear !== formYear) setSelectedYear(formYear);
+      if (selectedMonth !== formMonth) setSelectedMonth(formMonth);
+      if (selectedDay !== formDay) setSelectedDay(formDay);
+    } else {
+      // If form's birthdate is null/undefined, clear local select states
+      // This handles form resets or when Y/M/D becomes incomplete.
+      if (selectedYear !== undefined) setSelectedYear(undefined);
+      if (selectedMonth !== undefined) setSelectedMonth(undefined);
+      if (selectedDay !== undefined) setSelectedDay(undefined);
     }
-  }, [watchedBirthdate, selectedYear, selectedMonth, selectedDay]);
-  
+  }, [watchedBirthdate, clientReady]); // Only depends on watchedBirthdate and clientReady
+
+  // Effect to sync local Y/M/D select states TO form's birthdate
   useEffect(() => {
-    if (clientReady && selectedYear && selectedMonth && selectedDay) {
+    if (!clientReady) return;
+
+    if (selectedYear && selectedMonth && selectedDay) {
       const newDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
-      // Validate if the constructed date is valid (e.g. not Feb 30)
       if (
         newDate.getFullYear() === selectedYear &&
         newDate.getMonth() === selectedMonth - 1 &&
         newDate.getDate() === selectedDay
       ) {
-        // Only update if the date actually changed to avoid infinite loops
         if (!watchedBirthdate || newDate.getTime() !== watchedBirthdate.getTime()) {
           form.setValue('birthdate', newDate, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // If date is invalid (e.g. Feb 30 was selected), clear the form field
         if (watchedBirthdate) {
          form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
         }
       }
-    } else if (clientReady && (!selectedYear || !selectedMonth || !selectedDay) && watchedBirthdate) {
-      // If any part of Y/M/D is cleared, clear the main birthdate field
-      form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
+    } else {
+      // If Y/M/D is incomplete, ensure form's birthdate is also undefined.
+      if (watchedBirthdate) {
+        form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
+      }
     }
-  }, [selectedYear, selectedMonth, selectedDay, form, clientReady, watchedBirthdate]);
+  }, [selectedYear, selectedMonth, selectedDay, clientReady, form, watchedBirthdate]);
 
 
   const yearOptions = useMemo(() => {
@@ -200,6 +206,8 @@ export default function FortunePage() {
   }, [isMbtiSheetOpen, form]);
 
   useEffect(() => {
+    // This effect should only run when the sheet is open and mbtiParts change.
+    // It should not clear the form's mbti value if the sheet is closed.
     if (isMbtiSheetOpen) { 
       const { ei, sn, tf, jp } = mbtiParts;
       if (ei && sn && tf && jp) {
@@ -208,11 +216,11 @@ export default function FortunePage() {
           form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // If not all parts are selected, clear the MBTI in the form
-        // This handles the case where a user deselects a part
-        if (form.getValues('mbti') !== '') {
-          // form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
-        }
+        // If not all parts are selected while sheet is open, reflect this in the form potentially
+        // However, we might want to only set form 'mbti' to '' if user explicitly clears it
+        // or if they close the sheet without full selection.
+        // For now, let's not clear it aggressively here to avoid data loss if user reopens sheet.
+        // The form.setValue('mbti', '') was commented out earlier for this reason.
       }
     }
   }, [mbtiParts, form, isMbtiSheetOpen]);
@@ -305,16 +313,15 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="birthdate"
-                  render={() => ( // field is implicitly available via form.watch or controlled by selects
+                  render={() => ( 
                     <FormItem className="flex flex-col">
                       <FormLabel>생년월일</FormLabel>
                       <div className="grid grid-cols-3 gap-2">
                         <Select
-                          value={selectedYear?.toString()}
+                          value={selectedYear?.toString() || ""}
                           onValueChange={(value) => {
                             const year = parseInt(value);
                             setSelectedYear(year);
-                            // If day becomes invalid for new year (e.g. leap day), clear it
                             if (selectedMonth && selectedDay && new Date(year, selectedMonth -1, selectedDay).getMonth() !== selectedMonth -1) {
                                 setSelectedDay(undefined);
                             }
@@ -331,11 +338,10 @@ export default function FortunePage() {
                           </SelectContent>
                         </Select>
                          <Select
-                          value={selectedMonth?.toString()}
+                          value={selectedMonth?.toString() || ""}
                           onValueChange={(value) => {
                             const month = parseInt(value);
                             setSelectedMonth(month);
-                            // If day becomes invalid for new month, clear it
                              if (selectedYear && selectedDay && new Date(selectedYear, month - 1, selectedDay).getMonth() !== month -1) {
                                 setSelectedDay(undefined);
                             }
@@ -352,7 +358,7 @@ export default function FortunePage() {
                           </SelectContent>
                         </Select>
                         <Select
-                          value={selectedDay?.toString()}
+                          value={selectedDay?.toString() || ""}
                           onValueChange={(value) => setSelectedDay(parseInt(value))}
                           disabled={!clientReady || !selectedYear || !selectedMonth}
                         >
@@ -377,7 +383,7 @@ export default function FortunePage() {
                 <FormField
                   control={form.control}
                   name="mbti"
-                  render={() => ( 
+                  render={({ field }) => (  // Pass field to use field.value and field.onChange if needed for direct binding
                     <FormItem className="flex flex-col">
                       <FormLabel>MBTI</FormLabel>
                       <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
@@ -406,7 +412,7 @@ export default function FortunePage() {
                                         variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
                                         className="h-auto aspect-square flex flex-col justify-center items-center p-3 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
                                         onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
-                                        type="button"
+                                        type="button" // Important: prevent form submission
                                       >
                                         <span className="text-3xl font-bold">{option.value}</span>
                                         <span className="mt-1 text-sm font-semibold">{option.name}</span>
@@ -419,13 +425,31 @@ export default function FortunePage() {
                             })}
                           </div>
                            <SheetClose asChild>
-                              <Button type="button" variant="ghost" className="mt-auto border-t rounded-none w-full py-4">
+                              <Button 
+                                type="button" 
+                                variant="ghost" 
+                                className="mt-auto border-t rounded-none w-full py-4"
+                                onClick={() => {
+                                  // Optionally, ensure full MBTI is set on explicit close if all parts selected
+                                  const { ei, sn, tf, jp } = mbtiParts;
+                                  if (ei && sn && tf && jp) {
+                                    const fullMbti = `${ei}${sn}${tf}${jp}`;
+                                    if (form.getValues('mbti') !== fullMbti) {
+                                      form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
+                                    }
+                                  } else if (form.getValues('mbti') !== '') {
+                                    // If not all parts are selected, clear the MBTI in the form upon closing.
+                                    // This addresses the case where a user opens, makes partial selection, and closes.
+                                    form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
+                                  }
+                                }}
+                              >
                                 {mbtiValueFromForm && mbtiValueFromForm.length === 4 ? '완료' : '닫기'}
                               </Button>
                            </SheetClose>
                         </SheetContent>
                       </Sheet>
-                       <FormMessage />
+                       <FormMessage /> {/* This will show validation errors for field.name */}
                     </FormItem>
                   )}
                 />
@@ -596,7 +620,7 @@ export default function FortunePage() {
                       </div>
                     </AccordionTrigger>
                     <AccordionContent className="px-6 pb-6 pt-2 text-base leading-relaxed bg-background/50">
-                      {insight.split('\\n').map((paragraph, index) => (
+                      {insight.split('\\n').map((paragraph, index) => ( // Handle escaped newlines
                         <p key={index} className="mb-2 last:mb-0">{paragraph}</p>
                       ))}
                     </AccordionContent>
@@ -619,3 +643,6 @@ export default function FortunePage() {
     </div>
   );
 }
+
+
+    
