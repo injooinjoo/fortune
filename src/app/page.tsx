@@ -4,12 +4,14 @@
 import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock } from 'lucide-react';
+import { Sparkles, Wand2, Loader2, AlertTriangle, Lightbulb, Users, Star, Heart, Briefcase, Coins, RotateCcw, ChevronDown, User, Clock, Info } from 'lucide-react';
+import { format as formatDateFn } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 import { FortuneFormSchema, type FortuneFormValues } from '@/lib/schemas';
 import { FORTUNE_TYPES, MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
-import { getFortuneAction, type ActionResult } from './actions';
-import type { GenerateFortuneInsightsOutput } from "@/ai/flows/generate-fortune-insights";
+import { getFortuneAction, type ActionResult, type FormattedFortuneOutput } from './actions';
+import type { SajuDataType } from "@/ai/flows/generate-fortune-insights";
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +19,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet';
-import { Input } from '@/components/ui/input';
+// import { Input } from '@/components/ui/input'; // No longer used for MBTI direct input
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -49,40 +51,95 @@ interface MbtiPartsState {
 }
 
 const mbtiDimensionDetails = {
-  ei: {
-    label: "에너지 방향",
-    options: [
-      { value: 'E', name: "외향", description: "외부 세계와 활동" },
-      { value: 'I', name: "내향", description: "내면 세계와 성찰" },
-    ],
-  },
-  sn: {
-    label: "인식 방식",
-    options: [
-      { value: 'S', name: "감각형", description: "오감과 실제 경험" },
-      { value: 'N', name: "직관형", description: "통찰과 가능성" },
-    ],
-  },
-  tf: {
-    label: "판단 기준",
-    options: [
-      { value: 'T', name: "사고형", description: "논리와 분석" },
-      { value: 'F', name: "감정형", description: "관계와 조화" },
-    ],
-  },
-  jp: {
-    label: "생활 양식",
-    options: [
-      { value: 'J', name: "판단형", description: "체계적이고 계획적" },
-      { value: 'P', name: "인식형", description: "자율적이고 융통성" },
-    ],
-  },
+  ei: { label: "에너지", options: [{ value: 'E', name: "E (외향)", description: "활동으로 충전" }, { value: 'I', name: "I (내향)", description: "생각으로 충전" }] },
+  sn: { label: "인식", options: [{ value: 'S', name: "S (감각)", description: "현재와 실제" }, { value: 'N', name: "N (직관)", description: "미래와 가능성" }] },
+  tf: { label: "판단", options: [{ value: 'T', name: "T (사고)", description: "논리와 분석" }, { value: 'F', name: "F (감정)", description: "관계와 조화" }] },
+  jp: { label: "생활", options: [{ value: 'J', name: "J (판단)", description: "계획과 통제" }, { value: 'P', name: "P (인식)", description: "자율과 융통성" }] },
 } as const;
+
+
+const SajuDisplay: React.FC<{ sajuData: SajuDataType; userInfo: FortuneFormValues }> = ({ sajuData, userInfo }) => {
+  const pillarLabels = ["시주", "일주", "월주", "년주"]; // Matches screenshot order LTR
+
+  // Ensure pillars are in the correct order for display (Hour, Day, Month, Year)
+  const displayPillars = pillarLabels.map(label => {
+    return sajuData.pillars.find(p => p.label === label) || {
+      label: label,
+      heavenlyStem: 'N/A', heavenlyStemElement: 'N/A',
+      earthlyBranch: 'N/A', earthlyBranchElement: 'N/A',
+      sibsin: 'N/A', sibbiUnseong: 'N/A'
+    };
+  });
+
+
+  return (
+    <Card className="mt-6 shadow-lg">
+      <CardHeader>
+        <CardTitle className="flex items-center text-xl">
+          <Info className="mr-2 h-5 w-5 text-primary" />
+          사주명식
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex items-center space-x-4 p-4 bg-card rounded-lg shadow">
+          <div className="flex flex-col items-center justify-center w-20 h-20 bg-primary text-primary-foreground rounded-lg shadow-md">
+            <span className="text-4xl font-bold">{sajuData.myElementHanja}</span>
+            <span className="text-xs mt-1">나의 오행</span>
+          </div>
+          <div>
+            <p className="text-lg font-semibold">{`김인주 (본인)`}</p> {/* Placeholder name */}
+            <p className="text-sm text-muted-foreground">
+              {userInfo.birthdate ? formatDateFn(userInfo.birthdate, 'yyyy.MM.dd (양력)') : '생년월일 정보 없음'}
+            </p>
+            <p className="text-sm text-muted-foreground">{userInfo.birthTime || '태어난 시간 모름'}</p>
+            <p className="text-sm text-muted-foreground">{userInfo.gender}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center text-sm">
+          {displayPillars.map((pillar) => (
+            <div key={pillar.label} className="font-semibold text-muted-foreground">{pillar.label}</div>
+          ))}
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {displayPillars.map((pillar) => (
+            <div key={`${pillar.label}-sibsin`} className="p-1 bg-background rounded text-xs">{pillar.sibsin}</div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {displayPillars.map((pillar) => (
+            <div key={`${pillar.label}-stems`} className="p-2 bg-card rounded-lg shadow">
+              <div className="text-xs text-muted-foreground">{pillar.heavenlyStemElement || "N/A"}</div>
+              <div className="text-2xl font-bold my-1">{pillar.heavenlyStem || "?"}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {displayPillars.map((pillar) => (
+            <div key={`${pillar.label}-branches`} className="p-2 bg-card rounded-lg shadow">
+              <div className="text-xs text-muted-foreground">{pillar.earthlyBranchElement || "N/A"}</div>
+              <div className="text-2xl font-bold my-1">{pillar.earthlyBranch || "?"}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-4 gap-2 text-center">
+          {displayPillars.map((pillar) => (
+            <div key={`${pillar.label}-sibbi`} className="p-1 bg-background rounded text-xs">{pillar.sibbiUnseong}</div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 
 export default function FortunePage() {
   const [isPending, startTransition] = useTransition();
-  const [fortuneResult, setFortuneResult] = useState<GenerateFortuneInsightsOutput | null>(null);
+  const [fortuneResult, setFortuneResult] = useState<FormattedFortuneOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
   
@@ -101,9 +158,10 @@ export default function FortunePage() {
   useEffect(() => {
     setClientReady(true);
     const now = new Date();
-    setCurrentYear(now.getFullYear());
-    setMinCalendarDate(new Date(now.getFullYear() - 100, 0, 1)); // 100 years ago
-    setMaxCalendarDate(now);
+    const currentYearValue = now.getFullYear();
+    setCurrentYear(currentYearValue);
+    setMinCalendarDate(new Date(currentYearValue - 100, 0, 1)); 
+    setMaxCalendarDate(new Date(currentYearValue, 11, 31)); // Current year, end of Dec
   }, []);
 
   const { toast } = useToast();
@@ -133,11 +191,16 @@ export default function FortunePage() {
       if (selectedMonth !== formMonth) setSelectedMonth(formMonth);
       if (selectedDay !== formDay) setSelectedDay(formDay);
     } else {
-      if (selectedYear !== undefined) setSelectedYear(undefined);
-      if (selectedMonth !== undefined) setSelectedMonth(undefined);
-      if (selectedDay !== undefined) setSelectedDay(undefined);
+      // Only reset if form.birthdate is explicitly cleared, not on initial load
+      // This prevents resetting dropdowns when they are the source of truth initially
+      if (form.formState.dirtyFields.birthdate && selectedYear !== undefined) {
+        setSelectedYear(undefined);
+        setSelectedMonth(undefined);
+        setSelectedDay(undefined);
+      }
     }
-  }, [watchedBirthdate, clientReady]); 
+  }, [watchedBirthdate, clientReady, form.formState.dirtyFields.birthdate]); 
+
 
   useEffect(() => {
     if (!clientReady) return;
@@ -153,12 +216,14 @@ export default function FortunePage() {
           form.setValue('birthdate', newDate, { shouldValidate: true, shouldDirty: true });
         }
       } else {
+        // Invalid date combination (e.g. Feb 30), clear form value if it was set
         if (watchedBirthdate) {
          form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
         }
       }
     } else {
-      if (watchedBirthdate) {
+      // If any part of Y/M/D is not selected, and form.birthdate had a value, clear it.
+      if (watchedBirthdate && (selectedYear === undefined || selectedMonth === undefined || selectedDay === undefined)) {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
     }
@@ -178,6 +243,8 @@ export default function FortunePage() {
 
   const dayOptions = useMemo(() => {
     if (!selectedYear || !selectedMonth) return [];
+    // Ensure month is valid (1-12) before creating date
+    if (selectedMonth < 1 || selectedMonth > 12) return [];
     const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
     return Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
   }, [selectedYear, selectedMonth]);
@@ -227,7 +294,7 @@ export default function FortunePage() {
           variant: "destructive",
         });
       } else if (result.data) {
-        setFortuneResult(result.data);
+        setFortuneResult(result.data); // This now includes insights and potentially sajuData
         toast({
           title: "운세 도착!",
           description: "당신의 맞춤 운세를 확인해보세요.",
@@ -308,8 +375,12 @@ export default function FortunePage() {
                           onValueChange={(value) => {
                             const year = parseInt(value);
                             setSelectedYear(year);
-                            if (selectedMonth && selectedDay && new Date(year, selectedMonth -1, selectedDay).getMonth() !== selectedMonth -1) {
-                                setSelectedDay(undefined);
+                            // If month and day are already selected, check if the day is valid for the new year/month
+                            if (selectedMonth && selectedDay) {
+                                const newDaysInMonth = new Date(year, selectedMonth, 0).getDate();
+                                if (selectedDay > newDaysInMonth) {
+                                    setSelectedDay(undefined); // Reset day if it's invalid
+                                }
                             }
                           }}
                           disabled={!clientReady}
@@ -328,8 +399,11 @@ export default function FortunePage() {
                           onValueChange={(value) => {
                             const month = parseInt(value);
                             setSelectedMonth(month);
-                             if (selectedYear && selectedDay && new Date(selectedYear, month - 1, selectedDay).getMonth() !== month -1) {
-                                setSelectedDay(undefined);
+                            if (selectedYear && selectedDay) {
+                                const newDaysInMonth = new Date(selectedYear, month, 0).getDate();
+                                if (selectedDay > newDaysInMonth) {
+                                    setSelectedDay(undefined); 
+                                }
                             }
                           }}
                           disabled={!clientReady || !selectedYear}
@@ -374,21 +448,21 @@ export default function FortunePage() {
                       <FormLabel>MBTI</FormLabel>
                       <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
                         <SheetTrigger asChild>
-                           <Button variant="outline" className="w-full justify-between">
+                           <Button variant="outline" className="w-full justify-between font-normal">
                             {mbtiValueFromForm || "MBTI 선택"}
                             <ChevronDown className="h-4 w-4 opacity-50" />
                           </Button>
                         </SheetTrigger>
-                        <SheetContent side="bottom" className="h-[70vh] flex flex-col p-0">
+                        <SheetContent side="bottom" className="h-auto max-h-[70vh] flex flex-col p-0">
                           <SheetHeader className="p-4 border-b">
                             <SheetTitle>MBTI 유형 선택</SheetTitle>
                           </SheetHeader>
-                          <div className="flex-grow overflow-y-auto p-4 space-y-4">
+                          <div className="flex-grow overflow-y-auto p-4 space-y-3">
                             {(Object.keys(mbtiDimensionDetails) as MbtiPart[]).map((partKey) => {
                               const dimension = mbtiDimensionDetails[partKey];
                               return (
                                 <div key={partKey}>
-                                  <FormLabel className="text-sm font-medium text-foreground mb-1.5 block">
+                                  <FormLabel className="text-xs font-medium text-muted-foreground mb-1.5 block">
                                     {dimension.label}
                                   </FormLabel>
                                   <div className="grid grid-cols-2 gap-2">
@@ -396,13 +470,12 @@ export default function FortunePage() {
                                       <Button
                                         key={option.value}
                                         variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
-                                        className="h-auto flex flex-col justify-center items-center p-2.5 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
+                                        className="h-auto flex flex-col justify-center items-center p-2 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
                                         onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
                                         type="button"
                                       >
-                                        <span className="text-xl font-bold">{option.value}</span>
-                                        <span className="mt-0.5 text-xs font-semibold">{option.name}</span>
-                                        <span className="mt-0.5 text-[10px] text-muted-foreground leading-tight">{option.description}</span>
+                                        <span className="text-base font-semibold">{option.name}</span>
+                                        <span className="mt-0.5 text-[11px] text-muted-foreground leading-tight">{option.description}</span>
                                       </Button>
                                     ))}
                                   </div>
@@ -423,11 +496,13 @@ export default function FortunePage() {
                                       form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
                                     }
                                   } else if (form.getValues('mbti') !== '') {
-                                    form.setValue('mbti', '', { shouldValidate: true, shouldDirty: true });
+                                     // If not all parts are selected, clear the form's MBTI value only if it's not already empty
+                                    // This prevents clearing it if the user opens and closes without full selection
                                   }
+                                  setIsMbtiSheetOpen(false); // Explicitly close sheet
                                 }}
                               >
-                                {mbtiValueFromForm && mbtiValueFromForm.length === 4 ? '완료' : '닫기'}
+                                {mbtiValueFromForm && mbtiValueFromForm.length === 4 ? '완료' : '선택 완료'}
                               </Button>
                            </SheetClose>
                         </SheetContent>
@@ -569,7 +644,11 @@ export default function FortunePage() {
           </Card>
         )}
         
-        {fortuneResult && !isPending && (
+        {fortuneResult && lastSubmittedData && fortuneResult.sajuData && lastSubmittedData.fortuneTypes.includes("사주팔자") && !isPending && (
+          <SajuDisplay sajuData={fortuneResult.sajuData} userInfo={lastSubmittedData} />
+        )}
+
+        {fortuneResult && fortuneResult.insights && Object.keys(fortuneResult.insights).length > 0 && !isPending && (
           <div className="mt-10">
             <DailyFortuneSnippet />
             <h2 className="text-3xl font-semibold text-center mb-6 text-primary">
@@ -577,6 +656,9 @@ export default function FortunePage() {
             </h2>
             <Accordion type="multiple" className="w-full space-y-4">
               {Object.entries(fortuneResult.insights).map(([type, insight]) => {
+                // Do not render Saju interpretation here if SajuDisplay is shown separately
+                if (type === "사주팔자" && fortuneResult.sajuData) return null;
+
                 const Icon = fortuneIconMapping[type as FortuneType] || Wand2;
                 return (
                   <AccordionItem value={type} key={type} className="bg-card rounded-lg shadow-md border border-primary/20 overflow-hidden">
