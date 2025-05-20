@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useTransition } from 'react';
@@ -18,8 +19,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
@@ -42,6 +43,7 @@ export default function FortunePage() {
   const [fortuneResult, setFortuneResult] = useState<GenerateFortuneInsightsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [lastSubmittedData, setLastSubmittedData] = useState<FortuneFormValues | null>(null);
+  const [isCalendarSheetOpen, setIsCalendarSheetOpen] = React.useState(false);
 
   const { toast } = useToast();
 
@@ -141,8 +143,8 @@ export default function FortunePage() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>생년월일</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
+                      <Sheet open={isCalendarSheetOpen} onOpenChange={setIsCalendarSheetOpen}>
+                        <SheetTrigger asChild>
                           <FormControl>
                             <Button
                               variant={"outline"}
@@ -159,12 +161,19 @@ export default function FortunePage() {
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
                           </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
+                        </SheetTrigger>
+                        <SheetContent side="bottom" className="p-0 flex flex-col items-center h-auto">
+                          <SheetHeader className="pt-4">
+                            <SheetTitle>생년월일 선택</SheetTitle>
+                            <SheetDescription>달력에서 날짜를 선택해주세요.</SheetDescription>
+                          </SheetHeader>
                           <Calendar
                             mode="single"
                             selected={field.value}
-                            onSelect={field.onChange}
+                            onSelect={(date) => {
+                              field.onChange(date);
+                              setIsCalendarSheetOpen(false);
+                            }}
                             disabled={(date) =>
                               date > new Date() || date < new Date("1900-01-01")
                             }
@@ -172,9 +181,10 @@ export default function FortunePage() {
                             captionLayout="dropdown-buttons"
                             fromYear={1900}
                             toYear={new Date().getFullYear()}
+                            className="pt-2 pb-4"
                           />
-                        </PopoverContent>
-                      </Popover>
+                        </SheetContent>
+                      </Sheet>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -328,3 +338,5 @@ export default function FortunePage() {
     </div>
   );
 }
+
+    
