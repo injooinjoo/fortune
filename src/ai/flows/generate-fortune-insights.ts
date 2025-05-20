@@ -50,6 +50,9 @@ const prompt = ai.definePrompt({
   name: 'generateFortuneInsightsPrompt',
   input: {schema: GenerateFortuneInsightsInputSchema},
   output: {schema: GenerateFortuneInsightsOutputSchema},
+  config: {
+    responseMimeType: 'application/json', // Explicitly request JSON output
+  },
   prompt: `You are an expert fortune teller specializing in 사주팔자, MBTI, 띠운세, 별운세, 연애운, 결혼운, and 취업운.
 
 You will use the user's birthdate, MBTI, gender, and birth time to generate personalized fortune insights for the requested fortune types.
@@ -78,3 +81,4 @@ const generateFortuneInsightsFlow = ai.defineFlow(
     return output!;
   }
 );
+
