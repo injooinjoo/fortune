@@ -96,7 +96,8 @@ export default function ProfileSetupPage() {
     } else {
        if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
         // Reset only if there was a value previously to avoid loop with next effect
-        if (form.getValues('birthdate')) {
+        // and only if the form also doesn't have a value.
+        if (!form.getValues('birthdate')) {
             setSelectedYear(undefined);
             setSelectedMonth(undefined);
             setSelectedDay(undefined);
@@ -104,7 +105,7 @@ export default function ProfileSetupPage() {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedBirthdate, clientReady, form]);
+  }, [watchedBirthdate, clientReady]);
 
 
   useEffect(() => {
@@ -135,7 +136,8 @@ export default function ProfileSetupPage() {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
     }
-  }, [selectedYear, selectedMonth, selectedDay, clientReady, form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedYear, selectedMonth, selectedDay, clientReady]);
 
 
   const yearOptions = useMemo(() => {
@@ -227,6 +229,8 @@ export default function ProfileSetupPage() {
           title: "프로필 정보 저장 완료!",
           description: "운세 탐험을 시작할 준비가 되었습니다.",
         });
+        // Here you would typically navigate to the main app screen
+        // or trigger the next step (e.g., social login/phone auth if implemented)
         resolve(null);
       }, 1000));
     });
@@ -480,8 +484,8 @@ export default function ProfileSetupPage() {
                 
                 {currentStep === 4 && (
                   <div className="text-center space-y-4 py-8">
-                    <p className="text-lg">모든 정보를 입력해주셔서 감사합니다!</p>
-                    <p className="text-muted-foreground">이제 운세 탐험을 시작할 준비가 거의 다 되었어요.</p>
+                    <p className="text-lg">이후에 시작하는 것에 대해서는 앱으로 접속하여 진행합니다.</p>
+                    <p className="text-muted-foreground">소셜 로그인 및 휴대폰 인증 기능이 준비될 예정입니다.</p>
                   </div>
                 )}
 
