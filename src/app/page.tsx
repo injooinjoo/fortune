@@ -5,6 +5,7 @@ import React, { useState, useTransition, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, User, Clock, ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 import { ProfileFormSchema, type ProfileFormValues } from '@/lib/schemas';
 import { MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
@@ -46,6 +47,7 @@ export default function ProfileSetupPage() {
 
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const router = useRouter(); // Initialize useRouter
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileFormSchema),
@@ -97,9 +99,6 @@ export default function ProfileSetupPage() {
       if (selectedDay !== formDay) setSelectedDay(formDay);
     } else {
        if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
-        // Only reset if form.getValues('birthdate') is truly null/undefined
-        // and one of selectedYear, selectedMonth, selectedDay is defined.
-        // This prevents resetting when the form is initially undefined but selections are also undefined.
         if (!form.getValues('birthdate')) {
             setSelectedYear(undefined);
             setSelectedMonth(undefined);
@@ -116,7 +115,6 @@ export default function ProfileSetupPage() {
 
     if (selectedYear && selectedMonth && selectedDay) {
       const newDate = new Date(selectedYear, selectedMonth - 1, selectedDay);
-      // Check if the constructed date is valid (e.g., not Feb 30th)
       if (
         newDate.getFullYear() === selectedYear &&
         newDate.getMonth() === selectedMonth - 1 &&
@@ -127,14 +125,11 @@ export default function ProfileSetupPage() {
           form.setValue('birthdate', newDate, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // Invalid date (e.g., selected day not possible for month/year)
-        // Clear the date in the form if it was previously set
         if (form.getValues('birthdate')) {
          form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
         }
       }
     } else {
-      // If any part of Y/M/D is missing, and there was a date, clear it.
       if (form.getValues('birthdate') && (!selectedYear || !selectedMonth || !selectedDay) ) {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
@@ -157,7 +152,6 @@ export default function ProfileSetupPage() {
 
   const dayOptions = useMemo(() => {
     if (!selectedYear || !selectedMonth) return [];
-    // Basic validation for month (though Select should handle it)
     if (selectedMonth < 1 || selectedMonth > 12) return [];
     const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
     return Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
@@ -166,7 +160,6 @@ export default function ProfileSetupPage() {
   const mbtiValueFromForm = form.watch('mbti');
 
   useEffect(() => {
-    // When the sheet opens, populate mbtiParts from the form's mbti value
     if (isMbtiSheetOpen) {
       const currentMbti = form.getValues('mbti');
       if (currentMbti && currentMbti !== "모름" && currentMbti.length === 4) {
@@ -177,15 +170,13 @@ export default function ProfileSetupPage() {
           jp: currentMbti[3] as MbtiLetter<'jp'>,
         });
       } else {
-        // If form MBTI is "모름" or invalid, reset parts
         setMbtiParts({ ei: null, sn: null, tf: null, jp: null });
       }
     }
   }, [isMbtiSheetOpen, form]);
 
   useEffect(() => {
-    // When mbtiParts change (and sheet is open), update the form if all parts are selected
-    if (isMbtiSheetOpen) { // Only act if sheet is open to prevent race conditions on close
+    if (isMbtiSheetOpen) { 
       const { ei, sn, tf, jp } = mbtiParts;
       if (ei && sn && tf && jp) {
         const fullMbti = `${ei}${sn}${tf}${jp}`;
@@ -193,21 +184,10 @@ export default function ProfileSetupPage() {
           form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // If not all parts are selected, but the form has a full MBTI,
-        // it means a part was de-selected. We shouldn't automatically set to "모름" here,
-        // as the user might be in the process of changing.
-        // The "Confirm" or "Set to Unknown" button will finalize the form's MBTI.
         const currentMbtiOnForm = form.getValues('mbti');
-        // If a part is nullified, but the form still has a complete MBTI,
-        // we don't want to immediately set it to "모름".
-        // Let the confirm/unknown buttons handle final decision.
         if (currentMbtiOnForm && currentMbtiOnForm !== "모름" && currentMbtiOnForm.length === 4) {
-            // If any part becomes null, and the form had a full MBTI,
-            // the display button might show the old full MBTI.
-            // This is acceptable as user is actively changing.
-            // The '모름' button or '선택 완료' will rectify.
             if (!ei || !sn || !tf || !jp) {
-            // console.log("A part was deselected, form MBTI remains until confirm/unknown.");
+            // A part was deselected, form MBTI remains until confirm/unknown.
             }
         }
       }
@@ -223,14 +203,13 @@ export default function ProfileSetupPage() {
     if (ei && sn && tf && jp) {
       form.setValue('mbti', `${ei}${sn}${tf}${jp}`, { shouldValidate: true, shouldDirty: true });
     } else {
-      // If not all parts are selected on confirm, set to "모름"
       form.setValue('mbti', '모름', { shouldValidate: true, shouldDirty: true });
     }
     setIsMbtiSheetOpen(false);
   };
 
   const handleMbtiSheetSetToUnknown = () => {
-    setMbtiParts({ ei: null, sn: null, tf: null, jp: null }); // Clear visual selection
+    setMbtiParts({ ei: null, sn: null, tf: null, jp: null }); 
     form.setValue('mbti', '모름', { shouldValidate: true, shouldDirty: true });
     setIsMbtiSheetOpen(false);
   };
@@ -239,14 +218,14 @@ export default function ProfileSetupPage() {
   const onSubmit = (values: ProfileFormValues) => {
     console.log("Profile Setup Data (to be saved to Firestore):", values);
     startTransition(() => {
+      // Simulate API call
       return new Promise(resolve => setTimeout(() => {
         toast({
           title: "프로필 정보 임시 저장됨",
           description: "실제 앱에서는 이 단계에서 인증 화면(소셜 로그인/휴대폰)으로 이동합니다. 현재는 UI 프로토타이핑 중입니다.",
         });
-        // Firestore 저장 로직 및
-        // router.push('/auth-selection'); // (가칭) 인증 선택 화면으로 이동
-        // 또는 router.push('/auth/google'); 등으로 직접 이동
+        // Navigate to the authentication selection page
+        router.push('/auth/selection');
         resolve(null);
       }, 1000));
     });
@@ -256,16 +235,24 @@ export default function ProfileSetupPage() {
     let fieldsToValidate: (keyof ProfileFormValues)[] = [];
     if (currentStep === 1) fieldsToValidate = ['name'];
     if (currentStep === 2) fieldsToValidate = ['birthdate', 'birthTime'];
-    // Step 3 is the last data input step, its button will be type="submit"
+    if (currentStep === 3) fieldsToValidate = ['mbti', 'gender']; // For step 3, validate before potential submit
 
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
-      setCurrentStep(prev => prev + 1);
+      if (currentStep < totalSteps) {
+        setCurrentStep(prev => prev + 1);
+      } else {
+        // If it's the last step, and "Next" was somehow clicked instead of submit,
+        // we can also trigger the submit action.
+        // This case might not be reachable if the "Next" button is hidden on the last step.
+        form.handleSubmit(onSubmit)(); 
+      }
     } else {
-      // Optionally, provide more specific feedback if a field is invalid
       if (currentStep === 1 && form.formState.errors.name) toast({ title: "오류", description: form.formState.errors.name.message, variant: "destructive" });
       if (currentStep === 2 && form.formState.errors.birthdate) toast({ title: "오류", description: "생년월일을 올바르게 입력해주세요.", variant: "destructive" });
       if (currentStep === 2 && form.formState.errors.birthTime) toast({ title: "오류", description: form.formState.errors.birthTime.message, variant: "destructive" });
+      if (currentStep === 3 && form.formState.errors.mbti) toast({ title: "오류", description: form.formState.errors.mbti.message, variant: "destructive" });
+      if (currentStep === 3 && form.formState.errors.gender) toast({ title: "오류", description: form.formState.errors.gender.message, variant: "destructive" });
     }
   };
 
@@ -290,10 +277,10 @@ export default function ProfileSetupPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         ) : (
-          <div className="w-9 h-9"></div> // Placeholder for spacing
+          <div className="w-9 h-9"></div> 
         )}
         <h1 className="text-lg font-semibold">사주정보 입력</h1>
-        <div className="w-9 h-9"></div> // Placeholder for spacing
+        <div className="w-9 h-9"></div> 
       </header>
 
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
@@ -325,8 +312,8 @@ export default function ProfileSetupPage() {
                   <>
                     <FormField
                       control={form.control}
-                      name="birthdate" // This name must match your schema
-                      render={() => ( // field prop is not directly used here for Selects
+                      name="birthdate" 
+                      render={() => ( 
                         <FormItem className="flex flex-col">
                           <FormLabel>생년월일</FormLabel>
                           <div className="grid grid-cols-3 gap-2">
@@ -335,10 +322,9 @@ export default function ProfileSetupPage() {
                               onValueChange={(value) => {
                                 const year = parseInt(value);
                                 setSelectedYear(year);
-                                // If month and day are already selected, check if day is still valid
                                 if (selectedMonth && selectedDay) {
                                     const newDaysInMonth = new Date(year, selectedMonth, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); // Or newDaysInMonth
+                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
                                 }
                               }}
                               disabled={!clientReady}
@@ -357,7 +343,7 @@ export default function ProfileSetupPage() {
                                 setSelectedMonth(month);
                                 if (selectedYear && selectedDay) {
                                     const newDaysInMonth = new Date(selectedYear, month, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); // Or newDaysInMonth
+                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
                                 }
                               }}
                               disabled={!clientReady || !selectedYear}
@@ -385,7 +371,6 @@ export default function ProfileSetupPage() {
                               </SelectContent>
                             </Select>
                           </div>
-                          {/* Explicitly render FormMessage for birthdate field */}
                           <FormMessage>{form.formState.errors.birthdate?.message}</FormMessage> 
                         </FormItem>
                       )}
@@ -421,7 +406,7 @@ export default function ProfileSetupPage() {
                     <FormField
                       control={form.control}
                       name="mbti"
-                      render={({ field }) => ( // field is used to get value for button display
+                      render={({ field }) => ( 
                         <FormItem className="flex flex-col">
                           <FormLabel>MBTI</FormLabel>
                           <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
@@ -451,7 +436,7 @@ export default function ProfileSetupPage() {
                                             variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
                                             className="h-auto flex flex-col justify-center items-center p-2 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
                                             onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
-                                            type="button" // Important: prevent form submission
+                                            type="button" 
                                           >
                                             <span className="text-base font-semibold">{option.name}</span>
                                             <span className="mt-0.5 text-[11px] text-muted-foreground leading-tight">{option.description}</span>
@@ -498,19 +483,22 @@ export default function ProfileSetupPage() {
                   </>
                 )}
                 
-                <div className={cn("flex pt-4", currentStep > 1 ? "justify-between" : "justify-end")}>
+                <div className={cn("flex pt-4", currentStep > 1 || currentStep === totalSteps ? "justify-between" : "justify-end")}>
                   {currentStep > 1 && (
                     <Button type="button" variant="outline" onClick={handlePrev} disabled={isPending}>
                       이전
                     </Button>
                   )}
+                   {/* Spacer to push "다음" or "완료" to the right if only one is visible */}
+                  {currentStep === 1 && <div className="flex-grow"></div>}
+
                   {currentStep < totalSteps && (
                     <Button type="button" onClick={handleNext} disabled={isPending}>
                       다음
                     </Button>
                   )}
                   {currentStep === totalSteps && (
-                    <Button type="submit" disabled={isPending} className="w-full">
+                    <Button type="submit" disabled={isPending} className="w-full md:w-auto"> {/* Adjusted width for responsiveness */}
                       {isPending ? "저장 중..." : "프로필 저장하고 인증하기"}
                     </Button>
                   )}
@@ -527,4 +515,3 @@ export default function ProfileSetupPage() {
     </div>
   );
 }
-
