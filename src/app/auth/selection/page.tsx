@@ -1,7 +1,7 @@
 
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,27 +10,48 @@ import { Mail, LogIn, MessageSquare, Instagram, Smartphone } from 'lucide-react'
 import Image from 'next/image';
 
 import { auth } from '@/lib/firebase'; // Firebase auth 객체 가져오기
-import { GoogleAuthProvider, signInWithPopup, UserCredential } from 'firebase/auth'; // Firebase auth 관련 함수 가져오기
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, UserCredential } from 'firebase/auth'; // Firebase auth 관련 함수 가져오기
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
 
 export default function AuthSelectionPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // This is the redirect back from Google Sign-In.
+          const user = result.user;
+          console.log("Google 로그인 성공 (Redirect):", user);
+          toast({
+            title: "Google 로그인 성공!",
+            description: `${user.displayName || '사용자'}님, 환영합니다. 홈으로 이동합니다.`,
+          });
+          // TODO: Firestore에서 사용자 프로필 존재 여부 확인 후,
+          // 신규 사용자면 프로필 생성 페이지로, 기존 사용자면 홈으로 리디렉션
+          router.push('/home'); // 임시 홈 페이지로 이동
+        }
+      } catch (error: any) {
+        console.error("Google 로그인 실패 (Redirect):", error);
+        toast({
+          title: "Google 로그인 실패",
+          description: error.message || "다시 시도해주세요.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    handleRedirectResult();
+  }, [router, toast]);
+
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const result: UserCredential = await signInWithPopup(auth, provider);
-      // 로그인 성공
-      const user = result.user;
-      console.log("Google 로그인 성공:", user);
-      toast({
-        title: "Google 로그인 성공!",
-        description: `${user.displayName || '사용자'}님, 환영합니다. 홈으로 이동합니다.`,
-      });
-      // TODO: Firestore에서 사용자 프로필 존재 여부 확인 후,
-      // 신규 사용자면 프로필 생성 페이지로, 기존 사용자면 홈으로 리디렉션
-      router.push('/home'); // 임시 홈 페이지로 이동
+      await signInWithRedirect(auth, provider);
+      // signInWithRedirect does not return a UserCredential immediately.
+      // The user will be redirected to the Google sign-in page.
     } catch (error: any) {
       console.error("Google 로그인 실패:", error);
       toast({
