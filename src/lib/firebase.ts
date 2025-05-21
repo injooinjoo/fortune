@@ -3,17 +3,24 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+// getAnalytics is not directly used by the app right now, can be added later if needed.
+// import { getAnalytics } from "firebase/analytics";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Your web app's Firebase configuration (values provided by user)
+// IMPORTANT: Hardcoding API keys and sensitive information directly in the source code
+// is NOT recommended for production. This is a temporary setup.
+// Please use environment variables (.env file) for better security in production.
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyB7n-RpmPvrkxsA05-Q24slWTluWC5fA-M",
+  authDomain: "fortune-3f6a2.firebaseapp.com",
+  projectId: "fortune-3f6a2",
+  // Note: The storageBucket is often in the format [project-id].appspot.com
+  // The provided value is [project-id].firebasestorage.app, which might be for direct storage access.
+  // If issues arise, please double-check this value in your Firebase console.
+  storageBucket: "fortune-3f6a2.firebasestorage.app",
+  messagingSenderId: "668458108279",
+  appId: "1:668458108279:web:4713f40aa316fd69564d72",
+  measurementId: "G-94Z1C97D3L"
 };
 
 // Initialize Firebase
@@ -26,5 +33,6 @@ if (!getApps().length) {
 
 const auth: Auth = getAuth(app);
 const db: Firestore = getFirestore(app);
+// const analytics = getAnalytics(app); // Uncomment if analytics is needed
 
 export { app, auth, db };
