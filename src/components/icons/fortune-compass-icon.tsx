@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 
 export function FortuneCompassIcon(props: SVGProps<SVGSVGElement>) {
@@ -12,19 +13,32 @@ export function FortuneCompassIcon(props: SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <circle cx="12" cy="12" r="10" opacity="0.3" />
-      <path d="M12 2L12 6" /> {/* N */}
-      <path d="M12 18L12 22" /> {/* S */}
-      <path d="M2 12L6 12" /> {/* W */}
-      <path d="M18 12L22 12" /> {/* E */}
-      <path d="M4.93 4.93L7.76 7.76" /> {/* NW */}
-      <path d="M16.24 16.24L19.07 19.07" /> {/* SE */}
-      <path d="M4.93 19.07L7.76 16.24" /> {/* SW */}
-      <path d="M16.24 7.76L19.07 4.93" /> {/* NE */}
-      <circle cx="12" cy="12" r="3" strokeWidth="2" />
-      <path d="M12 12L15.5 10.5" /> {/* Pointer */}
-      {/* Mystical elements: e.g., subtle star or moon shapes if desired */}
-      <path d="M10.5 7.5 L12 4.5 L13.5 7.5 Z" fill="currentColor" opacity="0.7" /> {/* Small triangle/star shape */}
+      {/* Outer circle - thicker and more prominent */}
+      <circle cx="12" cy="12" r="10" strokeWidth="2" opacity="0.4" />
+      
+      {/* Inner decorative elements - more abstract and mystical */}
+      <path d="M12 6V2" /> {/* Top line */}
+      <path d="M12 22V18" /> {/* Bottom line */}
+      <path d="M18 12H22" /> {/* Right line */}
+      <path d="M2 12H6" /> {/* Left line */}
+
+      {/* Diagonal lines for a compass feel, but slightly offset for a mystical look */}
+      <path d="M15.536 8.464L18.364 5.636" /> {/* NE */}
+      <path d="M8.464 15.536L5.636 18.364" /> {/* SW */}
+      <path d="M8.464 8.464L5.636 5.636" /> {/* NW */}
+      <path d="M15.536 15.536L18.364 18.364" /> {/* SE */}
+
+      {/* Central element - could be a star, a stylized eye, or a simple dot */}
+      {/* Option 1: Simple dot */}
+      {/* <circle cx="12" cy="12" r="1.5" fill="currentColor" /> */}
+
+      {/* Option 2: Stylized star/sparkle */}
+      <path d="M12 9.5L12.7 11.3L14.5 12L12.7 12.7L12 14.5L11.3 12.7L9.5 12L11.3 11.3L12 9.5Z" fill="currentColor" opacity="0.8"/>
+      
+      {/* Optional: very faint background patterns or runes if the style allows */}
+      {/* <path d="M9 10 A3 3 0 0 1 15 10" opacity="0.2" />
+      <path d="M9 14 A3 3 0 0 0 15 14" opacity="0.2" /> */}
     </svg>
   );
 }
+
