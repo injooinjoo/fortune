@@ -11,7 +11,7 @@ import { MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortun
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose, SheetDescription } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
@@ -42,7 +42,7 @@ const mbtiDimensionDetails = {
 
 export default function ProfileSetupPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 4; // 이름, 생년월일/시간, MBTI/성별, 완료
+  const totalSteps = 3; // 이름, 생년월일/시간, MBTI/성별 (인증은 다음 화면)
 
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -52,7 +52,7 @@ export default function ProfileSetupPage() {
     defaultValues: {
       name: '',
       birthdate: undefined,
-      mbti: '모름', // 기본값을 "모름"으로 설정
+      mbti: '모름', 
       gender: GENDERS[0].value, 
       birthTime: BIRTH_TIMES[0].value, 
     },
@@ -70,7 +70,9 @@ export default function ProfileSetupPage() {
 
   useEffect(() => {
     setClientReady(true);
-    setCopyrightYear(new Date().getFullYear());
+    const currentYear = new Date().getFullYear();
+    setCopyrightYear(currentYear);
+
     const defaultBirthdate = form.getValues('birthdate');
     if (defaultBirthdate) {
       setSelectedYear(defaultBirthdate.getFullYear());
@@ -95,8 +97,6 @@ export default function ProfileSetupPage() {
       if (selectedDay !== formDay) setSelectedDay(formDay);
     } else {
        if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
-        // Reset only if there was a value previously to avoid loop with next effect
-        // and only if the form also doesn't have a value.
         if (!form.getValues('birthdate')) {
             setSelectedYear(undefined);
             setSelectedMonth(undefined);
@@ -123,15 +123,11 @@ export default function ProfileSetupPage() {
           form.setValue('birthdate', newDate, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // This case means the selected date is invalid (e.g., Feb 30)
-        // Clear the form's birthdate if it's currently set to an invalid date
         if (form.getValues('birthdate')) {
          form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
         }
       }
     } else {
-      // If any part is undefined, but the form has a date, clear the form's date
-      // This handles cases like clearing a year/month/day, or initial undefined state
       if (form.getValues('birthdate') && (!selectedYear || !selectedMonth || !selectedDay) ) {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
@@ -154,7 +150,7 @@ export default function ProfileSetupPage() {
 
   const dayOptions = useMemo(() => {
     if (!selectedYear || !selectedMonth) return [];
-    if (selectedMonth < 1 || selectedMonth > 12) return []; // Should not happen with select
+    if (selectedMonth < 1 || selectedMonth > 12) return [];
     const daysInSelectedMonth = new Date(selectedYear, selectedMonth, 0).getDate();
     return Array.from({ length: daysInSelectedMonth }, (_, i) => i + 1);
   }, [selectedYear, selectedMonth]);
@@ -186,14 +182,9 @@ export default function ProfileSetupPage() {
           form.setValue('mbti', fullMbti, { shouldValidate: true, shouldDirty: true });
         }
       } else {
-        // If not all parts are selected, and the current form MBTI is a full one, set to "모름"
-        // This handles deselecting a part.
         const currentMbtiOnForm = form.getValues('mbti');
         if (currentMbtiOnForm && currentMbtiOnForm !== "모름" && currentMbtiOnForm.length === 4) {
-            // Check if any part is null
             if (!ei || !sn || !tf || !jp) {
-                 // Don't immediately set to '모름' here; allow partial selection in sheet.
-                 // The confirm button or "모름" button will finalize.
             }
         }
       }
@@ -222,15 +213,15 @@ export default function ProfileSetupPage() {
 
 
   const onSubmit = (values: ProfileFormValues) => {
-    console.log("Profile Setup Data:", values);
+    console.log("Profile Setup Data to be saved:", values);
     startTransition(() => {
       return new Promise(resolve => setTimeout(() => {
         toast({
           title: "프로필 정보 저장 완료!",
-          description: "운세 탐험을 시작할 준비가 되었습니다.",
+          description: "다음으로 인증 단계를 진행합니다.", // 인증 단계로 넘어간다는 안내
         });
-        // Here you would typically navigate to the main app screen
-        // or trigger the next step (e.g., social login/phone auth if implemented)
+        // Firestore 저장 및 다음 페이지(인증)로 이동하는 로직이 여기에 들어갑니다.
+        // 예: router.push('/auth');
         resolve(null);
       }, 1000));
     });
@@ -240,7 +231,7 @@ export default function ProfileSetupPage() {
     let fieldsToValidate: (keyof ProfileFormValues)[] = [];
     if (currentStep === 1) fieldsToValidate = ['name'];
     if (currentStep === 2) fieldsToValidate = ['birthdate', 'birthTime'];
-    if (currentStep === 3) fieldsToValidate = ['mbti', 'gender'];
+    // Step 3 is the last data input step, its button will be type="submit"
 
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
@@ -249,8 +240,6 @@ export default function ProfileSetupPage() {
       if (currentStep === 1 && form.formState.errors.name) toast({ title: "오류", description: form.formState.errors.name.message, variant: "destructive" });
       if (currentStep === 2 && form.formState.errors.birthdate) toast({ title: "오류", description: "생년월일을 올바르게 입력해주세요.", variant: "destructive" });
       if (currentStep === 2 && form.formState.errors.birthTime) toast({ title: "오류", description: form.formState.errors.birthTime.message, variant: "destructive" });
-      if (currentStep === 3 && form.formState.errors.mbti) toast({ title: "오류", description: form.formState.errors.mbti.message, variant: "destructive" });
-      if (currentStep === 3 && form.formState.errors.gender) toast({ title: "오류", description: form.formState.errors.gender.message, variant: "destructive" });
     }
   };
 
@@ -263,7 +252,7 @@ export default function ProfileSetupPage() {
       case 1: return "어떤 이름으로 불러드릴까요?";
       case 2: return "생년월일과 태어난 시간을 알려주세요.";
       case 3: return "MBTI 유형과 성별을 선택해주세요.";
-      case 4: return "정보 입력이 거의 끝났어요!";
+      // case 4는 제거됨
       default: return "정보 입력";
     }
   };
@@ -323,7 +312,7 @@ export default function ProfileSetupPage() {
                                 setSelectedYear(year);
                                 if (selectedMonth && selectedDay) {
                                     const newDaysInMonth = new Date(year, selectedMonth, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); // 일자 초기화
+                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
                                 }
                               }}
                               disabled={!clientReady}
@@ -342,7 +331,7 @@ export default function ProfileSetupPage() {
                                 setSelectedMonth(month);
                                 if (selectedYear && selectedDay) {
                                     const newDaysInMonth = new Date(selectedYear, month, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); // 일자 초기화
+                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
                                 }
                               }}
                               disabled={!clientReady || !selectedYear}
@@ -370,7 +359,7 @@ export default function ProfileSetupPage() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <FormMessage /> {}
+                          <FormMessage /> 
                         </FormItem>
                       )}
                     />
@@ -482,12 +471,7 @@ export default function ProfileSetupPage() {
                   </>
                 )}
                 
-                {currentStep === 4 && (
-                  <div className="text-center space-y-4 py-8">
-                    <p className="text-lg">이후에 시작하는 것에 대해서는 앱으로 접속하여 진행합니다.</p>
-                    <p className="text-muted-foreground">소셜 로그인 및 휴대폰 인증 기능이 준비될 예정입니다.</p>
-                  </div>
-                )}
+                {/* Step 4 is removed */}
 
                 <div className={cn("flex pt-4", currentStep > 1 ? "justify-between" : "justify-end")}>
                   {currentStep > 1 && (
@@ -500,9 +484,9 @@ export default function ProfileSetupPage() {
                       다음
                     </Button>
                   )}
-                  {currentStep === totalSteps && (
+                  {currentStep === totalSteps && ( // Now step 3 is the last step for profile input
                     <Button type="submit" disabled={isPending} className="w-full">
-                      {isPending ? "완료 중..." : "완료하고 시작하기"}
+                      {isPending ? "저장 중..." : "프로필 저장하고 인증하기"}
                     </Button>
                   )}
                 </div>
@@ -518,4 +502,3 @@ export default function ProfileSetupPage() {
     </div>
   );
 }
-
