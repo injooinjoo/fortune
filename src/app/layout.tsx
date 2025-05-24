@@ -1,12 +1,16 @@
+
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Lato, Geist_Mono } from 'next/font/google'; // Changed Geist to Lato
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Providers from '@/components/providers';
+import ClientOnly from '@/components/client-only';
+import BackgroundAudioPlayer from '@/components/background-audio-player';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const lato = Lato({ // Changed to Lato
+  variable: '--font-lato', // Changed variable name
   subsets: ['latin'],
+  weight: ['300', '400', '700'] // Added common weights for Lato
 });
 
 const geistMono = Geist_Mono({
@@ -26,10 +30,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      {/* Changed font variable in body className */}
+      <body className={`${lato.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           {children}
           <Toaster />
+          <ClientOnly>
+            <BackgroundAudioPlayer />
+          </ClientOnly>
         </Providers>
       </body>
     </html>

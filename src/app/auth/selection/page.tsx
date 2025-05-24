@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect } from 'react';
@@ -13,7 +12,10 @@ import { auth } from '@/lib/firebase'; // Firebase auth 객체 가져오기
 import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, UserCredential } from 'firebase/auth'; // Firebase auth 관련 함수 가져오기
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
 
-export default function AuthSelectionPage() {
+export default function AuthSelectionPage({ searchParams }: { searchParams: Record<string, string | string[]> }) {
+  // Unwrap searchParams using React.use
+  
+
   const router = useRouter();
   const { toast } = useToast();
 

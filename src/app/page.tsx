@@ -1,14 +1,13 @@
-
 "use client";
 
-import React, { useState, useTransition, useEffect, useMemo } from 'react';
+import React, { useState, useTransition, useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChevronDown, User, Clock, ArrowLeft } from 'lucide-react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 
 import { ProfileFormSchema, type ProfileFormValues } from '@/lib/schemas';
-import { MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data'; 
+import { MBTI_TYPES, type FortuneType, GENDERS, BIRTH_TIMES } from '@/lib/fortune-data';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,7 +19,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 type MbtiPart = 'ei' | 'sn' | 'tf' | 'jp';
-type MbtiLetter<T extends MbtiPart> = 
+type MbtiLetter<T extends MbtiPart> =
   T extends 'ei' ? 'E' | 'I' :
   T extends 'sn' ? 'S' | 'N' :
   T extends 'tf' ? 'T' | 'F' :
@@ -40,38 +39,71 @@ const mbtiDimensionDetails = {
   jp: { label: "생활", options: [{ value: 'J', name: "J (판단)", description: "계획과 통제" }, { value: 'P', name: "P (인식)", description: "자율과 융통성" }] },
 } as const;
 
+interface StepContentProps {
+  children: React.ReactNode;
+  isActive: boolean;
+  isExiting: boolean;
+  animationDelay?: string;
+}
+
+const StepContent: React.FC<StepContentProps> = ({ children, isActive, isExiting, animationDelay }) => {
+  const [shouldRender, setShouldRender] = useState(isActive);
+
+  useEffect(() => {
+    if (isActive) {
+      setShouldRender(true);
+    } else if (isExiting) {
+      const timer = setTimeout(() => setShouldRender(false), 500); // Match animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [isActive, isExiting]);
+
+  if (!shouldRender && !isExiting) return null;
+
+  const animationClass = isActive ? 'animate-slide-up-fade-in' : isExiting ? 'animate-fade-out-blur' : 'opacity-0';
+  const style = animationDelay ? { animationDelay } : {};
+
+  return (
+    <div className={cn('w-full', animationClass)} style={style}>
+      {children}
+    </div>
+  );
+};
 
 export default function ProfileSetupPage() {
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 3; // 이름, 생년월일/시간, MBTI/성별
+  const [previousStep, setPreviousStep] = useState(0); // To track exiting step
+  const totalSteps = 3;
 
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
       name: '',
       birthdate: undefined,
-      mbti: '모름', 
-      gender: GENDERS[0].value, 
-      birthTime: BIRTH_TIMES[0].value, 
+      mbti: '모름',
+      gender: GENDERS[0].value,
+      birthTime: BIRTH_TIMES[0].value,
     },
-    mode: "onChange", 
+    mode: "onChange",
   });
 
   const [clientReady, setClientReady] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const [selectedMonth, setSelectedMonth] = useState<number | undefined>();
   const [selectedDay, setSelectedDay] = useState<number | undefined>();
-  
+
   const [isMbtiSheetOpen, setIsMbtiSheetOpen] = useState(false);
   const [mbtiParts, setMbtiParts] = useState<MbtiPartsState>({ ei: null, sn: null, tf: null, jp: null });
   const [copyrightYear, setCopyrightYear] = useState<number | null>(null);
+  const [animateCard, setAnimateCard] = useState(false);
 
   useEffect(() => {
     setClientReady(true);
+    setAnimateCard(true); // Trigger card animation after mount
     const currentYear = new Date().getFullYear();
     setCopyrightYear(currentYear);
 
@@ -98,17 +130,16 @@ export default function ProfileSetupPage() {
       if (selectedMonth !== formMonth) setSelectedMonth(formMonth);
       if (selectedDay !== formDay) setSelectedDay(formDay);
     } else {
-       if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
+      if (selectedYear !== undefined || selectedMonth !== undefined || selectedDay !== undefined) {
         if (!form.getValues('birthdate')) {
-            setSelectedYear(undefined);
-            setSelectedMonth(undefined);
-            setSelectedDay(undefined);
+          setSelectedYear(undefined);
+          setSelectedMonth(undefined);
+          setSelectedDay(undefined);
         }
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchedBirthdate, clientReady]);
-
 
   useEffect(() => {
     if (!clientReady) return;
@@ -126,17 +157,16 @@ export default function ProfileSetupPage() {
         }
       } else {
         if (form.getValues('birthdate')) {
-         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
+          form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
         }
       }
     } else {
-      if (form.getValues('birthdate') && (!selectedYear || !selectedMonth || !selectedDay) ) {
+      if (form.getValues('birthdate') && (!selectedYear || !selectedMonth || !selectedDay)) {
         form.setValue('birthdate', undefined, { shouldValidate: true, shouldDirty: true });
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedYear, selectedMonth, selectedDay, clientReady]);
-
 
   const yearOptions = useMemo(() => {
     if (!clientReady) return [];
@@ -176,7 +206,7 @@ export default function ProfileSetupPage() {
   }, [isMbtiSheetOpen, form]);
 
   useEffect(() => {
-    if (isMbtiSheetOpen) { 
+    if (isMbtiSheetOpen) {
       const { ei, sn, tf, jp } = mbtiParts;
       if (ei && sn && tf && jp) {
         const fullMbti = `${ei}${sn}${tf}${jp}`;
@@ -186,9 +216,9 @@ export default function ProfileSetupPage() {
       } else {
         const currentMbtiOnForm = form.getValues('mbti');
         if (currentMbtiOnForm && currentMbtiOnForm !== "모름" && currentMbtiOnForm.length === 4) {
-            if (!ei || !sn || !tf || !jp) {
+          if (!ei || !sn || !tf || !jp) {
             // A part was deselected, form MBTI remains until confirm/unknown.
-            }
+          }
         }
       }
     }
@@ -197,7 +227,7 @@ export default function ProfileSetupPage() {
   const handleMbtiPartSelect = (part: MbtiPart, value: MbtiLetter<typeof part>) => {
     setMbtiParts(prev => ({ ...prev, [part]: prev[part] === value ? null : value }));
   };
-  
+
   const handleMbtiSheetConfirm = () => {
     const { ei, sn, tf, jp } = mbtiParts;
     if (ei && sn && tf && jp) {
@@ -209,22 +239,20 @@ export default function ProfileSetupPage() {
   };
 
   const handleMbtiSheetSetToUnknown = () => {
-    setMbtiParts({ ei: null, sn: null, tf: null, jp: null }); 
+    setMbtiParts({ ei: null, sn: null, tf: null, jp: null });
     form.setValue('mbti', '모름', { shouldValidate: true, shouldDirty: true });
     setIsMbtiSheetOpen(false);
   };
 
-
   const onSubmit = (values: ProfileFormValues) => {
     console.log("Profile Setup Data (to be saved to Firestore):", values);
+    setPreviousStep(currentStep);
     startTransition(() => {
-      // Simulate API call
       return new Promise(resolve => setTimeout(() => {
         toast({
           title: "프로필 정보 임시 저장됨",
           description: "실제 앱에서는 이 단계에서 인증 화면(소셜 로그인/휴대폰)으로 이동합니다. 현재는 UI 프로토타이핑 중입니다.",
         });
-        // Navigate to the authentication selection page
         router.push('/auth/selection');
         resolve(null);
       }, 1000));
@@ -235,28 +263,30 @@ export default function ProfileSetupPage() {
     let fieldsToValidate: (keyof ProfileFormValues)[] = [];
     if (currentStep === 1) fieldsToValidate = ['name'];
     if (currentStep === 2) fieldsToValidate = ['birthdate', 'birthTime'];
-    if (currentStep === 3) fieldsToValidate = ['mbti', 'gender']; // For step 3, validate before potential submit
+    if (currentStep === 3) fieldsToValidate = ['mbti', 'gender'];
 
     const isValid = await form.trigger(fieldsToValidate);
     if (isValid) {
       if (currentStep < totalSteps) {
+        setPreviousStep(currentStep);
         setCurrentStep(prev => prev + 1);
       } else {
-        // If it's the last step, and "Next" was somehow clicked instead of submit,
-        // we can also trigger the submit action.
-        // This case might not be reachable if the "Next" button is hidden on the last step.
-        form.handleSubmit(onSubmit)(); 
+        form.handleSubmit(onSubmit)();
       }
     } else {
-      if (currentStep === 1 && form.formState.errors.name) toast({ title: "오류", description: form.formState.errors.name.message, variant: "destructive" });
-      if (currentStep === 2 && form.formState.errors.birthdate) toast({ title: "오류", description: "생년월일을 올바르게 입력해주세요.", variant: "destructive" });
-      if (currentStep === 2 && form.formState.errors.birthTime) toast({ title: "오류", description: form.formState.errors.birthTime.message, variant: "destructive" });
-      if (currentStep === 3 && form.formState.errors.mbti) toast({ title: "오류", description: form.formState.errors.mbti.message, variant: "destructive" });
-      if (currentStep === 3 && form.formState.errors.gender) toast({ title: "오류", description: form.formState.errors.gender.message, variant: "destructive" });
+      // Prevent focus loop if there are multiple errors
+      const firstErrorField = fieldsToValidate.find(field => form.formState.errors[field]);
+      if (firstErrorField) {
+         // The error message will be displayed by FormMessage component
+         // We don't need explicit toast for every field on every step
+         // Toasting only for step 2 birthdate error as date selection isn't standard input
+        if (currentStep === 2 && form.formState.errors.birthdate) toast({ title: "오류", description: "생년월일을 올바르게 입력해주세요.", variant: "destructive" });
+      }
     }
   };
 
   const handlePrev = () => {
+    setPreviousStep(currentStep);
     setCurrentStep(prev => prev - 1);
   };
 
@@ -269,52 +299,69 @@ export default function ProfileSetupPage() {
     }
   };
 
+  const getStepDescription = () => {
+      return `STEP ${currentStep} / ${totalSteps}`;
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === 'Enter') {
+      // Prevent default form submission on Enter key press
+      event.preventDefault();
+      // Trigger handleNext only if not on the last step
+      if (currentStep < totalSteps) {
+        handleNext();
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <header className="sticky top-0 z-10 flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-sm">
         {currentStep > 1 ? (
-          <Button variant="ghost" size="icon" onClick={handlePrev} aria-label="이전 단계로">
+          <Button variant="ghost" size="icon" onClick={handlePrev} aria-label="이전 단계로" disabled={isPending}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
         ) : (
-          <div className="w-9 h-9"></div> 
+          <div className="w-9 h-9"></div>
         )}
         <h1 className="text-lg font-semibold">사주정보 입력</h1>
-        <div className="w-9 h-9"></div> 
+        <div className="w-9 h-9"></div>
       </header>
 
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
-        <Card className="w-full max-w-md shadow-xl">
+        <Card className={cn("w-full max-w-md shadow-xl overflow-hidden", animateCard ? "animate-slide-up-fade-in" : "opacity-0")}>
           <CardHeader className="text-left p-6">
-            <CardDescription className="text-sm">STEP {currentStep} / {totalSteps}</CardDescription>
-            <CardTitle className="text-2xl mt-1">{getStepTitle()}</CardTitle>
+            {/* CardDescription and CardTitle will now be part of StepContent to animate with the step */}
           </CardHeader>
-          <CardContent className="p-6 pt-2">
+          <CardContent className="p-6 pt-0"> {/* Adjusted padding */}
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {currentStep === 1 && (
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>이름</FormLabel>
-                        <FormControl>
-                          <Input placeholder="한글 최대 6자" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
-
-                {currentStep === 2 && (
-                  <>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative" onKeyDown={handleKeyDown}>
+                <StepContent isActive={currentStep === 1} isExiting={previousStep === 1 && currentStep !== 1}>
+                    <CardDescription className="text-sm">{getStepDescription()}</CardDescription>
+                    <CardTitle className="text-2xl mt-1">{getStepTitle()}</CardTitle>
                     <FormField
                       control={form.control}
-                      name="birthdate" 
-                      render={() => ( 
-                        <FormItem className="flex flex-col">
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem className="mt-4">
+                          <FormLabel>이름</FormLabel>
+                          <FormControl>
+                            <Input placeholder="한글 최대 6자" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                </StepContent>
+
+                <StepContent isActive={currentStep === 2} isExiting={previousStep === 2 && currentStep !== 2}>
+                    <CardDescription className="text-sm">{getStepDescription()}</CardDescription>
+                    <CardTitle className="text-2xl mt-1">{getStepTitle()}</CardTitle>
+                    <FormField
+                      control={form.control}
+                      name="birthdate"
+                      render={() => (
+                        <FormItem className="flex flex-col mt-4">
                           <FormLabel>생년월일</FormLabel>
                           <div className="grid grid-cols-3 gap-2">
                             <Select
@@ -323,8 +370,8 @@ export default function ProfileSetupPage() {
                                 const year = parseInt(value);
                                 setSelectedYear(year);
                                 if (selectedMonth && selectedDay) {
-                                    const newDaysInMonth = new Date(year, selectedMonth, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
+                                  const newDaysInMonth = new Date(year, selectedMonth, 0).getDate();
+                                  if (selectedDay > newDaysInMonth) setSelectedDay(undefined);
                                 }
                               }}
                               disabled={!clientReady}
@@ -342,8 +389,8 @@ export default function ProfileSetupPage() {
                                 const month = parseInt(value);
                                 setSelectedMonth(month);
                                 if (selectedYear && selectedDay) {
-                                    const newDaysInMonth = new Date(selectedYear, month, 0).getDate();
-                                    if (selectedDay > newDaysInMonth) setSelectedDay(undefined); 
+                                  const newDaysInMonth = new Date(selectedYear, month, 0).getDate();
+                                  if (selectedDay > newDaysInMonth) setSelectedDay(undefined);
                                 }
                               }}
                               disabled={!clientReady || !selectedYear}
@@ -371,7 +418,7 @@ export default function ProfileSetupPage() {
                               </SelectContent>
                             </Select>
                           </div>
-                          <FormMessage>{form.formState.errors.birthdate?.message}</FormMessage> 
+                          <FormMessage>{form.formState.errors.birthdate?.message}</FormMessage>
                         </FormItem>
                       )}
                     />
@@ -379,7 +426,7 @@ export default function ProfileSetupPage() {
                       control={form.control}
                       name="birthTime"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex flex-col mt-4">
                           <FormLabel>태어난 시</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -398,16 +445,16 @@ export default function ProfileSetupPage() {
                         </FormItem>
                       )}
                     />
-                  </>
-                )}
+                </StepContent>
 
-                {currentStep === 3 && (
-                  <>
+                <StepContent isActive={currentStep === 3} isExiting={previousStep === 3 && currentStep !== 3}>
+                    <CardDescription className="text-sm">{getStepDescription()}</CardDescription>
+                    <CardTitle className="text-2xl mt-1">{getStepTitle()}</CardTitle>
                     <FormField
                       control={form.control}
                       name="mbti"
-                      render={({ field }) => ( 
-                        <FormItem className="flex flex-col">
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-4">
                           <FormLabel>MBTI</FormLabel>
                           <Sheet open={isMbtiSheetOpen} onOpenChange={setIsMbtiSheetOpen}>
                             <SheetTrigger asChild>
@@ -436,7 +483,7 @@ export default function ProfileSetupPage() {
                                             variant={mbtiParts[partKey] === option.value ? "default" : "outline"}
                                             className="h-auto flex flex-col justify-center items-center p-2 text-center shadow-sm hover:shadow-md transition-shadow duration-150"
                                             onClick={() => handleMbtiPartSelect(partKey, option.value as MbtiLetter<typeof partKey>)}
-                                            type="button" 
+                                            type="button"
                                           >
                                             <span className="text-base font-semibold">{option.name}</span>
                                             <span className="mt-0.5 text-[11px] text-muted-foreground leading-tight">{option.description}</span>
@@ -461,7 +508,7 @@ export default function ProfileSetupPage() {
                       control={form.control}
                       name="gender"
                       render={({ field }) => (
-                        <FormItem className="flex flex-col">
+                        <FormItem className="flex flex-col mt-4">
                           <FormLabel>성별</FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
@@ -480,16 +527,14 @@ export default function ProfileSetupPage() {
                         </FormItem>
                       )}
                     />
-                  </>
-                )}
-                
+                </StepContent>
+
                 <div className={cn("flex pt-4", currentStep > 1 || currentStep === totalSteps ? "justify-between" : "justify-end")}>
                   {currentStep > 1 && (
                     <Button type="button" variant="outline" onClick={handlePrev} disabled={isPending}>
                       이전
                     </Button>
                   )}
-                   {/* Spacer to push "다음" or "완료" to the right if only one is visible */}
                   {currentStep === 1 && <div className="flex-grow"></div>}
 
                   {currentStep < totalSteps && (
@@ -498,7 +543,7 @@ export default function ProfileSetupPage() {
                     </Button>
                   )}
                   {currentStep === totalSteps && (
-                    <Button type="submit" disabled={isPending} className="w-full md:w-auto"> {/* Adjusted width for responsiveness */}
+                    <Button type="submit" disabled={isPending} className="w-full md:w-auto">
                       {isPending ? "저장 중..." : "프로필 저장하고 인증하기"}
                     </Button>
                   )}

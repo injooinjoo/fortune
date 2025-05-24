@@ -14,9 +14,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyB7n-RpmPvrkxsA05-Q24slWTluWC5fA-M",
   authDomain: "fortune-3f6a2.firebaseapp.com",
   projectId: "fortune-3f6a2",
-  // Note: The storageBucket is often in the format [project-id].appspot.com
-  // The provided value is [project-id].firebasestorage.app, which might be for direct storage access.
-  // If issues arise, please double-check this value in your Firebase console.
   storageBucket: "fortune-3f6a2.firebasestorage.app",
   messagingSenderId: "668458108279",
   appId: "1:668458108279:web:4713f40aa316fd69564d72",
