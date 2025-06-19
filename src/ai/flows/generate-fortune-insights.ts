@@ -12,11 +12,36 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const MBTI_TYPES = [
+  'INTJ',
+  'INTP',
+  'ENTJ',
+  'ENTP',
+  'INFJ',
+  'INFP',
+  'ENFJ',
+  'ENFP',
+  'ISTJ',
+  'ISFJ',
+  'ESTJ',
+  'ESFJ',
+  'ISTP',
+  'ISFP',
+  'ESTP',
+  'ESFP',
+] as const;
+
 const GenerateFortuneInsightsInputSchema = z.object({
   birthdate: z
     .string()
+    .min(1, { message: 'birthdate cannot be empty' })
+    .regex(/^\d{4}-\d{2}-\d{2}$/, {
+      message: 'birthdate must be in YYYY-MM-DD format',
+    })
     .describe('The user birthdate in ISO format (YYYY-MM-DD).'),
-  mbti: z.string().describe('The user MBTI type.'),
+  mbti: z
+    .enum(MBTI_TYPES)
+    .describe('The user MBTI type (one of the 16 valid four-letter codes).'),
   gender: z.string().describe('User gender (e.g., 남성, 여성, 선택 안함).'),
   birthTime: z.string().describe('User birth time (e.g., 자시 (23:30 ~ 01:29), 모름).'),
   fortuneTypes: z
