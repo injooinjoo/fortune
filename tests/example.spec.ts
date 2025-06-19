@@ -54,12 +54,15 @@ test.describe('운세 앱 기본 동작 테스트', () => {
     await page.getByRole('button', { name: 'MBTI 선택하기' }).click();
 
     // 모달이 화면에 나타날 때까지 대기
-    await expect(page.locator('#mbti-selection-modal')).toBeVisible();
+    await expect(page.getByRole('dialog')).toBeVisible();
 
     // MBTI 옵션 선택
     await page.getByRole('button', { name: 'INFP' }).click();
 
-    // 선택된 MBTI가 표시되는지 확인
-    await expect(page.locator('.selected-mbti-display')).toHaveText('INFP');
+    // 모달이 사라질 때까지 대기
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+
+    // 결과가 표시되는 요소 확인
+    await expect(page.getByTestId('mbti-result')).toHaveText('INFP');
   });
 });
