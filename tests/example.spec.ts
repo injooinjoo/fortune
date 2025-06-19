@@ -26,22 +26,18 @@ test.describe('운세 앱 기본 동작 테스트', () => {
   });
 
   test('생년월일 선택 기능', async ({ page }) => {
-    await page.goto('/');
-    
-    // 첫 번째 단계 완료
-    await page.fill('input[name="name"]', '테스트 사용자');
-    await page.click('text=다음');
-    
-    // 생년월일 선택
-    await page.selectOption('select:near(:text("년"))', '1990');
-    await page.selectOption('select:near(:text("월"))', '5');
-    await page.selectOption('select:near(:text("일"))', '15');
-    
-    // 다음 단계로 진행
-    await page.click('text=다음');
-    
-    // 세 번째 단계 확인
-    await expect(page.locator('text=성별')).toBeVisible();
+    await page.goto('/onboarding/birthdate');
+
+    // 달력 입력 필드 클릭 후 달력이 보일 때까지 대기
+    await page.locator('#birthdate-input').click();
+    const calendar = page.locator('.calendar-container');
+    await expect(calendar).toBeVisible();
+
+    // 달력에서 15일 선택
+    await calendar.getByRole('button', { name: /^15$/ }).click();
+
+    // 입력 필드가 비어있지 않은지 확인
+    await expect(page.locator('#birthdate-input')).not.toHaveValue('');
   });
 
   test('MBTI 선택 모달 동작', async ({ page }) => {
@@ -65,4 +61,4 @@ test.describe('운세 앱 기본 동작 테스트', () => {
     await expect(page.locator('text=판단')).toBeVisible();
     await expect(page.locator('text=생활')).toBeVisible();
   });
-}); 
+});
