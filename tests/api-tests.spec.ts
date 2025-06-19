@@ -37,12 +37,13 @@ test.describe('API 엔드포인트 테스트', () => {
   });
 
   test('API 응답 시간 성능 테스트', async ({ request }) => {
-    const startTime = Date.now();
+    const startTime = performance.now();
     const response = await request.get('/api/mbti/ENFP');
-    const endTime = Date.now();
-    
+    const endTime = performance.now();
+
     expect(response.status()).toBe(200);
-    expect(endTime - startTime).toBeLessThan(1000); // 1초 이내 응답
+    const duration = endTime - startTime;
+    expect(duration).toBeLessThan(800); // 800ms 미만 응답
   });
 
   test('API 동시 요청 처리', async ({ request }) => {
