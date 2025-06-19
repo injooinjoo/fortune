@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { AxeBuilder } from '@axe-core/playwright';
 
 test.describe('MCP 통합 테스트', () => {
   // 헬퍼 함수: 프로필 설정 완료까지 진행
@@ -130,20 +131,9 @@ test.describe('MCP 통합 테스트', () => {
 
   test('접근성 기본 요구사항', async ({ page }) => {
     await page.goto('/');
-    
-    // 기본 접근성 검사
-    await expect(page.locator('input[name="name"]')).toHaveAttribute('aria-label');
-    
-    // 키보드 내비게이션 테스트
-    await page.keyboard.press('Tab');
-    await expect(page.locator('input[name="name"]')).toBeFocused();
-    
-    // 폼 라벨 연결 확인
-    const nameInput = page.locator('input[name="name"]');
-    const labelId = await nameInput.getAttribute('aria-labelledby');
-    if (labelId) {
-      await expect(page.locator(`#${labelId}`)).toBeVisible();
-    }
+
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
   });
 
   test('성능 메트릭 모니터링', async ({ page }) => {
