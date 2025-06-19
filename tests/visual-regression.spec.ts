@@ -27,8 +27,10 @@ test.describe('시각적 회귀 테스트', () => {
     await page.click('text=MBTI 선택');
     await expect(page.locator('text=에너지')).toBeVisible();
     
-    // 모달 스크린샷
-    await expect(page.locator('[role="dialog"]')).toHaveScreenshot('mbti-modal.png');
+    // 모달 스크린샷 - 애니메이션을 비활성화해 안정적인 비교 수행
+    await expect(page).toHaveScreenshot('mbti-modal-screenshot.png', {
+      animations: 'disabled',
+    });
   });
 
   test('다크 모드 지원 확인', async ({ page }) => {
