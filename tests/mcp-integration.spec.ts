@@ -57,43 +57,28 @@ test.describe('MCP 통합 테스트', () => {
   });
 
   test('MBTI API 엔드포인트 테스트', async ({ page }) => {
-    // API 응답을 모킹하기 위한 준비
-    await page.route('/api/mbti/*', async (route) => {
-      const mockResponse = {
-        type: 'ENFP',
-        description: '재기발랄한 활동가',
-        characteristics: ['창의적', '열정적', '사교적'],
-        compatibility: ['INTJ', 'INFJ']
-      };
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mockResponse)
-      });
+    let intercepted = false;
+    await page.route('**/api/mbti/*', async (route, request) => {
+      intercepted = true;
+      expect(request.method()).toBe('GET');
+      await route.continue();
     });
 
-    await page.goto('/');
-    
-    // MBTI 관련 요청이 발생할 때까지 대기
-    const responsePromise = page.waitForResponse('/api/mbti/**');
-    
-    // MBTI 선택 과정
-    await page.fill('input[name="name"]', 'API 테스트');
-    await page.click('text=다음');
-    await page.selectOption('select:near(:text("년"))', '1995');
-    await page.selectOption('select:near(:text("월"))', '8');
-    await page.selectOption('select:near(:text("일"))', '20');
-    await page.click('text=다음');
-    
-    await page.click('text=MBTI 선택');
-    await page.click('text=E (외향)');
-    await page.click('text=N (직관)');
-    await page.click('text=F (감정)');
-    await page.click('text=P (인식)');
-    await page.click('text=확인');
-    
+    await page.goto('/mbti');
+
+    const responsePromise = page.waitForResponse(res =>
+      res.url().includes('/api/mbti/INFP') && res.request().method() === 'GET'
+    );
+
+    await page.getByRole('button', { name: 'INFP' }).click();
+
     const response = await responsePromise;
+    expect(intercepted).toBe(true);
     expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(data).toHaveProperty('description');
+
+    await expect(page.locator('#mbti-result-text')).toContainText(data.description);
   });
 
   test('네트워크 오류 상황 처리', async ({ page }) => {
