@@ -1,4 +1,4 @@
-name: Playwright 테스트
+name: Playwright Tests
 
 on:
   push:
@@ -8,39 +8,49 @@ on:
 
 jobs:
   test:
+    # 테스트가 길어질 경우를 대비해 타임아웃을 넉넉하게 설정합니다.
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-        cache: 'npm'
-    
-    - name: 의존성 설치
-      run: npm ci
-    
-    - name: Playwright 브라우저 설치
-      run: npx playwright install --with-deps
-    
-    - name: Next.js 빌드
-      run: npm run build
-    
-    - name: Playwright 테스트 실행
-      run: npm run test
-    
-    - uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-    
-    - name: 시각적 회귀 테스트 스크린샷 업로드
-      uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: test-screenshots
-        path: test-results/
-        retention-days: 7 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          # 프로젝트에 맞는 Node.js 버전을 사용하세요.
+          node-version: '20.x'
+      
+      - name: Install dependencies
+        # package-lock.json을 기반으로 더 빠르고 일관되게 설치합니다.
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Build Next.js app
+        run: npm run build
+
+      # 💡 [핵심 수정] 1. 서버를 백그라운드에서 실행
+      - name: Run Next.js server in background
+        # & 를 붙여서 명령이 즉시 다음 단계로 넘어가게 합니다.
+        run: npm run start &
+
+      # 💡 [핵심 수정] 2. 서버가 켜질 때까지 대기
+      - name: Wait for server to be ready
+        # 1단계에서 설치한 wait-on을 사용해 localhost:3000이 응답할 때까지 기다립니다.
+        run: npx wait-on http://localhost:3000
+
+      # 3. 서버가 준비된 후 테스트 실행
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      # 테스트 보고서를 아티팩트로 업로드 (성공/실패와 무관하게 항상 실행)
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
