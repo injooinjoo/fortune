@@ -64,7 +64,7 @@ const StepContent: React.FC<StepContentProps> = ({ children, isActive, isExiting
   const style = animationDelay ? { animationDelay } : {};
 
   return (
-    <div className={cn('w-full', animationClass)} style={style}>
+    <div className={cn('absolute inset-0 w-full', animationClass)} style={style}>
       {children}
     </div>
   );
@@ -246,12 +246,22 @@ export default function ProfileSetupPage() {
 
   const onSubmit = (values: ProfileFormValues) => {
     console.log("Profile Setup Data (to be saved to Firestore):", values);
+    
+    // 프로필 정보를 로컬스토리지에 저장
+    localStorage.setItem('userProfile', JSON.stringify({
+      name: values.name,
+      birthdate: values.birthdate.toISOString(),
+      mbti: values.mbti,
+      gender: values.gender,
+      birthTime: values.birthTime
+    }));
+    
     setPreviousStep(currentStep);
     startTransition(() => {
       return new Promise(resolve => setTimeout(() => {
         toast({
-          title: "프로필 정보 임시 저장됨",
-          description: "실제 앱에서는 이 단계에서 인증 화면(소셜 로그인/휴대폰)으로 이동합니다. 현재는 UI 프로토타이핑 중입니다.",
+          title: "프로필 정보 저장됨",
+          description: `${values.name}님의 정보가 저장되었습니다. 로그인을 진행해주세요.`,
         });
         router.push('/auth/selection');
         resolve(null);
@@ -330,12 +340,9 @@ export default function ProfileSetupPage() {
 
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8">
         <Card className={cn("w-full max-w-md shadow-xl overflow-hidden", animateCard ? "animate-slide-up-fade-in" : "opacity-0")}>
-          <CardHeader className="text-left p-6">
-            {/* CardDescription and CardTitle will now be part of StepContent to animate with the step */}
-          </CardHeader>
-          <CardContent className="p-6 pt-0"> {/* Adjusted padding */}
+          <CardContent className="p-6">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative" onKeyDown={handleKeyDown}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 relative min-h-[400px]" onKeyDown={handleKeyDown}>
                 <StepContent isActive={currentStep === 1} isExiting={previousStep === 1 && currentStep !== 1}>
                     <CardDescription className="text-sm">{getStepDescription()}</CardDescription>
                     <CardTitle className="text-2xl mt-1">{getStepTitle()}</CardTitle>
@@ -528,29 +535,29 @@ export default function ProfileSetupPage() {
                       )}
                     />
                 </StepContent>
-
-                <div className={cn("flex pt-4", currentStep > 1 || currentStep === totalSteps ? "justify-between" : "justify-end")}>
-                  {currentStep > 1 && (
-                    <Button type="button" variant="outline" onClick={handlePrev} disabled={isPending}>
-                      이전
-                    </Button>
-                  )}
-                  {currentStep === 1 && <div className="flex-grow"></div>}
-
-                  {currentStep < totalSteps && (
-                    <Button type="button" onClick={handleNext} disabled={isPending}>
-                      다음
-                    </Button>
-                  )}
-                  {currentStep === totalSteps && (
-                    <Button type="submit" disabled={isPending} className="w-full md:w-auto">
-                      {isPending ? "저장 중..." : "프로필 저장하고 인증하기"}
-                    </Button>
-                  )}
-                </div>
               </form>
             </Form>
           </CardContent>
+          <CardFooter className="flex justify-between p-6 pt-0">
+            <Button type="button" variant="ghost" onClick={handlePrev} disabled={currentStep === 1 || isPending}>
+              이전
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleNext} 
+              disabled={isPending}
+              className="min-w-[80px]"
+            >
+              {isPending ? (
+                <div className="flex items-center">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  처리 중
+                </div>
+              ) : (
+                currentStep === totalSteps ? "완료" : "다음"
+              )}
+            </Button>
+          </CardFooter>
         </Card>
       </main>
       <footer className="py-6 text-center text-xs text-muted-foreground">
