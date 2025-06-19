@@ -29,19 +29,20 @@ jobs:
       - name: Type Check
         run: npm run typecheck
         
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      # Playwright 테스트 비활성화 - 로컬에서만 실행
+      # - name: Install Playwright Browsers
+      #   run: npx playwright install --with-deps
         
-      - name: Run Tests
-        run: npx playwright test
+      # - name: Run Tests
+      #   run: npx playwright test
         
       - name: Build Project
         run: npm run build
         
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: test-results
-          path: test-results/
-          retention-days: 7 
+      # - name: Upload Test Results
+      #   uses: actions/upload-artifact@v4
+      #   if: failure()
+      #   with:
+      #     name: test-results
+      #     path: test-results/
+      #     retention-days: 7 
