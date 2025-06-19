@@ -19,13 +19,13 @@ body {
     --popover-foreground: 210 29% 32%; /* #3A506B */
 
     --primary: 10 100% 70%; /* #FF7F66 */
-    --primary-foreground: 210 29% 32%; /* #3A506B */
+    --primary-foreground: 255 30% 13%; /* #1C162B */
 
     --secondary: 197 71% 74%; /* #89CFF0 */
     --secondary-foreground: 210 29% 32%; /* #3A506B */
 
     --muted: 261 34% 84%; /* #D1C4E9 */
-    --muted-foreground: 208 7% 58%; /* #6C757D */
+    --muted-foreground: 219 13% 41%; /* #5A6476 */
 
     --accent: 49 95% 56%; /* #F9D423 */
     --accent-foreground: 210 29% 32%; /* #3A506B */
@@ -50,7 +50,7 @@ body {
     --sidebar-background: 14 85% 92%; /* Lighter pink/beige #FADFE0 */
     --sidebar-foreground: 210 29% 32%; /* #3A506B */
     --sidebar-primary: 10 100% 70%; /* #FF7F66 */
-    --sidebar-primary-foreground: 210 29% 32%; /* #3A506B */
+    --sidebar-primary-foreground: 255 30% 13%; /* #1C162B */
     --sidebar-accent: 197 71% 74%; /* #89CFF0 */
     --sidebar-accent-foreground: 210 29% 32%; /* #3A506B */
     --sidebar-border: 260 30% 77%; /* #BDB0D8 */
