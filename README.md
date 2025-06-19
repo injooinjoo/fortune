@@ -2,6 +2,17 @@
 
 개인 맞춤형 AI 운세 서비스를 제공하는 풀스택 애플리케이션입니다.
 
+## ✨ Demo & Screenshots
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit-blueviolet?style=for-the-badge)](https://fortune-explorer.vercel.app)
+
+### Screenshots
+
+| | |
+| --- | --- |
+| ![Main Screen](https://via.placeholder.com/400x300.png?text=Main+Screen)<br>메인 화면 | ![AI Fortune Result](https://via.placeholder.com/400x300.png?text=AI+Fortune+Result)<br>AI 운세 결과 |
+| ![MBTI Compatibility](https://via.placeholder.com/400x300.png?text=MBTI+Compatibility)<br>MBTI 궁합 보기 | ![Face Reading Test](https://via.placeholder.com/400x300.png?text=Face+Reading+Test)<br>관상 보기 테스트 |
+
 ## 🔮 주요 기능
 
 ### ✅ 구현 완료
