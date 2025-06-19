@@ -1,28 +1,54 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const BackgroundAudioPlayer = () => {
+  const [audioError, setAudioError] = useState(false);
+
   useEffect(() => {
     const audio = document.getElementById('background-audio') as HTMLAudioElement;
-    if (audio) {
-      // Attempt to play, but catch errors for browsers that block autoplay
+    
+    if (!audio) return;
+
+    // 오디오 파일 로드 에러 처리
+    const handleError = () => {
+      console.warn("오디오 파일을 찾을 수 없습니다: monument-valley-theme.mp3");
+      setAudioError(true);
+    };
+
+    // 오디오 파일 로드 성공 처리
+    const handleCanPlay = () => {
       audio.play().catch(error => {
-        console.warn("Audio autoplay was prevented: ", error);
-        // Optionally, you could show a play button here
+        console.warn("오디오 자동 재생이 차단되었습니다: ", error);
       });
-    }
-    // Cleanup function to pause audio if component unmounts, though less likely for root layout
+    };
+
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('canplay', handleCanPlay);
+
     return () => {
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('canplay', handleCanPlay);
       if (audio && !audio.paused) {
         audio.pause();
       }
     };
   }, []);
 
+  // 오디오 파일이 없으면 렌더링하지 않음
+  if (audioError) {
+    return null;
+  }
+
   return (
-    // Added a visually hidden class for the audio element if no controls are desired initially
-    <audio id="background-audio" loop autoPlay controlsList="nodownload nofullscreen noremoteplayback" className="sr-only">
+    <audio 
+      id="background-audio" 
+      loop 
+      autoPlay 
+      controlsList="nodownload nofullscreen noremoteplaybook" 
+      className="sr-only"
+      preload="none"
+    >
       <source src="/audio/monument-valley-theme.mp3" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>

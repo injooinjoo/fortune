@@ -5,35 +5,26 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, LogIn, MessageSquare, Instagram, Smartphone } from 'lucide-react';
-import Image from 'next/image';
-
-import { auth } from '@/lib/firebase'; // Firebase auth 객체 가져오기
-import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, UserCredential } from 'firebase/auth'; // Firebase auth 관련 함수 가져오기
+import { MessageSquare, Instagram, Smartphone } from 'lucide-react';
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
+import { auth } from '@/lib/firebase';
 
 export default function AuthSelectionPage({ searchParams }: { searchParams: Record<string, string | string[]> }) {
-  // Unwrap searchParams using React.use
-  
-
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
     const handleRedirectResult = async () => {
       try {
-        const result = await getRedirectResult(auth);
+        const result = await auth.getRedirectResult();
         if (result) {
-          // This is the redirect back from Google Sign-In.
           const user = result.user;
           console.log("Google 로그인 성공 (Redirect):", user);
           toast({
             title: "Google 로그인 성공!",
             description: `${user.displayName || '사용자'}님, 환영합니다. 홈으로 이동합니다.`,
           });
-          // TODO: Firestore에서 사용자 프로필 존재 여부 확인 후,
-          // 신규 사용자면 프로필 생성 페이지로, 기존 사용자면 홈으로 리디렉션
-          router.push('/home'); // 임시 홈 페이지로 이동
+          router.push('/home');
         }
       } catch (error: any) {
         console.error("Google 로그인 실패 (Redirect):", error);
@@ -49,16 +40,13 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
   }, [router, toast]);
 
   const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithRedirect(auth, provider);
-      // signInWithRedirect does not return a UserCredential immediately.
-      // The user will be redirected to the Google sign-in page.
+      await auth.signInWithRedirect();
     } catch (error: any) {
       console.error("Google 로그인 실패:", error);
       toast({
-        title: "Google 로그인 실패",
-        description: error.message || "다시 시도해주세요.",
+        title: "Firebase 설정 필요",
+        description: "실제 Firebase 프로젝트를 설정해야 Google 로그인이 작동합니다.",
         variant: "destructive",
       });
     }
@@ -69,7 +57,6 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
       title: "인증 방법 선택됨",
       description: `${method} 로그인을 시도합니다. (UI 프로토타입 - ${method} 연동 필요)`,
     });
-    // In a real app, you would initiate the respective Firebase auth flow here.
   };
 
   return (
@@ -135,8 +122,7 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
         </CardContent>
       </Card>
        <footer className="py-8 text-center text-xs text-muted-foreground">
-        {/* <p>&copy; {new Date().getFullYear()} 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p> */}
-         <p>&copy; 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p> {/* Hydration error 방지 위해 new Date() 제거 */}
+         <p>&copy; 2024 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p>
       </footer>
     </div>
   );

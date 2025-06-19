@@ -35,9 +35,11 @@ export default function RootLayout({
         <Providers>
           {children}
           <Toaster />
+          {/* 임시로 오디오 플레이어 비활성화
           <ClientOnly>
             <BackgroundAudioPlayer />
           </ClientOnly>
+          */}
         </Providers>
       </body>
     </html>
