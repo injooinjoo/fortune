@@ -100,18 +100,23 @@ test.describe('MCP 통합 테스트', () => {
 
   test('로컬 스토리지 데이터 지속성', async ({ page }) => {
     await page.goto('/');
-    
+
     // 부분적으로 폼 작성
     await page.fill('input[name="name"]', '지속성 테스트');
     await page.click('text=다음');
     await page.selectOption('select:near(:text("년"))', '1988');
-    
+
     // 페이지 새로고침
     await page.reload();
-    
-    // 이전에 입력했던 데이터가 유지되는지 확인 (만약 구현되어 있다면)
-    // 이는 실제 구현에 따라 달라질 수 있음
-    await expect(page.locator('input[name="name"]')).toBeVisible();
+
+    // 로컬 스토리지에서 값이 복원될 때까지 대기
+    await page.waitForFunction(() => {
+      const input = document.querySelector('input[name="name"]') as HTMLInputElement | null;
+      return input?.value === '지속성 테스트';
+    });
+
+    // 입력값이 올바르게 복원됐는지 검증
+    await expect(page.locator('input[name="name"]')).toHaveValue('지속성 테스트');
   });
 
   test('반응형 디자인 테스트', async ({ page }) => {
