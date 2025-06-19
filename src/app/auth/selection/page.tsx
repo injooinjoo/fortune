@@ -7,46 +7,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { MessageSquare, Instagram, Smartphone } from 'lucide-react';
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
-import { auth } from '@/lib/firebase';
+import { auth } from '@/lib/supabase';
 
 export default function AuthSelectionPage({ searchParams }: { searchParams: Record<string, string | string[]> }) {
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    const handleRedirectResult = async () => {
-      try {
-        const result = await auth.getRedirectResult();
-        if (result) {
-          const user = result.user;
-          console.log("Google 로그인 성공 (Redirect):", user);
-          toast({
-            title: "Google 로그인 성공!",
-            description: `${user.displayName || '사용자'}님, 환영합니다. 홈으로 이동합니다.`,
-          });
-          router.push('/home');
-        }
-      } catch (error: any) {
-        console.error("Google 로그인 실패 (Redirect):", error);
+    // Supabase는 자동으로 auth state를 관리하므로 별도의 redirect 처리 불필요
+    const { data: { subscription } } = auth.onAuthStateChanged((user: any) => {
+      if (user) {
+        console.log("로그인 성공:", user);
         toast({
-          title: "Google 로그인 실패",
-          description: error.message || "다시 시도해주세요.",
-          variant: "destructive",
+          title: "로그인 성공!",
+          description: `${user.user_metadata?.name || '사용자'}님, 환영합니다. 홈으로 이동합니다.`,
         });
+        router.push('/home');
       }
-    };
+    });
 
-    handleRedirectResult();
+    return () => subscription?.unsubscribe();
   }, [router, toast]);
 
   const handleGoogleSignIn = async () => {
     try {
-      await auth.signInWithRedirect();
+      await auth.signInWithGoogle();
     } catch (error: any) {
       console.error("Google 로그인 실패:", error);
       toast({
-        title: "Firebase 설정 필요",
-        description: "실제 Firebase 프로젝트를 설정해야 Google 로그인이 작동합니다.",
+        title: "로그인 실패",
+        description: error.message || "다시 시도해주세요.",
         variant: "destructive",
       });
     }

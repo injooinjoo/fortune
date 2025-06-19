@@ -1,12 +1,11 @@
-
 "use client";
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { auth } from '@/lib/firebase'; // Firebase auth 객체 가져오기
-import type { User } from 'firebase/auth';
+import { auth } from '@/lib/supabase'; // Supabase auth 객체 가져오기
+import type { User } from '@supabase/supabase-js';
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
 
 export default function HomePage() {
@@ -15,18 +14,17 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        // 사용자가 로그인하지 않은 경우 로그인 선택 페이지로 리디렉션
+    const { data: { subscription } } = auth.onAuthStateChanged((currentUser: any) => {
+      setUser(currentUser);
+      setLoading(false);
+      
+      if (!currentUser) {
+        // 로그인하지 않은 사용자는 인증 페이지로 리디렉션
         router.push('/auth/selection');
       }
-      setLoading(false);
     });
 
-    // 컴포넌트 언마운트 시 구독 해제
-    return () => unsubscribe();
+    return () => subscription?.unsubscribe();
   }, [router]);
 
   const handleLogout = async () => {
@@ -61,7 +59,7 @@ export default function HomePage() {
           </div>
           <CardTitle className="text-2xl">운세 탐험 홈</CardTitle>
           <CardDescription className="mt-2">
-            {user.displayName || user.email || '사용자'}님, 환영합니다!
+            {user.user_metadata.user_name || user.user_metadata.user_email || '사용자'}님, 환영합니다!
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 p-6 text-center">

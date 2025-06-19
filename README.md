@@ -6,7 +6,7 @@
 
 ### ✅ 구현 완료
 - **사용자 프로필 관리**: 이름, 생년월일, MBTI, 성별, 출생시간 설정
-- **Firebase 인증**: Google 로그인 및 다중 인증 방법 지원 (카카오, 인스타그램, 휴대폰 준비중)
+- **Supabase 인증**: Google 로그인 및 다중 인증 방법 지원 (카카오, 인스타그램, 휴대폰 준비중)
 - **AI 기반 운세 생성**: Google Genkit을 활용한 맞춤형 운세 제공
 - **다양한 운세 유형**: 사주팔자, MBTI 운세, 띠운세, 별자리운세, 연애운, 결혼운, 취업운, 오늘의 총운, 금전운
 - **MBTI 정보 조회**: 16가지 MBTI 유형별 상세 정보 제공
@@ -35,7 +35,8 @@
 - **애니메이션**: Tailwind Animate, Lucide Icons
 
 ### 백엔드 & AI
-- **인증**: Firebase Auth
+- **인증**: Supabase Auth
+- **데이터베이스**: Supabase PostgreSQL
 - **AI**: Google Genkit
 - **API**: Next.js API Routes
 
@@ -116,14 +117,23 @@ fortune/
 
 ### 필수 환경 변수
 ```bash
-# Firebase 설정
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+# Supabase 설정
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 # Google AI (Genkit)
 GOOGLE_GENAI_API_KEY=
 ```
+
+## 🔧 Supabase 설정
+
+1. [Supabase Dashboard](https://supabase.com/dashboard)에서 새 프로젝트 생성
+2. Settings > API에서 Project URL과 anon public key 복사
+3. `.env.local` 파일에 위 환경 변수 설정
+4. Authentication > Providers에서 Google OAuth 설정:
+   - Google Provider 활성화
+   - Site URL: `http://localhost:9002`
+   - Redirect URLs: `http://localhost:9002/auth/callback`
 
 ## 📱 플랫폼 지원
 
