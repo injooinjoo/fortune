@@ -31,9 +31,7 @@ test.describe('시각적 회귀 테스트', () => {
     await expect(page.locator('[role="dialog"]')).toHaveScreenshot('mbti-modal.png');
   });
 
-  test('다크 모드 지원 확인', async ({ page }) => {
-    // 다크 모드 설정 (시스템 설정에 따라 달라질 수 있음)
-    await page.emulateMedia({ colorScheme: 'dark' });
+  test('다크 모드 지원 확인', { colorScheme: 'dark' }, async ({ page }) => {
     await page.goto('/');
     
     await expect(page.locator('input[name="name"]')).toBeVisible();
