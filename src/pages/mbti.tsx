@@ -76,7 +76,7 @@ export default function MbtiPage() {
                 className="w-full h-auto rounded-md"
               />
             )}
-            <p>{mbtiData.description}</p>
+            <p id="mbti-result-text">{mbtiData.description}</p>
           </CardContent>
         </Card>
       )}
