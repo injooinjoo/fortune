@@ -26,16 +26,11 @@ test.describe('운세 앱 기본 동작 테스트', () => {
   test('생년월일 선택 기능', async ({ page }) => {
     await page.goto('/onboarding/birthdate');
 
-    // 달력 입력 필드 클릭 후 달력이 보일 때까지 대기
-    await page.locator('#birthdate-input').click();
-    const calendar = page.locator('.calendar-container');
-    await expect(calendar).toBeVisible();
+    await page.getByRole('button', { name: '생년월일 입력' }).click();
+    await page.getByRole('button', { name: '20' }).click();
+    await page.getByRole('button', { name: '확인' }).click();
 
-    // 달력에서 15일 선택
-    await calendar.getByRole('button', { name: /^15$/ }).click();
-
-    // 입력 필드가 비어있지 않은지 확인
-    await expect(page.locator('#birthdate-input')).not.toHaveValue('');
+    await expect(page.getByTestId('birthdate-display')).toContainText('20');
   });
 
   test('MBTI 선택 모달 동작', async ({ page }) => {
