@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { OnboardingNamePage } from './pages/OnboardingNamePage';
 
 test.describe('운세 앱 기본 동작 테스트', () => {
   test('메인 페이지 로딩 및 기본 요소 확인', async ({ page }) => {
@@ -13,14 +14,11 @@ test.describe('운세 앱 기본 동작 테스트', () => {
   });
 
   test('이름 입력 및 다음 단계 진행', async ({ page }) => {
-    await page.goto('/');
-    
-    // 이름 입력
-    await page.fill('input[name="name"]', '테스트 사용자');
-    
-    // 다음 버튼 클릭
-    await page.click('text=다음');
-    
+    const namePage = new OnboardingNamePage(page);
+    await namePage.goto();
+    await namePage.enterName('테스트 사용자');
+    await namePage.submitName();
+
     // 두 번째 단계로 이동했는지 확인
     await expect(page.locator('text=생년월일')).toBeVisible();
   });
