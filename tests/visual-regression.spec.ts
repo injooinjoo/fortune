@@ -60,29 +60,30 @@ test.describe('시각적 회귀 테스트', () => {
   });
 
   test('로딩 상태 UI', async ({ page }) => {
-    // 네트워크 속도를 느리게 설정하여 로딩 상태 확인
-    await page.route('/api/**', async (route) => {
-      // 3초 지연
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      await route.continue();
+    await page.goto('/');
+
+    const apiPattern = '/api/**';
+    await page.route(apiPattern, async () => {
+      // Intercept the API call that triggers the loading indicator
+      // and keep it pending to freeze the UI in the loading state
     });
 
-    await page.goto('/');
-    
     // 폼 작성 후 제출하여 로딩 상태 트리거
     await page.fill('input[name="name"]', '로딩 테스트');
     await page.click('text=다음');
-    
+
     await page.selectOption('select:near(:text("년"))', '1990');
     await page.selectOption('select:near(:text("월"))', '5');
     await page.selectOption('select:near(:text("일"))', '15');
     await page.click('text=다음');
-    
+
     await page.selectOption('select:near(:text("성별"))', '남성');
     await page.click('text=완료');
-    
-    // 로딩 인디케이터가 나타나는지 확인
+
+    // 로딩 인디케이터가 나타나는지 확인 후 스크린샷
     await expect(page.locator('[data-testid="loading"]')).toBeVisible({ timeout: 1000 });
     await expect(page).toHaveScreenshot('loading-state.png');
+
+    await page.unroute(apiPattern);
   });
 }); 
