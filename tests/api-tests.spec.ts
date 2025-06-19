@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test.describe('API 엔드포인트 테스트', () => {
   test('MBTI API - 유효한 타입 조회', async ({ request }) => {
-    const response = await request.get('/api/mbti/ENFP');
-    
-    expect(response.status()).toBe(200);
-    
-    const data = await response.json();
-    expect(data).toHaveProperty('type', 'ENFP');
-    expect(data).toHaveProperty('description');
-    expect(data).toHaveProperty('characteristics');
-    expect(Array.isArray(data.characteristics)).toBe(true);
+    const response = await request.get('/api/mbti/ISTJ');
+
+    expect(response.ok()).toBeTruthy();
+
+    const responseBody = await response.json();
+    expect(responseBody.type).toBe('ISTJ');
+    expect(responseBody).toHaveProperty('description');
+    expect(responseBody).toHaveProperty('characteristics');
+    expect(Array.isArray(responseBody.characteristics)).toBe(true);
   });
 
   test('MBTI API - 잘못된 타입 조회', async ({ request }) => {
