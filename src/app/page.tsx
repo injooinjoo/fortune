@@ -245,7 +245,7 @@ export default function ProfileSetupPage() {
   };
 
   const onSubmit = (values: ProfileFormValues) => {
-    console.log("Profile Setup Data (to be saved to Firestore):", values);
+    console.log("Profile Setup Data (to be saved to Supabase):", values);
     setPreviousStep(currentStep);
     startTransition(() => {
       return new Promise(resolve => setTimeout(() => {
