@@ -26,17 +26,32 @@ test.describe('MCP 통합 테스트', () => {
     await page.click('text=F (감정)');
     await page.click('text=P (인식)');
     await page.click('text=확인');
-    
+
+    // 프로필 저장 API 응답 대기
+    const saveResponsePromise = page.waitForResponse((response) => {
+      return (
+        response.url().includes('/api/mcp/profile') &&
+        response.request().method() === 'POST' &&
+        response.status() === 200
+      );
+    });
+
     // 완료 버튼 클릭
     await page.click('text=완료');
+
+    // 네트워크 응답 확인
+    await saveResponsePromise;
   };
 
   test('프로필 데이터 저장 및 검증', async ({ page }) => {
     await completeProfileSetup(page);
-    
+
+    // 성공 토스트 메시지가 표시되는지 확인
+    await expect(page.locator('.toast-success-message')).toBeVisible();
+
     // 홈페이지로 리디렉션 확인
     await expect(page).toHaveURL('/home');
-    
+
     // 사용자 정보가 올바르게 표시되는지 확인
     await expect(page.locator('text=MCP 테스트 사용자')).toBeVisible();
   });
