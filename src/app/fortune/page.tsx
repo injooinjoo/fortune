@@ -18,7 +18,8 @@ import {
   Zap,
   PartyPopper,
   Crown,
-  Home
+  Home,
+  Rocket
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -139,6 +140,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "indigo",
     gradient: "from-indigo-50 to-purple-50",
     badge: "추천"
+  },
+  {
+    id: "startup",
+    title: "행운의 창업",
+    description: "어떤 업종이 잘 맞는지, 시작 시기를 알아보세요",
+    icon: Rocket,
+    route: "/fortune/startup",
+    color: "orange",
+    gradient: "from-orange-50 to-amber-50",
+    badge: "NEW"
   },
   {
     id: "palmistry",
