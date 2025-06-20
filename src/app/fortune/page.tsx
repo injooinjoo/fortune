@@ -138,6 +138,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통"
+  },
+  {
+    id: "designated-day",
+    title: "지정일 운세",
+    description: "중요한 날의 운세를 미리 확인하세요",
+    icon: Calendar,
+    route: "/fortune/designated-day",
+    color: "cyan",
+    gradient: "from-cyan-50 to-teal-50",
+    badge: "신규"
   }
 ];
 
