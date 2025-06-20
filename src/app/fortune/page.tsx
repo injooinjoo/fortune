@@ -22,6 +22,14 @@ import {
   PartyPopper,
   Crown,
   Home,
+  BookOpen,
+  AlertTriangle,
+  Gem,
+  ShieldAlert,
+  ScrollText,
+  Sunrise,
+  Gem,
+  AlertTriangle,
   CalendarCheck,
   Gem,
   AlertTriangle,
@@ -108,6 +116,26 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "신규"
   },
   {
+    id: "tojeong",
+    title: "토정비결",
+    description: "144괘로 풀이하는 신년 길흉",
+    icon: ScrollText,
+    route: "/fortune/tojeong",
+    color: "amber",
+    gradient: "from-amber-50 to-orange-50",
+    badge: "전통"
+  },
+  {
+    id: "salpuli",
+    title: "살풀이",
+    description: "흉살을 알고 대비하는 길을 찾아보세요",
+    icon: ShieldAlert,
+    route: "/fortune/salpuli",
+    color: "red",
+    gradient: "from-red-50 to-pink-50",
+    badge: "조화"
+  },
+  {
     id: "daily",
     title: "오늘의 운세",
     description: "총운, 애정운, 재물운, 건강운을 한 번에",
@@ -117,6 +145,15 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-emerald-50 to-teal-50",
   },
   {
+
+    id: "tomorrow",
+    title: "내일의 운세",
+    description: "내일의 흐름을 미리 살펴보세요",
+    icon: Sunrise,
+    route: "/fortune/tomorrow",
+    color: "sky",
+    gradient: "from-sky-50 to-blue-50"
+  },{
     id: "new-year",
     title: "신년운세",
     description: "새해 한 해의 흐름을 미리 확인하세요",
@@ -197,6 +234,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "추천"
   },
   {
+    id: "five-blessings",
+    title: "천생복덕운",
+    description: "타고난 오복의 균형을 살펴보세요",
+    icon: Gem,
+    route: "/fortune/five-blessings",
+    color: "teal",
+    gradient: "from-teal-50 to-emerald-50",
+    badge: "추천"
+  },
+  {
     id: "business",
     title: "사업운",
     description: "성공적인 창업과 사업 운영을 위한 운세를 확인하세요",
@@ -207,6 +254,15 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "추천",
   },
   {
+    id: "past-life",
+    title: "전생운",
+    description: "과거 생의 직업과 성격을 알아보세요",
+    icon: BookOpen,
+    route: "/fortune/past-life",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    badge: "신비"
+  },{
     id: "startup",
     title: "행운의 창업",
     description: "어떤 업종이 잘 맞는지, 시작 시기를 알아보세요",
@@ -238,6 +294,14 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-green-50 to-emerald-50",
     badge: "신규"
   },{
+    id: "talisman",
+    title: "행운의 부적",
+    description: "원하는 소망을 담은 부적을 만들어보세요",
+    icon: Coins,
+    route: "/fortune/talisman",
+    color: "yellow",
+    gradient: "from-yellow-50 to-orange-50",
+    badge: "신규"},{
     id: "birthstone",
     title: "탄생석",
     description: "생일로 알아보는 행운의 보석",

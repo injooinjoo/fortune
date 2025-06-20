@@ -41,6 +41,7 @@ import {
   Building2,
   UtensilsCrossed,
   GraduationCap,
+  Dice5,
   Shirt,
   Waves,
   Fish,
@@ -289,6 +290,7 @@ export default function HomePage() {
               { href: "/fortune/lucky-running", icon: Footprints, title: "행운의 마라톤", desc: "달리기 운세와 최적의 컨디션", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
 
               { href: "/fortune/lucky-realestate", icon: Building2, title: "행운의 부동산", desc: "성공적인 부동산 투자의 비밀", color: "violet", gradient: "from-violet-50 to-purple-50" },
+              { href: "/fortune/lucky-number", icon: Dice5, title: "행운의 번호", desc: "로또처럼 뽑는 6개 번호", color: "sky", gradient: "from-sky-50 to-blue-50" },
               { href: "/fortune/lucky-food", icon: UtensilsCrossed, title: "행운의 음식", desc: "맛있는 행운을 불러오는 음식 운세", color: "rose", gradient: "from-rose-50 to-pink-50" },
               { href: "/fortune/lucky-exam", icon: GraduationCap, title: "행운의 시험일자", desc: "합격을 부르는 최적의 시험 날짜", color: "emerald", gradient: "from-emerald-50 to-green-50" },
 
