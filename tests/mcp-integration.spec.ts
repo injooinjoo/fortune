@@ -5,16 +5,23 @@ test.describe('MCP 통합 테스트', () => {
   // 헬퍼 함수: 프로필 설정 완료까지 진행
   const completeProfileSetup = async (page: Page) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     
     // 1단계: 이름 입력
-    await page.fill('input[name="name"]', 'MCP 테스트 사용자');
-    await page.click('text=다음');
+    const nameInput = page.locator('input[name="name"]');
+    const nextBtn = page.getByRole('button', { name: '다음' });
+    await expect(nameInput).toBeVisible();
+    await nameInput.fill('MCP 테스트 사용자');
+    await expect(nextBtn).toBeEnabled();
+    await nextBtn.click();
+    await page.waitForLoadState('networkidle');
     
     // 2단계: 생년월일 선택
     await page.selectOption('select:near(:text("년"))', '1990');
     await page.selectOption('select:near(:text("월"))', '5');
     await page.selectOption('select:near(:text("일"))', '15');
-    await page.click('text=다음');
+    await nextBtn.click();
+    await page.waitForLoadState('networkidle');
     
     // 3단계: 성별, MBTI, 출생시간 선택
     await page.selectOption('select:near(:text("성별"))', '남성');
@@ -38,7 +45,10 @@ test.describe('MCP 통합 테스트', () => {
     });
 
     // 완료 버튼 클릭
-    await page.click('text=완료');
+    const completeBtn = page.getByRole('button', { name: '완료' });
+    await expect(completeBtn).toBeVisible();
+    await completeBtn.click();
+    await page.waitForLoadState('networkidle');
 
     // 네트워크 응답 확인
     await saveResponsePromise;

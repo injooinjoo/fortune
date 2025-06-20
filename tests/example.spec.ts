@@ -4,6 +4,7 @@ import { OnboardingNamePage } from './pages/OnboardingNamePage';
 test.describe('운세 앱 기본 동작 테스트', () => {
   test('메인 페이지 로딩 및 기본 요소 확인', async ({ page }) => {
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     
     // 페이지 타이틀 확인
     await expect(page).toHaveTitle(/운세 탐험/);
@@ -16,6 +17,8 @@ test.describe('운세 앱 기본 동작 테스트', () => {
   test('이름 입력 및 다음 단계 진행', async ({ page }) => {
     const namePage = new OnboardingNamePage(page);
     await namePage.goto();
+    // 필요한 경우 여기서 디버깅용 일시 중지를 사용할 수 있습니다.
+    // await page.pause();
     await namePage.enterName('테스트 사용자');
     await namePage.submitName();
 
