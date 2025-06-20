@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/AppHeader";
+import {
+  Heart,
+  Star,
 import { 
   Heart, 
   Star, 
@@ -21,6 +24,7 @@ import {
   PartyPopper,
   Crown,
   Home,
+  AlertTriangle
   Rocket
 } from "lucide-react";
 
@@ -192,6 +196,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통"
+  },
+  {
+    id: "avoid-people",
+    title: "피해야 할 상대",
+    description: "갈등을 줄이기 위해 조심해야 할 상대를 알아보세요",
+    icon: AlertTriangle,
+    route: "/fortune/avoid-people",
+    color: "red",
+    gradient: "from-red-50 to-orange-50",
+    badge: "주의"
   }
 ];
 
