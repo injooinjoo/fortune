@@ -52,6 +52,15 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-blue-50 to-indigo-50"
   },
   {
+    id: "employment",
+    title: "취업 운세",
+    description: "시즌별 취업 성공 가능성을 살펴보세요",
+    icon: Briefcase,
+    route: "/fortune/employment",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50"
+  },
+  {
     id: "wealth",
     title: "금전운",
     description: "재물과 투자의 운을 살펴보세요",
