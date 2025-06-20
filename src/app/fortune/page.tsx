@@ -6,12 +6,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/AppHeader";
-import {
-  Heart,
-  Star,
 import { 
   Heart, 
-  Star, 
+  Star,
   Calendar,
   Briefcase,
   Coins,
@@ -20,13 +17,22 @@ import {
   TrendingUp,
   Users,
   User,
+  Droplet,
   Zap,
   PartyPopper,
   Crown,
   Home,
-  BookOpen
-  Gem
-  AlertTriangle
+  BookOpen,
+  AlertTriangle,
+  Gem,
+  ShieldAlert,
+  ScrollText,
+  Sunrise,
+  Gem,
+  AlertTriangle,
+  CalendarCheck,
+  Gem,
+  AlertTriangle,
   Rocket
 } from "lucide-react";
 
@@ -50,7 +56,7 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/love",
     color: "pink",
     gradient: "from-pink-50 to-red-50",
-    badge: "인기"
+    badge: "인기",
   },
   {
     id: "destiny",
@@ -69,7 +75,16 @@ const fortuneCategories: FortuneCategory[] = [
     icon: Briefcase,
     route: "/fortune/career",
     color: "blue",
-    gradient: "from-blue-50 to-indigo-50"
+    gradient: "from-blue-50 to-indigo-50",
+  },
+  {
+    id: "employment",
+    title: "취업 운세",
+    description: "시즌별 취업 성공 가능성을 살펴보세요",
+    icon: Briefcase,
+    route: "/fortune/employment",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50"
   },
   {
     id: "wealth",
@@ -78,7 +93,7 @@ const fortuneCategories: FortuneCategory[] = [
     icon: Coins,
     route: "/fortune/wealth",
     color: "yellow",
-    gradient: "from-yellow-50 to-orange-50"
+    gradient: "from-yellow-50 to-orange-50",
   },
   {
     id: "saju",
@@ -88,7 +103,7 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/saju",
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
-    badge: "정통"
+    badge: "정통",
   },
   {
     id: "saju-psychology",
@@ -101,15 +116,44 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "신규"
   },
   {
+    id: "tojeong",
+    title: "토정비결",
+    description: "144괘로 풀이하는 신년 길흉",
+    icon: ScrollText,
+    route: "/fortune/tojeong",
+    color: "amber",
+    gradient: "from-amber-50 to-orange-50",
+    badge: "전통"
+  },
+  {
+    id: "salpuli",
+    title: "살풀이",
+    description: "흉살을 알고 대비하는 길을 찾아보세요",
+    icon: ShieldAlert,
+    route: "/fortune/salpuli",
+    color: "red",
+    gradient: "from-red-50 to-pink-50",
+    badge: "조화"
+  },
+  {
     id: "daily",
     title: "오늘의 운세",
     description: "총운, 애정운, 재물운, 건강운을 한 번에",
     icon: Star,
     route: "/fortune/daily",
     color: "emerald",
-    gradient: "from-emerald-50 to-teal-50"
+    gradient: "from-emerald-50 to-teal-50",
   },
   {
+
+    id: "tomorrow",
+    title: "내일의 운세",
+    description: "내일의 흐름을 미리 살펴보세요",
+    icon: Sunrise,
+    route: "/fortune/tomorrow",
+    color: "sky",
+    gradient: "from-sky-50 to-blue-50"
+  },{
     id: "new-year",
     title: "신년운세",
     description: "새해 한 해의 흐름을 미리 확인하세요",
@@ -127,7 +171,17 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/mbti",
     color: "violet",
     gradient: "from-violet-50 to-purple-50",
-    badge: "새로움"
+    badge: "새로움",
+  },
+  {
+    id: "blood-type",
+    title: "혈액형 궁합",
+    description: "혈액형으로 보는 성격 궁합",
+    icon: Droplet,
+    route: "/fortune/blood-type",
+    color: "red",
+    gradient: "from-red-50 to-rose-50",
+    badge: "NEW",
   },
   {
     id: "zodiac-animal",
@@ -137,7 +191,7 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/zodiac-animal",
     color: "orange",
     gradient: "from-orange-50 to-yellow-50",
-    badge: "전통"
+    badge: "전통",
   },
   {
     id: "marriage",
@@ -147,7 +201,7 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/marriage",
     color: "rose",
     gradient: "from-rose-50 to-pink-50",
-    badge: "특별"
+    badge: "특별",
   },
   {
     id: "couple-match",
@@ -167,7 +221,27 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/moving",
     color: "emerald",
     gradient: "from-emerald-50 to-green-50",
-    badge: "인기"
+    badge: "인기",
+  },
+  {
+    id: "moving-date",
+    title: "이사택일",
+    description: "이삿날 선택을 위한 길일을 확인하세요",
+    icon: CalendarCheck,
+    route: "/fortune/moving-date",
+    color: "teal",
+    gradient: "from-teal-50 to-emerald-50",
+    badge: "추천"
+  },
+  {
+    id: "five-blessings",
+    title: "천생복덕운",
+    description: "타고난 오복의 균형을 살펴보세요",
+    icon: Gem,
+    route: "/fortune/five-blessings",
+    color: "teal",
+    gradient: "from-teal-50 to-emerald-50",
+    badge: "추천"
   },
   {
     id: "business",
@@ -177,7 +251,7 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/business",
     color: "indigo",
     gradient: "from-indigo-50 to-purple-50",
-    badge: "추천"
+    badge: "추천",
   },
   {
     id: "past-life",
@@ -206,9 +280,19 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/palmistry",
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
+    badge: "전통",
+  },
     badge: "전통"
   },
   {
+    id: "talisman",
+    title: "행운의 부적",
+    description: "원하는 소망을 담은 부적을 만들어보세요",
+    icon: Coins,
+    route: "/fortune/talisman",
+    color: "yellow",
+    gradient: "from-yellow-50 to-orange-50",
+    badge: "신규"},{
     id: "birthstone",
     title: "탄생석",
     description: "생일로 알아보는 행운의 보석",
@@ -234,9 +318,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
 const itemVariants = {
@@ -247,14 +331,16 @@ const itemVariants = {
     transition: {
       type: "spring" as const,
       stiffness: 100,
-      damping: 10
-    }
-  }
+      damping: 10,
+    },
+  },
 };
 
 export default function FortunePage() {
   const router = useRouter();
-  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [fontSize, setFontSize] = useState<"small" | "medium" | "large">(
+    "medium",
+  );
 
   const handleCategoryClick = (route: string) => {
     router.push(route);
@@ -262,13 +348,13 @@ export default function FortunePage() {
 
   return (
     <>
-      <AppHeader 
-        title="운세" 
+      <AppHeader
+        title="운세"
         showBack={false}
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
       />
-      <motion.div 
+      <motion.div
         className="pb-32 px-4 space-y-6 pt-4"
         initial="hidden"
         animate="visible"
@@ -303,7 +389,9 @@ export default function FortunePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-purple-900 mb-1">연애운</h3>
-                  <p className="text-sm text-purple-700">새로운 만남의 기회가 열리는 날입니다</p>
+                  <p className="text-sm text-purple-700">
+                    새로운 만남의 기회가 열리는 날입니다
+                  </p>
                 </div>
                 <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200">
                   85점
@@ -326,27 +414,38 @@ export default function FortunePage() {
                 onClick={() => handleCategoryClick(category.route)}
                 className="cursor-pointer"
               >
-                <Card className={`hover:shadow-md transition-all duration-300 bg-gradient-to-r ${category.gradient} border-${category.color}-200`}>
+                <Card
+                  className={`hover:shadow-md transition-all duration-300 bg-gradient-to-r ${category.gradient} border-${category.color}-200`}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <motion.div 
+                        <motion.div
                           className={`bg-${category.color}-100 rounded-full w-12 h-12 flex items-center justify-center`}
                           whileHover={{ rotate: 360 }}
                           transition={{ duration: 0.5 }}
                         >
-                          <category.icon className={`w-6 h-6 text-${category.color}-600`} />
+                          <category.icon
+                            className={`w-6 h-6 text-${category.color}-600`}
+                          />
                         </motion.div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold text-gray-900">{category.title}</h3>
+                            <h3 className="font-semibold text-gray-900">
+                              {category.title}
+                            </h3>
                             {category.badge && (
-                              <Badge variant="secondary" className={`bg-${category.color}-100 text-${category.color}-700 text-xs`}>
+                              <Badge
+                                variant="secondary"
+                                className={`bg-${category.color}-100 text-${category.color}-700 text-xs`}
+                              >
                                 {category.badge}
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600">{category.description}</p>
+                          <p className="text-sm text-gray-600">
+                            {category.description}
+                          </p>
                         </div>
                       </div>
                       <motion.div
@@ -367,12 +466,12 @@ export default function FortunePage() {
         <motion.div variants={itemVariants}>
           <h2 className="text-xl font-bold text-gray-900 mb-4">특별 서비스</h2>
           <div className="grid grid-cols-2 gap-4">
-            <Card 
+            <Card
               className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200"
-              onClick={() => router.push('/interactive/tarot')}
+              onClick={() => router.push("/interactive/tarot")}
             >
               <CardContent className="p-4 text-center">
-                <motion.div 
+                <motion.div
                   className="bg-indigo-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
@@ -383,13 +482,13 @@ export default function FortunePage() {
                 <p className="text-xs text-gray-600">카드가 주는 메시지</p>
               </CardContent>
             </Card>
-            
-            <Card 
+
+            <Card
               className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-              onClick={() => router.push('/physiognomy')}
+              onClick={() => router.push("/physiognomy")}
             >
               <CardContent className="p-4 text-center">
-                <motion.div 
+                <motion.div
                   className="bg-green-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3"
                   whileHover={{ rotate: 360 }}
                   transition={{ duration: 0.5 }}
@@ -405,4 +504,4 @@ export default function FortunePage() {
       </motion.div>
     </>
   );
-} 
+}
