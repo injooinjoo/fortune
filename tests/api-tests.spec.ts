@@ -4,9 +4,16 @@ test.describe('API 엔드포인트 테스트', () => {
   test('MBTI API - 유효한 타입 조회', async ({ request }) => {
     const response = await request.get('/api/mbti/ISTJ');
 
+    const text = await response.text();
+    console.log('MBTI API response', {
+      status: response.status(),
+      headers: response.headers(),
+      body: text,
+    });
+
     expect(response.ok()).toBeTruthy();
 
-    const responseBody = await response.json();
+    const responseBody = JSON.parse(text);
     expect(responseBody.type).toBe('ISTJ');
     expect(responseBody).toHaveProperty('description');
     expect(responseBody).toHaveProperty('characteristics');
