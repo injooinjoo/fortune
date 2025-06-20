@@ -274,6 +274,14 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "전통"
   },
   {
+    id: "talisman",
+    title: "행운의 부적",
+    description: "원하는 소망을 담은 부적을 만들어보세요",
+    icon: Coins,
+    route: "/fortune/talisman",
+    color: "yellow",
+    gradient: "from-yellow-50 to-orange-50",
+    badge: "신규"},{
     id: "birthstone",
     title: "탄생석",
     description: "생일로 알아보는 행운의 보석",
