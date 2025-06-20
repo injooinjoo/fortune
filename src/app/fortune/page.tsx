@@ -16,6 +16,7 @@ import {
   TrendingUp,
   User,
   Zap,
+  PartyPopper,
   Crown,
   Home
 } from "lucide-react";
@@ -78,6 +79,16 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/today",
     color: "emerald",
     gradient: "from-emerald-50 to-teal-50"
+  },
+  {
+    id: "new-year",
+    title: "신년운세",
+    description: "새해 한 해의 흐름을 미리 확인하세요",
+    icon: PartyPopper,
+    route: "/fortune/new-year",
+    color: "indigo",
+    gradient: "from-indigo-50 to-blue-50",
+    badge: "2025"
   },
   {
     id: "mbti",
