@@ -285,6 +285,15 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "전통"
   },
   {
+    id: "talent",
+    title: "능력 평가",
+    description: "사주로 알아보는 나의 숨은 재능",
+    icon: Sparkles,
+    route: "/fortune/talent",
+    color: "green",
+    gradient: "from-green-50 to-emerald-50",
+    badge: "신규"
+  },{
     id: "talisman",
     title: "행운의 부적",
     description: "원하는 소망을 담은 부적을 만들어보세요",
