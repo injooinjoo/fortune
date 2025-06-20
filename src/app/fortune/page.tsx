@@ -17,7 +17,8 @@ import {
   User,
   Zap,
   Crown,
-  Home
+  Home,
+  BookOpen
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -128,6 +129,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "indigo",
     gradient: "from-indigo-50 to-purple-50",
     badge: "추천"
+  },
+  {
+    id: "past-life",
+    title: "전생운",
+    description: "과거 생의 직업과 성격을 알아보세요",
+    icon: BookOpen,
+    route: "/fortune/past-life",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    badge: "신비"
   },
   {
     id: "palmistry",
