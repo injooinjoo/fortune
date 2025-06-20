@@ -30,14 +30,21 @@ import {
   Coffee,
   Clock,
   Flame,
+  Brain,
   Gift,
   Activity,
   Target,
   DollarSign,
   CircleDot,
+  Bike,
+  Footprints,
   Building2,
   UtensilsCrossed,
-  GraduationCap
+  GraduationCap,
+  Shirt,
+  Waves,
+  Fish,
+  Mountain
 } from "lucide-react";
 
 // 애니메이션 variants
@@ -261,6 +268,7 @@ export default function HomePage() {
               { href: "/fortune/moving", icon: Home, title: "이사운", desc: "새로운 보금자리의 운", color: "emerald", gradient: "from-emerald-50 to-green-50" },
               { href: "/fortune/business", icon: TrendingUp, title: "사업운", desc: "창업과 사업 성공의 운", color: "indigo", gradient: "from-indigo-50 to-purple-50" },
               { href: "/fortune/palmistry", icon: Hand, title: "손금", desc: "손에 새겨진 운명의 선", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/saju-psychology", icon: Brain, title: "사주 심리분석", desc: "성격과 관계 심층 탐구", color: "teal", gradient: "from-teal-50 to-cyan-50" },
               { href: "/fortune/compatibility", icon: Users, title: "궁합", desc: "둘의 운명적 만남", color: "rose", gradient: "from-rose-50 to-pink-50" },
               { href: "/fortune/ex-lover", icon: HeartCrack, title: "헤어진 애인", desc: "지난 사랑과의 인연", color: "slate", gradient: "from-slate-50 to-gray-50" },
               { href: "/fortune/blind-date", icon: Coffee, title: "소개팅", desc: "새로운 만남의 가능성", color: "orange", gradient: "from-orange-50 to-amber-50" },
@@ -269,11 +277,25 @@ export default function HomePage() {
               { href: "/fortune/lucky-items", icon: Gift, title: "행운의 아이템", desc: "당신만의 행운을 부르는 물건", color: "emerald", gradient: "from-emerald-50 to-green-50" },
               { href: "/fortune/biorhythm", icon: Activity, title: "바이오리듬", desc: "건강, 감성, 지성의 주기 분석", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
               { href: "/fortune/lucky-baseball", icon: Target, title: "행운의 야구", desc: "야구를 통해 보는 당신의 운세", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/lucky-tennis", icon: Zap, title: "행운의 테니스", desc: "테니스를 통해 보는 당신의 운세와 승리 비결", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+              { href: "/fortune/lucky-hiking", icon: Mountain, title: "행운의 등산", desc: "등산을 통해 보는 당신의 운세와 안전한 완주 비결", color: "green", gradient: "from-green-50 to-emerald-50" },
+              { href: "/fortune/lucky-fishing", icon: Fish, title: "행운의 낚시", desc: "낚시를 통해 보는 당신의 운세와 대박 조황의 비결", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
               { href: "/fortune/lucky-investment", icon: DollarSign, title: "행운의 재테크", desc: "투자와 자산 운용의 황금 비결", color: "yellow", gradient: "from-yellow-50 to-orange-50" },
               { href: "/fortune/lucky-golf", icon: CircleDot, title: "행운의 골프", desc: "완벽한 라운딩을 위한 골프 운세", color: "lime", gradient: "from-lime-50 to-green-50" },
+
+              { href: "/fortune/lucky-cycling", icon: Bike, title: "행운의 자전거", desc: "오늘의 라이딩 코스 운세", color: "teal", gradient: "from-teal-50 to-cyan-50" },
+
+              { href: "/fortune/lucky-swim", icon: Waves, title: "행운의 수영", desc: "물의 기운으로 즐기는 건강 수영", color: "sky", gradient: "from-sky-50 to-blue-50" },
+              { href: "/fortune/lucky-running", icon: Footprints, title: "행운의 마라톤", desc: "달리기 운세와 최적의 컨디션", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
+
               { href: "/fortune/lucky-realestate", icon: Building2, title: "행운의 부동산", desc: "성공적인 부동산 투자의 비밀", color: "violet", gradient: "from-violet-50 to-purple-50" },
               { href: "/fortune/lucky-food", icon: UtensilsCrossed, title: "행운의 음식", desc: "맛있는 행운을 불러오는 음식 운세", color: "rose", gradient: "from-rose-50 to-pink-50" },
-              { href: "/fortune/lucky-exam", icon: GraduationCap, title: "행운의 시험일자", desc: "합격을 부르는 최적의 시험 날짜", color: "emerald", gradient: "from-emerald-50 to-green-50" }
+              { href: "/fortune/lucky-exam", icon: GraduationCap, title: "행운의 시험일자", desc: "합격을 부르는 최적의 시험 날짜", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+
+              { href: "/fortune/lucky-outfit", icon: Shirt, title: "행운의 코디", desc: "운을 부르는 패션 스타일", color: "fuchsia", gradient: "from-fuchsia-50 to-pink-50" },
+
+              { href: "/fortune/lucky-job", icon: Briefcase, title: "행운의 직업", desc: "사주로 보는 성공 직업 추천", color: "teal", gradient: "from-teal-50 to-emerald-50" }
+
             ].map((item, index) => (
               <motion.div
                 key={item.href}
