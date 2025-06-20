@@ -24,6 +24,17 @@ interface DetailItem {
 interface SajuData {
   summary: string;
   totalFortune: string;
+  manse: {
+    solar: string;
+    lunar: string;
+    ganji: string;
+  };
+  saju: {
+    heaven: string[];
+    earth: string[];
+  };
+  tenStars: { name: string; meaning: string }[];
+  twelveFortunes: { name: string; description: string }[];
   elements: { subject: string; value: number }[];
   lifeCycles: {
     youth: string;
@@ -38,6 +49,36 @@ const mockData: SajuData = {
   summary: "당신은 지혜로운 물(水)의 기운을 가진 사람입니다.",
   totalFortune:
     "물의 기운이 강한 당신은 유연하고 깊이 있는 사고를 지녔습니다. 주변과 조화를 이루며 때로는 흐름을 바꾸는 힘을 가졌습니다.",
+  manse: {
+    solar: "1990년 5월 17일",
+    lunar: "음력 1990년 4월 23일",
+    ganji: "경오년 을사월 정묘일 기미시",
+  },
+  saju: {
+    heaven: ["경", "을", "정", "기"],
+    earth: ["오", "사", "묘", "미"],
+  },
+  tenStars: [
+    { name: "비견", meaning: "경쟁심과 독립" },
+    { name: "식신", meaning: "표현력과 창조" },
+    { name: "정재", meaning: "현실적 재물" },
+    { name: "편관", meaning: "도전과 규범" },
+    { name: "정인", meaning: "학습과 도움" },
+  ],
+  twelveFortunes: [
+    { name: "장생", description: "새로운 시작과 에너지" },
+    { name: "목욕", description: "감정이 예민해지는 시기" },
+    { name: "관대", description: "역량이 커지는 때" },
+    { name: "건록", description: "활동력이 최고조" },
+    { name: "제왕", description: "가장 왕성한 상태" },
+    { name: "쇠", description: "기세가 약해짐" },
+    { name: "병", description: "다소 불안정" },
+    { name: "사", description: "정리가 필요한 시기" },
+    { name: "묘", description: "휴식과 재충전" },
+    { name: "절", description: "에너지 감소" },
+    { name: "태", description: "새로운 준비" },
+    { name: "양", description: "다시 태어남" },
+  ],
   elements: [
     { subject: "木", value: 60 },
     { subject: "火", value: 40 },
@@ -80,9 +121,13 @@ export default function SajuAnalysisPage() {
         </header>
 
         <Tabs defaultValue="general" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-4 gap-1">
             <TabsTrigger value="general">총운</TabsTrigger>
+            <TabsTrigger value="manse">만세력</TabsTrigger>
+            <TabsTrigger value="saju">사주팔자</TabsTrigger>
             <TabsTrigger value="elements">오행 분석</TabsTrigger>
+            <TabsTrigger value="tenStar">십성</TabsTrigger>
+            <TabsTrigger value="twelve">십이운성</TabsTrigger>
             <TabsTrigger value="cycle">인생 주기</TabsTrigger>
             <TabsTrigger value="detail">상세 풀이</TabsTrigger>
           </TabsList>
@@ -92,6 +137,44 @@ export default function SajuAnalysisPage() {
               {data.totalFortune}
             </p>
           </TabsContent>
+
+          <TabsContent value="manse" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>만세력</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1 text-sm text-muted-foreground">
+                <p>양력: {data.manse.solar}</p>
+                <p>음력: {data.manse.lunar}</p>
+                <p>간지: {data.manse.ganji}</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="saju" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>사주팔자</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  {data.saju.heaven.map((h, idx) => (
+                    <div key={`h-${idx}`} className="rounded-md bg-blue-50 p-2">
+                      {h}
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-4 gap-2 text-center mt-2">
+                  {data.saju.earth.map((e, idx) => (
+                    <div key={`e-${idx}`} className="rounded-md bg-green-50 p-2">
+                      {e}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
 
           <TabsContent value="elements" className="mt-4">
             <div className="w-full h-64">
@@ -110,6 +193,39 @@ export default function SajuAnalysisPage() {
                 </RadarChart>
               </ResponsiveContainer>
             </div>
+          </TabsContent>
+
+          <TabsContent value="tenStar" className="mt-4 space-y-3">
+            {data.tenStars.map((star) => (
+              <Card key={star.name}>
+                <CardHeader>
+                  <CardTitle>{star.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{star.meaning}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+
+          <TabsContent value="twelve" className="mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>십이운성</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2">
+                  {data.twelveFortunes.map((item) => (
+                    <div key={item.name} className="p-2 rounded-md bg-gray-50">
+                      <div className="font-medium text-sm">{item.name}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="cycle" className="mt-4 space-y-3">
