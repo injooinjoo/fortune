@@ -22,6 +22,8 @@ import {
   PartyPopper,
   Crown,
   Home,
+  BookOpen,
+  AlertTriangle,
   Gem,
   ShieldAlert,
   ScrollText,
@@ -252,6 +254,15 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "추천",
   },
   {
+    id: "past-life",
+    title: "전생운",
+    description: "과거 생의 직업과 성격을 알아보세요",
+    icon: BookOpen,
+    route: "/fortune/past-life",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    badge: "신비"
+  },{
     id: "startup",
     title: "행운의 창업",
     description: "어떤 업종이 잘 맞는지, 시작 시기를 알아보세요",
