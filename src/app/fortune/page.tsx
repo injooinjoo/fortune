@@ -138,6 +138,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통"
+  },
+  {
+    id: "talent",
+    title: "능력 평가",
+    description: "사주로 알아보는 나의 숨은 재능",
+    icon: Sparkles,
+    route: "/fortune/talent",
+    color: "green",
+    gradient: "from-green-50 to-emerald-50",
+    badge: "신규"
   }
 ];
 
