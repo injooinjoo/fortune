@@ -16,6 +16,7 @@ import {
   TrendingUp,
   User,
   Zap,
+  Cake,
   Crown,
   Home
 } from "lucide-react";
@@ -69,6 +70,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
     badge: "정통"
+  },
+  {
+    id: "birthdate",
+    title: "생년월일 운세",
+    description: "간단한 생년월일 운세를 확인하세요",
+    icon: Cake,
+    route: "/fortune/birthdate",
+    color: "cyan",
+    gradient: "from-cyan-50 to-blue-50",
+    badge: "NEW"
   },
   {
     id: "daily",
