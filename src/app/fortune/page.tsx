@@ -9,9 +9,10 @@ import AppHeader from "@/components/AppHeader";
 import { 
   Heart, 
   Star, 
-  Calendar, 
-  Briefcase, 
+  Calendar,
+  Briefcase,
   Coins,
+  Brain,
   Sparkles,
   TrendingUp,
   User,
@@ -69,6 +70,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
     badge: "정통"
+  },
+  {
+    id: "saju-psychology",
+    title: "사주 심리분석",
+    description: "타고난 성격과 관계를 심층 탐구",
+    icon: Brain,
+    route: "/fortune/saju-psychology",
+    color: "teal",
+    gradient: "from-teal-50 to-cyan-50",
+    badge: "신규"
   },
   {
     id: "daily",
