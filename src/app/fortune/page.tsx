@@ -17,7 +17,8 @@ import {
   User,
   Zap,
   Crown,
-  Home
+  Home,
+  CalendarCheck
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -118,6 +119,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "emerald",
     gradient: "from-emerald-50 to-green-50",
     badge: "인기"
+  },
+  {
+    id: "moving-date",
+    title: "이사택일",
+    description: "이삿날 선택을 위한 길일을 확인하세요",
+    icon: CalendarCheck,
+    route: "/fortune/moving-date",
+    color: "teal",
+    gradient: "from-teal-50 to-emerald-50",
+    badge: "추천"
   },
   {
     id: "business",
