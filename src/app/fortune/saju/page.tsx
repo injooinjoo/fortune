@@ -5,6 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Droplet, Lock } from "lucide-react";
+import AppHeader from "@/components/AppHeader";
 import {
   RadarChart,
   PolarGrid,
@@ -65,100 +66,103 @@ export default function SajuAnalysisPage() {
   const data = mockData; // 추후 fetchSajuData()로 대체
 
   return (
-    <div className="min-h-screen pb-20 px-4 space-y-6">
-      <header className="mt-4 p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
-        <Droplet className="w-5 h-5" />
-        <h2 className="text-lg font-semibold">{data.summary}</h2>
-      </header>
+    <>
+      <AppHeader title="사주팔자" showBack={true} />
+      <div className="min-h-screen pb-32 px-4 space-y-6">
+        <header className="mt-4 p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
+          <Droplet className="w-5 h-5" />
+          <h2 className="text-lg font-semibold">{data.summary}</h2>
+        </header>
 
-      <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="general">총운</TabsTrigger>
-          <TabsTrigger value="elements">오행 분석</TabsTrigger>
-          <TabsTrigger value="cycle">인생 주기</TabsTrigger>
-          <TabsTrigger value="detail">상세 풀이</TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="general">총운</TabsTrigger>
+            <TabsTrigger value="elements">오행 분석</TabsTrigger>
+            <TabsTrigger value="cycle">인생 주기</TabsTrigger>
+            <TabsTrigger value="detail">상세 풀이</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="general" className="mt-4">
-          <p className="leading-relaxed text-sm text-muted-foreground">
-            {data.totalFortune}
-          </p>
-        </TabsContent>
+          <TabsContent value="general" className="mt-4">
+            <p className="leading-relaxed text-sm text-muted-foreground">
+              {data.totalFortune}
+            </p>
+          </TabsContent>
 
-        <TabsContent value="elements" className="mt-4">
-          <div className="w-full h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={data.elements} outerRadius="80%">
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                <Radar
-                  name="오행"
-                  dataKey="value"
-                  stroke="#3b82f6"
-                  fill="#3b82f6"
-                  fillOpacity={0.6}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        </TabsContent>
+          <TabsContent value="elements" className="mt-4">
+            <div className="w-full h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={data.elements} outerRadius="80%">
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="오행"
+                    dataKey="value"
+                    stroke="#3b82f6"
+                    fill="#3b82f6"
+                    fillOpacity={0.6}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </TabsContent>
 
-        <TabsContent value="cycle" className="mt-4 space-y-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>초년운</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{data.lifeCycles.youth}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>중년운</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{data.lifeCycles.middle}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>말년운</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{data.lifeCycles.old}</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="detail" className="mt-4 space-y-3">
-          {data.details.map((item) => (
-            <Card key={item.subject}>
+          <TabsContent value="cycle" className="mt-4 space-y-3">
+            <Card>
               <CardHeader>
-                <CardTitle>{item.subject}</CardTitle>
+                <CardTitle>초년운</CardTitle>
               </CardHeader>
               <CardContent>
-                {item.premium ? (
-                  <div className="flex flex-col items-center space-y-2 py-4">
-                    <Lock className="w-6 h-6 text-muted-foreground" />
-                    <Button size="sm">프리미엄 구독으로 전체 내용 확인하기</Button>
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">{item.text}</p>
-                )}
+                <p className="text-sm text-muted-foreground">{data.lifeCycles.youth}</p>
               </CardContent>
             </Card>
-          ))}
-        </TabsContent>
-      </Tabs>
+            <Card>
+              <CardHeader>
+                <CardTitle>중년운</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{data.lifeCycles.middle}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>말년운</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{data.lifeCycles.old}</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-      <div className="sticky bottom-0 left-0 right-0 bg-background border-t p-4 flex gap-2">
-        <Button className="flex-1">결과 저장하기</Button>
-        <Button variant="outline" className="flex-1">
-          공유하기
-        </Button>
+          <TabsContent value="detail" className="mt-4 space-y-3">
+            {data.details.map((item) => (
+              <Card key={item.subject}>
+                <CardHeader>
+                  <CardTitle>{item.subject}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {item.premium ? (
+                    <div className="flex flex-col items-center space-y-2 py-4">
+                      <Lock className="w-6 h-6 text-muted-foreground" />
+                      <Button size="sm">프리미엄 구독으로 전체 내용 확인하기</Button>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">{item.text}</p>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </TabsContent>
+        </Tabs>
+
+        <div className="sticky bottom-16 left-0 right-0 bg-background border-t p-4 flex gap-2">
+          <Button className="flex-1">결과 저장하기</Button>
+          <Button variant="outline" className="flex-1">
+            공유하기
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

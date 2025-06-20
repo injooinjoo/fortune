@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Providers from '@/components/providers';
 import ClientOnly from '@/components/client-only';
 import BackgroundAudioPlayer from '@/components/background-audio-player';
+import ConditionalLayout from '@/components/ConditionalLayout';
 
 const lato = Lato({ // Changed to Lato
   variable: '--font-lato', // Changed variable name
@@ -33,7 +34,9 @@ export default function RootLayout({
       {/* Changed font variable in body className */}
       <body className={`${lato.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          {children}
+          <ConditionalLayout>
+            {children}
+          </ConditionalLayout>
           <Toaster />
           {/* 임시로 오디오 플레이어 비활성화
           <ClientOnly>
