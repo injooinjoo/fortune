@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Star, Heart, Gem, Calendar, User, Hand, Smile, Bot } from "lucide-react";
+import { Search, Star, Heart, Gem, Calendar, User, Hand, Smile, Bot, Brain } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -30,6 +30,7 @@ const fortuneCategories: Record<string, { label: string; items: FortuneItem[] }>
     label: "심층 분석",
     items: [
       { id: "saju", name: "사주팔자", description: "오늘의 총운을 확인하세요", icon: Calendar, route: "/fortune/saju" },
+      { id: "saju-psychology", name: "사주 심리분석", description: "성격과 관계 탐구", icon: Brain, route: "/fortune/saju-psychology" },
       { id: "mbti", name: "MBTI 운세", description: "오늘의 총운을 확인하세요", icon: User, route: "/fortune/mbti" },
     ],
   },
