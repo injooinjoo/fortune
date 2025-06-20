@@ -22,6 +22,7 @@ import {
   PartyPopper,
   Crown,
   Home,
+  ScrollText,
   Sunrise,
   Gem,
   AlertTriangle,
@@ -109,6 +110,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "teal",
     gradient: "from-teal-50 to-cyan-50",
     badge: "신규"
+  },
+  {
+    id: "tojeong",
+    title: "토정비결",
+    description: "144괘로 풀이하는 신년 길흉",
+    icon: ScrollText,
+    route: "/fortune/tojeong",
+    color: "amber",
+    gradient: "from-amber-50 to-orange-50",
+    badge: "전통"
   },
   {
     id: "daily",
