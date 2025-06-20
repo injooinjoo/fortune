@@ -22,6 +22,7 @@ import {
   PartyPopper,
   Crown,
   Home,
+  Gem,
   ShieldAlert,
   ScrollText,
   Sunrise,
@@ -226,6 +227,16 @@ const fortuneCategories: FortuneCategory[] = [
     description: "이삿날 선택을 위한 길일을 확인하세요",
     icon: CalendarCheck,
     route: "/fortune/moving-date",
+    color: "teal",
+    gradient: "from-teal-50 to-emerald-50",
+    badge: "추천"
+  },
+  {
+    id: "five-blessings",
+    title: "천생복덕운",
+    description: "타고난 오복의 균형을 살펴보세요",
+    icon: Gem,
+    route: "/fortune/five-blessings",
     color: "teal",
     gradient: "from-teal-50 to-emerald-50",
     badge: "추천"
