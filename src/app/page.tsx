@@ -298,11 +298,13 @@ export default function LandingPage() {
 
         {/* 기능 카드들 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-16">
-          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 cursor-pointer ${
             isDarkMode 
-              ? 'bg-gray-800 border-gray-700' 
-              : 'bg-white border-gray-200'
-          }`}>
+              ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
+              : 'bg-white border-gray-200 hover:bg-gray-50'
+          }`}
+          onClick={() => router.push("/fortune")}
+          >
             <CardHeader>
               <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
                 isDarkMode ? 'bg-purple-500' : 'bg-purple-100'
@@ -324,11 +326,13 @@ export default function LandingPage() {
             </CardHeader>
           </Card>
 
-          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 cursor-pointer ${
             isDarkMode 
-              ? 'bg-gray-800 border-gray-700' 
-              : 'bg-white border-gray-200'
-          }`}>
+              ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
+              : 'bg-white border-gray-200 hover:bg-gray-50'
+          }`}
+          onClick={() => router.push("/interactive/psychology-test")}
+          >
             <CardHeader>
               <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
                 isDarkMode ? 'bg-blue-500' : 'bg-blue-100'
@@ -340,21 +344,23 @@ export default function LandingPage() {
               <CardTitle className={`text-lg ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
-                AI 분석
+                심리테스트
               </CardTitle>
               <CardDescription className={`${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                첨단 AI가 분석하는 정확한 예측
+                5가지 질문으로 알아보는 나의 성격
               </CardDescription>
             </CardHeader>
           </Card>
 
-          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 cursor-pointer ${
             isDarkMode 
-              ? 'bg-gray-800 border-gray-700' 
-              : 'bg-white border-gray-200'
-          }`}>
+              ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
+              : 'bg-white border-gray-200 hover:bg-gray-50'
+          }`}
+          onClick={() => router.push("/fortune/celebrity")}
+          >
             <CardHeader>
               <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
                 isDarkMode ? 'bg-pink-500' : 'bg-pink-100'
@@ -366,12 +372,12 @@ export default function LandingPage() {
               <CardTitle className={`text-lg ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
-                다양한 분야
+                유명인 운세
               </CardTitle>
               <CardDescription className={`${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                사랑, 직업, 건강까지 모든 영역
+                당신과 닮은 유명인의 운세 확인
               </CardDescription>
             </CardHeader>
           </Card>

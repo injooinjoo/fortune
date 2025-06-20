@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
+import { getUserInfo, saveUserInfo, getUserProfile, isPremiumUser } from "@/lib/user-storage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Cake } from "lucide-react";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
 
 interface BirthdateFortune {
   lifePath: number;
@@ -80,18 +82,51 @@ function analyzeBirthdate(date: string): BirthdateFortune {
 }
 
 export default function BirthdateFortunePage() {
-  const [step, setStep] = useState<'input' | 'result'>('input');
+  const [step, setStep] = useState<'input' | 'loading' | 'result'>('input');
   const [birthDate, setBirthDate] = useState('');
   const [result, setResult] = useState<BirthdateFortune | null>(null);
+
+  // 컴포넌트 마운트 시 저장된 사용자 정보 불러오기
+  useEffect(() => {
+    const savedUserInfo = getUserInfo();
+    if (savedUserInfo.birthDate) {
+      setBirthDate(savedUserInfo.birthDate);
+    }
+  }, []);
 
   const handleSubmit = () => {
     if (!birthDate) {
       alert('생년월일을 입력해주세요.');
       return;
     }
+
+    // 사용자 정보 저장
+    saveUserInfo({ birthDate });
+
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
+    if (isPremium) {
+      // 프리미엄 사용자는 바로 결과 표시
+      const analysis = analyzeBirthdate(birthDate);
+      setResult(analysis);
+      setStep('result');
+    } else {
+      // 일반 사용자는 광고 로딩 화면 표시
+      setStep('loading');
+    }
+  };
+
+  // 광고 로딩 완료 후 결과 표시
+  const handleAdComplete = () => {
     const analysis = analyzeBirthdate(birthDate);
     setResult(analysis);
     setStep('result');
+  };
+
+  // 프리미엄 업그레이드 페이지로 이동
+  const handleUpgradeToPremium = () => {
+    window.location.href = '/membership';
   };
 
   const handleReset = () => {
@@ -108,6 +143,18 @@ export default function BirthdateFortunePage() {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100 } }
   };
+
+  // 광고 로딩 화면 표시
+  if (step === 'loading') {
+    return (
+      <AdLoadingScreen
+        fortuneType="birthdate"
+        fortuneTitle="생년월일 운세"
+        onComplete={handleAdComplete}
+        onSkip={handleUpgradeToPremium}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 pb-32">

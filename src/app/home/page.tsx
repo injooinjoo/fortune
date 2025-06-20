@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/supabase";
+import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
 import AppHeader from "@/components/AppHeader";
 import { 
   Sparkles, 
@@ -68,7 +70,13 @@ import {
   HelpCircle,
   Building,
   History,
-  ArrowRight
+  ArrowRight,
+  Thermometer,
+  Wind,
+  Eye,
+  Compass,
+  RefreshCw,
+  ChevronRight
 } from "lucide-react";
 
 // 운세 카테고리 정보 매핑
@@ -149,6 +157,10 @@ export default function HomePage() {
   const [name, setName] = useState<string>("사용자");
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [recentFortunes, setRecentFortunes] = useState<RecentFortune[]>([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showAdLoading, setShowAdLoading] = useState(false);
+  const [pendingFortune, setPendingFortune] = useState<{ path: string; title: string } | null>(null);
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -178,6 +190,15 @@ export default function HomePage() {
   };
 
   const fontClasses = getFontSizeClasses(fontSize);
+
+  // 실시간 시간 업데이트
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   // 최근 본 운세 불러오기
   useEffect(() => {
@@ -226,8 +247,35 @@ export default function HomePage() {
 
   // 운세 페이지로 이동할 때 최근 본 운세에 추가
   const handleFortuneClick = (path: string, title: string) => {
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
     addToRecentFortunes(path, title);
-    router.push(path);
+    
+    if (isPremium) {
+      // 프리미엄 사용자는 바로 이동
+      router.push(path);
+    } else {
+      // 일반 사용자는 광고 로딩 화면 표시
+      setPendingFortune({ path, title });
+      setShowAdLoading(true);
+    }
+  };
+
+  // 광고 로딩 완료 후 운세 페이지로 이동
+  const handleAdComplete = () => {
+    if (pendingFortune) {
+      setShowAdLoading(false);
+      router.push(pendingFortune.path);
+      setPendingFortune(null);
+    }
+  };
+
+  // 프리미엄 업그레이드 페이지로 이동
+  const handleUpgradeToPremium = () => {
+    setShowAdLoading(false);
+    setPendingFortune(null);
+    router.push('/membership');
   };
 
   // 운세 경로에서 키 추출
@@ -241,30 +289,79 @@ export default function HomePage() {
       if (!currentUser) {
         router.push("/auth/selection");
       } else {
-        const stored = localStorage.getItem("userProfile");
-        if (stored) {
-          try {
-            const profile = JSON.parse(stored);
-            setName(profile.name);
-          } catch {
-            setName(currentUser.user_metadata?.name || "사용자");
-          }
-        } else {
-          setName(currentUser.user_metadata?.name || "사용자");
-        }
+        // 사용자 프로필 생성 또는 업데이트
+        const userProfile = {
+          id: currentUser.id,
+          email: currentUser.email || 'user@example.com',
+          name: currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '사용자',
+          avatar_url: currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture,
+          provider: currentUser.app_metadata?.provider || 'google',
+          created_at: currentUser.created_at,
+          subscription_status: 'free' as const, // 실제로는 DB에서 조회해야 함
+          fortune_count: 0,
+          favorite_fortune_types: []
+        };
+        
+        // 로컬 스토리지에 저장
+        localStorage.setItem("userProfile", JSON.stringify(userProfile));
+        setName(userProfile.name);
       }
     });
 
     return () => subscription?.unsubscribe();
   }, [router]);
 
+  // 시간대별 인사말과 아이콘
+  const getTimeGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 6) return { greeting: "새벽", icon: Moon, color: "indigo" };
+    if (hour < 12) return { greeting: "아침", icon: Sunrise, color: "orange" };
+    if (hour < 18) return { greeting: "오후", icon: Sun, color: "yellow" };
+    return { greeting: "저녁", icon: Sunset, color: "purple" };
+  };
+
+  const timeInfo = getTimeGreeting();
+
+  // 오늘의 운세 새로고침
+  const refreshFortune = async () => {
+    setIsRefreshing(true);
+    // 실제로는 API 호출이 있겠지만, 여기서는 시뮬레이션
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
+
   const today = {
     score: 85,
     keywords: ["도전", "결실", "행운"],
-    summary: "새로운 시도가 좋은 결과로 이어지는 날입니다.",
+    summary: "새로운 시도가 좋은 결과로 이어지는 날입니다. 오늘은 특히 인간관계에서 좋은 소식이 있을 것 같습니다.",
     luckyColor: "#8B5CF6",
-    luckyNumber: 7
+    luckyNumber: 7,
+    energy: 92,
+    mood: "활기참",
+    advice: "오전에 중요한 결정을 내리세요",
+    caution: "서두르지 말고 신중하게",
+    bestTime: "14:00 - 16:00",
+    compatibility: "ENFP, 물병자리",
+    elements: {
+      love: 88,
+      career: 75,
+      money: 90,
+      health: 82
+    }
   };
+
+  // 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
+  if (showAdLoading && pendingFortune) {
+    return (
+      <AdLoadingScreen
+        fortuneType={pendingFortune.path.split('/').pop() || 'fortune'}
+        fortuneTitle={pendingFortune.title}
+        onComplete={handleAdComplete}
+        onSkip={handleUpgradeToPremium}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-20">
@@ -280,62 +377,212 @@ export default function HomePage() {
         animate="visible"
         className="px-6 pt-4"
       >
-        {/* 오늘의 운세 카드 */}
+        {/* 오늘의 운세 카드 - 새롭게 디자인 */}
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div
             variants={cardVariants}
             whileHover="hover"
             whileTap={{ scale: 0.98 }}
           >
-            <Card className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-xl overflow-hidden">
-              <CardHeader className="pb-4">
+            <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-2xl overflow-hidden relative">
+              {/* 배경 패턴 */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-4 right-4 w-32 h-32 rounded-full border border-white/20"></div>
+                <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white/20"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-white/10"></div>
+              </div>
+
+              <CardHeader className="pb-4 relative z-10">
                 <div className="flex items-center justify-between">
-                  <CardTitle className={`${fontClasses.title} font-bold`}>오늘의 운세</CardTitle>
-                  <motion.div 
-                    className="bg-white/20 rounded-full px-3 py-1"
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ repeat: Infinity, duration: 3 }}
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                      className="bg-white/20 rounded-full p-2"
+                    >
+                      <timeInfo.icon className="w-6 h-6" />
+                    </motion.div>
+                    <div>
+                      <CardTitle className={`${fontClasses.title} font-bold`}>
+                        {timeInfo.greeting} 운세
+                      </CardTitle>
+                      <p className={`${fontClasses.label} text-white/80`}>
+                        {currentTime.toLocaleDateString('ko-KR', { 
+                          month: 'long', 
+                          day: 'numeric',
+                          weekday: 'short'
+                        })} • {currentTime.toLocaleTimeString('ko-KR', { 
+                          hour: '2-digit', 
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  <motion.button
+                    onClick={refreshFortune}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="bg-white/20 rounded-full p-2 hover:bg-white/30 transition-colors"
                   >
-                    <span className={`${fontClasses.label} font-semibold`}>{today.score}점</span>
-                  </motion.div>
+                    <motion.div
+                      animate={isRefreshing ? { rotate: 360 } : {}}
+                      transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0 }}
+                    >
+                      <RefreshCw className="w-5 h-5" />
+                    </motion.div>
+                  </motion.button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className={`${fontClasses.text} text-white/90 leading-relaxed`}>{today.summary}</p>
-                
-                <div className="flex flex-wrap gap-2">
-                  {today.keywords.map((keyword, index) => (
-                    <motion.div
-                      key={keyword}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.6 + index * 0.1 }}
+
+              <CardContent className="space-y-6 relative z-10">
+                {/* 메인 운세 점수와 기분 */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <motion.div 
+                      className="bg-white/20 rounded-full px-4 py-2 flex items-center gap-2"
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ repeat: Infinity, duration: 3 }}
                     >
-                      <Badge variant="secondary" className={`${fontClasses.label} bg-white/20 text-white border-white/30`}>
-                        #{keyword}
-                      </Badge>
+                      <span className={`${fontClasses.title} font-bold`}>{today.score}점</span>
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                     </motion.div>
-                  ))}
+                    <div className="bg-white/20 rounded-full px-3 py-1">
+                      <span className={`${fontClasses.text} font-medium`}>{today.mood}</span>
+                    </div>
+                  </div>
+                  <motion.div 
+                    className="flex items-center gap-1"
+                    animate={{ y: [0, -2, 0] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  >
+                    <Zap className="w-4 h-4 text-yellow-300" />
+                    <span className={`${fontClasses.label} text-yellow-300`}>에너지 {today.energy}%</span>
+                  </motion.div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-white/20">
-                  <div className="flex items-center gap-2">
-                    <motion.div 
-                      className="w-4 h-4 rounded-full border-2 border-white"
-                      style={{ backgroundColor: today.luckyColor }}
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
-                    />
-                    <span className={fontClasses.label}>행운의 색상</span>
+                {/* 운세 요약 */}
+                <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                  <p className={`${fontClasses.text} text-white/95 leading-relaxed mb-3`}>{today.summary}</p>
+                  
+                  {/* 키워드 태그 */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {today.keywords.map((keyword, index) => (
+                      <motion.div
+                        key={keyword}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                      >
+                        <Badge variant="secondary" className={`${fontClasses.label} bg-white/20 text-white border-white/30 hover:bg-white/30 transition-colors`}>
+                          #{keyword}
+                        </Badge>
+                      </motion.div>
+                    ))}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <motion.div
-                      animate={{ rotate: [0, 10, -10, 0] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    >
+
+                  {/* 조언과 주의사항 */}
+                  <div className="grid grid-cols-1 gap-2">
+                    <div className="flex items-center gap-2">
+                      <Lightbulb className="w-4 h-4 text-yellow-300" />
+                      <span className={`${fontClasses.label} text-white/90`}>{today.advice}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-orange-300" />
+                      <span className={`${fontClasses.label} text-white/90`}>{today.caution}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 운세 세부 영역 */}
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(today.elements).map(([key, value], index) => {
+                    const icons = {
+                      love: Heart,
+                      career: Briefcase,
+                      money: Coins,
+                      health: Activity
+                    };
+                    const names = {
+                      love: "연애",
+                      career: "직업",
+                      money: "금전",
+                      health: "건강"
+                    };
+                    const Icon = icons[key as keyof typeof icons];
+                    
+                    return (
+                      <motion.div
+                        key={key}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.8 + index * 0.1 }}
+                        className="bg-white/10 rounded-lg p-3 backdrop-blur-sm"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Icon className="w-4 h-4" />
+                            <span className={`${fontClasses.label} text-white/90`}>
+                              {names[key as keyof typeof names]}
+                            </span>
+                          </div>
+                          <span className={`${fontClasses.label} font-semibold text-white`}>{value}%</span>
+                        </div>
+                        <div className="mt-2 bg-white/20 rounded-full h-1.5 overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-white to-yellow-300 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${value}%` }}
+                            transition={{ delay: 1 + index * 0.1, duration: 0.8 }}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* 하단 정보 */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/20">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <motion.div 
+                        className="w-4 h-4 rounded-full border-2 border-white"
+                        style={{ backgroundColor: today.luckyColor }}
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+                      />
+                      <span className={fontClasses.label}>행운의 색</span>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <Star className="w-4 h-4" />
-                    </motion.div>
-                    <span className={fontClasses.label}>행운의 숫자: {today.luckyNumber}</span>
+                      <span className={fontClasses.label}>행운의 숫자: {today.luckyNumber}</span>
+                    </div>
+                  </div>
+                  <motion.div
+                    onClick={() => handleFortuneClick('/fortune/daily', '오늘의 상세 운세')}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-white/20 rounded-full px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-white/30 transition-colors"
+                  >
+                    <span className={`${fontClasses.label} font-medium`}>자세히 보기</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </motion.div>
+                </div>
+
+                {/* 최적 시간과 궁합 정보 */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock className="w-4 h-4" />
+                      <span className={`${fontClasses.label} text-white/90`}>최적 시간</span>
+                    </div>
+                    <span className={`${fontClasses.text} font-semibold text-white`}>{today.bestTime}</span>
+                  </div>
+                  <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Users className="w-4 h-4" />
+                      <span className={`${fontClasses.label} text-white/90`}>궁합</span>
+                    </div>
+                    <span className={`${fontClasses.text} font-semibold text-white`}>{today.compatibility}</span>
                   </div>
                 </div>
               </CardContent>

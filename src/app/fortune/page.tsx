@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
+import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
 import { 
   Heart, 
   Star,
@@ -33,7 +35,8 @@ import {
   Sunrise,
   CalendarCheck,
   Rocket,
-  Filter
+  Filter,
+  Trophy
 } from "lucide-react";
 
 // 운세 카테고리 타입 정의
@@ -452,6 +455,305 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-red-50 to-orange-50",
     badge: "주의",
     category: "lifestyle"
+  },
+  // 추가 운세들
+  {
+    id: "celebrity",
+    title: "유명인 운세",
+    description: "당신과 닮은 유명인의 운세를 확인해보세요",
+    icon: Star,
+    route: "/fortune/celebrity",
+    color: "purple",
+    gradient: "from-purple-50 to-indigo-50",
+    badge: "NEW",
+    category: "lifestyle"
+  },
+  {
+    id: "celebrity-match",
+    title: "연예인 궁합",
+    description: "최애와 나의 케미를 확인해보세요",
+    icon: Heart,
+    route: "/fortune/celebrity-match",
+    color: "rose",
+    gradient: "from-rose-50 to-pink-50",
+    badge: "인기",
+    category: "love"
+  },
+  {
+    id: "blind-date",
+    title: "소개팅운",
+    description: "새로운 만남의 가능성을 확인하세요",
+    icon: Users,
+    route: "/fortune/blind-date",
+    color: "pink",
+    gradient: "from-pink-50 to-rose-50",
+    category: "love"
+  },
+  {
+    id: "ex-lover",
+    title: "전애인 운세",
+    description: "과거 연인과의 인연을 살펴보세요",
+    icon: Heart,
+    route: "/fortune/ex-lover",
+    color: "gray",
+    gradient: "from-gray-50 to-slate-50",
+    category: "love"
+  },
+  {
+    id: "chemistry",
+    title: "케미 운세",
+    description: "상대방과의 케미를 확인해보세요",
+    icon: Sparkles,
+    route: "/fortune/chemistry",
+    color: "cyan",
+    gradient: "from-cyan-50 to-blue-50",
+    category: "love"
+  },
+  {
+    id: "hourly",
+    title: "시간별 운세",
+    description: "오늘 하루 시간대별 운세를 확인하세요",
+    icon: Calendar,
+    route: "/fortune/hourly",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    category: "lifestyle"
+  },
+  {
+    id: "today",
+    title: "오늘의 운세",
+    description: "오늘 하루의 종합 운세를 확인하세요",
+    icon: Star,
+    route: "/fortune/today",
+    color: "emerald",
+    gradient: "from-emerald-50 to-teal-50",
+    category: "lifestyle"
+  },
+  {
+    id: "zodiac",
+    title: "별자리 운세",
+    description: "12별자리로 보는 이달의 운세",
+    icon: Star,
+    route: "/fortune/zodiac",
+    color: "purple",
+    gradient: "from-purple-50 to-indigo-50",
+    category: "lifestyle"
+  },
+  {
+    id: "birth-season",
+    title: "태어난 계절 운세",
+    description: "태어난 계절로 보는 성격과 운세",
+    icon: Sparkles,
+    route: "/fortune/birth-season",
+    color: "green",
+    gradient: "from-green-50 to-emerald-50",
+    category: "lifestyle"
+  },
+  {
+    id: "personality",
+    title: "성격 운세",
+    description: "타고난 성격으로 보는 운세",
+    icon: Brain,
+    route: "/fortune/personality",
+    color: "blue",
+    gradient: "from-blue-50 to-indigo-50",
+    category: "lifestyle"
+  },
+  {
+    id: "traditional-saju",
+    title: "전통 사주",
+    description: "정통 사주팔자로 보는 운명",
+    icon: ScrollText,
+    route: "/fortune/traditional-saju",
+    color: "amber",
+    gradient: "from-amber-50 to-orange-50",
+    badge: "정통",
+    category: "traditional"
+  },
+  {
+    id: "timeline",
+    title: "인생 타임라인",
+    description: "인생의 중요한 시기를 확인하세요",
+    icon: Calendar,
+    route: "/fortune/timeline",
+    color: "teal",
+    gradient: "from-teal-50 to-cyan-50",
+    category: "lifestyle"
+  },
+  {
+    id: "wish",
+    title: "소원 운세",
+    description: "간절한 소원이 이루어질 가능성을 확인하세요",
+    icon: Sparkles,
+    route: "/fortune/wish",
+    color: "yellow",
+    gradient: "from-yellow-50 to-orange-50",
+    badge: "특별",
+    category: "lifestyle"
+  },
+  {
+    id: "network-report",
+    title: "인맥 리포트",
+    description: "주변 인맥과의 관계를 분석해보세요",
+    icon: Users,
+    route: "/fortune/network-report",
+    color: "blue",
+    gradient: "from-blue-50 to-cyan-50",
+    category: "lifestyle"
+  },
+  {
+    id: "moving-date",
+    title: "이사 날짜",
+    description: "이사하기 좋은 날을 찾아보세요",
+    icon: Home,
+    route: "/fortune/moving-date",
+    color: "green",
+    gradient: "from-green-50 to-emerald-50",
+    category: "health"
+  },
+  // 행운의 시리즈
+  {
+    id: "lucky-baseball",
+    title: "행운의 야구",
+    description: "야구를 통해 보는 당신의 운세와 승부운",
+    icon: Trophy,
+    route: "/fortune/lucky-baseball",
+    color: "orange",
+    gradient: "from-orange-50 to-amber-50",
+    badge: "스포츠",
+    category: "health"
+  },
+  {
+    id: "lucky-tennis",
+    title: "행운의 테니스",
+    description: "테니스로 만나는 행운과 건강한 경기",
+    icon: Trophy,
+    route: "/fortune/lucky-tennis",
+    color: "green",
+    gradient: "from-green-50 to-emerald-50",
+    badge: "스포츠",
+    category: "health"
+  },
+  {
+    id: "lucky-golf",
+    title: "행운의 골프",
+    description: "골프를 통해 보는 당신의 운세와 좋은 스코어",
+    icon: Trophy,
+    route: "/fortune/lucky-golf",
+    color: "emerald",
+    gradient: "from-emerald-50 to-teal-50",
+    badge: "스포츠",
+    category: "health"
+  },
+  {
+    id: "lucky-swimming",
+    title: "행운의 수영",
+    description: "수영으로 만나는 건강과 행운",
+    icon: Droplet,
+    route: "/fortune/lucky-swim",
+    color: "blue",
+    gradient: "from-blue-50 to-cyan-50",
+    badge: "스포츠",
+    category: "health"
+  },
+  {
+    id: "lucky-running",
+    title: "행운의 러닝",
+    description: "달리기로 만나는 건강과 목표 달성",
+    icon: Zap,
+    route: "/fortune/lucky-running",
+    color: "red",
+    gradient: "from-red-50 to-orange-50",
+    badge: "스포츠",
+    category: "health"
+  },
+  {
+    id: "lucky-fishing",
+    title: "행운의 낚시",
+    description: "낚시를 통해 보는 인내와 행운",
+    icon: Droplet,
+    route: "/fortune/lucky-fishing",
+    color: "teal",
+    gradient: "from-teal-50 to-cyan-50",
+    badge: "레저",
+    category: "health"
+  },
+  {
+    id: "lucky-exam",
+    title: "행운의 시험",
+    description: "시험 합격을 위한 운세와 전략",
+    icon: BookOpen,
+    route: "/fortune/lucky-exam",
+    color: "purple",
+    gradient: "from-purple-50 to-indigo-50",
+    badge: "학업",
+    category: "career"
+  },
+  {
+    id: "lucky-food",
+    title: "행운의 음식",
+    description: "오늘 먹으면 좋은 행운의 음식",
+    icon: Heart,
+    route: "/fortune/lucky-food",
+    color: "orange",
+    gradient: "from-orange-50 to-yellow-50",
+    badge: "맛집",
+    category: "lifestyle"
+  },
+  {
+    id: "lucky-items",
+    title: "행운의 아이템",
+    description: "당신에게 행운을 가져다 줄 아이템",
+    icon: Gem,
+    route: "/fortune/lucky-items",
+    color: "purple",
+    gradient: "from-purple-50 to-pink-50",
+    badge: "아이템",
+    category: "lifestyle"
+  },
+  {
+    id: "lucky-number",
+    title: "행운의 숫자",
+    description: "오늘의 행운을 부르는 숫자",
+    icon: Star,
+    route: "/fortune/lucky-number",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    badge: "숫자",
+    category: "lifestyle"
+  },
+  {
+    id: "lucky-outfit",
+    title: "행운의 옷차림",
+    description: "오늘 입으면 좋은 행운의 스타일",
+    icon: Sparkles,
+    route: "/fortune/lucky-outfit",
+    color: "pink",
+    gradient: "from-pink-50 to-rose-50",
+    badge: "패션",
+    category: "lifestyle"
+  },
+  {
+    id: "lucky-job",
+    title: "행운의 직업",
+    description: "당신에게 맞는 행운의 직업",
+    icon: Briefcase,
+    route: "/fortune/lucky-job",
+    color: "blue",
+    gradient: "from-blue-50 to-indigo-50",
+    badge: "직업",
+    category: "career"
+  },
+  {
+    id: "lucky-sidejob",
+    title: "행운의 부업",
+    description: "성공할 수 있는 부업을 찾아보세요",
+    icon: Coins,
+    route: "/fortune/lucky-sidejob",
+    color: "yellow",
+    gradient: "from-yellow-50 to-orange-50",
+    badge: "부업",
+    category: "money"
   }
 ];
 
@@ -483,6 +785,8 @@ export default function FortunePage() {
   const router = useRouter();
   const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
   const [selectedCategory, setSelectedCategory] = useState<FortuneCategoryType>('all');
+  const [showAdLoading, setShowAdLoading] = useState(false);
+  const [pendingFortune, setPendingFortune] = useState<{ route: string; title: string } | null>(null);
   
   // 최근 본 운세 추가를 위한 hook
   useFortuneStream();
@@ -521,9 +825,47 @@ export default function FortunePage() {
     ? fortuneCategories 
     : fortuneCategories.filter(category => category.category === selectedCategory);
 
-  const handleCategoryClick = (route: string) => {
-    router.push(route);
+  const handleCategoryClick = (route: string, title: string) => {
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
+    if (isPremium) {
+      // 프리미엄 사용자는 바로 이동
+      router.push(route);
+    } else {
+      // 일반 사용자는 광고 로딩 화면 표시
+      setPendingFortune({ route, title });
+      setShowAdLoading(true);
+    }
   };
+
+  // 광고 로딩 완료 후 운세 페이지로 이동
+  const handleAdComplete = () => {
+    if (pendingFortune) {
+      setShowAdLoading(false);
+      router.push(pendingFortune.route);
+      setPendingFortune(null);
+    }
+  };
+
+  // 프리미엄 업그레이드 페이지로 이동
+  const handleUpgradeToPremium = () => {
+    setShowAdLoading(false);
+    setPendingFortune(null);
+    router.push('/membership');
+  };
+
+  // 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
+  if (showAdLoading && pendingFortune) {
+    return (
+      <AdLoadingScreen
+        fortuneType={pendingFortune.route.split('/').pop() || 'fortune'}
+        fortuneTitle={pendingFortune.title}
+        onComplete={handleAdComplete}
+        onSkip={handleUpgradeToPremium}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-25 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
@@ -668,7 +1010,7 @@ export default function FortunePage() {
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => handleCategoryClick(category.route)}
+                  onClick={() => handleCategoryClick(category.route, category.title)}
                   className="cursor-pointer"
                 >
                   <Card

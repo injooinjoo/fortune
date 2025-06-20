@@ -70,18 +70,16 @@ export default function MbtiFortunePage() {
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   useEffect(() => {
-    // 로컬 스토리지에서 사용자 MBTI 불러오기
-    const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        if (profile.mbti) {
-          setSelectedMBTI(profile.mbti);
-          setCurrentFortune(WEEKLY_FORTUNE[profile.mbti as keyof typeof WEEKLY_FORTUNE] || WEEKLY_FORTUNE.ENFP);
-        }
-      } catch (error) {
-        console.error("Failed to parse user profile:", error);
+    // 새로운 사용자 스토리지에서 MBTI 불러오기
+    try {
+      const { getUserInfo } = require("@/lib/user-storage");
+      const userInfo = getUserInfo();
+      if (userInfo.mbti) {
+        setSelectedMBTI(userInfo.mbti);
+        setCurrentFortune(WEEKLY_FORTUNE[userInfo.mbti as keyof typeof WEEKLY_FORTUNE] || WEEKLY_FORTUNE.ENFP);
       }
+    } catch (error) {
+      console.error("Failed to load user MBTI:", error);
     }
   }, []);
 
@@ -89,16 +87,12 @@ export default function MbtiFortunePage() {
     setSelectedMBTI(mbti);
     setCurrentFortune(WEEKLY_FORTUNE[mbti as keyof typeof WEEKLY_FORTUNE] || WEEKLY_FORTUNE.ENFP);
     
-    // 사용자 프로필에 MBTI 저장
-    const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        profile.mbti = mbti;
-        localStorage.setItem("userProfile", JSON.stringify(profile));
-      } catch (error) {
-        console.error("Failed to save MBTI:", error);
-      }
+    // 새로운 사용자 스토리지에 MBTI 저장
+    try {
+      const { saveUserInfo } = require("@/lib/user-storage");
+      saveUserInfo({ mbti });
+    } catch (error) {
+      console.error("Failed to save MBTI:", error);
     }
   };
 
