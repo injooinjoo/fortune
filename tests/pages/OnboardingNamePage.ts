@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 
 export class OnboardingNamePage {
   readonly page: Page;
@@ -13,13 +13,18 @@ export class OnboardingNamePage {
 
   async goto() {
     await this.page.goto('/');
+    await this.page.waitForLoadState('networkidle');
   }
 
   async enterName(name: string) {
+    await expect(this.nameInput).toBeVisible();
     await this.nameInput.fill(name);
   }
 
   async submitName() {
+    await expect(this.nextButton).toBeEnabled();
     await this.nextButton.click();
+    // 네트워크 요청이 끝날 때까지 대기
+    await this.page.waitForLoadState('networkidle');
   }
 }
