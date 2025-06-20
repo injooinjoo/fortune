@@ -15,8 +15,14 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
     '/home',
     '/fortune',
     '/physiognomy',
+    '/premium',
     '/interactive',
-    '/profile'
+    '/profile',
+    '/feedback',
+    '/about',
+    '/support',
+    '/policy',
+    '/membership'
   ].some(path => pathname?.startsWith(path));
 
   // 랜딩 페이지나 인증 페이지에서는 네비게이션 숨김

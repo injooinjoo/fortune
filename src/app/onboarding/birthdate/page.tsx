@@ -1,20 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar, Star } from "lucide-react";
+import { Calendar, Star, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  getYearOptions, 
+  getMonthOptions, 
+  getDayOptions, 
+  formatKoreanDate,
+  TIME_PERIODS,
+  getCurrentTimePeriod
+} from "@/lib/utils";
 
 export default function BirthdatePage() {
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [birthDay, setBirthDay] = useState("");
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [birthTimePeriod, setBirthTimePeriod] = useState("");
+  const [showTimeSelection, setShowTimeSelection] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  // 년월이 변경될 때 일 옵션 업데이트
+  const dayOptions = getDayOptions(
+    birthYear ? parseInt(birthYear) : undefined,
+    birthMonth ? parseInt(birthMonth) : undefined
+  );
+
+  // 현재 시진을 기본값으로 설정
+  useEffect(() => {
+    if (!birthTimePeriod) {
+      setBirthTimePeriod(getCurrentTimePeriod());
+    }
+  }, [birthTimePeriod]);
 
   const handleNext = () => {
     if (!birthYear || !birthMonth || !birthDay) {
@@ -26,35 +48,19 @@ export default function BirthdatePage() {
       return;
     }
 
-    // 생년월일을 로컬 스토리지에 저장
+    // 생년월일과 시진을 로컬 스토리지에 저장
     localStorage.setItem("birthYear", birthYear);
     localStorage.setItem("birthMonth", birthMonth);
     localStorage.setItem("birthDay", birthDay);
+    if (birthTimePeriod) {
+      localStorage.setItem("birthTimePeriod", birthTimePeriod);
+    }
     
     router.push("/onboarding/mbti");
   };
 
-  const handleDaySelect = (day: string) => {
-    setBirthDay(day);
-    // 달력을 바로 닫지 않고 확인 버튼 클릭까지 기다림
-  };
-
-  const handleCalendarConfirm = () => {
-    setShowCalendar(false);
-  };
-
-  const handleCalendarToggle = () => {
-    setShowCalendar(!showCalendar);
-  };
-
-  // 년도 옵션 생성 (1950-2024)
-  const yearOptions = Array.from({ length: 75 }, (_, i) => 2024 - i);
-  
-  // 월 옵션 생성 (1-12)
-  const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-  
-  // 일 옵션 생성 (1-31)
-  const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
+  const yearOptions = getYearOptions();
+  const monthOptions = getMonthOptions();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center p-4">
@@ -71,131 +77,107 @@ export default function BirthdatePage() {
           </CardDescription>
         </CardHeader>
 
-        <div className="px-6 pb-6 space-y-6">
-          <div className="space-y-4">
-            {/* 년도 선택 */}
-            <div>
-              <label htmlFor="birth-year" className="block text-sm font-medium text-gray-700 mb-2">
-                년
-              </label>
-              <select 
-                id="birth-year"
-                data-testid="birth-year-select"
-                aria-label="생년 선택"
-                value={birthYear} 
-                onChange={(e) => setBirthYear(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">년도 선택</option>
+        <CardContent className="space-y-6">
+          {/* 년도 선택 */}
+          <div>
+            <label htmlFor="birth-year" className="block text-sm font-medium text-gray-700 mb-2">
+              년도
+            </label>
+            <Select value={birthYear} onValueChange={setBirthYear}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="년도 선택" />
+              </SelectTrigger>
+              <SelectContent>
                 {yearOptions.map((year) => (
-                  <option key={year} value={year.toString()}>
-                    {year}
-                  </option>
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}년
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* 월 선택 */}
-            <div>
-              <label htmlFor="birth-month" className="block text-sm font-medium text-gray-700 mb-2">
-                월
-              </label>
-              <select 
-                id="birth-month"
-                data-testid="birth-month-select"
-                aria-label="생월 선택"
-                value={birthMonth} 
-                onChange={(e) => setBirthMonth(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">월 선택</option>
+          {/* 월 선택 */}
+          <div>
+            <label htmlFor="birth-month" className="block text-sm font-medium text-gray-700 mb-2">
+              월
+            </label>
+            <Select value={birthMonth} onValueChange={setBirthMonth}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="월 선택" />
+              </SelectTrigger>
+              <SelectContent>
                 {monthOptions.map((month) => (
-                  <option key={month} value={month.toString()}>
-                    {month}
-                  </option>
+                  <SelectItem key={month} value={month.toString()}>
+                    {month}월
+                  </SelectItem>
                 ))}
-              </select>
-            </div>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* 일 선택 */}
-            <div>
-              <label htmlFor="birth-day" className="block text-sm font-medium text-gray-700 mb-2">
-                일
-              </label>
-              <select 
-                id="birth-day"
-                data-testid="birth-day-select"
-                aria-label="생일 선택"
-                value={birthDay} 
-                onChange={(e) => setBirthDay(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-              >
-                <option value="">일 선택</option>
+          {/* 일 선택 */}
+          <div>
+            <label htmlFor="birth-day" className="block text-sm font-medium text-gray-700 mb-2">
+              일
+            </label>
+            <Select value={birthDay} onValueChange={setBirthDay}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="일 선택" />
+              </SelectTrigger>
+              <SelectContent>
                 {dayOptions.map((day) => (
-                  <option key={day} value={day.toString()}>
-                    {day}
-                  </option>
+                  <SelectItem key={day} value={day.toString()}>
+                    {day}일
+                  </SelectItem>
                 ))}
-              </select>
-              
-              {/* 캘린더 형태 입력 (테스트용) */}
-              <div className="mt-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start text-left font-normal"
-                  onClick={handleCalendarToggle}
-                  role="button"
-                >
-                  생년월일 입력
-                </Button>
-                
-                {/* 간단한 달력 그리드 */}
-                {showCalendar && (
-                  <div className="mt-3 p-4 border rounded-lg bg-white">
-                    <div className="text-sm font-medium mb-2">일자 선택</div>
-                    <div className="grid grid-cols-7 gap-2 mb-3">
-                      {dayOptions.map((day) => (
-                        <Button
-                          key={day}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDaySelect(day.toString())}
-                          className="aspect-square p-0 text-xs"
-                        >
-                          {day}
-                        </Button>
-                      ))}
-                    </div>
-                    <div className="flex justify-end">
-                      <Button onClick={handleCalendarConfirm} size="sm">
-                        확인
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* 시진 선택 (선택사항) */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-4 h-4 text-gray-600" />
+              <label className="block text-sm font-medium text-gray-700">
+                태어난 시진 (선택사항)
+              </label>
             </div>
+            <p className="text-xs text-gray-500 mb-3">
+              더 정확한 사주 풀이를 위해 태어난 시간대를 선택해주세요
+            </p>
+            <Select value={birthTimePeriod} onValueChange={setBirthTimePeriod}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="시진 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                {TIME_PERIODS.map((period) => (
+                  <SelectItem key={period.value} value={period.value}>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{period.label}</span>
+                      <span className="text-xs text-gray-500">{period.description}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* 선택된 생년월일 표시 */}
-          {(birthYear && birthMonth && birthDay) || birthDay ? (
-            <div 
-              data-testid="birthdate-display"
-              className="p-4 bg-purple-50 rounded-lg border border-purple-200"
-            >
+          {birthYear && birthMonth && birthDay && (
+            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
               <div className="text-center">
-                {birthYear && birthMonth && birthDay ? (
-                  <p className="font-semibold text-purple-800">
-                    {birthYear}년 {birthMonth}월 {birthDay}일
+                <p className="font-semibold text-purple-800">
+                  {formatKoreanDate(birthYear, birthMonth, birthDay)}
+                </p>
+                {birthTimePeriod && (
+                  <p className="text-sm text-purple-600 mt-1">
+                    {TIME_PERIODS.find(p => p.value === birthTimePeriod)?.label}
                   </p>
-                ) : birthDay ? (
-                  <p className="font-semibold text-purple-800">
-                    {birthDay}일 선택됨
-                  </p>
-                ) : null}
+                )}
               </div>
             </div>
-          ) : null}
+          )}
 
           <div className="space-y-3">
             <Button 
@@ -214,7 +196,7 @@ export default function BirthdatePage() {
               이전으로
             </Button>
           </div>
-        </div>
+        </CardContent>
       </Card>
     </div>
   );

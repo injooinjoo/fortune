@@ -724,11 +724,10 @@ export default function LuckyExamPage() {
                           </Badge>
                           <div>
                             <p className="font-semibold text-gray-800">
-                              {new Date(dateInfo.date).toLocaleDateString('ko-KR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
+                              {(() => {
+                                const date = new Date(dateInfo.date);
+                                return `${String(date.getFullYear()).padStart(4, '0')}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`;
+                              })()}
                             </p>
                             <p className="text-sm text-gray-600">{dateInfo.day_of_week}요일</p>
                           </div>

@@ -80,7 +80,10 @@ const MONTHLY_FORTUNE = {
 export default function ZodiacFortunePage() {
   const [selectedZodiac, setSelectedZodiac] = useState<string>("");
   const [currentFortune, setCurrentFortune] = useState<any>(null);
-  const [currentMonth] = useState(new Date().toLocaleDateString('ko-KR', { month: 'long' }));
+  const [currentMonth] = useState(() => {
+    const now = new Date();
+    return `${String(now.getFullYear()).padStart(4, '0')}년 ${String(now.getMonth() + 1).padStart(2, '0')}월`;
+  });
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   useEffect(() => {

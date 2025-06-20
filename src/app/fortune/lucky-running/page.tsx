@@ -100,7 +100,7 @@ const calculateBiorhythm = (birthDate: Date, targetDate: Date) => {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  return `${String(date.getFullYear()).padStart(4, '0')}년 ${String(date.getMonth() + 1).padStart(2, '0')}월 ${String(date.getDate()).padStart(2, '0')}일`;
 };
 
 export default function LuckyRunningPage() {

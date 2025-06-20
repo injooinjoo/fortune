@@ -34,6 +34,15 @@ export default function AppHeader({
       router.push('/fortune');
     } else if (pathname?.startsWith('/interactive/')) {
       router.push('/home');
+    } else if (pathname?.startsWith('/profile/')) {
+      // 프로필 서브 페이지들은 프로필 메인으로 이동
+      router.push('/profile');
+    } else if (pathname?.startsWith('/app/')) {
+      // 앱 관련 페이지들은 홈으로 이동
+      router.push('/home');
+    } else if (pathname === '/feedback' || pathname === '/about' || pathname === '/support' || pathname === '/policy' || pathname === '/membership') {
+      // 메인 서비스 페이지들은 홈으로 이동
+      router.push('/home');
     } else {
       router.back(); // 기본적으로는 이전 페이지
     }
@@ -73,7 +82,7 @@ export default function AppHeader({
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm"
+      className="sticky top-0 z-50 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm"
     >
       <div className="flex items-center justify-between px-4 py-3 h-14">
         {/* 왼쪽: 뒤로가기 버튼 */}
@@ -87,9 +96,9 @@ export default function AppHeader({
                 variant="ghost" 
                 size="sm" 
                 onClick={handleBack}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
+                <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
               </Button>
             </motion.div>
           )}
@@ -102,7 +111,7 @@ export default function AppHeader({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <h1 className="text-lg font-bold text-gray-900 truncate px-4">
+          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate px-4">
             {title}
           </h1>
         </motion.div>
@@ -119,9 +128,9 @@ export default function AppHeader({
                 variant="ghost" 
                 size="sm"
                 onClick={() => setShowFontMenu(!showFontMenu)}
-                className="p-2 hover:bg-gray-100 rounded-full"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
               >
-                <Type className="w-4 h-4 text-gray-700" />
+                <Type className="w-4 h-4 text-gray-700 dark:text-gray-300" />
               </Button>
             </motion.div>
 
@@ -131,17 +140,18 @@ export default function AppHeader({
                 initial={{ opacity: 0, scale: 0.95, y: -5 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[80px] z-10"
+                className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1 min-w-[80px] z-[100]"
               >
                 {(['small', 'medium', 'large'] as const).map((size) => (
                   <button
                     key={size}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       onFontSizeChange?.(size);
                       setShowFontMenu(false);
                     }}
-                    className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center gap-2 ${
-                      currentFontSize === size ? 'bg-purple-50 text-purple-600' : 'text-gray-700'
+                    className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors ${
+                      currentFontSize === size ? 'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300'
                     }`}
                   >
                     <TypeIcon className={`${
@@ -164,9 +174,9 @@ export default function AppHeader({
               variant="ghost" 
               size="sm"
               onClick={handleShare}
-              className="p-2 hover:bg-gray-100 rounded-full"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
             >
-              <Share2 className="w-4 h-4 text-gray-700" />
+              <Share2 className="w-4 h-4 text-gray-700 dark:text-gray-300" />
             </Button>
           </motion.div>
         </div>
@@ -175,7 +185,7 @@ export default function AppHeader({
       {/* 글씨크기 메뉴 배경 클릭시 닫기 */}
       {showFontMenu && (
         <div 
-          className="fixed inset-0 z-0" 
+          className="fixed inset-0 z-[90]" 
           onClick={() => setShowFontMenu(false)}
         />
       )}

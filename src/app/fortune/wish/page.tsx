@@ -409,7 +409,11 @@ export default function WishPage() {
                         </div>
                         <p className="text-gray-700 mb-2">{wish.content}</p>
                         <div className="text-xs text-gray-500">
-                          {new Date(wish.createdAt).toLocaleDateString('ko-KR')}
+                          {new Date(wish.createdAt).toLocaleDateString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                          }).replace(/\./g, '').replace(/\s/g, '').replace(/(\d{4})(\d{2})(\d{2})/, '$1년 $2월 $3일')}
                         </div>
                       </div>
                     );

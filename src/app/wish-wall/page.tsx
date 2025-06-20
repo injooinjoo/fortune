@@ -56,7 +56,7 @@ export default function WishWallPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 pb-24">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-24">
       <AppHeader title="소원담벼락" />
       <div className="container mx-auto px-4 pt-6 space-y-6">
         <motion.div
@@ -108,9 +108,9 @@ export default function WishWallPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+            <Card className="shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm dark:border-gray-700">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 dark:text-gray-100">
                   <Heart className="h-5 w-5 text-red-500" />
                   다른 사람들의 소원
                 </CardTitle>
@@ -118,10 +118,14 @@ export default function WishWallPage() {
               <CardContent>
                 <div className="space-y-4">
                   {wishes.map((wish) => (
-                    <div key={wish.id} className="p-4 border border-gray-200 rounded-lg bg-white">
-                      <p className="text-gray-700 mb-2 whitespace-pre-wrap">{wish.text}</p>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <span>{new Date(wish.createdAt).toLocaleString('ko-KR')}</span>
+                    <div key={wish.id} className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
+                      <p className="text-gray-700 dark:text-gray-300 mb-2 whitespace-pre-wrap">{wish.text}</p>
+                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                        <span>{new Date(wish.createdAt).toLocaleDateString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit', 
+                          day: '2-digit'
+                        }).replace(/\./g, '').replace(/\s/g, '').replace(/(\d{4})(\d{2})(\d{2})/, '$1년 $2월 $3일')}</span>
                         <button
                           type="button"
                           onClick={() => handleLike(wish.id)}

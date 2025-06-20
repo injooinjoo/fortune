@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import AppHeader from "@/components/AppHeader";
+import { useFortuneStream } from "@/hooks/use-fortune-stream";
+import { useDailyFortune } from "@/hooks/use-daily-fortune";
+import { FortuneResult } from "@/lib/schemas";
 import { 
   Mountain, 
   Star, 
@@ -23,12 +27,28 @@ import {
   Shield,
   CloudRain,
   Compass,
-  TreePine
+  TreePine,
+  RotateCcw,
+  CheckCircle,
+  ArrowLeft,
+  MapPin,
+  Sunrise
 } from "lucide-react";
+import { 
+  getYearOptions, 
+  getMonthOptions, 
+  getDayOptions, 
+  formatKoreanDate,
+  koreanToIsoDate,
+  TIME_PERIODS
+} from "@/lib/utils";
 
 interface HikingInfo {
   name: string;
-  birth_date: string;
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  birthTimePeriod: string;
   hiking_level: string;
   current_goal: string;
 }
@@ -92,15 +112,101 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyHikingPage() {
-  const [step, setStep] = useState<'input' | 'result'>('input');
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState<'form' | 'result'>('form');
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [isGenerating, setIsGenerating] = useState(false);
   const [formData, setFormData] = useState<HikingInfo>({
     name: '',
-    birth_date: '',
+    birthYear: '',
+    birthMonth: '',
+    birthDay: '',
+    birthTimePeriod: '',
     hiking_level: '',
     current_goal: ''
   });
   const [result, setResult] = useState<HikingFortune | null>(null);
+  
+  // 최근 본 운세 추가를 위한 hook
+  useFortuneStream();
+  
+  // 데일리 운세 관리를 위한 hook
+  const {
+    todayFortune,
+    isLoading: isDailyLoading,
+    isGenerating: isDailyGenerating,
+    hasTodayFortune,
+    saveFortune,
+    regenerateFortune,
+    canRegenerate
+  } = useDailyFortune({ fortuneType: 'lucky-hiking' });
+
+  // 기존 운세가 있으면 자동으로 복원
+  useEffect(() => {
+    if (hasTodayFortune && todayFortune && step === 'form') {
+      const savedData = todayFortune.fortune_data as any;
+      const metadata = savedData.metadata || {};
+      
+      // 저장된 폼 데이터 복원
+      setFormData({
+        name: savedData.user_info?.name || '',
+        birthYear: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[0] : '',
+        birthMonth: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[1] : '',
+        birthDay: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[2] : '',
+        birthTimePeriod: metadata.birth_time_period || '',
+        hiking_level: metadata.hiking_level || '',
+        current_goal: metadata.current_goal || ''
+      });
+      
+      // 운세 결과 복원
+      if (savedData.fortune_scores) {
+        const restoredResult: HikingFortune = {
+          overall_luck: savedData.fortune_scores.overall_luck,
+          summit_luck: savedData.fortune_scores.summit_luck,
+          weather_luck: savedData.fortune_scores.weather_luck,
+          safety_luck: savedData.fortune_scores.safety_luck,
+          endurance_luck: savedData.fortune_scores.endurance_luck,
+          lucky_trail: savedData.lucky_items?.lucky_trail || '',
+          lucky_mountain: savedData.lucky_items?.lucky_mountain || '',
+          lucky_hiking_time: savedData.lucky_items?.lucky_hiking_time || '',
+          lucky_weather: savedData.lucky_items?.lucky_weather || ''
+        };
+        setResult(restoredResult);
+        setStep('result');
+      }
+    }
+  }, [hasTodayFortune, todayFortune, step]);
+
+  // 폰트 크기 클래스 매핑
+  const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
+    switch (size) {
+      case 'small':
+        return {
+          text: 'text-sm',
+          title: 'text-lg',
+          heading: 'text-xl',
+          score: 'text-4xl',
+          label: 'text-xs'
+        };
+      case 'large':
+        return {
+          text: 'text-lg',
+          title: 'text-2xl',
+          heading: 'text-3xl',
+          score: 'text-8xl',
+          label: 'text-base'
+        };
+      default: // medium
+        return {
+          text: 'text-base',
+          title: 'text-xl',
+          heading: 'text-2xl',
+          score: 'text-6xl',
+          label: 'text-sm'
+        };
+    }
+  };
+
+  const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeHikingFortune = async (): Promise<HikingFortune> => {
     const baseScore = Math.floor(Math.random() * 25) + 60;
@@ -118,41 +224,104 @@ export default function LuckyHikingPage() {
     };
   };
 
+  const yearOptions = getYearOptions();
+  const monthOptions = getMonthOptions();
+  const dayOptions = getDayOptions(
+    formData.birthYear ? parseInt(formData.birthYear) : undefined,
+    formData.birthMonth ? parseInt(formData.birthMonth) : undefined
+  );
+
   const handleSubmit = async () => {
-    if (!formData.name || !formData.birth_date || !formData.hiking_level) {
-      alert('필수 정보를 모두 입력해주세요.');
+    if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
+      alert('이름과 생년월일을 모두 입력해주세요.');
       return;
     }
 
-    setLoading(true);
-    
+    setIsGenerating(true);
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      const analysisResult = await analyzeHikingFortune();
-      setResult(analysisResult);
+      // 한국식 날짜를 ISO 형식으로 변환
+      const birthDate = koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay);
+      
+      if (hasTodayFortune && todayFortune) {
+        // 기존 운세 데이터를 HikingFortune 형식으로 변환
+        const savedData = todayFortune.fortune_data as any;
+        const restoredResult: HikingFortune = {
+          overall_luck: savedData.fortune_scores?.overall_luck || 0,
+          summit_luck: savedData.fortune_scores?.summit_luck || 0,
+          weather_luck: savedData.fortune_scores?.weather_luck || 0,
+          safety_luck: savedData.fortune_scores?.safety_luck || 0,
+          endurance_luck: savedData.fortune_scores?.endurance_luck || 0,
+          lucky_trail: savedData.lucky_items?.lucky_trail || '',
+          lucky_mountain: savedData.lucky_items?.lucky_mountain || '',
+          lucky_hiking_time: savedData.lucky_items?.lucky_hiking_time || '',
+          lucky_weather: savedData.lucky_items?.lucky_weather || ''
+        };
+        setResult(restoredResult);
+      } else {
+        const fortuneResult = await analyzeHikingFortune();
+        setResult(fortuneResult);
+        
+        // FortuneResult 형식으로 변환하여 저장
+        const fortuneData: FortuneResult = {
+          user_info: {
+            name: formData.name,
+            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+          },
+          fortune_scores: {
+            overall_luck: fortuneResult.overall_luck,
+            summit_luck: fortuneResult.summit_luck,
+            weather_luck: fortuneResult.weather_luck,
+            safety_luck: fortuneResult.safety_luck,
+            endurance_luck: fortuneResult.endurance_luck,
+          },
+          lucky_items: {
+            lucky_trail: fortuneResult.lucky_trail,
+            lucky_mountain: fortuneResult.lucky_mountain,
+            lucky_hiking_time: fortuneResult.lucky_hiking_time,
+            lucky_weather: fortuneResult.lucky_weather,
+          },
+          metadata: {
+            hiking_level: formData.hiking_level,
+            current_goal: formData.current_goal,
+            birth_time_period: formData.birthTimePeriod,
+          }
+        };
+        
+        // 오늘의 운세로 저장
+        await saveFortune(fortuneData);
+      }
+      
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error('등산 운세 분석 실패:', error);
+      alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
     }
   };
 
   const handleReset = () => {
-    setStep('input');
+    setStep('form');
     setResult(null);
     setFormData({
       name: '',
-      birth_date: '',
+      birthYear: '',
+      birthMonth: '',
+      birthDay: '',
+      birthTimePeriod: '',
       hiking_level: '',
       current_goal: ''
     });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-25 to-teal-50 pb-32">
-      <AppHeader title="행운의 등산" />
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900 dark:to-gray-800 pb-20">
+      <AppHeader 
+        title="행운의 등산" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       
       <motion.div
         variants={containerVariants}
@@ -161,9 +330,9 @@ export default function LuckyHikingPage() {
         className="px-6 pt-6"
       >
         <AnimatePresence mode="wait">
-          {step === 'input' && (
+          {step === 'form' && (
             <motion.div
-              key="input"
+              key="form"
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 50 }}
@@ -178,58 +347,149 @@ export default function LuckyHikingPage() {
                 >
                   <Mountain className="w-10 h-10 text-white" />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">행운의 등산</h1>
-                <p className="text-gray-600">등산을 통해 보는 당신의 운세와 안전한 완주의 비결</p>
+                <h1 className={`${fontClasses.heading} font-bold text-gray-900 dark:text-gray-100 mb-2`}>행운의 등산</h1>
+                <p className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>등산을 통해 보는 당신의 운세와 안전한 완주의 비결</p>
               </motion.div>
 
               {/* 기본 정보 */}
               <motion.div variants={itemVariants}>
-                <Card className="border-green-200">
+                <Card className="border-green-200 dark:border-green-700 dark:bg-gray-800">
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-green-700">
-                      <Users className="w-5 h-5" />
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-green-700 dark:text-green-400`}>
+                      <Mountain className="w-5 h-5" />
                       기본 정보
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name">이름</Label>
-                        <Input
-                          id="name"
-                          placeholder="이름"
-                          value={formData.name}
-                          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="birth_date">생년월일</Label>
-                        <Input
-                          id="birth_date"
-                          type="date"
-                          value={formData.birth_date}
-                          onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
-                          className="mt-1"
-                        />
-                      </div>
+                    <div>
+                      <Label htmlFor="name" className={`${fontClasses.text} dark:text-gray-300`}>이름</Label>
+                      <Input
+                        id="name"
+                        placeholder="이름"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        className={`${fontClasses.text} mt-1`}
+                      />
                     </div>
+
+                    {/* 년도 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생년</Label>
+                      <Select 
+                        value={formData.birthYear} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthYear: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="년도 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {yearOptions.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}년
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 월 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생월</Label>
+                      <Select 
+                        value={formData.birthMonth} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthMonth: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="월 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {monthOptions.map((month) => (
+                            <SelectItem key={month} value={month.toString()}>
+                              {month}월
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 일 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생일</Label>
+                      <Select 
+                        value={formData.birthDay} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthDay: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="일 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {dayOptions.map((day) => (
+                            <SelectItem key={day} value={day.toString()}>
+                              {day}일
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 시진 선택 (선택사항) */}
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <Label className={`${fontClasses.text} dark:text-gray-300`}>태어난 시진 (선택사항)</Label>
+                      </div>
+                      <p className={`${fontClasses.label} text-gray-500 dark:text-gray-400 mb-2`}>
+                        더 정확한 등산 운세를 위해 태어난 시간대를 선택해주세요
+                      </p>
+                      <Select 
+                        value={formData.birthTimePeriod} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthTimePeriod: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="시진 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_PERIODS.map((period) => (
+                            <SelectItem key={period.value} value={period.value}>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{period.label}</span>
+                                <span className="text-xs text-gray-500">{period.description}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 선택된 생년월일 표시 */}
+                    {formData.birthYear && formData.birthMonth && formData.birthDay && (
+                      <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                        <p className={`${fontClasses.text} font-medium text-green-800 dark:text-green-300 text-center`}>
+                          {formatKoreanDate(formData.birthYear, formData.birthMonth, formData.birthDay)}
+                        </p>
+                        {formData.birthTimePeriod && (
+                          <p className={`${fontClasses.label} text-green-600 dark:text-green-400 text-center mt-1`}>
+                            {TIME_PERIODS.find(p => p.value === formData.birthTimePeriod)?.label}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
 
               {/* 등산 레벨 */}
               <motion.div variants={itemVariants}>
-                <Card className="border-emerald-200">
+                <Card className="border-emerald-200 dark:border-emerald-700 dark:bg-gray-800">
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-emerald-700">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-emerald-700 dark:text-emerald-400`}>
                       <Mountain className="w-5 h-5" />
                       등산 레벨
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label>현재 등산 수준</Label>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>현재 등산 수준</Label>
                       <RadioGroup 
                         value={formData.hiking_level} 
                         onValueChange={(value) => setFormData(prev => ({ ...prev, hiking_level: value }))}
@@ -238,7 +498,7 @@ export default function LuckyHikingPage() {
                         {hikingLevels.map((level) => (
                           <div key={level} className="flex items-center space-x-2">
                             <RadioGroupItem value={level} id={level} />
-                            <Label htmlFor={level} className="text-sm">{level}</Label>
+                            <Label htmlFor={level} className={`${fontClasses.label} dark:text-gray-300`}>{level}</Label>
                           </div>
                         ))}
                       </RadioGroup>
@@ -249,22 +509,22 @@ export default function LuckyHikingPage() {
 
               {/* 목표 */}
               <motion.div variants={itemVariants}>
-                <Card className="border-green-200">
+                <Card className="border-green-200 dark:border-green-700 dark:bg-gray-800">
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-green-700">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-green-700 dark:text-green-400`}>
                       <Star className="w-5 h-5" />
                       등산 목표
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="current_goal">현재 등산 목표</Label>
+                      <Label htmlFor="current_goal" className={`${fontClasses.text} dark:text-gray-300`}>현재 등산 목표</Label>
                       <Textarea
                         id="current_goal"
                         placeholder="예: 백두대간 완주, 한라산 등반, 암벽등반 도전 등..."
                         value={formData.current_goal}
                         onChange={(e) => setFormData(prev => ({ ...prev, current_goal: e.target.value }))}
-                        className="mt-1 min-h-[60px]"
+                        className={`${fontClasses.text} mt-1 min-h-[60px]`}
                       />
                     </div>
                   </CardContent>
@@ -275,22 +535,31 @@ export default function LuckyHikingPage() {
               <motion.div variants={itemVariants} className="pt-4">
                 <Button
                   onClick={handleSubmit}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-6 text-lg font-semibold"
+                  disabled={isGenerating || isDailyGenerating}
+                  className={`w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-6 ${fontClasses.title} font-semibold`}
                 >
-                  {loading ? (
+                  {(isGenerating || isDailyGenerating) ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{ repeat: Infinity, duration: 1 }}
                       className="flex items-center gap-2"
                     >
                       <Shuffle className="w-5 h-5" />
-                      분석 중...
+                      {hasTodayFortune ? '불러오는 중...' : '분석 중...'}
                     </motion.div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <Mountain className="w-5 h-5" />
-                      등산 운세 분석하기
+                      {hasTodayFortune ? (
+                        <>
+                          <CheckCircle className="w-5 h-5" />
+                          오늘의 등산 운세 보기
+                        </>
+                      ) : (
+                        <>
+                          <Mountain className="w-5 h-5" />
+                          등산 운세 분석하기
+                        </>
+                      )}
                     </div>
                   )}
                 </Button>
@@ -310,19 +579,19 @@ export default function LuckyHikingPage() {
               <motion.div variants={itemVariants}>
                 <Card className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
                   <CardContent className="text-center py-8">
-                    <div className="flex items-center justify-center gap-2 mb-4">
+                    <div className={`flex items-center justify-center gap-2 mb-4`}>
                       <Mountain className="w-6 h-6" />
-                      <span className="text-xl font-medium">{formData.name}님의 등산 운세</span>
+                      <span className={`${fontClasses.title} font-medium`}>{formData.name}님의 등산 운세</span>
                     </div>
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.3, type: "spring" }}
-                      className="text-6xl font-bold mb-2"
+                      className={`${fontClasses.score} font-bold mb-2`}
                     >
                       {result.overall_luck}점
                     </motion.div>
-                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                    <Badge variant="secondary" className={`${fontClasses.text} bg-white/20 text-white border-white/30`}>
                       {getLuckText(result.overall_luck)}
                     </Badge>
                   </CardContent>
@@ -331,9 +600,9 @@ export default function LuckyHikingPage() {
 
               {/* 세부 운세 */}
               <motion.div variants={itemVariants}>
-                <Card>
+                <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-green-600">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-green-600 dark:text-green-400`}>
                       <BarChart3 className="w-5 h-5" />
                       세부 등산 운세
                     </CardTitle>
@@ -353,20 +622,20 @@ export default function LuckyHikingPage() {
                         className="space-y-2"
                       >
                         <div className="flex items-center gap-3">
-                          <item.icon className="w-5 h-5 text-gray-600" />
+                          <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                           <div className="flex-1">
                             <div className="flex justify-between items-center mb-1">
                               <div>
-                                <span className="font-medium">{item.label}</span>
-                                <p className="text-xs text-gray-500">{item.desc}</p>
+                                <span className={`${fontClasses.text} font-medium dark:text-gray-200`}>{item.label}</span>
+                                <p className={`${fontClasses.label} text-gray-500 dark:text-gray-400`}>{item.desc}</p>
                               </div>
-                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getLuckColor(item.score)}`}>
+                              <span className={`px-3 py-1 rounded-full ${fontClasses.label} font-medium ${getLuckColor(item.score)}`}>
                                 {item.score}점
                               </span>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                               <motion.div
-                                className="bg-green-500 h-2 rounded-full"
+                                className="bg-green-500 dark:bg-green-400 h-2 rounded-full"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${item.score}%` }}
                                 transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
@@ -382,56 +651,116 @@ export default function LuckyHikingPage() {
 
               {/* 행운의 요소들 */}
               <motion.div variants={itemVariants}>
-                <Card>
+                <Card className="dark:bg-gray-800 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-purple-600">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-purple-600 dark:text-purple-400`}>
                       <Crown className="w-5 h-5" />
                       행운의 요소들
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-purple-50 rounded-lg">
-                        <h4 className="font-medium text-purple-800 mb-2 flex items-center gap-2">
+                      <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+                        <h4 className={`${fontClasses.text} font-medium text-purple-800 dark:text-purple-300 mb-2 flex items-center gap-2`}>
                           <Compass className="w-4 h-4" />
                           행운의 등산로
                         </h4>
-                        <p className="text-lg font-semibold text-purple-700">{result.lucky_trail}</p>
+                        <p className={`${fontClasses.title} font-semibold text-purple-700 dark:text-purple-400`}>{result.lucky_trail}</p>
                       </div>
-                      <div className="p-4 bg-indigo-50 rounded-lg">
-                        <h4 className="font-medium text-indigo-800 mb-2 flex items-center gap-2">
+                      <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                        <h4 className={`${fontClasses.text} font-medium text-indigo-800 dark:text-indigo-300 mb-2 flex items-center gap-2`}>
                           <Mountain className="w-4 h-4" />
                           행운의 산
                         </h4>
-                        <p className="text-lg font-semibold text-indigo-700">{result.lucky_mountain}</p>
+                        <p className={`${fontClasses.title} font-semibold text-indigo-700 dark:text-indigo-400`}>{result.lucky_mountain}</p>
                       </div>
-                      <div className="p-4 bg-teal-50 rounded-lg">
-                        <h4 className="font-medium text-teal-800 mb-2 flex items-center gap-2">
+                      <div className="p-4 bg-teal-50 dark:bg-teal-900/30 rounded-lg">
+                        <h4 className={`${fontClasses.text} font-medium text-teal-800 dark:text-teal-300 mb-2 flex items-center gap-2`}>
                           <Clock className="w-4 h-4" />
                           행운의 출발 시간
                         </h4>
-                        <p className="text-lg font-semibold text-teal-700">{result.lucky_hiking_time}</p>
+                        <p className={`${fontClasses.title} font-semibold text-teal-700 dark:text-teal-400`}>{result.lucky_hiking_time}</p>
                       </div>
-                      <div className="p-4 bg-emerald-50 rounded-lg">
-                        <h4 className="font-medium text-emerald-800 mb-2 flex items-center gap-2">
+                      <div className="p-4 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
+                        <h4 className={`${fontClasses.text} font-medium text-emerald-800 dark:text-emerald-300 mb-2 flex items-center gap-2`}>
                           <CloudRain className="w-4 h-4" />
                           행운의 날씨
                         </h4>
-                        <p className="text-lg font-semibold text-emerald-700">{result.lucky_weather}</p>
+                        <p className={`${fontClasses.title} font-semibold text-emerald-700 dark:text-emerald-400`}>{result.lucky_weather}</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </motion.div>
 
-              {/* 다시 분석하기 버튼 */}
-              <motion.div variants={itemVariants} className="pt-4">
+              {/* 다시 분석하기 및 재생성 버튼 */}
+              <motion.div variants={itemVariants} className="pt-4 space-y-3">
+                {canRegenerate && (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        const analysisResult = await analyzeHikingFortune();
+                        
+                        const fortuneResult: FortuneResult = {
+                          user_info: {
+                            name: formData.name,
+                            birth_date: formData.birthYear + '-' + formData.birthMonth + '-' + formData.birthDay,
+                          },
+                          fortune_scores: {
+                            overall_luck: analysisResult.overall_luck,
+                            summit_luck: analysisResult.summit_luck,
+                            weather_luck: analysisResult.weather_luck,
+                            safety_luck: analysisResult.safety_luck,
+                            endurance_luck: analysisResult.endurance_luck,
+                          },
+                          lucky_items: {
+                            lucky_trail: analysisResult.lucky_trail,
+                            lucky_mountain: analysisResult.lucky_mountain,
+                            lucky_hiking_time: analysisResult.lucky_hiking_time,
+                            lucky_weather: analysisResult.lucky_weather,
+                          },
+                          metadata: {
+                            hiking_level: formData.hiking_level,
+                            current_goal: formData.current_goal,
+                          }
+                        };
+
+                        const success = await regenerateFortune(fortuneResult);
+                        if (success) {
+                          setResult(analysisResult);
+                        }
+                      } catch (error) {
+                        console.error('재생성 중 오류:', error);
+                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+                      }
+                    }}
+                    disabled={isGenerating}
+                    className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
+                  >
+                    {isGenerating ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Shuffle className="w-4 h-4" />
+                        재생성 중...
+                      </motion.div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <RotateCcw className="w-4 h-4" />
+                        오늘 운세 다시 생성하기
+                      </div>
+                    )}
+                  </Button>
+                )}
                 <Button
                   onClick={handleReset}
                   variant="outline"
-                  className="w-full border-green-300 text-green-600 hover:bg-green-50 py-3"
+                  className={`w-full border-green-300 dark:border-green-700 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 py-3 ${fontClasses.text}`}
                 >
-                  <ArrowRight className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-4 h-4 mr-2" />
                   다른 분석하기
                 </Button>
               </motion.div>
