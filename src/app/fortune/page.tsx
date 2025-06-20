@@ -133,6 +133,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "특별"
   },
   {
+    id: "couple-match",
+    title: "짝궁합",
+    description: "현재 연인의 관계 흐름과 미래를 알아보세요",
+    icon: Heart,
+    route: "/fortune/couple-match",
+    color: "rose",
+    gradient: "from-rose-50 to-pink-50",
+    badge: "NEW"
+  },
+  {
     id: "moving",
     title: "이사운",
     description: "새로운 보금자리로의 행복한 이주를 확인하세요",
