@@ -72,10 +72,10 @@ const fortuneCategories: FortuneCategory[] = [
   },
   {
     id: "daily",
-    title: "오늘의 총운",
-    description: "오늘 하루의 전반적인 운세를 확인하세요",
+    title: "오늘의 운세",
+    description: "총운, 애정운, 재물운, 건강운을 한 번에",
     icon: Star,
-    route: "/fortune/today",
+    route: "/fortune/daily",
     color: "emerald",
     gradient: "from-emerald-50 to-teal-50"
   },
