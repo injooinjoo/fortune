@@ -37,7 +37,9 @@ import {
   CircleDot,
   Building2,
   UtensilsCrossed,
-  GraduationCap
+  GraduationCap,
+  Fish,
+  Mountain
 } from "lucide-react";
 
 // 애니메이션 variants
@@ -269,6 +271,9 @@ export default function HomePage() {
               { href: "/fortune/lucky-items", icon: Gift, title: "행운의 아이템", desc: "당신만의 행운을 부르는 물건", color: "emerald", gradient: "from-emerald-50 to-green-50" },
               { href: "/fortune/biorhythm", icon: Activity, title: "바이오리듬", desc: "건강, 감성, 지성의 주기 분석", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
               { href: "/fortune/lucky-baseball", icon: Target, title: "행운의 야구", desc: "야구를 통해 보는 당신의 운세", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/lucky-tennis", icon: Zap, title: "행운의 테니스", desc: "테니스를 통해 보는 당신의 운세와 승리 비결", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+              { href: "/fortune/lucky-hiking", icon: Mountain, title: "행운의 등산", desc: "등산을 통해 보는 당신의 운세와 안전한 완주 비결", color: "green", gradient: "from-green-50 to-emerald-50" },
+              { href: "/fortune/lucky-fishing", icon: Fish, title: "행운의 낚시", desc: "낚시를 통해 보는 당신의 운세와 대박 조황의 비결", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
               { href: "/fortune/lucky-investment", icon: DollarSign, title: "행운의 재테크", desc: "투자와 자산 운용의 황금 비결", color: "yellow", gradient: "from-yellow-50 to-orange-50" },
               { href: "/fortune/lucky-golf", icon: CircleDot, title: "행운의 골프", desc: "완벽한 라운딩을 위한 골프 운세", color: "lime", gradient: "from-lime-50 to-green-50" },
               { href: "/fortune/lucky-realestate", icon: Building2, title: "행운의 부동산", desc: "성공적인 부동산 투자의 비밀", color: "violet", gradient: "from-violet-50 to-purple-50" },
