@@ -22,7 +22,10 @@ import {
   PartyPopper,
   Crown,
   Home,
-  CalendarCheck
+  Sunrise,
+  Gem,
+  AlertTriangle,
+  CalendarCheck,
   Gem,
   AlertTriangle,
   Rocket
@@ -117,6 +120,15 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-emerald-50 to-teal-50",
   },
   {
+
+    id: "tomorrow",
+    title: "내일의 운세",
+    description: "내일의 흐름을 미리 살펴보세요",
+    icon: Sunrise,
+    route: "/fortune/tomorrow",
+    color: "sky",
+    gradient: "from-sky-50 to-blue-50"
+  },{
     id: "new-year",
     title: "신년운세",
     description: "새해 한 해의 흐름을 미리 확인하세요",
