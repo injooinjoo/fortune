@@ -17,7 +17,8 @@ import {
   User,
   Zap,
   Crown,
-  Home
+  Home,
+  Gem
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -138,6 +139,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통"
+  },
+  {
+    id: "birthstone",
+    title: "탄생석",
+    description: "생일로 알아보는 행운의 보석",
+    icon: Gem,
+    route: "/fortune/birthstone",
+    color: "sky",
+    gradient: "from-sky-50 to-indigo-50",
+    badge: "신규"
   }
 ];
 
