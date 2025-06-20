@@ -1,7 +1,17 @@
 
 "use server";
 
-import { generateFortuneInsights, type GenerateFortuneInsightsInput, type GenerateFortuneInsightsOutput as AIOutputType, type SajuDataType } from "@/ai/flows/generate-fortune-insights";
+import {
+  generateFortuneInsights,
+  type GenerateFortuneInsightsInput,
+  type GenerateFortuneInsightsOutput as AIOutputType,
+  type SajuDataType,
+} from "@/ai/flows/generate-fortune-insights";
+import {
+  generateFaceReadingInsights,
+  type FaceReadingInput,
+  type FaceReadingOutput,
+} from "@/ai/flows/generate-face-reading-insights";
 import type { FortuneFormValues } from "@/lib/schemas";
 import { format } from "date-fns";
 
@@ -11,10 +21,20 @@ export interface FormattedFortuneOutput {
   sajuData?: SajuDataType; // Added SajuDataType
 }
 
+export interface FaceReadingResult {
+  interpretation: string;
+}
+
 export interface ActionResult {
   data?: FormattedFortuneOutput;
   error?: string;
   input?: GenerateFortuneInsightsInput;
+}
+
+export interface FaceReadingActionResult {
+  data?: FaceReadingResult;
+  error?: string;
+  input?: FaceReadingInput;
 }
 
 export async function getFortuneAction(
@@ -63,5 +83,19 @@ export async function getFortuneAction(
     console.error("Error generating fortune:", e);
     const errorMessage = e instanceof Error ? e.message : "알 수 없는 오류가 발생했습니다.";
     return { error: `운세 생성 중 오류가 발생했습니다: ${errorMessage}` };
+  }
+}
+
+export async function getFaceReadingAction(
+  labels: string[]
+): Promise<FaceReadingActionResult> {
+  try {
+    const input: FaceReadingInput = { labels };
+    const result: FaceReadingOutput = await generateFaceReadingInsights(input);
+    return { data: result, input };
+  } catch (e) {
+    console.error('Error generating face reading:', e);
+    const message = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
+    return { error: message };
   }
 }
