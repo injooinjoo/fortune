@@ -9,16 +9,22 @@ import AppHeader from "@/components/AppHeader";
 import { 
   Heart, 
   Star, 
-  Calendar, 
-  Briefcase, 
+  Calendar,
+  Briefcase,
   Coins,
+  Brain,
   Sparkles,
   TrendingUp,
+  Users,
   User,
   Zap,
+  PartyPopper,
   Crown,
   Home,
   CalendarCheck
+  Gem,
+  AlertTriangle,
+  Rocket
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -44,6 +50,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "인기"
   },
   {
+    id: "destiny",
+    title: "인연운",
+    description: "앞으로 만나게 될 인연의 흐름을 알아보세요",
+    icon: Users,
+    route: "/fortune/destiny",
+    color: "fuchsia",
+    gradient: "from-fuchsia-50 to-rose-50",
+    badge: "NEW"
+  },
+  {
     id: "career",
     title: "취업운",
     description: "커리어와 성공의 길을 찾아보세요",
@@ -51,6 +67,15 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/career",
     color: "blue",
     gradient: "from-blue-50 to-indigo-50"
+  },
+  {
+    id: "employment",
+    title: "취업 운세",
+    description: "시즌별 취업 성공 가능성을 살펴보세요",
+    icon: Briefcase,
+    route: "/fortune/employment",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50"
   },
   {
     id: "wealth",
@@ -72,13 +97,33 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "정통"
   },
   {
+    id: "saju-psychology",
+    title: "사주 심리분석",
+    description: "타고난 성격과 관계를 심층 탐구",
+    icon: Brain,
+    route: "/fortune/saju-psychology",
+    color: "teal",
+    gradient: "from-teal-50 to-cyan-50",
+    badge: "신규"
+  },
+  {
     id: "daily",
-    title: "오늘의 총운",
-    description: "오늘 하루의 전반적인 운세를 확인하세요",
+    title: "오늘의 운세",
+    description: "총운, 애정운, 재물운, 건강운을 한 번에",
     icon: Star,
-    route: "/fortune/today",
+    route: "/fortune/daily",
     color: "emerald",
     gradient: "from-emerald-50 to-teal-50"
+  },
+  {
+    id: "new-year",
+    title: "신년운세",
+    description: "새해 한 해의 흐름을 미리 확인하세요",
+    icon: PartyPopper,
+    route: "/fortune/new-year",
+    color: "indigo",
+    gradient: "from-indigo-50 to-blue-50",
+    badge: "2025"
   },
   {
     id: "mbti",
@@ -111,6 +156,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "특별"
   },
   {
+    id: "couple-match",
+    title: "짝궁합",
+    description: "현재 연인의 관계 흐름과 미래를 알아보세요",
+    icon: Heart,
+    route: "/fortune/couple-match",
+    color: "rose",
+    gradient: "from-rose-50 to-pink-50",
+    badge: "NEW"
+  },
+  {
     id: "moving",
     title: "이사운",
     description: "새로운 보금자리로의 행복한 이주를 확인하세요",
@@ -141,6 +196,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "추천"
   },
   {
+    id: "startup",
+    title: "행운의 창업",
+    description: "어떤 업종이 잘 맞는지, 시작 시기를 알아보세요",
+    icon: Rocket,
+    route: "/fortune/startup",
+    color: "orange",
+    gradient: "from-orange-50 to-amber-50",
+    badge: "NEW"
+  },
+  {
     id: "palmistry",
     title: "손금",
     description: "손에 새겨진 인생의 지도를 읽어보세요",
@@ -149,6 +214,24 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통"
+  },
+  {
+    id: "birthstone",
+    title: "탄생석",
+    description: "생일로 알아보는 행운의 보석",
+    icon: Gem,
+    route: "/fortune/birthstone",
+    color: "sky",
+    gradient: "from-sky-50 to-indigo-50",
+    badge: "신규"
+    id: "avoid-people",
+    title: "피해야 할 상대",
+    description: "갈등을 줄이기 위해 조심해야 할 상대를 알아보세요",
+    icon: AlertTriangle,
+    route: "/fortune/avoid-people",
+    color: "red",
+    gradient: "from-red-50 to-orange-50",
+    badge: "주의"
   }
 ];
 
