@@ -41,7 +41,8 @@ import {
   Building2,
   UtensilsCrossed,
   GraduationCap,
-  Waves
+  Shirt,
+  Waves,
   Fish,
   Mountain
 } from "lucide-react";
@@ -290,7 +291,11 @@ export default function HomePage() {
               { href: "/fortune/lucky-realestate", icon: Building2, title: "행운의 부동산", desc: "성공적인 부동산 투자의 비밀", color: "violet", gradient: "from-violet-50 to-purple-50" },
               { href: "/fortune/lucky-food", icon: UtensilsCrossed, title: "행운의 음식", desc: "맛있는 행운을 불러오는 음식 운세", color: "rose", gradient: "from-rose-50 to-pink-50" },
               { href: "/fortune/lucky-exam", icon: GraduationCap, title: "행운의 시험일자", desc: "합격을 부르는 최적의 시험 날짜", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+
+              { href: "/fortune/lucky-outfit", icon: Shirt, title: "행운의 코디", desc: "운을 부르는 패션 스타일", color: "fuchsia", gradient: "from-fuchsia-50 to-pink-50" },
+
               { href: "/fortune/lucky-job", icon: Briefcase, title: "행운의 직업", desc: "사주로 보는 성공 직업 추천", color: "teal", gradient: "from-teal-50 to-emerald-50" }
+
             ].map((item, index) => (
               <motion.div
                 key={item.href}
