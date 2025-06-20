@@ -24,6 +24,7 @@ import {
   PartyPopper,
   Crown,
   Home,
+  Gem
   AlertTriangle
   Rocket
 } from "lucide-react";
@@ -198,6 +199,14 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "전통"
   },
   {
+    id: "birthstone",
+    title: "탄생석",
+    description: "생일로 알아보는 행운의 보석",
+    icon: Gem,
+    route: "/fortune/birthstone",
+    color: "sky",
+    gradient: "from-sky-50 to-indigo-50",
+    badge: "신규"
     id: "avoid-people",
     title: "피해야 할 상대",
     description: "갈등을 줄이기 위해 조심해야 할 상대를 알아보세요",
