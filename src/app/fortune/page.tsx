@@ -19,6 +19,7 @@ import {
   User,
   Droplet,
   Zap,
+  Cake,
   PartyPopper,
   Crown,
   Home,
@@ -134,6 +135,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "red",
     gradient: "from-red-50 to-pink-50",
     badge: "조화"
+  },
+  {
+    id: "birthdate",
+    title: "생년월일 운세",
+    description: "간단한 생년월일 운세를 확인하세요",
+    icon: Cake,
+    route: "/fortune/birthdate",
+    color: "cyan",
+    gradient: "from-cyan-50 to-blue-50",
+    badge: "NEW"
   },
   {
     id: "daily",
