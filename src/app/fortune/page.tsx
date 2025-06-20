@@ -14,6 +14,7 @@ import {
   Coins,
   Sparkles,
   TrendingUp,
+  Users,
   User,
   Zap,
   Crown,
@@ -41,6 +42,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "pink",
     gradient: "from-pink-50 to-red-50",
     badge: "인기"
+  },
+  {
+    id: "destiny",
+    title: "인연운",
+    description: "앞으로 만나게 될 인연의 흐름을 알아보세요",
+    icon: Users,
+    route: "/fortune/destiny",
+    color: "fuchsia",
+    gradient: "from-fuchsia-50 to-rose-50",
+    badge: "NEW"
   },
   {
     id: "career",
