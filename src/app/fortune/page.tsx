@@ -17,7 +17,8 @@ import {
   User,
   Zap,
   Crown,
-  Home
+  Home,
+  ScrollText
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -69,6 +70,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
     badge: "정통"
+  },
+  {
+    id: "tojeong",
+    title: "토정비결",
+    description: "144괘로 풀이하는 신년 길흉",
+    icon: ScrollText,
+    route: "/fortune/tojeong",
+    color: "amber",
+    gradient: "from-amber-50 to-orange-50",
+    badge: "전통"
   },
   {
     id: "daily",
