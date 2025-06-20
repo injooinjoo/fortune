@@ -45,7 +45,28 @@ import {
   Shirt,
   Waves,
   Fish,
-  Mountain
+  Mountain,
+  UserX,
+  CakeSlice,
+  Gem,
+  CloudSnow,
+  Droplets,
+  Users2,
+  MapPin,
+  Megaphone,
+  Rocket,
+  Palette,
+  Shield,
+  LineChart,
+  Lightbulb,
+  Scroll,
+  Timer,
+  ScrollText,
+  Sunrise,
+  Sunset,
+  ScrollIcon,
+  HelpCircle,
+  Building
 } from "lucide-react";
 
 // 애니메이션 variants
@@ -296,7 +317,35 @@ export default function HomePage() {
 
               { href: "/fortune/lucky-outfit", icon: Shirt, title: "행운의 코디", desc: "운을 부르는 패션 스타일", color: "fuchsia", gradient: "from-fuchsia-50 to-pink-50" },
 
-              { href: "/fortune/lucky-job", icon: Briefcase, title: "행운의 직업", desc: "사주로 보는 성공 직업 추천", color: "teal", gradient: "from-teal-50 to-emerald-50" }
+              { href: "/fortune/lucky-job", icon: Briefcase, title: "행운의 직업", desc: "사주로 보는 성공 직업 추천", color: "teal", gradient: "from-teal-50 to-emerald-50" },
+
+              // 누락된 페이지들 추가
+              { href: "/fortune/avoid-people", icon: UserX, title: "피해야 할 사람", desc: "주의해야 할 인연과 관계 운세", color: "gray", gradient: "from-gray-50 to-slate-50" },
+              { href: "/fortune/birthdate", icon: CakeSlice, title: "생년월일 운세", desc: "태어난 날로 보는 운명 분석", color: "pink", gradient: "from-pink-50 to-rose-50" },
+              { href: "/fortune/birthstone", icon: Gem, title: "탄생석 운세", desc: "당신만의 탄생석이 주는 힘", color: "purple", gradient: "from-purple-50 to-violet-50" },
+              { href: "/fortune/birth-season", icon: CloudSnow, title: "태어난 계절", desc: "계절이 결정하는 성격과 운명", color: "blue", gradient: "from-blue-50 to-cyan-50" },
+              { href: "/fortune/blood-type", icon: Droplets, title: "혈액형 운세", desc: "혈액형별 성격과 운세 분석", color: "red", gradient: "from-red-50 to-pink-50" },
+              { href: "/fortune/celebrity-match", icon: Star, title: "연예인 궁합", desc: "최애 연예인과의 궁합도", color: "yellow", gradient: "from-yellow-50 to-amber-50" },
+              { href: "/fortune/couple-match", icon: Users2, title: "커플 매칭", desc: "완벽한 커플이 되는 비결", color: "rose", gradient: "from-rose-50 to-pink-50" },
+              { href: "/fortune/daily", icon: Sun, title: "일일 운세", desc: "매일 달라지는 운의 흐름", color: "orange", gradient: "from-orange-50 to-yellow-50" },
+              { href: "/fortune/destiny", icon: ScrollIcon, title: "운명 분석", desc: "타고난 운명의 길을 찾아보세요", color: "indigo", gradient: "from-indigo-50 to-purple-50" },
+              { href: "/fortune/employment", icon: Building, title: "취업 운세", desc: "취업과 경력 발전의 운", color: "blue", gradient: "from-blue-50 to-indigo-50" },
+              { href: "/fortune/five-blessings", icon: Gift, title: "오복 운세", desc: "다섯 가지 복을 받을 운세", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+              { href: "/fortune/lucky-sidejob", icon: Coins, title: "행운의 부업", desc: "성공적인 부업 아이템 추천", color: "yellow", gradient: "from-yellow-50 to-orange-50" },
+              { href: "/fortune/moving-date", icon: MapPin, title: "이사 날짜", desc: "최적의 이사 타이밍 찾기", color: "green", gradient: "from-green-50 to-emerald-50" },
+              { href: "/fortune/network-report", icon: Users, title: "인맥 리포트", desc: "당신 주변 인맥의 힘", color: "blue", gradient: "from-blue-50 to-cyan-50" },
+              { href: "/fortune/new-year", icon: Sparkles, title: "신년 운세", desc: "새해 한 해 전체 운세", color: "gold", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/past-life", icon: Scroll, title: "전생 분석", desc: "과거생에서 온 인연과 업", color: "purple", gradient: "from-purple-50 to-indigo-50" },
+              { href: "/fortune/salpuli", icon: Shield, title: "살풀이", desc: "액운을 막고 복을 부르는 방법", color: "red", gradient: "from-red-50 to-orange-50" },
+              { href: "/fortune/startup", icon: Rocket, title: "창업 운세", desc: "사업 시작의 최적 타이밍", color: "blue", gradient: "from-blue-50 to-indigo-50" },
+              { href: "/fortune/talent", icon: Lightbulb, title: "재능 분석", desc: "숨겨진 재능과 능력 발견", color: "yellow", gradient: "from-yellow-50 to-amber-50" },
+              { href: "/fortune/talisman", icon: Star, title: "부적", desc: "당신에게 맞는 행운의 부적", color: "purple", gradient: "from-purple-50 to-violet-50" },
+              { href: "/fortune/timeline", icon: LineChart, title: "타임라인 운세", desc: "인생 전체의 운세 흐름", color: "indigo", gradient: "from-indigo-50 to-purple-50" },
+              { href: "/fortune/today", icon: Sunrise, title: "오늘의 운세", desc: "지금 이 순간의 운세", color: "orange", gradient: "from-orange-50 to-red-50" },
+              { href: "/fortune/tojeong", icon: ScrollText, title: "토정 운세", desc: "전통 토정비결로 보는 운세", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/tomorrow", icon: Sunset, title: "내일의 운세", desc: "다가올 내일의 운기", color: "purple", gradient: "from-purple-50 to-pink-50" },
+              { href: "/fortune/traditional-compatibility", icon: Heart, title: "전통 궁합", desc: "전통 명리학 궁합 분석", color: "rose", gradient: "from-rose-50 to-red-50" },
+              { href: "/fortune/traditional-saju", icon: ScrollText, title: "전통 사주", desc: "정통 사주명리학 풀이", color: "amber", gradient: "from-amber-50 to-orange-50" }
 
             ].map((item, index) => (
               <motion.div

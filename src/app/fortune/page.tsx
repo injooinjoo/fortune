@@ -29,11 +29,7 @@ import {
   ShieldAlert,
   ScrollText,
   Sunrise,
-  Gem,
-  AlertTriangle,
   CalendarCheck,
-  Gem,
-  AlertTriangle,
   Rocket
 } from "lucide-react";
 
@@ -293,8 +289,6 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-amber-50 to-yellow-50",
     badge: "전통",
   },
-    badge: "전통"
-  },
   {
     id: "talent",
     title: "능력 평가",
@@ -304,7 +298,8 @@ const fortuneCategories: FortuneCategory[] = [
     color: "green",
     gradient: "from-green-50 to-emerald-50",
     badge: "신규"
-  },{
+  },
+  {
     id: "talisman",
     title: "행운의 부적",
     description: "원하는 소망을 담은 부적을 만들어보세요",
@@ -312,7 +307,9 @@ const fortuneCategories: FortuneCategory[] = [
     route: "/fortune/talisman",
     color: "yellow",
     gradient: "from-yellow-50 to-orange-50",
-    badge: "신규"},{
+    badge: "신규"
+  },
+  {
     id: "birthstone",
     title: "탄생석",
     description: "생일로 알아보는 행운의 보석",
@@ -321,6 +318,8 @@ const fortuneCategories: FortuneCategory[] = [
     color: "sky",
     gradient: "from-sky-50 to-indigo-50",
     badge: "신규"
+  },
+  {
     id: "avoid-people",
     title: "피해야 할 상대",
     description: "갈등을 줄이기 위해 조심해야 할 상대를 알아보세요",

@@ -727,4 +727,3 @@ export default function BiorhythmPage() {
     </div>
   );
 }
-</rewritten_file>

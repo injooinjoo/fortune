@@ -875,4 +875,3 @@ export default function ChemistryPage() {
     </div>
   );
 }
-</rewritten_file>
