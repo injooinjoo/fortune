@@ -5,14 +5,46 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Hand, Heart, Brain, Star, TrendingUp, Calendar, Users, Zap, Eye, Target, Activity, Crown, Gem } from "lucide-react"
+import { Hand, Heart, Brain, Star, TrendingUp, Calendar, Users, Zap, Eye, Target, Activity, Crown, Gem, Camera } from "lucide-react"
 import { motion } from "framer-motion"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import AppHeader from "@/components/AppHeader"
 
 export default function PalmistryPage() {
   const [selectedHand, setSelectedHand] = useState<'left' | 'right'>('right')
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium')
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [analysis, setAnalysis] = useState<string | null>(null)
+
+  const handleAnalyze = async () => {
+    const file = fileInputRef.current?.files?.[0]
+    if (!file) return
+    setLoading(true)
+    try {
+      // Dynamically load on-device ML libraries from CDN
+      await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3')
+      await import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.19.0')
+      // TODO: use the loaded libraries to detect palm lines and classify them
+      const labels = [
+        'life_line_long_clear',
+        'emotion_line_chained',
+        'head_line_straight',
+      ]
+      const res = await fetch('/api/palmistry/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ labels }),
+      })
+      const data = await res.json()
+      setAnalysis(data.interpretation)
+    } catch (e) {
+      console.error(e)
+      setAnalysis('분석 중 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const palmLines = [
     {
@@ -194,6 +226,33 @@ export default function PalmistryPage() {
             ✋ 손금
           </h1>
           <p className="text-gray-600">손에 새겨진 인생의 지도를 읽어보세요</p>
+        </motion.div>
+
+        {/* 손 사진 업로드 및 분석 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-teal-700">
+                <Camera className="w-6 h-6" />
+                손 사진 분석
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <input ref={fileInputRef} type="file" accept="image/*" className="w-full" />
+              <Button onClick={handleAnalyze} disabled={loading} className="w-full">
+                {loading ? '분석 중...' : '분석하기'}
+              </Button>
+              {analysis && (
+                <div className="p-3 bg-gray-50 border rounded text-sm text-gray-700 whitespace-pre-line">
+                  {analysis}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
         {/* 손 선택 */}
