@@ -17,7 +17,8 @@ import {
   User,
   Zap,
   Crown,
-  Home
+  Home,
+  ShieldAlert
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -69,6 +70,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
     badge: "정통"
+  },
+  {
+    id: "salpuli",
+    title: "살풀이",
+    description: "흉살을 알고 대비하는 길을 찾아보세요",
+    icon: ShieldAlert,
+    route: "/fortune/salpuli",
+    color: "red",
+    gradient: "from-red-50 to-pink-50",
+    badge: "조화"
   },
   {
     id: "daily",
