@@ -5,6 +5,7 @@ import { generateFortuneInsights, type GenerateFortuneInsightsInput, type Genera
 import type { FortuneFormValues } from "@/lib/schemas";
 import { format } from "date-fns";
 
+import { analyzeDream, type AnalyzeDreamInput, type AnalyzeDreamOutput } from "@/ai/flows/analyze-dream";
 // This is the structure expected by the Page component
 export interface FormattedFortuneOutput {
   insights: Record<string, string>;
@@ -63,5 +64,25 @@ export async function getFortuneAction(
     console.error("Error generating fortune:", e);
     const errorMessage = e instanceof Error ? e.message : "알 수 없는 오류가 발생했습니다.";
     return { error: `운세 생성 중 오류가 발생했습니다: ${errorMessage}` };
+  }
+}
+
+
+export interface DreamActionResult {
+  data?: AnalyzeDreamOutput;
+  error?: string;
+  input?: AnalyzeDreamInput;
+}
+
+export async function analyzeDreamAction(
+  input: AnalyzeDreamInput
+): Promise<DreamActionResult> {
+  try {
+    const result = await analyzeDream(input);
+    return { data: result, input };
+  } catch (e) {
+    console.error('Error analyzing dream:', e);
+    const msg = e instanceof Error ? e.message : '알 수 없는 오류가 발생했습니다.';
+    return { error: `꿈 해석 중 오류가 발생했습니다: ${msg}` };
   }
 }
