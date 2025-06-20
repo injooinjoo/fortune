@@ -1,82 +1,184 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FortuneCompassIcon } from "@/components/icons/fortune-compass-icon";
 import { Button } from "@/components/ui/button";
-import { Bell, Settings, User } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, Type, Share2, Type as TypeIcon } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
 
 interface AppHeaderProps {
   title?: string;
   showBack?: boolean;
-  showNotification?: boolean;
-  showProfile?: boolean;
+  onFontSizeChange?: (size: 'small' | 'medium' | 'large') => void;
+  currentFontSize?: 'small' | 'medium' | 'large';
 }
 
 export default function AppHeader({ 
   title = "Fortune", 
-  showBack = false, 
-  showNotification = true, 
-  showProfile = true 
+  showBack,
+  onFontSizeChange,
+  currentFontSize = 'medium'
 }: AppHeaderProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [showFontMenu, setShowFontMenu] = useState(false);
+
+  // 뒤로가기 버튼 표시 여부 결정
+  const shouldShowBack = showBack !== undefined ? showBack : !pathname?.includes('/home');
+
+  const handleBack = () => {
+    // 상위 페이지로 이동하는 로직
+    if (pathname === '/fortune') {
+      router.push('/home');
+    } else if (pathname?.startsWith('/fortune/')) {
+      router.push('/fortune');
+    } else if (pathname?.startsWith('/interactive/')) {
+      router.push('/home');
+    } else {
+      router.back(); // 기본적으로는 이전 페이지
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: `${title} - 운세 보기`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        // 공유 취소시 에러 무시
+      }
+    } else {
+      // 웹 공유 API 미지원시 클립보드 복사
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        // 간단한 피드백 (실제 앱에서는 toast 메시지 사용)
+        alert('링크가 클립보드에 복사되었습니다!');
+      } catch (error) {
+        console.error('공유 실패:', error);
+      }
+    }
+  };
+
+  const fontSizeLabels = {
+    small: '작게',
+    medium: '보통',
+    large: '크게'
+  };
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-200/50"
+      className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm"
     >
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* 왼쪽 영역 */}
-        <div className="flex items-center space-x-3">
-          <motion.div
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.5 }}
-          >
-            <FortuneCompassIcon className="w-8 h-8 text-purple-600" />
-          </motion.div>
-          <motion.h1 
-            className="text-xl font-bold text-gray-900"
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            {title}
-          </motion.h1>
-        </div>
-
-        {/* 오른쪽 영역 */}
-        <div className="flex items-center space-x-2">
-          {showNotification && (
+      <div className="flex items-center justify-between px-4 py-3 h-14">
+        {/* 왼쪽: 뒤로가기 버튼 */}
+        <div className="flex items-center w-16">
+          {shouldShowBack && (
             <motion.div
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Button variant="ghost" size="sm" className="relative">
-                <Bell className="w-5 h-5 text-gray-600" />
-                <motion.div
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBack}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-700" />
               </Button>
             </motion.div>
           )}
-          
-          {showProfile && (
+        </div>
+
+        {/* 가운데: 페이지 제목 */}
+        <motion.div 
+          className="flex-1 text-center"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <h1 className="text-lg font-bold text-gray-900 truncate px-4">
+            {title}
+          </h1>
+        </motion.div>
+
+        {/* 오른쪽: 글씨크기 조절 & 공유 버튼 */}
+        <div className="flex items-center space-x-1 w-16 justify-end relative">
+          {/* 글씨크기 조절 버튼 */}
+          <div className="relative">
             <motion.div
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link href="/profile">
-                <Button variant="ghost" size="sm">
-                  <User className="w-5 h-5 text-gray-600" />
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setShowFontMenu(!showFontMenu)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <Type className="w-4 h-4 text-gray-700" />
+              </Button>
             </motion.div>
-          )}
+
+            {/* 글씨크기 메뉴 */}
+            {showFontMenu && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[80px] z-10"
+              >
+                {(['small', 'medium', 'large'] as const).map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => {
+                      onFontSizeChange?.(size);
+                      setShowFontMenu(false);
+                    }}
+                    className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 flex items-center gap-2 ${
+                      currentFontSize === size ? 'bg-purple-50 text-purple-600' : 'text-gray-700'
+                    }`}
+                  >
+                    <TypeIcon className={`${
+                      size === 'small' ? 'w-3 h-3' : 
+                      size === 'medium' ? 'w-4 h-4' : 'w-5 h-5'
+                    }`} />
+                    {fontSizeLabels[size]}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </div>
+
+          {/* 공유 버튼 */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleShare}
+              className="p-2 hover:bg-gray-100 rounded-full"
+            >
+              <Share2 className="w-4 h-4 text-gray-700" />
+            </Button>
+          </motion.div>
         </div>
       </div>
+
+      {/* 글씨크기 메뉴 배경 클릭시 닫기 */}
+      {showFontMenu && (
+        <div 
+          className="fixed inset-0 z-0" 
+          onClick={() => setShowFontMenu(false)}
+        />
+      )}
     </motion.header>
   );
 } 

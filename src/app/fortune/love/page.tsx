@@ -97,10 +97,15 @@ const itemVariants = {
 export default function LoveFortunePage() {
   const [data] = useState<LoveFortuneData>(mockLoveData);
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'thisWeek' | 'thisMonth'>('today');
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   return (
     <>
-      <AppHeader title="연애운" showBack={true} />
+      <AppHeader 
+        title="연애운" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       <motion.div 
         className="pb-32 px-4 space-y-6 pt-4"
         initial="hidden"

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import AppHeader from "@/components/AppHeader";
 import {
   Bell,
   Crown,
@@ -44,7 +45,10 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-4 space-y-6">
+    <div className="min-h-screen bg-background text-foreground pb-20">
+      <AppHeader title="프로필" />
+      
+      <div className="p-6 space-y-6">
       <section className="flex items-center space-x-4">
         <Avatar>
           <AvatarImage src="/placeholder-avatar.png" alt="avatar" />
@@ -123,6 +127,7 @@ export default function ProfilePage() {
             <span className="text-sm">회원 탈퇴</span>
           </div>
         </button>
+      </div>
       </div>
     </div>
   );

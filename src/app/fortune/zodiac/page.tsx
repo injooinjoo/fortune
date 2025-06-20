@@ -81,6 +81,7 @@ export default function ZodiacFortunePage() {
   const [selectedZodiac, setSelectedZodiac] = useState<string>("");
   const [currentFortune, setCurrentFortune] = useState<any>(null);
   const [currentMonth] = useState(new Date().toLocaleDateString('ko-KR', { month: 'long' }));
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   useEffect(() => {
     // 로컬 스토리지에서 사용자 별자리 불러오기
@@ -139,7 +140,11 @@ export default function ZodiacFortunePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50">
-      <AppHeader />
+      <AppHeader 
+        title="별자리 월간운세"
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       
       <motion.div 
         className="container mx-auto px-4 pt-4 pb-20"

@@ -9,13 +9,13 @@ body {
 
 @layer base {
   :root {
-    --background: 14 75% 94%; /* #FBE8E4 */
+    --background: 0 0% 100%; /* #FFFFFF */
     --foreground: 210 29% 32%; /* #3A506B */
 
-    --card: 14 80% 95%; /* #FDECE9 */
+    --card: 0 0% 100%; /* #FFFFFF */
     --card-foreground: 210 29% 32%; /* #3A506B */
 
-    --popover: 14 80% 95%; /* #FDECE9 */
+    --popover: 0 0% 100%; /* #FFFFFF */
     --popover-foreground: 210 29% 32%; /* #3A506B */
 
     --primary: 10 100% 70%; /* #FF7F66 */

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { FortuneCompassIcon } from "@/components/icons/fortune-compass-icon";
+import AppHeader from "@/components/AppHeader";
 
 interface AnalysisResult {
   part: string;
@@ -41,7 +42,10 @@ export default function ImagePhysiognomyScreen() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-background text-foreground p-4 space-y-4">
+    <div className="min-h-screen bg-background text-foreground pb-20">
+      <AppHeader title="AI 관상" />
+      
+      <div className="flex flex-col items-center p-6 space-y-6">
       <input type="file" accept="image/*" onChange={handleFileChange} className="w-full max-w-md" />
 
       {previewUrl && (
@@ -70,6 +74,7 @@ export default function ImagePhysiognomyScreen() {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

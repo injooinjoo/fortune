@@ -21,7 +21,22 @@ import {
   Coins,
   Calendar,
   TrendingUp,
-  Zap
+  Zap,
+  Crown,
+  Home,
+  Hand,
+  Users,
+  HeartCrack,
+  Coffee,
+  Clock,
+  Flame,
+  Gift,
+  Activity,
+  Target,
+  DollarSign,
+  CircleDot,
+  Building2,
+  UtensilsCrossed
 } from "lucide-react";
 
 // 애니메이션 variants
@@ -196,7 +211,7 @@ export default function HomePage() {
               { href: "/fortune/saju", icon: Sun, title: "사주팔자", desc: "정통 사주 풀이", color: "orange" },
               { href: "/physiognomy", icon: Camera, title: "AI 관상", desc: "얼굴로 보는 운세", color: "purple" },
               { href: "/interactive/tarot", icon: Sparkles, title: "타로 리딩", desc: "카드가 주는 메시지", color: "indigo" },
-              { href: "/interactive/dream-interpretation", icon: Moon, title: "꿈해몽", desc: "꿈이 전하는 의미", color: "emerald" }
+              { href: "/fortune/wish", icon: Star, title: "소원빌기", desc: "진심을 담은 소원", color: "purple" }
             ].map((item, index) => (
               <motion.div
                 key={item.href}
@@ -239,8 +254,24 @@ export default function HomePage() {
           <motion.div className="space-y-3" variants={containerVariants}>
             {[
               { href: "/fortune/love", icon: Heart, title: "연애운", desc: "사랑과 인연의 흐름", color: "pink", gradient: "from-pink-50 to-red-50" },
+              { href: "/fortune/marriage", icon: Heart, title: "결혼운", desc: "평생의 동반자 운세", color: "rose", gradient: "from-rose-50 to-pink-50" },
               { href: "/fortune/career", icon: Briefcase, title: "취업운", desc: "커리어와 성공의 길", color: "blue", gradient: "from-blue-50 to-indigo-50" },
-              { href: "/fortune/wealth", icon: Coins, title: "금전운", desc: "재물과 투자의 운", color: "yellow", gradient: "from-yellow-50 to-orange-50" }
+              { href: "/fortune/wealth", icon: Coins, title: "금전운", desc: "재물과 투자의 운", color: "yellow", gradient: "from-yellow-50 to-orange-50" },
+              { href: "/fortune/moving", icon: Home, title: "이사운", desc: "새로운 보금자리의 운", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+              { href: "/fortune/business", icon: TrendingUp, title: "사업운", desc: "창업과 사업 성공의 운", color: "indigo", gradient: "from-indigo-50 to-purple-50" },
+              { href: "/fortune/palmistry", icon: Hand, title: "손금", desc: "손에 새겨진 운명의 선", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/compatibility", icon: Users, title: "궁합", desc: "둘의 운명적 만남", color: "rose", gradient: "from-rose-50 to-pink-50" },
+              { href: "/fortune/ex-lover", icon: HeartCrack, title: "헤어진 애인", desc: "지난 사랑과의 인연", color: "slate", gradient: "from-slate-50 to-gray-50" },
+              { href: "/fortune/blind-date", icon: Coffee, title: "소개팅", desc: "새로운 만남의 가능성", color: "orange", gradient: "from-orange-50 to-amber-50" },
+              { href: "/fortune/hourly", icon: Clock, title: "시간대별 운세", desc: "매 시간의 운기 변화", color: "indigo", gradient: "from-indigo-50 to-purple-50" },
+              { href: "/fortune/chemistry", icon: Flame, title: "속궁합", desc: "은밀하고 깊은 관계의 궁합", color: "red", gradient: "from-red-50 to-pink-50" },
+              { href: "/fortune/lucky-items", icon: Gift, title: "행운의 아이템", desc: "당신만의 행운을 부르는 물건", color: "emerald", gradient: "from-emerald-50 to-green-50" },
+              { href: "/fortune/biorhythm", icon: Activity, title: "바이오리듬", desc: "건강, 감성, 지성의 주기 분석", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
+              { href: "/fortune/lucky-baseball", icon: Target, title: "행운의 야구", desc: "야구를 통해 보는 당신의 운세", color: "amber", gradient: "from-amber-50 to-yellow-50" },
+              { href: "/fortune/lucky-investment", icon: DollarSign, title: "행운의 재테크", desc: "투자와 자산 운용의 황금 비결", color: "yellow", gradient: "from-yellow-50 to-orange-50" },
+              { href: "/fortune/lucky-golf", icon: CircleDot, title: "행운의 골프", desc: "완벽한 라운딩을 위한 골프 운세", color: "lime", gradient: "from-lime-50 to-green-50" },
+              { href: "/fortune/lucky-realestate", icon: Building2, title: "행운의 부동산", desc: "성공적인 부동산 투자의 비밀", color: "violet", gradient: "from-violet-50 to-purple-50" },
+              { href: "/fortune/lucky-food", icon: UtensilsCrossed, title: "행운의 음식", desc: "맛있는 행운을 불러오는 음식 운세", color: "rose", gradient: "from-rose-50 to-pink-50" }
             ].map((item, index) => (
               <motion.div
                 key={item.href}
@@ -291,7 +322,8 @@ export default function HomePage() {
           <motion.div className="grid grid-cols-1 gap-3" variants={containerVariants}>
             {[
               { href: "/fortune/mbti", icon: Zap, title: "MBTI 주간 운세", desc: "성격 유형별 조언", badge: "새로움", color: "violet" },
-              { href: "/fortune/zodiac", icon: Star, title: "별자리 월간 운세", desc: "별이 알려주는 흐름", badge: "인기", color: "cyan" }
+              { href: "/fortune/zodiac", icon: Star, title: "별자리 월간 운세", desc: "별이 알려주는 흐름", badge: "인기", color: "cyan" },
+              { href: "/fortune/zodiac-animal", icon: Crown, title: "띠 운세", desc: "12간지로 보는 이달의 운세", badge: "전통", color: "orange" }
             ].map((item, index) => (
               <motion.div
                 key={item.href}

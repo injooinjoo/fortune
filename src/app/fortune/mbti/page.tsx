@@ -67,6 +67,7 @@ const WEEKLY_FORTUNE = {
 export default function MbtiFortunePage() {
   const [selectedMBTI, setSelectedMBTI] = useState<string>("");
   const [currentFortune, setCurrentFortune] = useState<any>(null);
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   useEffect(() => {
     // 로컬 스토리지에서 사용자 MBTI 불러오기
@@ -125,7 +126,11 @@ export default function MbtiFortunePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
-      <AppHeader />
+      <AppHeader 
+        title="MBTI 주간운세"
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       
       <motion.div 
         className="container mx-auto px-4 pt-4 pb-20"

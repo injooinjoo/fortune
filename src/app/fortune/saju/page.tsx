@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,10 +64,15 @@ export async function fetchSajuData(): Promise<SajuData> {
 
 export default function SajuAnalysisPage() {
   const data = mockData; // 추후 fetchSajuData()로 대체
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   return (
     <>
-      <AppHeader title="사주팔자" showBack={true} />
+      <AppHeader 
+        title="사주팔자" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       <div className="pb-32 px-4 space-y-6 pt-4">
         <header className="p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
           <Droplet className="w-5 h-5" />

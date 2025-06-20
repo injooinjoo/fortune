@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -15,7 +15,9 @@ import {
   Sparkles,
   TrendingUp,
   User,
-  Zap
+  Zap,
+  Crown,
+  Home
 } from "lucide-react";
 
 interface FortuneCategory {
@@ -86,6 +88,56 @@ const fortuneCategories: FortuneCategory[] = [
     color: "violet",
     gradient: "from-violet-50 to-purple-50",
     badge: "새로움"
+  },
+  {
+    id: "zodiac-animal",
+    title: "띠 운세",
+    description: "12간지로 보는 이달의 운세를 확인하세요",
+    icon: Crown,
+    route: "/fortune/zodiac-animal",
+    color: "orange",
+    gradient: "from-orange-50 to-yellow-50",
+    badge: "전통"
+  },
+  {
+    id: "marriage",
+    title: "결혼운",
+    description: "평생의 동반자와의 인연을 확인하세요",
+    icon: Heart,
+    route: "/fortune/marriage",
+    color: "rose",
+    gradient: "from-rose-50 to-pink-50",
+    badge: "특별"
+  },
+  {
+    id: "moving",
+    title: "이사운",
+    description: "새로운 보금자리로의 행복한 이주를 확인하세요",
+    icon: Home,
+    route: "/fortune/moving",
+    color: "emerald",
+    gradient: "from-emerald-50 to-green-50",
+    badge: "인기"
+  },
+  {
+    id: "business",
+    title: "사업운",
+    description: "성공적인 창업과 사업 운영을 위한 운세를 확인하세요",
+    icon: TrendingUp,
+    route: "/fortune/business",
+    color: "indigo",
+    gradient: "from-indigo-50 to-purple-50",
+    badge: "추천"
+  },
+  {
+    id: "palmistry",
+    title: "손금",
+    description: "손에 새겨진 인생의 지도를 읽어보세요",
+    icon: Zap,
+    route: "/fortune/palmistry",
+    color: "amber",
+    gradient: "from-amber-50 to-yellow-50",
+    badge: "전통"
   }
 ];
 
@@ -115,6 +167,7 @@ const itemVariants = {
 
 export default function FortunePage() {
   const router = useRouter();
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   const handleCategoryClick = (route: string) => {
     router.push(route);
@@ -122,7 +175,12 @@ export default function FortunePage() {
 
   return (
     <>
-      <AppHeader title="운세" showBack={false} />
+      <AppHeader 
+        title="운세" 
+        showBack={false}
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       <motion.div 
         className="pb-32 px-4 space-y-6 pt-4"
         initial="hidden"
