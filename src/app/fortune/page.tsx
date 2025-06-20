@@ -22,6 +22,7 @@ import {
   PartyPopper,
   Crown,
   Home,
+  ShieldAlert,
   ScrollText,
   Sunrise,
   Gem,
@@ -120,6 +121,16 @@ const fortuneCategories: FortuneCategory[] = [
     color: "amber",
     gradient: "from-amber-50 to-orange-50",
     badge: "전통"
+  },
+  {
+    id: "salpuli",
+    title: "살풀이",
+    description: "흉살을 알고 대비하는 길을 찾아보세요",
+    icon: ShieldAlert,
+    route: "/fortune/salpuli",
+    color: "red",
+    gradient: "from-red-50 to-pink-50",
+    badge: "조화"
   },
   {
     id: "daily",
