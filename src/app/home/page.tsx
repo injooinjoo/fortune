@@ -113,30 +113,8 @@ export default function HomePage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="px-6"
+        className="px-6 pt-4"
       >
-        {/* 헤더 */}
-        <motion.header variants={itemVariants} className="py-8 text-center">
-          <div className="mb-2">
-            <motion.h1 
-              className="text-3xl font-bold text-gray-900 mb-2"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.3, type: "spring" }}
-            >
-              안녕하세요, <span className="text-purple-600">{name}</span>님!
-            </motion.h1>
-            <motion.p 
-              className="text-gray-600"
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              오늘도 좋은 하루 되세요 ✨
-            </motion.p>
-          </div>
-        </motion.header>
-
         {/* 오늘의 운세 카드 */}
         <motion.div variants={itemVariants} className="mb-8">
           <motion.div
@@ -217,8 +195,8 @@ export default function HomePage() {
             {[
               { href: "/fortune/saju", icon: Sun, title: "사주팔자", desc: "정통 사주 풀이", color: "orange" },
               { href: "/physiognomy", icon: Camera, title: "AI 관상", desc: "얼굴로 보는 운세", color: "purple" },
-              { href: "/tarot", icon: Sparkles, title: "타로 리딩", desc: "카드가 주는 메시지", color: "indigo" },
-              { href: "/dream", icon: Moon, title: "꿈해몽", desc: "꿈이 전하는 의미", color: "emerald" }
+              { href: "/interactive/tarot", icon: Sparkles, title: "타로 리딩", desc: "카드가 주는 메시지", color: "indigo" },
+              { href: "/interactive/dream-interpretation", icon: Moon, title: "꿈해몽", desc: "꿈이 전하는 의미", color: "emerald" }
             ].map((item, index) => (
               <motion.div
                 key={item.href}

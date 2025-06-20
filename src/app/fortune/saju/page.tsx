@@ -68,8 +68,8 @@ export default function SajuAnalysisPage() {
   return (
     <>
       <AppHeader title="사주팔자" showBack={true} />
-      <div className="min-h-screen pb-32 px-4 space-y-6">
-        <header className="mt-4 p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
+      <div className="pb-32 px-4 space-y-6 pt-4">
+        <header className="p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
           <Droplet className="w-5 h-5" />
           <h2 className="text-lg font-semibold">{data.summary}</h2>
         </header>

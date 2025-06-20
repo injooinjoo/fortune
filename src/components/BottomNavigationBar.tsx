@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
   { href: '/home', label: '홈', icon: Home },
   { href: '/fortune', label: '운세', icon: Sparkles },
   { href: '/physiognomy', label: '관상', icon: Camera },
-  { href: '/tarot', label: '타로', icon: BookOpen },
+  { href: '/interactive/tarot', label: '타로', icon: BookOpen },
   { href: '/profile', label: '프로필', icon: User },
 ];
 

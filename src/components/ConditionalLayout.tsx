@@ -15,7 +15,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
     '/home',
     '/fortune',
     '/physiognomy',
-    '/tarot',
+    '/interactive',
     '/profile'
   ].some(path => pathname?.startsWith(path));
 
