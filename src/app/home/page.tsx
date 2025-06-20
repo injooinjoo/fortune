@@ -306,7 +306,7 @@ export default function HomePage() {
               { href: "/fortune/lucky-golf", icon: CircleDot, title: "행운의 골프", desc: "완벽한 라운딩을 위한 골프 운세", color: "lime", gradient: "from-lime-50 to-green-50" },
 
               { href: "/fortune/lucky-cycling", icon: Bike, title: "행운의 자전거", desc: "오늘의 라이딩 코스 운세", color: "teal", gradient: "from-teal-50 to-cyan-50" },
-
+              { href: "/fortune/lucky-color", icon: Palette, title: "행운의 색깔", desc: "마음을 위로하는 당신만의 색깔", color: "purple", gradient: "from-purple-50 to-blue-50" },
               { href: "/fortune/lucky-swim", icon: Waves, title: "행운의 수영", desc: "물의 기운으로 즐기는 건강 수영", color: "sky", gradient: "from-sky-50 to-blue-50" },
               { href: "/fortune/lucky-running", icon: Footprints, title: "행운의 마라톤", desc: "달리기 운세와 최적의 컨디션", color: "cyan", gradient: "from-cyan-50 to-blue-50" },
 

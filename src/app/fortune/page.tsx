@@ -241,6 +241,16 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "추천"
   },
   {
+    id: "lucky-color",
+    title: "행운의 색깔",
+    description: "마음을 위로하는 당신만의 색깔을 찾아보세요",
+    icon: Sparkles,
+    route: "/fortune/lucky-color",
+    color: "purple",
+    gradient: "from-purple-50 to-blue-50",
+    badge: "치유"
+  },
+  {
     id: "five-blessings",
     title: "천생복덕운",
     description: "타고난 오복의 균형을 살펴보세요",
