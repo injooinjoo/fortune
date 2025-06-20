@@ -8,6 +8,7 @@ export const FORTUNE_TYPES = [
   "결혼운", // Marriage Fortune
   "취업운", // Career/Job Fortune
   "오늘의 총운", // Today's General Fortune
+  "내일의 운세", // Tomorrow's General Fortune
   "금전운" // Wealth Fortune
 ] as const;
 
