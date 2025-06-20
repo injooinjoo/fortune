@@ -57,7 +57,7 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
             {/* <Image src="https://placehold.co/128x128.png" alt="앱 로고" width={64} height={64} className="rounded-full" data-ai-hint="mystical compass" /> */}
             <FortuneCompassIcon className="h-16 w-16 text-primary" />
           </div>
-          <CardTitle className="text-2xl">운세 탐험</CardTitle>
+          <CardTitle className="text-2xl">운세</CardTitle>
           <CardDescription className="mt-2">계속하려면 인증 방법을 선택해주세요.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 p-6">
@@ -112,7 +112,7 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
         </CardContent>
       </Card>
        <footer className="py-8 text-center text-xs text-muted-foreground">
-         <p>&copy; 2024 운세 탐험. 모든 운명은 당신의 선택에 달려있습니다.</p>
+         <p>&copy; 2024 운세. 모든 운명은 당신의 선택에 달려있습니다.</p>
       </footer>
     </div>
   );

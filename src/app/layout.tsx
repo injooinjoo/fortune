@@ -1,4 +1,3 @@
-
 import type { Metadata } from 'next';
 import { Lato, Geist_Mono } from 'next/font/google'; // Changed Geist to Lato
 import './globals.css';
@@ -20,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '운세 탐험',
+  title: '운세',
   description: '당신의 운명을 탐험하고 새로운 가능성을 발견하세요.',
 };
 

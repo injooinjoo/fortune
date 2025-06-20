@@ -2,23 +2,67 @@
 
 import { FortuneCompassIcon } from "@/components/icons/fortune-compass-icon";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun } from "lucide-react";
 import React, { useState, useRef } from "react";
 import { auth } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showNameInput, setShowNameInput] = useState(true);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const loginSectionRef = useRef<HTMLElement>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleGetStarted = () => {
     console.log("시작하기 버튼 클릭");
-    // 간편 로그인 섹션으로 부드럽게 스크롤
-    loginSectionRef.current?.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
+    setShowNameInput(true);
+  };
+
+  const handleNameSubmit = () => {
+    if (!userName.trim()) {
+      toast({
+        title: "이름을 입력해주세요",
+        description: "운세를 위해 이름이 필요합니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // 이름을 로컬 스토리지에 저장하고 생년월일 페이지로 이동
+    localStorage.setItem("userName", userName);
+    router.push("/onboarding/birthdate");
+  };
+
+  const handleLoginClick = () => {
+    setShowLoginForm(true);
+    setShowNameInput(false);
+  };
+
+  const handleLoginSubmit = () => {
+    if (!email || !password) {
+      toast({
+        title: "이메일과 비밀번호를 입력해주세요",
+        description: "로그인을 위해 필요합니다.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 테스트용 더미 로그인
+    localStorage.setItem("userEmail", email);
+    router.push("/dashboard");
+    
+    toast({
+      title: "로그인 성공!",
+      description: "대시보드로 이동합니다.",
     });
   };
 
@@ -52,167 +96,291 @@ export default function LandingPage() {
   };
 
   return (
-    <div className={`flex flex-col items-start relative w-full min-h-screen transition-colors duration-300 ${
+    <div className={`min-h-screen flex flex-col transition-colors ${
       isDarkMode 
-        ? 'bg-gray-900' 
-        : 'bg-white'
+        ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white' 
+        : 'bg-gradient-to-br from-purple-50 via-white to-pink-50 text-gray-900'
     }`}>
       {/* 헤더 */}
-      <header className="flex items-center justify-between w-full px-6 py-4">
+      <header className="w-full px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <FortuneCompassIcon className={`w-6 h-6 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
-          <span className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Fortune</span>
+          <FortuneCompassIcon className={`h-8 w-8 ${
+            isDarkMode ? 'text-purple-400' : 'text-purple-600'
+          }`} />
+          <span className={`text-xl font-bold ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>운세</span>
         </div>
         <Button
+          onClick={toggleTheme}
           variant="ghost"
           size="sm"
-          onClick={toggleTheme}
-          className={`p-2 rounded-full transition-colors ${
-            isDarkMode 
-              ? 'hover:bg-gray-800 text-gray-300' 
-              : 'hover:bg-gray-100 text-gray-600'
-          }`}
+          className="rounded-full w-10 h-10 p-0"
+          aria-label={isDarkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
         >
           {isDarkMode ? (
-            <Sun className="w-5 h-5" />
+            <Sun className="h-5 w-5 text-yellow-400" />
           ) : (
-            <Moon className="w-5 h-5" />
+            <Moon className="h-5 w-5 text-gray-600" />
           )}
         </Button>
       </header>
 
-      {/* 메인 컨텐츠 */}
-      <main className="flex flex-col items-start w-full">
+      {/* 메인 콘텐츠 */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6">
         {/* 히어로 섹션 */}
-        <section className="flex flex-col items-center text-center w-full px-6 py-12">
+        <div className="text-center mb-12 max-w-md mx-auto">
           <div className="mb-8">
-            <h1 className={`text-3xl font-bold mb-4 leading-tight ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>
-              당신의 운명을
-              <br />
-              <span className={isDarkMode ? 'text-purple-400' : 'text-purple-600'}>
-                읽어드립니다
-              </span>
-            </h1>
-            <p className={`text-base leading-relaxed max-w-sm mx-auto ${
-              isDarkMode ? 'text-gray-300' : 'text-gray-600'
-            }`}>
-              AI와 전통 명리학이 만나
-              <br />
-              당신만의 특별한 운세를 제공합니다
-            </p>
+            <FortuneCompassIcon className={`h-24 w-24 mx-auto mb-4 ${
+              isDarkMode ? 'text-purple-400' : 'text-purple-600'
+            }`} />
           </div>
+          
+          <h1 className={`text-4xl font-bold mb-4 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>
+            당신의 운명을 <br />
+            <span className={`${
+              isDarkMode ? 'text-purple-400' : 'text-purple-600'
+            }`}>탐험해보세요</span>
+          </h1>
+          
+          <p className={`text-lg mb-8 ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            AI가 제공하는 개인화된 운세로<br />
+            새로운 가능성을 발견하세요
+          </p>
 
-          {/* CTA 버튼 */}
-          <div className="mb-12">
-            <Button 
-              className={`font-medium px-8 py-3 rounded-full shadow-lg transition-colors ${
-                isDarkMode 
-                  ? 'bg-purple-500 hover:bg-purple-600 text-white' 
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-              onClick={handleGetStarted}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              무료로 시작하기
-            </Button>
-          </div>
-        </section>
-
-        {/* 서비스 소개 섹션 */}
-        <section className="w-full px-6 pb-12">
-          <div className="text-center mb-8">
-            <h2 className={`text-2xl font-bold mb-2 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>
-              다양한 운세 서비스
-            </h2>
-            <p className={`text-sm ${
-              isDarkMode ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              전통과 현대가 만나는 특별한 경험
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <Card className={`transition-all duration-300 ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
-                : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
-            }`}>
-              <CardHeader className="text-center p-6">
-                <div className={`mx-auto mb-3 w-12 h-12 rounded-full flex items-center justify-center ${
-                  isDarkMode ? 'bg-orange-900/30' : 'bg-orange-100'
-                }`}>
-                  <Sun className={`h-6 w-6 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`} />
+          {showLoginForm ? (
+            <div className="mb-12 w-full max-w-sm mx-auto">
+              <div className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    이메일
+                  </label>
+                  <Input
+                    type="email"
+                    placeholder="이메일을 입력하세요"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`w-full ${
+                      isDarkMode 
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                  />
                 </div>
-                <CardTitle className={`text-lg mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>사주팔자</CardTitle>
-                <CardDescription className={`text-sm leading-relaxed ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  생년월일시를 바탕으로 한 정통 사주 풀이로 
-                  당신의 타고난 운명을 분석합니다
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className={`transition-all duration-300 ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
-                : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
-            }`}>
-              <CardHeader className="text-center p-6">
-                <div className={`mx-auto mb-3 w-12 h-12 rounded-full flex items-center justify-center ${
-                  isDarkMode ? 'bg-purple-900/30' : 'bg-purple-100'
-                }`}>
-                  <Star className={`h-6 w-6 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    비밀번호
+                  </label>
+                  <Input
+                    type="password"
+                    placeholder="비밀번호를 입력하세요"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className={`w-full ${
+                      isDarkMode 
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleLoginSubmit();
+                      }
+                    }}
+                  />
                 </div>
-                <CardTitle className={`text-lg mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>AI 관상</CardTitle>
-                <CardDescription className={`text-sm leading-relaxed ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  최신 AI 기술로 얼굴 특징을 분석하여 
-                  성격과 운세를 읽어드립니다
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className={`transition-all duration-300 ${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700 hover:bg-gray-750' 
-                : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
-            }`}>
-              <CardHeader className="text-center p-6">
-                <div className={`mx-auto mb-3 w-12 h-12 rounded-full flex items-center justify-center ${
-                  isDarkMode ? 'bg-indigo-900/30' : 'bg-indigo-100'
-                }`}>
-                  <Moon className={`h-6 w-6 ${isDarkMode ? 'text-indigo-400' : 'text-indigo-600'}`} />
+                <Button 
+                  onClick={handleLoginSubmit}
+                  className={`w-full font-medium py-3 rounded-lg shadow-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-purple-500 hover:bg-purple-600 text-white' 
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  }`}
+                >
+                  로그인 제출
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => {
+                    setShowLoginForm(false);
+                    setShowNameInput(true);
+                  }}
+                  className="w-full"
+                >
+                  돌아가기
+                </Button>
+              </div>
+            </div>
+          ) : showNameInput ? (
+            <div className="mb-12 w-full max-w-sm mx-auto">
+              <div className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    이름을 입력해주세요
+                  </label>
+                  <Input
+                    name="name"
+                    placeholder="홍길동"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className={`w-full ${
+                      isDarkMode 
+                        ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleNameSubmit();
+                      }
+                    }}
+                  />
                 </div>
-                <CardTitle className={`text-lg mb-2 ${
-                  isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>타로 리딩</CardTitle>
-                <CardDescription className={`text-sm leading-relaxed ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}>
-                  신비로운 타로카드를 통해 현재와 미래의 
-                  가능성을 탐색해보세요
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-        </section>
+                <Button 
+                  onClick={handleNameSubmit}
+                  className={`w-full font-medium py-3 rounded-lg shadow-lg transition-colors ${
+                    isDarkMode 
+                      ? 'bg-purple-500 hover:bg-purple-600 text-white' 
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  }`}
+                >
+                  다음
+                </Button>
+                <Button 
+                  onClick={handleLoginClick}
+                  variant="outline"
+                  className={`w-full max-w-sm font-medium py-4 px-8 rounded-full transition-all duration-300 hover:scale-105 ${
+                    isDarkMode 
+                      ? 'border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-gray-900' 
+                      : 'border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white'
+                  }`}
+                >
+                  이메일로 로그인
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 mb-12">
+              <Button 
+                onClick={handleGetStarted}
+                className={`w-full max-w-sm font-medium py-4 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'bg-purple-500 hover:bg-purple-600 text-white' 
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                무료로 시작하기
+              </Button>
+              
+              <Button 
+                onClick={handleLoginClick}
+                variant="outline"
+                className={`w-full max-w-sm font-medium py-4 px-8 rounded-full transition-all duration-300 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-gray-900' 
+                    : 'border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white'
+                }`}
+              >
+                이메일로 로그인
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* 기능 카드들 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-16">
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
+          }`}>
+            <CardHeader>
+              <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
+                isDarkMode ? 'bg-purple-500' : 'bg-purple-100'
+              }`}>
+                <Star className={`w-6 h-6 ${
+                  isDarkMode ? 'text-white' : 'text-purple-600'
+                }`} />
+              </div>
+              <CardTitle className={`text-lg ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                개인화된 운세
+              </CardTitle>
+              <CardDescription className={`${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                당신만의 특별한 운세를 받아보세요
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
+          }`}>
+            <CardHeader>
+              <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
+                isDarkMode ? 'bg-blue-500' : 'bg-blue-100'
+              }`}>
+                <Sparkles className={`w-6 h-6 ${
+                  isDarkMode ? 'text-white' : 'text-blue-600'
+                }`} />
+              </div>
+              <CardTitle className={`text-lg ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                AI 분석
+              </CardTitle>
+              <CardDescription className={`${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                첨단 AI가 분석하는 정확한 예측
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className={`text-center p-6 shadow-lg transition-all hover:scale-105 ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
+          }`}>
+            <CardHeader>
+              <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${
+                isDarkMode ? 'bg-pink-500' : 'bg-pink-100'
+              }`}>
+                <Moon className={`w-6 h-6 ${
+                  isDarkMode ? 'text-white' : 'text-pink-600'
+                }`} />
+              </div>
+              <CardTitle className={`text-lg ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                다양한 분야
+              </CardTitle>
+              <CardDescription className={`${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                사랑, 직업, 건강까지 모든 영역
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
 
         {/* 소셜 로그인 섹션 */}
         <section ref={loginSectionRef} className="w-full px-6 pb-12">
           <div className="text-center mb-6">
-            <h3 className={`text-xl font-bold mb-1 ${
-              isDarkMode ? 'text-white' : 'text-gray-900'
-            }`}>간편 로그인</h3>
+            <h2 className="text-xl font-bold mb-1 text-gray-900">간편 로그인</h2>
             <p className={`text-sm ${
               isDarkMode ? 'text-gray-400' : 'text-gray-600'
             }`}>소셜 계정으로 빠르게 시작하세요</p>
@@ -245,6 +413,18 @@ export default function LandingPage() {
               </svg>
               <span>카카오로 계속하기</span>
             </Button>
+            
+            <div className="text-center mt-4">
+              <Button
+                variant="link"
+                className={`text-sm ${
+                  isDarkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => router.push("/home")}
+              >
+                로그인 없이 체험하기
+              </Button>
+            </div>
           </div>
         </section>
       </main>
