@@ -176,7 +176,7 @@ export default function LuckyRunningPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-green-25 to-blue-50 pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-green-25 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
       <AppHeader title="행운의 마라톤" />
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-6 pt-6">
         <AnimatePresence mode="wait">
@@ -348,12 +348,12 @@ export default function LuckyRunningPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 bg-green-50 rounded-lg">
-                      <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                    <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                      <h4 className="font-medium text-green-800 dark:text-green-300 mb-2 flex items-center gap-2">
                         <Sun className="w-4 h-4" />
                         컨디션 관리 팁
                       </h4>
-                      <ul className="list-disc pl-4 space-y-1 text-sm text-green-700">
+                      <ul className="list-disc pl-4 space-y-1 text-sm text-green-700 dark:text-green-400">
                         {result.tips.map((tip, idx) => (
                           <li key={idx}>{tip}</li>
                         ))}

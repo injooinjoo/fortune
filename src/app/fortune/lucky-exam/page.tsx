@@ -117,10 +117,10 @@ const preferredTimes = [
 ];
 
 const getLuckColor = (score: number) => {
-  if (score >= 85) return "text-green-600 bg-green-50";
-  if (score >= 70) return "text-blue-600 bg-blue-50";
-  if (score >= 55) return "text-orange-600 bg-orange-50";
-  return "text-red-600 bg-red-50";
+  if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
+  if (score >= 70) return "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30";
+  if (score >= 55) return "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30";
+  return "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30";
 };
 
 const getLuckText = (score: number) => {
@@ -310,7 +310,7 @@ export default function LuckyExamPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-25 to-teal-50 pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-25 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
       <AppHeader title="행운의 시험일자" />
       
       <motion.div

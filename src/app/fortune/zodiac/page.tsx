@@ -377,18 +377,18 @@ export default function ZodiacFortunePage() {
                     
                     {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '물' && (
                       <>
-                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                          <MoonIcon className="h-5 w-5 text-blue-500 mt-0.5" />
+                        <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                          <MoonIcon className="h-5 w-5 text-blue-500 dark:text-blue-400 mt-0.5" />
                           <div>
-                            <div className="font-medium">감정 정리</div>
-                            <div className="text-sm text-gray-600">내면의 목소리에 귀 기울이고 감정을 정리하는 시간</div>
+                            <div className="font-medium text-gray-800 dark:text-gray-200">감정 정리</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">내면의 목소리에 귀 기울이고 감정을 정리하는 시간</div>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3 p-3 bg-teal-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-teal-500 mt-0.5" />
+                        <div className="flex items-start gap-3 p-3 bg-teal-50 dark:bg-teal-900/30 rounded-lg">
+                          <CheckCircleIcon className="h-5 w-5 text-teal-500 dark:text-teal-400 mt-0.5" />
                           <div>
-                            <div className="font-medium">창작 활동</div>
-                            <div className="text-sm text-gray-600">예술이나 창작 활동을 통해 영감을 표현하세요</div>
+                            <div className="font-medium text-gray-800 dark:text-gray-200">창작 활동</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">예술이나 창작 활동을 통해 영감을 표현하세요</div>
                           </div>
                         </div>
                       </>
@@ -415,18 +415,18 @@ export default function ZodiacFortunePage() {
                     
                     {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '땅' && (
                       <>
-                        <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5" />
+                        <div className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                          <CheckCircleIcon className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5" />
                           <div>
-                            <div className="font-medium">안정적인 계획</div>
-                            <div className="text-sm text-gray-600">체계적이고 실용적인 계획 수립에 집중하세요</div>
+                            <div className="font-medium text-gray-800 dark:text-gray-200">안정적인 계획</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">체계적이고 실용적인 계획 수립에 집중하세요</div>
                           </div>
                         </div>
-                        <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg">
-                          <AlertCircleIcon className="h-5 w-5 text-emerald-500 mt-0.5" />
+                        <div className="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
+                          <AlertCircleIcon className="h-5 w-5 text-emerald-500 dark:text-emerald-400 mt-0.5" />
                           <div>
-                            <div className="font-medium">건강 관리</div>
-                            <div className="text-sm text-gray-600">규칙적인 생활과 건강 관리에 신경 쓰세요</div>
+                            <div className="font-medium text-gray-800 dark:text-gray-200">건강 관리</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">규칙적인 생활과 건강 관리에 신경 쓰세요</div>
                           </div>
                         </div>
                       </>

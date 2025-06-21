@@ -79,17 +79,6 @@ const fortuneCategories: FortuneCategory[] = [
     category: "love"
   },
   {
-    id: "destiny",
-    title: "인연운",
-    description: "앞으로 만나게 될 인연의 흐름을 알아보세요",
-    icon: Users,
-    route: "/fortune/destiny",
-    color: "fuchsia",
-    gradient: "from-fuchsia-50 to-rose-50",
-    badge: "NEW",
-    category: "love"
-  },
-  {
     id: "marriage",
     title: "결혼운",
     description: "평생의 동반자와의 인연을 확인하세요",
@@ -98,17 +87,6 @@ const fortuneCategories: FortuneCategory[] = [
     color: "rose",
     gradient: "from-rose-50 to-pink-50",
     badge: "특별",
-    category: "love"
-  },
-  {
-    id: "couple-match",
-    title: "짝궁합",
-    description: "현재 연인의 관계 흐름과 미래를 알아보세요",
-    icon: Heart,
-    route: "/fortune/couple-match",
-    color: "rose",
-    gradient: "from-rose-50 to-pink-50",
-    badge: "NEW",
     category: "love"
   },
   {
@@ -133,16 +111,6 @@ const fortuneCategories: FortuneCategory[] = [
     category: "career"
   },
   {
-    id: "employment",
-    title: "취업 운세",
-    description: "시즌별 취업 성공 가능성을 살펴보세요",
-    icon: Briefcase,
-    route: "/fortune/employment",
-    color: "indigo",
-    gradient: "from-indigo-50 to-purple-50",
-    category: "career"
-  },
-  {
     id: "business",
     title: "사업운",
     description: "성공적인 창업과 사업 운영을 위한 운세를 확인하세요",
@@ -151,17 +119,6 @@ const fortuneCategories: FortuneCategory[] = [
     color: "indigo",
     gradient: "from-indigo-50 to-purple-50",
     badge: "추천",
-    category: "career"
-  },
-  {
-    id: "startup",
-    title: "행운의 창업",
-    description: "어떤 업종이 잘 맞는지, 시작 시기를 알아보세요",
-    icon: Rocket,
-    route: "/fortune/startup",
-    color: "orange",
-    gradient: "from-orange-50 to-amber-50",
-    badge: "NEW",
     category: "career"
   },
   // 재물·투자
@@ -293,16 +250,7 @@ const fortuneCategories: FortuneCategory[] = [
     badge: "전통",
     category: "traditional"
   },
-  {
-    id: "traditional-compatibility",
-    title: "전통 궁합",
-    description: "정통 방식으로 보는 궁합",
-    icon: ScrollText,
-    route: "/fortune/traditional-compatibility",
-    color: "amber",
-    gradient: "from-amber-50 to-orange-50",
-    category: "traditional"
-  },
+
   // 생활·운세
   {
     id: "daily",
@@ -611,149 +559,17 @@ const fortuneCategories: FortuneCategory[] = [
     gradient: "from-green-50 to-emerald-50",
     category: "health"
   },
-  // 행운의 시리즈
+  // 행운 시리즈 (통합)
   {
-    id: "lucky-baseball",
-    title: "행운의 야구",
-    description: "야구를 통해 보는 당신의 운세와 승부운",
-    icon: Trophy,
-    route: "/fortune/lucky-baseball",
-    color: "orange",
-    gradient: "from-orange-50 to-amber-50",
-    badge: "스포츠",
-    category: "health"
-  },
-  {
-    id: "lucky-tennis",
-    title: "행운의 테니스",
-    description: "테니스로 만나는 행운과 건강한 경기",
-    icon: Trophy,
-    route: "/fortune/lucky-tennis",
-    color: "green",
-    gradient: "from-green-50 to-emerald-50",
-    badge: "스포츠",
-    category: "health"
-  },
-  {
-    id: "lucky-golf",
-    title: "행운의 골프",
-    description: "골프를 통해 보는 당신의 운세와 좋은 스코어",
-    icon: Trophy,
-    route: "/fortune/lucky-golf",
-    color: "emerald",
-    gradient: "from-emerald-50 to-teal-50",
-    badge: "스포츠",
-    category: "health"
-  },
-  {
-    id: "lucky-swimming",
-    title: "행운의 수영",
-    description: "수영으로 만나는 건강과 행운",
-    icon: Droplet,
-    route: "/fortune/lucky-swim",
-    color: "blue",
-    gradient: "from-blue-50 to-cyan-50",
-    badge: "스포츠",
-    category: "health"
-  },
-  {
-    id: "lucky-running",
-    title: "행운의 러닝",
-    description: "달리기로 만나는 건강과 목표 달성",
-    icon: Zap,
-    route: "/fortune/lucky-running",
-    color: "red",
-    gradient: "from-red-50 to-orange-50",
-    badge: "스포츠",
-    category: "health"
-  },
-  {
-    id: "lucky-fishing",
-    title: "행운의 낚시",
-    description: "낚시를 통해 보는 인내와 행운",
-    icon: Droplet,
-    route: "/fortune/lucky-fishing",
-    color: "teal",
-    gradient: "from-teal-50 to-cyan-50",
-    badge: "레저",
-    category: "health"
-  },
-  {
-    id: "lucky-exam",
-    title: "행운의 시험",
-    description: "시험 합격을 위한 운세와 전략",
-    icon: BookOpen,
-    route: "/fortune/lucky-exam",
+    id: "lucky-series",
+    title: "행운 시리즈",
+    description: "일상 속 다양한 행운 운세를 날짜별로 확인하세요",
+    icon: Sparkles,
+    route: "/fortune/lucky-series",
     color: "purple",
     gradient: "from-purple-50 to-indigo-50",
-    badge: "학업",
-    category: "career"
-  },
-  {
-    id: "lucky-food",
-    title: "행운의 음식",
-    description: "오늘 먹으면 좋은 행운의 음식",
-    icon: Heart,
-    route: "/fortune/lucky-food",
-    color: "orange",
-    gradient: "from-orange-50 to-yellow-50",
-    badge: "맛집",
+    badge: "인기",
     category: "lifestyle"
-  },
-  {
-    id: "lucky-items",
-    title: "행운의 아이템",
-    description: "당신에게 행운을 가져다 줄 아이템",
-    icon: Gem,
-    route: "/fortune/lucky-items",
-    color: "purple",
-    gradient: "from-purple-50 to-pink-50",
-    badge: "아이템",
-    category: "lifestyle"
-  },
-  {
-    id: "lucky-number",
-    title: "행운의 숫자",
-    description: "오늘의 행운을 부르는 숫자",
-    icon: Star,
-    route: "/fortune/lucky-number",
-    color: "indigo",
-    gradient: "from-indigo-50 to-purple-50",
-    badge: "숫자",
-    category: "lifestyle"
-  },
-  {
-    id: "lucky-outfit",
-    title: "행운의 옷차림",
-    description: "오늘 입으면 좋은 행운의 스타일",
-    icon: Sparkles,
-    route: "/fortune/lucky-outfit",
-    color: "pink",
-    gradient: "from-pink-50 to-rose-50",
-    badge: "패션",
-    category: "lifestyle"
-  },
-  {
-    id: "lucky-job",
-    title: "행운의 직업",
-    description: "당신에게 맞는 행운의 직업",
-    icon: Briefcase,
-    route: "/fortune/lucky-job",
-    color: "blue",
-    gradient: "from-blue-50 to-indigo-50",
-    badge: "직업",
-    category: "career"
-  },
-  {
-    id: "lucky-sidejob",
-    title: "행운의 부업",
-    description: "성공할 수 있는 부업을 찾아보세요",
-    icon: Coins,
-    route: "/fortune/lucky-sidejob",
-    color: "yellow",
-    gradient: "from-yellow-50 to-orange-50",
-    badge: "부업",
-    category: "money"
   }
 ];
 

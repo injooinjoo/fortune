@@ -76,12 +76,12 @@ const mockData = {
 export default function DailyFortunePage() {
   const data = mockData;
   return (
-    <div className="min-h-screen pb-32 px-4 space-y-6 bg-gradient-to-br from-purple-50 via-white to-indigo-50">
+    <div className="min-h-screen pb-32 px-4 space-y-6 bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
       <AppHeader title="오늘의 운세" />
 
       <Card>
         <CardHeader>
-          <CardTitle as="h2" className="text-xl">
+          <CardTitle className="text-xl">
             {data.dateLabel}
           </CardTitle>
         </CardHeader>

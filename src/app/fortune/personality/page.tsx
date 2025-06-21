@@ -574,15 +574,15 @@ export default function PersonalityPage() {
                               <h5 className="font-semibold text-green-600 mb-2">강점</h5>
                               <ul className="text-sm space-y-1">
                                 {trait.strengths.map((strength, idx) => (
-                                  <li key={idx} className="text-gray-600">• {strength}</li>
+                                  <li key={idx} className="text-gray-600 dark:text-gray-400">• {strength}</li>
                                 ))}
                               </ul>
                             </div>
                             <div>
-                              <h5 className="font-semibold text-orange-600 mb-2">성장 포인트</h5>
+                              <h5 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">성장 포인트</h5>
                               <ul className="text-sm space-y-1">
                                 {trait.areas_for_growth.map((area, idx) => (
-                                  <li key={idx} className="text-gray-600">• {area}</li>
+                                  <li key={idx} className="text-gray-600 dark:text-gray-400">• {area}</li>
                                 ))}
                               </ul>
                             </div>
@@ -606,18 +606,18 @@ export default function PersonalityPage() {
 
                 {/* 강점과 도전과제 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                  <Card className="shadow-lg border-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
                     <CardHeader>
-                      <CardTitle className="text-xl text-gray-800 flex items-center gap-2">
-                        <TrendingUp className="w-5 h-5 text-green-500" />
+                      <CardTitle className="text-xl text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <TrendingUp className="w-5 h-5 text-green-500 dark:text-green-400" />
                         주요 강점
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
                         {result.strengths.map((strength, index) => (
-                          <li key={index} className="flex items-start gap-2 text-gray-600">
-                            <Zap className="w-4 h-4 text-green-500 mt-1 flex-shrink-0" />
+                          <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                            <Zap className="w-4 h-4 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" />
                             {strength}
                           </li>
                         ))}
@@ -625,18 +625,18 @@ export default function PersonalityPage() {
                     </CardContent>
                   </Card>
 
-                  <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                  <Card className="shadow-lg border-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
                     <CardHeader>
-                      <CardTitle className="text-xl text-gray-800 flex items-center gap-2">
-                        <Target className="w-5 h-5 text-orange-500" />
+                      <CardTitle className="text-xl text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <Target className="w-5 h-5 text-orange-500 dark:text-orange-400" />
                         도전과제
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
                         {result.challenges.map((challenge, index) => (
-                          <li key={index} className="flex items-start gap-2 text-gray-600">
-                            <Shield className="w-4 h-4 text-orange-500 mt-1 flex-shrink-0" />
+                          <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                            <Shield className="w-4 h-4 text-orange-500 dark:text-orange-400 mt-1 flex-shrink-0" />
                             {challenge}
                           </li>
                         ))}

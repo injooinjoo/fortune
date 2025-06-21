@@ -115,7 +115,7 @@ export default function SajuAnalysisPage() {
         currentFontSize={fontSize}
       />
       <div className="pb-32 px-4 space-y-6 pt-4">
-        <header className="p-4 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center gap-2">
+        <header className="p-4 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 flex items-center justify-center gap-2">
           <Droplet className="w-5 h-5" />
           <h2 className="text-lg font-semibold">{data.summary}</h2>
         </header>
@@ -159,14 +159,14 @@ export default function SajuAnalysisPage() {
               <CardContent>
                 <div className="grid grid-cols-4 gap-2 text-center">
                   {data.saju.heaven.map((h, idx) => (
-                    <div key={`h-${idx}`} className="rounded-md bg-blue-50 p-2">
+                    <div key={`h-${idx}`} className="rounded-md bg-blue-50 dark:bg-blue-900/30 p-2 text-blue-800 dark:text-blue-200">
                       {h}
                     </div>
                   ))}
                 </div>
                 <div className="grid grid-cols-4 gap-2 text-center mt-2">
                   {data.saju.earth.map((e, idx) => (
-                    <div key={`e-${idx}`} className="rounded-md bg-green-50 p-2">
+                    <div key={`e-${idx}`} className="rounded-md bg-green-50 dark:bg-green-900/30 p-2 text-green-800 dark:text-green-200">
                       {e}
                     </div>
                   ))}
@@ -216,8 +216,8 @@ export default function SajuAnalysisPage() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-2">
                   {data.twelveFortunes.map((item) => (
-                    <div key={item.name} className="p-2 rounded-md bg-gray-50">
-                      <div className="font-medium text-sm">{item.name}</div>
+                    <div key={item.name} className="p-2 rounded-md bg-gray-50 dark:bg-gray-800/50">
+                      <div className="font-medium text-sm text-gray-800 dark:text-gray-200">{item.name}</div>
                       <p className="text-xs text-muted-foreground">
                         {item.description}
                       </p>

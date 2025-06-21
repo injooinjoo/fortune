@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,8 @@ import {
   Salad,
   Beef,
   Carrot,
-  Cherry
+  Cherry,
+  Calendar
 } from "lucide-react";
 
 interface FoodInfo {
@@ -111,10 +113,10 @@ const mealTimings = [
 ];
 
 const getLuckColor = (score: number) => {
-  if (score >= 85) return "text-green-600 bg-green-50";
-  if (score >= 70) return "text-blue-600 bg-blue-50";
-  if (score >= 55) return "text-orange-600 bg-orange-50";
-  return "text-red-600 bg-red-50";
+  if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
+  if (score >= 70) return "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30";
+  if (score >= 55) return "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30";
+  return "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30";
 };
 
 const getLuckText = (score: number) => {
@@ -125,8 +127,10 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyFoodPage() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>('');
   const [formData, setFormData] = useState<FoodInfo>({
     name: '',
     birth_date: '',
@@ -143,6 +147,18 @@ export default function LuckyFoodPage() {
     food_wishes: ''
   });
   const [result, setResult] = useState<FoodFortune | null>(null);
+
+  // URL에서 날짜 파라미터 가져오기
+  useEffect(() => {
+    const dateParam = searchParams?.get('date');
+    if (dateParam) {
+      setSelectedDate(dateParam);
+    } else {
+      // 기본값은 오늘 날짜
+      const today = new Date().toISOString().split('T')[0];
+      setSelectedDate(today);
+    }
+  }, [searchParams]);
 
   const analyzeFoodFortune = async (): Promise<FoodFortune> => {
     const baseScore = Math.floor(Math.random() * 25) + 65;
@@ -291,8 +307,21 @@ export default function LuckyFoodPage() {
                 >
                   <UtensilsCrossed className="w-10 h-10 text-white" />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">행운의 음식</h1>
-                <p className="text-gray-600">맛있는 행운을 불러오는 당신만의 음식 운세</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">행운의 음식</h1>
+                <p className="text-gray-600 dark:text-gray-400">맛있는 행운을 불러오는 당신만의 음식 운세</p>
+                {selectedDate && (
+                  <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-rose-100 dark:bg-rose-900/30 rounded-full">
+                    <Calendar className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                    <span className="text-sm font-medium text-rose-700 dark:text-rose-300">
+                      {new Date(selectedDate).toLocaleDateString('ko-KR', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        weekday: 'short'
+                      })} 운세
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* 기본 정보 */}

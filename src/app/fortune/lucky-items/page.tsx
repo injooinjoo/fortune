@@ -38,7 +38,8 @@ import {
   Flower,
   Coffee,
   Book,
-  Music
+  Music,
+  Briefcase
 } from "lucide-react";
 
 interface UserInfo {
@@ -312,8 +313,8 @@ export default function LuckyItemsPage() {
                 >
                   <Gift className="w-10 h-10 text-white" />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">행운의 아이템 추천</h1>
-                <p className="text-gray-600">당신만을 위한 특별한 행운의 아이템을 찾아드립니다</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">행운의 아이템 추천</h1>
+                <p className="text-gray-600 dark:text-gray-400">당신만을 위한 특별한 행운의 아이템을 찾아드립니다</p>
               </motion.div>
 
               {/* 기본 정보 */}

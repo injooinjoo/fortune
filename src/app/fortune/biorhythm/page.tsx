@@ -116,6 +116,89 @@ const getTrendIcon = (value: number) => {
   return Minus;
 };
 
+// 날짜 포맷팅 함수 추가
+const formatKoreanDate = (dateString: string): string => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}년 ${month}월 ${day}일`;
+};
+
+// 날짜 입력 컴포넌트
+const DateInput = ({ 
+  value, 
+  onChange, 
+  label, 
+  placeholder = "날짜를 선택해주세요" 
+}: { 
+  value: string; 
+  onChange: (value: string) => void; 
+  label: string;
+  placeholder?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [tempDate, setTempDate] = useState(value);
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = e.target.value;
+    setTempDate(newDate);
+    onChange(newDate);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <Label className="text-gray-700 dark:text-gray-300 font-medium mb-2 block">
+        {label}
+      </Label>
+      <motion.div
+        className="relative"
+        whileHover={{ scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+      >
+        <div
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200 dark:focus-within:ring-blue-800"
+        >
+          <div className="flex items-center justify-between">
+            <span className={`${value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'} font-medium`}>
+              {value ? formatKoreanDate(value) : placeholder}
+            </span>
+            <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+          </div>
+        </div>
+        
+        {/* 숨겨진 실제 date input */}
+        <input
+          type="date"
+          value={tempDate}
+          onChange={handleDateChange}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          style={{ zIndex: isOpen ? 10 : -1 }}
+        />
+      </motion.div>
+      
+      {/* 선택된 날짜 미리보기 */}
+      {value && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700"
+        >
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              선택된 날짜: {formatKoreanDate(value)}
+            </span>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
 export default function BiorhythmPage() {
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
@@ -385,344 +468,341 @@ export default function BiorhythmPage() {
   }, [result]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-25 to-indigo-50 pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-20">
       <AppHeader title="바이오리듬" />
       
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="px-6 pt-6"
+        className="px-6 pt-4"
       >
-        <AnimatePresence mode="wait">
-          {step === 'input' && (
-            <motion.div
-              key="input"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
-              className="space-y-6"
-            >
-              {/* 헤더 */}
-              <motion.div variants={itemVariants} className="text-center mb-8">
-                <motion.div
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <Activity className="w-10 h-10 text-white" />
-                </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">바이오리듬 분석</h1>
-                <p className="text-gray-600">건강, 감성, 지성의 주기적 변화를 분석해드립니다</p>
+        {step === 'input' && (
+          <motion.div className="space-y-6">
+            {/* 헤더 */}
+            <motion.div variants={itemVariants} className="text-center">
+              <motion.div
+                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              >
+                <Activity className="w-8 h-8 text-white" />
               </motion.div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                바이오리듬 분석
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400">
+                신체, 감정, 지적 리듬을 분석하여 최적의 컨디션을 확인해보세요
+              </p>
+            </motion.div>
 
-              {/* 바이오리듬 설명 */}
-              <motion.div variants={itemVariants}>
-                <Card className="border-cyan-200 bg-cyan-50">
-                  <CardContent className="py-4">
+            {/* 입력 폼 */}
+            <motion.div variants={itemVariants}>
+              <Card className="border-blue-200 dark:border-blue-700 dark:bg-gray-800">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                    <Calendar className="w-5 h-5" />
+                    정보 입력
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <DateInput
+                    value={birthDate}
+                    onChange={setBirthDate}
+                    label="생년월일"
+                    placeholder="태어난 날짜를 선택해주세요"
+                  />
+                  
+                  <DateInput
+                    value={targetDate}
+                    onChange={setTargetDate}
+                    label="분석할 날짜"
+                    placeholder="분석하고 싶은 날짜를 선택해주세요"
+                  />
+                  
+                  {/* 분석 설명 */}
+                  <motion.div
+                    className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-700"
+                    whileHover={{ scale: 1.02 }}
+                  >
                     <div className="flex items-start gap-3">
-                      <Info className="w-5 h-5 text-cyan-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
+                        <Brain className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      </div>
                       <div>
-                        <h4 className="font-medium text-cyan-800 mb-1">바이오리듬이란?</h4>
-                        <p className="text-cyan-700 text-sm">
-                          바이오리듬은 인간의 신체적, 감성적, 지적 능력이 주기적으로 변화한다는 이론입니다. 
-                          신체 리듬(23일), 감성 리듬(28일), 지성 리듬(33일)의 주기로 변화합니다.
+                        <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                          바이오리듬이란?
+                        </h3>
+                        <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
+                          생체 리듬의 주기적 변화를 분석하여 신체(23일), 감정(28일), 지적(33일) 상태를 예측하는 이론입니다.
                         </p>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-              {/* 입력 폼 */}
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-blue-700">
-                      <Calendar className="w-5 h-5" />
-                      정보 입력
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="birth_date">생년월일</Label>
-                      <Input
-                        id="birth_date"
-                        type="date"
-                        value={birthDate}
-                        onChange={(e) => setBirthDate(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="target_date">분석할 날짜</Label>
-                      <Input
-                        id="target_date"
-                        type="date"
-                        value={targetDate}
-                        onChange={(e) => setTargetDate(e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 분석 버튼 */}
-              <motion.div variants={itemVariants} className="pt-4">
+            {/* 분석 버튼 */}
+            <motion.div variants={itemVariants}>
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   onClick={handleSubmit}
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white py-6 text-lg font-semibold"
+                  disabled={!birthDate || loading}
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg transition-all duration-200"
                 >
                   {loading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ repeat: Infinity, duration: 1 }}
-                      className="flex items-center gap-2"
-                    >
-                      <RefreshCw className="w-5 h-5" />
+                    <div className="flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                      >
+                        <Activity className="w-5 h-5" />
+                      </motion.div>
                       분석 중...
-                    </motion.div>
+                    </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <Activity className="w-5 h-5" />
+                      <Zap className="w-5 h-5" />
                       바이오리듬 분석하기
                     </div>
                   )}
                 </Button>
               </motion.div>
             </motion.div>
-          )}
+          </motion.div>
+        )}
 
-          {step === 'result' && result && (
-            <motion.div
-              key="result"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              className="space-y-6"
-            >
-              {/* 현재 바이오리듬 */}
-              <motion.div variants={itemVariants}>
-                <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
-                  <CardContent className="text-center py-8">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <Activity className="w-6 h-6" />
-                      <span className="text-xl font-medium">
-                        {formatDate(result.current.date)} 바이오리듬
-                      </span>
+        {step === 'result' && result && (
+          <motion.div
+            key="result"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            className="space-y-6"
+          >
+            {/* 현재 바이오리듬 */}
+            <motion.div variants={itemVariants}>
+              <Card className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
+                <CardContent className="text-center py-8">
+                  <div className="flex items-center justify-center gap-2 mb-4">
+                    <Activity className="w-6 h-6" />
+                    <span className="text-xl font-medium">
+                      {formatKoreanDate(result.current.date)} 바이오리듬
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 mt-6">
+                    <div>
+                      <Heart className="w-6 h-6 mx-auto mb-2" />
+                      <p className="text-sm opacity-90">신체</p>
+                      <p className="text-2xl font-bold">{Math.round(result.current.physical)}%</p>
                     </div>
-                    <div className="grid grid-cols-3 gap-4 mt-6">
-                      <div>
-                        <Heart className="w-6 h-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-90">신체</p>
-                        <p className="text-2xl font-bold">{Math.round(result.current.physical)}%</p>
-                      </div>
-                      <div>
-                        <Star className="w-6 h-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-90">감성</p>
-                        <p className="text-2xl font-bold">{Math.round(result.current.emotional)}%</p>
-                      </div>
-                      <div>
-                        <Brain className="w-6 h-6 mx-auto mb-2" />
-                        <p className="text-sm opacity-90">지성</p>
-                        <p className="text-2xl font-bold">{Math.round(result.current.intellectual)}%</p>
-                      </div>
+                    <div>
+                      <Star className="w-6 h-6 mx-auto mb-2" />
+                      <p className="text-sm opacity-90">감성</p>
+                      <p className="text-2xl font-bold">{Math.round(result.current.emotional)}%</p>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 바이오리듬 차트 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-600">
-                      <LineChart className="w-5 h-5" />
-                      7일간 바이오리듬 변화
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {biorhythmChart}
-                    <div className="mt-4 grid grid-cols-7 gap-1 text-xs text-center">
-                      {result.forecast.map((day, index) => (
-                        <div key={index} className="p-1">
-                          {formatDate(day.date)}
-                        </div>
-                      ))}
+                    <div>
+                      <Brain className="w-6 h-6 mx-auto mb-2" />
+                      <p className="text-sm opacity-90">지성</p>
+                      <p className="text-2xl font-bold">{Math.round(result.current.intellectual)}%</p>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 상세 분석 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-green-600">
-                      <Target className="w-5 h-5" />
-                      상세 분석
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid gap-4">
-                      {/* 신체 리듬 */}
-                      <div className="p-4 bg-red-50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-red-800 flex items-center gap-2">
-                            <Heart className="w-4 h-4" />
-                            신체 리듬
-                          </h4>
-                          <div className="flex items-center gap-2">
-                            <Badge className={getStatusInfo(result.current.physical).color}>
-                              {getStatusText(result.analysis.physical.status)}
-                            </Badge>
-                            {(() => {
-                              const TrendIcon = getTrendIcon(result.current.physical);
-                              return <TrendIcon className="w-4 h-4 text-red-600" />;
-                            })()}
-                          </div>
-                        </div>
-                        <p className="text-red-700 text-sm mb-2">{result.analysis.physical.description}</p>
-                        <p className="text-red-600 text-xs font-medium">조언: {result.analysis.physical.advice}</p>
-                      </div>
-
-                      {/* 감성 리듬 */}
-                      <div className="p-4 bg-blue-50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-blue-800 flex items-center gap-2">
-                            <Star className="w-4 h-4" />
-                            감성 리듬
-                          </h4>
-                          <div className="flex items-center gap-2">
-                            <Badge className={getStatusInfo(result.current.emotional).color}>
-                              {getStatusText(result.analysis.emotional.status)}
-                            </Badge>
-                            {(() => {
-                              const TrendIcon = getTrendIcon(result.current.emotional);
-                              return <TrendIcon className="w-4 h-4 text-blue-600" />;
-                            })()}
-                          </div>
-                        </div>
-                        <p className="text-blue-700 text-sm mb-2">{result.analysis.emotional.description}</p>
-                        <p className="text-blue-600 text-xs font-medium">조언: {result.analysis.emotional.advice}</p>
-                      </div>
-
-                      {/* 지성 리듬 */}
-                      <div className="p-4 bg-green-50 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-green-800 flex items-center gap-2">
-                            <Brain className="w-4 h-4" />
-                            지성 리듬
-                          </h4>
-                          <div className="flex items-center gap-2">
-                            <Badge className={getStatusInfo(result.current.intellectual).color}>
-                              {getStatusText(result.analysis.intellectual.status)}
-                            </Badge>
-                            {(() => {
-                              const TrendIcon = getTrendIcon(result.current.intellectual);
-                              return <TrendIcon className="w-4 h-4 text-green-600" />;
-                            })()}
-                          </div>
-                        </div>
-                        <p className="text-green-700 text-sm mb-2">{result.analysis.intellectual.description}</p>
-                        <p className="text-green-600 text-xs font-medium">조언: {result.analysis.intellectual.advice}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 최적의 날과 주의할 날 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-purple-600">
-                      <Calendar className="w-5 h-5" />
-                      주요 일정 가이드
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {result.bestDays.length > 0 && (
-                      <div className="p-4 bg-green-50 rounded-lg">
-                        <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4" />
-                          최적의 날
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {result.bestDays.map((day, index) => (
-                            <Badge key={index} variant="outline" className="text-green-700 border-green-300">
-                              {day}
-                            </Badge>
-                          ))}
-                        </div>
-                        <p className="text-green-600 text-xs mt-2">중요한 일정이나 새로운 도전에 좋은 시기입니다.</p>
-                      </div>
-                    )}
-                    
-                    {result.cautionDays.length > 0 && (
-                      <div className="p-4 bg-amber-50 rounded-lg">
-                        <h4 className="font-medium text-amber-800 mb-2 flex items-center gap-2">
-                          <AlertCircle className="w-4 h-4" />
-                          주의할 날
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {result.cautionDays.map((day, index) => (
-                            <Badge key={index} variant="outline" className="text-amber-700 border-amber-300">
-                              {day}
-                            </Badge>
-                          ))}
-                        </div>
-                        <p className="text-amber-600 text-xs mt-2">휴식을 취하고 무리한 일정은 피하는 것이 좋습니다.</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 추천사항 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-indigo-600">
-                      <Zap className="w-5 h-5" />
-                      맞춤 추천사항
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {result.recommendations.map((recommendation, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
-                          className="flex items-start gap-2"
-                        >
-                          <Star className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
-                          <p className="text-gray-700">{recommendation}</p>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 다시 분석하기 버튼 */}
-              <motion.div variants={itemVariants} className="pt-4">
-                <Button
-                  onClick={handleReset}
-                  variant="outline"
-                  className="w-full border-cyan-300 text-cyan-600 hover:bg-cyan-50 py-3"
-                >
-                  <ArrowRight className="w-4 h-4 mr-2" />
-                  다른 날짜 분석하기
-                </Button>
-              </motion.div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
-          )}
-        </AnimatePresence>
+
+            {/* 바이오리듬 차트 */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-blue-600">
+                    <LineChart className="w-5 h-5" />
+                    7일간 바이오리듬 변화
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {biorhythmChart}
+                  <div className="mt-4 grid grid-cols-7 gap-1 text-xs text-center">
+                    {result.forecast.map((day, index) => (
+                      <div key={index} className="p-1">
+                        {formatKoreanDate(day.date)}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* 상세 분석 */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-green-600">
+                    <Target className="w-5 h-5" />
+                    상세 분석
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4">
+                    {/* 신체 리듬 */}
+                    <div className="p-4 bg-red-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-red-800 flex items-center gap-2">
+                          <Heart className="w-4 h-4" />
+                          신체 리듬
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <Badge className={getStatusInfo(result.current.physical).color}>
+                            {getStatusText(result.analysis.physical.status)}
+                          </Badge>
+                          {(() => {
+                            const TrendIcon = getTrendIcon(result.current.physical);
+                            return <TrendIcon className="w-4 h-4 text-red-600" />;
+                          })()}
+                        </div>
+                      </div>
+                      <p className="text-red-700 text-sm mb-2">{result.analysis.physical.description}</p>
+                      <p className="text-red-600 text-xs font-medium">조언: {result.analysis.physical.advice}</p>
+                    </div>
+
+                    {/* 감성 리듬 */}
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                          <Star className="w-4 h-4" />
+                          감성 리듬
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <Badge className={getStatusInfo(result.current.emotional).color}>
+                            {getStatusText(result.analysis.emotional.status)}
+                          </Badge>
+                          {(() => {
+                            const TrendIcon = getTrendIcon(result.current.emotional);
+                            return <TrendIcon className="w-4 h-4 text-blue-600" />;
+                          })()}
+                        </div>
+                      </div>
+                      <p className="text-blue-700 text-sm mb-2">{result.analysis.emotional.description}</p>
+                      <p className="text-blue-600 text-xs font-medium">조언: {result.analysis.emotional.advice}</p>
+                    </div>
+
+                    {/* 지성 리듬 */}
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium text-green-800 flex items-center gap-2">
+                          <Brain className="w-4 h-4" />
+                          지성 리듬
+                        </h4>
+                        <div className="flex items-center gap-2">
+                          <Badge className={getStatusInfo(result.current.intellectual).color}>
+                            {getStatusText(result.analysis.intellectual.status)}
+                          </Badge>
+                          {(() => {
+                            const TrendIcon = getTrendIcon(result.current.intellectual);
+                            return <TrendIcon className="w-4 h-4 text-green-600" />;
+                          })()}
+                        </div>
+                      </div>
+                      <p className="text-green-700 text-sm mb-2">{result.analysis.intellectual.description}</p>
+                      <p className="text-green-600 text-xs font-medium">조언: {result.analysis.intellectual.advice}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* 최적의 날과 주의할 날 */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-purple-600">
+                    <Calendar className="w-5 h-5" />
+                    주요 일정 가이드
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {result.bestDays.length > 0 && (
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <h4 className="font-medium text-green-800 mb-2 flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        최적의 날
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {result.bestDays.map((day, index) => (
+                          <Badge key={index} variant="outline" className="text-green-700 border-green-300">
+                            {day}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-green-600 text-xs mt-2">중요한 일정이나 새로운 도전에 좋은 시기입니다.</p>
+                    </div>
+                  )}
+                  
+                  {result.cautionDays.length > 0 && (
+                    <div className="p-4 bg-amber-50 rounded-lg">
+                      <h4 className="font-medium text-amber-800 mb-2 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4" />
+                        주의할 날
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {result.cautionDays.map((day, index) => (
+                          <Badge key={index} variant="outline" className="text-amber-700 border-amber-300">
+                            {day}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-amber-600 text-xs mt-2">휴식을 취하고 무리한 일정은 피하는 것이 좋습니다.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* 추천사항 */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-indigo-600">
+                    <Zap className="w-5 h-5" />
+                    맞춤 추천사항
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {result.recommendations.map((recommendation, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.6 + index * 0.1 }}
+                        className="flex items-start gap-2"
+                      >
+                        <Star className="w-4 h-4 text-indigo-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-gray-700">{recommendation}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* 다시 분석하기 버튼 */}
+            <motion.div variants={itemVariants} className="pt-4">
+              <Button
+                onClick={handleReset}
+                variant="outline"
+                className="w-full border-cyan-300 text-cyan-600 hover:bg-cyan-50 py-3"
+              >
+                <ArrowRight className="w-4 h-4 mr-2" />
+                다른 날짜 분석하기
+              </Button>
+            </motion.div>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );

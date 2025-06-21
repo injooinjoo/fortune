@@ -157,7 +157,7 @@ export default function HomePage() {
   const [name, setName] = useState<string>("사용자");
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [recentFortunes, setRecentFortunes] = useState<RecentFortune[]>([]);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showAdLoading, setShowAdLoading] = useState(false);
   const [pendingFortune, setPendingFortune] = useState<{ path: string; title: string } | null>(null);
@@ -192,8 +192,11 @@ export default function HomePage() {
 
   const fontClasses = getFontSizeClasses(fontSize);
 
-  // 실시간 시간 업데이트
+  // 실시간 시간 업데이트 (클라이언트에서만)
   useEffect(() => {
+    // 초기 시간 설정
+    setCurrentTime(new Date());
+    
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -347,6 +350,8 @@ export default function HomePage() {
 
   // 시간대별 인사말과 아이콘
   const getTimeGreeting = () => {
+    if (!currentTime) return { greeting: "오늘", icon: Sun, color: "orange" };
+    
     const hour = currentTime.getHours();
     if (hour < 6) return { greeting: "새벽", icon: Moon, color: "indigo" };
     if (hour < 12) return { greeting: "아침", icon: Sunrise, color: "orange" };
@@ -458,14 +463,20 @@ export default function HomePage() {
                         {timeInfo.greeting} 운세
                       </CardTitle>
                       <p className={`${fontClasses.label} text-white/80`}>
-                        {currentTime.toLocaleDateString('ko-KR', { 
-                          month: 'long', 
-                          day: 'numeric',
-                          weekday: 'short'
-                        })} • {currentTime.toLocaleTimeString('ko-KR', { 
-                          hour: '2-digit', 
-                          minute: '2-digit'
-                        })}
+                        {currentTime ? (
+                          <>
+                            {currentTime.toLocaleDateString('ko-KR', { 
+                              month: 'long', 
+                              day: 'numeric',
+                              weekday: 'short'
+                            })} • {currentTime.toLocaleTimeString('ko-KR', { 
+                              hour: '2-digit', 
+                              minute: '2-digit'
+                            })}
+                          </>
+                        ) : (
+                          '로딩 중...'
+                        )}
                       </p>
                     </div>
                   </div>
@@ -655,37 +666,37 @@ export default function HomePage() {
             className="grid grid-cols-2 gap-4 mb-6"
             variants={containerVariants}
           >
-            {[
-              { href: "/fortune/saju", icon: Sun, title: "사주팔자", desc: "정통 사주 풀이", color: "orange" },
-              { href: "/physiognomy", icon: Camera, title: "AI 관상", desc: "얼굴로 보는 운세", color: "purple" },
-              { href: "/premium", icon: Sparkles, title: "프리미엄사주", desc: "만화로 보는 사주", color: "indigo" },
-              { href: "/fortune", icon: Star, title: "전체 운세", desc: "모든 운세 보기", color: "purple" }
-            ].map((item, index) => (
-              <motion.div
-                key={item.href}
-                variants={itemVariants}
-                whileHover="hover"
-                whileTap={{ scale: 0.95 }}
-              >
-                <div onClick={() => handleFortuneClick(item.href, item.title)} className="cursor-pointer">
-                  <motion.div variants={cardVariants}>
-                    <Card className={`h-full hover:shadow-lg transition-all duration-300 border-${item.color}-200 hover:border-${item.color}-300 dark:bg-gray-800 dark:border-gray-700`}>
-                      <CardContent className="p-6 text-center">
-                        <motion.div 
-                          className={`bg-${item.color}-100 dark:bg-${item.color}-900/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <item.icon className={`w-8 h-8 text-${item.color}-600 dark:text-${item.color}-400`} />
-                        </motion.div>
-                        <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>{item.title}</h3>
-                        <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </div>
+                    {[
+          { href: "/fortune/saju", icon: Sun, title: "사주팔자", desc: "정통 사주 풀이", color: "orange", needsAd: true },
+          { href: "/physiognomy", icon: Camera, title: "AI 관상", desc: "얼굴로 보는 운세", color: "purple", needsAd: true },
+          { href: "/premium", icon: Sparkles, title: "프리미엄사주", desc: "만화로 보는 사주", color: "indigo", needsAd: true },
+          { href: "/fortune", icon: Star, title: "전체 운세", desc: "모든 운세 보기", color: "purple", needsAd: false }
+        ].map((item, index) => (
+          <motion.div
+            key={item.href}
+            variants={itemVariants}
+            whileHover="hover"
+            whileTap={{ scale: 0.95 }}
+          >
+            <div onClick={() => item.needsAd ? handleFortuneClick(item.href, item.title) : router.push(item.href)} className="cursor-pointer">
+              <motion.div variants={cardVariants}>
+                <Card className={`h-full hover:shadow-lg transition-all duration-300 border-${item.color}-200 hover:border-${item.color}-300 dark:bg-gray-800 dark:border-gray-700`}>
+                  <CardContent className="p-6 text-center">
+                    <motion.div 
+                      className={`bg-${item.color}-100 dark:bg-${item.color}-900/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3`}
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <item.icon className={`w-8 h-8 text-${item.color}-600 dark:text-${item.color}-400`} />
+                    </motion.div>
+                    <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>{item.title}</h3>
+                    <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
+                  </CardContent>
+                </Card>
               </motion.div>
-            ))}
+            </div>
+          </motion.div>
+        ))}
           </motion.div>
         </motion.div>
 

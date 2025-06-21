@@ -356,24 +356,24 @@ export default function MbtiFortunePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                      <div className="text-sm font-medium text-yellow-800">행운의 요일</div>
-                      <div className="text-lg font-bold text-yellow-600">수요일</div>
+                    <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                      <div className="text-sm font-medium text-yellow-800 dark:text-yellow-300">행운의 요일</div>
+                      <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">수요일</div>
                     </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-sm font-medium text-green-800">행운의 색상</div>
-                      <div className="text-lg font-bold text-green-600">
+                    <div className="text-center p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                      <div className="text-sm font-medium text-green-800 dark:text-green-300">행운의 색상</div>
+                      <div className="text-lg font-bold text-green-600 dark:text-green-400">
                         {MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.color === 'purple' ? '보라색' : 
                          MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.color === 'blue' ? '파란색' : '초록색'}
                       </div>
                     </div>
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <div className="text-sm font-medium text-purple-800">행운의 숫자</div>
-                      <div className="text-lg font-bold text-purple-600">7</div>
+                    <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+                      <div className="text-sm font-medium text-purple-800 dark:text-purple-300">행운의 숫자</div>
+                      <div className="text-lg font-bold text-purple-600 dark:text-purple-400">7</div>
                     </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-sm font-medium text-blue-800">행운의 키워드</div>
-                      <div className="text-lg font-bold text-blue-600">소통</div>
+                    <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                      <div className="text-sm font-medium text-blue-800 dark:text-blue-300">행운의 키워드</div>
+                      <div className="text-lg font-bold text-blue-600 dark:text-blue-400">소통</div>
                     </div>
                   </div>
                 </CardContent>

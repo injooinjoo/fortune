@@ -135,9 +135,9 @@ export default function MovingFortunePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-gradient-to-r from-blue-100 to-green-100 border-blue-200">
+          <Card className="bg-gradient-to-r from-blue-100 to-green-100 dark:from-blue-900/30 dark:to-green-900/30 border-blue-200 dark:border-blue-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-700">
+              <CardTitle className="flex items-center gap-2 text-blue-700 dark:text-blue-300">
                 <Home className="w-6 h-6" />
                 오늘의 이사운
               </CardTitle>
@@ -158,8 +158,8 @@ export default function MovingFortunePage() {
                       transition={{ delay: 0.2 + index * 0.1 }}
                       className="text-center"
                     >
-                      <div className="text-2xl font-bold text-gray-800">{item.value}점</div>
-                      <div className="text-sm text-gray-600">{item.label}</div>
+                      <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">{item.value}점</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">{item.label}</div>
                       <Progress
                         value={item.value}
                         className="mt-2 h-2"

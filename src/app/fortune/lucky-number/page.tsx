@@ -91,8 +91,8 @@ export default function LuckyNumberPage() {
                 >
                   <Dice5 className="w-10 h-10 text-white" />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">나만의 행운 번호</h1>
-                <p className="text-gray-600">생년월일을 입력하고 오늘의 번호 6개를 확인하세요</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">나만의 행운 번호</h1>
+                <p className="text-gray-600 dark:text-gray-400">생년월일을 입력하고 오늘의 번호 6개를 확인하세요</p>
               </motion.div>
               <motion.div variants={itemVariants}>
                 <Card className="border-indigo-200">
@@ -128,7 +128,7 @@ export default function LuckyNumberPage() {
                 >
                   <Sparkles className="w-10 h-10 text-white" />
                 </motion.div>
-                <h2 className="text-xl font-bold text-gray-900 mb-4">오늘의 행운 번호</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">오늘의 행운 번호</h2>
                 <div className="flex justify-center gap-3">
                   {numbers.map((n, idx) => (
                     <motion.div

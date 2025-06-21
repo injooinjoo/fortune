@@ -30,6 +30,9 @@ export default function AppHeader({
     // 상위 페이지로 이동하는 로직
     if (pathname === '/fortune') {
       router.push('/home');
+    } else if (pathname?.startsWith('/fortune/lucky-')) {
+      // 행운 시리즈 페이지들은 행운 시리즈 메인으로 이동
+      router.push('/fortune/lucky-series');
     } else if (pathname?.startsWith('/fortune/')) {
       router.push('/fortune');
     } else if (pathname?.startsWith('/interactive/')) {

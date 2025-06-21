@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       {/* Changed font variable in body className */}
       <body className={`${lato.variable} ${geistMono.variable} antialiased`}>
         <Providers>

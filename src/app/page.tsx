@@ -28,6 +28,7 @@ export default function LandingPage() {
       try {
         const { data: { session } } = await auth.getSession();
         if (session && session.user) {
+          console.log('Existing session found, redirecting to home');
           // 로그인되어 있으면 홈으로 리다이렉트
           router.push('/home');
           return;
@@ -39,16 +40,26 @@ export default function LandingPage() {
       }
     };
 
-    checkAuthState();
+    // 약간의 지연을 두어 URL 해시 처리 시간 확보
+    const timer = setTimeout(() => {
+      checkAuthState();
+    }, 500);
 
     // 실시간 인증 상태 변화 감지
     const { data: { subscription } } = auth.onAuthStateChanged((session: any) => {
       if (session && session.user) {
+        console.log('Auth state changed, user logged in');
         router.push('/home');
+      } else {
+        console.log('Auth state changed, user logged out');
+        setIsCheckingAuth(false);
       }
     });
 
-    return () => subscription?.unsubscribe();
+    return () => {
+      clearTimeout(timer);
+      subscription?.unsubscribe();
+    };
   }, [router]);
 
   const handleGetStarted = () => {
