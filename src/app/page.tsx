@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun } from "lucide-react";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { auth } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,39 @@ export default function LandingPage() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const loginSectionRef = useRef<HTMLElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+
+  // 페이지 로드 시 로그인 상태 확인
+  useEffect(() => {
+    const checkAuthState = async () => {
+      try {
+        const { data: { session } } = await auth.getSession();
+        if (session && session.user) {
+          // 로그인되어 있으면 홈으로 리다이렉트
+          router.push('/home');
+          return;
+        }
+      } catch (error) {
+        console.error('로그인 상태 확인 실패:', error);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAuthState();
+
+    // 실시간 인증 상태 변화 감지
+    const { data: { subscription } } = auth.onAuthStateChanged((session: any) => {
+      if (session && session.user) {
+        router.push('/home');
+      }
+    });
+
+    return () => subscription?.unsubscribe();
+  }, [router]);
 
   const handleGetStarted = () => {
     console.log("시작하기 버튼 클릭");
@@ -94,6 +124,28 @@ export default function LandingPage() {
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
+
+  // 로그인 상태 확인 중이면 로딩 화면 표시
+  if (isCheckingAuth) {
+    return (
+      <div className={`min-h-screen flex flex-col items-center justify-center transition-colors ${
+        isDarkMode 
+          ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white' 
+          : 'bg-gradient-to-br from-purple-50 via-white to-pink-50 text-gray-900'
+      }`}>
+        <div className="text-center">
+          <FortuneCompassIcon className={`h-16 w-16 mx-auto mb-4 animate-spin ${
+            isDarkMode ? 'text-purple-400' : 'text-purple-600'
+          }`} />
+          <p className={`text-lg ${
+            isDarkMode ? 'text-gray-300' : 'text-gray-600'
+          }`}>
+            로그인 상태를 확인하고 있습니다...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors ${

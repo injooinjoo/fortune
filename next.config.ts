@@ -24,6 +24,28 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    esmExternals: true,
+  },
+  webpack: (config: any, { isServer }: any) => {
+    // 한글 인코딩 문제 해결을 위한 설정
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+    };
+    
+    // 파일 시스템 인코딩 설정
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      };
+    }
+    
+    return config;
+  },
 };
 
 export default nextConfig;

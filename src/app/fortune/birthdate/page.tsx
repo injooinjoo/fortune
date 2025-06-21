@@ -119,6 +119,7 @@ export default function BirthdateFortunePage() {
 
   // 광고 로딩 완료 후 결과 표시
   const handleAdComplete = () => {
+    // 결과 분석 및 상태 변경을 동시에 처리하여 중간 단계가 보이지 않도록 함
     const analysis = analyzeBirthdate(birthDate);
     setResult(analysis);
     setStep('result');

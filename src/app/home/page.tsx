@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/supabase";
-import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
+import { getUserProfile, isPremiumUser, saveUserProfile } from "@/lib/user-storage";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
 import AppHeader from "@/components/AppHeader";
 import { 
@@ -161,6 +161,7 @@ export default function HomePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showAdLoading, setShowAdLoading] = useState(false);
   const [pendingFortune, setPendingFortune] = useState<{ path: string; title: string } | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -198,6 +199,30 @@ export default function HomePage() {
     }, 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // 사용자 프로필 상태 실시간 업데이트
+  useEffect(() => {
+    const updateUserProfile = () => {
+      const profile = getUserProfile();
+      if (profile) {
+        setUserProfile(profile);
+      }
+    };
+
+    // 초기 로드
+    updateUserProfile();
+
+    // storage 이벤트 리스너 (다른 탭에서 변경 시)
+    window.addEventListener('storage', updateUserProfile);
+    
+    // 포커스 시 업데이트 (같은 탭에서 프로필 페이지에서 돌아올 때)
+    window.addEventListener('focus', updateUserProfile);
+
+    return () => {
+      window.removeEventListener('storage', updateUserProfile);
+      window.removeEventListener('focus', updateUserProfile);
+    };
   }, []);
 
   // 최근 본 운세 불러오기
@@ -265,9 +290,13 @@ export default function HomePage() {
   // 광고 로딩 완료 후 운세 페이지로 이동
   const handleAdComplete = () => {
     if (pendingFortune) {
-      setShowAdLoading(false);
+      // 먼저 페이지 이동을 시작하고
       router.push(pendingFortune.path);
-      setPendingFortune(null);
+      // 그 다음에 상태 정리 (이렇게 하면 중간에 홈 페이지가 보이지 않음)
+      setTimeout(() => {
+        setShowAdLoading(false);
+        setPendingFortune(null);
+      }, 100);
     }
   };
 
@@ -287,9 +316,12 @@ export default function HomePage() {
   useEffect(() => {
     const { data: { subscription } } = auth.onAuthStateChanged((currentUser: any) => {
       if (!currentUser) {
-        router.push("/auth/selection");
+        router.push("/");
       } else {
-        // 사용자 프로필 생성 또는 업데이트
+        // 기존 사용자 프로필 확인
+        const existingProfile = getUserProfile();
+        
+        // 사용자 프로필 생성 또는 업데이트 (기존 설정 유지)
         const userProfile = {
           id: currentUser.id,
           email: currentUser.email || 'user@example.com',
@@ -297,14 +329,16 @@ export default function HomePage() {
           avatar_url: currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture,
           provider: currentUser.app_metadata?.provider || 'google',
           created_at: currentUser.created_at,
-          subscription_status: 'free' as const, // 실제로는 DB에서 조회해야 함
-          fortune_count: 0,
-          favorite_fortune_types: []
+          // 기존 프로필이 있으면 구독 상태 유지, 없으면 무료로 시작
+          subscription_status: existingProfile?.subscription_status || 'free' as const,
+          fortune_count: existingProfile?.fortune_count || 0,
+          favorite_fortune_types: existingProfile?.favorite_fortune_types || []
         };
         
         // 로컬 스토리지에 저장
-        localStorage.setItem("userProfile", JSON.stringify(userProfile));
+        saveUserProfile(userProfile);
         setName(userProfile.name);
+        setUserProfile(userProfile);
       }
     });
 
@@ -370,6 +404,23 @@ export default function HomePage() {
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
       />
+      
+      {/* 디버깅용 프리미엄 상태 표시 */}
+      {userProfile && (
+        <div className="fixed top-20 right-4 z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`px-3 py-1 rounded-full text-xs font-medium shadow-lg ${
+              isPremiumUser(userProfile) 
+                ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white' 
+                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+            }`}
+          >
+            {isPremiumUser(userProfile) ? '프리미엄' : '무료'}
+          </motion.div>
+        </div>
+      )}
       
       <motion.div
         variants={containerVariants}

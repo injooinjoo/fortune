@@ -33,6 +33,7 @@ import {
   Zap
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getUserProfile, saveUserProfile } from "@/lib/user-storage";
 
 interface UserProfile {
   id: string;
@@ -78,11 +79,17 @@ export default function ProfilePage() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPremiumDebug, setIsPremiumDebug] = useState(false);
 
   // 컴포넌트가 마운트된 후에만 테마 관련 UI를 보여줌 (hydration 오류 방지)
   useEffect(() => {
     setMounted(true);
     loadUserProfile();
+    // 로컬 스토리지에서 디버그 프리미엄 상태 로드
+    const storedProfile = getUserProfile();
+    if (storedProfile) {
+      setIsPremiumDebug(storedProfile.subscription_status === 'premium' || storedProfile.subscription_status === 'premium_plus');
+    }
   }, []);
 
   const loadUserProfile = async () => {
@@ -179,6 +186,27 @@ export default function ProfilePage() {
 
   const handleNotificationSettings = () => {
     router.push("/profile/notifications");
+  };
+
+  // 디버깅용 프리미엄 상태 토글
+  const togglePremiumDebug = (enabled: boolean) => {
+    setIsPremiumDebug(enabled);
+    
+    // 로컬 스토리지의 사용자 프로필 업데이트
+    const currentProfile = getUserProfile();
+    if (currentProfile) {
+      const updatedProfile = {
+        ...currentProfile,
+        subscription_status: enabled ? 'premium' as const : 'free' as const
+      };
+      saveUserProfile(updatedProfile);
+      
+      // 현재 표시되는 사용자 정보도 업데이트
+      setUser(prev => prev ? {
+        ...prev,
+        subscription_status: enabled ? 'premium' : 'free'
+      } : null);
+    }
   };
 
   if (isLoading) {
@@ -346,6 +374,26 @@ export default function ProfilePage() {
                     checked={emailNotifications}
                     onCheckedChange={setEmailNotifications}
                   />
+                </div>
+
+                {/* 디버깅용 프리미엄 토글 */}
+                <div className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-t-2 border-dashed border-orange-200 dark:border-orange-800">
+                  <div className="flex items-center space-x-3">
+                    <Zap className="h-5 w-5 text-orange-500" />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">프리미엄 모드 (디버그)</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">개발/테스트용 - 광고 스킵</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={isPremiumDebug ? "default" : "secondary"} className="text-xs">
+                      {isPremiumDebug ? "프리미엄" : "무료"}
+                    </Badge>
+                    <Switch
+                      checked={isPremiumDebug}
+                      onCheckedChange={togglePremiumDebug}
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>

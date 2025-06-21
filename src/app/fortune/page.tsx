@@ -842,9 +842,13 @@ export default function FortunePage() {
   // 광고 로딩 완료 후 운세 페이지로 이동
   const handleAdComplete = () => {
     if (pendingFortune) {
-      setShowAdLoading(false);
+      // 먼저 페이지 이동을 시작하고
       router.push(pendingFortune.route);
-      setPendingFortune(null);
+      // 그 다음에 상태 정리 (이렇게 하면 중간에 운세 페이지가 보이지 않음)
+      setTimeout(() => {
+        setShowAdLoading(false);
+        setPendingFortune(null);
+      }, 100);
     }
   };
 
