@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -28,8 +28,10 @@ import {
   Gift,
   Hash,
 } from "lucide-react";
+import AppHeader from "@/components/AppHeader";
 
 export default function TodayFortunePage() {
+  const [fontSize, setFontSize] = useState<'small'|'medium'|'large'>('medium');
   const dateLabel = "2025년 6월 20일 금요일";
   const score = 85;
   const keywords = ["#도전", "#긍정", "#결실"];
@@ -90,7 +92,8 @@ export default function TodayFortunePage() {
   };
 
   return (
-    <div className="min-h-screen p-4 space-y-6">
+    <div className="min-h-screen pb-32 px-4 space-y-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
+      <AppHeader title="오늘의 운세" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
       <Card>
         <CardHeader>
           <CardTitle className="text-xl">
@@ -162,24 +165,10 @@ export default function TodayFortunePage() {
         </div>
       </section>
 
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-start pt-4">
         <Button asChild variant="outline">
           <Link href="/fortune">목록으로</Link>
         </Button>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>공유하기</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>공유하기</DialogTitle>
-            </DialogHeader>
-            <p className="text-sm text-muted-foreground">
-              공유 기능은 준비 중입니다.
-            </p>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

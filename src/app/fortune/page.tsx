@@ -257,7 +257,7 @@ const fortuneCategories: FortuneCategory[] = [
     title: "오늘의 운세",
     description: "총운, 애정운, 재물운, 건강운을 한 번에",
     icon: Star,
-    route: "/fortune/daily",
+    route: "/fortune/today",
     color: "emerald",
     gradient: "from-emerald-50 to-teal-50",
     category: "lifestyle"

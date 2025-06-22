@@ -421,6 +421,33 @@ export default function PremiumSajuPage() {
     }
   }, [step, storyScenes.length]);
 
+  // 사용자 프로필 불러와서 폼 초기값 설정
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const res = await fetch('/api/profile');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success && json.data) {
+          const { name, birth_date, birth_time, gender } = json.data;
+          const [year, month, day] = birth_date.split('-');
+          const genderValue = gender === '남성' ? 'male' : gender === '여성' ? 'female' : '';
+          setFormData({
+            name,
+            birthYear: year,
+            birthMonth: month.replace(/^0/, ''),
+            birthDay: day.replace(/^0/, ''),
+            birthTimePeriod: birth_time || '',
+            gender: genderValue
+          });
+        }
+      } catch (error) {
+        console.error('프로필 불러오기 오류:', error);
+      }
+    }
+    loadProfile();
+  }, []);
+
   if (step === 'input') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
@@ -468,7 +495,7 @@ export default function PremiumSajuPage() {
                     placeholder="이름"
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className={`${fontClasses.text} mt-1`}
+                    className={`${fontClasses.text} mt-1 bg-white dark:bg-input text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}
                   />
                 </div>
 
@@ -479,7 +506,7 @@ export default function PremiumSajuPage() {
                     value={formData.birthYear} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, birthYear: value }))}
                   >
-                    <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                    <SelectTrigger className={`${fontClasses.text} mt-1 bg-white dark:bg-background text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}>
                       <SelectValue placeholder="년도 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -499,7 +526,7 @@ export default function PremiumSajuPage() {
                     value={formData.birthMonth} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, birthMonth: value }))}
                   >
-                    <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                    <SelectTrigger className={`${fontClasses.text} mt-1 bg-white dark:bg-background text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}>
                       <SelectValue placeholder="월 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -519,7 +546,7 @@ export default function PremiumSajuPage() {
                     value={formData.birthDay} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, birthDay: value }))}
                   >
-                    <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                    <SelectTrigger className={`${fontClasses.text} mt-1 bg-white dark:bg-background text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}>
                       <SelectValue placeholder="일 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -545,7 +572,7 @@ export default function PremiumSajuPage() {
                     value={formData.birthTimePeriod} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, birthTimePeriod: value }))}
                   >
-                    <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                    <SelectTrigger className={`${fontClasses.text} mt-1 bg-white dark:bg-background text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}>
                       <SelectValue placeholder="시진 선택" />
                     </SelectTrigger>
                     <SelectContent>
@@ -568,7 +595,7 @@ export default function PremiumSajuPage() {
                     value={formData.gender} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
                   >
-                    <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                    <SelectTrigger className={`${fontClasses.text} mt-1 bg-white dark:bg-background text-gray-900 dark:text-foreground border border-gray-300 dark:border-input`}>
                       <SelectValue placeholder="성별 선택" />
                     </SelectTrigger>
                     <SelectContent>

@@ -620,7 +620,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   <motion.div
-                    onClick={() => handleFortuneClick('/fortune/daily', '오늘의 상세 운세')}
+                    onClick={() => handleFortuneClick('/fortune/today', '오늘의 상세 운세')}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="bg-white/20 rounded-full px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-white/30 transition-colors"

@@ -21,7 +21,7 @@ const fortuneCategories: Record<string, { label: string; items: FortuneItem[] }>
   daily: {
     label: "데일리",
     items: [
-      { id: "general", name: "오늘의 총운", description: "오늘의 총운을 확인하세요", icon: Star, route: "/fortune/daily" },
+      { id: "general", name: "오늘의 총운", description: "오늘의 총운을 확인하세요", icon: Star, route: "/fortune/today" },
       { id: "love", name: "연애운", description: "오늘의 총운을 확인하세요", icon: Heart, route: "/fortune/love" },
       { id: "wealth", name: "재물운", description: "오늘의 총운을 확인하세요", icon: Gem, route: "/fortune/wealth" },
     ],
