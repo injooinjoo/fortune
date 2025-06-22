@@ -71,7 +71,8 @@ export default function LandingPage() {
 
   const handleGetStarted = () => {
     console.log("시작하기 버튼 클릭");
-    router.push("/onboarding");
+    // 프로필 온보딩으로 바로 이동
+    router.push("/onboarding/profile");
   };
 
 
@@ -195,6 +196,19 @@ export default function LandingPage() {
             >
               <Sparkles className="w-5 h-5 mr-2" />
               무료로 시작하기
+            </Button>
+            
+            <Button 
+              onClick={() => router.push('/fortune/saju')}
+              variant="outline"
+              className={`w-full max-w-sm font-medium py-4 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 ${
+                isDarkMode 
+                  ? 'border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white' 
+                  : 'border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white'
+              }`}
+            >
+              <Star className="w-5 h-5 mr-2" />
+              사주팔자 바로보기
             </Button>
             
             {/* 간편 로그인 */}

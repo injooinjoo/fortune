@@ -105,6 +105,76 @@
 
 ---
 
+## 🧠 AI 운세 시스템 아키텍처
+
+`행운`은 비용 효율성과 사용자 경험을 동시에 최적화하기 위해 운세 데이터를 4개 그룹으로 분류하여 관리합니다.
+
+### 그룹 1: 고정 정보 (평생 변하지 않는 운세)
+**최초 1회 통합 생성으로 API 비용 최소화**
+
+**대상 페이지:**
+- `/fortune/saju` (기본 사주)
+- `/fortune/traditional-saju` (전통 사주)
+- `/fortune/tojeong` (토정비결)
+- `/fortune/past-life` (전생)
+- `/fortune/personality` (타고난 성격)
+- `/fortune/destiny` (운명의 수레바퀴)
+- `/fortune/salpuli` (살풀이)
+- `/fortune/five-blessings` (오복)
+- `/fortune/talent` (타고난 재능)
+
+**처리 프로세스:**
+1. 사용자가 위 페이지 중 하나에 최초 진입
+2. DB에서 `fortune_type: 'LIFE_PROFILE'` 데이터 존재 여부 확인
+3. **Cache Hit**: DB에서 즉시 로딩 (API 호출 없음)
+4. **Cache Miss**: `generateLifeProfile` Flow로 모든 고정 운세를 한 번에 생성하여 DB 저장
+
+### 그룹 2: 일일 정보 (매일 바뀌는 운세)
+**배치 처리를 통한 사전 생성으로 실시간 응답 보장**
+
+**대상 페이지:**
+- `/fortune/daily`, `/fortune/tomorrow`, `/fortune/hourly`
+- `/fortune/wealth`, `/fortune/love`, `/fortune/career`
+- `/fortune/lucky-*` (행운의 숫자, 색상, 음식, 아이템 등)
+- `/fortune/biorhythm`, `/fortune/zodiac-animal`, `/fortune/mbti`
+
+**처리 프로세스:**
+1. **매일 자정 배치 실행**: Supabase Edge Function 스케줄러 작동
+2. **전체 사용자 대상 통합 생성**: `generateComprehensiveDailyFortune` Flow로 하루치 모든 운세를 한 번에 생성
+3. **DB 저장**: `fortune_type: 'DAILY_COMPREHENSIVE'`로 24시간 유효 데이터 저장
+4. **사용자 요청 시**: DB에서 필요한 부분만 파싱하여 즉시 응답 (API 호출 없음)
+
+### 그룹 3: 실시간 상호작용 (사용자 입력 기반)
+**사용자별 맞춤 입력에 따른 실시간 생성 + 결과 캐싱**
+
+**대상 페이지:**
+- `/interactive/dream-interpretation` (꿈 해몽)
+- `/interactive/tarot` (타로점)
+- `/interactive/worry-bead` (고민 구슬)
+- `/fortune/compatibility`, `/fortune/couple-match`, `/fortune/celebrity-match`
+
+**처리 프로세스:**
+1. 사용자 입력 수집 (꿈 내용, 타로 질문, 상대방 정보 등)
+2. 입력값 해시로 DB 캐시 조회
+3. **Cache Hit**: 기존 결과 즉시 반환
+4. **Cache Miss**: 실시간 API 호출 후 결과 캐싱
+
+### 그룹 4: 클라이언트 기반 (오프라인 처리)
+**기기 내 모델 실행으로 API 비용 완전 제거**
+
+**대상 페이지:**
+- `/interactive/face-reading` (관상 - Teachable Machine 모델)
+- `/fortune/palmistry` (손금 - 클라이언트 분석)
+- `/fortune/talisman` (맞춤 부적 - 클라이언트 생성)
+
+**처리 프로세스:**
+1. 클라이언트에서 이미지/데이터 처리
+2. 기기 내 모델로 즉시 분석
+3. 정적 해석 데이터와 매칭하여 결과 표시
+4. 오프라인 동작 가능, 서버 비용 0원
+
+---
+
 ## 🛠️ 기술 스택 (Tech Stack)
 
 ### 프론트엔드 (웹)
@@ -117,6 +187,7 @@
 - **Auth & DB:** Supabase Auth, PostgreSQL
 - **AI & ML:** Google Genkit
 - **API:** Next.js API Routes
+- **Batch Processing:** Supabase Edge Functions (Cron Scheduler)
 
 ### 모바일 (Android)
 - **UI:** Jetpack Compose
@@ -128,6 +199,449 @@
 - **Language:** TypeScript, Kotlin
 - **Testing:** Playwright, Vitest
 - **Docs:** Storybook
+
+---
+
+## 💾 데이터베이스 스키마
+
+### 핵심 테이블 구조
+
+#### `fortunes` 테이블 (운세 데이터 저장)
+```sql
+CREATE TABLE fortunes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  fortune_type TEXT NOT NULL, -- 'LIFE_PROFILE', 'DAILY_COMPREHENSIVE', 'INTERACTIVE'
+  fortune_category TEXT, -- 'saju', 'daily', 'tarot' 등
+  data JSONB NOT NULL, -- 운세 결과 데이터
+  input_hash TEXT, -- 사용자 입력값 해시 (그룹 3용)
+  expires_at TIMESTAMP WITH TIME ZONE, -- 데이터 만료 시간
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+#### `user_profiles` 테이블 (사용자 개인화 정보)
+```sql
+CREATE TABLE user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  name TEXT,
+  birth_date DATE NOT NULL,
+  birth_time TEXT, -- '자시', '축시' 등
+  gender TEXT, -- '남성', '여성', '선택 안함'
+  mbti TEXT, -- 'ENFP', 'INTJ' 등
+  zodiac_sign TEXT, -- '양자리', '황소자리' 등
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
+
+#### `fortune_history` 테이블 (운세 조회 기록)
+```sql
+CREATE TABLE fortune_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id),
+  fortune_type TEXT NOT NULL,
+  fortune_category TEXT NOT NULL,
+  viewed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  data_snapshot JSONB -- 조회 시점의 운세 데이터 스냅샷
+);
+```
+
+### 인덱스 최적화
+- `fortunes` 테이블: `(user_id, fortune_type, expires_at)`
+- `fortune_history` 테이블: `(user_id, viewed_at DESC)`
+- `user_profiles` 테이블: `(birth_date, mbti)`
+
+---
+
+## 🔄 API 플로우 및 비용 최적화
+
+### Genkit AI 플로우 구조
+
+#### 1. `generateLifeProfile` (그룹 1 - 고정 정보)
+```typescript
+// 평생 변하지 않는 모든 운세를 한 번에 생성
+export const generateLifeProfile = defineFlow(
+  {
+    name: 'generateLifeProfile',
+    inputSchema: z.object({
+      birthDate: z.string(),
+      birthTime: z.string().optional(),
+      gender: z.string().optional(),
+    }),
+    outputSchema: z.object({
+      saju: z.object({...}),           // 기본 사주
+      traditionalSaju: z.object({...}), // 전통 사주
+      tojeong: z.object({...}),        // 토정비결
+      pastLife: z.object({...}),       // 전생
+      personality: z.object({...}),    // 타고난 성격
+      destiny: z.object({...}),        // 운명의 수레바퀴
+      salpuli: z.object({...}),        // 살풀이
+      fiveBlessings: z.object({...}),  // 오복
+      talent: z.object({...}),         // 타고난 재능
+    }),
+  },
+  async (input) => {
+    // 모든 고정 운세를 한 번의 AI 호출로 생성
+    return await generateComprehensiveLifeAnalysis(input);
+  }
+);
+```
+
+#### 2. `generateComprehensiveDailyFortune` (그룹 2 - 일일 정보)
+```typescript
+// 하루치 모든 운세를 통합 생성 (배치 처리용)
+export const generateComprehensiveDailyFortune = defineFlow(
+  {
+    name: 'generateComprehensiveDailyFortune',
+    inputSchema: z.object({
+      userId: z.string(),
+      date: z.string(),
+      userProfile: z.object({...}),
+    }),
+    outputSchema: z.object({
+      daily: z.object({...}),          // 오늘의 총운
+      tomorrow: z.object({...}),       // 내일의 운세
+      hourly: z.array(z.object({...})), // 시간대별 운세
+      wealth: z.object({...}),         // 재물운
+      love: z.object({...}),           // 애정운
+      career: z.object({...}),         // 직업운
+      luckyItems: z.object({
+        number: z.array(z.number()),
+        color: z.string(),
+        food: z.string(),
+        outfit: z.object({...}),
+      }),
+      biorhythm: z.object({...}),      // 바이오리듬
+      zodiacAnimal: z.object({...}),   // 띠별 운세
+      mbti: z.object({...}),           // MBTI 운세
+    }),
+  },
+  async (input) => {
+    // 개인화된 하루치 종합 운세 생성
+    return await generateDailyComprehensiveAnalysis(input);
+  }
+);
+```
+
+### 비용 최적화 전략
+
+#### 📊 예상 비용 절감 효과
+- **기존 방식**: 사용자당 페이지 방문 시마다 개별 API 호출
+  - 일일 운세 10개 페이지 조회 = 10회 API 호출
+  - 사주 관련 9개 페이지 조회 = 9회 API 호출
+  
+- **최적화된 방식**: 그룹별 통합 생성
+  - 일일 운세 전체 = 1회 API 호출 (배치 처리)
+  - 사주 관련 전체 = 1회 API 호출 (최초 1회만)
+  - **비용 절감률: 최대 90%**
+
+#### 🚀 성능 개선 효과
+- **응답 시간**: DB 조회 (~100ms) vs API 호출 (~3-5초)
+- **사용자 경험**: 즉시 로딩으로 이탈률 감소
+- **서버 부하**: 배치 처리로 트래픽 분산
+
+#### 💡 캐싱 전략 및 조건부 데이터 로딩
+```typescript
+// 운세 데이터 조회 및 생성 통합 함수
+const getOrCreateFortune = async (
+  userId: string, 
+  fortuneCategory: string,
+  userProfile: UserProfile
+): Promise<FortuneData> => {
+  
+  // 1단계: 기존 데이터 존재 여부 체크
+  const existingData = await checkExistingFortuneData(userId, fortuneCategory);
+  
+  if (existingData) {
+    console.log(`✅ 캐시된 데이터 발견: ${fortuneCategory}`);
+    return existingData;
+  }
+  
+  console.log(`🔄 새 데이터 생성 필요: ${fortuneCategory}`);
+  
+  // 2단계: 운세 그룹별 조건부 생성
+  return await generateFortuneByGroup(userId, fortuneCategory, userProfile);
+};
+
+// 기존 데이터 존재 여부 체크 (다층 캐시 확인)
+const checkExistingFortuneData = async (
+  userId: string, 
+  fortuneCategory: string
+): Promise<FortuneData | null> => {
+  
+  // 1. Redis 메모리 캐시 확인 (가장 빠름 ~1ms)
+  const redisKey = `fortune:${userId}:${fortuneCategory}`;
+  const cachedData = await redis.get(redisKey);
+  
+  if (cachedData) {
+    console.log(`🚀 Redis 캐시 히트: ${fortuneCategory}`);
+    return JSON.parse(cachedData);
+  }
+  
+  // 2. DB 캐시 확인 (빠름 ~50-100ms)
+  const fortuneType = getFortuneCategoryGroup(fortuneCategory);
+  const dbResult = await supabase
+    .from('fortunes')
+    .select('data, expires_at')
+    .eq('user_id', userId)
+    .eq('fortune_type', fortuneType)
+    .single();
+  
+  if (dbResult.data) {
+    // 만료 시간 체크
+    const isExpired = dbResult.data.expires_at && 
+                     new Date(dbResult.data.expires_at) < new Date();
+    
+    if (!isExpired) {
+      console.log(`💾 DB 캐시 히트: ${fortuneCategory}`);
+      
+      // Redis에 백업 저장 (다음 조회 가속화)
+      await redis.setex(redisKey, 3600, JSON.stringify(dbResult.data.data));
+      
+      // 요청된 카테고리에 해당하는 부분만 추출
+      return extractCategoryData(dbResult.data.data, fortuneCategory);
+    } else {
+      console.log(`⏰ 캐시 만료됨: ${fortuneCategory}`);
+    }
+  }
+  
+  console.log(`❌ 캐시 미스: ${fortuneCategory}`);
+  return null;
+};
+
+// 운세 그룹별 조건부 생성 로직
+const generateFortuneByGroup = async (
+  userId: string,
+  fortuneCategory: string,
+  userProfile: UserProfile
+): Promise<FortuneData> => {
+  
+  const fortuneGroup = getFortuneCategoryGroup(fortuneCategory);
+  
+  switch (fortuneGroup) {
+    case 'LIFE_PROFILE':
+      // 그룹 1: 평생 고정 정보 (최초 1회만 생성)
+      console.log(`🔮 생애 프로필 생성 중...`);
+      const lifeProfile = await generateLifeProfile({
+        birthDate: userProfile.birth_date,
+        birthTime: userProfile.birth_time,
+        gender: userProfile.gender
+      });
+      
+      // DB에 영구 저장 (만료 시간 없음)
+      await saveFortuneToDatabase(userId, 'LIFE_PROFILE', lifeProfile, null);
+      
+      return extractCategoryData(lifeProfile, fortuneCategory);
+      
+    case 'DAILY_COMPREHENSIVE':
+      // 그룹 2: 일일 정보 (배치에서 미리 생성되어야 함)
+      console.log(`📅 일일 운세 배치 데이터 확인 중...`);
+      
+      // 배치에서 생성된 데이터가 없다면 임시 생성
+      const dailyFortune = await generateComprehensiveDailyFortune({
+        userId,
+        date: new Date().toISOString().split('T')[0],
+        userProfile
+      });
+      
+      // 24시간 만료로 저장
+      const expiresAt = new Date();
+      expiresAt.setHours(23, 59, 59, 999); // 오늘 자정까지
+      
+      await saveFortuneToDatabase(userId, 'DAILY_COMPREHENSIVE', dailyFortune, expiresAt);
+      
+      return extractCategoryData(dailyFortune, fortuneCategory);
+      
+    case 'INTERACTIVE':
+      // 그룹 3: 실시간 상호작용 (사용자 입력 기반)
+      console.log(`🎯 실시간 상호작용 운세 생성 중...`);
+      
+      // 사용자 입력이 필요한 경우는 별도 처리
+      throw new Error(`${fortuneCategory}는 사용자 입력이 필요합니다.`);
+      
+    default:
+      throw new Error(`지원하지 않는 운세 카테고리: ${fortuneCategory}`);
+  }
+};
+
+// 운세 카테고리별 그룹 매핑
+const getFortuneCategoryGroup = (category: string): string => {
+  const groupMapping = {
+    // 그룹 1: 평생 고정 정보
+    'saju': 'LIFE_PROFILE',
+    'traditional-saju': 'LIFE_PROFILE',
+    'tojeong': 'LIFE_PROFILE',
+    'past-life': 'LIFE_PROFILE',
+    'personality': 'LIFE_PROFILE',
+    'destiny': 'LIFE_PROFILE',
+    'salpuli': 'LIFE_PROFILE',
+    'five-blessings': 'LIFE_PROFILE',
+    'talent': 'LIFE_PROFILE',
+    
+    // 그룹 2: 일일 정보
+    'daily': 'DAILY_COMPREHENSIVE',
+    'tomorrow': 'DAILY_COMPREHENSIVE',
+    'hourly': 'DAILY_COMPREHENSIVE',
+    'wealth': 'DAILY_COMPREHENSIVE',
+    'love': 'DAILY_COMPREHENSIVE',
+    'career': 'DAILY_COMPREHENSIVE',
+    'lucky-number': 'DAILY_COMPREHENSIVE',
+    'lucky-color': 'DAILY_COMPREHENSIVE',
+    'lucky-food': 'DAILY_COMPREHENSIVE',
+    'biorhythm': 'DAILY_COMPREHENSIVE',
+    'zodiac-animal': 'DAILY_COMPREHENSIVE',
+    'mbti': 'DAILY_COMPREHENSIVE',
+    
+    // 그룹 3: 실시간 상호작용
+    'dream-interpretation': 'INTERACTIVE',
+    'tarot': 'INTERACTIVE',
+    'compatibility': 'INTERACTIVE',
+    'worry-bead': 'INTERACTIVE'
+  };
+  
+  return groupMapping[category] || 'UNKNOWN';
+};
+
+// DB 저장 함수
+const saveFortuneToDatabase = async (
+  userId: string,
+  fortuneType: string,
+  data: any,
+  expiresAt: Date | null
+) => {
+  await supabase.from('fortunes').upsert({
+    user_id: userId,
+    fortune_type: fortuneType,
+    data: data,
+    expires_at: expiresAt?.toISOString(),
+    updated_at: new Date().toISOString()
+  });
+  
+  console.log(`💾 DB 저장 완료: ${fortuneType} (만료: ${expiresAt || '없음'})`);
+};
+
+// 대용량 JSON에서 특정 카테고리 데이터만 추출
+const extractCategoryData = (fullData: any, category: string): any => {
+  // 예: fullData.saju, fullData.daily, fullData.wealth 등에서 해당 부분만 추출
+  return fullData[category] || fullData;
+};
+```
+
+### 🔄 실제 페이지에서의 사용 예시
+
+```typescript
+// 사주팔자 페이지 (/fortune/saju)
+export default async function SajuPage() {
+  const user = await getCurrentUser();
+  const userProfile = await getUserProfile(user.id);
+  
+  // 기존 데이터 체크 → 없으면 생성 → 있으면 로드
+  const sajuData = await getOrCreateFortune(user.id, 'saju', userProfile);
+  
+  return <SajuAnalysisComponent data={sajuData} />;
+}
+
+// 오늘의 운세 페이지 (/fortune/daily)
+export default async function DailyPage() {
+  const user = await getCurrentUser();
+  const userProfile = await getUserProfile(user.id);
+  
+  // 배치에서 미리 생성된 데이터 확인 → 없으면 임시 생성
+  const dailyData = await getOrCreateFortune(user.id, 'daily', userProfile);
+  
+  return <DailyFortuneComponent data={dailyData} />;
+}
+```
+
+### 📋 데이터 체크 및 로딩 플로우 다이어그램
+
+```mermaid
+flowchart TD
+    A[사용자 운세 페이지 접속] --> B{Redis 캐시 확인}
+    B -->|캐시 히트| C[🚀 즉시 반환<br/>~1ms]
+    B -->|캐시 미스| D{DB 캐시 확인}
+    
+    D -->|데이터 존재| E{만료 시간 체크}
+    E -->|유효함| F[💾 DB에서 로드<br/>~50-100ms]
+    E -->|만료됨| G[⏰ 만료된 데이터 삭제]
+    
+    D -->|데이터 없음| H{운세 그룹 확인}
+    G --> H
+    
+    H -->|그룹 1<br/>LIFE_PROFILE| I[🔮 평생 운세 생성<br/>~3-5초]
+    H -->|그룹 2<br/>DAILY_COMPREHENSIVE| J[📅 일일 운세 생성<br/>~2-3초]
+    H -->|그룹 3<br/>INTERACTIVE| K[🎯 실시간 생성<br/>~1-2초]
+    H -->|그룹 4<br/>CLIENT_BASED| L[💻 클라이언트 처리<br/>~100ms]
+    
+    I --> M[DB 영구 저장]
+    J --> N[DB 24시간 저장]
+    K --> O[DB 입력별 저장]
+    L --> P[로컬 처리만]
+    
+    F --> Q[Redis 백업 저장]
+    M --> Q
+    N --> Q
+    O --> Q
+    
+    C --> R[사용자에게 결과 표시]
+    Q --> R
+    P --> R
+```
+
+### 🎯 스마트 캐싱의 핵심 원리
+
+#### 1. **계층적 캐시 전략**
+- **L1 캐시 (Redis)**: 메모리 기반 초고속 접근 (~1ms)
+- **L2 캐시 (Supabase DB)**: 디스크 기반 빠른 접근 (~50-100ms)
+- **L3 생성 (AI API)**: 실시간 생성 (~1-5초)
+
+#### 2. **그룹별 차별화된 만료 정책**
+```typescript
+const getExpirationPolicy = (fortuneGroup: string): Date | null => {
+  switch (fortuneGroup) {
+    case 'LIFE_PROFILE':
+      return null; // 영구 저장 (평생 변하지 않음)
+      
+    case 'DAILY_COMPREHENSIVE':
+      const midnight = new Date();
+      midnight.setHours(23, 59, 59, 999);
+      return midnight; // 오늘 자정까지
+      
+    case 'INTERACTIVE':
+      const oneWeek = new Date();
+      oneWeek.setDate(oneWeek.getDate() + 7);
+      return oneWeek; // 1주일 후 만료
+      
+    default:
+      return null;
+  }
+};
+```
+
+#### 3. **프리로딩 및 백그라운드 갱신**
+```typescript
+// 배치 작업: 매일 자정 모든 사용자의 일일 운세 미리 생성
+export const dailyFortunePreloader = async () => {
+  const activeUsers = await getActiveUsers();
+  
+  for (const user of activeUsers) {
+    try {
+      // 백그라운드에서 내일 운세 미리 생성
+      await generateComprehensiveDailyFortune({
+        userId: user.id,
+        date: getTomorrowDate(),
+        userProfile: user.profile
+      });
+      
+      console.log(`✅ ${user.id} 내일 운세 준비 완료`);
+    } catch (error) {
+      console.error(`❌ ${user.id} 운세 생성 실패:`, error);
+    }
+  }
+};
+```
 
 ---
 
@@ -181,18 +695,55 @@ npm run storybook
 Android: Android 5.0 (Lollipop) 이상
 iOS: PWA 지원 및 네이티브 앱 개발 예정
 🎯 개발 로드맵
-2025년 1분기
-✅ Android 네이티브 앱 출시
-✅ 타로 카드 기능 확장 (스프레드 추가)
-✅ 운세 히스토리 관리 시스템 개발
-2025년 2분기
-⏳ PWA iOS App Store 배포
-⏳ React Native 기반 iOS 네이티브 앱 개발 시작
-⏳ 프리미엄 구독 모델 도입 (심층 분석 리포트, 광고 제거)
-2025년 3분기
-📅 ML 기반 개인화 추천 알고리즘 구현
-📅 다국어 지원 (영어, 일본어)
-📅 오프라인 모드 지원
+
+### 2025년 1분기 - AI 시스템 최적화 및 안정화
+✅ **4그룹 운세 시스템 구현**
+- 그룹 1: 고정 정보 통합 생성 시스템 (`generateLifeProfile`)
+- 그룹 2: 일일 운세 배치 처리 시스템 (`generateComprehensiveDailyFortune`)
+- 그룹 3: 실시간 상호작용 캐싱 시스템
+- 그룹 4: 클라이언트 기반 오프라인 처리
+
+✅ **데이터베이스 최적화**
+- `fortunes`, `user_profiles`, `fortune_history` 테이블 구조 확정
+- 인덱스 최적화 및 쿼리 성능 튜닝
+- Redis 캐싱 레이어 구축
+
+✅ **배치 처리 인프라**
+- Supabase Edge Functions 기반 스케줄러 구축
+- 매일 자정 일일 운세 자동 생성 시스템
+- 장애 복구 및 모니터링 시스템
+
+### 2025년 2분기 - 사용자 경험 개선 및 확장
+⏳ **성능 최적화 완료**
+- API 호출 90% 절감 달성
+- 평균 응답 시간 100ms 이하 달성
+- 사용자 이탈률 50% 감소 목표
+
+⏳ **모바일 앱 출시**
+- Android 네이티브 앱 출시
+- PWA iOS App Store 배포
+- 오프라인 모드 지원 (그룹 4 기능)
+
+⏳ **프리미엄 구독 모델**
+- 심층 분석 리포트 (AI 상세 해석)
+- 광고 제거 및 우선 지원
+- 과거 운세 무제한 조회
+
+### 2025년 3분기 - AI 고도화 및 글로벌 확장
+📅 **AI 모델 고도화**
+- 개인화 추천 알고리즘 구현
+- 사용자 피드백 기반 학습 시스템
+- 예측 정확도 개선 시스템
+
+📅 **글로벌 서비스 확장**
+- 다국어 지원 (영어, 일본어, 중국어)
+- 현지화된 운세 시스템 (서양 점성술, 중국 사주 등)
+- 해외 결제 시스템 연동
+
+📅 **고급 기능 추가**
+- 실시간 운세 알림 시스템
+- 사용자 간 운세 공유 및 커뮤니티
+- AI 기반 맞춤형 조언 시스템
 
 ---
 

@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 
 export default function TodayFortunePage() {
-  const dateLabel = "2025\uB144 6\uC6D4 20\uC77C \uAE08\uC694\uC77C"; // 2025년 6월 20일 금요일
+  const dateLabel = "2025년 6월 20일 금요일";
   const score = 85;
   const keywords = ["#도전", "#긍정", "#결실"];
   const summary = "새로운 시도가 좋은 결과로 이어지는 날입니다.";
@@ -93,12 +93,12 @@ export default function TodayFortunePage() {
     <div className="min-h-screen p-4 space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle as="h2" className="text-xl">
+          <CardTitle className="text-xl">
             {dateLabel}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-2">
-          <div className="text-5xl font-bold">{score}\uC810</div>
+          <div className="text-5xl font-bold">{score}점</div>
           <div className="flex justify-center space-x-2">
             {keywords.map((k) => (
               <Badge key={k}>{k}</Badge>
@@ -120,7 +120,7 @@ export default function TodayFortunePage() {
                     <Icon className="w-4 h-4" />
                     <span>{d.title}</span>
                     <span className="ml-2 text-sm text-muted-foreground">
-                      {d.score}\uC810
+                      {d.score}점
                     </span>
                   </div>
                 </AccordionTrigger>
