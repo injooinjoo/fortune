@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, Calendar, Sparkles, Clock } from "lucide-react";
+import { Star, Calendar, Sparkles, Clock, User } from "lucide-react";
 import AppHeader from "@/components/AppHeader";
 import { 
   getYearOptions, 
@@ -15,6 +15,7 @@ import {
   koreanToIsoDate,
   TIME_PERIODS
 } from "@/lib/utils";
+import { auth, userProfileService, guestProfileService, fortuneCompletionService } from "@/lib/supabase";
 
 export default function DashboardPage() {
   const [birthYear, setBirthYear] = useState("");
@@ -23,6 +24,57 @@ export default function DashboardPage() {
   const [birthTimePeriod, setBirthTimePeriod] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [fortuneResult, setFortuneResult] = useState("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // 사용자 정보 및 프로필 로드
+    const loadUserData = async () => {
+      try {
+        // 현재 로그인된 사용자 확인
+        const { data } = await auth.getSession();
+        if (data?.session?.user) {
+          setCurrentUser(data.session.user);
+          
+          // 데이터베이스에서 사용자 프로필 로드
+          const profile = await userProfileService.getProfile(data.session.user.id);
+          if (profile) {
+            setUserProfile(profile);
+            loadProfileToForm(profile);
+          }
+        }
+        
+        // 로컬 스토리지에서 백업 데이터 로드 (데이터베이스에 없는 경우)
+        if (!userProfile) {
+          const localProfile = localStorage.getItem('userProfile');
+          if (localProfile) {
+            const profile = JSON.parse(localProfile);
+            setBirthYear(profile.birthYear || "");
+            setBirthMonth(profile.birthMonth || "");
+            setBirthDay(profile.birthDay || "");
+            setBirthTimePeriod(profile.birthTimePeriod || "");
+          }
+        }
+      } catch (error) {
+        console.error('사용자 데이터 로드 실패:', error);
+      }
+    };
+    
+    loadUserData();
+  }, []);
+
+  const loadProfileToForm = (profile: any) => {
+    if (profile.birth_date) {
+      const date = new Date(profile.birth_date);
+      setBirthYear(date.getFullYear().toString());
+      setBirthMonth((date.getMonth() + 1).toString());
+      setBirthDay(date.getDate().toString());
+    }
+    if (profile.birth_time) {
+      setBirthTimePeriod(profile.birth_time);
+    }
+  };
 
   const yearOptions = getYearOptions();
   const monthOptions = getMonthOptions();
@@ -31,24 +83,57 @@ export default function DashboardPage() {
     birthMonth ? parseInt(birthMonth) : undefined
   );
 
-  const handleFortuneSubmit = () => {
+  const handleFortuneSubmit = async () => {
     if (!birthYear || !birthMonth || !birthDay) {
       alert("생년월일을 모두 선택해주세요.");
       return;
     }
 
-    // 간단한 운세 생성
-    const results = [
-      "오늘은 새로운 시작에 좋은 날입니다. 도전하는 마음가짐으로 하루를 보내세요.",
-      "사랑운이 상승하는 시기입니다. 소중한 사람과의 시간을 늘려보세요.",
-      "재물운이 좋은 날입니다. 투자나 새로운 사업 기회를 고려해보세요.",
-      "건강에 주의가 필요한 시기입니다. 규칙적인 생활 패턴을 유지하세요.",
-      "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
-    ];
+    setIsLoading(true);
     
-    const randomResult = results[Math.floor(Math.random() * results.length)];
-    setFortuneResult(randomResult);
-    setShowResult(true);
+    try {
+      // 사용자 ID 결정
+      const userId = currentUser?.id || 'anonymous';
+      
+      // 운세 시작 기록
+      const completionId = await fortuneCompletionService.startFortune(userId, 'daily');
+      
+      // 간단한 운세 생성
+      const results = [
+        "오늘은 새로운 시작에 좋은 날입니다. 도전하는 마음가짐으로 하루를 보내세요.",
+        "사랑운이 상승하는 시기입니다. 소중한 사람과의 시간을 늘려보세요.",
+        "재물운이 좋은 날입니다. 투자나 새로운 사업 기회를 고려해보세요.",
+        "건강에 주의가 필요한 시기입니다. 규칙적인 생활 패턴을 유지하세요.",
+        "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
+      ];
+      
+      const randomResult = results[Math.floor(Math.random() * results.length)];
+      setFortuneResult(randomResult);
+      setShowResult(true);
+      
+      // 운세 완성 기록
+      if (completionId) {
+        await fortuneCompletionService.completeFortune(completionId, 5, "대시보드에서 생성된 운세");
+      }
+      
+      console.log('운세 생성 및 기록 완료');
+    } catch (error) {
+      console.error('운세 생성 실패:', error);
+      // 오류가 발생해도 운세는 보여줌
+      const results = [
+        "오늘은 새로운 시작에 좋은 날입니다. 도전하는 마음가짐으로 하루를 보내세요.",
+        "사랑운이 상승하는 시기입니다. 소중한 사람과의 시간을 늘려보세요.",
+        "재물운이 좋은 날입니다. 투자나 새로운 사업 기회를 고려해보세요.",
+        "건강에 주의가 필요한 시기입니다. 규칙적인 생활 패턴을 유지하세요.",
+        "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
+      ];
+      
+      const randomResult = results[Math.floor(Math.random() * results.length)];
+      setFortuneResult(randomResult);
+      setShowResult(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,10 +145,49 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
             운세 대시보드
           </h1>
-          <p className="text-gray-600">
-            생년월일을 입력하고 오늘의 운세를 확인해보세요
-          </p>
+          {userProfile ? (
+            <p className="text-gray-600">
+              안녕하세요, {userProfile.name}님! 오늘의 운세를 확인해보세요
+            </p>
+          ) : (
+            <p className="text-gray-600">
+              생년월일을 입력하고 오늘의 운세를 확인해보세요
+            </p>
+          )}
         </div>
+
+        {/* 사용자 프로필 카드 (프로필이 있는 경우) */}
+        {userProfile && (
+          <Card className="shadow-lg mb-6">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-blue-600" />
+              </div>
+              <CardTitle className="text-xl font-bold text-gray-900">
+                내 정보
+              </CardTitle>
+            </CardHeader>
+            
+            <CardContent className="space-y-2">
+              <div className="text-center space-y-1">
+                <p className="text-lg font-medium text-gray-900">{userProfile.name}</p>
+                {userProfile.birth_date && (
+                  <p className="text-sm text-gray-600">
+                    생년월일: {new Date(userProfile.birth_date).toLocaleDateString('ko-KR')}
+                  </p>
+                )}
+                {userProfile.mbti && (
+                  <p className="text-sm text-gray-600">MBTI: {userProfile.mbti}</p>
+                )}
+                {userProfile.gender && (
+                  <p className="text-sm text-gray-600">
+                    성별: {userProfile.gender === 'male' ? '남성' : userProfile.gender === 'female' ? '여성' : '기타'}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="shadow-lg">
           <CardHeader className="text-center">
@@ -177,10 +301,11 @@ export default function DashboardPage() {
             
             <Button 
               onClick={handleFortuneSubmit}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-lg shadow-lg transition-colors"
+              disabled={isLoading}
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-lg shadow-lg transition-colors disabled:opacity-50"
             >
               <Star className="w-4 h-4 mr-2" />
-              운세 보기
+              {isLoading ? "운세 생성 중..." : "운세 보기"}
             </Button>
           </CardContent>
         </Card>

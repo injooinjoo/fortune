@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,6 +28,7 @@ import {
   koreanToIsoDate,
   TIME_PERIODS
 } from "@/lib/utils";
+import { auth, userProfileService, guestProfileService } from "@/lib/supabase";
 
 const formSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요."),
@@ -43,6 +44,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   
   const form = useForm<FormValues>({
@@ -57,6 +60,23 @@ export default function OnboardingPage() {
       gender: "",
     },
   });
+
+  useEffect(() => {
+    // 현재 사용자 정보 확인
+    const checkUser = async () => {
+      const { data } = await auth.getSession();
+      if (data?.session?.user) {
+        setCurrentUser(data.session.user);
+        // 사용자 이름을 폼에 미리 채우기
+        const userName = data.session.user.user_metadata?.full_name || 
+                        data.session.user.user_metadata?.name || 
+                        data.session.user.email?.split('@')[0] || '';
+        form.setValue('name', userName);
+      }
+    };
+    
+    checkUser();
+  }, [form]);
 
   const watchedValues = form.watch();
   const yearOptions = getYearOptions();
@@ -78,17 +98,55 @@ export default function OnboardingPage() {
     setStep(step + 1);
   };
 
-  const handleSubmit = (values: FormValues) => {
-    // 한국식 날짜를 ISO 형식으로 변환
-    const isoDate = koreanToIsoDate(values.birthYear, values.birthMonth, values.birthDay);
+  const handleSubmit = async (values: FormValues) => {
+    setIsLoading(true);
     
-    // 로컬 스토리지에 저장
-    localStorage.setItem("userProfile", JSON.stringify({
-      ...values,
-      birthdate: isoDate
-    }));
-    
-    router.push("/dashboard");
+    try {
+      // 한국식 날짜를 ISO 형식으로 변환
+      const isoDate = koreanToIsoDate(values.birthYear, values.birthMonth, values.birthDay);
+      
+      const profileData = {
+        name: values.name,
+        birth_date: isoDate,
+        birth_time: values.birthTimePeriod || undefined,
+        mbti: values.mbti || undefined,
+        gender: (values.gender as 'male' | 'female' | 'other') || undefined,
+        onboarding_completed: true
+      };
+
+      if (currentUser) {
+        // 로그인된 사용자의 경우 user_profiles 테이블에 저장
+        await userProfileService.upsertProfile({
+          id: currentUser.id,
+          email: currentUser.email,
+          ...profileData
+        });
+        
+        console.log('사용자 프로필 저장 완료');
+      } else {
+        // 로그인하지 않은 사용자의 경우 로컬 스토리지에만 저장
+        console.log('비로그인 사용자 - 로컬 스토리지에만 저장');
+      }
+      
+      // 로컬 스토리지에도 백업 저장 (호환성)
+      localStorage.setItem("userProfile", JSON.stringify({
+        ...values,
+        birthdate: isoDate
+      }));
+      
+      router.push("/dashboard");
+    } catch (error) {
+      console.error('프로필 저장 실패:', error);
+      // 오류가 발생해도 로컬 스토리지에 저장하고 진행
+      const isoDate = koreanToIsoDate(values.birthYear, values.birthMonth, values.birthDay);
+      localStorage.setItem("userProfile", JSON.stringify({
+        ...values,
+        birthdate: isoDate
+      }));
+      router.push("/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -305,7 +363,9 @@ export default function OnboardingPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">완료</Button>
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "저장 중..." : "완료"}
+              </Button>
             </form>
           )}
         </Form>

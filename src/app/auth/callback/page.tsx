@@ -14,7 +14,6 @@ export default function AuthCallbackPage() {
         console.log('Auth callback started...');
         console.log('Current URL:', window.location.href);
         
-        // URL 해시에서 인증 정보 처리 - 여러 번 시도
         let session = null;
         let attempts = 0;
         const maxAttempts = 5;
