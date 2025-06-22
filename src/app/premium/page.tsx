@@ -423,7 +423,7 @@ export default function PremiumSajuPage() {
 
   if (step === 'input') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-25 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
         <AppHeader 
           title="프리미엄 사주" 
           onFontSizeChange={setFontSize}
@@ -442,7 +442,7 @@ export default function PremiumSajuPage() {
             className="text-center mb-8"
           >
             <motion.div
-              className="bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
+              className="bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-700 dark:to-indigo-700 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.8 }}
             >
@@ -459,7 +459,7 @@ export default function PremiumSajuPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="border-purple-200 dark:border-purple-700 dark:bg-gray-800">
+            <Card className="border-purple-200 dark:border-purple-700">
               <CardContent className="p-6 space-y-4">
                 <div>
                   <Label htmlFor="name" className={`${fontClasses.text} dark:text-gray-300`}>이름</Label>
@@ -595,7 +595,7 @@ export default function PremiumSajuPage() {
                 <Button 
                   onClick={handleSubmit} 
                   disabled={loading}
-                  className={`${fontClasses.text} w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-300`}
+                  className={`${fontClasses.text} w-full bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-500 dark:to-indigo-500 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 rounded-lg shadow-lg transition-all duration-300`}
                 >
                   {loading ? (
                     <div className="flex items-center gap-2">

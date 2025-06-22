@@ -240,7 +240,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-25 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-20">
       <AppHeader title="프로필" />
       
       <motion.div
@@ -302,20 +302,20 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                     {user.fortune_count}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">운세 조회</div>
                 </div>
-                <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                     {user.favorite_fortune_types?.length || 0}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">선호 운세</div>
                 </div>
-                <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">7</div>
+                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">7</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">연속 일수</div>
                 </div>
               </div>

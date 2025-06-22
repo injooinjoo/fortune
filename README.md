@@ -97,11 +97,29 @@
 
 ## 🎨 디자인 시스템
 
-- **Primary Color:** `Soft Navy (#2A4D69)` - 신뢰감과 차분함
-- **Secondary Color:** `Pastel Blue (#4B86B4)` - 편안함과 접근성
-- **Accent Color:** `Coral Pink (#FF6F61)` - 활기와 긍정적 에너지
-- **Background Color:** `Ivory (#F4F1EA)` - 깔끔하고 심플한 배경
-- **Typography:** 가독성 높은 산세리프 기반의 모던한 폰트 시스템
+### Liquid Glass UI (2025 iOS 26 Design)
+
+**컨셉**: 미래지향적 글라스모피즘과 뉴모피즘의 결합
+- **Primary Color:** `Deep Dark (#171717)` - 고급스러운 어둠
+- **Secondary Color:** `Glass Light (#F1F5F9)` - 투명한 밝음  
+- **Background:** `Pure Dark (#0A0A0B)` - 깊은 어둠
+- **Glass Effects:** 반투명 배경 + 백드롭 블러 + 정교한 섀도우
+- **Typography:** SF Pro 폰트 시스템 (애플 디자인 언어)
+
+### 핵심 디자인 원칙
+
+1. **Glass Morphism**: 반투명 배경과 백드롭 블러 효과
+2. **Neumorphism**: 정교한 inset/outset 섀도우로 입체감 구현
+3. **Micro Interactions**: 부드러운 scale, shimmer, float 애니메이션
+4. **Accessibility**: WCAG 2.1 AA 준수, 고대비 색상 시스템
+5. **Future-Ready**: 2025년 트렌드를 반영한 미래지향적 UI
+
+### 컴포넌트 시스템
+
+- **Glass Button**: 복층 섀도우와 백드롭 블러 효과
+- **Glass Card**: 투명한 배경과 정교한 테두리 처리
+- **Glass Navigation**: 플로팅 네비게이션 바
+- **Typography**: SF Pro Display/Text 폰트 패밀리
 
 ---
 
