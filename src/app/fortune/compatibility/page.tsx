@@ -93,6 +93,7 @@ export default function CompatibilityPage() {
   const [person1, setPerson1] = useState<PersonInfo>({ name: '', birthDate: '' });
   const [person2, setPerson2] = useState<PersonInfo>({ name: '', birthDate: '' });
   const [result, setResult] = useState<CompatibilityResult | null>(null);
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   const calculateCompatibility = async (): Promise<CompatibilityResult> => {
     const baseScore = Math.floor(Math.random() * 40) + 50;
@@ -157,8 +158,12 @@ export default function CompatibilityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 pb-20">
-      <AppHeader title="궁합 보기" />
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pb-20">
+      <AppHeader 
+        title="궁합 보기" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       
       <motion.div
         variants={containerVariants}
@@ -184,15 +189,15 @@ export default function CompatibilityPage() {
                 >
                   <Users className="w-10 h-10 text-white" />
                 </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">궁합 분석</h1>
-                <p className="text-gray-600">두 사람의 정보를 입력하고 운명적 인연을 확인해보세요</p>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">궁합 분석</h1>
+                <p className="text-gray-600 dark:text-gray-300">두 사람의 정보를 입력하고 운명적 인연을 확인해보세요</p>
               </motion.div>
 
               {/* 첫 번째 사람 정보 */}
               <motion.div variants={itemVariants}>
-                <Card className="border-rose-200">
+                <Card className="border-rose-200 dark:border-rose-800 bg-white/80 dark:bg-gray-800/80">
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-rose-700">
+                    <CardTitle className="flex items-center gap-2 text-rose-700 dark:text-rose-300">
                       <Heart className="w-5 h-5" />
                       첫 번째 사람
                     </CardTitle>

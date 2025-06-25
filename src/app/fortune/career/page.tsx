@@ -22,6 +22,7 @@ import {
 
 export default function CareerFortunePage() {
   const [selectedTab, setSelectedTab] = useState("today");
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   const todayScore = 78;
   const weekScore = 82;
@@ -50,8 +51,12 @@ export default function CareerFortunePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      <AppHeader />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <AppHeader 
+        title="취업운" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
       
       <motion.div 
         className="container mx-auto px-4 pt-4 pb-20"
@@ -62,29 +67,29 @@ export default function CareerFortunePage() {
         {/* 헤더 섹션 */}
         <motion.div variants={itemVariants} className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <BriefcaseIcon className="h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <BriefcaseIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
               취업운
             </h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             당신의 커리어 발전과 취업 기회를 확인해보세요
           </p>
         </motion.div>
 
         {/* 오늘의 취업운 점수 */}
         <motion.div variants={itemVariants}>
-          <Card className="mb-6 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <Card className="mb-6 border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
             <CardHeader className="text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-blue-700">
+              <CardTitle className="flex items-center justify-center gap-2 text-blue-700 dark:text-blue-300">
                 <TrendingUpIcon className="h-5 w-5" />
                 오늘의 취업운
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">{todayScore}점</div>
+              <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">{todayScore}점</div>
               <Progress value={todayScore} className="mb-4" />
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 새로운 기회가 찾아올 가능성이 높은 날입니다
               </p>
             </CardContent>
@@ -93,23 +98,23 @@ export default function CareerFortunePage() {
 
         {/* 기간별 점수 */}
         <motion.div variants={itemVariants}>
-          <Card className="mb-6">
+          <Card className="mb-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="text-center">기간별 취업운</CardTitle>
+              <CardTitle className="text-center text-gray-900 dark:text-gray-100">기간별 취업운</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{todayScore}</div>
-                  <div className="text-sm text-gray-500">오늘</div>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{todayScore}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">오늘</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">{weekScore}</div>
-                  <div className="text-sm text-gray-500">이번 주</div>
+                  <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{weekScore}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">이번 주</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{monthScore}</div>
-                  <div className="text-sm text-gray-500">이번 달</div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{monthScore}</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">이번 달</div>
                 </div>
               </div>
             </CardContent>
@@ -118,9 +123,9 @@ export default function CareerFortunePage() {
 
         {/* 행운의 정보 */}
         <motion.div variants={itemVariants}>
-          <Card className="mb-6">
+          <Card className="mb-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <StarIcon className="h-5 w-5 text-yellow-500" />
                 행운의 정보
               </CardTitle>
@@ -128,31 +133,31 @@ export default function CareerFortunePage() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
-                  <ClockIcon className="h-4 w-4 text-blue-500" />
+                  <ClockIcon className="h-4 w-4 text-blue-500 dark:text-blue-400" />
                   <div>
-                    <div className="text-sm font-medium">행운의 시간</div>
-                    <div className="text-sm text-gray-600">오후 2-4시</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">행운의 시간</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">오후 2-4시</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPinIcon className="h-4 w-4 text-green-500" />
+                  <MapPinIcon className="h-4 w-4 text-green-500 dark:text-green-400" />
                   <div>
-                    <div className="text-sm font-medium">행운의 장소</div>
-                    <div className="text-sm text-gray-600">카페, 도서관</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">행운의 장소</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">카페, 도서관</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
+                  <div className="h-4 w-4 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
                   <div>
-                    <div className="text-sm font-medium">행운의 색상</div>
-                    <div className="text-sm text-gray-600">네이비, 화이트</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">행운의 색상</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">네이비, 화이트</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <UserIcon className="h-4 w-4 text-purple-500" />
+                  <UserIcon className="h-4 w-4 text-purple-500 dark:text-purple-400" />
                   <div>
-                    <div className="text-sm font-medium">도움이 되는 사람</div>
-                    <div className="text-sm text-gray-600">선배, 멘토</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">도움이 되는 사람</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">선배, 멘토</div>
                   </div>
                 </div>
               </div>
@@ -162,35 +167,35 @@ export default function CareerFortunePage() {
 
         {/* 업계별 운세 */}
         <motion.div variants={itemVariants}>
-          <Card className="mb-6">
+          <Card className="mb-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BuildingIcon className="h-5 w-5 text-gray-600" />
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <BuildingIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                 업계별 운세
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-green-100 text-green-700">최고</Badge>
-                    <span className="font-medium">IT/소프트웨어</span>
+                    <Badge variant="outline" className="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700">최고</Badge>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">IT/소프트웨어</span>
                   </div>
-                  <div className="text-green-600 font-bold">95점</div>
+                  <div className="text-green-600 dark:text-green-400 font-bold">95점</div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-blue-100 text-blue-700">좋음</Badge>
-                    <span className="font-medium">금융/보험</span>
+                    <Badge variant="outline" className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700">좋음</Badge>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">금융/보험</span>
                   </div>
-                  <div className="text-blue-600 font-bold">88점</div>
+                  <div className="text-blue-600 dark:text-blue-400 font-bold">88점</div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="bg-purple-100 text-purple-700">좋음</Badge>
-                    <span className="font-medium">교육/연구</span>
+                    <Badge variant="outline" className="bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-700">좋음</Badge>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">교육/연구</span>
                   </div>
-                  <div className="text-purple-600 font-bold">82점</div>
+                  <div className="text-purple-600 dark:text-purple-400 font-bold">82점</div>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                   <div className="flex items-center gap-2">

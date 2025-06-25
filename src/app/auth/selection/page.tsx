@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { MessageSquare, Instagram, Smartphone } from 'lucide-react';
+
 import { FortuneCompassIcon } from '@/components/icons/fortune-compass-icon';
 import { auth } from '@/lib/supabase';
 
@@ -42,10 +42,10 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
     }
   };
 
-  const handleOtherAuthMethodSelect = (method: string) => {
+  const handleKakaoSignIn = async () => {
     toast({
-      title: "인증 방법 선택됨",
-      description: `${method} 로그인을 시도합니다. (UI 프로토타입 - ${method} 연동 필요)`,
+      title: "준비 중인 기능",
+      description: "카카오 로그인은 현재 준비 중입니다.",
     });
   };
 
@@ -63,10 +63,10 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
         <CardContent className="space-y-4 p-6">
           <Button
             variant="outline"
-            className="w-full justify-center text-base py-6"
-            onClick={handleGoogleSignIn} // Google 로그인 함수 연결
+            className="w-full justify-center text-base py-6 font-medium"
+            onClick={handleGoogleSignIn}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 48 48" width="24px" height="24px">
+            <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 48 48" width="20px" height="20px">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
               <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
@@ -76,38 +76,13 @@ export default function AuthSelectionPage({ searchParams }: { searchParams: Reco
             Google 계정으로 계속하기
           </Button>
           <Button
-            variant="outline"
-            className="w-full justify-center text-base py-6 bg-[#03C75A] text-white hover:bg-[#03C75A]/90"
-            onClick={() => handleOtherAuthMethodSelect('Naver')}
+            className="w-full justify-center text-base py-6 bg-[#FEE500] text-black hover:bg-[#FEE500]/90 font-medium"
+            onClick={handleKakaoSignIn}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16.273 12.845h-3.217V8.53h3.217v4.315zm0 4.308h-3.217v-3.21h3.217v3.21zM7.727 8.53v8.623H4V4h7.54v3.21H7.727v1.32zM20 4v16H4V4h16z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.477 2 2 5.813 2 10.176c0 2.923 2.137 5.487 5.338 6.93L6 22l4.184-3.006c.594.09 1.207.138 1.816.138 5.523 0 10-3.813 10-8.176S17.523 2 12 2z" />
             </svg>
-            Naver 계정으로 계속하기
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-center text-base py-6 bg-[#FEE500] text-black hover:bg-[#FEE500]/90"
-            onClick={() => handleOtherAuthMethodSelect('Kakao')}
-          >
-            <MessageSquare className="mr-3 h-5 w-5" />
-            Kakao 계정으로 계속하기
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full justify-center text-base py-6"
-            onClick={() => handleOtherAuthMethodSelect('Instagram')}
-          >
-            <Instagram className="mr-3 h-5 w-5" />
-            Instagram 계정으로 계속하기
-          </Button>
-          <Button
-            variant="secondary"
-            className="w-full justify-center text-base py-6"
-            onClick={() => handleOtherAuthMethodSelect('휴대폰')}
-          >
-            <Smartphone className="mr-3 h-5 w-5" />
-            휴대폰 번호로 인증하기
+            카카오 계정으로 계속하기
           </Button>
         </CardContent>
       </Card>

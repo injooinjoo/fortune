@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -218,110 +218,61 @@ export default function HourlyFortunePage() {
   const selectedFortune = selectedHour !== null ? fortunes[selectedHour] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 pb-32">
-      <AppHeader title="시간대별 운세" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20">
+      <AppHeader />
       
-      <motion.div
+      <motion.div 
+        className="container mx-auto px-4 pt-4 pb-20"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="px-6 pt-6"
       >
-        {/* 헤더 */}
+        {/* 헤더 섹션 */}
         <motion.div variants={itemVariants} className="text-center mb-8">
-          <motion.div
-            className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Clock className="w-10 h-10 text-white" />
-          </motion.div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">시간대별 운세</h1>
-          <p className="text-gray-600">매 시간마다 변화하는 당신의 운세를 확인해보세요</p>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            <Clock className="w-4 h-4 text-indigo-600" />
-            <span className="text-sm text-indigo-600 font-medium">
-              현재 시간: {formatHour(currentHour)}
-            </span>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              시간별 운세
+            </h1>
           </div>
-        </motion.div>
-
-        {/* 새로고침 버튼 */}
-        <motion.div variants={itemVariants} className="text-center mb-6">
-          <Button
+          <p className="text-gray-600 dark:text-gray-400">
+            24시간 동안의 운세 흐름을 확인해보세요
+          </p>
+          <Button 
             onClick={refreshFortunes}
             variant="outline"
-            className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+            size="sm"
+            className="mt-4 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            운세 새로고침
+            새로고침
           </Button>
         </motion.div>
 
-        {/* 시간 선택 그리드 */}
-        <motion.div variants={itemVariants} className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-indigo-700">
-                <Calendar className="w-5 h-5" />
-                시간 선택
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-4 gap-2">
-                {fortunes.map((fortune, index) => {
-                  const IconComponent = fortune.icon;
-                  const isSelected = selectedHour === index;
-                  const isCurrent = currentHour === index;
-                  
-                  return (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedHour(index)}
-                      className={`
-                        relative p-3 rounded-lg border-2 transition-all duration-200
-                        ${isSelected 
-                          ? 'border-indigo-500 bg-indigo-50' 
-                          : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-25'
-                        }
-                        ${isCurrent ? 'ring-2 ring-amber-400 ring-offset-2' : ''}
-                      `}
-                    >
-                      {isCurrent && (
-                        <div className="absolute -top-1 -right-1">
-                          <div className="w-3 h-3 bg-amber-400 rounded-full animate-pulse" />
-                        </div>
-                      )}
-                      <div className="flex flex-col items-center gap-1">
-                        <IconComponent className={`w-4 h-4 text-${fortune.color}-600`} />
-                        <span className="text-xs font-medium text-gray-700">
-                          {index === 0 ? '12' : index > 12 ? index - 12 : index}
-                        </span>
-                        <div className={`w-2 h-2 rounded-full ${getLuckColor(fortune.overall_luck).split(' ')[1]}`} />
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
-              <div className="mt-4 text-center">
-                <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-amber-400" />
-                    <span>현재 시간</span>
+        {/* 현재 시간 하이라이트 */}
+        <motion.div variants={itemVariants}>
+          <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-blue-200 dark:border-blue-700 dark:bg-gray-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
+                    <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-green-400" />
-                    <span>좋음</span>
+                  <div>
+                    <h3 className="font-bold text-blue-900 dark:text-blue-300">
+                      현재 시간: {formatHour(currentHour)}
+                    </h3>
+                    <p className="text-sm text-blue-700 dark:text-blue-400">
+                      {fortunes[currentHour]?.period} 시간대
+                    </p>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-orange-400" />
-                    <span>보통</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {fortunes[currentHour]?.overall_luck}점
                   </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-red-400" />
-                    <span>주의</span>
+                  <div className="text-sm text-blue-700 dark:text-blue-400">
+                    {getLuckText(fortunes[currentHour]?.overall_luck || 0)}
                   </div>
                 </div>
               </div>
@@ -329,167 +280,194 @@ export default function HourlyFortunePage() {
           </Card>
         </motion.div>
 
-        {/* 선택된 시간대 운세 */}
-        <AnimatePresence mode="wait">
-          {selectedFortune && (
+        {/* 시간별 운세 목록 */}
+        <motion.div variants={itemVariants}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
+            {fortunes.map((fortune, index) => {
+              const IconComponent = fortune.icon;
+              const isCurrentHour = index === currentHour;
+              const isSelected = selectedHour === index;
+              
+              return (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`cursor-pointer ${isCurrentHour ? 'ring-2 ring-blue-500 dark:ring-blue-400' : ''}`}
+                  onClick={() => setSelectedHour(isSelected ? null : index)}
+                >
+                  <Card className={`h-full transition-all duration-200 ${
+                    isSelected 
+                      ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600' 
+                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-700'
+                  }`}>
+                    <CardContent className="p-3 text-center">
+                      <IconComponent className={`w-5 h-5 mx-auto mb-2 ${
+                        fortune.color === 'yellow' ? 'text-yellow-500 dark:text-yellow-400' :
+                        fortune.color === 'orange' ? 'text-orange-500 dark:text-orange-400' :
+                        fortune.color === 'purple' ? 'text-purple-500 dark:text-purple-400' :
+                        'text-indigo-500 dark:text-indigo-400'
+                      }`} />
+                      <div className="text-xs font-medium text-gray-900 dark:text-gray-100 mb-1">
+                        {formatHour(fortune.hour)}
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        {fortune.period}
+                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className={`text-xs px-1 py-0 ${getLuckColor(fortune.overall_luck)} border-0`}
+                      >
+                        {fortune.overall_luck}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        {/* 선택된 시간의 상세 운세 */}
+        <AnimatePresence>
+          {selectedHour !== null && (
             <motion.div
-              key={selectedHour}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              {/* 전체 운세 */}
-              <motion.div variants={itemVariants}>
-                <Card className={`bg-gradient-to-r ${selectedFortune.gradient} border-${selectedFortune.color}-200`}>
-                  <CardContent className="text-center py-8">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                      <selectedFortune.icon className={`w-6 h-6 text-${selectedFortune.color}-600`} />
-                      <span className="text-xl font-medium text-gray-900">
-                        {formatHour(selectedHour!)} ({selectedFortune.period})
+              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      {React.createElement(fortunes[selectedHour].icon, { 
+                        className: `w-6 h-6 ${
+                          fortunes[selectedHour].color === 'yellow' ? 'text-yellow-500 dark:text-yellow-400' :
+                          fortunes[selectedHour].color === 'orange' ? 'text-orange-500 dark:text-orange-400' :
+                          fortunes[selectedHour].color === 'purple' ? 'text-purple-500 dark:text-purple-400' :
+                          'text-indigo-500 dark:text-indigo-400'
+                        }` 
+                      })}
+                      {formatHour(fortunes[selectedHour].hour)} 상세 운세
+                    </CardTitle>
+                    <Badge 
+                      variant="outline"
+                      className={`${getLuckColor(fortunes[selectedHour].overall_luck)} border-0`}
+                    >
+                      {getLuckText(fortunes[selectedHour].overall_luck)}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* 운세 메시지 */}
+                  <div className={`p-4 rounded-lg bg-gradient-to-r ${fortunes[selectedHour].gradient} dark:from-gray-700 dark:to-gray-600`}>
+                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                      {fortunes[selectedHour].fortune_text}
+                    </p>
+                  </div>
+
+                  {/* 분야별 운세 */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Heart className="w-4 h-4 text-red-500 dark:text-red-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">애정운</span>
+                      </div>
+                      <span className="font-bold text-red-600 dark:text-red-400">
+                        {fortunes[selectedHour].love_fortune}점
                       </span>
                     </div>
-                    <p className="text-gray-700 text-lg mb-4">전체 운세</p>
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3, type: "spring" }}
-                      className="text-5xl font-bold mb-2 text-gray-900"
-                    >
-                      {selectedFortune.overall_luck}점
-                    </motion.div>
-                    <Badge variant="secondary" className={`${getLuckColor(selectedFortune.overall_luck)} border-0`}>
-                      {getLuckText(selectedFortune.overall_luck)}
-                    </Badge>
-                    <p className="text-gray-700 mt-4 text-base">
-                      {selectedFortune.fortune_text}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">업무운</span>
+                      </div>
+                      <span className="font-bold text-blue-600 dark:text-blue-400">
+                        {fortunes[selectedHour].work_fortune}점
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-green-500 dark:text-green-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">건강운</span>
+                      </div>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {fortunes[selectedHour].health_fortune}점
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">금전운</span>
+                      </div>
+                      <span className="font-bold text-yellow-600 dark:text-yellow-400">
+                        {fortunes[selectedHour].money_fortune}점
+                      </span>
+                    </div>
+                  </div>
 
-              {/* 세부 운세 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Star className="w-5 h-5 text-indigo-600" />
-                      세부 운세
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {[
-                      { label: "연애운", score: selectedFortune.love_fortune, icon: Heart, desc: "사랑과 인간관계" },
-                      { label: "직장운", score: selectedFortune.work_fortune, icon: Briefcase, desc: "업무와 성과" },
-                      { label: "건강운", score: selectedFortune.health_fortune, icon: Activity, desc: "몸과 마음의 컨디션" },
-                      { label: "재물운", score: selectedFortune.money_fortune, icon: TrendingUp, desc: "금전과 투자" }
-                    ].map((item, index) => {
-                      const LuckIcon = getLuckIcon(item.score);
-                      return (
-                        <motion.div
-                          key={item.label}
-                          initial={{ x: -20, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: 0.4 + index * 0.1 }}
-                          className="space-y-2"
-                        >
-                          <div className="flex items-center gap-3">
-                            <item.icon className="w-5 h-5 text-gray-600" />
-                            <div className="flex-1">
-                              <div className="flex justify-between items-center mb-1">
-                                <div>
-                                  <span className="font-medium">{item.label}</span>
-                                  <p className="text-xs text-gray-500">{item.desc}</p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <LuckIcon className={`w-4 h-4 ${getLuckColor(item.score).split(' ')[0]}`} />
-                                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getLuckColor(item.score)}`}>
-                                    {item.score}점
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <motion.div
-                                  className={`bg-${selectedFortune.color}-500 h-2 rounded-full`}
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${item.score}%` }}
-                                  transition={{ delay: 0.5 + index * 0.1, duration: 0.8 }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 추천 활동 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-green-600">
-                      <Lightbulb className="w-5 h-5" />
+                  {/* 추천 활동 */}
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      <Lightbulb className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
                       추천 활동
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {selectedFortune.best_activities.map((activity, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.6 + index * 0.1 }}
-                          className="flex items-start gap-2"
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {fortunes[selectedHour].best_activities.map((activity, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="outline"
+                          className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-600"
                         >
-                          <Sparkles className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                          <p className="text-gray-700">{activity}</p>
-                        </motion.div>
+                          {activity}
+                        </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  </div>
 
-              {/* 조언 */}
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-600">
-                      <Star className="w-5 h-5" />
-                      조언
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-blue-50 rounded-lg">
-                        <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4" />
-                          권장사항
-                        </h4>
-                        <div className="space-y-1">
-                          {selectedFortune.recommendations.map((rec, index) => (
-                            <p key={index} className="text-blue-700 text-sm">• {rec}</p>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="p-4 bg-amber-50 rounded-lg">
-                        <h4 className="font-medium text-amber-800 mb-2 flex items-center gap-2">
-                          <AlertTriangle className="w-4 h-4" />
-                          주의사항
-                        </h4>
-                        <div className="space-y-1">
-                          {selectedFortune.warnings.map((warning, index) => (
-                            <p key={index} className="text-amber-700 text-sm">• {warning}</p>
-                          ))}
-                        </div>
+                  {/* 주의사항 */}
+                  {fortunes[selectedHour].warnings.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                        <AlertTriangle className="w-4 h-4 text-orange-500 dark:text-orange-400" />
+                        주의사항
+                      </h4>
+                      <div className="space-y-2">
+                        {fortunes[selectedHour].warnings.map((warning, index) => (
+                          <div 
+                            key={index}
+                            className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded text-sm text-orange-800 dark:text-orange-300"
+                          >
+                            {warning}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  )}
+
+                  {/* 행운 조언 */}
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      <Sparkles className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                      행운 조언
+                    </h4>
+                    <div className="space-y-2">
+                      {fortunes[selectedHour].recommendations.map((rec, index) => (
+                        <div 
+                          key={index}
+                          className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded text-sm text-purple-800 dark:text-purple-300"
+                        >
+                          • {rec}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>

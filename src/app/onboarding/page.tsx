@@ -150,11 +150,11 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-600">
         <div className="mb-6">
           <Progress value={(step / 3) * 100} className="w-full" />
-          <p className="text-sm text-gray-600 mt-2 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
             {step} / 3 단계
           </p>
         </div>
@@ -167,11 +167,15 @@ export default function OnboardingPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>이름</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">이름</FormLabel>
                     <FormControl>
-                      <Input placeholder="홍길동" {...field} />
+                      <Input 
+                        placeholder="홍길동" 
+                        {...field} 
+                        className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100"
+                      />
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">정확한 사주 분석을 위해 필요해요.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">정확한 사주 분석을 위해 필요해요.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -183,16 +187,20 @@ export default function OnboardingPage() {
                 name="birthYear"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>생년</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">생년</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                           <SelectValue placeholder="년도 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
                         {yearOptions.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
+                          <SelectItem 
+                            key={year} 
+                            value={year.toString()}
+                            className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
                             {year}년
                           </SelectItem>
                         ))}
@@ -209,16 +217,20 @@ export default function OnboardingPage() {
                 name="birthMonth"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>생월</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">생월</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                           <SelectValue placeholder="월 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
                         {monthOptions.map((month) => (
-                          <SelectItem key={month} value={month.toString()}>
+                          <SelectItem 
+                            key={month} 
+                            value={month.toString()}
+                            className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
                             {month}월
                           </SelectItem>
                         ))}
@@ -235,16 +247,20 @@ export default function OnboardingPage() {
                 name="birthDay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>생일</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">생일</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                           <SelectValue placeholder="일 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
                         {dayOptions.map((day) => (
-                          <SelectItem key={day} value={day.toString()}>
+                          <SelectItem 
+                            key={day} 
+                            value={day.toString()}
+                            className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
                             {day}일
                           </SelectItem>
                         ))}
@@ -261,25 +277,29 @@ export default function OnboardingPage() {
                 name="birthTimePeriod"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>태어난 시진 (선택사항)</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">태어난 시진 (선택사항)</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                           <SelectValue placeholder="시진 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
                         {TIME_PERIODS.map((period) => (
-                          <SelectItem key={period.value} value={period.value}>
+                          <SelectItem 
+                            key={period.value} 
+                            value={period.value}
+                            className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
                             <div className="flex flex-col">
                               <span className="font-medium">{period.label}</span>
-                              <span className="text-xs text-gray-500">{period.description}</span>
+                              <span className="text-xs text-gray-500 dark:text-gray-400">{period.description}</span>
                             </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-muted-foreground">더 정확한 사주 분석을 위해 필요해요.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">더 정확한 사주 분석을 위해 필요해요.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -310,22 +330,26 @@ export default function OnboardingPage() {
                 name="mbti"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>MBTI (선택사항)</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">MBTI (선택사항)</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                           <SelectValue placeholder="MBTI 선택" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
                         {MBTI_TYPES.map((type) => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem 
+                            key={type} 
+                            value={type}
+                            className="text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          >
                             {type}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-muted-foreground">성격 기반 운세 분석에 활용됩니다.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">성격 기반 운세 분석에 활용됩니다.</p>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -341,7 +365,7 @@ export default function OnboardingPage() {
                 name="gender"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>성별 (선택사항)</FormLabel>
+                    <FormLabel className="text-gray-700 dark:text-gray-300">성별 (선택사항)</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -350,15 +374,15 @@ export default function OnboardingPage() {
                       >
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="male" id="male" />
-                          <Label htmlFor="male">남성</Label>
+                          <Label htmlFor="male" className="text-gray-700 dark:text-gray-300">남성</Label>
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="female" id="female" />
-                          <Label htmlFor="female">여성</Label>
+                          <Label htmlFor="female" className="text-gray-700 dark:text-gray-300">여성</Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">성별별 운세 분석에 활용됩니다.</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">성별별 운세 분석에 활용됩니다.</p>
                     <FormMessage />
                   </FormItem>
                 )}

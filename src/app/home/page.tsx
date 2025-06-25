@@ -312,8 +312,22 @@ export default function HomePage() {
 
   // 운세 경로에서 키 추출
   const getFortuneKey = (path: string) => {
-    const match = path.match(/\/fortune\/([^\/]+)/);
-    return match ? match[1] : '';
+    const pathParts = path.split('/');
+    return pathParts[pathParts.length - 1] || 'unknown';
+  };
+
+  // 시간차이를 한국어로 표시하는 함수
+  const formatTimeAgo = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (days > 0) return `${days}일 전`;
+    if (hours > 0) return `${hours}시간 전`;
+    if (minutes > 0) return `${minutes}분 전`;
+    return '방금 전';
   };
 
   useEffect(() => {
@@ -679,21 +693,20 @@ export default function HomePage() {
             whileTap={{ scale: 0.95 }}
           >
             <div onClick={() => item.needsAd ? handleFortuneClick(item.href, item.title) : router.push(item.href)} className="cursor-pointer">
-              <motion.div variants={cardVariants}>
-                <Card className={`h-full hover:shadow-lg transition-all duration-300 border-${item.color}-200 hover:border-${item.color}-300 dark:bg-gray-800 dark:border-gray-700`}>
-                  <CardContent className="p-6 text-center">
-                    <motion.div 
-                      className={`bg-${item.color}-100 dark:bg-${item.color}-900/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3`}
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <item.icon className={`w-8 h-8 text-${item.color}-600 dark:text-${item.color}-400`} />
-                    </motion.div>
-                    <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>{item.title}</h3>
-                    <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <Card className="h-full hover:shadow-lg transition-all duration-300 border-gray-200 hover:border-purple-300 dark:bg-gray-800 dark:border-gray-600 dark:hover:border-purple-500">
+                <CardContent className="p-6 flex flex-col items-center text-center h-full">
+                  <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                    <item.icon className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>{item.title}</h3>
+                  <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
+                  {item.needsAd && (
+                    <Badge variant="secondary" className={`${fontClasses.label} mt-2 bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300`}>
+                      광고 후 이용
+                    </Badge>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           </motion.div>
         ))}
@@ -713,49 +726,44 @@ export default function HomePage() {
               <h2 className={`${fontClasses.title} font-bold text-gray-900 dark:text-gray-100`}>최근에 본 운세</h2>
             </motion.div>
             <motion.div className="space-y-3" variants={containerVariants}>
-              {recentFortunes.map((fortune, index) => {
-                const fortuneKey = getFortuneKey(fortune.path);
-                const info = fortuneInfo[fortuneKey];
+              {recentFortunes.slice(0, 3).map((recent, index) => {
+                const fortuneKey = getFortuneKey(recent.path);
+                const info = fortuneInfo[fortuneKey] || { 
+                  icon: Star, 
+                  title: recent.title, 
+                  desc: "운세 정보", 
+                  color: "purple",
+                  gradient: "from-purple-50 to-indigo-50"
+                };
                 
-                if (!info) return null;
-
                 return (
-                  <motion.div
-                    key={`${fortune.path}-${fortune.visitedAt}`}
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.02, x: 5 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <div onClick={() => handleFortuneClick(fortune.path, fortune.title)} className="cursor-pointer">
-                      <Card className={`hover:shadow-md transition-shadow bg-gradient-to-r ${info.gradient} dark:bg-gradient-to-r dark:from-${info.color}-900/20 dark:to-${info.color}-800/10 border-${info.color}-200 dark:border-${info.color}-700`}>
-                        <CardContent className="p-4 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <motion.div 
-                              className={`bg-${info.color}-100 dark:bg-${info.color}-900/30 rounded-full w-12 h-12 flex items-center justify-center`}
-                              whileHover={{ rotate: 360 }}
-                              transition={{ duration: 0.5 }}
-                            >
-                              <info.icon className={`w-6 h-6 text-${info.color}-600 dark:text-${info.color}-400`} />
-                            </motion.div>
-                            <div>
-                              <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100`}>{info.title}</h3>
-                              <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{info.desc}</p>
-                            </div>
+                  <motion.div key={recent.path} variants={itemVariants}>
+                    <Card className="hover:shadow-md transition-shadow bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500">
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-12 h-12 flex items-center justify-center">
+                            <info.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100`}>{info.title}</h3>
+                            <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{info.desc}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className={`${fontClasses.label} bg-${info.color}-100 dark:bg-${info.color}-900/50 text-${info.color}-700 dark:text-${info.color}-300`}>
-                              최근
+                            <Badge variant="secondary" className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300">
+                              {formatTimeAgo(recent.visitedAt)}
                             </Badge>
-                            <motion.div
-                              animate={{ x: [0, 5, 0] }}
-                              transition={{ repeat: Infinity, duration: 2 }}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="p-2 h-auto"
+                              onClick={() => handleFortuneClick(recent.path, recent.title)}
                             >
-                              <ArrowRight className={`w-5 h-5 text-${info.color}-600 dark:text-${info.color}-400`} />
-                            </motion.div>
+                              <ArrowRight className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                            </Button>
                           </div>
-                        </CardContent>
-                      </Card>
-                    </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </motion.div>
                 );
               })}
@@ -785,33 +793,28 @@ export default function HomePage() {
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div onClick={() => handleFortuneClick(item.href, item.title)} className="cursor-pointer">
-                  <Card className={`hover:shadow-md transition-shadow border-${item.color}-200 dark:border-${item.color}-700 dark:bg-gray-800`}>
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <motion.div 
-                          className={`bg-${item.color}-100 dark:bg-${item.color}-900/30 rounded-full w-10 h-10 flex items-center justify-center`}
-                          whileHover={{ rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <item.icon className={`w-5 h-5 text-${item.color}-600 dark:text-${item.color}-400`} />
-                        </motion.div>
-                        <div>
-                          <h3 className={`${fontClasses.text} font-medium text-gray-900 dark:text-gray-100`}>{item.title}</h3>
-                          <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
-                        </div>
+                <Card 
+                  className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500"
+                  onClick={() => handleFortuneClick(item.href, item.title)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-10 h-10 flex items-center justify-center">
+                        <item.icon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                       </div>
-                      <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        <Badge variant="secondary" className={`${fontClasses.label} bg-${item.color}-100 dark:bg-${item.color}-900/50 text-${item.color}-700 dark:text-${item.color}-300`}>
-                          {item.badge}
-                        </Badge>
-                      </motion.div>
-                    </CardContent>
-                  </Card>
-                </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className={`${fontClasses.text} font-medium text-gray-900 dark:text-gray-100`}>{item.title}</h3>
+                          <Badge variant="secondary" className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300">
+                            {item.badge}
+                          </Badge>
+                        </div>
+                        <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>{item.desc}</p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </motion.div>

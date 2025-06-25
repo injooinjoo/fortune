@@ -223,7 +223,7 @@ export default function MarriageFortunePage() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <AppHeader 
         title="결혼운" 
         onFontSizeChange={setFontSize}
@@ -236,14 +236,14 @@ export default function MarriageFortunePage() {
         variants={containerVariants}
       >
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-br from-pink-50 to-rose-50 border-pink-200">
+          <Card className="bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-200 dark:border-pink-800">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Gem className="w-6 h-6 text-pink-600" />
-                <CardTitle className="text-xl text-pink-800">오늘의 결혼운</CardTitle>
+                <Gem className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                <CardTitle className="text-xl text-pink-800 dark:text-pink-200">오늘의 결혼운</CardTitle>
               </div>
               <motion.div
-                className="text-4xl font-bold text-pink-600"
+                className="text-4xl font-bold text-pink-600 dark:text-pink-400"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
@@ -253,7 +253,7 @@ export default function MarriageFortunePage() {
             </CardHeader>
             <CardContent>
               <Progress value={data.todayScore} className="mb-4" />
-              <p className="text-center text-pink-700 leading-relaxed">
+              <p className="text-center text-pink-700 dark:text-pink-300 leading-relaxed">
                 {data.summary}
               </p>
             </CardContent>
@@ -261,9 +261,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <TrendingUp className="w-5 h-5" />
                 기간별 결혼운
               </CardTitle>
@@ -271,20 +271,20 @@ export default function MarriageFortunePage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-4 gap-3">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-pink-600">{data.todayScore}</div>
-                  <div className="text-xs text-gray-600">오늘</div>
+                  <div className="text-2xl font-bold text-pink-600 dark:text-pink-400">{data.todayScore}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">오늘</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{data.weeklyScore}</div>
-                  <div className="text-xs text-gray-600">이번 주</div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{data.weeklyScore}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">이번 주</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{data.monthlyScore}</div>
-                  <div className="text-xs text-gray-600">이번 달</div>
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">{data.monthlyScore}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">이번 달</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-rose-600">{data.yearlyScore}</div>
-                  <div className="text-xs text-gray-600">올해</div>
+                  <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">{data.yearlyScore}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">올해</div>
                 </div>
               </div>
             </CardContent>
@@ -292,9 +292,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Sparkles className="w-5 h-5" />
                 행운의 정보
               </CardTitle>
@@ -302,32 +302,32 @@ export default function MarriageFortunePage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <Clock className="w-5 h-5 text-blue-600" />
+                  <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <div className="text-sm text-gray-600">행운의 시간</div>
-                    <div className="font-medium">{data.luckyTime}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">행운의 시간</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">{data.luckyTime}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-green-600" />
+                  <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
                   <div>
-                    <div className="text-sm text-gray-600">행운의 장소</div>
-                    <div className="font-medium">{data.luckyPlace}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">행운의 장소</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">{data.luckyPlace}</div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-300" style={{ backgroundColor: data.luckyColor }} />
+                <div className="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600" style={{ backgroundColor: data.luckyColor }} />
                 <div>
-                  <div className="text-sm text-gray-600">행운의 색상</div>
-                  <div className="font-medium">핑크 계열</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">행운의 색상</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">핑크 계열</div>
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">결혼하기 좋은 달</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">결혼하기 좋은 달</div>
                 <div className="flex flex-wrap gap-2">
                   {data.bestMarriageMonth.map((month, index) => (
-                    <Badge key={index} variant="outline" className="text-pink-700">
+                    <Badge key={index} variant="outline" className="text-pink-700 dark:text-pink-300 dark:border-pink-600">
                       {month}
                     </Badge>
                   ))}
@@ -338,45 +338,45 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Heart className="w-5 h-5" />
                 이상적인 결혼 조건
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="text-sm text-gray-600 mb-2">적합한 연령대</div>
-                <Badge className="bg-pink-100 text-pink-700">
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">적합한 연령대</div>
+                <Badge className="bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
                   {data.compatibility.bestAge}
                 </Badge>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">좋은 계절</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">좋은 계절</div>
                 <div className="flex flex-wrap gap-2">
                   {data.compatibility.goodSeasons.map((season, index) => (
-                    <Badge key={index} variant="outline" className="text-green-700">
+                    <Badge key={index} variant="outline" className="text-green-700 dark:text-green-300 dark:border-green-600">
                       {season}
                     </Badge>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">이상적인 파트너</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">이상적인 파트너</div>
                 <div className="flex flex-wrap gap-2">
                   {data.compatibility.idealPartner.map((trait, index) => (
-                    <Badge key={index} className="bg-blue-100 text-blue-700">
+                    <Badge key={index} className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
                       {trait}
                     </Badge>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">피해야 할 것</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">피해야 할 것</div>
                 <div className="flex flex-wrap gap-2">
                   {data.compatibility.avoid.map((item, index) => (
-                    <Badge key={index} className="bg-red-100 text-red-700">
+                    <Badge key={index} className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
                       {item}
                     </Badge>
                   ))}
@@ -387,9 +387,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Calendar className="w-5 h-5" />
                 결혼 타임라인 추천
               </CardTitle>
@@ -402,17 +402,17 @@ export default function MarriageFortunePage() {
                     initial={{ opacity: 0, x: -50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + index * 0.1 }}
-                    className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-white to-gray-50 border"
+                    className="flex items-center gap-4 p-4 rounded-lg bg-gradient-to-r from-white to-gray-50 dark:from-gray-700/50 dark:to-gray-800/50 border dark:border-gray-600"
                   >
-                    <div className={`p-2 rounded-full bg-${item.color}-100`}>
-                      <item.icon className={`w-5 h-5 text-${item.color}-600`} />
+                    <div className={`p-2 rounded-full bg-${item.color}-100 dark:bg-${item.color}-900/30`}>
+                      <item.icon className={`w-5 h-5 text-${item.color}-600 dark:text-${item.color}-400`} />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-gray-800">{item.phase}</div>
-                      <div className="text-sm text-gray-600">{item.timing}</div>
+                      <div className="font-medium text-gray-800 dark:text-gray-200">{item.phase}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300">{item.timing}</div>
                     </div>
                     {index < timeline.length - 1 && (
-                      <ArrowRight className="w-4 h-4 text-gray-400" />
+                      <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                     )}
                   </motion.div>
                 ))}
@@ -422,9 +422,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Star className="w-5 h-5" />
                 기간별 예측
               </CardTitle>
@@ -455,7 +455,7 @@ export default function MarriageFortunePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="text-sm text-gray-700 leading-relaxed"
+                  className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
                 >
                   {data.predictions[selectedPeriod]}
                 </motion.div>
@@ -465,9 +465,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <CheckCircle className="w-5 h-5" />
                 결혼 준비 체크리스트
               </CardTitle>
@@ -503,15 +503,15 @@ export default function MarriageFortunePage() {
                   {data.preparation[selectedPrep].map((item, index) => (
                     <motion.div
                       key={index}
-                      className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+                      className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
-                      <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
-                        <span className="text-xs font-medium text-pink-600">{index + 1}</span>
+                      <div className="w-6 h-6 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
+                        <span className="text-xs font-medium text-pink-600 dark:text-pink-400">{index + 1}</span>
                       </div>
-                      <span className="text-sm text-gray-700">{item}</span>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
                     </motion.div>
                   ))}
                 </motion.div>
@@ -521,15 +521,15 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-800">
+              <CardTitle className="flex items-center gap-2 text-purple-800 dark:text-purple-200">
                 <MessageCircle className="w-5 h-5" />
                 오늘의 조언
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700 leading-relaxed">
+              <p className="text-purple-700 dark:text-purple-300 leading-relaxed">
                 {data.advice}
               </p>
             </CardContent>
@@ -537,9 +537,9 @@ export default function MarriageFortunePage() {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Card className="bg-amber-50 border-amber-200">
+          <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-amber-700">
+              <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
                 <AlertTriangle className="w-5 h-5" />
                 주의사항
               </CardTitle>
@@ -547,8 +547,8 @@ export default function MarriageFortunePage() {
             <CardContent>
               <div className="space-y-2">
                 {data.warnings.map((warning, index) => (
-                  <div key={index} className="flex items-start gap-2 text-sm text-amber-700">
-                    <span className="text-amber-400 mt-1">•</span>
+                  <div key={index} className="flex items-start gap-2 text-sm text-amber-700 dark:text-amber-300">
+                    <span className="text-amber-400 dark:text-amber-500 mt-1">•</span>
                     <span>{warning}</span>
                   </div>
                 ))}
@@ -557,6 +557,6 @@ export default function MarriageFortunePage() {
           </Card>
         </motion.div>
       </motion.div>
-    </>
+    </div>
   );
 } 

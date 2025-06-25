@@ -85,7 +85,7 @@ export default function AppHeader({
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="sticky top-0 z-50 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm"
+      className="sticky top-0 z-50 w-full liquid-glass-header border-b border-white/10"
     >
       <div className="flex items-center justify-between px-4 py-3 h-14">
         {/* 왼쪽: 뒤로가기 버튼 */}

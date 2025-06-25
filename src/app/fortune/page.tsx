@@ -36,7 +36,8 @@ import {
   CalendarCheck,
   Rocket,
   Filter,
-  Trophy
+  Trophy,
+  ArrowRight
 } from "lucide-react";
 
 // 운세 카테고리 타입 정의
@@ -751,15 +752,15 @@ export default function FortunePage() {
             <div className="flex flex-wrap gap-2">
               {filterCategories.map((category) => {
                 const isSelected = selectedCategory === category.id;
+                const buttonClasses = isSelected 
+                  ? `bg-purple-500 border-purple-500 text-white shadow-lg`
+                  : `bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:border-purple-300 dark:hover:border-purple-500 hover:shadow-sm`;
+                
                 return (
                   <motion.button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.id as FortuneCategoryType)}
-                    className={`${fontClasses.label} px-4 py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-medium ${
-                      isSelected 
-                        ? `bg-${category.color}-500 border-${category.color}-500 text-white shadow-lg` 
-                        : `bg-white dark:bg-gray-800 border-${category.color}-200 dark:border-${category.color}-700 text-${category.color}-700 dark:text-${category.color}-400 hover:bg-${category.color}-50 dark:hover:bg-${category.color}-900/30 hover:border-${category.color}-300 dark:hover:border-${category.color}-600 hover:shadow-sm`
-                    }`}
+                    className={`${fontClasses.label} px-4 py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-medium ${buttonClasses}`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, y: 10 }}
@@ -767,7 +768,7 @@ export default function FortunePage() {
                     transition={{ delay: category.id === 'all' ? 0 : 0.1 }}
                   >
                     <category.icon className={`w-4 h-4 ${
-                      isSelected ? 'text-white' : `text-${category.color}-600 dark:text-${category.color}-400`
+                      isSelected ? 'text-white' : 'text-purple-600 dark:text-purple-400'
                     }`} />
                     <span>{category.name}</span>
                     {isSelected && (
@@ -833,46 +834,33 @@ export default function FortunePage() {
                   onClick={() => handleCategoryClick(category.route, category.title)}
                   className="cursor-pointer"
                 >
-                  <Card
-                    className={`hover:shadow-md transition-all duration-300 bg-gradient-to-r ${category.gradient} dark:bg-gradient-to-r dark:from-${category.color}-900/20 dark:to-${category.color}-800/10 border-${category.color}-200 dark:border-${category.color}-700`}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <motion.div
-                            className={`bg-${category.color}-100 dark:bg-${category.color}-900/30 rounded-full w-12 h-12 flex items-center justify-center`}
-                            whileHover={{ rotate: 360 }}
-                            transition={{ duration: 0.5 }}
-                          >
-                            <category.icon
-                              className={`w-6 h-6 text-${category.color}-600 dark:text-${category.color}-400`}
-                            />
-                          </motion.div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100`}>
-                                {category.title}
-                              </h3>
-                              {category.badge && (
-                                <Badge
-                                  variant="secondary"
-                                  className={`${fontClasses.label} bg-${category.color}-100 dark:bg-${category.color}-900/50 text-${category.color}-700 dark:text-${category.color}-300`}
-                                >
-                                  {category.badge}
-                                </Badge>
-                              )}
-                            </div>
-                            <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>
-                              {category.description}
-                            </p>
-                          </div>
+                  <Card className="hover:shadow-md transition-all duration-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-4">
+                        <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
+                          <category.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                         </div>
-                        <motion.div
-                          animate={{ x: [0, 5, 0] }}
-                          transition={{ repeat: Infinity, duration: 2 }}
-                        >
-                          <Zap className={`w-5 h-5 text-${category.color}-600 dark:text-${category.color}-400`} />
-                        </motion.div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 truncate`}>
+                              {category.title}
+                            </h3>
+                            {category.badge && (
+                              <Badge 
+                                variant="secondary" 
+                                className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs"
+                              >
+                                {category.badge}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400 leading-relaxed`}>
+                            {category.description}
+                          </p>
+                        </div>
+                        <div className="flex items-center">
+                          <ArrowRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

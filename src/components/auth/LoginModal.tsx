@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase"
+import { useTheme } from "next-themes"
 
 interface LoginModalProps {
   trigger: React.ReactNode
@@ -48,6 +49,9 @@ function KakaoIcon(props: React.SVGProps<SVGSVGElement>) {
 }
 
 export default function LoginModal({ trigger }: LoginModalProps) {
+  const { theme } = useTheme()
+  const isDarkMode = theme === 'dark'
+  
   const handleSocialLogin = async (provider: "google" | "kakao") => {
     try {
       if (provider === "google") {
@@ -82,21 +86,25 @@ export default function LoginModal({ trigger }: LoginModalProps) {
             SNS 계정으로 1초 만에 시작하세요.
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-4 grid gap-3">
+        <div className="mt-6 space-y-3">
           <Button
             variant="outline"
-            className="w-full"
+            className={`w-full py-3 font-medium flex items-center justify-center space-x-3 transition-colors ${
+              isDarkMode 
+                ? 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700' 
+                : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'
+            }`}
             onClick={() => handleSocialLogin("google")}
           >
-            <GoogleIcon className="h-4 w-4" />
-            Google로 시작하기
+            <GoogleIcon className="h-5 w-5" />
+            <span>Google로 시작하기</span>
           </Button>
           <Button
-            className="w-full bg-[#FEE500] text-[#3C1E1E] hover:bg-[#f7d900]"
+            className="w-full py-3 bg-[#FEE500] hover:bg-[#f7d900] text-black font-medium flex items-center justify-center space-x-3 transition-colors"
             onClick={() => handleSocialLogin("kakao")}
           >
-            <KakaoIcon className="h-4 w-4" />
-            카카오로 시작하기
+            <KakaoIcon className="h-5 w-5" />
+            <span>카카오로 시작하기</span>
           </Button>
         </div>
       </DialogContent>

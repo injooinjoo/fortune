@@ -197,7 +197,7 @@ export default function SajuAnalysisPage() {
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
       />
-      <div className="pb-32">
+      <div className="pb-32 min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
         {/* 상태 헤더 */}
         <div className="sticky top-16 z-10 bg-background/95 backdrop-blur-sm border-b">
           <div className="px-4 py-3 flex items-center justify-between">

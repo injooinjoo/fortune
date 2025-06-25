@@ -142,7 +142,7 @@ export default function ZodiacFortunePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-indigo-900/20 dark:to-purple-900/20">
       <AppHeader 
         title="별자리 월간운세"
         onFontSizeChange={setFontSize}
@@ -158,12 +158,12 @@ export default function ZodiacFortunePage() {
         {/* 헤더 섹션 */}
         <motion.div variants={itemVariants} className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <StarIcon className="h-8 w-8 text-indigo-600" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <StarIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
               별자리 월간운세
             </h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             {currentMonth} 별이 전하는 메시지를 확인해보세요
           </p>
         </motion.div>
@@ -171,10 +171,10 @@ export default function ZodiacFortunePage() {
         {/* 별자리 선택 */}
         {!selectedZodiac && (
           <motion.div variants={itemVariants}>
-            <Card className="mb-8">
+            <Card className="mb-8 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
               <CardHeader>
-                <CardTitle className="text-center flex items-center justify-center gap-2">
-                  <SparklesIcon className="h-5 w-5 text-indigo-600" />
+                <CardTitle className="text-center flex items-center justify-center gap-2 text-gray-900 dark:text-gray-100">
+                  <SparklesIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   당신의 별자리를 선택해주세요
                 </CardTitle>
               </CardHeader>
@@ -188,12 +188,12 @@ export default function ZodiacFortunePage() {
                     >
                       <Button
                         variant="outline"
-                        className={`h-auto p-4 flex flex-col items-center gap-2 w-full border-${info.color}-200 hover:bg-${info.color}-50`}
+                        className="h-auto p-4 flex flex-col items-center gap-2 w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600"
                         onClick={() => handleZodiacSelect(sign)}
                       >
                         <span className="text-3xl">{info.emoji}</span>
                         <span className="font-bold text-sm">{info.name}</span>
-                        <span className="text-xs text-gray-600">{info.period}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{info.period}</span>
                       </Button>
                     </motion.div>
                   ))}

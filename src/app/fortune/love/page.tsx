@@ -100,7 +100,7 @@ export default function LoveFortunePage() {
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <AppHeader 
         title="연애운" 
         onFontSizeChange={setFontSize}
@@ -114,14 +114,14 @@ export default function LoveFortunePage() {
       >
         {/* 오늘의 연애운 점수 */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-br from-pink-50 to-red-50 border-pink-200">
+          <Card className="bg-gradient-to-br from-pink-50 to-red-50 dark:from-pink-900/30 dark:to-red-900/30 border-pink-200 dark:border-pink-700 dark:bg-gray-800/50">
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
-                <Heart className="w-6 h-6 text-pink-600" />
-                <CardTitle className="text-xl text-pink-800">오늘의 연애운</CardTitle>
+                <Heart className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                <CardTitle className="text-xl text-pink-800 dark:text-pink-200">오늘의 연애운</CardTitle>
               </div>
               <motion.div
-                className="text-4xl font-bold text-pink-600"
+                className="text-4xl font-bold text-pink-600 dark:text-pink-400"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
@@ -131,7 +131,7 @@ export default function LoveFortunePage() {
             </CardHeader>
             <CardContent>
               <Progress value={data.todayScore} className="mb-4" />
-              <p className="text-center text-pink-700 leading-relaxed">
+              <p className="text-center text-pink-700 dark:text-pink-300 leading-relaxed">
                 {data.summary}
               </p>
             </CardContent>
@@ -140,26 +140,26 @@ export default function LoveFortunePage() {
 
         {/* 기간별 점수 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 기간별 연애운
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-pink-600">{data.todayScore}</div>
-                  <div className="text-sm text-gray-600">오늘</div>
+                  <div className="text-2xl font-bold text-pink-600 dark:text-pink-400">{data.todayScore}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">오늘</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">{data.weeklyScore}</div>
-                  <div className="text-sm text-gray-600">이번 주</div>
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{data.weeklyScore}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">이번 주</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{data.monthlyScore}</div>
-                  <div className="text-sm text-gray-600">이번 달</div>
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">{data.monthlyScore}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">이번 달</div>
                 </div>
               </div>
             </CardContent>
@@ -168,35 +168,35 @@ export default function LoveFortunePage() {
 
         {/* 행운의 정보 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5" />
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                <Sparkles className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                 행운의 정보
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                  <Calendar className="w-5 h-5 text-blue-600" />
+                  <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <div className="text-sm text-gray-600">행운의 시간</div>
-                    <div className="font-medium">{data.luckyTime}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">행운의 시간</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">{data.luckyTime}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-green-600" />
+                  <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
                   <div>
-                    <div className="text-sm text-gray-600">행운의 장소</div>
-                    <div className="font-medium">{data.luckyPlace}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">행운의 장소</div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100">{data.luckyPlace}</div>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-300" style={{ backgroundColor: data.luckyColor }} />
+                <div className="w-5 h-5 rounded-full border-2 border-gray-300 dark:border-gray-600" style={{ backgroundColor: data.luckyColor }} />
                 <div>
-                  <div className="text-sm text-gray-600">행운의 색상</div>
-                  <div className="font-medium">핑크 계열</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">행운의 색상</div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">핑크 계열</div>
                 </div>
               </div>
             </CardContent>
@@ -205,33 +205,33 @@ export default function LoveFortunePage() {
 
         {/* 궁합 정보 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <User className="w-5 h-5" />
                 오늘의 궁합
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="text-sm text-gray-600 mb-2">최고 궁합</div>
-                <Badge variant="default" className="bg-red-100 text-red-700 hover:bg-red-200">
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">최고 궁합</div>
+                <Badge variant="default" className="bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50">
                   {data.compatibility.best}
                 </Badge>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">좋은 궁합</div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">좋은 궁합</div>
                 <div className="flex flex-wrap gap-2">
                   {data.compatibility.good.map((sign) => (
-                    <Badge key={sign} variant="secondary" className="bg-pink-100 text-pink-700">
+                    <Badge key={sign} variant="secondary" className="bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
                       {sign}
                     </Badge>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-sm text-gray-600 mb-2">주의할 상대</div>
-                <Badge variant="outline" className="border-gray-400 text-gray-600">
+                <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">주의할 상대</div>
+                <Badge variant="outline" className="border-gray-400 text-gray-600 dark:border-gray-600 dark:text-gray-300">
                   {data.compatibility.avoid}
                 </Badge>
               </div>
@@ -241,9 +241,9 @@ export default function LoveFortunePage() {
 
         {/* 기간별 예측 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Star className="w-5 h-5" />
                 기간별 예측
               </CardTitle>
@@ -272,7 +272,7 @@ export default function LoveFortunePage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="text-sm text-gray-700 leading-relaxed"
+                  className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
                 >
                   {data.predictions[selectedPeriod]}
                 </motion.div>
@@ -283,15 +283,15 @@ export default function LoveFortunePage() {
 
         {/* 조언 */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-purple-800">
+              <CardTitle className="flex items-center gap-2 text-purple-800 dark:text-purple-200">
                 <MessageCircle className="w-5 h-5" />
                 오늘의 조언
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-purple-700 leading-relaxed">
+              <p className="text-purple-700 dark:text-purple-300 leading-relaxed">
                 {data.advice}
               </p>
             </CardContent>
@@ -300,9 +300,9 @@ export default function LoveFortunePage() {
 
         {/* 실천 항목 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Gift className="w-5 h-5" />
                 오늘 실천해볼 것들
               </CardTitle>
@@ -312,15 +312,15 @@ export default function LoveFortunePage() {
                 {data.actionItems.map((item, index) => (
                   <motion.div
                     key={index}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                    className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.8 + index * 0.1 }}
                   >
-                    <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
-                      <span className="text-xs font-medium text-pink-600">{index + 1}</span>
+                    <div className="w-6 h-6 bg-pink-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-medium text-pink-600 dark:text-pink-400">{index + 1}</span>
                     </div>
-                    <span className="text-sm text-gray-700">{item}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
                   </motion.div>
                 ))}
               </div>
@@ -331,17 +331,17 @@ export default function LoveFortunePage() {
         {/* 액션 버튼 */}
         <motion.div 
           variants={itemVariants}
-          className="sticky bottom-16 left-0 right-0 bg-background border-t p-4 flex gap-2"
+          className="sticky bottom-16 left-0 right-0 bg-background dark:bg-gray-900 border-t dark:border-gray-700 p-4 flex gap-2"
         >
-          <Button className="flex-1 bg-pink-600 hover:bg-pink-700">
+          <Button className="flex-1 bg-pink-600 hover:bg-pink-700 dark:bg-pink-600 dark:hover:bg-pink-700">
             <Heart className="w-4 h-4 mr-2" />
             결과 저장하기
           </Button>
-          <Button variant="outline" className="flex-1 border-pink-300 text-pink-600 hover:bg-pink-50">
+          <Button variant="outline" className="flex-1 border-pink-300 text-pink-600 hover:bg-pink-50 dark:border-pink-600 dark:text-pink-400 dark:hover:bg-pink-900/20">
             공유하기
           </Button>
         </motion.div>
       </motion.div>
-    </>
+    </div>
   );
 } 

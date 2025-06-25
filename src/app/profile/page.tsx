@@ -216,10 +216,10 @@ export default function ProfilePage() {
         <div className="p-6 space-y-6">
           <div className="animate-pulse space-y-4">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
               <div className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-32"></div>
-                <div className="h-3 bg-gray-200 rounded w-48"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32"></div>
+                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background text-foreground pb-20">
         <AppHeader title="프로필" />
         <div className="p-6 text-center">
-          <p>사용자 정보를 불러올 수 없습니다.</p>
+          <p className="text-gray-900 dark:text-gray-100">사용자 정보를 불러올 수 없습니다.</p>
         </div>
       </div>
     );
@@ -302,21 +302,21 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                <div className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {user.fortune_count}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">운세 조회</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">운세 조회</div>
                 </div>
-                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                <div className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {user.favorite_fortune_types?.length || 0}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">선호 운세</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">선호 운세</div>
                 </div>
-                <div className="text-center p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                  <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">7</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">연속 일수</div>
+                <div className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">7</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-300">연속 일수</div>
                 </div>
               </div>
             </CardContent>
@@ -339,11 +339,11 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <div className="flex items-center space-x-3">
                       {theme === 'dark' ? (
-                        <Moon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                        <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                       ) : (
-                        <Sun className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                        <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                       )}
-                      <span className="text-sm font-medium">다크 모드</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">다크 모드</span>
                     </div>
                     <Switch
                       checked={theme === 'dark'}
@@ -355,8 +355,8 @@ export default function ProfilePage() {
                 {/* 알림 설정 */}
                 <div className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <Bell className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <span className="text-sm font-medium">푸시 알림</span>
+                    <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">푸시 알림</span>
                   </div>
                   <Switch
                     checked={notificationsEnabled}
@@ -367,8 +367,8 @@ export default function ProfilePage() {
                 {/* 이메일 알림 */}
                 <div className="flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                   <div className="flex items-center space-x-3">
-                    <Globe className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <span className="text-sm font-medium">이메일 알림</span>
+                    <Globe className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">이메일 알림</span>
                   </div>
                   <Switch
                     checked={emailNotifications}
@@ -381,8 +381,8 @@ export default function ProfilePage() {
                   <div className="flex items-center space-x-3">
                     <Zap className="h-5 w-5 text-orange-500" />
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium">프리미엄 모드 (디버그)</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">개발/테스트용 - 광고 스킵</span>
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100">프리미엄 모드 (디버그)</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-300">개발/테스트용 - 광고 스킵</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -413,12 +413,12 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Crown className="h-5 w-5 text-purple-500" />
-                    <span className="text-sm font-medium">구독 멤버십 관리</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">구독 멤버십 관리</span>
                     {user.subscription_status === 'free' && (
                       <Badge variant="outline" className="text-xs">업그레이드</Badge>
                     )}
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 {/* 나의 운세 기록 */}
@@ -429,9 +429,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Calendar className="h-5 w-5 text-indigo-500" />
-                    <span className="text-sm font-medium">나의 운세 기록</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">나의 운세 기록</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 {/* 즐겨찾기 관리 */}
@@ -442,9 +442,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Heart className="h-5 w-5 text-red-500" />
-                    <span className="text-sm font-medium">즐겨찾기 관리</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">즐겨찾기 관리</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 {/* 알림 상세 설정 */}
@@ -455,9 +455,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Smartphone className="h-5 w-5 text-blue-500" />
-                    <span className="text-sm font-medium">알림 상세 설정</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">알림 상세 설정</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
               </div>
             </CardContent>
@@ -482,9 +482,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <HelpCircle className="h-5 w-5 text-green-500" />
-                    <span className="text-sm font-medium">고객센터 / 문의하기</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">고객센터 / 문의하기</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 <button
@@ -494,9 +494,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Star className="h-5 w-5 text-yellow-500" />
-                    <span className="text-sm font-medium">평가 및 리뷰</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">평가 및 리뷰</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 <button
@@ -505,10 +505,10 @@ export default function ProfilePage() {
                   className="flex w-full items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 >
                   <div className="flex items-center space-x-3">
-                    <FileText className="h-5 w-5 text-gray-500" />
-                    <span className="text-sm font-medium">이용약관 및 개인정보 처리방침</span>
+                    <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">이용약관 및 개인정보 처리방침</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
 
                 <button
@@ -518,9 +518,9 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center space-x-3">
                     <Shield className="h-5 w-5 text-blue-500" />
-                    <span className="text-sm font-medium">앱 정보</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-100">앱 정보</span>
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <ChevronRight className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </button>
               </div>
             </CardContent>

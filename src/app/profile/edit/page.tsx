@@ -169,7 +169,7 @@ export default function ProfileEditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-25 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-indigo-900/20 pb-20">
       <AppHeader title="프로필 수정" />
       
       <motion.div
@@ -180,20 +180,20 @@ export default function ProfileEditPage() {
       >
         {/* 아바타 섹션 */}
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
             <CardContent className="p-6">
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative">
                   <Avatar className="w-24 h-24">
                     <AvatarImage src={user.avatar_url} alt={user.name} />
-                    <AvatarFallback className="text-2xl">
+                    <AvatarFallback className="text-2xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
                       {user.name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="sm"
                     onClick={handleAvatarUpload}
-                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
+                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
                   >
                     <Camera className="w-4 h-4" />
                   </Button>

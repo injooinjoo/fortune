@@ -147,24 +147,29 @@ export default function InteractiveTarotPage() {
   return (
     <>
       <AppHeader title="타로 카드" showBack={false} />
-      <div className="pb-32 flex flex-col items-center bg-background text-foreground p-4 space-y-6 pt-4">
+      <div className="pb-32 flex flex-col items-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 text-gray-900 dark:text-gray-100 p-4 space-y-6 pt-4 min-h-screen">
         {step === 'question' && (
           <div className="text-center space-y-4">
-            <p className="text-lg">마음속으로 궁금한 질문 하나에 집중해주세요.</p>
-            <Button onClick={() => setStep('shuffling')}>카드 섞기</Button>
+            <p className="text-lg text-gray-800 dark:text-gray-200">마음속으로 궁금한 질문 하나에 집중해주세요.</p>
+            <Button 
+              onClick={() => setStep('shuffling')}
+              className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white"
+            >
+              카드 섞기
+            </Button>
           </div>
         )}
 
         {step === 'shuffling' && (
           <div className="flex flex-col items-center space-y-4">
-            <p className="text-lg">카드를 섞고 있습니다...</p>
-            <div className="animate-spin h-10 w-10 border-4 border-primary border-t-transparent rounded-full" />
+            <p className="text-lg text-gray-800 dark:text-gray-200">카드를 섞고 있습니다...</p>
+            <div className="animate-spin h-10 w-10 border-4 border-purple-600 dark:border-purple-400 border-t-transparent rounded-full" />
           </div>
         )}
 
         {step === 'selection' && (
           <div className="w-full max-w-md space-y-4">
-            <p className="text-center">가장 마음이 이끌리는 카드 3장을 선택해주세요.</p>
+            <p className="text-center text-gray-800 dark:text-gray-200">가장 마음이 이끌리는 카드 3장을 선택해주세요.</p>
             <div className="grid grid-cols-5 gap-2">
               {tarotCards.map((card) => {
                 const selected = selectedCards.some((c) => c.id === card.id);
@@ -172,8 +177,10 @@ export default function InteractiveTarotPage() {
                   <div
                     key={card.id}
                     className={cn(
-                      'relative cursor-pointer rounded-md overflow-hidden',
-                      selected && 'ring-2 ring-primary'
+                      'relative cursor-pointer rounded-md overflow-hidden border-2 transition-all',
+                      selected 
+                        ? 'ring-2 ring-purple-500 dark:ring-purple-400 border-purple-500 dark:border-purple-400' 
+                        : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500'
                     )}
                     onClick={() => handleSelectCard(card)}
                   >
@@ -190,7 +197,7 @@ export default function InteractiveTarotPage() {
             <Button
               disabled={selectedCards.length !== 3}
               onClick={() => setStep('result')}
-              className="w-full"
+              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:bg-purple-500 dark:hover:bg-purple-600 dark:disabled:bg-gray-600 text-white"
             >
               결과 보기
             </Button>

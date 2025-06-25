@@ -218,121 +218,144 @@ export default function PsychologyTestPage() {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pb-20">
-      <AppHeader title="심리테스트" />
-      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-6 pt-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-indigo-900/20">
+      <AppHeader />
+      
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="container mx-auto px-4 pt-4 pb-20"
+      >
         <AnimatePresence mode="wait">
           {step === "intro" && (
             <motion.div
               key="intro"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="space-y-6"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="text-center space-y-6"
             >
-              <motion.div variants={itemVariants} className="text-center mb-8">
-                <motion.div
-                  className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.8 }}
-                >
-                  <Brain className="w-10 h-10 text-white" />
-                </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">성격 유형 테스트</h1>
-                <p className="text-gray-600">5가지 질문으로 알아보는 나의 성격</p>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-700">
-                      <Lightbulb className="w-5 h-5" />
-                      테스트 안내
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <Target className="w-5 h-5 text-blue-500" />
-                      <span>총 5개의 질문에 답하세요</span>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Brain className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
+                  심리 성향 테스트
+                </h1>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">
+                5가지 간단한 질문으로 당신의 성향을 알아보세요
+              </p>
+              
+              <Card className="max-w-md mx-auto bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-center gap-2 text-gray-900 dark:text-gray-100">
+                    <Sparkles className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    테스트 안내
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+                      <Heart className="h-6 w-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">감정</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">감정적 패턴</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Heart className="w-5 h-5 text-blue-500" />
-                      <span>직감적으로 가장 가까운 답을 선택하세요</span>
+                    <div className="text-center p-3 bg-pink-50 dark:bg-pink-900/30 rounded-lg">
+                      <Users className="h-6 w-6 text-pink-600 dark:text-pink-400 mx-auto mb-2" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">사회성</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">대인관계 스타일</div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Users className="w-5 h-5 text-blue-500" />
-                      <span>정답은 없으니 편안하게 응답하세요</span>
+                    <div className="text-center p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                      <Lightbulb className="h-6 w-6 text-indigo-600 dark:text-indigo-400 mx-auto mb-2" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">사고</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">사고 방식</div>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Button
-                  onClick={() => setStep("test")}
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3 text-lg"
-                >
-                  <div className="flex items-center gap-2">
-                    테스트 시작하기
-                    <ArrowRight className="w-5 h-5" />
+                    <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
+                      <Target className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">목표</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">목표 지향성</div>
+                    </div>
                   </div>
-                </Button>
-              </motion.div>
+                  
+                  <div className="text-center space-y-2">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      소요시간: 약 3분
+                    </p>
+                    <Button 
+                      onClick={() => setStep("test")}
+                      className="w-full bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white"
+                    >
+                      테스트 시작하기
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
 
           {step === "test" && (
             <motion.div
               key="test"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              className="space-y-6"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="max-w-2xl mx-auto"
             >
-              <motion.div variants={itemVariants}>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-gray-600">
-                    {currentQuestion + 1} / {questions.length}
-                  </span>
-                  <span className="text-sm text-gray-600">{Math.round(progress)}%</span>
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    질문 {currentQuestion + 1} / {questions.length}
+                  </h2>
+                  <Badge variant="outline" className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-600">
+                    {Math.round(((currentQuestion + 1) / questions.length) * 100)}%
+                  </Badge>
                 </div>
-                <Progress value={progress} className="h-2" />
-              </motion.div>
+                <Progress 
+                  value={((currentQuestion + 1) / questions.length) * 100} 
+                  className="h-2"
+                />
+              </div>
 
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader>
-                    <CardTitle className="text-blue-700 text-lg">
-                      Q{currentQuestion + 1}. {questions[currentQuestion].text}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {questions[currentQuestion].options.map((option, index) => (
-                      <motion.div
-                        key={index}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+                <CardHeader>
+                  <CardTitle className="text-xl text-gray-900 dark:text-gray-100">
+                    {questions[currentQuestion].text}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {questions[currentQuestion].options.map((option, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        variant="outline"
+                        onClick={() => handleAnswer(option.value)}
+                        className="w-full p-4 h-auto text-left justify-start bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:border-purple-300 dark:hover:border-purple-500"
                       >
-                        <Button
-                          onClick={() => handleAnswer(option.value)}
-                          variant="outline"
-                          className="w-full text-left justify-start h-auto p-4 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
-                        >
-                          <span className="text-blue-600 font-medium mr-3">{index + 1}.</span>
-                          {option.text}
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </CardContent>
-                </Card>
-              </motion.div>
+                        <span className="font-medium mr-3 text-purple-600 dark:text-purple-400">
+                          {String.fromCharCode(65 + index)}.
+                        </span>
+                        {option.text}
+                      </Button>
+                    </motion.div>
+                  ))}
+                </CardContent>
+              </Card>
 
               {currentQuestion > 0 && (
-                <motion.div variants={itemVariants}>
+                <motion.div 
+                  variants={itemVariants}
+                  className="mt-4"
+                >
                   <Button
+                    variant="ghost"
                     onClick={handlePrevious}
-                    variant="outline"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                    className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     이전 질문
@@ -345,109 +368,102 @@ export default function PsychologyTestPage() {
           {step === "result" && result && (
             <motion.div
               key="result"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              className="space-y-6"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="max-w-2xl mx-auto space-y-6"
             >
-              <motion.div variants={itemVariants} className="text-center mb-8">
-                <motion.div
-                  className="rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
-                  style={{ backgroundColor: result.color }}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                >
-                  <Sparkles className="w-10 h-10 text-white" />
-                </motion.div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">테스트 완료!</h1>
-                <p className="text-gray-600">당신의 성격 유형을 분석했습니다</p>
-              </motion.div>
+              <div className="text-center">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent mb-2">
+                  테스트 완료!
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400">
+                  당신의 심리 성향 결과입니다
+                </p>
+              </div>
 
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200" style={{ borderColor: result.color }}>
-                  <CardHeader>
-                    <CardTitle className="text-center" style={{ color: result.color }}>
-                      {result.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 text-center leading-relaxed">{result.description}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-700">
-                      <Target className="w-5 h-5" />
-                      주요 특징
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {result.characteristics.map((char, index) => (
-                        <Badge
-                          key={index}
-                          variant="secondary"
-                          className="bg-blue-100 text-blue-700"
-                        >
-                          {char}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-700">
-                      <Lightbulb className="w-5 h-5" />
-                      조언
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 leading-relaxed">{result.advice}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              <motion.div variants={itemVariants}>
-                <Card className="border-blue-200">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-blue-700">
-                      <Users className="w-5 h-5" />
-                      잘 맞는 유형
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {result.compatibility.map((type, index) => (
-                        <Badge
-                          key={index}
+              <Card 
+                className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600"
+                style={{ 
+                  background: `linear-gradient(135deg, ${result.color}10, ${result.color}05)` 
+                }}
+              >
+                <CardHeader className="text-center pb-4">
+                  <div 
+                    className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center"
+                    style={{ backgroundColor: `${result.color}20` }}
+                  >
+                    <Sparkles 
+                      className="w-10 h-10" 
+                      style={{ color: result.color }}
+                    />
+                  </div>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {result.title}
+                  </CardTitle>
+                  <p className="text-gray-600 dark:text-gray-400 mt-2">
+                    {result.description}
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      <Users className="w-4 h-4" style={{ color: result.color }} />
+                      주요 특성
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {result.characteristics.map((trait, index) => (
+                        <Badge 
+                          key={index} 
                           variant="outline"
-                          className="border-blue-300 text-blue-700"
+                          className="justify-center bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100"
                         >
-                          {type}
+                          {trait}
                         </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  </div>
 
-              <motion.div variants={itemVariants}>
-                <Button
-                  onClick={handleReset}
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-3"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  다시 테스트하기
-                </Button>
-              </motion.div>
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      <Lightbulb className="w-4 h-4" style={{ color: result.color }} />
+                      성장 조언
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                      {result.advice}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                      <Heart className="w-4 h-4" style={{ color: result.color }} />
+                      잘 맞는 성향
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {result.compatibility.map((comp, index) => (
+                        <Badge 
+                          key={index}
+                          className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-600"
+                        >
+                          {comp}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-4 space-y-3">
+                    <Button 
+                      onClick={handleReset}
+                      variant="outline"
+                      className="w-full bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      다시 테스트하기
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>

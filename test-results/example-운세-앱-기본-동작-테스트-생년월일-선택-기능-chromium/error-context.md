@@ -1,0 +1,25 @@
+# Page snapshot
+
+```yaml
+- img
+- heading "생년월일을 알려주세요" [level=1]
+- text: 정확한 사주 풀이를 위해 생년월일이 필요합니다 년도
+- combobox: 년도 선택
+- text: 월
+- combobox: 월 선택
+- text: 일
+- combobox: 일 선택
+- img
+- text: 태어난 시진 (선택사항)
+- paragraph: 더 정확한 사주 풀이를 위해 태어난 시간대를 선택해주세요
+- combobox: 해시 (亥時) 오후 9시 ~ 오후 11시
+- button "다음":
+  - img
+  - text: 다음
+- button "이전으로"
+- region "Notifications (F8)":
+  - list
+- button "Open Next.js Dev Tools":
+  - img
+- alert
+```
