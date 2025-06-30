@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { getUserProfile, saveUserProfile } from "@/lib/user-storage";
+import { cn } from "@/lib/utils";
 
 interface UserProfile {
   id: string;
@@ -212,7 +213,6 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background text-foreground pb-20">
-        <AppHeader title="프로필" />
         <div className="p-6 space-y-6">
           <div className="animate-pulse space-y-4">
             <div className="flex items-center space-x-4">
@@ -231,7 +231,6 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <div className="min-h-screen bg-background text-foreground pb-20">
-        <AppHeader title="프로필" />
         <div className="p-6 text-center">
           <p className="text-gray-900 dark:text-gray-100">사용자 정보를 불러올 수 없습니다.</p>
         </div>
@@ -241,7 +240,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-20">
-      <AppHeader title="프로필" />
       
       <motion.div
         variants={containerVariants}
@@ -348,6 +346,9 @@ export default function ProfilePage() {
                     <Switch
                       checked={theme === 'dark'}
                       onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                      style={{
+                        backgroundColor: theme === 'dark' ? '#374151' : '#d1d5db'
+                      }}
                     />
                   </div>
                 )}

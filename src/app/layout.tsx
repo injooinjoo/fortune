@@ -32,6 +32,57 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       {/* Changed font variable in body className */}
       <body className={`${lato.variable} ${geistMono.variable} antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // 전역 에러 핸들링 - React DevTools 및 브라우저 확장 프로그램 에러 방지
+              window.addEventListener('error', function(e) {
+                // React DevTools, 광고 차단기, 기타 확장 프로그램 에러 무시
+                if (
+                  e.filename && (
+                    e.filename.includes('extension://') ||
+                    e.filename.includes('ads.') ||
+                    e.filename.includes('inspector.') ||
+                    e.filename.includes('chrome-extension://') ||
+                    e.filename.includes('moz-extension://')
+                  )
+                ) {
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                  return false;
+                }
+                
+                // React Error #31 관련 에러 무시 (개발 환경이 아닌 경우)
+                if (
+                  e.message && 
+                  e.message.includes('Minified React error #31') &&
+                  typeof window !== 'undefined' &&
+                  !window.location.hostname.includes('localhost')
+                ) {
+                  e.preventDefault();
+                  e.stopImmediatePropagation();
+                  return false;
+                }
+              });
+              
+              // Promise rejection 에러 처리
+              window.addEventListener('unhandledrejection', function(e) {
+                // 개발 환경이 아닌 경우 확장 프로그램 관련 에러 무시
+                if (
+                  typeof window !== 'undefined' &&
+                  !window.location.hostname.includes('localhost') &&
+                  e.reason && (
+                    (typeof e.reason === 'string' && e.reason.includes('Extension')) ||
+                    (e.reason.stack && e.reason.stack.includes('extension://'))
+                  )
+                ) {
+                  e.preventDefault();
+                  return false;
+                }
+              });
+            `,
+          }}
+        />
         <Providers>
           <ConditionalLayout>
             {children}

@@ -78,24 +78,22 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await getCurrentUser();
     const profile = getUserProfile(user.id);
 
     if (!profile) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: '프로필을 찾을 수 없습니다.' 
-        },
+        { userId: user.id, found: false, profile: undefined },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
-      success: true,
-      data: profile
+      userId: user.id,
+      found: true,
+      profile: profile
     });
 
   } catch (error) {

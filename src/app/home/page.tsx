@@ -418,11 +418,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-20">
-      <AppHeader 
-        title="Fortune" 
-        onFontSizeChange={setFontSize}
-        currentFontSize={fontSize}
-      />
       
       {/* 디버깅용 프리미엄 상태 표시 */}
       {userProfile && (

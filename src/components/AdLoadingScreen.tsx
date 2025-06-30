@@ -95,7 +95,7 @@ export default function AdLoadingScreen({
   const currentStepData = loadingSteps[currentStep];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen max-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* 배경 애니메이션 */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
@@ -122,24 +122,24 @@ export default function AdLoadingScreen({
 
       {/* 메인 카드 */}
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.8, opacity: 1 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-sm sm:max-w-md relative z-10 max-h-[80vh] overflow-y-auto scrollbar-hide"
       >
         <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-          <CardContent className="p-8 text-center space-y-6">
+          <CardContent className="p-4 sm:p-6 text-center space-y-4 sm:space-y-6">
             {/* 운세 타입 */}
             <div className="space-y-2">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="bg-white/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto"
+                className="bg-white/20 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto"
               >
-                <currentStepData.icon className="w-8 h-8" />
+                <currentStepData.icon className="w-6 h-6 sm:w-8 sm:h-8" />
               </motion.div>
-              <h2 className="text-xl font-bold">{fortuneTitle}</h2>
-              <p className="text-white/80 text-sm">운세를 분석하고 있습니다</p>
+              <h2 className="text-lg sm:text-xl font-bold">{fortuneTitle}</h2>
+              <p className="text-white/80 text-xs sm:text-sm">운세를 분석하고 있습니다</p>
             </div>
 
             {/* 현재 단계 */}
@@ -174,39 +174,29 @@ export default function AdLoadingScreen({
               </div>
               
               {/* 실제 광고 영역 - AdSense/AdMob */}
-              <div className="bg-gray-800/50 rounded-lg p-6 min-h-[200px] flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <div className="text-4xl">📱</div>
-                  <p className="text-sm text-white/80">광고 영역</p>
-                  <p className="text-xs text-white/60">AdSense/AdMob 광고가 여기에 표시됩니다</p>
+              <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4 min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
+                <div className="text-center space-y-1 sm:space-y-2">
+                  <div className="text-2xl sm:text-4xl">📱</div>
+                  <p className="text-xs sm:text-sm text-white/80">광고 영역</p>
+                  <p className="text-xs text-white/60 hidden sm:block">AdSense/AdMob 광고가 여기에 표시됩니다</p>
                 </div>
               </div>
             </div>
 
             {/* 확인 버튼 */}
             <div className="space-y-3">
-              <Button
-                onClick={onComplete}
-                disabled={!canSkip}
-                className={`w-full font-semibold py-3 transition-all duration-300 ${
-                  canSkip 
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white' 
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {canSkip ? (
+              {progress >= 100 && (
+                <Button
+                  onClick={onComplete}
+                  className="w-full font-semibold py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                >
                   <div className="flex items-center gap-2">
                     <Star className="w-5 h-5" />
-                    운세 확인하기
+                    운세 보기
                   </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-5 h-5" />
-                    {timeLeft}초 후 확인 가능
-                  </div>
-                )}
-              </Button>
-
+                </Button>
+              )}
+             
               {/* 프리미엄 업그레이드 안내 */}
               <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
                 <div className="flex items-center gap-2 justify-center text-yellow-300 mb-2">

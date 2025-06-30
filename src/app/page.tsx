@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles, Star, Moon, Sun } from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { auth } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
@@ -13,77 +13,105 @@ import { useRouter } from "next/navigation";
 export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [isAuthProcessing, setIsAuthProcessing] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
 
-  // 페이지 로드 시 로그인 상태 확인
-  useEffect(() => {
-    // 데모 세션 정리
-    const clearDemoData = () => {
+  // 인증 상태 확인을 useCallback으로 메모이제이션
+  const checkAuthState = useCallback(async () => {
+    try {
+      // 데모 세션 정리
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
         if (key.startsWith('demo_') || key === 'demo_session' || key === 'guest_user_id') {
           localStorage.removeItem(key);
         }
       });
-    };
-
-    const checkAuthState = async () => {
-      try {
-        // 먼저 데모 데이터 정리
-        clearDemoData();
-        
-        const { data: { session } } = await auth.getSession();
-        if (session && session.user) {
-          console.log('Existing session found, redirecting to home');
-          // 로그인되어 있으면 홈으로 리다이렉트
-          router.push('/home');
-          return;
+      
+      const { data: { session }, error } = await auth.getSession();
+      
+      if (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('로그인 상태 확인 실패:', error);
         }
-      } catch (error) {
-        console.error('로그인 상태 확인 실패:', error);
-      } finally {
-        setIsCheckingAuth(false);
+        return;
       }
-    };
+      
+      if (session && session.user) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Existing session found, redirecting to home');
+        }
+        router.push('/home');
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('로그인 상태 확인 예외:', error);
+      }
+    } finally {
+      setIsCheckingAuth(false);
+    }
+  }, [router]);
 
+  // 페이지 로드 시 로그인 상태 확인
+  useEffect(() => {
+    let isMounted = true;
+    
     // 약간의 지연을 두어 URL 해시 처리 시간 확보
     const timer = setTimeout(() => {
-      checkAuthState();
+      if (isMounted) {
+        checkAuthState();
+      }
     }, 500);
 
     // 실시간 인증 상태 변화 감지
     const { data: { subscription } } = auth.onAuthStateChanged((session: any) => {
+      if (!isMounted) return;
+      
       if (session && session.user) {
-        console.log('Auth state changed, user logged in');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state changed, user logged in');
+        }
         router.push('/home');
       } else {
-        console.log('Auth state changed, user logged out');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Auth state changed, user logged out');
+        }
         setIsCheckingAuth(false);
       }
     });
 
     return () => {
+      isMounted = false;
       clearTimeout(timer);
       subscription?.unsubscribe();
     };
+  }, [checkAuthState]);
+
+  const handleGetStarted = useCallback(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log("시작하기 버튼 클릭");
+    }
+    router.push("/onboarding/profile");
   }, [router]);
 
-  const handleGetStarted = () => {
-    console.log("시작하기 버튼 클릭");
-    // 프로필 온보딩으로 바로 이동
-    router.push("/onboarding/profile");
-  };
-
-  const handleSocialLogin = async (provider: string) => {
+  const handleSocialLogin = useCallback(async (provider: string) => {
+    if (isAuthProcessing) return;
+    
+    setIsAuthProcessing(true);
     try {
       if (provider === 'Google') {
-        console.log("Google 로그인 시도 중...");
-        await auth.signInWithGoogle();
         toast({
           title: "로그인 진행 중",
           description: "Google 계정으로 로그인하고 있습니다...",
         });
+        
+        const result = await auth.signInWithGoogle();
+        
+        if (result?.error) {
+          throw new Error('Google 로그인에 실패했습니다.');
+        }
+        
+        // 성공적으로 리다이렉트되면 이 코드는 실행되지 않음
       } else if (provider === 'Kakao') {
         toast({
           title: "준비 중인 기능",
@@ -91,18 +119,23 @@ export default function LandingPage() {
         });
       }
     } catch (error: any) {
-      console.error(`${provider} 로그인 실패:`, error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`${provider} 로그인 실패:`, error);
+      }
+      
       toast({
         title: "로그인 실패",
-        description: error.message || "다시 시도해주세요.",
+        description: "로그인 중 문제가 발생했습니다. 다시 시도해주세요.",
         variant: "destructive",
       });
+    } finally {
+      setIsAuthProcessing(false);
     }
-  };
+  }, [toast, isAuthProcessing]);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleTheme = useCallback(() => {
+    setIsDarkMode(prev => !prev);
+  }, []);
 
   // 로그인 상태 확인 중이면 로딩 화면 표시
   if (isCheckingAuth) {
@@ -167,57 +200,35 @@ export default function LandingPage() {
             }`} />
           </div>
           
-          <h1 className={`text-4xl font-bold mb-4 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            당신의 운명을 <br />
-            <span className={`${
-              isDarkMode ? 'text-purple-400' : 'text-purple-600'
-            }`}>탐험해보세요</span>
-          </h1>
-          
-          <p className={`text-lg mb-8 ${
-            isDarkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            AI가 제공하는 개인화된 운세로<br />
-            새로운 가능성을 발견하세요
-          </p>
+
 
           <div className="space-y-4 mb-12">
-            <Button 
-              onClick={handleGetStarted}
-              className={`w-full max-w-sm font-medium py-4 px-8 rounded-full shadow-lg transition-all duration-300 hover:scale-105 ${
-                isDarkMode 
-                  ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-purple-500/25' 
-                  : 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/25'
-              }`}
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              무료로 시작하기
-            </Button>
+
             
             {/* 소셜 로그인 버튼들 */}
             <div className="space-y-2">
               <Button 
                 onClick={() => handleSocialLogin('Google')}
+                disabled={isAuthProcessing}
                 variant="outline"
                 className={`w-full max-w-sm py-3 px-6 rounded-full transition-all duration-300 ${
                   isDarkMode 
                     ? 'border-gray-600 bg-gray-800 text-gray-200 hover:bg-gray-700 hover:border-gray-500' 
                     : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-400'
-                }`}
+                } ${isAuthProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                Google로 시작하기
+                {isAuthProcessing ? '로그인 중...' : 'Google로 시작하기'}
               </Button>
               
               <Button 
                 onClick={() => handleSocialLogin('Kakao')}
+                disabled={isAuthProcessing}
                 variant="outline"
                 className={`w-full max-w-sm py-3 px-6 rounded-full transition-all duration-300 ${
                   isDarkMode 
                     ? 'border-yellow-500 bg-yellow-600 text-gray-900 hover:bg-yellow-500' 
                     : 'border-yellow-400 bg-yellow-400 text-gray-900 hover:bg-yellow-500'
-                }`}
+                } ${isAuthProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 카카오로 시작하기
               </Button>

@@ -12,7 +12,7 @@ export class OnboardingNamePage {
   }
 
   async goto() {
-    await this.page.goto('/');
+    await this.page.goto('/onboarding');
     await this.page.waitForLoadState('networkidle');
   }
 

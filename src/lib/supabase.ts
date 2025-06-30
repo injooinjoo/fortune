@@ -314,15 +314,25 @@ export const auth = {
           redirectTo: `${window.location.origin}/auth/callback`,
           queryParams: {
             access_type: 'offline',
-            prompt: 'consent',
-          }
+            prompt: 'select_account',
+          },
+          skipBrowserRedirect: false
         }
       });
-      if (error) throw error;
-      return data;
+      
+      if (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Google 로그인 실패:', error);
+        }
+        return { error };
+      }
+      
+      return { data, error: null };
     } catch (error) {
-      console.error('Google 로그인 실패:', error);
-      throw error;
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Google 로그인 예외:', error);
+      }
+      return { error };
     }
   },
   signOut: () => {
@@ -331,7 +341,9 @@ export const auth = {
   },
   onAuthStateChanged: (callback: (user: any) => void) => {
     return supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Auth state changed:', event, session?.user?.email);
+      }
       callback(session?.user || null);
     });
   },
