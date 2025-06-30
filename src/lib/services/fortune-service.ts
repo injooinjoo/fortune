@@ -371,7 +371,7 @@ export class FortuneService {
 
 **기본 정보:**
 - 이름: ${userProfile.name}
-- 생년월일: ${userProfile.birth_date}
+- 생년월일: ${userProfile.birth_date} 
 - 출생시간: ${userProfile.birth_time || '시간 미상'}
 - 성별: ${userProfile.gender || '선택 안함'}
 - MBTI: ${userProfile.mbti || '미상'}
@@ -2990,6 +2990,219 @@ export class FortuneService {
         age: age,
         ageGroup: ageGroup,
         mbtiStyle: mbtiTrait.yearlyStyle
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 토정비결 기본 데이터 (GPT 실패 시)
+   */
+  private getDefaultTojeongData(userProfile: UserProfile, category?: FortuneCategory): any {
+    return {
+      tojeong: {
+        year: new Date().getFullYear(),
+        yearly_hexagram: '천지비(天地否)',
+        total_fortune: '토정비결 분석이 진행 중입니다. 잠시 후 다시 확인해주세요.',
+        monthly_fortunes: Array.from({ length: 12 }, (_, i) => ({
+          month: `${i + 1}월`,
+          hexagram: '분석 중',
+          summary: '분석이 진행 중입니다.',
+          advice: '잠시 후 다시 확인해주세요.'
+        }))
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 띠별 운세 GPT 시뮬레이션
+   */
+  async generateZodiacAnimalFortuneGPT(userProfile: UserProfile): Promise<any> {
+    console.log(`📡 GPT 띠별 운세 요청: ${userProfile.name} (${userProfile.birth_date})`);
+    
+    // 생년월일에서 띠 계산
+    const birthYear = new Date(userProfile.birth_date).getFullYear();
+    const zodiacAnimals = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
+    const zodiacAnimal = zodiacAnimals[(birthYear - 4) % 12];
+    
+    // GPT 시뮬레이션 데이터
+    return {
+      'zodiac-animal': {
+        animal: zodiacAnimal,
+        element: this.getZodiacElement(birthYear),
+        current_score: Math.floor(Math.random() * 30) + 70,
+        monthly_score: Math.floor(Math.random() * 30) + 65,
+        yearly_score: Math.floor(Math.random() * 30) + 75,
+        summary: `${zodiacAnimal}띠인 당신은 ${userProfile.mbti || '독특한'} 성향과 어우러져 특별한 매력을 발산합니다.`,
+        monthly_fortune: {
+          love: `${zodiacAnimal}띠의 연애운은 ${['상승세', '안정적', '변화무쌍'][Math.floor(Math.random() * 3)]}를 보입니다.`,
+          career: `직장에서 ${zodiacAnimal}띠 특유의 ${['성실함', '창의력', '리더십'][Math.floor(Math.random() * 3)]}이 빛을 발할 것입니다.`,
+          wealth: `재물운은 ${['꾸준한 상승', '안정적인 유지', '신중한 관리 필요'][Math.floor(Math.random() * 3)]} 상태입니다.`,
+          health: `건강면에서는 ${['활력이 넘치는', '균형 잡힌', '휴식이 필요한'][Math.floor(Math.random() * 3)]} 시기입니다.`
+        },
+        compatible_animals: this.getCompatibleAnimals(zodiacAnimal),
+        avoid_animals: this.getAvoidAnimals(zodiacAnimal),
+        lucky_directions: this.getLuckyDirections(zodiacAnimal),
+        lucky_colors: this.getZodiacLuckyColors(zodiacAnimal),
+        lucky_numbers: this.getZodiacLuckyNumbers(zodiacAnimal),
+        monthly_predictions: Array.from({ length: 12 }, (_, i) => ({
+          month: i + 1,
+          prediction: `${i + 1}월에는 ${zodiacAnimal}띠의 ${['도전정신', '협력', '인내심'][Math.floor(Math.random() * 3)]}이 중요한 열쇠가 될 것입니다.`,
+          focus_area: ['인간관계', '건강관리', '재정관리', '자기계발'][Math.floor(Math.random() * 4)]
+        })),
+        yearly_advice: `${zodiacAnimal}띠인 올해는 ${['새로운 시작', '안정적인 발전', '변화에 대한 적응'][Math.floor(Math.random() * 3)]}의 해입니다. ${userProfile.mbti || '당신의'} 성향을 잘 활용하여 목표를 달성하세요.`,
+        warning_months: [3, 7, 11].slice(0, Math.floor(Math.random() * 2) + 1),
+        best_months: [5, 8, 10].slice(0, Math.floor(Math.random() * 2) + 1)
+      }
+    };
+  }
+
+  /**
+   * 띠별 원소 계산
+   */
+  private getZodiacElement(year: number): string {
+    const elements = ['목', '화', '토', '금', '수'];
+    return elements[Math.floor((year - 4) / 2) % 5];
+  }
+
+  /**
+   * 상극/상생 띠 계산
+   */
+  private getCompatibleAnimals(animal: string): string[] {
+    const compatibility: { [key: string]: string[] } = {
+      '쥐': ['용', '원숭이'],
+      '소': ['뱀', '닭'],
+      '호랑이': ['말', '개'],
+      '토끼': ['양', '돼지'],
+      '용': ['쥐', '원숭이'],
+      '뱀': ['소', '닭'],
+      '말': ['호랑이', '개'],
+      '양': ['토끼', '돼지'],
+      '원숭이': ['쥐', '용'],
+      '닭': ['소', '뱀'],
+      '개': ['호랑이', '말'],
+      '돼지': ['토끼', '양']
+    };
+    return compatibility[animal] || [];
+  }
+
+  private getAvoidAnimals(animal: string): string[] {
+    const avoidance: { [key: string]: string[] } = {
+      '쥐': ['말'],
+      '소': ['양'],
+      '호랑이': ['원숭이'],
+      '토끼': ['닭'],
+      '용': ['개'],
+      '뱀': ['돼지'],
+      '말': ['쥐'],
+      '양': ['소'],
+      '원숭이': ['호랑이'],
+      '닭': ['토끼'],
+      '개': ['용'],
+      '돼지': ['뱀']
+    };
+    return avoidance[animal] || [];
+  }
+
+  /**
+   * 띠별 행운의 방향
+   */
+  private getLuckyDirections(animal: string): string[] {
+    const directions: { [key: string]: string[] } = {
+      '쥐': ['북', '동북'],
+      '소': ['북동', '남'],
+      '호랑이': ['동', '남'],
+      '토끼': ['동', '남동'],
+      '용': ['동남', '서북'],
+      '뱀': ['남', '동남'],
+      '말': ['남', '서남'],
+      '양': ['남서', '동'],
+      '원숭이': ['서', '북'],
+      '닭': ['서', '북서'],
+      '개': ['서북', '동남'],
+      '돼지': ['북', '서']
+    };
+    return directions[animal] || ['동'];
+  }
+
+  /**
+   * 띠별 행운의 색깔
+   */
+  private getZodiacLuckyColors(animal: string): string[] {
+    const colors: { [key: string]: string[] } = {
+      '쥐': ['검정', '파랑', '회색'],
+      '소': ['노랑', '갈색', '주황'],
+      '호랑이': ['초록', '파랑', '검정'],
+      '토끼': ['초록', '빨강', '분홍'],
+      '용': ['노랑', '금색', '흰색'],
+      '뱀': ['빨강', '노랑', '검정'],
+      '말': ['빨강', '보라', '주황'],
+      '양': ['초록', '빨강', '보라'],
+      '원숭이': ['흰색', '금색', '파랑'],
+      '닭': ['흰색', '금색', '갈색'],
+      '개': ['빨강', '초록', '보라'],
+      '돼지': ['노랑', '회색', '갈색']
+    };
+    return colors[animal] || ['파랑'];
+  }
+
+  /**
+   * 띠별 행운의 숫자
+   */
+  private getZodiacLuckyNumbers(animal: string): number[] {
+    const numbers: { [key: string]: number[] } = {
+      '쥐': [2, 3, 6, 8],
+      '소': [1, 4, 5, 9],
+      '호랑이': [1, 3, 4, 7],
+      '토끼': [3, 4, 6, 9],
+      '용': [1, 6, 7, 8],
+      '뱀': [2, 7, 8, 9],
+      '말': [2, 3, 7, 8],
+      '양': [2, 7, 8, 9],
+      '원숭이': [1, 7, 8, 9],
+      '닭': [5, 7, 8, 9],
+      '개': [3, 4, 9],
+      '돼지': [2, 5, 8]
+    };
+    return numbers[animal] || [1, 7];
+  }
+
+  /**
+   * 띠별 운세 기본 데이터 (GPT 실패 시)
+   */
+  private getDefaultZodiacAnimalData(userProfile: UserProfile, category?: FortuneCategory): any {
+    const birthYear = new Date(userProfile.birth_date).getFullYear();
+    const zodiacAnimals = ['쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양', '원숭이', '닭', '개', '돼지'];
+    const animal = zodiacAnimals[(birthYear - 4) % 12];
+    
+    return {
+      'zodiac-animal': {
+        animal,
+        element: this.getZodiacElement(birthYear),
+        current_score: 75,
+        monthly_score: 70,
+        yearly_score: 80,
+        summary: '띠별 운세 분석이 진행 중입니다. 잠시 후 다시 확인해주세요.',
+        monthly_fortune: {
+          love: '분석 중입니다.',
+          career: '분석 중입니다.',
+          wealth: '분석 중입니다.',
+          health: '분석 중입니다.'
+        },
+        compatible_animals: this.getCompatibleAnimals(animal),
+        avoid_animals: this.getAvoidAnimals(animal),
+        lucky_directions: this.getLuckyDirections(animal),
+        lucky_colors: this.getZodiacLuckyColors(animal),
+        lucky_numbers: this.getZodiacLuckyNumbers(animal),
+        monthly_predictions: Array.from({ length: 12 }, (_, i) => ({
+          month: i + 1,
+          prediction: '분석 중입니다.',
+          focus_area: '분석 중'
+        })),
+        yearly_advice: '분석 중입니다.',
+        warning_months: [],
+        best_months: []
       },
       generated_at: new Date().toISOString()
     };
