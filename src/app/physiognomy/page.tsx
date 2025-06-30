@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import AppHeader from "@/components/AppHeader";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
 import { 
   Eye, 
   Star, 
@@ -98,7 +100,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function PhysiognomyPage() {
-  const [step, setStep] = useState<'upload' | 'result'>('upload');
+  const [step, setStep] = useState<'upload' | 'result' | 'analyzing'>('upload');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -267,25 +269,29 @@ export default function PhysiognomyPage() {
     }
   };
 
-  const handleAnalyze = async () => {
+const handleAnalyze = async () => {
     if (!selectedImage || !userName.trim()) {
       alert('이름을 입력하고 사진을 선택해주세요.');
       return;
     }
 
-    try {
-      // 기존 운세가 있으면 불러오기
-      if (hasTodayFortune && todayFortune) {
-        const savedResult = todayFortune.fortune_data as any;
-        if (savedResult.face_parts) {
-          setResult(savedResult);
-          setStep('result');
-          return;
-        }
+    // 기존 운세가 있으면 불러오기
+    if (hasTodayFortune && todayFortune) {
+      const savedResult = todayFortune.fortune_data as any;
+      if (savedResult.face_parts) {
+        setResult(savedResult);
+        setStep('result');
+        return;
       }
+    }
 
+    // 로딩 화면 표시
+    setStep('analyzing');
+  };
+
+  const handleAnalysisComplete = async () => {
+    try {
       // 새로운 분석 생성
-      await new Promise(resolve => setTimeout(resolve, 3000));
       const analysisResult = await analyzePhysiognomy();
       
       // FortuneResult 형식으로 변환
@@ -322,13 +328,28 @@ export default function PhysiognomyPage() {
     }
   };
 
-  const handleReset = () => {
+const handleReset = () => {
     setStep('upload');
     setResult(null);
     setSelectedImage(null);
     setImageFile(null);
     setUserName('');
   };
+
+  // 분석 화면에서 프리미엄 사용자 확인
+  if (step === 'analyzing') {
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
+    return (
+      <AdLoadingScreen
+        fortuneType="physiognomy"
+        fortuneTitle="AI 관상 분석"
+        onComplete={handleAnalysisComplete}
+        isPremium={isPremium}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-25 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">

@@ -346,9 +346,6 @@ export default function ProfilePage() {
                     <Switch
                       checked={theme === 'dark'}
                       onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                      style={{
-                        backgroundColor: theme === 'dark' ? '#374151' : '#d1d5db'
-                      }}
                     />
                   </div>
                 )}

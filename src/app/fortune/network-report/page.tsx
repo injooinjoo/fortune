@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -20,26 +20,6 @@ interface NetworkReportData {
     direction: string;
   };
 }
-
-const mockData: NetworkReportData = {
-  score: 82,
-  summary:
-    "당신의 사주에서 인간관계의 흐름이 원활한 편입니다. 도움을 주는 귀인을 잘 만나고 갈등 상황도 원만히 해결할 수 있습니다.",
-  benefactors: ["양띠 또는 말띠", "화(火) 기운이 강한 사람", "같은 분야의 선배"],
-  challengers: ["뱀띠", "극단적인 성향의 사람", "과도하게 경쟁심이 강한 동료"],
-  advice:
-    "귀인을 잘 구분하여 관계를 맺고, 갈등 상황에서는 중립적인 태도로 조율하세요.",
-  actionItems: [
-    "도움을 준 사람에게 감사 인사하기",
-    "새로운 모임에 적극 참여하기",
-    "갈등이 있는 사람과는 최소한의 거리를 유지하기"
-  ],
-  lucky: {
-    color: "#FFD700",
-    number: 3,
-    direction: "동쪽"
-  }
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -67,7 +47,66 @@ const itemVariants = {
 
 export default function NetworkReportPage() {
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
-  const data = mockData;
+  const [data, setData] = useState<NetworkReportData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNetworkReport = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/fortune/network-report?userId=dev-user-123');
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          setData(result.data);
+        } else {
+          // 기본 데이터 설정
+          setData({
+            score: 75,
+            summary: '인맥보고서를 불러오는 중입니다.',
+            benefactors: ['분석 중입니다'],
+            challengers: ['분석 중입니다'],
+            advice: '잠시 후 다시 확인해주세요.',
+            actionItems: ['데이터를 준비 중입니다'],
+            lucky: { color: '#FFD700', number: 7, direction: '동쪽' }
+          });
+        }
+      } catch (error) {
+        console.error('인맥보고서 로딩 실패:', error);
+        setData({
+          score: 75,
+          summary: '인맥보고서를 불러오는 중 오류가 발생했습니다.',
+          benefactors: ['다시 시도해주세요'],
+          challengers: ['다시 시도해주세요'],
+          advice: '잠시 후 다시 확인해주세요.',
+          actionItems: ['새로고침 후 재시도'],
+          lucky: { color: '#FFD700', number: 7, direction: '동쪽' }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNetworkReport();
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <>
+        <AppHeader
+          title="인맥보고서"
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="pb-32 px-4 pt-4 min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">인맥보고서를 분석 중입니다...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   const fontClasses = {
     small: "text-sm",
@@ -114,7 +153,7 @@ export default function NetworkReportPage() {
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                {data.benefactors.map((item, idx) => (
+                {data.benefactors.map((item: string, idx: number) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
@@ -131,7 +170,7 @@ export default function NetworkReportPage() {
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                {data.challengers.map((item, idx) => (
+                {data.challengers.map((item: string, idx: number) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>
@@ -163,7 +202,7 @@ export default function NetworkReportPage() {
             </CardHeader>
             <CardContent>
               <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                {data.actionItems.map((item, idx) => (
+                {data.actionItems.map((item: string, idx: number) => (
                   <li key={idx}>{item}</li>
                 ))}
               </ul>

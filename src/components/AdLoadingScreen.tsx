@@ -21,13 +21,15 @@ interface AdLoadingScreenProps {
   fortuneTitle: string;
   onComplete: () => void;
   onSkip?: () => void;
+  isPremium?: boolean;
 }
 
 export default function AdLoadingScreen({ 
   fortuneType, 
   fortuneTitle, 
   onComplete, 
-  onSkip 
+  onSkip,
+  isPremium = false
 }: AdLoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
@@ -41,7 +43,7 @@ export default function AdLoadingScreen({
     { icon: Eye, text: "미래의 흐름을 읽고 있어요", duration: 1000 }
   ];
 
-  // 진행률 업데이트
+// 진행률 업데이트
   useEffect(() => {
     const totalDuration = loadingSteps.reduce((sum, step) => sum + step.duration, 0);
     let elapsed = 0;
@@ -64,11 +66,18 @@ export default function AdLoadingScreen({
       if (elapsed >= totalDuration) {
         clearInterval(timer);
         setCanSkip(true);
+        
+        // 프리미엄 사용자는 자동으로 완료
+        if (isPremium) {
+          setTimeout(() => {
+            onComplete();
+          }, 500); // 0.5초 후 자동 이동
+        }
       }
     }, 50);
 
     return () => clearInterval(timer);
-  }, []);
+  }, []); // 의존성 배열 제거
 
   // 스킵 버튼 활성화 타이머
   useEffect(() => {
@@ -166,71 +175,84 @@ export default function AdLoadingScreen({
               <p className="text-sm text-white/70">{Math.round(progress)}% 완료</p>
             </div>
 
-            {/* 광고 영역 */}
-            <div className="bg-white/5 border border-white/20 rounded-lg p-4 space-y-3">
-              <div className="flex items-center justify-center gap-2 text-yellow-300">
-                <Gift className="w-4 h-4" />
-                <span className="text-sm font-medium">광고를 보고 무료로 이용하세요</span>
-              </div>
-              
-              {/* 실제 광고 영역 - AdSense/AdMob */}
-              <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4 min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
-                <div className="text-center space-y-1 sm:space-y-2">
-                  <div className="text-2xl sm:text-4xl">📱</div>
-                  <p className="text-xs sm:text-sm text-white/80">광고 영역</p>
-                  <p className="text-xs text-white/60 hidden sm:block">AdSense/AdMob 광고가 여기에 표시됩니다</p>
+{/* 광고 영역 - 일반 사용자만 */}
+            {!isPremium && (
+              <div className="bg-white/5 border border-white/20 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-center gap-2 text-yellow-300">
+                  <Gift className="w-4 h-4" />
+                  <span className="text-sm font-medium">광고를 보고 무료로 이용하세요</span>
                 </div>
-              </div>
-            </div>
-
-            {/* 확인 버튼 */}
-            <div className="space-y-3">
-              {progress >= 100 && (
-                <Button
-                  onClick={onComplete}
-                  className="w-full font-semibold py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-                >
-                  <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5" />
-                    운세 보기
+                
+                {/* 실제 광고 영역 - AdSense/AdMob */}
+                <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4 min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
+                  <div className="text-center space-y-1 sm:space-y-2">
+                    <div className="text-2xl sm:text-4xl">📱</div>
+                    <p className="text-xs sm:text-sm text-white/80">광고 영역</p>
+                    <p className="text-xs text-white/60 hidden sm:block">AdSense/AdMob 광고가 여기에 표시됩니다</p>
                   </div>
-                </Button>
-              )}
-             
-              {/* 프리미엄 업그레이드 안내 */}
-              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
-                <div className="flex items-center gap-2 justify-center text-yellow-300 mb-2">
-                  <Crown className="w-4 h-4" />
-                  <span className="text-sm font-medium">프리미엄으로 업그레이드</span>
                 </div>
-                <p className="text-xs text-yellow-200 text-center">
-                  광고 없이 바로 운세를 확인하세요!
-                </p>
-                {onSkip && (
+              </div>
+            )}
+
+{/* 확인 버튼 - 일반 사용자만 */}
+            {!isPremium && (
+              <div className="space-y-3">
+                {progress >= 100 && (
                   <Button
-                    onClick={onSkip}
-                    variant="outline"
-                    size="sm"
-                    className="w-full mt-2 border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/10"
+                    onClick={onComplete}
+                    className="w-full font-semibold py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
                   >
-                    프리미엄 알아보기
+                    <div className="flex items-center gap-2">
+                      <Star className="w-5 h-5" />
+                      운세 보기
+                    </div>
                   </Button>
                 )}
+               
+                {/* 프리미엄 업그레이드 안내 */}
+                <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
+                  <div className="flex items-center gap-2 justify-center text-yellow-300 mb-2">
+                    <Crown className="w-4 h-4" />
+                    <span className="text-sm font-medium">프리미엄으로 업그레이드</span>
+                  </div>
+                  <p className="text-xs text-yellow-200 text-center">
+                    광고 없이 바로 운세를 확인하세요!
+                  </p>
+                  {onSkip && (
+                    <Button
+                      onClick={onSkip}
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-2 border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/10"
+                    >
+                      프리미엄 알아보기
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* 하단 정보 */}
+{/* 하단 정보 */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5 }}
         className="mt-6 text-center text-white/60 text-sm"
       >
-        <p>광고를 통해 무료 서비스를 제공하고 있습니다</p>
-        <p>이용해 주셔서 감사합니다 ✨</p>
+        {isPremium ? (
+          <>
+            <p>프리미엄 서비스를 이용해 주셔서 감사합니다</p>
+            <p>최고의 운세 경험을 제공해드려요 ✨</p>
+          </>
+        ) : (
+          <>
+            <p>광고를 통해 무료 서비스를 제공하고 있습니다</p>
+            <p>이용해 주셔서 감사합니다 ✨</p>
+          </>
+        )}
       </motion.div>
     </div>
   );

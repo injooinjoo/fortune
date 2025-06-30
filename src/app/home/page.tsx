@@ -273,21 +273,16 @@ export default function HomePage() {
     }
   };
 
-  // 운세 페이지로 이동할 때 최근 본 운세에 추가
+// 운세 페이지로 이동할 때 최근 본 운세에 추가
   const handleFortuneClick = (path: string, title: string) => {
     const userProfile = getUserProfile();
     const isPremium = isPremiumUser(userProfile);
     
     addToRecentFortunes(path, title);
     
-    if (isPremium) {
-      // 프리미엄 사용자는 바로 이동
-      router.push(path);
-    } else {
-      // 일반 사용자는 광고 로딩 화면 표시
-      setPendingFortune({ path, title });
-      setShowAdLoading(true);
-    }
+    // 프리미엄, 일반 사용자 모두 로딩 화면 표시 (분석하는 척)
+    setPendingFortune({ path, title });
+    setShowAdLoading(true);
   };
 
   // 광고 로딩 완료 후 운세 페이지로 이동
@@ -404,14 +399,18 @@ export default function HomePage() {
     }
   };
 
-  // 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
+// 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
   if (showAdLoading && pendingFortune) {
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
     return (
       <AdLoadingScreen
         fortuneType={pendingFortune.path.split('/').pop() || 'fortune'}
         fortuneTitle={pendingFortune.title}
         onComplete={handleAdComplete}
         onSkip={handleUpgradeToPremium}
+        isPremium={isPremium}
       />
     );
   }

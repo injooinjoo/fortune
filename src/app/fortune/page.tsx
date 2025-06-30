@@ -642,18 +642,10 @@ export default function FortunePage() {
     ? fortuneCategories 
     : fortuneCategories.filter(category => category.category === selectedCategory);
 
-  const handleCategoryClick = (route: string, title: string) => {
-    const userProfile = getUserProfile();
-    const isPremium = isPremiumUser(userProfile);
-    
-    if (isPremium) {
-      // 프리미엄 사용자는 바로 이동
-      router.push(route);
-    } else {
-      // 일반 사용자는 광고 로딩 화면 표시
-      setPendingFortune({ route, title });
-      setShowAdLoading(true);
-    }
+const handleCategoryClick = (route: string, title: string) => {
+    // 프리미엄, 일반 사용자 모두 로딩 화면 표시 (분석하는 척)
+    setPendingFortune({ route, title });
+    setShowAdLoading(true);
   };
 
   // 광고 로딩 완료 후 운세 페이지로 이동
@@ -676,14 +668,18 @@ export default function FortunePage() {
     router.push('/membership');
   };
 
-  // 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
+// 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
   if (showAdLoading && pendingFortune) {
+    const userProfile = getUserProfile();
+    const isPremium = isPremiumUser(userProfile);
+    
     return (
       <AdLoadingScreen
         fortuneType={pendingFortune.route.split('/').pop() || 'fortune'}
         fortuneTitle={pendingFortune.title}
         onComplete={handleAdComplete}
         onSkip={handleUpgradeToPremium}
+        isPremium={isPremium}
       />
     );
   }

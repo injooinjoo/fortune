@@ -9,33 +9,33 @@ body {
 @layer base {
   :root {
     /* Liquid Glass UI 컬러 시스템 */
-    --background: 240 10% 3.9%;        /* #0A0A0B - Deep Dark */
-    --foreground: 0 0% 98%;             /* #FAFAFA - Pure White */
+    --background: 0 0% 100%;            /* #FFFFFF - Pure White */
+    --foreground: 240 10% 3.9%;         /* #0A0A0B - Deep Dark */
 
-    --card: 240 10% 3.9%;               /* #0A0A0B - Deep Dark */
-    --card-foreground: 0 0% 98%;        /* #FAFAFA - Pure White */
+    --card: 0 0% 100%;                  /* #FFFFFF - Pure White */
+    --card-foreground: 240 10% 3.9%;    /* #0A0A0B - Deep Dark */
 
-    --popover: 240 10% 3.9%;            /* #0A0A0B - Deep Dark */
-    --popover-foreground: 0 0% 98%;     /* #FAFAFA - Pure White */
+    --popover: 0 0% 100%;               /* #FFFFFF - Pure White */
+    --popover-foreground: 240 10% 3.9%; /* #0A0A0B - Deep Dark */
 
-    --primary: 0 0% 9%;                 /* #171717 - Glass Dark */
+    --primary: 217 91% 60%;             /* #3B82F6 - Blue 500 */
     --primary-foreground: 0 0% 98%;     /* #FAFAFA - Pure White */
 
-    --secondary: 0 0% 95%;        /* 밝은 회색 */
-    --secondary-foreground: 0 0% 10%; /* 어두운 회색 */
+    --secondary: 210 40% 96%;       /* #F1F5F9 - 밝은 회색 */
+    --secondary-foreground: 222 84% 5%; /* #020817 - 어두운 회색 */
 
-    --muted: 0 0% 80%;            /* 회색 */
-    --muted-foreground: 0 0% 20%; /* 어두운 회색 */
+    --muted: 210 40% 96%;         /* #F1F5F9 - 회색 */
+    --muted-foreground: 215 16% 47%; /* #64748B - 어두운 회색 */
 
-    --accent: 0 0% 60%;           /* 중간 회색 */
-    --accent-foreground: 0 0% 98%; /* 흰색 */
+    --accent: 210 40% 96%;        /* #F1F5F9 - 중간 회색 */
+    --accent-foreground: 222 84% 5%; /* #020817 - 흰색 */
 
-    --destructive: 0 0% 50%;       /* 중간 회색 */
-    --destructive-foreground: 0 0% 98%; /* 흰색 */
+    --destructive: 0 84% 60%;      /* #EF4444 - Red 500 */
+    --destructive-foreground: 0 0% 98%; /* #FAFAFA - 흰색 */
 
-    --border: 240 3.7% 15.9%;           /* #27272A - Dark Border */
-    --input: 240 3.7% 15.9%;            /* #27272A - Dark Input */
-    --ring: 240 4.9% 83.9%;             /* #D4D4D8 - Light Ring */
+    --border: 214 32% 91%;        /* #E2E8F0 - Light Border */
+    --input: 214 32% 91%;         /* #E2E8F0 - Light Input */
+    --ring: 217 91% 60%;          /* #3B82F6 - Blue Ring */
 
     --radius: 42px; /* Liquid Glass의 큰 radius */
 

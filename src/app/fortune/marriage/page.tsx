@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -65,63 +65,6 @@ interface MarriageFortuneData {
   warnings: string[];
 }
 
-const mockMarriageData: MarriageFortuneData = {
-  todayScore: 88,
-  weeklyScore: 82,
-  monthlyScore: 91,
-  yearlyScore: 85,
-  summary: "결혼과 관련된 좋은 소식이나 진전이 있을 수 있는 시기입니다. 가족의 지지와 축복을 받을 수 있습니다.",
-  advice: "서두르지 말고 신중하게 계획을 세우세요. 상대방과의 솔직한 대화를 통해 미래에 대한 비전을 공유하는 것이 중요합니다.",
-  luckyTime: "오후 4시 ~ 7시",
-  luckyPlace: "카페, 레스토랑, 공원",
-  luckyColor: "#FFB6C1",
-  bestMarriageMonth: ["5월", "6월", "10월", "11월"],
-  compatibility: {
-    bestAge: "25-30세",
-    goodSeasons: ["봄", "가을"],
-    idealPartner: ["안정적인 성격", "가족을 중시하는 사람", "책임감 있는 사람"],
-    avoid: ["성급한 결정", "경제적 불안정", "가족 반대"]
-  },
-  timeline: {
-    engagement: "이번 년도 하반기가 좋습니다",
-    wedding: "내년 봄~가을 사이가 적합합니다",
-    honeymoon: "결혼 후 3개월 이내가 좋습니다",
-    newHome: "결혼 전 6개월 전부터 준비하세요"
-  },
-  predictions: {
-    today: "결혼과 관련된 좋은 소식을 들을 수 있습니다. 가족이나 지인을 통한 소개가 있을 수 있어요.",
-    thisWeek: "파트너와의 관계가 더욱 깊어지는 주입니다. 미래에 대한 구체적인 계획을 세워보세요.",
-    thisMonth: "결혼 준비나 약혼과 관련된 중요한 결정을 내리기에 좋은 달입니다.",
-    thisYear: "인생의 중요한 전환점이 될 수 있는 해입니다. 진정한 동반자를 만날 가능성이 높습니다."
-  },
-  preparation: {
-    emotional: [
-      "결혼에 대한 마음가짐 정리하기",
-      "상대방과의 가치관 공유하기",
-      "가족 간의 화합 도모하기",
-      "스트레스 관리법 익히기"
-    ],
-    practical: [
-      "예식장 및 날짜 예약하기",
-      "혼수 및 예물 준비하기",
-      "신혼집 마련하기",
-      "혼인신고 절차 알아보기"
-    ],
-    financial: [
-      "결혼 자금 계획 세우기",
-      "가계부 작성 습관 기르기",
-      "보험 가입 검토하기",
-      "미래 자녀 교육비 준비하기"
-    ]
-  },
-  warnings: [
-    "성급한 결정은 금물입니다",
-    "양가 부모님과의 충분한 상의가 필요합니다",
-    "경제적 부담을 무리하지 마세요",
-    "상대방에게만 의존하지 말고 독립적인 관계를 유지하세요"
-  ]
-};
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -147,11 +90,138 @@ const itemVariants = {
 };
 
 export default function MarriageFortunePage() {
-  const [data] = useState<MarriageFortuneData>(mockMarriageData);
+  const [data, setData] = useState<MarriageFortuneData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'thisWeek' | 'thisMonth' | 'thisYear'>('today');
   const [selectedPrep, setSelectedPrep] = useState<'emotional' | 'practical' | 'financial'>('emotional');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  useEffect(() => {
+    const fetchMarriageFortune = async () => {
+      try {
+        setLoading(true);
+        console.log('결혼운 데이터 요청 시작...');
+        
+        const response = await fetch('/api/fortune/marriage', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`운세 요청 실패: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('결혼운 API 응답:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error || '결혼운 생성에 실패했습니다');
+        }
+
+        // API 응답을 MarriageFortuneData 형식으로 변환
+        const marriageData: MarriageFortuneData = {
+          todayScore: result.data.marriage?.current_score || 85,
+          weeklyScore: result.data.marriage?.weekly_score || 80,
+          monthlyScore: result.data.marriage?.monthly_score || 90,
+          yearlyScore: result.data.marriage?.yearly_score || 88,
+          summary: result.data.marriage?.summary || '결혼운이 상승세를 보이고 있습니다.',
+          advice: result.data.marriage?.advice || '신중하게 계획을 세우고 상대방과 소통하세요.',
+          luckyTime: result.data.marriage?.lucky_time || '오후 4시 ~ 7시',
+          luckyPlace: result.data.marriage?.lucky_place || '카페, 레스토랑, 공원',
+          luckyColor: result.data.marriage?.lucky_color || '#FFB6C1',
+          bestMarriageMonth: result.data.marriage?.best_months || ['5월', '6월', '10월'],
+          compatibility: {
+            bestAge: result.data.marriage?.compatibility?.best_age || '25-30세',
+            goodSeasons: result.data.marriage?.compatibility?.good_seasons || ['봄', '가을'],
+            idealPartner: result.data.marriage?.compatibility?.ideal_partner || ['안정적인 성격'],
+            avoid: result.data.marriage?.compatibility?.avoid || ['성급한 결정']
+          },
+          timeline: {
+            engagement: result.data.marriage?.timeline?.engagement || '이번 년도 하반기',
+            wedding: result.data.marriage?.timeline?.wedding || '내년 봄~가을',
+            honeymoon: result.data.marriage?.timeline?.honeymoon || '결혼 후 3개월 이내',
+            newHome: result.data.marriage?.timeline?.new_home || '결혼 전 6개월'
+          },
+          predictions: {
+            today: result.data.marriage?.predictions?.today || '좋은 소식이 있을 것입니다.',
+            thisWeek: result.data.marriage?.predictions?.this_week || '관계가 깊어질 것입니다.',
+            thisMonth: result.data.marriage?.predictions?.this_month || '중요한 결정의 시기입니다.',
+            thisYear: result.data.marriage?.predictions?.this_year || '인생의 전환점이 될 것입니다.'
+          },
+          preparation: {
+            emotional: result.data.marriage?.preparation?.emotional || ['마음가짐 정리하기'],
+            practical: result.data.marriage?.preparation?.practical || ['예식장 예약하기'],
+            financial: result.data.marriage?.preparation?.financial || ['결혼 자금 계획하기']
+          },
+          warnings: result.data.marriage?.warnings || ['성급한 결정은 금물입니다']
+        };
+
+        setData(marriageData);
+        console.log('결혼운 데이터 설정 완료:', marriageData);
+        
+      } catch (err) {
+        console.error('결혼운 데이터 로딩 실패:', err);
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMarriageFortune();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <AppHeader 
+          title="결혼운" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <motion.div
+              className="w-16 h-16 border-4 border-pink-200 border-t-pink-600 rounded-full mx-auto"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <p className="text-pink-700 dark:text-pink-300">결혼운을 분석하고 있습니다...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <AppHeader 
+          title="결혼운" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4 max-w-md mx-auto px-4">
+            <Heart className="w-16 h-16 text-red-400 mx-auto" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">운세를 불러올 수 없습니다</h2>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   const marriageScore = {
     today: data.todayScore,

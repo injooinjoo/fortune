@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,8 @@ import {
   MessageCircle,
   Heart,
   Users,
-  Star
+  Star,
+  Loader2
 } from "lucide-react";
 
 interface DestinyFortuneData {
@@ -34,28 +35,6 @@ interface DestinyFortuneData {
   };
   actionItems: string[];
 }
-
-const mockDestinyData: DestinyFortuneData = {
-  destinyScore: 82,
-  summary:
-    "다가오는 몇 달 안에 특별한 인연을 만날 가능성이 높습니다. 현재의 노력이 좋은 결과로 이어질 것입니다.",
-  advice:
-    "새로운 만남에 열린 마음을 유지하고, 사람들과의 교류를 즐기는 것이 좋습니다.",
-  meetingPeriod: "3~4개월 내",
-  meetingPlace: "지인 모임, 취미 활동 장소",
-  partnerTraits: ["밝은 에너지", "배려심", "유머 감각"],
-  developmentChance: "친구에서 연인으로 발전할 확률이 높습니다.",
-  predictions: {
-    firstMeeting: "가까운 미래에 지인을 통해 소개받을 가능성이 있습니다.",
-    relationship: "서로의 관심사가 잘 맞아 빠르게 가까워질 수 있습니다.",
-    longTerm: "신뢰를 쌓아가면 오래 지속되는 관계로 발전합니다."
-  },
-  actionItems: [
-    "친구의 초대를 가능한 한 수락하기",
-    "새로운 취미 모임에 참여하기",
-    "긍정적인 이미지를 유지하기"
-  ]
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,11 +61,84 @@ const itemVariants = {
 };
 
 export default function DestinyFortunePage() {
-  const [data] = useState<DestinyFortuneData>(mockDestinyData);
+  const [data, setData] = useState<DestinyFortuneData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedStep, setSelectedStep] = useState<
     'firstMeeting' | 'relationship' | 'longTerm'
   >('firstMeeting');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  // API에서 인연운 데이터 가져오기
+  useEffect(() => {
+    const fetchDestinyData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/fortune/destiny');
+        
+        if (!response.ok) {
+          throw new Error('인연운 데이터를 가져오는데 실패했습니다');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success && result.data?.destiny) {
+          const destinyData = result.data.destiny;
+          setData({
+            destinyScore: destinyData.destiny_score,
+            summary: destinyData.summary,
+            advice: destinyData.advice,
+            meetingPeriod: destinyData.meeting_period,
+            meetingPlace: destinyData.meeting_place,
+            partnerTraits: destinyData.partner_traits,
+            developmentChance: destinyData.development_chance,
+            predictions: {
+              firstMeeting: destinyData.predictions.first_meeting,
+              relationship: destinyData.predictions.relationship,
+              longTerm: destinyData.predictions.long_term
+            },
+            actionItems: destinyData.action_items
+          });
+        } else {
+          throw new Error('잘못된 응답 형식입니다');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDestinyData();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <AppHeader title="나의 인연 운세" />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-fuchsia-600" />
+            <p className="text-gray-600">인연운을 분석 중입니다...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <>
+        <AppHeader title="나의 인연 운세" />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error || '데이터를 불러올 수 없습니다'}</p>
+            <Button onClick={() => window.location.reload()}>다시 시도</Button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

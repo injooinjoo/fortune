@@ -17,7 +17,8 @@ import {
   MessageCircle,
   Gift,
   Coffee,
-  MapPin
+  MapPin,
+  CheckCircle2
 } from "lucide-react";
 
 interface LoveFortuneData {
@@ -41,34 +42,6 @@ interface LoveFortuneData {
   };
   actionItems: string[];
 }
-
-// 임시 데이터
-const mockLoveData: LoveFortuneData = {
-  todayScore: 85,
-  weeklyScore: 72,
-  monthlyScore: 88,
-  summary: "오늘은 새로운 만남의 기회가 열리는 날입니다. 평소보다 적극적인 모습을 보이면 좋은 결과가 있을 것입니다.",
-  advice: "진정성 있는 대화를 나누세요. 상대방의 마음을 이해하려는 노력이 관계를 더욱 깊게 만들어줄 것입니다.",
-  luckyTime: "오후 3시 ~ 6시",
-  luckyPlace: "카페, 공원",
-  luckyColor: "#FF69B4",
-  compatibility: {
-    best: "물병자리",
-    good: ["쌍둥이자리", "천칭자리", "사수자리"],
-    avoid: "전갈자리"
-  },
-  predictions: {
-    today: "기존 관계에서 새로운 면을 발견하게 될 것입니다. 솔직한 대화가 관계 발전의 열쇠입니다.",
-    thisWeek: "주중에 특별한 만남이 있을 수 있습니다. 금요일 저녁이 특히 좋은 시간대입니다.",
-    thisMonth: "이달 말까지 중요한 결정을 내리게 될 가능성이 높습니다. 신중하되 과감하게 행동하세요."
-  },
-  actionItems: [
-    "평소 관심 있던 취미 활동 시작하기",
-    "친구들과의 모임에 적극 참여하기", 
-    "새로운 스타일에 도전해보기",
-    "감사 인사 전하기"
-  ]
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -95,9 +68,125 @@ const itemVariants = {
 };
 
 export default function LoveFortunePage() {
-  const [data] = useState<LoveFortuneData>(mockLoveData);
+  const [data, setData] = useState<LoveFortuneData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'thisWeek' | 'thisMonth'>('today');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  useEffect(() => {
+    const fetchLoveFortune = async () => {
+      try {
+        setLoading(true);
+        console.log('연애운 데이터 요청 시작...');
+        
+        const response = await fetch('/api/fortune/love', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`운세 요청 실패: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('연애운 API 응답:', result);
+        
+        if (!result.success) {
+          throw new Error(result.error || '운세 생성에 실패했습니다');
+        }
+
+        // API 응답을 LoveFortuneData 형식으로 변환
+        const loveData: LoveFortuneData = {
+          todayScore: result.data.love?.current_score || 75,
+          weeklyScore: result.data.love?.weekly_score || 70,
+          monthlyScore: result.data.love?.monthly_score || 80,
+          summary: result.data.love?.summary || '연애운이 상승세를 보이고 있습니다.',
+          advice: result.data.love?.advice || '진정성 있는 마음으로 상대방에게 다가가세요.',
+          luckyTime: result.data.love?.lucky_time || '오후 3시 ~ 6시',
+          luckyPlace: result.data.love?.lucky_place || '카페, 공원',
+          luckyColor: result.data.love?.lucky_color || '#FF69B4',
+          compatibility: {
+            best: result.data.love?.compatibility?.best || '물병자리',
+            good: result.data.love?.compatibility?.good || ['쌍둥이자리', '천칭자리'],
+            avoid: result.data.love?.compatibility?.avoid || '전갈자리'
+          },
+          predictions: {
+            today: result.data.love?.predictions?.today || '좋은 만남의 기회가 있을 것입니다.',
+            thisWeek: result.data.love?.predictions?.this_week || '특별한 인연을 만날 수 있습니다.',
+            thisMonth: result.data.love?.predictions?.this_month || '중요한 결정을 내리게 될 것입니다.'
+          },
+          actionItems: result.data.love?.action_items || [
+            '적극적인 자세로 임하기',
+            '새로운 활동에 참여하기',
+            '진솔한 대화 나누기'
+          ]
+        };
+
+        setData(loveData);
+        console.log('연애운 데이터 설정 완료:', loveData);
+        
+      } catch (err) {
+        console.error('연애운 데이터 로딩 실패:', err);
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLoveFortune();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <AppHeader 
+          title="연애운" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <motion.div
+              className="w-16 h-16 border-4 border-pink-200 border-t-pink-600 rounded-full mx-auto"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <p className="text-pink-700 dark:text-pink-300">연애운을 분석하고 있습니다...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <AppHeader 
+          title="연애운" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4 max-w-md mx-auto px-4">
+            <Heart className="w-16 h-16 text-red-400 mx-auto" />
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">운세를 불러올 수 없습니다</h2>
+            <p className="text-gray-600 dark:text-gray-400">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

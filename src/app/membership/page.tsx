@@ -61,7 +61,7 @@ const plans: SubscriptionPlan[] = [
   {
     id: 'premium',
     name: '프리미엄',
-    price: 9900,
+    price: 2500,
     period: 'month',
     description: '더 정확하고 상세한 운세로 업그레이드하세요',
     icon: Crown,
@@ -74,26 +74,10 @@ const plans: SubscriptionPlan[] = [
       '운세 히스토리 무제한',
       '개인 맞춤 추천',
       '광고 제거',
-      '우선 고객지원'
-    ]
-  },
-  {
-    id: 'premium_plus',
-    name: '프리미엄 플러스',
-    price: 19900,
-    period: 'month',
-    description: '최고 수준의 프리미엄 운세 경험을 제공합니다',
-    icon: Gem,
-    gradient: 'from-yellow-500 to-orange-500',
-    features: [
-      '프리미엄 모든 기능',
+      '우선 고객지원',
       'AI 전문가 상담 (월 3회)',
       '실시간 운세 알림',
-      '독점 프리미엄 콘텐츠',
-      '개인 운세 리포트 (월간)',
-      '커뮤니티 VIP 기능',
-      '24시간 우선 지원',
-      '특별 이벤트 우선 참여'
+      '개인 운세 리포트 (월간)'
     ]
   }
 ];
@@ -174,21 +158,19 @@ export default function MembershipPage() {
     }
   };
 
-  const getPlanPrice = (plan: SubscriptionPlan) => {
+const getPlanPrice = (plan: SubscriptionPlan) => {
     if (plan.price === 0) return '무료';
     
-    const price = isYearly ? Math.floor(plan.price * 12 * 0.8) : plan.price;
+    const price = isYearly ? Math.floor(plan.price * 12 * 0.9) : plan.price; // 10% 할인
     const period = isYearly ? '년' : '월';
     
     return `₩${price.toLocaleString()}/${period}`;
   };
 
-  const getPlanBadge = (planId: string) => {
+const getPlanBadge = (planId: string) => {
     switch (planId) {
       case 'premium':
         return <Badge className="bg-purple-500">현재 플랜</Badge>;
-      case 'premium_plus':
-        return <Badge className="bg-orange-500">현재 플랜</Badge>;
       case 'free':
         return <Badge variant="secondary">현재 플랜</Badge>;
       default:
@@ -267,20 +249,25 @@ export default function MembershipPage() {
         <motion.div variants={itemVariants}>
           <Card>
             <CardContent className="p-6">
-              <div className="flex items-center justify-center gap-4">
-                <span className={`text-sm font-medium ${!isYearly ? 'text-purple-600' : 'text-gray-500'}`}>
-                  월간
-                </span>
-                <Switch
-                  checked={isYearly}
-                  onCheckedChange={setIsYearly}
-                />
-                <span className={`text-sm font-medium ${isYearly ? 'text-purple-600' : 'text-gray-500'}`}>
-                  연간
-                </span>
+              <div className="flex flex-col items-center gap-3">
+                {/* 토글 중앙 영역 */}
+                <div className="flex items-center gap-4">
+                  <span className={`text-sm font-medium ${!isYearly ? 'text-purple-600' : 'text-gray-500'}`}>
+                    월간
+                  </span>
+                  <Switch
+                    checked={isYearly}
+                    onCheckedChange={setIsYearly}
+                  />
+                  <span className={`text-sm font-medium ${isYearly ? 'text-purple-600' : 'text-gray-500'}`}>
+                    연간
+                  </span>
+                </div>
+                
+                {/* 할인 표기 - 토글 아래 */}
                 {isYearly && (
                   <Badge variant="outline" className="text-green-600 border-green-200">
-                    20% 할인
+                    10% 할인
                   </Badge>
                 )}
               </div>

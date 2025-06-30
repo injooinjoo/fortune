@@ -2,21 +2,29 @@
 // 작성일: 2024-12-19
 
 export type FortuneGroupType = 
-  | 'LIFE_PROFILE'        // 그룹 1: 평생 고정 정보
-  | 'DAILY_COMPREHENSIVE' // 그룹 2: 일일 정보
-  | 'INTERACTIVE'         // 그룹 3: 실시간 상호작용
-  | 'CLIENT_BASED';       // 그룹 4: 클라이언트 기반
+  | 'LIFE_PROFILE'           // 그룹 1: 평생 고정 정보
+  | 'DAILY_COMPREHENSIVE'    // 그룹 2: 일일 정보
+  | 'INTERACTIVE'            // 그룹 3: 실시간 상호작용
+  | 'CLIENT_BASED'           // 그룹 4: 클라이언트 기반
+  | 'LOVE_PACKAGE'           // 그룹 5: 연애·인연 패키지 (72시간)
+  | 'CAREER_WEALTH_PACKAGE'  // 그룹 6: 취업·재물 패키지 (168시간)
+  | 'LUCKY_ITEMS_PACKAGE';   // 그룹 7: 행운 아이템 패키지 (720시간)
 
 export type FortuneCategory = 
   // 그룹 1: 평생 고정 정보
   | 'saju' | 'traditional-saju' | 'tojeong' | 'past-life' 
   | 'personality' | 'destiny' | 'salpuli' | 'five-blessings' | 'talent'
+  | 'saju-psychology' | 'network-report' | 'tojeong'
   // 그룹 2: 일일 정보
   | 'daily' | 'tomorrow' | 'hourly' | 'wealth' | 'love' | 'career'
   | 'lucky-number' | 'lucky-color' | 'lucky-food' | 'biorhythm'
   | 'zodiac-animal' | 'mbti'
   // 그룹 3: 실시간 상호작용
-  | 'dream-interpretation' | 'tarot' | 'compatibility' | 'worry-bead';
+  | 'dream-interpretation' | 'tarot' | 'compatibility' | 'worry-bead'
+  // 그룹 5: 연애·인연 패키지
+  | 'marriage' | 'blind-date' | 'celebrity-match' | 'couple-match'
+  | 'ex-lover' | 'traditional-compatibility' | 'chemistry' | 'celebrity'
+  | 'avoid-people';
 
 export interface UserProfile {
   id: string;

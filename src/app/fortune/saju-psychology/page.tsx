@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import {
   Tabs,
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Brain } from "lucide-react";
+import { Brain, Loader2 } from "lucide-react";
 
 interface PsychologyData {
   summary: string;
@@ -18,23 +18,100 @@ interface PsychologyData {
   relationship: string;
   psyche: string;
   advice: string;
+  generated_at?: string;
 }
 
-const mockData: PsychologyData = {
-  summary: "사주 오행의 균형이 뛰어나 다양한 상황에 유연하게 대응합니다.",
-  personality:
-    "타고난 성격은 온화하면서도 결단력이 있어 주변의 신뢰를 얻습니다. 논리적 사고와 감성적 직관을 적절히 활용해 문제를 해결하는 능력이 뛰어납니다.",
-  relationship:
-    "타인을 배려하는 마음이 강해 대인관계가 원만하지만, 때로는 지나친 책임감으로 부담을 느끼기도 합니다. 의사소통이 원활해 조율 능력이 뛰어납니다.",
-  psyche:
-    "내면에는 이상을 향한 열정이 있지만 동시에 현실을 중시하는 면모가 공존합니다. 감정을 드러내기보다는 스스로 조절하려 노력하며, 균형을 잃지 않으려 합니다.",
-  advice:
-    "자신의 감정을 솔직히 표현하고 휴식을 통해 심리적 에너지를 회복하세요. 타인의 기대에 맞추기보다는 스스로의 욕구를 살펴보는 시간이 필요합니다.",
-};
-
 export default function SajuPsychologyPage() {
-  const data = mockData;
+  const [data, setData] = useState<PsychologyData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  useEffect(() => {
+    const fetchPsychologyData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/fortune/saju-psychology');
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || '사주 심리분석을 불러오는데 실패했습니다.');
+        }
+        
+        if (result.success && result.data) {
+          setData(result.data);
+        } else {
+          throw new Error('데이터 형식이 올바르지 않습니다.');
+        }
+      } catch (err) {
+        console.error('사주 심리분석 로드 오류:', err);
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPsychologyData();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <AppHeader
+          title="사주 심리분석"
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="pb-32 px-4 space-y-6 pt-4">
+          <div className="flex items-center justify-center min-h-64">
+            <div className="text-center space-y-4">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+              <p className="text-muted-foreground">사주 심리분석을 불러오는 중...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <AppHeader
+          title="사주 심리분석"
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="pb-32 px-4 space-y-6 pt-4">
+          <div className="text-center py-8">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              다시 시도
+            </Button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (!data) {
+    return (
+      <>
+        <AppHeader
+          title="사주 심리분석"
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="pb-32 px-4 space-y-6 pt-4">
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">사주 심리분석 데이터가 없습니다.</p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

@@ -15,7 +15,7 @@ interface UserProfileForm {
   name: string;
   birth_date: string;
   birth_time?: string;
-  gender: '남성' | '여성' | '선택 안함';
+  gender: '남성' | '여성' | '';
   mbti?: string;
 }
 
@@ -48,7 +48,7 @@ export default function ProfileOnboardingPage() {
     name: '',
     birth_date: '',
     birth_time: undefined,
-    gender: '선택 안함',
+    gender: '',
     mbti: undefined
   });
   const [loading, setLoading] = useState(false);
@@ -121,6 +121,14 @@ export default function ProfileOnboardingPage() {
       if (!formData.birth_date) {
         toast({
           title: "생년월일을 입력해주세요",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (!formData.gender) {
+        toast({
+          title: "성별을 선택해주세요",
           variant: "destructive"
         });
         return;
@@ -224,56 +232,54 @@ export default function ProfileOnboardingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label>성별</Label>
+              <Label>태어난 시간 (선택사항)</Label>
+              <p className="text-sm text-muted-foreground">
+                더 정확한 사주 분석을 위해 태어난 시간을 알고 계시면 선택해주세요
+              </p>
+              <Select
+                value={formData.birth_time || 'unknown'}
+                onValueChange={(value) => updateFormData('birth_time', value === 'unknown' ? '' : value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="태어난 시간을 모르겠어요" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unknown">태어난 시간을 모르겠어요</SelectItem>
+                  {BIRTH_TIMES.map((time) => (
+                    <SelectItem key={time.value} value={time.value}>
+                      <div className="flex flex-col">
+                        <span>{time.label}</span>
+                        <span className="text-xs text-muted-foreground">{time.description}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>성별 *</Label>
               <div className="flex gap-2">
-                {['남성', '여성', '선택 안함'].map((gender) => (
+                {['남성', '여성'].map((gender) => (
                   <Button
                     key={gender}
                     variant={formData.gender === gender ? "default" : "outline"}
                     size="sm"
                     onClick={() => updateFormData('gender', gender as any)}
+                    className={!formData.gender ? "border-red-300" : ""}
                   >
                     {gender}
                   </Button>
                 ))}
               </div>
+              {!formData.gender && (
+                <p className="text-sm text-red-500">성별을 선택해주세요</p>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* 태어난 시간 */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="w-5 h-5" />
-              태어난 시간 (선택사항)
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              더 정확한 사주 분석을 위해 태어난 시간을 알고 계시면 선택해주세요
-            </p>
-          </CardHeader>
-          <CardContent>
-            <Select
-              value={formData.birth_time || 'unknown'}
-              onValueChange={(value) => updateFormData('birth_time', value === 'unknown' ? '' : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="태어난 시간을 모르겠어요" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unknown">태어난 시간을 모르겠어요</SelectItem>
-                {BIRTH_TIMES.map((time) => (
-                  <SelectItem key={time.value} value={time.value}>
-                    <div className="flex flex-col">
-                      <span>{time.label}</span>
-                      <span className="text-xs text-muted-foreground">{time.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+
 
         {/* MBTI */}
         <Card>
@@ -309,46 +315,13 @@ export default function ProfileOnboardingPage() {
           </CardContent>
         </Card>
 
-        {/* 입력된 정보 미리보기 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>입력된 정보 확인</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between">
-              <span>이름:</span>
-              <span className="font-medium">{formData.name || '미입력'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>생년월일:</span>
-              <span className="font-medium">
-                {formData.birth_date || '미입력'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>성별:</span>
-              <span className="font-medium">{formData.gender}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>태어난 시간:</span>
-              <span className="font-medium">
-                {formData.birth_time || '모름'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>MBTI:</span>
-              <span className="font-medium">
-                {formData.mbti || '미선택'}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+
 
         {/* 저장 버튼 */}
         <div className="sticky bottom-20 left-0 right-0 bg-background p-4">
           <Button 
             onClick={saveProfile} 
-            disabled={loading || !formData.name.trim() || !formData.birth_date}
+            disabled={loading || !formData.name.trim() || !formData.birth_date || !formData.gender}
             className="w-full"
             size="lg"
           >
