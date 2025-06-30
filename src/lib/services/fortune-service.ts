@@ -1924,7 +1924,7 @@ export class FortuneService {
     
     return {
       destiny: {
-        destiny_score: Math.floor(Math.random() * 20) + 75, // 75-95점
+        destiny_score: this.calculateDestinyScore(userProfile), // 개인화된 점수 계산
         summary: `${mbti} 성향의 ${userProfile.name}님은 앞으로 ${age < 30 ? '2-3개월' : age < 40 ? '3-4개월' : '4-6개월'} 내에 특별한 인연을 만날 가능성이 높습니다.`,
         advice: mbti.includes('E') 
           ? '적극적인 성격을 살려 새로운 만남에 열린 마음을 유지하세요.'
@@ -2073,7 +2073,7 @@ export class FortuneService {
           communication: this.getCommunicationSkill(mbti),
           focus: this.getFocusSkill(mbti)
         },
-        potential_score: Math.floor(Math.random() * 15) + 80, // 80-95점
+        potential_score: this.calculateTalentPotentialScore(userProfile), // 개인화된 점수 계산
         development_phases: this.getDevelopmentPhases(age, mbti)
       },
       generated_at: new Date().toISOString()
@@ -2275,24 +2275,34 @@ export class FortuneService {
     return tips.slice(0, 3);
   }
 
-  private getAnalyticalSkill(mbti: string): number {
-    return mbti.includes('T') ? 
-      Math.floor(Math.random() * 20) + 75 : 
-      Math.floor(Math.random() * 25) + 60;
+    private getAnalyticalSkill(mbti: string): number {
+    const scores: Record<string, number> = {
+      'INTJ': 95, 'INTP': 93, 'ENTJ': 88, 'ENTP': 85,
+      'ISTJ': 82, 'ESTJ': 80, 'INFJ': 78, 'ENFJ': 75,
+      'ISTP': 72, 'ESTP': 68, 'ISFJ': 65, 'ESFJ': 62,
+      'INFP': 70, 'ENFP': 68, 'ISFP': 60, 'ESFP': 55
+    };
+    return scores[mbti] || 70;
   }
 
-  private getCreativeSkill(mbti: string): number {
-    return mbti.includes('N') ? 
-      Math.floor(Math.random() * 20) + 75 : 
-      Math.floor(Math.random() * 25) + 60;
+    private getCreativeSkill(mbti: string): number {
+    const scores: Record<string, number> = {
+      'ENFP': 95, 'INFP': 92, 'ENTP': 90, 'INTP': 85,
+      'ESFP': 83, 'ISFP': 80, 'ENFJ': 78, 'INFJ': 75,
+      'ESTP': 70, 'ISTP': 68, 'ESFJ': 65, 'ISFJ': 62,
+      'ENTJ': 60, 'INTJ': 58, 'ESTJ': 55, 'ISTJ': 50
+    };
+    return scores[mbti] || 65;
   }
 
-  private getLeadershipSkill(mbti: string): number {
-    return mbti.includes('E') && mbti.includes('J') ? 
-      Math.floor(Math.random() * 20) + 80 : 
-      mbti.includes('E') ? 
-        Math.floor(Math.random() * 25) + 65 : 
-        Math.floor(Math.random() * 30) + 50;
+    private getLeadershipSkill(mbti: string): number {
+    const scores: Record<string, number> = {
+      'ENTJ': 95, 'ENFJ': 92, 'ESTJ': 88, 'ESFJ': 82,
+      'ENTP': 80, 'ENFP': 78, 'ESTP': 75, 'ESFP': 70,
+      'INTJ': 68, 'INFJ': 65, 'ISTJ': 62, 'ISFJ': 60,
+      'INTP': 55, 'INFP': 52, 'ISTP': 50, 'ISFP': 48
+    };
+    return scores[mbti] || 60;
   }
 
   private getCommunicationSkill(mbti: string): number {
@@ -3206,6 +3216,103 @@ export class FortuneService {
       },
       generated_at: new Date().toISOString()
     };
+  }
+  /**
+   * 개인화된 점수 계산 메서드들
+   */
+  
+  /**
+   * 사용자 프로필 기반 운명 점수 계산
+   */
+  private calculateDestinyScore(userProfile: UserProfile): number {
+    let baseScore = 70;
+    const mbti = userProfile.mbti || 'ISFJ';
+    const age = this.calculateAge(userProfile.birth_date);
+    const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
+    
+    // MBTI별 기본 점수
+    if (mbti.includes('E')) baseScore += 8; // 외향적인 사람이 인연 만들기 유리
+    if (mbti.includes('F')) baseScore += 5; // 감정형이 인간관계에 유리
+    if (mbti.includes('P')) baseScore += 3; // 유연한 사람이 새로운 만남에 열려있음
+    
+    // 나이별 점수 (최적 연령대)
+    if (age >= 25 && age <= 35) baseScore += 7; // 최적 만남 연령대
+    else if (age >= 20 && age <= 40) baseScore += 3;
+    
+    // 계절별 점수 (봄, 가을에 인연 운 상승)
+    if (birthMonth === 3 || birthMonth === 4 || birthMonth === 5 || 
+        birthMonth === 9 || birthMonth === 10 || birthMonth === 11) {
+      baseScore += 5;
+    }
+    
+    return Math.min(Math.max(baseScore, 65), 95); // 65-95점 범위
+  }
+
+  /**
+   * 재능 잠재력 점수 계산
+   */
+  private calculateTalentPotentialScore(userProfile: UserProfile): number {
+    let baseScore = 75;
+    const mbti = userProfile.mbti || 'ISFJ';
+    const age = this.calculateAge(userProfile.birth_date);
+    const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
+    
+    // MBTI별 재능 점수
+    const talentScores: Record<string, number> = {
+      'ENFP': 15, 'ENTP': 13, 'INTJ': 12, 'INFJ': 11,
+      'ENFJ': 10, 'ENTJ': 10, 'INTP': 9, 'INFP': 9,
+      'ESFP': 8, 'ESTP': 8, 'ISFP': 7, 'ISTP': 7,
+      'ESFJ': 6, 'ESTJ': 6, 'ISFJ': 5, 'ISTJ': 5
+    };
+    
+    baseScore += talentScores[mbti] || 5;
+    
+    // 나이별 점수 (젊을수록 발전 가능성 높음)
+    if (age < 25) baseScore += 5;
+    else if (age < 35) baseScore += 3;
+    else if (age < 45) baseScore += 1;
+    
+    // 태어난 계절별 재능 특성
+    if (birthMonth >= 3 && birthMonth <= 5) baseScore += 3; // 봄 - 창조력
+    else if (birthMonth >= 6 && birthMonth <= 8) baseScore += 2; // 여름 - 에너지
+    else if (birthMonth >= 9 && birthMonth <= 11) baseScore += 4; // 가을 - 완성도
+    else baseScore += 2; // 겨울 - 집중력
+    
+    return Math.min(Math.max(baseScore, 70), 95); // 70-95점 범위
+  }
+
+  /**
+   * 띠별 운세 개인화 점수 계산
+   */
+  private calculateZodiacScore(userProfile: UserProfile, scoreType: 'current' | 'monthly' | 'yearly'): number {
+    const birthYear = new Date(userProfile.birth_date).getFullYear();
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth() + 1;
+    const mbti = userProfile.mbti || 'ISFJ';
+    
+    let baseScore = 70;
+    
+    // 띠별 기본 운세 (12년 주기)
+    const zodiacCycle = (currentYear - birthYear) % 12;
+    const zodiacScores = [85, 75, 65, 70, 80, 90, 75, 65, 85, 80, 70, 75]; // 12년 주기
+    baseScore = zodiacScores[zodiacCycle];
+    
+    // MBTI별 보정
+    if (mbti.includes('E')) baseScore += 3;
+    if (mbti.includes('J')) baseScore += 2;
+    
+    // 점수 타입별 조정
+    if (scoreType === 'current') {
+      // 현재 달 기준 조정
+      const monthlyAdjustment = [0, -2, 3, 5, 2, -1, -3, 1, 4, 2, -1, 0];
+      baseScore += monthlyAdjustment[currentMonth - 1];
+    } else if (scoreType === 'monthly') {
+      baseScore -= 5; // 월별은 조금 더 보수적
+    } else if (scoreType === 'yearly') {
+      baseScore += 5; // 연간은 조금 더 긍정적
+    }
+    
+    return Math.min(Math.max(baseScore, 55), 95);
   }
 }
 
