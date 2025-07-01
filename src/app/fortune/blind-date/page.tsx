@@ -124,64 +124,84 @@ export default function BlindDatePage() {
   const [result, setResult] = useState<BlindDateResult | null>(null);
 
   const analyzeBlindDate = async (): Promise<BlindDateResult> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
-    
-    return {
-      success_rate: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      chemistry_score: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      conversation_score: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      impression_score: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      insights: {
-        personality_analysis: "당신은 진솔하고 매력적인 성격을 가지고 있어 상대방에게 좋은 인상을 줄 수 있습니다.",
-        strengths: "자연스러운 대화 능력과 상대방을 배려하는 마음이 큰 장점입니다.",
-        areas_to_improve: "첫 만남에서의 긴장감을 줄이고 좀 더 자신감을 가지면 좋겠습니다."
-      },
-      recommendations: {
-        ideal_venues: [
-          "조용한 카페나 티하우스",
-          "브런치 레스토랑",
-          "미술관이나 전시회",
-          "공원에서 산책",
-          "북카페"
-        ],
-        conversation_topics: [
-          "취미와 관심사에 대한 이야기",
-          "여행 경험과 가고 싶은 곳",
-          "좋아하는 음식과 맛집",
-          "최근에 본 영화나 드라마",
-          "일상적인 소소한 이야기"
-        ],
-        style_tips: [
-          "깔끔하고 단정한 옷차림",
-          "너무 화려하지 않은 자연스러운 메이크업",
-          "편안하면서도 매너있는 스타일",
-          "상황에 맞는 적절한 액세서리"
-        ],
-        behavior_tips: [
-          "진솔한 모습으로 대화하기",
-          "상대방의 이야기에 집중하고 공감하기",
-          "적절한 아이컨택 유지하기",
-          "자연스러운 미소 짓기",
-          "휴대폰 사용 자제하기"
+    try {
+      const response = await fetch('/api/fortune/blind-date', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('소개팅 분석에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      return data.analysis || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
+      
+      return {
+        success_rate: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
+        chemistry_score: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
+        conversation_score: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
+        impression_score: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        insights: {
+          personality_analysis: "당신은 진솔하고 매력적인 성격을 가지고 있어 상대방에게 좋은 인상을 줄 수 있습니다.",
+          strengths: "자연스러운 대화 능력과 상대방을 배려하는 마음이 큰 장점입니다.",
+          areas_to_improve: "첫 만남에서의 긴장감을 줄이고 좀 더 자신감을 가지면 좋겠습니다."
+        },
+        recommendations: {
+          ideal_venues: [
+            "조용한 카페나 티하우스",
+            "브런치 레스토랑",
+            "미술관이나 전시회",
+            "공원에서 산책",
+            "북카페"
+          ],
+          conversation_topics: [
+            "취미와 관심사에 대한 이야기",
+            "여행 경험과 가고 싶은 곳",
+            "좋아하는 음식과 맛집",
+            "최근에 본 영화나 드라마",
+            "일상적인 소소한 이야기"
+          ],
+          style_tips: [
+            "깔끔하고 단정한 옷차림",
+            "너무 화려하지 않은 자연스러운 메이크업",
+            "편안하면서도 매너있는 스타일",
+            "상황에 맞는 적절한 액세서리"
+          ],
+          behavior_tips: [
+            "진솔한 모습으로 대화하기",
+            "상대방의 이야기에 집중하고 공감하기",
+            "적절한 아이컨택 유지하기",
+            "자연스러운 미소 짓기",
+            "휴대폰 사용 자제하기"
+          ]
+        },
+        timeline: {
+          best_timing: "오후 2-4시 또는 저녁 6-8시",
+          preparation_period: "만남 1주일 전부터 컨디션 관리",
+          success_indicators: [
+            "대화가 자연스럽게 이어짐",
+            "서로 웃음이 많아짐",
+            "시간 가는 줄 모름",
+            "다음 만남에 대한 언급"
+          ]
+        },
+        warnings: [
+          "과도한 기대는 금물",
+          "첫 만남에서 너무 개인적인 질문 피하기",
+          "과거 연애 이야기는 신중하게",
+          "상대방을 평가하려는 태도 지양"
         ]
-      },
-      timeline: {
-        best_timing: "오후 2-4시 또는 저녁 6-8시",
-        preparation_period: "만남 1주일 전부터 컨디션 관리",
-        success_indicators: [
-          "대화가 자연스럽게 이어짐",
-          "서로 웃음이 많아짐",
-          "시간 가는 줄 모름",
-          "다음 만남에 대한 언급"
-        ]
-      },
-      warnings: [
-        "과도한 기대는 금물",
-        "첫 만남에서 너무 개인적인 질문 피하기",
-        "과거 연애 이야기는 신중하게",
-        "상대방을 평가하려는 태도 지양"
-      ]
-    };
+      };
+    }
   };
 
   const handleSubmit = async () => {

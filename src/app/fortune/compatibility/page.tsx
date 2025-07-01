@@ -96,37 +96,66 @@ export default function CompatibilityPage() {
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
 
   const calculateCompatibility = async (): Promise<CompatibilityResult> => {
-    const baseScore = Math.floor(Math.random() * 40) + 50;
-    
-    return {
-      overallScore: baseScore + Math.floor(Math.random() * 10),
-      loveScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-      marriageScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-      careerScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-      dailyLifeScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-      personality: {
-        person1: "따뜻하고 배려심 많은 성격으로 상대방을 잘 이해합니다.",
-        person2: "적극적이고 리더십이 강해 관계를 주도하는 타입입니다."
-      },
-      strengths: [
-        "서로의 부족한 부분을 잘 보완해 줍니다",
-        "소통과 이해가 원활한 관계입니다",
-        "공통된 가치관과 목표를 가지고 있습니다",
-        "서로를 존중하고 배려하는 마음이 깊습니다"
-      ],
-      challenges: [
-        "때로는 의견 차이로 인한 갈등이 있을 수 있습니다",
-        "서로 다른 성격으로 인해 오해가 생길 수 있습니다",
-        "소통 방식의 차이를 이해하는 노력이 필요합니다"
-      ],
-      advice: "서로의 다름을 인정하고 존중하는 마음가짐이 중요합니다. 작은 배려와 관심이 더 큰 행복을 만들어 갈 것입니다.",
-      luckyElements: {
-        color: "#EC4899",
-        number: Math.floor(Math.random() * 9) + 1,
-        direction: ["동쪽", "서쪽", "남쪽", "북쪽"][Math.floor(Math.random() * 4)],
-        date: "매월 7일, 17일, 27일"
+    try {
+      const response = await fetch('/api/fortune/compatibility', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          person1: {
+            name: person1.name,
+            birth_date: person1.birthDate,
+          },
+          person2: {
+            name: person2.name,
+            birth_date: person2.birthDate,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('궁합 분석에 실패했습니다.');
       }
-    };
+
+      const data = await response.json();
+      return data.compatibility || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const baseScore = Math.floor(Math.random() * 40) + 50;
+      
+      return {
+        overallScore: baseScore + Math.floor(Math.random() * 10),
+        loveScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
+        marriageScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
+        careerScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
+        dailyLifeScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
+        personality: {
+          person1: "따뜻하고 배려심 많은 성격으로 상대방을 잘 이해합니다.",
+          person2: "적극적이고 리더십이 강해 관계를 주도하는 타입입니다."
+        },
+        strengths: [
+          "서로의 부족한 부분을 잘 보완해 줍니다",
+          "소통과 이해가 원활한 관계입니다",
+          "공통된 가치관과 목표를 가지고 있습니다",
+          "서로를 존중하고 배려하는 마음이 깊습니다"
+        ],
+        challenges: [
+          "때로는 의견 차이로 인한 갈등이 있을 수 있습니다",
+          "서로 다른 성격으로 인해 오해가 생길 수 있습니다",
+          "소통 방식의 차이를 이해하는 노력이 필요합니다"
+        ],
+        advice: "서로의 다름을 인정하고 존중하는 마음가짐이 중요합니다. 작은 배려와 관심이 더 큰 행복을 만들어 갈 것입니다.",
+        luckyElements: {
+          color: "#EC4899",
+          number: Math.floor(Math.random() * 9) + 1,
+          direction: ["동쪽", "서쪽", "남쪽", "북쪽"][Math.floor(Math.random() * 4)],
+          date: "매월 7일, 17일, 27일"
+        }
+      };
+    }
   };
 
   const handleSubmit = async () => {

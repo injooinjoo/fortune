@@ -79,18 +79,38 @@ export default function CoupleMatchPage() {
   const [result, setResult] = useState<CoupleResult | null>(null);
 
   const analyzeCouple = async (): Promise<CoupleResult> => {
-    const base = Math.floor(Math.random() * 40) + 50;
-    return {
-      currentFlow: Math.max(40, Math.min(95, base + Math.floor(Math.random() * 20) - 10)),
-      futurePotential: Math.max(50, Math.min(100, base + Math.floor(Math.random() * 20))),
-      advice1: "상대방의 입장을 먼저 생각하고 대화를 이어가면 관계가 더욱 안정됩니다.",
-      advice2: "솔직한 감정 표현이 서로의 신뢰를 높여 줄 것입니다.",
-      tips: [
-        "함께 즐길 수 있는 취미를 찾아보세요",
-        "주기적으로 서로의 고민을 나누는 시간을 가지세요",
-        "작은 선물이나 이벤트로 마음을 표현해 보세요"
-      ]
-    };
+    try {
+      const response = await fetch('/api/fortune/couple-match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('짝궁합 분석에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      return data.analysis || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const base = Math.floor(Math.random() * 40) + 50;
+      return {
+        currentFlow: Math.max(40, Math.min(95, base + Math.floor(Math.random() * 20) - 10)),
+        futurePotential: Math.max(50, Math.min(100, base + Math.floor(Math.random() * 20))),
+        advice1: "상대방의 입장을 먼저 생각하고 대화를 이어가면 관계가 더욱 안정됩니다.",
+        advice2: "솔직한 감정 표현이 서로의 신뢰를 높여 줄 것입니다.",
+        tips: [
+          "함께 즐길 수 있는 취미를 찾아보세요",
+          "주기적으로 서로의 고민을 나누는 시간을 가지세요",
+          "작은 선물이나 이벤트로 마음을 표현해 보세요"
+        ]
+      };
+    }
   };
 
   const handleSubmit = async () => {

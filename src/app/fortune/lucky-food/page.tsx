@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -127,7 +127,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyFoodPage() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -148,17 +148,17 @@ export default function LuckyFoodPage() {
   });
   const [result, setResult] = useState<FoodFortune | null>(null);
 
-  // URL에서 날짜 파라미터 가져오기
+  // URL에서 날짜 파라미터 가져오기 (임시 비활성화)
   useEffect(() => {
-    const dateParam = searchParams?.get('date');
-    if (dateParam) {
-      setSelectedDate(dateParam);
-    } else {
+    // const dateParam = searchParams?.get('date');
+    // if (dateParam) {
+    //   setSelectedDate(dateParam);
+    // } else {
       // 기본값은 오늘 날짜
       const today = new Date().toISOString().split('T')[0];
       setSelectedDate(today);
-    }
-  }, [searchParams]);
+    // }
+  }, []);
 
   const analyzeFoodFortune = async (): Promise<FoodFortune> => {
     const baseScore = Math.floor(Math.random() * 25) + 65;

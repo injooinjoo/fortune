@@ -171,71 +171,128 @@ export default function LuckyGolfPage() {
   const [result, setResult] = useState<GolfFortune | null>(null);
 
   const analyzeGolfFortune = async (): Promise<GolfFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    try {
+      const response = await fetch('/api/fortune/lucky-golf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      driving_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      iron_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      putting_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      course_management_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      analysis: {
-        strength: "차분하고 집중력이 좋아 어려운 상황에서도 안정적인 플레이를 할 수 있습니다.",
-        weakness: "가끔 과도한 완벽주의로 인해 긴장하여 실수할 수 있으니 여유로운 마음가짐이 필요합니다.",
-        opportunity: "꾸준한 연습과 경험으로 비거리와 정확성을 동시에 향상시킬 수 있는 시기입니다.",
-        threat: "날씨나 코스 컨디션에 민감하게 반응할 수 있으니 다양한 상황에 대한 준비가 필요합니다."
-      },
-      lucky_elements: {
-        course_type: courseTypes[Math.floor(Math.random() * courseTypes.length)],
-        tee_time: ["오전 7-9시", "오전 10-12시", "오후 1-3시", "오후 4-6시"][Math.floor(Math.random() * 4)],
-        weather: ["맑음", "구름 조금", "살짝 바람"][Math.floor(Math.random() * 3)],
-        playing_direction: ["북쪽", "동쪽", "남쪽", "서쪽"][Math.floor(Math.random() * 4)]
-      },
-      recommendations: {
-        driving_tips: [
-          "백스윙을 천천히 하여 리듬을 유지하세요",
-          "몸의 중심을 안정적으로 유지하세요",
-          "임팩트 순간 헤드업을 피하세요",
-          "팔로우 스루를 완전히 마무리하세요",
-          "자신의 비거리에 맞는 클럽을 선택하세요"
+      if (!response.ok) {
+        throw new Error('API 호출 실패');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('골프 운세 분석 오류:', error);
+      
+      // 개선된 백업 로직 (개인화된)
+      const birthYear = formData.birth_date ? parseInt(formData.birth_date.substring(0, 4)) : new Date().getFullYear() - 30;
+      const birthMonth = formData.birth_date ? parseInt(formData.birth_date.substring(5, 7)) : 6;
+      const birthDay = formData.birth_date ? parseInt(formData.birth_date.substring(8, 10)) : 15;
+      
+      let baseScore = ((birthYear + birthMonth + birthDay) % 25) + 65;
+      
+      // 핸디캡별 보너스
+      const handicapNum = parseFloat(formData.handicap) || 20;
+      if (handicapNum <= 10) baseScore += 10;
+      else if (handicapNum <= 15) baseScore += 5;
+      
+      // 경험별 보너스
+      if (formData.playing_experience.includes('10년 이상')) baseScore += 12;
+      else if (formData.playing_experience.includes('5-10년')) baseScore += 8;
+      
+      // 클럽 다양성 보너스
+      if (formData.favorite_clubs && formData.favorite_clubs.length >= 4) baseScore += 6;
+      
+      baseScore = Math.max(50, Math.min(95, baseScore));
+
+      return {
+        overall_luck: baseScore,
+        driving_luck: Math.max(45, Math.min(100, baseScore + 3)),
+        iron_luck: Math.max(40, Math.min(95, baseScore)),
+        putting_luck: Math.max(50, Math.min(100, baseScore + 2)),
+        course_management_luck: Math.max(55, Math.min(95, baseScore)),
+        analysis: {
+          strength: "차분하고 집중력이 좋아 어려운 상황에서도 안정적인 플레이를 할 수 있습니다.",
+          weakness: "가끔 과도한 완벽주의로 인해 긴장하여 실수할 수 있으니 여유로운 마음가짐이 필요합니다.",
+          opportunity: "꾸준한 연습과 경험으로 비거리와 정확성을 동시에 향상시킬 수 있는 시기입니다.",
+          threat: "날씨나 코스 컨디션에 민감하게 반응할 수 있으니 다양한 상황에 대한 준비가 필요합니다."
+        },
+        lucky_elements: {
+          course_type: courseTypes[birthMonth % courseTypes.length],
+          tee_time: ["오전 7-9시", "오전 10-12시", "오후 1-3시", "오후 4-6시"][birthDay % 4],
+          weather: ["맑음", "구름 조금", "살짝 바람"][(birthDay + birthMonth) % 3],
+          playing_direction: ["북쪽", "동쪽", "남쪽", "서쪽"][birthMonth % 4]
+        },
+        recommendations: {
+          driving_tips: [
+            formData.playing_style?.includes('파워') ?
+              "파워를 유지하면서도 정확성에 더 집중하세요" :
+              "백스윙을 천천히 하여 리듬을 유지하세요",
+            "몸의 중심을 안정적으로 유지하세요",
+            "임팩트 순간 헤드업을 피하세요",
+            "팔로우 스루를 완전히 마무리하세요",
+            formData.handicap && parseFloat(formData.handicap) > 15 ?
+              "정확성을 우선으로 하여 페어웨이 킵에 집중하세요" :
+              "자신의 비거리에 맞는 클럽을 선택하세요"
+          ],
+          approach_tips: [
+            "핀까지의 정확한 거리를 측정하세요",
+            "그린의 경사와 바람을 고려하세요",
+            formData.playing_style?.includes('안정') ?
+              "안전한 플레이를 유지하되 공격적인 샷도 시도해보세요" :
+              "여유있는 클럽으로 안전하게 플레이하세요",
+            "그린 중앙을 노리는 것이 안전합니다",
+            "볼의 라이를 정확히 판단하세요"
+          ],
+          putting_tips: [
+            "그린의 경사를 충분히 읽으세요",
+            "일정한 템포로 퍼팅하세요",
+            "볼이 굴러가는 라인을 시각화하세요",
+            formData.favorite_clubs?.includes('퍼터') ?
+              "자신감을 가지고 공격적인 퍼팅을 시도하세요" :
+              "숏퍼팅에서는 확신을 가지고 치세요",
+            "롱퍼팅에서는 거리 감각에 집중하세요"
+          ],
+          mental_tips: [
+            "각 샷마다 긍정적인 이미지를 그리세요",
+            "실수를 했을 때 빨리 잊고 다음 샷에 집중하세요",
+            "자신만의 루틴을 만들어 일관성을 유지하세요",
+            formData.golf_goals ?
+              "목표를 명확히 하되 과도한 압박은 피하세요" :
+              "과도한 욕심보다는 현실적인 목표를 설정하세요",
+            "라운딩을 즐기는 마음가짐을 가지세요"
+          ],
+          equipment_advice: [
+            "자신의 스윙 속도에 맞는 샤프트를 선택하세요",
+            "정기적으로 클럽 그립을 점검하고 교체하세요",
+            formData.handicap && parseFloat(formData.handicap) > 15 ?
+              "관용성이 높은 클럽을 선택하는 것이 좋습니다" :
+              "볼의 압축도를 고려하여 선택하세요",
+            "날씨에 맞는 골프웨어를 착용하세요",
+            "골프화 스파이크를 주기적으로 확인하세요"
+          ]
+        },
+        future_predictions: {
+          this_week: "드라이빙 거리가 늘어날 수 있는 좋은 시기입니다. 기본기 연습에 집중하세요.",
+          this_month: "퍼팅 감각이 좋아질 것으로 예상됩니다. 숏게임 연습을 늘려보세요.",
+          this_season: "전반적인 스코어 향상이 기대되는 시즌입니다. 꾸준한 라운딩으로 경험을 쌓으세요."
+        },
+        lucky_holes: [
+          ((birthDay + birthMonth) % 18) + 1,
+          ((birthDay + birthMonth + 3) % 18) + 1,
+          ((birthDay + birthMonth + 6) % 18) + 1
         ],
-        approach_tips: [
-          "핀까지의 정확한 거리를 측정하세요",
-          "그린의 경사와 바람을 고려하세요",
-          "여유있는 클럽으로 안전하게 플레이하세요",
-          "그린 중앙을 노리는 것이 안전합니다",
-          "볼의 라이를 정확히 판단하세요"
-        ],
-        putting_tips: [
-          "그린의 경사를 충분히 읽으세요",
-          "일정한 템포로 퍼팅하세요",
-          "볼이 굴러가는 라인을 시각화하세요",
-          "숏퍼팅에서는 확신을 가지고 치세요",
-          "롱퍼팅에서는 거리 감각에 집중하세요"
-        ],
-        mental_tips: [
-          "각 샷마다 긍정적인 이미지를 그리세요",
-          "실수를 했을 때 빨리 잊고 다음 샷에 집중하세요",
-          "자신만의 루틴을 만들어 일관성을 유지하세요",
-          "과도한 욕심보다는 현실적인 목표를 설정하세요",
-          "라운딩을 즐기는 마음가짐을 가지세요"
-        ],
-        equipment_advice: [
-          "자신의 스윙 속도에 맞는 샤프트를 선택하세요",
-          "정기적으로 클럽 그립을 점검하고 교체하세요",
-          "볼의 압축도를 고려하여 선택하세요",
-          "날씨에 맞는 골프웨어를 착용하세요",
-          "골프화 스파이크를 주기적으로 확인하세요"
+        course_recommendations: [
+          koreanCourses[baseScore % koreanCourses.length],
+          koreanCourses[(baseScore + 7) % koreanCourses.length],
+          koreanCourses[(baseScore + 14) % koreanCourses.length]
         ]
-      },
-      future_predictions: {
-        this_week: "드라이빙 거리가 늘어날 수 있는 좋은 시기입니다. 기본기 연습에 집중하세요.",
-        this_month: "퍼팅 감각이 좋아질 것으로 예상됩니다. 숏게임 연습을 늘려보세요.",
-        this_season: "전반적인 스코어 향상이 기대되는 시즌입니다. 꾸준한 라운딩으로 경험을 쌓으세요."
-      },
-      lucky_holes: Array.from({length: 3}, () => Math.floor(Math.random() * 18) + 1),
-      course_recommendations: koreanCourses.slice().sort(() => 0.5 - Math.random()).slice(0, 3)
-    };
+      };
+    }
   };
 
   const handleSubmit = async () => {

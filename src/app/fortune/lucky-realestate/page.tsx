@@ -165,70 +165,84 @@ export default function LuckyRealEstatePage() {
   const [result, setResult] = useState<RealEstateFortune | null>(null);
 
   const analyzeRealEstateFortune = async (): Promise<RealEstateFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    try {
+      const response = await fetch('/api/fortune/lucky-realestate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      buying_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      selling_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      rental_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      location_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      analysis: {
-        strength: "부동산 시장에 대한 직감이 좋고, 장기적인 안목으로 투자할 수 있는 인내심을 가지고 있습니다.",
-        weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 결단력이 필요합니다.",
-        opportunity: "정부 정책과 시장 변화를 잘 파악하여 새로운 투자 기회를 발견할 수 있는 시기입니다.",
-        risk: "감정적인 투자 결정을 내릴 수 있는 위험이 있으니 항상 객관적인 분석을 바탕으로 해야 합니다."
-      },
-      lucky_elements: {
-        areas: preferredAreas.slice().sort(() => 0.5 - Math.random()).slice(0, 3),
-        property_types: propertyTypes.slice().sort(() => 0.5 - Math.random()).slice(0, 2),
-        timing: ["봄철(3-5월)", "가을철(9-11월)", "연말(11-12월)"][Math.floor(Math.random() * 3)],
-        direction: ["남향", "동남향", "남서향"][Math.floor(Math.random() * 3)],
-        floor_preference: ["중층(5-10층)", "고층(10층 이상)", "저층(1-5층)"][Math.floor(Math.random() * 3)]
-      },
-      recommendations: {
-        investment_tips: [
-          "장기 보유를 전제로 한 투자 계획을 세우세요",
-          "입지와 교통 편의성을 최우선으로 고려하세요",
-          "레버리지 비율을 적절히 조절하여 리스크를 관리하세요",
-          "임대 수익률과 시세 상승률을 균형있게 검토하세요",
-          "정부 정책 변화에 대한 지속적인 모니터링이 필요합니다"
-        ],
-        timing_strategies: [
-          "시장 과열기보다는 조정기에 투자 기회를 찾으세요",
-          "금리 변동과 부동산 정책을 주시하여 타이밍을 잡으세요",
-          "계절적 요인을 고려하여 매매 시점을 조절하세요",
-          "경제 지표와 부동산 시장 동향을 정기적으로 분석하세요",
-          "급매물이나 경매물건도 검토해보세요"
-        ],
-        location_advice: [
-          "교통 개발 계획이 있는 지역을 주목하세요",
-          "학군과 생활 인프라가 우수한 지역을 우선 고려하세요",
-          "재개발이나 재건축 계획이 있는 지역을 체크하세요",
-          "미래 성장 가능성이 높은 신도시나 택지개발지구를 살펴보세요",
-          "임대 수요가 안정적인 지역을 선택하세요"
-        ],
-        risk_management: [
-          "투자 금액의 한도를 미리 정하고 준수하세요",
-          "대출 비율을 소득 대비 적정 수준으로 유지하세요",
-          "여러 지역이나 물건 유형으로 분산 투자하세요",
-          "시장 상황에 따른 출구 전략을 미리 수립하세요",
-          "전문가 자문을 받아 객관적인 판단을 하세요"
+      if (!response.ok) {
+        throw new Error('API 요청 실패');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('API 호출 중 오류:', error);
+      
+      // Fallback: 기본 응답 반환
+      const baseScore = 70;
+      const preferredAreas = ["강남구", "서초구", "송파구", "마포구", "성동구"];
+      const propertyTypes = ["아파트", "오피스텔", "주택"];
+      
+      return {
+        overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
+        buying_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
+        selling_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
+        rental_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        location_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+        analysis: {
+          strength: "부동산 시장에 대한 직감이 좋고, 장기적인 안목으로 투자할 수 있는 인내심을 가지고 있습니다.",
+          weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 결단력이 필요합니다.",
+          opportunity: "정부 정책과 시장 변화를 잘 파악하여 새로운 투자 기회를 발견할 수 있는 시기입니다.",
+          risk: "감정적인 투자 결정을 내릴 수 있는 위험이 있으니 항상 객관적인 분석을 바탕으로 해야 합니다."
+        },
+        lucky_elements: {
+          areas: preferredAreas.slice(0, 3),
+          property_types: propertyTypes.slice(0, 2),
+          timing: "봄철(3-5월)",
+          direction: "남향",
+          floor_preference: "중층(5-10층)"
+        },
+        recommendations: {
+          investment_tips: [
+            "장기 보유를 전제로 한 투자 계획을 세우세요",
+            "입지와 교통 편의성을 최우선으로 고려하세요",
+            "레버리지 비율을 적절히 조절하여 리스크를 관리하세요"
+          ],
+          timing_strategies: [
+            "시장 과열기보다는 조정기에 투자 기회를 찾으세요",
+            "금리 변동과 부동산 정책을 주시하여 타이밍을 잡으세요",
+            "계절적 요인을 고려하여 매매 시점을 조절하세요"
+          ],
+          location_advice: [
+            "교통 개발 계획이 있는 지역을 주목하세요",
+            "학군과 생활 인프라가 우수한 지역을 우선 고려하세요",
+            "재개발이나 재건축 계획이 있는 지역을 체크하세요"
+          ],
+          risk_management: [
+            "투자 금액의 한도를 미리 정하고 준수하세요",
+            "대출 비율을 소득 대비 적정 수준으로 유지하세요",
+            "여러 지역이나 물건 유형으로 분산 투자하세요"
+          ]
+        },
+        future_predictions: {
+          this_month: "신중한 검토가 필요한 시기입니다. 서두르지 말고 충분히 조사한 후 결정하세요.",
+          next_quarter: "좋은 투자 기회가 나타날 수 있습니다. 평소 관심 지역의 시장 동향을 주의깊게 살펴보세요.",
+          this_year: "장기적인 관점에서 안정적인 수익을 기대할 수 있는 해입니다. 꾸준한 투자로 자산을 늘려가세요."
+        },
+        warning_signs: [
+          "과도한 레버리지 투자는 피하세요",
+          "감정적 판단보다는 객관적 데이터에 의존하세요",
+          "유행이나 소문에만 의존한 투자는 위험합니다",
+          "단기 차익을 노린 무리한 투자는 자제하세요",
+          "본인의 재정 능력을 넘어서는 투자는 금물입니다"
         ]
-      },
-      future_predictions: {
-        this_month: "신중한 검토가 필요한 시기입니다. 서두르지 말고 충분히 조사한 후 결정하세요.",
-        next_quarter: "좋은 투자 기회가 나타날 수 있습니다. 평소 관심 지역의 시장 동향을 주의깊게 살펴보세요.",
-        this_year: "장기적인 관점에서 안정적인 수익을 기대할 수 있는 해입니다. 꾸준한 투자로 자산을 늘려가세요."
-      },
-      warning_signs: [
-        "과도한 레버리지 투자는 피하세요",
-        "감정적 판단보다는 객관적 데이터에 의존하세요",
-        "유행이나 소문에만 의존한 투자는 위험합니다",
-        "단기 차익을 노린 무리한 투자는 자제하세요",
-        "본인의 재정 능력을 넘어서는 투자는 금물입니다"
-      ]
-    };
+      };
+    }
   };
 
   const handleSubmit = async () => {

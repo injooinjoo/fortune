@@ -70,60 +70,83 @@ export default function CelebrityFortunePage() {
   const [result, setResult] = useState<CelebrityFortuneResult | null>(null);
 
   const generateFortune = async (info: CelebrityInfo): Promise<CelebrityFortuneResult> => {
-    // 유명인 카테고리 자동 추정
-    const getCategory = (name: string): string => {
-      if (name.includes("BTS") || name.includes("블랙핑크") || name.includes("뉴진스") || name.includes("aespa") || name.includes("스트레이키즈")) return "K-POP 그룹";
-      if (["아이유", "태연", "박효신", "이승기"].includes(name)) return "가수";
-      if (["손흥민", "김연아", "박세리", "류현진"].includes(name)) return "스포츠 스타";
-      if (["박서준", "김고은", "이병헌", "전지현", "송중기", "박보영"].includes(name)) return "배우";
-      if (["유재석", "강호동", "박나래", "김구라"].includes(name)) return "방송인";
-      return "연예인";
-    };
+    try {
+      const response = await fetch('/api/fortune/celebrity', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          celebrity_name: info.name,
+          user_name: "게스트",
+          birth_date: new Date().toISOString().split('T')[0],
+          category: info.category,
+        }),
+      });
 
-    const category = info.category || getCategory(info.name);
-    
-    // 이모지 매핑
-    const getEmoji = (category: string): string => {
-      switch (category) {
-        case "K-POP 그룹": return "🎤";
-        case "가수": return "🎵";
-        case "스포츠 스타": return "🏆";
-        case "배우": return "🎭";
-        case "방송인": return "📺";
-        default: return "⭐";
+      if (!response.ok) {
+        throw new Error('운세 생성에 실패했습니다.');
       }
-    };
 
-    const descriptions = [
-      "창의적이고 열정적인 에너지가 넘치는 시기입니다.",
-      "안정적이고 꾸준한 성장을 이어가는 단계입니다.",
-      "새로운 도전과 변화가 기다리는 흥미진진한 때입니다.",
-      "내면의 힘을 발견하고 잠재력을 발휘하는 시기입니다.",
-      "주변과의 조화를 이루며 영향력을 확대하는 단계입니다."
-    ];
+      const data = await response.json();
+      return data.fortune || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const getCategory = (name: string): string => {
+        if (name.includes("BTS") || name.includes("블랙핑크") || name.includes("뉴진스") || name.includes("aespa") || name.includes("스트레이키즈")) return "K-POP 그룹";
+        if (["아이유", "태연", "박효신", "이승기"].includes(name)) return "가수";
+        if (["손흥민", "김연아", "박세리", "류현진"].includes(name)) return "스포츠 스타";
+        if (["박서준", "김고은", "이병헌", "전지현", "송중기", "박보영"].includes(name)) return "배우";
+        if (["유재석", "강호동", "박나래", "김구라"].includes(name)) return "방송인";
+        return "연예인";
+      };
 
-    return {
-      celebrity: {
-        name: info.name,
-        category,
-        description: descriptions[Math.floor(Math.random() * descriptions.length)],
-        emoji: getEmoji(category),
-      },
-      todayScore: Math.floor(Math.random() * 30) + 70,
-      weeklyScore: Math.floor(Math.random() * 30) + 70,
-      monthlyScore: Math.floor(Math.random() * 30) + 70,
-      summary: `${info.name}님의 운세는 전반적으로 상승세를 보이고 있습니다. 특히 창의적인 활동에서 좋은 결과를 얻을 수 있을 것입니다.`,
-      luckyTime: "오후 3시 ~ 6시",
-      luckyColor: "#FFD700",
-      luckyItem: "골드 액세서리",
-      advice: `${info.name}님처럼 꾸준한 노력과 진정성 있는 태도로 목표를 향해 나아가세요. 팬들과의 소통을 소중히 여기는 마음이 더 큰 성공을 가져다줄 것입니다.`,
-      predictions: {
-        love: "진정한 사랑을 만날 수 있는 기회가 생기며, 기존 관계에서도 더 깊은 유대감을 느낄 것입니다.",
-        career: "새로운 프로젝트나 협업 기회가 찾아오며, 창의적인 아이디어가 큰 호응을 얻을 것입니다.",
-        wealth: "꾸준한 활동의 결실로 안정적인 수입이 보장되고, 새로운 수익원도 생길 것입니다.",
-        health: "규칙적인 생활과 적절한 휴식으로 컨디션이 좋아지며, 스트레스 관리가 중요합니다.",
-      },
-    };
+      const category = info.category || getCategory(info.name);
+      
+      const getEmoji = (category: string): string => {
+        switch (category) {
+          case "K-POP 그룹": return "🎤";
+          case "가수": return "🎵";
+          case "스포츠 스타": return "🏆";
+          case "배우": return "🎭";
+          case "방송인": return "📺";
+          default: return "⭐";
+        }
+      };
+
+      const descriptions = [
+        "창의적이고 열정적인 에너지가 넘치는 시기입니다.",
+        "안정적이고 꾸준한 성장을 이어가는 단계입니다.",
+        "새로운 도전과 변화가 기다리는 흥미진진한 때입니다.",
+        "내면의 힘을 발견하고 잠재력을 발휘하는 시기입니다.",
+        "주변과의 조화를 이루며 영향력을 확대하는 단계입니다."
+      ];
+
+      return {
+        celebrity: {
+          name: info.name,
+          category,
+          description: descriptions[Math.floor(Math.random() * descriptions.length)],
+          emoji: getEmoji(category),
+        },
+        todayScore: Math.floor(Math.random() * 30) + 70,
+        weeklyScore: Math.floor(Math.random() * 30) + 70,
+        monthlyScore: Math.floor(Math.random() * 30) + 70,
+        summary: `${info.name}님의 운세는 전반적으로 상승세를 보이고 있습니다. 특히 창의적인 활동에서 좋은 결과를 얻을 수 있을 것입니다.`,
+        luckyTime: "오후 3시 ~ 6시",
+        luckyColor: "#FFD700",
+        luckyItem: "골드 액세서리",
+        advice: `${info.name}님처럼 꾸준한 노력과 진정성 있는 태도로 목표를 향해 나아가세요. 팬들과의 소통을 소중히 여기는 마음이 더 큰 성공을 가져다줄 것입니다.`,
+        predictions: {
+          love: "진정한 사랑을 만날 수 있는 기회가 생기며, 기존 관계에서도 더 깊은 유대감을 느낄 것입니다.",
+          career: "새로운 프로젝트나 협업 기회가 찾아오며, 창의적인 아이디어가 큰 호응을 얻을 것입니다.",
+          wealth: "꾸준한 활동의 결실로 안정적인 수입이 보장되고, 새로운 수익원도 생길 것입니다.",
+          health: "규칙적인 생활과 적절한 휴식으로 컨디션이 좋아지며, 스트레스 관리가 중요합니다.",
+        },
+      };
+    }
   };
 
   const handleSubmit = async () => {

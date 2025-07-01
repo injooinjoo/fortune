@@ -104,43 +104,63 @@ export default function ExLoverPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
   const analyzeExLover = async (): Promise<AnalysisResult> => {
-    const baseScore = Math.floor(Math.random() * 30) + 40;
-    
-    return {
-      closure_score: Math.max(20, Math.min(100, baseScore + Math.floor(Math.random() * 20))),
-      reconciliation_chance: Math.max(10, Math.min(90, baseScore + Math.floor(Math.random() * 30) - 15)),
-      emotional_healing: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 25))),
-      future_relationship_impact: Math.max(25, Math.min(95, baseScore + Math.floor(Math.random() * 20))),
-      insights: {
-        current_status: "현재 과거의 관계에 대한 감정적 정리가 어느 정도 진행되고 있습니다.",
-        emotional_state: "여전히 그리움과 아쉬움이 남아있지만, 점차 자신만의 삶을 찾아가고 있는 상태입니다.",
-        advice: "과거를 완전히 놓아주고 새로운 시작을 위한 준비를 하는 것이 좋겠습니다."
-      },
-      closure_activities: [
-        "편지 쓰기 (보내지 않고 태우기)",
-        "함께했던 추억의 물건 정리하기",
-        "새로운 취미나 관심사 찾기",
-        "친구들과의 시간 늘리기",
-        "자기계발에 집중하기"
-      ],
-      warning_signs: [
-        "계속해서 연락을 시도하고 싶은 충동",
-        "SNS를 통한 지속적인 관찰",
-        "공통 지인들을 통한 소식 확인",
-        "비슷한 유형의 사람에게만 관심"
-      ],
-      positive_aspects: [
-        "관계를 통해 자신에 대해 더 잘 알게 됨",
-        "사랑하는 방법을 배웠음",
-        "성숙한 이별을 경험함",
-        "앞으로 더 건강한 관계를 맺을 수 있는 기반 마련"
-      ],
-      timeline: {
-        healing_phase: "회복 진행 단계",
-        duration: "3-6개월",
-        next_steps: "새로운 관계에 대한 마음의 준비가 되어가는 시기"
+    try {
+      const response = await fetch('/api/fortune/ex-lover', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('헤어진 애인 분석에 실패했습니다.');
       }
-    };
+
+      const data = await response.json();
+      return data.analysis || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const baseScore = Math.floor(Math.random() * 30) + 40;
+      
+      return {
+        closure_score: Math.max(20, Math.min(100, baseScore + Math.floor(Math.random() * 20))),
+        reconciliation_chance: Math.max(10, Math.min(90, baseScore + Math.floor(Math.random() * 30) - 15)),
+        emotional_healing: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 25))),
+        future_relationship_impact: Math.max(25, Math.min(95, baseScore + Math.floor(Math.random() * 20))),
+        insights: {
+          current_status: "현재 과거의 관계에 대한 감정적 정리가 어느 정도 진행되고 있습니다.",
+          emotional_state: "여전히 그리움과 아쉬움이 남아있지만, 점차 자신만의 삶을 찾아가고 있는 상태입니다.",
+          advice: "과거를 완전히 놓아주고 새로운 시작을 위한 준비를 하는 것이 좋겠습니다."
+        },
+        closure_activities: [
+          "편지 쓰기 (보내지 않고 태우기)",
+          "함께했던 추억의 물건 정리하기",
+          "새로운 취미나 관심사 찾기",
+          "친구들과의 시간 늘리기",
+          "자기계발에 집중하기"
+        ],
+        warning_signs: [
+          "계속해서 연락을 시도하고 싶은 충동",
+          "SNS를 통한 지속적인 관찰",
+          "공통 지인들을 통한 소식 확인",
+          "비슷한 유형의 사람에게만 관심"
+        ],
+        positive_aspects: [
+          "관계를 통해 자신에 대해 더 잘 알게 됨",
+          "사랑하는 방법을 배웠음",
+          "성숙한 이별을 경험함",
+          "앞으로 더 건강한 관계를 맺을 수 있는 기반 마련"
+        ],
+        timeline: {
+          healing_phase: "회복 진행 단계",
+          duration: "3-6개월",
+          next_steps: "새로운 관계에 대한 마음의 준비가 되어가는 시기"
+        }
+      };
+    }
   };
 
   const handleSubmit = async () => {

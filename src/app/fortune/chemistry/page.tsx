@@ -152,57 +152,77 @@ export default function ChemistryPage() {
   const [result, setResult] = useState<ChemistryResult | null>(null);
 
   const analyzeChemistry = async (): Promise<ChemistryResult> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
-    
-    return {
-      overall_chemistry: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      physical_attraction: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      emotional_connection: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      passion_intensity: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      compatibility_level: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      intimacy_potential: Math.max(60, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      insights: {
-        strengths: "두 분의 에너지가 매우 조화로우며, 서로에 대한 깊은 이해와 신뢰를 바탕으로 한 친밀감이 돋보입니다.",
-        challenges: "때로는 감정 표현 방식의 차이로 인해 오해가 생길 수 있으니, 더욱 솔직하고 개방적인 소통이 필요합니다.",
-        enhancement_tips: "서로의 욕구와 선호도를 더 깊이 이해하고, 새로운 경험을 함께 시도해보는 것이 관계 발전에 도움이 됩니다."
-      },
-      detailed_analysis: {
-        physical_chemistry: "신체적 매력과 끌림이 강하며, 서로에게 자연스럽게 이끌리는 에너지를 가지고 있습니다.",
-        emotional_bond: "감정적으로 깊이 연결되어 있으며, 서로의 마음을 잘 이해하고 공감하는 능력이 뛰어납니다.",
-        passion_dynamics: "열정적인 관계를 유지할 수 있는 잠재력이 크며, 서로를 자극하고 발전시키는 역동성이 있습니다.",
-        intimacy_forecast: "시간이 지날수록 더욱 깊어질 수 있는 친밀감의 가능성이 높으며, 지속적인 관심과 노력으로 발전할 수 있습니다."
-      },
-      recommendations: {
-        enhancement_activities: [
-          "함께하는 새로운 취미나 활동 시도하기",
-          "정기적인 데이트 시간 확보하기",
-          "서로의 관심사에 대해 더 깊이 알아가기",
-          "감정을 솔직하게 표현하는 시간 갖기",
-          "로맨틱한 분위기 조성하기"
+    try {
+      const response = await fetch('/api/fortune/chemistry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('속궁합 분석에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      return data.analysis || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
+      
+      return {
+        overall_chemistry: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
+        physical_attraction: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
+        emotional_connection: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
+        passion_intensity: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        compatibility_level: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+        intimacy_potential: Math.max(60, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        insights: {
+          strengths: "두 분의 에너지가 매우 조화로우며, 서로에 대한 깊은 이해와 신뢰를 바탕으로 한 친밀감이 돋보입니다.",
+          challenges: "때로는 감정 표현 방식의 차이로 인해 오해가 생길 수 있으니, 더욱 솔직하고 개방적인 소통이 필요합니다.",
+          enhancement_tips: "서로의 욕구와 선호도를 더 깊이 이해하고, 새로운 경험을 함께 시도해보는 것이 관계 발전에 도움이 됩니다."
+        },
+        detailed_analysis: {
+          physical_chemistry: "신체적 매력과 끌림이 강하며, 서로에게 자연스럽게 이끌리는 에너지를 가지고 있습니다.",
+          emotional_bond: "감정적으로 깊이 연결되어 있으며, 서로의 마음을 잘 이해하고 공감하는 능력이 뛰어납니다.",
+          passion_dynamics: "열정적인 관계를 유지할 수 있는 잠재력이 크며, 서로를 자극하고 발전시키는 역동성이 있습니다.",
+          intimacy_forecast: "시간이 지날수록 더욱 깊어질 수 있는 친밀감의 가능성이 높으며, 지속적인 관심과 노력으로 발전할 수 있습니다."
+        },
+        recommendations: {
+          enhancement_activities: [
+            "함께하는 새로운 취미나 활동 시도하기",
+            "정기적인 데이트 시간 확보하기",
+            "서로의 관심사에 대해 더 깊이 알아가기",
+            "감정을 솔직하게 표현하는 시간 갖기",
+            "로맨틱한 분위기 조성하기"
+          ],
+          communication_tips: [
+            "상대방의 감정을 먼저 이해하려 노력하기",
+            "비판보다는 격려와 지지 표현하기",
+            "욕구와 바람을 솔직하게 이야기하기",
+            "갈등 상황에서도 존중하는 태도 유지하기",
+            "정기적인 관계 점검 시간 갖기"
+          ],
+          intimacy_advice: [
+            "서로의 경계와 선호도 존중하기",
+            "새로운 경험에 대해 열린 마음 갖기",
+            "충분한 시간과 여유 확보하기",
+            "감정적 친밀감 먼저 쌓기",
+            "상대방의 반응에 세심하게 주의 기울이기"
+          ]
+        },
+        warnings: [
+          "성급한 진전보다는 서로를 충분히 이해하는 시간 필요",
+          "상대방의 의사를 존중하지 않는 강요는 금물",
+          "감정적 상처를 줄 수 있는 말이나 행동 주의",
+          "외부 스트레스가 관계에 영향을 주지 않도록 관리"
         ],
-        communication_tips: [
-          "상대방의 감정을 먼저 이해하려 노력하기",
-          "비판보다는 격려와 지지 표현하기",
-          "욕구와 바람을 솔직하게 이야기하기",
-          "갈등 상황에서도 존중하는 태도 유지하기",
-          "정기적인 관계 점검 시간 갖기"
-        ],
-        intimacy_advice: [
-          "서로의 경계와 선호도 존중하기",
-          "새로운 경험에 대해 열린 마음 갖기",
-          "충분한 시간과 여유 확보하기",
-          "감정적 친밀감 먼저 쌓기",
-          "상대방의 반응에 세심하게 주의 기울이기"
-        ]
-      },
-      warnings: [
-        "성급한 진전보다는 서로를 충분히 이해하는 시간 필요",
-        "상대방의 의사를 존중하지 않는 강요는 금물",
-        "감정적 상처를 줄 수 있는 말이나 행동 주의",
-        "외부 스트레스가 관계에 영향을 주지 않도록 관리"
-      ],
-      compatibility_percentage: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20)))
-    };
+        compatibility_percentage: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20)))
+      };
+    }
   };
 
   const handleSubmit = async () => {

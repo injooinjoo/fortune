@@ -93,22 +93,42 @@ export default function CelebrityMatchPage() {
   const [result, setResult] = useState<CelebrityResult | null>(null);
 
   const analyze = async (): Promise<CelebrityResult> => {
-    const score = Math.floor(Math.random() * 61) + 20; // 20 ~ 80
-    const comments = [
-      "이 조합, 팬미팅에서 자주 보게 될 운명?!",
-      "마치 예능 한 장면 같은 케미입니다.",
-      "친구로 지내기 딱 좋은 관계일지도 몰라요.",
-      "이렇게 되면 온라인 밈이 될 수도?!",
-    ];
-    const items = ["마이크", "사인 앨범", "응원봉", "팬레터", "포토카드"];
-    const colors = ["#F87171", "#FBBF24", "#34D399", "#60A5FA", "#A78BFA"];
+    try {
+      const response = await fetch('/api/fortune/celebrity-match', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(info),
+      });
 
-    return {
-      score,
-      comment: comments[Math.floor(Math.random() * comments.length)],
-      luckyColor: colors[Math.floor(Math.random() * colors.length)],
-      luckyItem: items[Math.floor(Math.random() * items.length)],
-    };
+      if (!response.ok) {
+        throw new Error('연예인 궁합 분석에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      return data.analysis || data;
+    } catch (error) {
+      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      
+      // GPT 실패시 기본 로직
+      const score = Math.floor(Math.random() * 61) + 20; // 20 ~ 80
+      const comments = [
+        "이 조합, 팬미팅에서 자주 보게 될 운명?!",
+        "마치 예능 한 장면 같은 케미입니다.",
+        "친구로 지내기 딱 좋은 관계일지도 몰라요.",
+        "이렇게 되면 온라인 밈이 될 수도?!",
+      ];
+      const items = ["마이크", "사인 앨범", "응원봉", "팬레터", "포토카드"];
+      const colors = ["#F87171", "#FBBF24", "#34D399", "#60A5FA", "#A78BFA"];
+
+      return {
+        score,
+        comment: comments[Math.floor(Math.random() * comments.length)],
+        luckyColor: colors[Math.floor(Math.random() * colors.length)],
+        luckyItem: items[Math.floor(Math.random() * items.length)],
+      };
+    }
   };
 
   const handleSubmit = async () => {

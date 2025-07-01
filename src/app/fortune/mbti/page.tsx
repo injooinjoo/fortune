@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useForm, Controller } from "react-hook-form";
+import toast from 'react-hot-toast';
+import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import AppHeader from "@/components/AppHeader";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,90 +22,333 @@ import {
   AlertCircleIcon,
   BrainIcon,
   UsersIcon,
-  TargetIcon
+  TargetIcon,
+  RefreshCwIcon,
+  SparklesIcon,
+  ClockIcon
 } from "lucide-react";
 
-// MBTI 유형별 데이터
+// MBTI 유형별 데이터 (UI 전용)
 const MBTI_TYPES = {
-  INTJ: { name: "건축가", color: "purple", emoji: "🏗️" },
-  INTP: { name: "논리술사", color: "indigo", emoji: "🔬" },
-  ENTJ: { name: "통솔자", color: "red", emoji: "👑" },
-  ENTP: { name: "변론가", color: "orange", emoji: "💡" },
-  INFJ: { name: "옹호자", color: "green", emoji: "🌱" },
-  INFP: { name: "중재자", color: "pink", emoji: "🎨" },
-  ENFJ: { name: "선도자", color: "blue", emoji: "🌟" },
-  ENFP: { name: "활동가", color: "yellow", emoji: "🎭" },
-  ISTJ: { name: "현실주의자", color: "gray", emoji: "📋" },
-  ISFJ: { name: "수호자", color: "teal", emoji: "🛡️" },
-  ESTJ: { name: "경영자", color: "emerald", emoji: "📊" },
-  ESFJ: { name: "집정관", color: "rose", emoji: "🤝" },
-  ISTP: { name: "만능재주꾼", color: "slate", emoji: "🔧" },
-  ISFP: { name: "모험가", color: "cyan", emoji: "🌸" },
-  ESTP: { name: "사업가", color: "amber", emoji: "⚡" },
-  ESFP: { name: "연예인", color: "lime", emoji: "🎪" }
+  INTJ: { name: "건축가", color: "purple", emoji: "🏗️", element: "직관 + 사고" },
+  INTP: { name: "논리술사", color: "indigo", emoji: "🔬", element: "직관 + 사고" },
+  ENTJ: { name: "통솔자", color: "red", emoji: "👑", element: "직관 + 사고" },
+  ENTP: { name: "변론가", color: "orange", emoji: "💡", element: "직관 + 사고" },
+  INFJ: { name: "옹호자", color: "green", emoji: "🌱", element: "직관 + 감정" },
+  INFP: { name: "중재자", color: "pink", emoji: "🎨", element: "직관 + 감정" },
+  ENFJ: { name: "선도자", color: "blue", emoji: "🌟", element: "직관 + 감정" },
+  ENFP: { name: "활동가", color: "yellow", emoji: "🎭", element: "직관 + 감정" },
+  ISTJ: { name: "현실주의자", color: "gray", emoji: "📋", element: "감각 + 사고" },
+  ISFJ: { name: "수호자", color: "teal", emoji: "🛡️", element: "감각 + 감정" },
+  ESTJ: { name: "경영자", color: "emerald", emoji: "📊", element: "감각 + 사고" },
+  ESFJ: { name: "집정관", color: "rose", emoji: "🤝", element: "감각 + 감정" },
+  ISTP: { name: "만능재주꾼", color: "slate", emoji: "🔧", element: "감각 + 사고" },
+  ISFP: { name: "모험가", color: "cyan", emoji: "🌸", element: "감각 + 감정" },
+  ESTP: { name: "사업가", color: "amber", emoji: "⚡", element: "감각 + 사고" },
+  ESFP: { name: "연예인", color: "lime", emoji: "🎪", element: "감각 + 감정" }
 };
 
-const WEEKLY_FORTUNE = {
-  INTJ: {
-    overall: 85,
-    love: 75,
-    career: 92,
-    wealth: 80,
-    summary: "체계적인 계획이 빛을 발하는 한 주입니다.",
-    keyword: ["계획", "성취", "통찰"],
-    advice: "장기적 관점에서 현재 상황을 바라보세요. 당신의 전략적 사고가 큰 성과로 이어질 것입니다."
-  },
-  ENFP: {
-    overall: 78,
-    love: 88,
-    career: 70,
-    wealth: 65,
-    summary: "새로운 인연과 기회가 가득한 활기찬 주간입니다.",
-    keyword: ["열정", "소통", "창의"],
-    advice: "호기심을 따라가세요. 예상치 못한 만남이 새로운 가능성을 열어줄 것입니다."
-  }
-  // 나머지 유형들도 추가 가능
-};
+interface MBTIFormData {
+  mbti: string;
+  name: string;
+  includeCareer: boolean;
+  includeLove: boolean;
+  includeWealth: boolean;
+}
 
 export default function MbtiFortunePage() {
   const [selectedMBTI, setSelectedMBTI] = useState<string>("");
-  const [currentFortune, setCurrentFortune] = useState<any>(null);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [lastGenerated, setLastGenerated] = useState<Date | null>(null);
 
-  useEffect(() => {
-    // 새로운 사용자 스토리지에서 MBTI 불러오기
+  // Context7 최적화 패턴: useForm 활용
+  const { control, handleSubmit, watch, setValue, reset } = useForm<MBTIFormData>({
+    mode: 'onChange',
+    defaultValues: {
+      mbti: '',
+      name: '',
+      includeCareer: true,
+      includeLove: true,
+      includeWealth: true
+    }
+  });
+
+  // Context7 패턴: 특정 필드만 구독
+  const watchedMBTI = watch('mbti');
+
+  // 향상된 운세 Hook 사용
+  const {
+    control: fortuneControl,
+    isGenerating,
+    progress,
+    result,
+    error,
+    generateFortune,
+    checkCache,
+    reset: resetFortune
+  } = useFortuneStream({
+    packageType: 'single',
+    enableCache: true,
+    cacheDuration: 1440, // 24시간 캐시
+    onSuccess: () => {
+      setLastGenerated(new Date());
+      toast.success('🔮 MBTI 운세가 완성되었습니다!', {
+        duration: 3000,
+        icon: '✨'
+      });
+    },
+    onError: (error) => {
+      toast.error(`운세 생성 실패: ${error.message}`, {
+        duration: 5000
+      });
+    }
+  });
+
+  // Context7 패턴: useCallback으로 함수 최적화
+  const loadUserData = useCallback(() => {
     try {
       const { getUserInfo } = require("@/lib/user-storage");
       const userInfo = getUserInfo();
+      
       if (userInfo.mbti) {
         setSelectedMBTI(userInfo.mbti);
-        setCurrentFortune(WEEKLY_FORTUNE[userInfo.mbti as keyof typeof WEEKLY_FORTUNE] || WEEKLY_FORTUNE.ENFP);
+        setValue('mbti', userInfo.mbti);
+      }
+      if (userInfo.name) {
+        setValue('name', userInfo.name);
       }
     } catch (error) {
-      console.error("Failed to load user MBTI:", error);
+      console.warn("사용자 데이터 로드 실패:", error);
     }
-  }, []);
+  }, [setValue]);
 
-  const handleMBTISelect = (mbti: string) => {
+  useEffect(() => {
+    loadUserData();
+  }, [loadUserData]);
+
+  // Context7 패턴: 메모이제이션된 MBTI 선택 핸들러
+  const handleMBTISelect = useCallback((mbti: string) => {
     setSelectedMBTI(mbti);
-    setCurrentFortune(WEEKLY_FORTUNE[mbti as keyof typeof WEEKLY_FORTUNE] || WEEKLY_FORTUNE.ENFP);
+    setValue('mbti', mbti);
     
-    // 새로운 사용자 스토리지에 MBTI 저장
+    // 사용자 스토리지에 저장
     try {
       const { saveUserInfo } = require("@/lib/user-storage");
       saveUserInfo({ mbti });
     } catch (error) {
-      console.error("Failed to save MBTI:", error);
+      console.warn("MBTI 저장 실패:", error);
     }
+  }, [setValue]);
+
+  // Context7 패턴: Promise toast를 활용한 운세 생성
+  const onSubmit = useCallback(async (data: MBTIFormData) => {
+    if (!data.mbti || !data.name) {
+      toast.error('MBTI와 이름을 모두 입력해주세요!');
+      return;
+    }
+
+    // 캐시 확인
+    const cachedResult = checkCache({
+      category: 'mbti',
+      userInfo: {
+        mbti: data.mbti,
+        name: data.name
+      },
+      packageType: 'single'
+    });
+
+    if (cachedResult) {
+      return;
+    }
+
+    // 새로운 GPT 연동 운세 생성
+    await generateFortune({
+      category: 'mbti',
+      userInfo: {
+        mbti: data.mbti,
+        name: data.name,
+        preferences: {
+          includeCareer: data.includeCareer,
+          includeLove: data.includeLove,
+          includeWealth: data.includeWealth
+        }
+      },
+      packageType: 'single'
+    });
+  }, [generateFortune, checkCache]);
+
+  // 결과 렌더링 함수
+  const renderFortuneResult = () => {
+    if (!result?.mbti) return null;
+
+    const fortune = result.mbti;
+    const mbtiInfo = MBTI_TYPES[watchedMBTI as keyof typeof MBTI_TYPES];
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mt-8 space-y-6"
+      >
+        {/* MBTI 정보 카드 */}
+        <Card className="border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50">
+          <CardHeader className="text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <span className="text-4xl">{mbtiInfo?.emoji}</span>
+              <div>
+                <h2 className="text-2xl font-bold text-violet-700">{watchedMBTI}</h2>
+                <p className="text-violet-600">{mbtiInfo?.name}</p>
+                <p className="text-sm text-violet-500">{mbtiInfo?.element}</p>
+              </div>
+            </div>
+            {lastGenerated && (
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+                <ClockIcon className="h-4 w-4" />
+                마지막 업데이트: {lastGenerated.toLocaleString('ko-KR')}
+              </div>
+            )}
+          </CardHeader>
+        </Card>
+
+        {/* 종합 운세 */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <StarIcon className="h-5 w-5 text-yellow-500" />
+              종합 운세
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">전체 운세</span>
+                <span className="text-lg font-bold text-violet-600">
+                  {fortune.overall_score || 85}점
+                </span>
+              </div>
+              <Progress 
+                value={fortune.overall_score || 85} 
+                className="h-2"
+              />
+            </div>
+            
+            <p className="text-gray-700 leading-relaxed mb-4">
+              {fortune.summary || "AI가 생성한 개인 맞춤 운세입니다."}
+            </p>
+
+            {fortune.keywords && (
+              <div className="flex flex-wrap gap-2">
+                {fortune.keywords.map((keyword: string, index: number) => (
+                  <Badge key={index} variant="secondary" className="bg-violet-100 text-violet-700">
+                    {keyword}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 세부 운세 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="bg-red-50 border-red-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <HeartIcon className="h-5 w-5 text-red-500" />
+                연애운
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center mb-3">
+                <span className="text-2xl font-bold text-red-600">
+                  {fortune.love_score || 78}점
+                </span>
+              </div>
+              <Progress value={fortune.love_score || 78} className="h-2 mb-3" />
+              <p className="text-sm text-gray-600">
+                {fortune.love_advice || "새로운 인연의 기회가 찾아올 것입니다."}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-blue-50 border-blue-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BriefcaseIcon className="h-5 w-5 text-blue-500" />
+                직업운
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center mb-3">
+                <span className="text-2xl font-bold text-blue-600">
+                  {fortune.career_score || 82}점
+                </span>
+              </div>
+              <Progress value={fortune.career_score || 82} className="h-2 mb-3" />
+              <p className="text-sm text-gray-600">
+                {fortune.career_advice || "새로운 도전이 성공으로 이어질 것입니다."}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-green-50 border-green-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <CoinsIcon className="h-5 w-5 text-green-500" />
+                재물운
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center mb-3">
+                <span className="text-2xl font-bold text-green-600">
+                  {fortune.wealth_score || 75}점
+                </span>
+              </div>
+              <Progress value={fortune.wealth_score || 75} className="h-2 mb-3" />
+              <p className="text-sm text-gray-600">
+                {fortune.wealth_advice || "꾸준한 투자가 좋은 결과를 가져올 것입니다."}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 조언 카드 */}
+        {fortune.advice && (
+          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-700">
+                <SparklesIcon className="h-5 w-5" />
+                AI의 맞춤 조언
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-700 leading-relaxed">{fortune.advice}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 재생성 버튼 */}
+        <div className="text-center">
+          <Button
+            onClick={() => resetFortune()}
+            variant="outline"
+            size="lg"
+            disabled={isGenerating}
+            className="gap-2"
+          >
+            <RefreshCwIcon className="h-4 w-4" />
+            새로운 운세 받기
+          </Button>
+        </div>
+      </motion.div>
+    );
   };
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   };
 
@@ -111,10 +357,7 @@ export default function MbtiFortunePage() {
     visible: {
       y: 0,
       opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100
-      }
+      transition: { type: "spring" as const, stiffness: 100 }
     }
   };
 
@@ -137,11 +380,11 @@ export default function MbtiFortunePage() {
           <div className="flex items-center justify-center gap-2 mb-4">
             <ZapIcon className="h-8 w-8 text-violet-600" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-              MBTI 주간운세
+              MBTI 맞춤 운세
             </h1>
           </div>
           <p className="text-gray-600">
-            성격 유형별 맞춤 주간 운세를 확인해보세요
+            AI가 분석하는 성격 유형별 개인 맞춤 운세 (GPT-4 기반)
           </p>
         </motion.div>
 
@@ -165,7 +408,7 @@ export default function MbtiFortunePage() {
                     >
                       <Button
                         variant="outline"
-                        className={`h-auto p-3 flex flex-col items-center gap-2 w-full border-${info.color}-200 hover:bg-${info.color}-50`}
+                        className="h-auto p-3 flex flex-col items-center gap-2 w-full hover:bg-violet-50"
                         onClick={() => handleMBTISelect(type)}
                       >
                         <span className="text-2xl">{info.emoji}</span>
@@ -180,206 +423,156 @@ export default function MbtiFortunePage() {
           </motion.div>
         )}
 
-        {/* 선택된 MBTI 정보 */}
-        {selectedMBTI && currentFortune && (
-          <>
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6 border-violet-200 bg-gradient-to-r from-violet-50 to-purple-50">
-                <CardHeader className="text-center">
-                  <div className="flex items-center justify-center gap-3 mb-2">
-                    <span className="text-4xl">{MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.emoji}</span>
+        {/* 운세 생성 폼 */}
+        {selectedMBTI && !result && (
+          <motion.div variants={itemVariants}>
+            <Card className="mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserIcon className="h-5 w-5 text-violet-600" />
+                  운세 생성하기
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                  <div className="flex items-center gap-3 p-3 bg-violet-50 rounded-lg">
+                    <span className="text-2xl">{MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.emoji}</span>
                     <div>
-                      <h2 className="text-2xl font-bold text-violet-700">{selectedMBTI}</h2>
-                      <p className="text-violet-600">{MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.name}</p>
+                      <p className="font-bold">{selectedMBTI} - {MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.name}</p>
+                      <p className="text-sm text-gray-600">{MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.element}</p>
+                    </div>
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setSelectedMBTI("")}
+                      className="ml-auto"
+                    >
+                      변경
+                    </Button>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">이름</label>
+                    <Controller
+                      control={control}
+                      name="name"
+                      rules={{ required: '이름을 입력해주세요' }}
+                      render={({ field, fieldState }) => (
+                        <div>
+                          <input
+                            {...field}
+                            type="text"
+                            placeholder="이름을 입력하세요"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                          />
+                          {fieldState.error && (
+                            <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>
+                          )}
+                        </div>
+                      )}
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="block text-sm font-medium">포함할 운세 (선택)</label>
+                    <div className="grid grid-cols-3 gap-4">
+                      <Controller
+                        control={control}
+                        name="includeCareer"
+                        render={({ field }) => (
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={field.value}
+                              onChange={field.onChange}
+                              className="rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+                            />
+                            <span className="text-sm">직업운</span>
+                          </label>
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="includeLove"
+                        render={({ field }) => (
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={field.value}
+                              onChange={field.onChange}
+                              className="rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+                            />
+                            <span className="text-sm">연애운</span>
+                          </label>
+                        )}
+                      />
+                      <Controller
+                        control={control}
+                        name="includeWealth"
+                        render={({ field }) => (
+                          <label className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              checked={field.value}
+                              onChange={field.onChange}
+                              className="rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+                            />
+                            <span className="text-sm">재물운</span>
+                          </label>
+                        )}
+                      />
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setSelectedMBTI("")}
-                    className="mx-auto"
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isGenerating || !watch('name')}
+                    className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
                   >
-                    다른 MBTI 선택
+                    {isGenerating ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                        AI 분석 중... {progress}%
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <SparklesIcon className="h-4 w-4" />
+                        AI 맞춤 운세 생성하기
+                      </div>
+                    )}
                   </Button>
-                </CardHeader>
-              </Card>
-            </motion.div>
+                </form>
 
-            {/* 이번 주 종합 운세 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6 border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
-                <CardHeader className="text-center">
-                  <CardTitle className="flex items-center justify-center gap-2 text-purple-700">
-                    <TrendingUpIcon className="h-5 w-5" />
-                    이번 주 종합 운세
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <div className="text-4xl font-bold text-purple-600 mb-2">{currentFortune.overall}점</div>
-                  <Progress value={currentFortune.overall} className="mb-4" />
-                  <p className="text-sm text-gray-600 mb-4">
-                    {currentFortune.summary}
-                  </p>
-                  
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {currentFortune.keyword.map((keyword: string, index: number) => (
-                      <motion.div
-                        key={keyword}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.6 + index * 0.1 }}
-                      >
-                        <Badge variant="secondary" className="bg-white/20 text-purple-700 border-purple-300">
-                          #{keyword}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 분야별 운세 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="text-center">분야별 주간 운세</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-pink-50 rounded-lg">
-                      <HeartIcon className="h-6 w-6 text-pink-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-pink-600">{currentFortune.love}</div>
-                      <div className="text-sm text-gray-600">연애운</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <BriefcaseIcon className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-blue-600">{currentFortune.career}</div>
-                      <div className="text-sm text-gray-600">취업운</div>
-                    </div>
-                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                      <CoinsIcon className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-yellow-600">{currentFortune.wealth}</div>
-                      <div className="text-sm text-gray-600">금전운</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* MBTI별 특화 조언 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TargetIcon className="h-5 w-5 text-violet-600" />
-                    {selectedMBTI} 맞춤 조언
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gradient-to-r from-violet-50 to-purple-50 p-4 rounded-lg">
-                    <p className="text-sm text-violet-700 leading-relaxed">
-                      {currentFortune.advice}
+                {isGenerating && (
+                  <div className="mt-4">
+                    <Progress value={progress} className="h-2" />
+                    <p className="text-sm text-gray-600 mt-2 text-center">
+                      AI가 당신만의 맞춤 운세를 생성하고 있습니다...
                     </p>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
-            {/* 이번 주 추천 활동 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <StarIcon className="h-5 w-5 text-yellow-500" />
-                    이번 주 추천 활동
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {selectedMBTI.startsWith('E') ? (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                          <UsersIcon className="h-5 w-5 text-orange-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">네트워킹 활동</div>
-                            <div className="text-sm text-gray-600">새로운 사람들과의 만남을 통해 에너지 충전</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">팀 프로젝트 참여</div>
-                            <div className="text-sm text-gray-600">협업을 통한 목표 달성에 집중</div>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                          <BrainIcon className="h-5 w-5 text-blue-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">개인 시간 확보</div>
-                            <div className="text-sm text-gray-600">혼자만의 시간을 통해 내면 성찰</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-purple-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">계획 수립</div>
-                            <div className="text-sm text-gray-600">체계적인 목표 설정과 실행 계획 마련</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    
-                    <div className="flex items-start gap-3 p-3 bg-indigo-50 rounded-lg">
-                      <AlertCircleIcon className="h-5 w-5 text-indigo-500 mt-0.5" />
-                      <div>
-                        <div className="font-medium">균형 잡기</div>
-                        <div className="text-sm text-gray-600">강점을 살리되 약점도 보완하는 시간</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+        {/* 운세 결과 */}
+        {renderFortuneResult()}
 
-            {/* 주간 행운 포인트 */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <StarIcon className="h-5 w-5 text-yellow-500" />
-                    이번 주 행운 포인트
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-                      <div className="text-sm font-medium text-yellow-800 dark:text-yellow-300">행운의 요일</div>
-                      <div className="text-lg font-bold text-yellow-600 dark:text-yellow-400">수요일</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                      <div className="text-sm font-medium text-green-800 dark:text-green-300">행운의 색상</div>
-                      <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                        {MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.color === 'purple' ? '보라색' : 
-                         MBTI_TYPES[selectedMBTI as keyof typeof MBTI_TYPES]?.color === 'blue' ? '파란색' : '초록색'}
-                      </div>
-                    </div>
-                    <div className="text-center p-3 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
-                      <div className="text-sm font-medium text-purple-800 dark:text-purple-300">행운의 숫자</div>
-                      <div className="text-lg font-bold text-purple-600 dark:text-purple-400">7</div>
-                    </div>
-                    <div className="text-center p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                      <div className="text-sm font-medium text-blue-800 dark:text-blue-300">행운의 키워드</div>
-                      <div className="text-lg font-bold text-blue-600 dark:text-blue-400">소통</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </>
+        {/* 에러 표시 */}
+        {error && (
+          <motion.div variants={itemVariants}>
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-red-600">
+                  <AlertCircleIcon className="h-5 w-5" />
+                  <span>오류가 발생했습니다: {error.message}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
       </motion.div>
     </div>

@@ -1,80 +1,104 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import AppHeader from "@/components/AppHeader";
-import { 
-  Clock, 
-  Star, 
-  Sparkles,
-  ArrowRight,
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Clock,
+  Star,
+  Heart,
+  Briefcase,
+  Coins,
+  HeartPulse,
   Sun,
   Moon,
   Sunrise,
   Sunset,
-  Coffee,
-  Briefcase,
-  Heart,
-  Home,
-  Activity,
-  AlertTriangle,
+  Loader2,
+  RefreshCw,
+  User,
+  Calendar,
+  Sparkles,
   TrendingUp,
   TrendingDown,
   Minus,
-  Lightbulb,
-  Calendar,
-  RefreshCw
+  Activity,
+  Coffee,
+  Home
 } from "lucide-react";
+import AppHeader from "@/components/AppHeader";
+import { useFortuneStream } from "@/hooks/use-fortune-stream";
+import toast from "react-hot-toast";
 
-interface HourlyFortune {
-  hour: number;
-  period: string;
-  icon: typeof Sun;
-  overall_luck: number;
-  fortune_text: string;
-  love_fortune: number;
-  work_fortune: number;
-  health_fortune: number;
-  money_fortune: number;
-  recommendations: string[];
-  warnings: string[];
-  best_activities: string[];
-  color: string;
-  gradient: string;
+interface HourlyFortuneForm {
+  name: string;
+  birth_date: string;
+  mbti?: string;
+  zodiac?: string;
 }
 
+interface HourlyFortuneResult {
+  hourly: {
+    date: string;
+    hours: Array<{
+      hour: number;
+      period: string;
+      overall_luck: number;
+      love_fortune: number;
+      work_fortune: number;
+      health_fortune: number;
+      money_fortune: number;
+      fortune_text: string;
+      recommendations: string[];
+      warnings: string[];
+      best_activities: string[];
+      energy_level: number;
+      favorable_time: boolean;
+    }>;
+    best_hours: number[];
+    caution_hours: number[];
+    daily_peak: number;
+    daily_summary: string;
+  };
+}
+
+// 애니메이션 variants
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
-    }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.05 } }
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring" as const,
-      stiffness: 100,
-      damping: 10
-    }
-  }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const getTimeIcon = (hour: number) => {
+  if (hour >= 6 && hour < 12) return Sunrise;
+  if (hour >= 12 && hour < 18) return Sun;
+  if (hour >= 18 && hour < 24) return Sunset;
+  return Moon;
+};
+
+const getTimePeriod = (hour: number) => {
+  if (hour >= 6 && hour < 12) return { name: "오전", color: "yellow", bg: "from-yellow-50 to-amber-50" };
+  if (hour >= 12 && hour < 18) return { name: "오후", color: "orange", bg: "from-orange-50 to-red-50" };
+  if (hour >= 18 && hour < 24) return { name: "저녁", color: "purple", bg: "from-purple-50 to-pink-50" };
+  return { name: "새벽", color: "indigo", bg: "from-indigo-50 to-blue-50" };
 };
 
 const getLuckColor = (score: number) => {
-  if (score >= 80) return "text-green-600 bg-green-50";
-  if (score >= 60) return "text-blue-600 bg-blue-50";
-  if (score >= 40) return "text-orange-600 bg-orange-50";
-  return "text-red-600 bg-red-50";
+  if (score >= 80) return "text-green-600 bg-green-50 border-green-200";
+  if (score >= 60) return "text-blue-600 bg-blue-50 border-blue-200";
+  if (score >= 40) return "text-orange-600 bg-orange-50 border-orange-200";
+  return "text-red-600 bg-red-50 border-red-200";
 };
 
 const getLuckText = (score: number) => {
@@ -90,384 +114,442 @@ const getLuckIcon = (score: number) => {
   return TrendingDown;
 };
 
-const generateHourlyFortunes = (): HourlyFortune[] => {
-  const periods = [
-    { range: [6, 11], name: "오전", icon: Sunrise, color: "yellow", gradient: "from-yellow-50 to-amber-50" },
-    { range: [12, 17], name: "오후", icon: Sun, color: "orange", gradient: "from-orange-50 to-red-50" },
-    { range: [18, 23], name: "저녁", icon: Sunset, color: "purple", gradient: "from-purple-50 to-pink-50" },
-    { range: [0, 5], name: "새벽", icon: Moon, color: "indigo", gradient: "from-indigo-50 to-blue-50" }
-  ];
-
-  const fortunes: HourlyFortune[] = [];
-
-  for (let hour = 0; hour < 24; hour++) {
-    const period = periods.find(p => 
-      (p.range[0] <= p.range[1] && hour >= p.range[0] && hour <= p.range[1]) ||
-      (p.range[0] > p.range[1] && (hour >= p.range[0] || hour <= p.range[1]))
-    ) || periods[3];
-
-    const baseLuck = Math.floor(Math.random() * 40) + 40; // 40-80 기본 점수
-    const variance = Math.floor(Math.random() * 30) - 15; // -15 ~ +15 변동
-
-    const overall_luck = Math.max(20, Math.min(100, baseLuck + variance));
-    
-    const fortuneTexts = [
-      "새로운 기회가 찾아올 수 있는 시간입니다.",
-      "인간관계에서 좋은 소식이 들려올 것 같습니다.",
-      "창의적인 아이디어가 떠오르기 쉬운 시간대입니다.",
-      "재정적인 면에서 긍정적인 변화가 있을 수 있습니다.",
-      "건강 관리에 특별히 신경 써야 할 시간입니다.",
-      "가족이나 연인과의 시간을 소중히 여기세요.",
-      "업무나 학습에 집중하기 좋은 시간대입니다.",
-      "휴식과 재충전이 필요한 시간입니다.",
-      "사교활동이나 네트워킹에 좋은 시간입니다.",
-      "내면의 성찰과 명상에 적합한 시간대입니다."
-    ];
-
-    const recommendations = [
-      "긍정적인 마음가짐 유지하기",
-      "새로운 도전을 시작해보기",
-      "소중한 사람과 시간 보내기",
-      "건강한 식단과 운동하기",
-      "창작 활동이나 취미 즐기기",
-      "독서나 학습 시간 갖기",
-      "명상이나 요가로 마음 다스리기",
-      "자연 속에서 산책하기",
-      "감사 인사나 안부 전하기",
-      "정리정돈과 계획 세우기"
-    ];
-
-    const warnings = [
-      "급한 결정은 피하는 것이 좋습니다",
-      "감정적인 대화나 논쟁 주의하세요",
-      "금전 관리에 신중함이 필요합니다",
-      "과로나 스트레스 관리에 주의하세요",
-      "교통안전과 안전사고 예방하세요",
-      "소문이나 가십에 휘둘리지 마세요",
-      "충동구매나 과소비 주의하세요",
-      "건강 이상 신호를 무시하지 마세요"
-    ];
-
-    const activities = [
-      "카페에서 여유로운 시간 보내기",
-      "공원이나 산책로 걷기",
-      "좋아하는 음악 감상하기",
-      "친구나 가족과 전화하기",
-      "독서나 글쓰기",
-      "요리나 베이킹 도전하기",
-      "온라인 강의 수강하기",
-      "정리정돈과 청소하기",
-      "운동이나 스트레칭",
-      "영화나 드라마 감상하기"
-    ];
-
-    fortunes.push({
-      hour,
-      period: period.name,
-      icon: period.icon,
-      overall_luck,
-      fortune_text: fortuneTexts[Math.floor(Math.random() * fortuneTexts.length)],
-      love_fortune: Math.max(20, Math.min(100, overall_luck + Math.floor(Math.random() * 20) - 10)),
-      work_fortune: Math.max(20, Math.min(100, overall_luck + Math.floor(Math.random() * 20) - 10)),
-      health_fortune: Math.max(20, Math.min(100, overall_luck + Math.floor(Math.random() * 20) - 10)),
-      money_fortune: Math.max(20, Math.min(100, overall_luck + Math.floor(Math.random() * 20) - 10)),
-      recommendations: [
-        recommendations[Math.floor(Math.random() * recommendations.length)],
-        recommendations[Math.floor(Math.random() * recommendations.length)]
-      ].filter((item, index, arr) => arr.indexOf(item) === index),
-      warnings: [
-        warnings[Math.floor(Math.random() * warnings.length)]
-      ],
-      best_activities: [
-        activities[Math.floor(Math.random() * activities.length)],
-        activities[Math.floor(Math.random() * activities.length)],
-        activities[Math.floor(Math.random() * activities.length)]
-      ].filter((item, index, arr) => arr.indexOf(item) === index),
-      color: period.color,
-      gradient: period.gradient
-    });
-  }
-
-  return fortunes;
-};
-
 export default function HourlyFortunePage() {
-  const [currentHour, setCurrentHour] = useState(0);
-  const [fortunes, setFortunes] = useState<HourlyFortune[]>([]);
+  const [fontSize, setFontSize] = useState<'small'|'medium'|'large'>('medium');
+  const [step, setStep] = useState<'input' | 'result'>('input');
+  const [result, setResult] = useState<HourlyFortuneResult | null>(null);
   const [selectedHour, setSelectedHour] = useState<number | null>(null);
+  const [currentHour, setCurrentHour] = useState(0);
 
+  // React Hook Form 설정
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<HourlyFortuneForm>({
+    defaultValues: {
+      name: '',
+      birth_date: '',
+      mbti: '',
+      zodiac: ''
+    }
+  });
+
+  // 현재 시간 설정
   useEffect(() => {
     const now = new Date();
-    const hour = now.getHours();
-    setCurrentHour(hour);
-    setSelectedHour(hour);
-    setFortunes(generateHourlyFortunes());
+    setCurrentHour(now.getHours());
+    setSelectedHour(now.getHours());
   }, []);
 
-  const refreshFortunes = () => {
-    setFortunes(generateHourlyFortunes());
-  };
+  // 운세 스트림 훅 사용
+  const { generateFortune, isGenerating } = useFortuneStream();
 
+  // 폼 제출 처리
+  const onSubmit = useCallback(async (data: HourlyFortuneForm) => {
+    if (!data.name.trim() || !data.birth_date) {
+      toast.error('이름과 생년월일을 입력해주세요.');
+      return;
+    }
+
+    const loadingToast = toast.loading('24시간 운세를 분석하고 있습니다...');
+
+    try {
+      const requestData = {
+        category: 'hourly',
+        userInfo: {
+          name: data.name.trim(),
+          birthDate: data.birth_date,
+          mbti: data.mbti || '미입력',
+          zodiac: data.zodiac || '미입력'
+        },
+        packageType: 'single' as const
+      };
+
+      const fortuneResult = await generateFortune(requestData);
+      
+      if (fortuneResult.hourly) {
+        setResult(fortuneResult as HourlyFortuneResult);
+        setStep('result');
+        toast.success('24시간 운세 분석이 완료되었습니다!', { id: loadingToast });
+      } else {
+        throw new Error('운세 데이터를 받지 못했습니다.');
+      }
+    } catch (error) {
+      console.error('운세 생성 오류:', error);
+      toast.error('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.', { id: loadingToast });
+    }
+  }, [generateFortune]);
+
+  // 다시하기 함수
+  const handleReset = useCallback(() => {
+    setStep('input');
+    setResult(null);
+    setSelectedHour(currentHour);
+  }, [currentHour]);
+
+  // 새로고침 함수  
+  const handleRefresh = useCallback(async () => {
+    const formData = watch();
+    await onSubmit(formData);
+  }, [onSubmit, watch]);
+
+  // 시간 포맷 함수
   const formatHour = (hour: number) => {
-    if (hour === 0) return "오전 12시";
-    if (hour < 12) return `오전 ${hour}시`;
-    if (hour === 12) return "오후 12시";
-    return `오후 ${hour - 12}시`;
+    const ampm = hour < 12 ? '오전' : '오후';
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${ampm} ${displayHour}시`;
   };
-
-  const selectedFortune = selectedHour !== null ? fortunes[selectedHour] : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20">
-      <AppHeader />
+    <div className="min-h-screen pb-32 px-4 space-y-6 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900 dark:to-gray-800">
+      <AppHeader title="시간별 운세" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
       
-      <motion.div 
-        className="container mx-auto px-4 pt-4 pb-20"
+      <motion.div
+        className="max-w-6xl mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* 헤더 섹션 */}
-        <motion.div variants={itemVariants} className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-              시간별 운세
-            </h1>
-          </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            24시간 동안의 운세 흐름을 확인해보세요
-          </p>
-          <Button 
-            onClick={refreshFortunes}
-            variant="outline"
-            size="sm"
-            className="mt-4 bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            새로고침
-          </Button>
-        </motion.div>
-
-        {/* 현재 시간 하이라이트 */}
-        <motion.div variants={itemVariants}>
-          <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-blue-200 dark:border-blue-700 dark:bg-gray-800">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full">
-                    <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-blue-900 dark:text-blue-300">
-                      현재 시간: {formatHour(currentHour)}
-                    </h3>
-                    <p className="text-sm text-blue-700 dark:text-blue-400">
-                      {fortunes[currentHour]?.period} 시간대
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                    {fortunes[currentHour]?.overall_luck}점
-                  </div>
-                  <div className="text-sm text-blue-700 dark:text-blue-400">
-                    {getLuckText(fortunes[currentHour]?.overall_luck || 0)}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* 시간별 운세 목록 */}
-        <motion.div variants={itemVariants}>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
-            {fortunes.map((fortune, index) => {
-              const IconComponent = fortune.icon;
-              const isCurrentHour = index === currentHour;
-              const isSelected = selectedHour === index;
-              
-              return (
-                <motion.div
-                  key={index}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`cursor-pointer ${isCurrentHour ? 'ring-2 ring-blue-500 dark:ring-blue-400' : ''}`}
-                  onClick={() => setSelectedHour(isSelected ? null : index)}
-                >
-                  <Card className={`h-full transition-all duration-200 ${
-                    isSelected 
-                      ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600' 
-                      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-blue-200 dark:hover:border-blue-700'
-                  }`}>
-                    <CardContent className="p-3 text-center">
-                      <IconComponent className={`w-5 h-5 mx-auto mb-2 ${
-                        fortune.color === 'yellow' ? 'text-yellow-500 dark:text-yellow-400' :
-                        fortune.color === 'orange' ? 'text-orange-500 dark:text-orange-400' :
-                        fortune.color === 'purple' ? 'text-purple-500 dark:text-purple-400' :
-                        'text-indigo-500 dark:text-indigo-400'
-                      }`} />
-                      <div className="text-xs font-medium text-gray-900 dark:text-gray-100 mb-1">
-                        {formatHour(fortune.hour)}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                        {fortune.period}
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs px-1 py-0 ${getLuckColor(fortune.overall_luck)} border-0`}
-                      >
-                        {fortune.overall_luck}
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* 선택된 시간의 상세 운세 */}
-        <AnimatePresence>
-          {selectedHour !== null && (
+        <AnimatePresence mode="wait">
+          {step === 'input' && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
+              key="input"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                      {React.createElement(fortunes[selectedHour].icon, { 
-                        className: `w-6 h-6 ${
-                          fortunes[selectedHour].color === 'yellow' ? 'text-yellow-500 dark:text-yellow-400' :
-                          fortunes[selectedHour].color === 'orange' ? 'text-orange-500 dark:text-orange-400' :
-                          fortunes[selectedHour].color === 'purple' ? 'text-purple-500 dark:text-purple-400' :
-                          'text-indigo-500 dark:text-indigo-400'
-                        }` 
-                      })}
-                      {formatHour(fortunes[selectedHour].hour)} 상세 운세
+              <motion.div variants={itemVariants} className="text-center mb-8">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="p-3 bg-gradient-to-r from-gray-500 to-slate-500 rounded-full">
+                    <Clock className="w-8 h-8 text-white" />
+                  </div>
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-600 to-slate-600 bg-clip-text text-transparent">
+                    시간별 운세
+                  </h1>
+                </div>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                  오늘 24시간 동안의 당신만의 운세를 시간대별로 확인해보세요
+                </p>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <Card className="shadow-lg border-0 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm">
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-2xl text-gray-800 dark:text-gray-200 flex items-center justify-center gap-2">
+                      <Sparkles className="w-6 h-6 text-gray-500" />
+                      정보 입력
                     </CardTitle>
-                    <Badge 
-                      variant="outline"
-                      className={`${getLuckColor(fortunes[selectedHour].overall_luck)} border-0`}
-                    >
-                      {getLuckText(fortunes[selectedHour].overall_luck)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* 운세 메시지 */}
-                  <div className={`p-4 rounded-lg bg-gradient-to-r ${fortunes[selectedHour].gradient} dark:from-gray-700 dark:to-gray-600`}>
-                    <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                      {fortunes[selectedHour].fortune_text}
-                    </p>
-                  </div>
-
-                  {/* 분야별 운세 */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/30 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Heart className="w-4 h-4 text-red-500 dark:text-red-400" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">애정운</span>
-                      </div>
-                      <span className="font-bold text-red-600 dark:text-red-400">
-                        {fortunes[selectedHour].love_fortune}점
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">업무운</span>
-                      </div>
-                      <span className="font-bold text-blue-600 dark:text-blue-400">
-                        {fortunes[selectedHour].work_fortune}점
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-green-500 dark:text-green-400" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">건강운</span>
-                      </div>
-                      <span className="font-bold text-green-600 dark:text-green-400">
-                        {fortunes[selectedHour].health_fortune}점
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <Star className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
-                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">금전운</span>
-                      </div>
-                      <span className="font-bold text-yellow-600 dark:text-yellow-400">
-                        {fortunes[selectedHour].money_fortune}점
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* 추천 활동 */}
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                      <Lightbulb className="w-4 h-4 text-yellow-500 dark:text-yellow-400" />
-                      추천 활동
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {fortunes[selectedHour].best_activities.map((activity, index) => (
-                        <Badge 
-                          key={index} 
-                          variant="outline"
-                          className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-600"
-                        >
-                          {activity}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 주의사항 */}
-                  {fortunes[selectedHour].warnings.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                        <AlertTriangle className="w-4 h-4 text-orange-500 dark:text-orange-400" />
-                        주의사항
-                      </h4>
-                      <div className="space-y-2">
-                        {fortunes[selectedHour].warnings.map((warning, index) => (
-                          <div 
-                            key={index}
-                            className="p-2 bg-orange-50 dark:bg-orange-900/30 rounded text-sm text-orange-800 dark:text-orange-300"
-                          >
-                            {warning}
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                      {/* 기본 정보 */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-gray-700 dark:text-gray-300 font-medium">
+                            이름 <span className="text-red-500">*</span>
+                          </Label>
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Input
+                              {...register("name", { required: "이름을 입력해주세요" })}
+                              placeholder="이름을 입력하세요"
+                              className="pl-10 border-gray-200 dark:border-gray-600 focus:border-gray-400 dark:focus:border-gray-500"
+                            />
                           </div>
-                        ))}
+                          {errors.name && (
+                            <p className="text-red-500 text-sm">{errors.name.message}</p>
+                          )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="birth_date" className="text-gray-700 dark:text-gray-300 font-medium">
+                            생년월일 <span className="text-red-500">*</span>
+                          </Label>
+                          <div className="relative">
+                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <Input
+                              {...register("birth_date", { required: "생년월일을 입력해주세요" })}
+                              type="date"
+                              className="pl-10 border-gray-200 dark:border-gray-600 focus:border-gray-400 dark:focus:border-gray-500"
+                            />
+                          </div>
+                          {errors.birth_date && (
+                            <p className="text-red-500 text-sm">{errors.birth_date.message}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 선택 정보 */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-gray-700 dark:text-gray-300 font-medium">
+                            MBTI (선택)
+                          </Label>
+                          <Select onValueChange={(value) => setValue("mbti", value)}>
+                            <SelectTrigger className="border-gray-200 dark:border-gray-600 focus:border-gray-400">
+                              <SelectValue placeholder="MBTI를 선택하세요" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
+                                'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((type) => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-gray-700 dark:text-gray-300 font-medium">
+                            별자리 (선택)
+                          </Label>
+                          <Select onValueChange={(value) => setValue("zodiac", value)}>
+                            <SelectTrigger className="border-gray-200 dark:border-gray-600 focus:border-gray-400">
+                              <SelectValue placeholder="별자리를 선택하세요" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {['양자리', '황소자리', '쌍둥이자리', '게자리', '사자자리', '처녀자리',
+                                '천칭자리', '전갈자리', '사수자리', '염소자리', '물병자리', '물고기자리'].map((sign) => (
+                                <SelectItem key={sign} value={sign}>{sign}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={isGenerating}
+                        className="w-full bg-gradient-to-r from-gray-500 to-slate-500 hover:from-gray-600 hover:to-slate-600 text-white py-3 text-lg font-medium shadow-lg"
+                      >
+                        {isGenerating ? (
+                          <div className="flex items-center gap-2">
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            24시간 운세 분석 중...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-5 h-5" />
+                            시간별 운세 보기
+                          </div>
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {step === 'result' && result && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              {/* 헤더 */}
+              <motion.div variants={itemVariants} className="text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Clock className="w-6 h-6 text-gray-600" />
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                    {result.hourly.date} 시간별 운세
+                  </h2>
+                </div>
+                <p className="text-gray-600 dark:text-gray-400">
+                  현재 시간: {formatHour(currentHour)} - {result.hourly.daily_summary}
+                </p>
+              </motion.div>
+
+              {/* 일일 요약 */}
+              <motion.div variants={itemVariants}>
+                <Card className="border-gray-200 dark:border-gray-700 bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-800 dark:to-gray-700">
+                  <CardContent className="text-center py-6">
+                    <div className="text-4xl font-bold text-gray-600 dark:text-gray-400 mb-2">
+                      오늘의 피크 타임: {formatHour(result.hourly.daily_peak)}
+                    </div>
+                    <div className="flex justify-center gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-sm text-gray-500">최고 운세 시간</div>
+                        <div className="flex gap-1">
+                          {result.hourly.best_hours.map((hour, index) => (
+                            <Badge key={index} className="bg-green-100 text-green-800">
+                              {formatHour(hour)}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-gray-500">주의 시간</div>
+                        <div className="flex gap-1">
+                          {result.hourly.caution_hours.map((hour, index) => (
+                            <Badge key={index} className="bg-amber-100 text-amber-800">
+                              {formatHour(hour)}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  )}
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-                  {/* 행운 조언 */}
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                      <Sparkles className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-                      행운 조언
-                    </h4>
-                    <div className="space-y-2">
-                      {fortunes[selectedHour].recommendations.map((rec, index) => (
-                        <div 
-                          key={index}
-                          className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded text-sm text-purple-800 dark:text-purple-300"
-                        >
-                          • {rec}
+              {/* 24시간 타임라인 */}
+              <motion.div variants={itemVariants}>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">24시간 타임라인</h3>
+                <div className="grid grid-cols-6 md:grid-cols-12 gap-2 mb-6">
+                  {result.hourly.hours.map((hourData) => {
+                    const TimeIcon = getTimeIcon(hourData.hour);
+                    const isSelected = selectedHour === hourData.hour;
+                    const isCurrent = currentHour === hourData.hour;
+                    const period = getTimePeriod(hourData.hour);
+                    
+                    return (
+                      <motion.button
+                        key={hourData.hour}
+                        onClick={() => setSelectedHour(hourData.hour)}
+                        className={`
+                          relative p-3 rounded-lg border-2 transition-all text-center
+                          ${isSelected 
+                            ? 'border-gray-500 bg-gray-100 dark:bg-gray-700' 
+                            : 'border-gray-200 hover:border-gray-300 bg-white dark:bg-gray-800'
+                          }
+                          ${isCurrent ? 'ring-2 ring-blue-400' : ''}
+                        `}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {isCurrent && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"></div>
+                        )}
+                        <TimeIcon className="w-4 h-4 mx-auto mb-1 text-gray-600" />
+                        <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                          {hourData.hour}시
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                        <div className={`text-xs px-1 rounded mt-1 ${getLuckColor(hourData.overall_luck)}`}>
+                          {hourData.overall_luck}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+
+              {/* 선택된 시간 상세 정보 */}
+              {selectedHour !== null && (
+                <motion.div variants={itemVariants}>
+                  {(() => {
+                    const hourData = result.hourly.hours.find(h => h.hour === selectedHour);
+                    if (!hourData) return null;
+
+                    const TimeIcon = getTimeIcon(hourData.hour);
+                    const period = getTimePeriod(hourData.hour);
+                    const LuckIcon = getLuckIcon(hourData.overall_luck);
+
+                    return (
+                      <Card className={`border-gray-200 dark:border-gray-700 bg-gradient-to-br ${period.bg} dark:from-gray-800 dark:to-gray-700`}>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-3">
+                            <TimeIcon className="w-6 h-6 text-gray-600" />
+                            <span>{formatHour(hourData.hour)} {hourData.period}</span>
+                            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-sm ${getLuckColor(hourData.overall_luck)}`}>
+                              <LuckIcon className="w-4 h-4" />
+                              {getLuckText(hourData.overall_luck)} ({hourData.overall_luck}점)
+                            </div>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                          {/* 운세 설명 */}
+                          <div className="text-center">
+                            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                              {hourData.fortune_text}
+                            </p>
+                          </div>
+
+                          {/* 세부 운세 */}
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                              { icon: Heart, label: "애정운", score: hourData.love_fortune },
+                              { icon: Briefcase, label: "직업운", score: hourData.work_fortune },
+                              { icon: Coins, label: "금전운", score: hourData.money_fortune },
+                              { icon: HeartPulse, label: "건강운", score: hourData.health_fortune }
+                            ].map((item) => (
+                              <div key={item.label} className="text-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                                <item.icon className="w-5 h-5 mx-auto mb-2 text-gray-600" />
+                                <div className="text-sm text-gray-600 dark:text-gray-400">{item.label}</div>
+                                <div className={`text-lg font-bold ${getLuckColor(item.score).split(' ')[0]}`}>
+                                  {item.score}점
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* 추천사항 */}
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                              <h4 className="font-semibold text-green-800 dark:text-green-400 mb-2 flex items-center gap-2">
+                                <Activity className="w-4 h-4" />
+                                추천 활동
+                              </h4>
+                              <ul className="space-y-1 text-sm text-green-700 dark:text-green-300">
+                                {hourData.best_activities.map((activity, index) => (
+                                  <li key={index}>• {activity}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            
+                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                              <h4 className="font-semibold text-blue-800 dark:text-blue-400 mb-2 flex items-center gap-2">
+                                <Star className="w-4 h-4" />
+                                권장사항
+                              </h4>
+                              <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
+                                {hourData.recommendations.map((rec, index) => (
+                                  <li key={index}>• {rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            
+                            <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4">
+                              <h4 className="font-semibold text-amber-800 dark:text-amber-400 mb-2 flex items-center gap-2">
+                                <Coffee className="w-4 h-4" />
+                                주의사항
+                              </h4>
+                              <ul className="space-y-1 text-sm text-amber-700 dark:text-amber-300">
+                                {hourData.warnings.map((warning, index) => (
+                                  <li key={index}>• {warning}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })()}
+                </motion.div>
+              )}
+
+              {/* 액션 버튼 */}
+              <motion.div variants={itemVariants} className="flex justify-center gap-4 pt-6">
+                <Button
+                  onClick={handleRefresh}
+                  disabled={isGenerating}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  새로고침
+                </Button>
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                >
+                  다시하기
+                </Button>
+                <Button asChild variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
+                  <Link href="/fortune">목록으로</Link>
+                </Button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -161,65 +161,133 @@ export default function LuckyBaseballPage() {
   const [result, setResult] = useState<BaseballFortune | null>(null);
 
   const analyzeBaseballFortune = async (): Promise<BaseballFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
+    try {
+      const response = await fetch('/api/fortune/lucky-baseball', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      batting_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      pitching_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      fielding_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      team_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      analysis: {
-        strength: "강한 정신력과 끈기를 바탕으로 어려운 상황에서도 포기하지 않는 투지를 가지고 있습니다.",
-        weakness: "때로는 완벽을 추구하다가 과도한 스트레스를 받을 수 있으니 적당한 휴식이 필요합니다.",
-        opportunity: "팀워크를 중시하는 성향으로 인해 동료들과 좋은 시너지를 만들어낼 수 있습니다.",
-        challenge: "새로운 기술이나 전술을 익히는 데 시간이 걸릴 수 있지만, 꾸준히 노력하면 극복할 수 있습니다."
-      },
-      lucky_position: positions[Math.floor(Math.random() * positions.length)],
-      lucky_uniform_number: Math.floor(Math.random() * 99) + 1,
-      lucky_game_time: ["오후 2시", "오후 6시", "오후 7시"][Math.floor(Math.random() * 3)],
-      lucky_stadium: ["잠실야구장", "고척스카이돔", "창원NC파크", "사직야구장"][Math.floor(Math.random() * 4)],
-      recommendations: {
-        training_tips: [
-          "매일 기본기 연습에 30분 이상 투자하세요",
-          "몸의 유연성을 위해 스트레칭을 꾸준히 하세요",
-          "정확한 폼을 익히기 위해 천천히 연습하세요",
-          "체력 관리를 위한 유산소 운동을 병행하세요",
-          "부상 예방을 위해 충분한 워밍업을 하세요"
-        ],
-        game_strategies: [
-          "상대방의 패턴을 관찰하고 분석하세요",
-          "자신의 강점을 최대한 활용하는 전략을 세우세요",
-          "팀원들과의 소통을 자주하여 호흡을 맞추세요",
-          "경기 상황에 따라 유연하게 대응하세요",
-          "실수를 두려워하지 말고 적극적으로 플레이하세요"
-        ],
-        team_building: [
-          "팀원들과 함께하는 식사 시간을 가져보세요",
-          "서로의 강점을 칭찬하고 인정해주세요",
-          "어려운 상황에서 서로를 격려해주세요",
-          "팀의 목표를 함께 설정하고 공유하세요",
-          "경기 후에는 함께 경기를 되돌아보세요"
-        ],
-        mental_preparation: [
-          "경기 전 긍정적인 이미지 트레이닝을 하세요",
-          "심호흡을 통해 마음을 안정시키세요",
-          "실패를 두려워하지 말고 도전하세요",
-          "집중력 향상을 위한 명상을 해보세요",
-          "자신만의 루틴을 만들어 심리적 안정감을 가지세요"
-        ]
-      },
-      future_predictions: {
-        this_week: "새로운 기술을 배우기에 좋은 시기입니다. 기본기에 충실하면 큰 발전을 이룰 수 있습니다.",
-        this_month: "팀워크가 중요한 시기입니다. 동료들과의 호흡을 맞추는데 집중하면 좋은 결과가 있을 것입니다.",
-        this_season: "꾸준한 노력이 결실을 맺는 시기입니다. 포기하지 않고 계속 도전하면 목표를 달성할 수 있습니다."
-      },
-      compatibility: {
-        best_teammate_type: "긍정적이고 서로를 격려해주는 동료",
-        ideal_coach_style: "체계적이면서도 선수 개인을 배려하는 코치",
-        perfect_opponent: "실력이 비슷하면서 페어플레이를 중시하는 상대"
+      if (!response.ok) {
+        throw new Error('API 요청 실패');
       }
-    };
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('API 호출 실패, 백업 로직 사용:', error);
+      
+      // 개선된 백업 로직 - 생년월일 기반 개인화
+      const birth = new Date(formData.birth_date);
+      const birthSum = birth.getFullYear() + birth.getMonth() + birth.getDate();
+      const nameSum = formData.name.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+      const personalSeed = (birthSum + nameSum) % 100;
+      
+      // 경험에 따른 보너스
+      let experienceBonus = 0;
+      if (formData.playing_experience === '10년 이상') experienceBonus = 15;
+      else if (formData.playing_experience === '5-10년') experienceBonus = 10;
+      else if (formData.playing_experience === '2-5년') experienceBonus = 5;
+      
+      // 경기 빈도에 따른 보너스
+      let frequencyBonus = 0;
+      if (formData.game_frequency === '주 3회 이상') frequencyBonus = 12;
+      else if (formData.game_frequency === '주 1-2회') frequencyBonus = 8;
+      else if (formData.game_frequency === '월 2-3회') frequencyBonus = 4;
+      
+      // 지식 다양성 보너스
+      const knowledgeBonus = formData.baseball_knowledge.length >= 6 ? 10 : 
+                            formData.baseball_knowledge.length >= 4 ? 5 : 0;
+      
+      // 포지션별 특성
+      const positionBonus = {
+        '포수': 12, '유격수': 10, '중견수': 9, '투수': 8, '3루수': 7,
+        '2루수': 6, '1루수': 5, '좌익수': 4, '우익수': 4, '지명타자': 3
+      }[formData.favorite_position] || 0;
+      
+      const baseScore = Math.max(50, Math.min(85, 65 + (personalSeed % 20) + experienceBonus + frequencyBonus + knowledgeBonus + positionBonus));
+      
+      // 포지션별 운세 특성
+      const getPositionBasedLuck = (base: number, position: string) => {
+        const adjustments = {
+          '투수': { pitching: 15, batting: -5, fielding: 5, team: 10 },
+          '포수': { pitching: 10, batting: 0, fielding: 15, team: 12 },
+          '내야수': { pitching: -5, batting: 5, fielding: 12, team: 8 },
+          '외야수': { pitching: -8, batting: 8, fielding: 10, team: 5 }
+        };
+        
+        const posType = ['투수'].includes(position) ? '투수' :
+                       ['포수'].includes(position) ? '포수' :
+                       ['1루수', '2루수', '3루수', '유격수'].includes(position) ? '내야수' : '외야수';
+        
+        return adjustments[posType] || { pitching: 0, batting: 0, fielding: 0, team: 0 };
+      };
+      
+      const positionAdj = getPositionBasedLuck(baseScore, formData.favorite_position);
+      
+      // 행운의 번호 기반 추가 랜덤
+      const luckyBonus = formData.lucky_number ? (parseInt(formData.lucky_number) % 10) : 0;
+
+      return {
+        overall_luck: Math.max(50, Math.min(95, baseScore + luckyBonus)),
+        batting_luck: Math.max(45, Math.min(100, baseScore + positionAdj.batting + (personalSeed % 15) - 5)),
+        pitching_luck: Math.max(40, Math.min(95, baseScore + positionAdj.pitching + (personalSeed % 20) - 10)),
+        fielding_luck: Math.max(50, Math.min(100, baseScore + positionAdj.fielding + (personalSeed % 15))),
+        team_luck: Math.max(55, Math.min(95, baseScore + positionAdj.team + (personalSeed % 18) - 5)),
+        analysis: {
+          strength: "강한 정신력과 끈기를 바탕으로 어려운 상황에서도 포기하지 않는 투지를 가지고 있습니다.",
+          weakness: "때로는 완벽을 추구하다가 과도한 스트레스를 받을 수 있으니 적당한 휴식이 필요합니다.",
+          opportunity: "팀워크를 중시하는 성향으로 인해 동료들과 좋은 시너지를 만들어낼 수 있습니다.",
+          challenge: "새로운 기술이나 전술을 익히는 데 시간이 걸릴 수 있지만, 꾸준히 노력하면 극복할 수 있습니다."
+        },
+        lucky_position: positions[(personalSeed + nameSum) % positions.length],
+        lucky_uniform_number: ((personalSeed + parseInt(formData.lucky_number || '7')) % 99) + 1,
+        lucky_game_time: ["오후 2시", "오후 6시", "오후 7시"][(personalSeed + birthSum) % 3],
+        lucky_stadium: ["잠실야구장", "고척스카이돔", "창원NC파크", "사직야구장"][(personalSeed + nameSum) % 4],
+        recommendations: {
+          training_tips: [
+            "매일 기본기 연습에 30분 이상 투자하세요",
+            "몸의 유연성을 위해 스트레칭을 꾸준히 하세요",
+            "정확한 폼을 익히기 위해 천천히 연습하세요",
+            "체력 관리를 위한 유산소 운동을 병행하세요",
+            "부상 예방을 위해 충분한 워밍업을 하세요"
+          ],
+          game_strategies: [
+            "상대방의 패턴을 관찰하고 분석하세요",
+            "자신의 강점을 최대한 활용하는 전략을 세우세요",
+            "팀원들과의 소통을 자주하여 호흡을 맞추세요",
+            "경기 상황에 따라 유연하게 대응하세요",
+            "실수를 두려워하지 말고 적극적으로 플레이하세요"
+          ],
+          team_building: [
+            "팀원들과 함께하는 식사 시간을 가져보세요",
+            "서로의 강점을 칭찬하고 인정해주세요",
+            "어려운 상황에서 서로를 격려해주세요",
+            "팀의 목표를 함께 설정하고 공유하세요",
+            "경기 후에는 함께 경기를 되돌아보세요"
+          ],
+          mental_preparation: [
+            "경기 전 긍정적인 이미지 트레이닝을 하세요",
+            "심호흡을 통해 마음을 안정시키세요",
+            "실패를 두려워하지 말고 도전하세요",
+            "집중력 향상을 위한 명상을 해보세요",
+            "자신만의 루틴을 만들어 심리적 안정감을 가지세요"
+          ]
+        },
+        future_predictions: {
+          this_week: "새로운 기술을 배우기에 좋은 시기입니다. 기본기에 충실하면 큰 발전을 이룰 수 있습니다.",
+          this_month: "팀워크가 중요한 시기입니다. 동료들과의 호흡을 맞추는데 집중하면 좋은 결과가 있을 것입니다.",
+          this_season: "꾸준한 노력이 결실을 맺는 시기입니다. 포기하지 않고 계속 도전하면 목표를 달성할 수 있습니다."
+        },
+        compatibility: {
+          best_teammate_type: "긍정적이고 서로를 격려해주는 동료",
+          ideal_coach_style: "체계적이면서도 선수 개인을 배려하는 코치",
+          perfect_opponent: "실력이 비슷하면서 페어플레이를 중시하는 상대"
+        }
+      };
+    }
   };
 
   const handleSubmit = async () => {

@@ -163,65 +163,112 @@ export default function LuckyTennisPage() {
   const [result, setResult] = useState<TennisFortune | null>(null);
 
   const analyzeTennisFortune = async (): Promise<TennisFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    try {
+      const response = await fetch('/api/fortune/lucky-tennis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      serve_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      return_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      volley_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      mental_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      analysis: {
-        strength: "강한 집중력과 정확한 타이밍으로 중요한 순간에 실력을 발휘하는 능력이 뛰어납니다.",
-        weakness: "때로는 완벽을 추구하다가 긴장하여 실수할 수 있으니 마음의 여유가 필요합니다.",
-        opportunity: "꾸준한 연습과 전략적 사고로 상대방의 약점을 찾아내는 능력이 있습니다.",
-        challenge: "새로운 기술 습득에 시간이 걸리지만, 인내심을 가지고 연습하면 반드시 개선됩니다."
-      },
-      lucky_racket_tension: `${Math.floor(Math.random() * 10) + 48}파운드`,
-      lucky_court_position: ["베이스라인", "네트 앞", "서비스 라인", "코트 중앙"][Math.floor(Math.random() * 4)],
-      lucky_match_time: ["오전 10시", "오후 2시", "오후 4시", "오후 6시"][Math.floor(Math.random() * 4)],
-      lucky_tournament: tournaments[Math.floor(Math.random() * tournaments.length)],
-      recommendations: {
-        training_tips: [
-          "매일 15분씩 서브 연습으로 정확도를 높이세요",
-          "풋워크 훈련으로 코트 커버리지를 개선하세요",
-          "백핸드 슬라이스 연습으로 다양성을 키우세요",
-          "체력 훈련으로 긴 경기에 대비하세요",
-          "정확한 타겟 연습으로 컨트롤을 향상시키세요"
-        ],
-        match_strategies: [
-          "상대방의 약한 쪽을 집중적으로 공략하세요",
-          "서브의 방향과 스피드를 다양하게 변화시키세요",
-          "중요한 포인트에서는 안전한 플레이를 선택하세요",
-          "상대방의 리듬을 깨뜨리는 전술을 사용하세요",
-          "자신만의 경기 루틴을 만들어 일관성을 유지하세요"
-        ],
-        equipment_advice: [
-          "자신의 플레이 스타일에 맞는 라켓을 선택하세요",
-          "그립 사이즈를 정확히 맞춰 부상을 예방하세요",
-          "코트 표면에 적합한 신발을 착용하세요",
-          "스트링 텐션을 정기적으로 체크하세요",
-          "습도와 온도에 따라 볼의 특성을 고려하세요"
-        ],
-        mental_preparation: [
-          "경기 전 긍정적인 시각화 훈련을 하세요",
-          "실수 후에는 빠르게 마음을 리셋하세요",
-          "호흡법을 통해 긴장을 완화하세요",
-          "자신만의 집중 의식을 만드세요",
-          "경기 중 감정 기복을 최소화하세요"
-        ]
-      },
-      future_predictions: {
-        this_week: "새로운 기술을 배우기에 좋은 시기입니다. 기본기를 다지면 큰 향상을 이룰 수 있습니다.",
-        this_month: "경기력이 안정화되는 시기입니다. 꾸준한 연습으로 자신감을 키워보세요.",
-        this_season: "목표 달성에 가까워지는 시기입니다. 끝까지 포기하지 말고 최선을 다하세요."
-      },
-      compatibility: {
-        best_doubles_partner: "차분하고 전략적 사고를 가진 파트너",
-        ideal_coach_style: "체계적이면서도 개인의 특성을 살려주는 코치",
-        perfect_opponent: "페어플레이를 중시하며 서로 발전시켜주는 상대"
+      if (!response.ok) {
+        throw new Error('API 호출 실패');
       }
-    };
+
+      return await response.json();
+    } catch (error) {
+      console.error('테니스 운세 분석 오류:', error);
+      
+      // 개선된 백업 로직 (개인화된)
+      const birthYear = formData.birth_date ? parseInt(formData.birth_date.substring(0, 4)) : new Date().getFullYear() - 25;
+      const birthMonth = formData.birth_date ? parseInt(formData.birth_date.substring(5, 7)) : 6;
+      const birthDay = formData.birth_date ? parseInt(formData.birth_date.substring(8, 10)) : 15;
+      
+      let baseScore = ((birthYear + birthMonth + birthDay) % 30) + 65;
+      
+      // 경험별 보너스
+      if (formData.playing_experience.includes('10년 이상')) baseScore += 15;
+      else if (formData.playing_experience.includes('5-10년')) baseScore += 10;
+      
+      // 기술 다양성 보너스
+      if (formData.tennis_skills && formData.tennis_skills.length >= 6) baseScore += 10;
+      
+      // 왼손잡이 보너스
+      if (formData.dominant_hand === 'left') baseScore += 8;
+      
+      baseScore = Math.max(50, Math.min(95, baseScore));
+
+      return {
+        overall_luck: baseScore,
+        serve_luck: Math.max(45, Math.min(100, baseScore + 5)),
+        return_luck: Math.max(40, Math.min(95, baseScore)),
+        volley_luck: Math.max(50, Math.min(100, baseScore + 3)),
+        mental_luck: Math.max(55, Math.min(95, baseScore + 3)),
+        analysis: {
+          strength: "강한 집중력과 정확한 타이밍으로 중요한 순간에 실력을 발휘하는 능력이 뛰어납니다.",
+          weakness: "때로는 완벽을 추구하다가 긴장하여 실수할 수 있으니 마음의 여유가 필요합니다.",
+          opportunity: "꾸준한 연습과 전략적 사고로 상대방의 약점을 찾아내는 능력이 있습니다.",
+          challenge: "새로운 기술 습득에 시간이 걸리지만, 인내심을 가지고 연습하면 반드시 개선됩니다."
+        },
+        lucky_racket_tension: `${48 + (birthDay % 11)}파운드`,
+        lucky_court_position: ["베이스라인", "네트 앞", "서비스 라인", "코트 중앙"][birthMonth % 4],
+        lucky_match_time: ["오전 10시", "오후 2시", "오후 4시", "오후 6시"][birthDay % 4],
+        lucky_tournament: tournaments[baseScore % tournaments.length],
+        recommendations: {
+          training_tips: [
+            formData.tennis_skills?.includes('서브') ? 
+              "서브 기술을 더욱 발전시켜 에이스 확률을 높이세요" :
+              "매일 15분씩 서브 연습으로 정확도를 높이세요",
+            "풋워크 훈련으로 코트 커버리지를 개선하세요",
+            formData.dominant_hand === 'left' ?
+              "왼손잡이의 장점을 살린 각도 공격을 연습하세요" :
+              "백핸드 슬라이스 연습으로 다양성을 키우세요",
+            "체력 훈련으로 긴 경기에 대비하세요",
+            "정확한 타겟 연습으로 컨트롤을 향상시키세요"
+          ],
+          match_strategies: [
+            "상대방의 약한 쪽을 집중적으로 공략하세요",
+            formData.playing_style?.includes('공격') ?
+              "공격적인 플레이로 상대방에게 압박을 가하세요" :
+              "서브의 방향과 스피드를 다양하게 변화시키세요",
+            "중요한 포인트에서는 안전한 플레이를 선택하세요",
+            "상대방의 리듬을 깨뜨리는 전술을 사용하세요",
+            "자신만의 경기 루틴을 만들어 일관성을 유지하세요"
+          ],
+          equipment_advice: [
+            "자신의 플레이 스타일에 맞는 라켓을 선택하세요",
+            "그립 사이즈를 정확히 맞춰 부상을 예방하세요",
+            formData.favorite_surface ?
+              `${formData.favorite_surface}에 최적화된 신발을 선택하세요` :
+              "코트 표면에 적합한 신발을 착용하세요",
+            "스트링 텐션을 정기적으로 체크하세요",
+            "습도와 온도에 따라 볼의 특성을 고려하세요"
+          ],
+          mental_preparation: [
+            "경기 전 긍정적인 시각화 훈련을 하세요",
+            "실수 후에는 빠르게 마음을 리셋하세요",
+            "호흡법을 통해 긴장을 완화하세요",
+            formData.current_goal ?
+              "목표를 명확히 하고 집중력을 유지하세요" :
+              "자신만의 집중 의식을 만드세요",
+            "경기 중 감정 기복을 최소화하세요"
+          ]
+        },
+        future_predictions: {
+          this_week: "새로운 기술을 배우기에 좋은 시기입니다. 기본기를 다지면 큰 향상을 이룰 수 있습니다.",
+          this_month: "경기력이 안정화되는 시기입니다. 꾸준한 연습으로 자신감을 키워보세요.",
+          this_season: "목표 달성에 가까워지는 시기입니다. 끝까지 포기하지 말고 최선을 다하세요."
+        },
+        compatibility: {
+          best_doubles_partner: formData.playing_style?.includes('공격') ? 
+            "차분하고 전략적 사고를 가진 파트너" :
+            "활발하고 공격적인 플레이를 하는 파트너",
+          ideal_coach_style: "체계적이면서도 개인의 특성을 살려주는 코치",
+          perfect_opponent: "페어플레이를 중시하며 서로 발전시켜주는 상대"
+        }
+      };
+    }
   };
 
   const handleSubmit = async () => {

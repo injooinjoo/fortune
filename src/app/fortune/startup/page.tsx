@@ -100,26 +100,47 @@ export default function StartupFortunePage() {
   };
 
   const analyze = async (): Promise<StartupFortune> => {
-    const score = Math.floor(Math.random() * 30) + 60;
-    const mbtiKey = formData.mbti.charAt(0).toUpperCase();
-    const recIndustries = mbtiMap[mbtiKey] || industries.slice(0, 3);
-    const startMonth = ['3월', '5월', '8월', '10월'][Math.floor(Math.random() * 4)];
-    const startTime = `${new Date().getFullYear() + 1}년 ${startMonth}`;
-    return {
-      score,
-      best_industries: recIndustries.slice(0, 2),
-      best_start_time: startTime,
-      partners: ['ENFP', 'ISTJ', 'ENTJ'].slice(0, 2),
-      tips: [
-        '시장 조사를 철저히 하세요',
-        '초기 자금 관리를 신중히 하세요',
-        '네트워크를 적극 활용하세요'
-      ],
-      cautions: [
-        '과도한 확장에 주의',
-        '파트너와의 갈등 관리 필요'
-      ]
-    };
+    try {
+      const response = await fetch('/api/fortune/startup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('API 요청 실패');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('API 호출 중 오류:', error);
+      
+      // Fallback: 기본 응답 반환
+      const score = Math.floor(Math.random() * 30) + 60;
+      const mbtiKey = formData.mbti.charAt(0).toUpperCase();
+      const recIndustries = mbtiMap[mbtiKey] || industries.slice(0, 3);
+      const startMonth = ['3월', '5월', '8월', '10월'][Math.floor(Math.random() * 4)];
+      const startTime = `${new Date().getFullYear() + 1}년 ${startMonth}`;
+      
+      return {
+        score,
+        best_industries: recIndustries.slice(0, 2),
+        best_start_time: startTime,
+        partners: ['ENFP', 'ISTJ', 'ENTJ'].slice(0, 2),
+        tips: [
+          '시장 조사를 철저히 하세요',
+          '초기 자금 관리를 신중히 하세요',
+          '네트워크를 적극 활용하세요'
+        ],
+        cautions: [
+          '과도한 확장에 주의',
+          '파트너와의 갈등 관리 필요'
+        ]
+      };
+    }
   };
 
   const handleSubmit = async () => {

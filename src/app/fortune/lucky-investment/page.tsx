@@ -162,73 +162,84 @@ export default function LuckyInvestmentPage() {
   const [result, setResult] = useState<InvestmentFortune | null>(null);
 
   const analyzeInvestmentFortune = async (): Promise<InvestmentFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    try {
+      const response = await fetch('/api/fortune/lucky-investment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const assets = ["주식", "부동산", "채권", "금/귀금속", "펀드", "ETF", "암호화폐"];
-    const shuffledAssets = [...assets].sort(() => 0.5 - Math.random());
-    
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      investment_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      trading_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      profit_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      timing_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      analysis: {
-        strength: "신중하고 분석적인 투자 성향으로 리스크를 잘 관리할 수 있는 능력을 가지고 있습니다.",
-        weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 행동력이 필요합니다.",
-        opportunity: "시장의 변화를 빠르게 감지하고 새로운 투자 기회를 발견할 수 있는 시기입니다.",
-        risk: "감정적인 투자 결정을 내릴 수 있는 위험이 있으니 항상 냉정함을 유지해야 합니다."
-      },
-      lucky_assets: shuffledAssets.slice(0, 3),
-      lucky_timing: {
-        best_months: ["3월", "6월", "9월", "12월"].slice(0, 2),
-        best_days: ["화요일", "목요일"],
-        best_time: ["오전 9-11시", "오후 2-4시"][Math.floor(Math.random() * 2)]
-      },
-      recommendations: {
-        investment_tips: [
-          "분산 투자를 통해 리스크를 최소화하세요",
-          "장기적인 관점에서 투자 계획을 수립하세요",
-          "정기적으로 포트폴리오를 점검하고 리밸런싱하세요",
-          "시장 상황에 따라 유연하게 전략을 조정하세요",
-          "감정에 휘둘리지 말고 원칙을 지키세요"
-        ],
-        risk_management: [
-          "투자 금액의 한도를 미리 정하고 지키세요",
-          "손실 한도선을 설정하고 철저히 관리하세요",
-          "한 번에 모든 자금을 투자하지 마세요",
-          "긴급 자금은 별도로 확보해두세요",
-          "투자 전에 충분한 조사와 분석을 하세요"
-        ],
-        timing_strategies: [
-          "시장의 과도한 공포나 탐욕 시점을 활용하세요",
-          "정기적인 적립식 투자로 시점 분산하세요",
-          "경제 지표와 뉴스를 주기적으로 모니터링하세요",
-          "계절성과 주기성을 고려한 투자를 하세요",
-          "급등 후에는 차익 실현을 고려해보세요"
-        ],
-        portfolio_advice: [
-          "안정형과 공격형 자산의 비율을 조절하세요",
-          "국내외 자산에 균형있게 투자하세요",
-          "생애주기에 맞는 자산 배분을 하세요",
-          "인플레이션 헤지 자산을 포함하세요",
-          "대체 투자도 소량 포함을 고려해보세요"
+      if (!response.ok) {
+        throw new Error('API 요청 실패');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('API 호출 중 오류:', error);
+      
+      // Fallback: 기본 응답 반환
+      const baseScore = 70;
+      const assets = ["주식", "부동산", "채권", "금/귀금속", "펀드", "ETF", "암호화폐"];
+      const shuffledAssets = [...assets].sort(() => 0.5 - Math.random());
+      
+      return {
+        overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
+        investment_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
+        trading_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
+        profit_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        timing_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+        analysis: {
+          strength: "신중하고 분석적인 투자 성향으로 리스크를 잘 관리할 수 있는 능력을 가지고 있습니다.",
+          weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 행동력이 필요합니다.",
+          opportunity: "시장의 변화를 빠르게 감지하고 새로운 투자 기회를 발견할 수 있는 시기입니다.",
+          risk: "감정적인 투자 결정을 내릴 수 있는 위험이 있으니 항상 냉정함을 유지해야 합니다."
+        },
+        lucky_assets: shuffledAssets.slice(0, 3),
+        lucky_timing: {
+          best_months: ["3월", "6월", "9월", "12월"].slice(0, 2),
+          best_days: ["화요일", "목요일"],
+          best_time: "오전 9-11시"
+        },
+        recommendations: {
+          investment_tips: [
+            "분산 투자를 통해 리스크를 최소화하세요",
+            "장기적인 관점에서 투자 계획을 수립하세요",
+            "정기적으로 포트폴리오를 점검하고 리밸런싱하세요"
+          ],
+          risk_management: [
+            "투자 금액의 한도를 미리 정하고 지키세요",
+            "손실 한도선을 설정하고 철저히 관리하세요",
+            "긴급 자금은 별도로 확보해두세요"
+          ],
+          timing_strategies: [
+            "시장의 과도한 공포나 탐욕 시점을 활용하세요",
+            "정기적인 적립식 투자로 시점 분산하세요",
+            "경제 지표와 뉴스를 주기적으로 모니터링하세요"
+          ],
+          portfolio_advice: [
+            "안정형과 공격형 자산의 비율을 조절하세요",
+            "국내외 자산에 균형있게 투자하세요",
+            "생애주기에 맞는 자산 배분을 하세요"
+          ]
+        },
+        future_predictions: {
+          this_month: "신중한 접근이 필요한 시기입니다. 기존 투자를 점검하고 새로운 기회를 탐색해보세요.",
+          next_quarter: "변동성이 큰 시기가 예상됩니다. 리스크 관리에 더욱 신경 쓰며 안정적인 수익을 추구하세요.",
+          this_year: "장기적인 성장이 기대되는 해입니다. 꾸준한 투자와 인내심으로 좋은 결과를 얻을 수 있습니다."
+        },
+        lucky_numbers: [7, 21, 35, 49, 63],
+        warning_signs: [
+          "급격한 시장 변동 시 패닉 매도 주의",
+          "과도한 레버리지 사용 금지",
+          "소문이나 추천에만 의존한 투자 경계",
+          "감정적 투자 결정 시 한 박자 쉬기",
+          "투자 원금 이상의 손실 방지"
         ]
-      },
-      future_predictions: {
-        this_month: "신중한 접근이 필요한 시기입니다. 기존 투자를 점검하고 새로운 기회를 탐색해보세요.",
-        next_quarter: "변동성이 큰 시기가 예상됩니다. 리스크 관리에 더욱 신경 쓰며 안정적인 수익을 추구하세요.",
-        this_year: "장기적인 성장이 기대되는 해입니다. 꾸준한 투자와 인내심으로 좋은 결과를 얻을 수 있습니다."
-      },
-      lucky_numbers: Array.from({length: 5}, () => Math.floor(Math.random() * 100) + 1),
-      warning_signs: [
-        "급격한 시장 변동 시 패닉 매도 주의",
-        "과도한 레버리지 사용 금지",
-        "소문이나 추천에만 의존한 투자 경계",
-        "감정적 투자 결정 시 한 박자 쉬기",
-        "투자 원금 이상의 손실 방지"
-      ]
-    };
+      };
+    }
   };
 
   const handleSubmit = async () => {

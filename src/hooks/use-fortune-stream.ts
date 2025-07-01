@@ -1,7 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 
 // 최근 본 운세 타입
 interface RecentFortune {
@@ -81,30 +83,244 @@ export interface FortuneResult {
   isComplete: boolean;
 }
 
-export const useFortuneStream = () => {
-  const [result, setResult] = useState<FortuneResult | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+interface FortuneFormData {
+  category: string
+  userInfo: {
+    name?: string
+    mbti?: string
+    zodiac?: string
+    birthDate?: string
+    [key: string]: any
+  }
+  packageType?: 'single' | 'traditional_bundle' | 'daily_bundle' | 'love_bundle'
+}
 
-  const streamFortune = async (prompt: string) => {
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
+interface FortuneStreamOptions {
+  packageType?: 'single' | 'traditional_bundle' | 'daily_bundle' | 'love_bundle'
+  enableCache?: boolean
+  cacheDuration?: number // 시간 (분)
+  onProgress?: (progress: number) => void
+  onSuccess?: (result: any) => void
+  onError?: (error: Error) => void
+}
 
-    try {
-      // 실제 스트리밍 구현은 여기에
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      setResult({
-        message: `당신의 운세 결과입니다: ${prompt}`,
-        isComplete: true
-      });
-    } catch (err) {
-      setError('운세 분석 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
+export function useFortuneStream(options: FortuneStreamOptions = {}) {
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [result, setResult] = useState<any>(null)
+  const [error, setError] = useState<Error | null>(null)
+  
+  // Context7 최적화 패턴: 특정 필드만 구독
+  const { control, handleSubmit, watch, setValue, reset } = useForm<FortuneFormData>({
+    mode: 'onChange',
+    defaultValues: {
+      category: '',
+      userInfo: {},
+      packageType: options.packageType || 'single'
     }
-  };
+  })
+
+  // Context7 패턴: useCallback으로 함수 메모이제이션
+  const updateProgress = useCallback((newProgress: number) => {
+    setProgress(newProgress)
+    options.onProgress?.(newProgress)
+  }, [options.onProgress])
+
+  // 운세 패키지별 처리 로직
+  const getPackageCategories = useCallback((packageType: string) => {
+    switch (packageType) {
+      case 'traditional_bundle':
+        return ['saju', 'traditional-saju', 'tojeong', 'salpuli', 'past-life']
+      case 'daily_bundle':
+        return ['daily', 'hourly', 'today', 'tomorrow']
+      case 'love_bundle':
+        const userInfo = watch('userInfo')
+        const isSingle = !userInfo.relationship || userInfo.relationship === 'single'
+        return isSingle 
+          ? ['love', 'destiny', 'blind-date', 'celebrity-match']
+          : ['love', 'marriage', 'couple-match', 'chemistry']
+      default:
+        return [watch('category')]
+    }
+  }, [watch])
+
+  // Context7 패턴: Promise 토스트를 활용한 에러 처리
+  const generateFortune = useCallback(async (formData: FortuneFormData) => {
+    const categories = getPackageCategories(formData.packageType || 'single')
+    
+    return toast.promise(
+      (async () => {
+        setIsGenerating(true)
+        setError(null)
+        setProgress(0)
+
+        try {
+          // 패키지 타입에 따른 토큰 효율성 계산
+          const isBundle = formData.packageType !== 'single'
+          const tokenSavings = isBundle ? '75% 토큰 절약' : '일반 요청'
+          
+          toast.loading(`${categories.length}개 운세 생성 중... (${tokenSavings})`, {
+            id: 'fortune-generation'
+          })
+
+          let allResults: any = {}
+          
+          if (isBundle) {
+            // 묶음 요청 - 단일 API 호출로 효율성 극대화
+            const response = await fetch('/api/fortune/generate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                categories,
+                userInfo: formData.userInfo,
+                packageType: formData.packageType,
+                requestId: `${Date.now()}_${Math.random().toString(36).substring(7)}`
+              })
+            })
+
+            if (!response.ok) {
+              throw new Error(`운세 생성 실패: ${response.statusText}`)
+            }
+
+            const reader = response.body?.getReader()
+            if (!reader) throw new Error('스트림 읽기 실패')
+
+            let buffer = ''
+            while (true) {
+              const { done, value } = await reader.read()
+              if (done) break
+
+              buffer += new TextDecoder().decode(value)
+              const lines = buffer.split('\n')
+              buffer = lines.pop() || ''
+
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  try {
+                    const data = JSON.parse(line.slice(6))
+                    
+                    if (data.type === 'progress') {
+                      updateProgress(data.progress)
+                    } else if (data.type === 'result') {
+                      allResults[data.category] = data.result
+                    } else if (data.type === 'complete') {
+                      allResults = data.results
+                      break
+                    }
+                  } catch (e) {
+                    console.warn('JSON 파싱 실패:', line)
+                  }
+                }
+              }
+            }
+          } else {
+            // 단일 요청
+            for (let i = 0; i < categories.length; i++) {
+              const category = categories[i]
+              updateProgress((i / categories.length) * 100)
+
+              const response = await fetch(`/api/fortune/${category}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData.userInfo)
+              })
+
+              if (!response.ok) {
+                throw new Error(`${category} 운세 생성 실패`)
+              }
+
+              allResults[category] = await response.json()
+            }
+          }
+
+          updateProgress(100)
+          setResult(allResults)
+          toast.dismiss('fortune-generation')
+          
+          options.onSuccess?.(allResults)
+          return allResults
+
+        } catch (err) {
+          const error = err instanceof Error ? err : new Error('알 수 없는 오류')
+          setError(error)
+          toast.dismiss('fortune-generation')
+          options.onError?.(error)
+          throw error
+        } finally {
+          setIsGenerating(false)
+        }
+      })(),
+      {
+        loading: '운세를 생성하고 있습니다...',
+        success: (data) => {
+          const categories = Object.keys(data)
+          return `${categories.length}개 운세가 완성되었습니다! ✨`
+        },
+        error: (err) => `운세 생성 실패: ${err.message}`,
+      },
+      {
+        style: {
+          minWidth: '300px',
+        },
+        success: {
+          duration: 3000,
+          icon: '✨',
+        },
+        error: {
+          duration: 5000,
+          icon: '❌',
+        },
+      }
+    )
+  }, [getPackageCategories, updateProgress, options])
+
+  // Context7 패턴: 폼 제출 최적화
+  const onSubmit = useCallback(
+    handleSubmit((data) => generateFortune(data)),
+    [handleSubmit, generateFortune]
+  )
+
+  // Context7 패턴: reset 함수 메모이제이션
+  const resetForm = useCallback(() => {
+    reset()
+    setResult(null)
+    setError(null)
+    setProgress(0)
+  }, [reset])
+
+  // 캐시 키 생성 (정책에 따른 캐시 전략)
+  const getCacheKey = useCallback((formData: FortuneFormData) => {
+    const { category, userInfo, packageType } = formData
+    const key = `${packageType || category}_${JSON.stringify(userInfo)}`
+    return btoa(key).replace(/[^a-zA-Z0-9]/g, '')
+  }, [])
+
+  // Context7 패턴: 조건부 캐시 체크
+  const checkCache = useCallback((formData: FortuneFormData) => {
+    if (!options.enableCache) return null
+    
+    const cacheKey = getCacheKey(formData)
+    const cached = localStorage.getItem(`fortune_${cacheKey}`)
+    
+    if (cached) {
+      try {
+        const { data, timestamp } = JSON.parse(cached)
+        const cacheAge = Date.now() - timestamp
+        const maxAge = (options.cacheDuration || 1440) * 60 * 1000 // 기본 24시간
+        
+        if (cacheAge < maxAge) {
+          toast.success('캐시된 운세를 불러왔습니다! ⚡', {
+            duration: 2000,
+            icon: '⚡'
+          })
+          return data
+        }
+      } catch (e) {
+        localStorage.removeItem(`fortune_${cacheKey}`)
+      }
+    }
+    return null
+  }, [getCacheKey, options.enableCache, options.cacheDuration])
 
   // 최근 본 운세에 추가하는 함수
   const addToRecentFortunes = (path: string) => {
@@ -150,10 +366,28 @@ export const useFortuneStream = () => {
   }, []);
 
   return {
+    // 폼 관련 (Context7 최적화 적용)
+    control,
+    handleSubmit: onSubmit,
+    watch,
+    setValue,
+    reset: resetForm,
+    
+    // 상태 관리
+    isGenerating,
+    progress,
     result,
-    isLoading,
     error,
-    streamFortune,
+    
+    // 액션
+    generateFortune,
+    checkCache,
+    
+    // 유틸리티
+    getPackageCategories,
+    getCacheKey,
+    
+    // 최근 본 운세 관련
     addToRecentFortunes
   };
-};
+}

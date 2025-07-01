@@ -20,7 +20,7 @@ import {
   Heart,
   Flower,
   Palette,
-  Hat,
+  Crown,
   Watch
 } from "lucide-react";
 
@@ -126,7 +126,7 @@ export default function LuckyOutfitPage() {
         colors: ["네온", "블랙"],
         items: ["오버사이즈 후디", "데님 팬츠"],
         description: "자유롭고 개성 넘치는 스타일",
-        icon: Hat,
+        icon: Crown,
       },
       {
         style: "포멀",
