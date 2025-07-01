@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     console.log('🐲 띠별 운세 API 요청');
     
     // URL에서 사용자 ID 추출 (쿼리 파라미터 또는 헤더에서)
-    const userId = request.nextUrl.searchParams.get('userId') || 'dev-user-123';
+    const userId = request.nextUrl.searchParams.get('userId') || `guest_${Date.now()}`;
     console.log(`🔍 띠별 운세 요청: 사용자 ID = ${userId}`);
 
     const result = await fortuneService.getOrCreateFortune(userId, 'zodiac-animal');

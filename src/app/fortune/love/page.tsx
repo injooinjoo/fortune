@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
 import { 
   Heart, 
   Star, 
@@ -73,6 +74,7 @@ export default function LoveFortunePage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'thisWeek' | 'thisMonth'>('today');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
 
   useEffect(() => {
     const fetchLoveFortune = async () => {
@@ -136,8 +138,27 @@ export default function LoveFortunePage() {
       }
     };
 
-    fetchLoveFortune();
-  }, []);
+    // 로딩 스크린이 표시되지 않을 때만 데이터 fetching
+    if (!showLoadingScreen) {
+      fetchLoveFortune();
+    }
+  }, [showLoadingScreen]);
+
+  // 로딩 스크린 표시
+  if (showLoadingScreen) {
+    return (
+      <AdLoadingScreen
+        fortuneType="love"
+        fortuneTitle="연애운"
+        onComplete={() => setShowLoadingScreen(false)}
+        onSkip={() => {
+          // 프리미엄 페이지로 이동
+          window.location.href = '/premium';
+        }}
+        isPremium={false}
+      />
+    );
+  }
 
   if (loading) {
     return (

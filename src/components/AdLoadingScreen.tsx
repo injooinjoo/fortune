@@ -112,8 +112,8 @@ export default function AdLoadingScreen({
             key={i}
             className="absolute w-2 h-2 bg-white rounded-full opacity-20"
             animate={{
-              y: [-100, window.innerHeight + 100],
-              x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
+              y: [-100, 800],
+              x: [Math.random() * 400, Math.random() * 400],
               opacity: [0, 1, 0]
             }}
             transition={{
@@ -137,18 +137,18 @@ export default function AdLoadingScreen({
         className="w-full max-w-sm sm:max-w-md relative z-10 max-h-[80vh] overflow-y-auto scrollbar-hide"
       >
         <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
-          <CardContent className="p-4 sm:p-6 text-center space-y-4 sm:space-y-6">
+          <CardContent className="p-3 sm:p-4 text-center space-y-3 sm:space-y-4">
             {/* 운세 타입 */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="bg-white/20 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mx-auto"
+                className="bg-white/20 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center mx-auto"
               >
-                <currentStepData.icon className="w-6 h-6 sm:w-8 sm:h-8" />
+                <currentStepData.icon className="w-5 h-5 sm:w-6 sm:h-6" />
               </motion.div>
-              <h2 className="text-lg sm:text-xl font-bold">{fortuneTitle}</h2>
-              <p className="text-white/80 text-xs sm:text-sm">운세를 분석하고 있습니다</p>
+              <h2 className="text-base sm:text-lg font-bold">{fortuneTitle}</h2>
+              <p className="text-white/80 text-xs">운세를 분석하고 있습니다</p>
             </div>
 
             {/* 현재 단계 */}
@@ -159,76 +159,108 @@ export default function AdLoadingScreen({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="space-y-3"
+                className="space-y-2"
               >
-                <p className="text-lg font-medium">{currentStepData.text}</p>
+                <p className="text-sm font-medium">{currentStepData.text}</p>
                 <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm text-white/80">잠시만 기다려주세요...</span>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span className="text-xs text-white/80">잠시만 기다려주세요...</span>
                 </div>
               </motion.div>
             </AnimatePresence>
 
-            {/* 진행률 바 */}
-            <div className="space-y-2">
-              <Progress value={progress} className="h-2 bg-white/20" />
-              <p className="text-sm text-white/70">{Math.round(progress)}% 완료</p>
+            {/* 진행률 바 - 클릭 가능한 버튼 */}
+            <div className="space-y-1">
+              <div 
+                className={`relative h-8 bg-white/20 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${
+                  progress >= 100 ? 'hover:bg-white/30 active:scale-[0.98]' : 'cursor-not-allowed'
+                }`}
+                onClick={() => {
+                  if (progress >= 100) {
+                    onComplete();
+                  }
+                }}
+              >
+                {/* 프로그래스 배경 */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500"
+                  initial={{ width: '0%' }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+                
+                {/* 버튼 텍스트 */}
+                <div className="absolute inset-0 flex items-center justify-center text-white font-semibold">
+                  {progress >= 100 ? (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Star className="w-4 h-4" />
+                      <span className="text-sm">운세 보기</span>
+                    </motion.div>
+                  ) : (
+                    <span className="text-xs">{Math.round(progress)}% 완료</span>
+                  )}
+                </div>
+                
+                {/* 활성화 시 글로우 효과 */}
+                {progress >= 100 && (
+                  <motion.div
+                    className="absolute inset-0 bg-white/10"
+                    animate={{ opacity: [0, 0.3, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                )}
+              </div>
+              
+              {progress < 100 && (
+                <p className="text-xs text-white/70">프로그래스바가 완료되면 클릭하세요</p>
+              )}
             </div>
 
 {/* 광고 영역 - 일반 사용자만 */}
             {!isPremium && (
-              <div className="bg-white/5 border border-white/20 rounded-lg p-4 space-y-3">
+              <div className="bg-white/5 border border-white/20 rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-center gap-2 text-yellow-300">
-                  <Gift className="w-4 h-4" />
-                  <span className="text-sm font-medium">광고를 보고 무료로 이용하세요</span>
+                  <Gift className="w-3 h-3" />
+                  <span className="text-xs font-medium">광고를 보고 무료로 이용하세요</span>
                 </div>
                 
                 {/* 실제 광고 영역 - AdSense/AdMob */}
-                <div className="bg-gray-800/50 rounded-lg p-3 sm:p-4 min-h-[120px] sm:min-h-[160px] flex items-center justify-center">
-                  <div className="text-center space-y-1 sm:space-y-2">
-                    <div className="text-2xl sm:text-4xl">📱</div>
-                    <p className="text-xs sm:text-sm text-white/80">광고 영역</p>
+                <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 min-h-[100px] sm:min-h-[120px] flex items-center justify-center">
+                  <div className="text-center space-y-1">
+                    <div className="text-xl sm:text-2xl">📱</div>
+                    <p className="text-xs text-white/80">광고 영역</p>
                     <p className="text-xs text-white/60 hidden sm:block">AdSense/AdMob 광고가 여기에 표시됩니다</p>
                   </div>
                 </div>
               </div>
             )}
 
-{/* 확인 버튼 - 일반 사용자만 */}
+{/* 프리미엄 업그레이드 안내 - 일반 사용자만 */}
             {!isPremium && (
-              <div className="space-y-3">
-                {progress >= 100 && (
-                  <Button
-                    onClick={onComplete}
-                    className="w-full font-semibold py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Star className="w-5 h-5" />
-                      운세 보기
-                    </div>
-                  </Button>
-                )}
-               
-                {/* 프리미엄 업그레이드 안내 */}
-                <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-3">
-                  <div className="flex items-center gap-2 justify-center text-yellow-300 mb-2">
-                    <Crown className="w-4 h-4" />
-                    <span className="text-sm font-medium">프리미엄으로 업그레이드</span>
-                  </div>
-                  <p className="text-xs text-yellow-200 text-center">
-                    광고 없이 바로 운세를 확인하세요!
-                  </p>
-                  {onSkip && (
+              <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-lg p-2 overflow-hidden">
+                <div className="flex items-center gap-2 justify-center text-yellow-300 mb-1">
+                  <Crown className="w-3 h-3" />
+                  <span className="text-xs font-medium">프리미엄으로 업그레이드</span>
+                </div>
+                <p className="text-xs text-yellow-200 text-center mb-2">
+                  광고 없이 바로 운세를 확인하세요!
+                </p>
+                {onSkip && (
+                  <div className="mx-[-8px] mb-[-8px]">
                     <Button
                       onClick={onSkip}
                       variant="outline"
                       size="sm"
-                      className="w-full mt-2 border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/10"
+                      className="w-full text-xs py-1 h-7 border-yellow-500/50 text-yellow-300 hover:bg-yellow-500/10 rounded-b-lg rounded-t-none border-l-0 border-r-0 border-b-0"
                     >
                       프리미엄 알아보기
                     </Button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>

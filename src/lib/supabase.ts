@@ -55,9 +55,9 @@ export interface FortuneCompletion {
   updated_at?: string;
 }
 
-// Supabase 설정 - 강제 하드코딩으로 테스트
-const supabaseUrl = 'https://hayjukwfcsdmppairazc.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMDIyNzUsImV4cCI6MjA2MzY3ODI3NX0.nV--LlLk8VOUyz0Vmu_26dRn1vRD9WFxPg0BIYS7ct0';
+// Supabase 설정 - 환경변수에서 가져오기
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://hayjukwfcsdmppairazc.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMDIyNzUsImV4cCI6MjA2MzY3ODI3NX0.nV--LlLk8VOUyz0Vmu_26dRn1vRD9WFxPg0BIYS7ct0';
 
 console.log('🔧 Supabase URL:', supabaseUrl);
 console.log('🔧 Environment URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);

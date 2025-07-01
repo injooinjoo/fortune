@@ -9,7 +9,8 @@ export async function GET(request: NextRequest) {
     const fortuneService = new FortuneService();
 
     // 개발용 고정 사용자 ID (실제로는 JWT에서 추출)
-    const userId = 'dev-user-123';
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId') || `guest_${Date.now()}`;
     
     console.log(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);
 

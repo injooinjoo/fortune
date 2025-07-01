@@ -5,16 +5,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { saveUserProfile, getUserProfile, getAllProfiles } from '@/lib/mock-storage';
 
 // 임시로 인증 우회 (개발용)
-async function getCurrentUser() {
+async function getCurrentUser(request?: NextRequest) {
+  const userId = request?.nextUrl.searchParams.get('userId') || `guest_${Date.now()}`;
   return {
-    id: 'dev-user-123',
+    id: userId,
     email: 'dev@example.com'
   };
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    const user = await getCurrentUser(request);
     const profileData = await request.json();
 
     console.log('프로필 저장 요청:', profileData);
@@ -78,9 +79,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    const user = await getCurrentUser(request);
     const profile = getUserProfile(user.id);
 
     if (!profile) {

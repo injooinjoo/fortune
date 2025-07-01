@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
 
-// 개발용 고정 사용자 프로필
-const mockUserProfile: UserProfile = {
-  id: 'dev-user-123',
+// 개발용 기본 사용자 프로필 생성 함수
+const getDefaultUserProfile = (userId: string): UserProfile => ({
+  id: userId,
   name: '김인주',
   birth_date: '1988-09-05',
   birth_time: '인시',
   gender: '남성',
   mbti: 'ENTJ',
   zodiac_sign: '처녀자리',
-  created_at: '2025-06-30T16:43:32.858Z',
-  updated_at: '2025-06-30T16:43:32.858Z'
-};
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,15 +21,18 @@ export async function GET(request: NextRequest) {
     
     // URL에서 사용자 ID 추출 (테스트용)
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || 'dev-user-123'; // 기본값
+    const userId = searchParams.get('userId') || `guest_${Date.now()}`; // 동적 기본값
     
     console.log(`🔍 전통 사주 요청: 사용자 ID = ${userId}`);
+    
+    // 기본 사용자 프로필 생성
+    const userProfile = getDefaultUserProfile(userId);
     
     const fortuneService = new FortuneService();
     const result = await fortuneService.getOrCreateFortune(
       userId, 
       'traditional-saju',
-      mockUserProfile
+      userProfile
     );
     
     console.log('✅ 전통 사주 API 응답 완료:', userId);

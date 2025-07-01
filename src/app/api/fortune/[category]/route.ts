@@ -7,11 +7,12 @@ import { FortuneCategory, InteractiveInput } from '@/lib/types/fortune-system';
 import { getUserProfile, getAllProfiles } from '@/lib/mock-storage';
 
 // 임시로 인증 우회 (개발용)
-async function getCurrentUser() {
+async function getCurrentUser(request?: NextRequest) {
   // 실제 프로덕션에서는 Supabase 인증을 사용
   // 지금은 개발 단계이므로 임시 사용자 반환
+  const userId = request?.url ? new URL(request.url).searchParams.get('userId') : null;
   return {
-    id: 'dev-user-123',
+    id: userId || `guest_${Date.now()}`,
     email: 'dev@example.com'
   };
 }
@@ -22,7 +23,7 @@ export async function GET(
 ) {
   try {
     // 임시 사용자 정보 가져오기 (개발용)
-    const user = await getCurrentUser();
+    const user = await getCurrentUser(request);
 
     const { category } = await params;
     console.log(`운세 요청: ${category}, 사용자: ${user.id}`);
@@ -77,7 +78,7 @@ export async function POST(
 ) {
   try {
     // 임시 사용자 정보 가져오기 (개발용)
-    const user = await getCurrentUser();
+    const user = await getCurrentUser(request);
 
     const { category } = await params;
     const requestBody = await request.json();

@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
     console.log('🤝 인맥보고서 API 요청 접수');
     
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || 'dev-user-123';
+    const userId = searchParams.get('userId') || `guest_${Date.now()}`;
     
     console.log(`🔍 인맥보고서 요청: 사용자 ID = ${userId}`);
 

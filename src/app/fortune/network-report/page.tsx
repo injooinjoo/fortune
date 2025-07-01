@@ -54,7 +54,7 @@ export default function NetworkReportPage() {
     const fetchNetworkReport = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/fortune/network-report?userId=dev-user-123');
+        const response = await fetch(`/api/fortune/network-report?userId=guest_${Date.now()}`);
         const result = await response.json();
         
         if (result.success && result.data) {
