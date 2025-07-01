@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
 interface GolfInfo {
   name: string;
@@ -47,6 +48,116 @@ interface GolfFortune {
   };
   lucky_holes: number[];
   course_recommendations: string[];
+}
+
+async function analyzeGolfFortune(info: GolfInfo): Promise<GolfFortune> {
+  try {
+    // GPT 모델 선택 (기본 텍스트 운세)
+    const model = selectGPTModel('daily', 'text');
+    
+    // 전문 골프 운세 프롬프트 생성
+    const prompt = `
+당신은 골프 전문가이자 운세 상담사입니다. 다음 정보를 바탕으로 골프 운세를 상세히 분석해주세요.
+
+사용자 정보:
+- 생년월일: ${info.birth_date}
+- 핸디캡: ${info.handicap || '정보 없음'}
+- 골프 경험: ${info.playing_experience || '정보 없음'}
+- 플레이 빈도: ${info.play_frequency || '정보 없음'}
+- 선호 코스: ${info.preferred_courses?.join(', ') || '정보 없음'}
+- 플레이 스타일: ${info.playing_style || '정보 없음'}
+- 선호 클럽: ${info.favorite_clubs?.join(', ') || '정보 없음'}
+- 골프 목표: ${info.golf_goals || '정보 없음'}
+- 가장 큰 도전: ${info.biggest_challenge || '정보 없음'}
+
+다음 JSON 형식으로 응답해주세요:
+{
+  "overall_luck": 85,
+  "driving_luck": 78,
+  "iron_luck": 82,
+  "putting_luck": 75,
+  "course_management_luck": 88,
+  "analysis": {
+    "strength": "골프에서의 주요 강점과 장점",
+    "weakness": "주의해야 할 약점이나 개선점",
+    "opportunity": "골프를 통해 얻을 수 있는 기회들",
+    "threat": "라운딩에서 주의해야 할 도전과제들"
+  },
+  "lucky_elements": {
+    "course_type": "행운의 코스 유형",
+    "tee_time": "행운의 티타임",
+    "weather": "행운의 날씨",
+    "playing_direction": "행운의 플레이 방향"
+  },
+  "recommendations": {
+    "driving_tips": ["구체적인 드라이빙 조언들"],
+    "approach_tips": ["어프로치 샷 조언들"],
+    "putting_tips": ["퍼팅 조언들"],
+    "mental_tips": ["멘탈 관리 조언들"],
+    "equipment_advice": ["장비 관련 조언들"]
+  },
+  "future_predictions": {
+    "this_week": "이번 주 골프 운세",
+    "this_month": "이번 달 골프 운세",
+    "this_season": "이번 시즌 골프 운세"
+  }
+}
+`;
+
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.overall_luck === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      // GPT 응답을 기존 인터페이스 형식으로 변환
+      const transformedResult: GolfFortune = {
+        overall_luck: gptResult.overall_luck,
+        driving_luck: gptResult.driving_luck,
+        iron_luck: gptResult.iron_luck,
+        putting_luck: gptResult.putting_luck,
+        course_management_luck: gptResult.course_management_luck,
+        analysis: {
+          strength: gptResult.analysis?.strength || '차분하고 집중력이 좋아 안정적인 플레이가 가능합니다',
+          weakness: gptResult.analysis?.weakness || '때로는 과도한 완벽주의로 인한 부담감이 있을 수 있습니다',
+          opportunity: gptResult.analysis?.opportunity || '꾸준한 연습을 통해 기량 향상의 기회가 있습니다',
+          threat: gptResult.analysis?.threat || '컨디션 관리와 멘탈 관리에 주의가 필요합니다'
+        },
+        lucky_elements: {
+          course_type: gptResult.lucky_elements?.course_type || generateLuckyElements(new Date().getDate(), new Date().getMonth() + 1).course_type,
+          tee_time: gptResult.lucky_elements?.tee_time || generateLuckyElements(new Date().getDate(), new Date().getMonth() + 1).tee_time,
+          weather: gptResult.lucky_elements?.weather || generateLuckyElements(new Date().getDate(), new Date().getMonth() + 1).weather,
+          playing_direction: gptResult.lucky_elements?.playing_direction || generateLuckyElements(new Date().getDate(), new Date().getMonth() + 1).playing_direction
+        },
+        recommendations: {
+          driving_tips: gptResult.recommendations?.driving_tips || ['백스윙을 천천히 하여 리듬을 유지하세요'],
+          approach_tips: gptResult.recommendations?.approach_tips || ['핀까지의 정확한 거리를 측정하세요'],
+          putting_tips: gptResult.recommendations?.putting_tips || ['그린의 경사를 충분히 읽으세요'],
+          mental_tips: gptResult.recommendations?.mental_tips || ['각 샷마다 긍정적인 이미지를 그리세요'],
+          equipment_advice: gptResult.recommendations?.equipment_advice || ['자신의 스윙 속도에 맞는 샤프트를 선택하세요']
+        },
+        future_predictions: {
+          this_week: gptResult.future_predictions?.this_week || '이번 주는 드라이빙 거리가 늘어날 수 있는 좋은 시기입니다',
+          this_month: gptResult.future_predictions?.this_month || '이번 달은 퍼팅 감각이 좋아질 것으로 예상됩니다',
+          this_season: gptResult.future_predictions?.this_season || '이번 시즌은 전반적인 스코어 향상이 기대됩니다'
+        },
+        lucky_holes: generateLuckyHoles(new Date().getDate(), new Date().getMonth() + 1),
+        course_recommendations: generateCourseRecommendations(gptResult.overall_luck)
+      };
+      
+      return transformedResult;
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 개선된 개인화 알고리즘
+    return generatePersonalizedGolfFortune(info);
+  }
 }
 
 function generatePersonalizedGolfFortune(info: GolfInfo): GolfFortune {
@@ -326,7 +437,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const golfFortune = generatePersonalizedGolfFortune(body as GolfInfo);
+    const golfFortune = await analyzeGolfFortune(body as GolfInfo);
     
     return NextResponse.json(golfFortune);
   } catch (error) {

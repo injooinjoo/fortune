@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
 interface BaseballInfo {
   name: string;
@@ -45,6 +46,110 @@ interface BaseballFortune {
     ideal_coach_style: string;
     perfect_opponent: string;
   };
+}
+
+async function analyzeBaseballFortune(info: BaseballInfo): Promise<BaseballFortune> {
+  try {
+    // GPT 모델 선택 (기본 텍스트 운세)
+    const model = selectGPTModel('daily', 'text');
+    
+    // 전문 야구 운세 프롬프트 생성
+    const prompt = `
+당신은 야구 전문가이자 운세 상담사입니다. 다음 정보를 바탕으로 야구 운세를 상세히 분석해주세요.
+
+사용자 정보:
+- 생년월일: ${info.birth_date}
+- 선호 팀: ${info.favorite_team || '정보 없음'}
+- 선호 포지션: ${info.favorite_position || '정보 없음'}
+- 야구 경험: ${info.playing_experience || '정보 없음'}
+- 경기 빈도: ${info.game_frequency || '정보 없음'}
+- 야구 지식: ${info.baseball_knowledge?.join(', ') || '정보 없음'}
+- 행운 번호: ${info.lucky_number || '정보 없음'}
+- 현재 목표: ${info.current_goal || '정보 없음'}
+
+다음 JSON 형식으로 응답해주세요:
+{
+  "overall_luck": 85,
+  "batting_luck": 78,
+  "pitching_luck": 82,
+  "fielding_luck": 75,
+  "team_luck": 88,
+  "analysis": {
+    "strength": "야구에서의 주요 강점과 장점",
+    "weakness": "주의해야 할 약점이나 개선점", 
+    "opportunity": "야구를 통해 얻을 수 있는 기회들",
+    "challenge": "경기에서 주의해야 할 도전과제들"
+  },
+  "lucky_elements": {
+    "position": "행운의 포지션",
+    "number": "행운의 등번호",
+    "game_time": "행운의 경기 시간",
+    "stadium": "행운의 구장"
+  },
+  "recommendations": {
+    "training_tips": ["구체적인 훈련 포인트들"],
+    "game_strategies": ["경기 전략 조언들"],
+    "team_building": ["팀빌딩 조언들"],
+    "mental_preparation": ["멘탈 준비법들"]
+  },
+  "future_predictions": {
+    "this_week": "이번 주 야구 운세",
+    "this_month": "이번 달 야구 운세",
+    "this_season": "이번 시즌 운세"
+  }
+}
+`;
+
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.overall_luck === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      // GPT 응답을 기존 인터페이스 형식으로 변환
+      const transformedResult: BaseballFortune = {
+        overall_luck: gptResult.overall_luck,
+        batting_luck: gptResult.batting_luck,
+        pitching_luck: gptResult.pitching_luck,
+        fielding_luck: gptResult.fielding_luck,
+        team_luck: gptResult.team_luck,
+        analysis: {
+          strength: gptResult.analysis?.strength || '강한 정신력과 끈기를 바탕으로 한 안정적인 플레이',
+          weakness: gptResult.analysis?.weakness || '때로는 과도한 완벽주의로 인한 부담감',
+          opportunity: gptResult.analysis?.opportunity || '지속적인 연습을 통한 기량 향상 기회',
+          challenge: gptResult.analysis?.challenge || '새로운 기술 습득에 대한 도전'
+        },
+        lucky_position: gptResult.lucky_elements?.position || generateLuckyPosition(new Date().getMonth() + 1),
+        lucky_uniform_number: parseInt(gptResult.lucky_elements?.number) || generateLuckyNumber(new Date().getDate(), info.lucky_number),
+        lucky_game_time: gptResult.lucky_elements?.game_time || generateLuckyGameTime(new Date().getDate()),
+        lucky_stadium: gptResult.lucky_elements?.stadium || generateLuckyStadium(gptResult.overall_luck),
+        recommendations: {
+          training_tips: gptResult.recommendations?.training_tips || ['기본기 강화에 집중하세요'],
+          game_strategies: gptResult.recommendations?.game_strategies || ['상대방의 약점을 파악하여 공략하세요'],
+          team_building: gptResult.recommendations?.team_building || ['팀원들과의 소통을 늘리세요'],
+          mental_preparation: gptResult.recommendations?.mental_preparation || ['경기 전 충분한 준비운동을 하세요']
+        },
+        future_predictions: {
+          this_week: gptResult.future_predictions?.this_week || '이번 주는 기량 향상에 좋은 시기입니다',
+          this_month: gptResult.future_predictions?.this_month || '이번 달은 새로운 도전에 적극적으로 임하세요',
+          this_season: gptResult.future_predictions?.this_season || '이번 시즌은 전반적으로 좋은 성과가 기대됩니다'
+        },
+        compatibility: generateCompatibility(info)
+      };
+      
+      return transformedResult;
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 개선된 개인화 알고리즘
+    return generatePersonalizedBaseballFortune(info);
+  }
 }
 
 function generatePersonalizedBaseballFortune(info: BaseballInfo): BaseballFortune {
@@ -368,7 +473,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const baseballFortune = generatePersonalizedBaseballFortune(body as BaseballInfo);
+    const baseballFortune = await analyzeBaseballFortune(body as BaseballInfo);
     
     return NextResponse.json(baseballFortune);
   } catch (error) {

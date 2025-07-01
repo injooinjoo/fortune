@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
 interface StartupRequest {
   name: string;
@@ -212,6 +213,75 @@ function generateTipsAndCautions(request: StartupRequest) {
   };
 }
 
+async function analyzeStartupFortune(request: StartupRequest): Promise<StartupFortune> {
+  try {
+    // GPT 모델 선택 (창업 상담용)
+    const model = selectGPTModel('daily', 'text');
+    
+    // 전문 창업 운세 프롬프트 생성
+    const prompt = `
+당신은 창업 전문가이자 운세 상담사입니다. 다음 정보를 바탕으로 창업 운세를 상세히 분석해주세요.
+
+사용자 정보:
+- 이름: ${request.name}
+- 생년월일: ${request.birth_date}
+- MBTI: ${request.mbti}
+- 예상 자본금: ${request.capital}만원
+- 창업 경험: ${request.experience}
+- 관심 분야: ${request.interests.join(', ')}
+
+다음 JSON 형식으로 응답해주세요:
+{
+  "score": 85,
+  "best_industries": ["추천 업종 1", "추천 업종 2", "추천 업종 3"],
+  "best_start_time": "창업에 적합한 시기",
+  "partners": ["적합한 파트너 MBTI 1", "적합한 파트너 MBTI 2"],
+  "tips": ["창업 성공을 위한 조언들"],
+  "cautions": ["주의해야 할 사항들"]
+}
+`;
+
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.score === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      return {
+        score: gptResult.score,
+        best_industries: gptResult.best_industries || generateBestIndustries(request),
+        best_start_time: gptResult.best_start_time || generateBestStartTime(request),
+        partners: gptResult.partners || generateBestPartners(request),
+        tips: gptResult.tips || ['시장 조사를 철저히 하세요', '초기 자금 관리를 신중히 하세요'],
+        cautions: gptResult.cautions || ['과도한 확장에 주의', '파트너와의 갈등 관리 필요']
+      };
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 기존 알고리즘 실행
+    return generatePersonalizedStartupFortune(request);
+  }
+}
+
+function generatePersonalizedStartupFortune(request: StartupRequest): StartupFortune {
+  const tipsAndCautions = generateTipsAndCautions(request);
+  
+  return {
+    score: generateStartupScore(request),
+    best_industries: generateBestIndustries(request),
+    best_start_time: generateBestStartTime(request),
+    partners: generateBestPartners(request),
+    tips: tipsAndCautions.tips,
+    cautions: tipsAndCautions.cautions
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: StartupRequest = await request.json();
@@ -232,30 +302,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // GPT API 호출을 위한 프롬프트 생성 (실제 구현 시 사용)
-    const prompt = `
-사용자 정보:
-- 이름: ${body.name}
-- 생년월일: ${body.birth_date}
-- MBTI: ${body.mbti}
-- 예상 자본금: ${body.capital}만원
-- 창업 경험: ${body.experience}
-- 관심 분야: ${body.interests.join(', ')}
-
-위 정보를 바탕으로 개인화된 창업운을 분석해주세요.
-`;
-
-    const tipsAndCautions = generateTipsAndCautions(body);
-
-    // Mock 응답 (GPT 연동 시 실제 응답으로 대체)
-    const fortuneResult: StartupFortune = {
-      score: generateStartupScore(body),
-      best_industries: generateBestIndustries(body),
-      best_start_time: generateBestStartTime(body),
-      partners: generateBestPartners(body),
-      tips: tipsAndCautions.tips,
-      cautions: tipsAndCautions.cautions
-    };
+    const fortuneResult = await analyzeStartupFortune(body);
 
     return NextResponse.json(fortuneResult);
     

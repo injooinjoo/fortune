@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
 interface InvestmentRequest {
   name: string;
@@ -299,6 +300,101 @@ function generateWarningSignsAndFuturePredictions(request: InvestmentRequest) {
   return warningSignsToShow.slice(0, 5);
 }
 
+async function analyzeInvestmentFortune(request: InvestmentRequest): Promise<InvestmentFortune> {
+  try {
+    // GPT 모델 선택 (투자 상담용)
+    const model = selectGPTModel('daily', 'text');
+    
+    // 전문 투자 운세 프롬프트 생성
+    const prompt = `
+당신은 투자 전문가이자 운세 상담사입니다. 다음 정보를 바탕으로 투자 운세를 상세히 분석해주세요.
+
+사용자 정보:
+- 이름: ${request.name}
+- 생년월일: ${request.birth_date}
+- 나이: ${request.current_age}세
+- 월 소득: ${request.monthly_income}
+- 투자 경험: ${request.investment_experience}
+- 위험 성향: ${request.risk_tolerance}
+- 투자 목표: ${request.investment_goals.join(', ')}
+- 선호 자산: ${request.preferred_assets.join(', ')}
+- 투자 금액: ${request.investment_amount}
+- 투자 기간: ${request.investment_period}
+- 재정 목표: ${request.financial_goal}
+- 현재 상황: ${request.current_situation}
+
+다음 JSON 형식으로 응답해주세요:
+{
+  "overall_luck": 85,
+  "investment_luck": 78,
+  "trading_luck": 82,
+  "profit_luck": 75,
+  "timing_luck": 88,
+  "analysis": {
+    "strength": "투자에서의 주요 강점",
+    "weakness": "주의해야 할 약점",
+    "opportunity": "투자 기회",
+    "risk": "주의해야 할 위험"
+  },
+  "future_predictions": {
+    "this_month": "이번 달 투자 운세",
+    "next_quarter": "다음 분기 투자 운세",
+    "this_year": "올해 투자 운세"
+  }
+}
+`;
+
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.overall_luck === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      return {
+        overall_luck: gptResult.overall_luck,
+        investment_luck: gptResult.investment_luck,
+        trading_luck: gptResult.trading_luck,
+        profit_luck: gptResult.profit_luck,
+        timing_luck: gptResult.timing_luck,
+        analysis: gptResult.analysis || generateAnalysis(request),
+        lucky_assets: generateLuckyAssets(request),
+        lucky_timing: generateLuckyTiming(request),
+        recommendations: generateRecommendations(request),
+        future_predictions: gptResult.future_predictions || generateFuturePredictions(request),
+        lucky_numbers: generateLuckyNumbers(request.birth_date),
+        warning_signs: generateWarningSignsAndFuturePredictions(request)
+      };
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 기존 알고리즘 실행
+    return generatePersonalizedInvestmentFortune(request);
+  }
+}
+
+function generatePersonalizedInvestmentFortune(request: InvestmentRequest): InvestmentFortune {
+  return {
+    overall_luck: generateOverallLuck(request),
+    investment_luck: generateInvestmentLuck(request),
+    trading_luck: generateTradingLuck(request),
+    profit_luck: generateProfitLuck(request),
+    timing_luck: generateTimingLuck(request),
+    analysis: generateAnalysis(request),
+    lucky_assets: generateLuckyAssets(request),
+    lucky_timing: generateLuckyTiming(request),
+    recommendations: generateRecommendations(request),
+    future_predictions: generateFuturePredictions(request),
+    lucky_numbers: generateLuckyNumbers(request.birth_date),
+    warning_signs: generateWarningSignsAndFuturePredictions(request)
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: InvestmentRequest = await request.json();
@@ -311,40 +407,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // GPT API 호출을 위한 프롬프트 생성 (실제 구현 시 사용)
-    const prompt = `
-사용자 정보:
-- 이름: ${body.name}
-- 생년월일: ${body.birth_date}
-- 나이: ${body.current_age}세
-- 월 소득: ${body.monthly_income}
-- 투자 경험: ${body.investment_experience}
-- 위험 성향: ${body.risk_tolerance}
-- 투자 목표: ${body.investment_goals.join(', ')}
-- 선호 자산: ${body.preferred_assets.join(', ')}
-- 투자 금액: ${body.investment_amount}
-- 투자 기간: ${body.investment_period}
-- 재정 목표: ${body.financial_goal}
-- 현재 상황: ${body.current_situation}
-
-위 정보를 바탕으로 개인화된 투자운을 분석해주세요.
-`;
-
     // Mock 응답 (GPT 연동 시 실제 응답으로 대체)
-    const fortuneResult: InvestmentFortune = {
-      overall_luck: generateOverallLuck(body),
-      investment_luck: generateInvestmentLuck(body),
-      trading_luck: generateTradingLuck(body),
-      profit_luck: generateProfitLuck(body),
-      timing_luck: generateTimingLuck(body),
-      analysis: generateAnalysis(body),
-      lucky_assets: generateLuckyAssets(body),
-      lucky_timing: generateLuckyTiming(body),
-      recommendations: generateRecommendations(body),
-      future_predictions: generateFuturePredictions(body),
-      lucky_numbers: generateLuckyNumbers(body.birth_date),
-      warning_signs: generateWarningSignsAndFuturePredictions(body)
-    };
+    const fortuneResult = await analyzeInvestmentFortune(body);
 
     return NextResponse.json(fortuneResult);
     

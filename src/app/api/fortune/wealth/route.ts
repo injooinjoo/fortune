@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
 interface WealthInfo {
   name: string;
@@ -100,8 +101,12 @@ export async function POST(request: NextRequest) {
 }
 
 async function analyzeWealthFortune(info: WealthInfo): Promise<WealthFortune> {
-  // GPT API 호출을 위한 프롬프트 생성 (실제 구현 시 사용)
-  const prompt = `
+  try {
+    // GPT 모델 선택 (재정 상담용)
+    const model = selectGPTModel('daily', 'text');
+    
+    // GPT API 호출을 위한 프롬프트 생성
+    const prompt = `
 당신은 전문 재정 컨설턴트입니다. 다음 사용자 정보를 바탕으로 개인화된 금전운과 재정 조언을 제공해주세요.
 
 사용자 정보:
@@ -117,21 +122,72 @@ async function analyzeWealthFortune(info: WealthInfo): Promise<WealthFortune> {
 - 수입원: ${info.income_sources?.join(', ') || '정보 없음'}
 - 재정 스트레스: ${info.financial_stress_level || '정보 없음'}
 
-다음 항목들을 포함한 종합적인 금전운 분석을 제공해주세요:
-1. 5가지 세부 운세 점수 (전체/수입/저축/투자/부채관리)
-2. 개인화된 재정 계획 (월간 분석, 투자 조언, 부채 전략)
-3. 행운의 요소 (시간, 요일, 색상, 방향, 숫자)
-4. 재정 타이밍 조언 (수입/투자/저축/부채상환 시기)
-5. 개인 맞춤 조언 (강점, 개선점, 목표달성전략, 비상금)
-6. 월별 실행 계획 (주차별 액션 아이템)
-7. 성공 요인과 주의사항
-
-사용자의 현재 재정 상태와 목표를 고려한 구체적이고 실용적인 조언을 제공해주세요.
+다음 JSON 형식으로 응답해주세요:
+{
+  "overall_luck": 85,
+  "income_luck": 78,
+  "saving_luck": 82,
+  "investment_luck": 75,
+  "debt_management_luck": 88,
+  "personalized_advice": {
+    "strengths": "재정 관리의 주요 강점",
+    "improvement_areas": "개선이 필요한 영역",
+    "goal_achievement_strategy": "목표 달성 전략",
+    "emergency_fund_advice": "비상금 조언"
+  },
+  "future_predictions": {
+    "this_week": "이번 주 금전운",
+    "this_month": "이번 달 금전운",
+    "this_season": "이번 시즌 금전운"
+  }
+}
 `;
 
-  // 실제 GPT API 호출 (현재는 mock)
-  // const gptResponse = await callGPTAPI(prompt);
-  
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.overall_luck === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      // GPT 응답을 기반으로 종합 결과 생성
+      const birthYear = parseInt(info.birth_date.substring(0, 4));
+      const birthMonth = parseInt(info.birth_date.substring(5, 7));
+      const birthDay = parseInt(info.birth_date.substring(8, 10));
+      
+      return {
+        overall_luck: gptResult.overall_luck,
+        income_luck: gptResult.income_luck,
+        saving_luck: gptResult.saving_luck,
+        investment_luck: gptResult.investment_luck,
+        debt_management_luck: gptResult.debt_management_luck,
+        financial_planning: generateFinancialPlanning(info, gptResult.overall_luck),
+        lucky_elements: calculateWealthLuckyElements(birthDay, birthMonth),
+        wealth_timing: generateWealthTiming(birthMonth, info.investment_experience),
+        personalized_advice: gptResult.personalized_advice || {
+          strengths: '신중하고 안정적인 재정 운용이 강점입니다',
+          improvement_areas: '수입원 다변화와 절약을 통한 저축률 증대가 중요합니다',
+          goal_achievement_strategy: '단계별 목표 설정과 정기적인 점검을 통해 착실히 진행하세요',
+          emergency_fund_advice: '먼저 월 지출의 3개월분 비상금부터 만들어보세요'
+        },
+        monthly_action_plan: generateMonthlyActionPlan(info),
+        success_factors: generateWealthSuccessFactors(info),
+        warning_signs: generateWealthWarningSignsForJob(info)
+      };
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 기존 알고리즘 실행
+    return generatePersonalizedWealthFortune(info);
+  }
+}
+
+function generatePersonalizedWealthFortune(info: WealthInfo): WealthFortune {
   // 생년월일 기반 기본 점수 계산
   const birthYear = parseInt(info.birth_date.substring(0, 4));
   const birthMonth = parseInt(info.birth_date.substring(5, 7));

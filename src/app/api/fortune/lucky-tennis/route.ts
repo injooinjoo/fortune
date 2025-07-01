@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { selectGPTModel, callGPTAPI, PROMPT_TEMPLATES } from '@/config/ai-models';
 
 interface TennisInfo {
   name: string;
@@ -49,8 +50,105 @@ interface TennisFortune {
 }
 
 async function analyzeTennisFortune(info: TennisInfo): Promise<TennisFortune> {
-  // 개인화된 백업 로직
-  return generatePersonalizedTennisFortune(info);
+  try {
+    // GPT 모델 선택 (기본 텍스트 운세)
+    const model = selectGPTModel('daily', 'text');
+    
+    // 전문 테니스 운세 프롬프트 생성
+    const prompt = `
+당신은 테니스 전문가이자 운세 상담사입니다. 다음 정보를 바탕으로 테니스 운세를 상세히 분석해주세요.
+
+사용자 정보:
+- 생년월일: ${info.birth_date}
+- 테니스 경험: ${info.playing_experience || '정보 없음'}
+- 경기 빈도: ${info.game_frequency || '정보 없음'}
+- 테니스 기술: ${info.tennis_skills?.join(', ') || '정보 없음'}
+- 주 사용 손: ${info.dominant_hand || '정보 없음'}
+- 플레이 스타일: ${info.playing_style || '정보 없음'}
+
+다음 JSON 형식으로 응답해주세요:
+{
+  "overall_luck": 85,
+  "serve_luck": 78,
+  "return_luck": 82,
+  "volley_luck": 75,
+  "mental_luck": 88,
+  "analysis": {
+    "strength": "테니스에서의 주요 강점과 장점",
+    "weakness": "주의해야 할 약점이나 개선점", 
+    "opportunity": "테니스를 통해 얻을 수 있는 기회들",
+    "threat": "경기에서 주의해야 할 도전과제들"
+  },
+  "lucky_elements": {
+    "time": "오전 10-12시",
+    "court_surface": "클레이 코트",
+    "equipment": "새 스트링",
+    "partner_type": "경험이 풍부한 파트너"
+  },
+  "recommendations": {
+    "training_focus": "구체적인 훈련 포인트",
+    "match_strategy": "경기 전략 조언",
+    "equipment_advice": "장비 관련 조언",
+    "mental_preparation": "멘탈 준비법"
+  },
+  "future_predictions": {
+    "this_week": "이번 주 테니스 운세",
+    "this_month": "이번 달 테니스 운세",
+    "season_outlook": "시즌 전망"
+  }
+}
+`;
+
+    // GPT API 호출
+    const gptResult = await callGPTAPI(prompt, model);
+    
+    // GPT 응답이 올바른 형식인지 검증 및 변환
+    if (gptResult && typeof gptResult === 'object' && 
+        typeof gptResult.overall_luck === 'number') {
+      console.log('GPT API 호출 성공');
+      
+      // GPT 응답을 기존 인터페이스 형식으로 변환
+      const transformedResult: TennisFortune = {
+        overall_luck: gptResult.overall_luck,
+        serve_luck: gptResult.serve_luck,
+        return_luck: gptResult.return_luck,
+        volley_luck: gptResult.volley_luck,
+        mental_luck: gptResult.mental_luck,
+        analysis: {
+          strength: gptResult.analysis?.strength || '강한 정신력을 바탕으로 한 안정적인 플레이',
+          weakness: gptResult.analysis?.weakness || '때로는 과도한 완벽주의로 인한 부담감',
+          opportunity: gptResult.analysis?.opportunity || '지속적인 연습을 통한 기량 향상 기회',
+          challenge: gptResult.analysis?.threat || '새로운 기술 습득에 대한 도전'
+        },
+        lucky_racket_tension: gptResult.lucky_elements?.equipment || generateLuckyTension(new Date().getDate()),
+        lucky_court_position: gptResult.lucky_elements?.court_surface || generateLuckyPosition(new Date().getMonth() + 1),
+        lucky_match_time: gptResult.lucky_elements?.time || generateLuckyTime(new Date().getDate()),
+        lucky_tournament: gptResult.lucky_elements?.partner_type || generateLuckyTournament(gptResult.overall_luck),
+        recommendations: {
+          training_tips: [gptResult.recommendations?.training_focus || '기본기 강화에 집중하세요'],
+          match_strategies: [gptResult.recommendations?.match_strategy || '상대방의 약점을 파악하여 공략하세요'],
+          equipment_advice: [gptResult.recommendations?.equipment_advice || '정기적인 장비 점검을 하세요'],
+          mental_preparation: [gptResult.recommendations?.mental_preparation || '경기 전 충분한 준비운동을 하세요']
+        },
+        future_predictions: {
+          this_week: gptResult.future_predictions?.this_week || '이번 주는 기술 향상에 좋은 시기입니다',
+          this_month: gptResult.future_predictions?.this_month || '이번 달은 새로운 도전에 적극적으로 임하세요',
+          this_season: gptResult.future_predictions?.season_outlook || '이번 시즌은 전반적으로 좋은 성과가 기대됩니다'
+        },
+        compatibility: generateCompatibility(info)
+      };
+      
+      return transformedResult;
+    } else {
+      throw new Error('GPT 응답 형식 오류');
+    }
+    
+  } catch (error) {
+    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    
+    // 백업 로직: 개선된 개인화 알고리즘
+    return generatePersonalizedTennisFortune(info);
+  }
 }
 
 function generatePersonalizedTennisFortune(info: TennisInfo): TennisFortune {
