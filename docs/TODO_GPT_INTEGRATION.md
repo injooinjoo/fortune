@@ -2,10 +2,10 @@
 
 ## 📊 전체 진행 상황
 - **총 운세 페이지**: 67개
-- **완료된 GPT 연동**: 7개 (10.4%)
-- **남은 작업**: 60개 (89.6%)
+- **완료된 GPT 연동**: 17개 (25.3%)
+- **남은 작업**: 50개 (74.7%)
 
-## ✅ 완료된 GPT 연동 API들 (7개)
+## ✅ 완료된 GPT 연동 API들 (17개)
 
 ### 스포츠 운세 (3개)
 1. **lucky-tennis** - 테니스 운세 ✅
@@ -20,21 +20,33 @@
 6. **startup** - 창업운 ✅
 7. **celebrity** - 유명인 운세 ✅
 
+### 재정·취업 패키지 (4개)
+8. **lucky-realestate** - 부동산 투자운 ✅
+9. **lucky-job** - 취업운 ✅  
+10. **lucky-sidejob** - 부업운 ✅
+11. **business** - 사업운 ✅
+
+### 연애·인연 패키지 (6개)
+12. **compatibility** - 궁합운 ✅
+13. **blind-date** - 소개팅 운세 ✅
+14. **ex-lover** - 전 연인 운세 ✅
+15. **couple-match** - 커플 매칭 ✅
+16. **chemistry** - 케미 운세 ✅
+17. **celebrity-match** - 연예인 궁합 ✅
+
 ## 🔥 다음 우선순위 작업 (프롬프트 준비됨 - 빠른 처리 가능)
 
-### A. 재정·취업 패키지 (4개)
-- [ ] **lucky-realestate** - 부동산 투자운
-- [ ] **lucky-job** - 취업운  
-- [ ] **lucky-sidejob** - 부업운
-- [ ] **business** - 사업운
+### A. 전통 사주 패키지 (8개)
+- [ ] **traditional-saju** - 전통 사주
+- [ ] **zodiac-animal** - 띠별 운세
+- [ ] **tojeong** - 토정비결
+- [ ] **traditional-compatibility** - 전통 궁합
+- [ ] **saju-psychology** - 사주 심리
+- [ ] **network-report** - 인맥 리포트
+- [ ] **destiny** - 운명 분석
+- [ ] **talent** - 재능 분석
 
-### B. 연애·인연 패키지 (7개)
-- [ ] **compatibility** - 궁합운 (프롬프트 있음)
-- [ ] **blind-date** - 소개팅 운세 (프롬프트 있음)
-- [ ] **ex-lover** - 전 연인 운세 (프롬프트 있음)
-- [ ] **couple-match** - 커플 매칭 (프롬프트 있음)
-- [ ] **chemistry** - 케미 운세 (프롬프트 있음)
-- [ ] **celebrity-match** - 연예인 궁합 (프롬프트 있음)
+### B. 연애·인연 패키지 (남은 2개)
 - [ ] **love** - 연애운
 - [ ] **marriage** - 결혼운
 

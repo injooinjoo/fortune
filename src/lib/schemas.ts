@@ -103,6 +103,97 @@ export type FortuneResult = z.infer<typeof FortuneResultSchema>;
 // 각 운세 타입별 특화 스키마
 // =============================================================================
 
+// 케미 운세 스키마
+export const ChemistryResultSchema = FortuneResultSchema.extend({
+    overall_chemistry: z.number(),
+    physical_attraction: z.number(),
+    emotional_connection: z.number(),
+    passion_intensity: z.number(),
+    compatibility_level: z.number(),
+    intimacy_potential: z.number(),
+    insights: z.object({
+        strengths: z.string(),
+        challenges: z.string(),
+        enhancement_tips: z.string(),
+    }),
+    detailed_analysis: z.object({
+        physical_chemistry: z.string(),
+        emotional_bond: z.string(),
+        passion_dynamics: z.string(),
+        intimacy_forecast: z.string(),
+    }),
+    recommendations: z.object({
+        enhancement_activities: z.array(z.string()),
+        communication_tips: z.array(z.string()),
+        intimacy_advice: z.array(z.string()),
+    }),
+    warnings: z.array(z.string()),
+    compatibility_percentage: z.number(),
+});
+
+// 커플 매칭 운세 스키마
+export const CoupleMatchResultSchema = FortuneResultSchema.extend({
+    currentFlow: z.number(),
+    futurePotential: z.number(),
+    advice1: z.string(),
+    advice2: z.string(),
+    tips: z.array(z.string()),
+});
+
+// 전 연인 운세 스키마
+export const ExLoverResultSchema = FortuneResultSchema.extend({
+    closure_score: z.number(),
+    reconciliation_chance: z.number(),
+    emotional_healing: z.number(),
+    future_relationship_impact: z.number(),
+    insights: z.object({
+        current_status: z.string(),
+        emotional_state: z.string(),
+        advice: z.string(),
+    }),
+    closure_activities: z.array(z.string()),
+    warning_signs: z.array(z.string()),
+    positive_aspects: z.array(z.string()),
+    timeline: z.object({
+        healing_phase: z.string(),
+        duration: z.string(),
+        next_steps: z.string(),
+    }),
+});
+
+// 소개팅 운세 스키마
+export const BlindDateResultSchema = FortuneResultSchema.extend({
+    success_rate: z.number(),
+    chemistry_score: z.number(),
+    conversation_score: z.number(),
+    impression_score: z.number(),
+    insights: z.object({
+        personality_analysis: z.string(),
+        strengths: z.string(),
+        areas_to_improve: z.string(),
+    }),
+    recommendations: z.object({
+        ideal_venues: z.array(z.string()),
+        conversation_topics: z.array(z.string()),
+        style_tips: z.array(z.string()),
+        behavior_tips: z.array(z.string()),
+    }),
+    timeline: z.object({
+        best_timing: z.string(),
+        preparation_period: z.string(),
+        success_indicators: z.array(z.string()),
+    }),
+    warnings: z.array(z.string()),
+});
+
+// 연예인 궁합 운세 스키마
+export const CelebrityMatchResultSchema = FortuneResultSchema.extend({
+    score: z.number(),
+    comment: z.string(),
+    luckyColor: z.string(),
+    luckyItem: z.string(),
+});
+
 // 사주팔자 특화 스키마
 export const SajuResultSchema = FortuneResultSchema.extend({
   summary: z.string(),
