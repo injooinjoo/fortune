@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { getUserProfile } from '@/lib/mock-storage';
 
+// 개발용 기본 사용자 프로필 생성 함수
+const getDefaultUserProfile = (userId: string) => ({
+  id: userId,
+  name: '김인주',
+  birth_date: '1988-09-05',
+  birth_time: '인시',
+  gender: '남성' as const,
+  mbti: 'ENTJ',
+  zodiac_sign: '처녀자리',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+});
+
 export async function GET(request: NextRequest) {
   try {
     console.log('🧠 사주 심리분석 API 요청');
@@ -14,13 +27,11 @@ export async function GET(request: NextRequest) {
     
     console.log(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);
 
-    // 사용자 프로필 조회
-    const userProfile = getUserProfile(userId);
+    // 사용자 프로필 조회 (없으면 기본 프로필 사용)
+    let userProfile = getUserProfile(userId);
     if (!userProfile) {
-      return NextResponse.json(
-        { success: false, error: '사용자 프로필을 찾을 수 없습니다.' },
-        { status: 404 }
-      );
+      userProfile = getDefaultUserProfile(userId);
+      console.log('🔧 기본 사용자 프로필 사용');
     }
 
     // 사주 심리분석 데이터 가져오기 (캐시 우선)

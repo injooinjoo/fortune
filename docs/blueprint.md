@@ -1,4 +1,4 @@
-# **App Name**: Fortune Compass
+# **App Name**: Fortune
 
 ## Core Features:
 

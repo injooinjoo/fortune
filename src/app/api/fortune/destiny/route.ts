@@ -2,21 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
 
+// 개발용 기본 사용자 프로필 생성 함수
+const getDefaultUserProfile = (userId: string): UserProfile => ({
+  id: userId,
+  name: '김인주',
+  birth_date: '1988-09-05',
+  birth_time: '인시',
+  gender: '남성' as const,
+  mbti: 'ENTJ',
+  zodiac_sign: '처녀자리',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString()
+});
+
 export async function GET(request: NextRequest) {
   try {
-    const userId = 'kim-in-ju'; // 실제로는 세션에서 가져와야 함
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId') || `guest_${Date.now()}`;
     
-    // 임시 사용자 프로필 (실제로는 데이터베이스에서 가져와야 함)
-    const userProfile: UserProfile = {
-      id: userId,
-      name: '김인주',
-      birth_date: '1992-03-15',
-      birth_time: '14:30',
-      gender: '여성',
-      mbti: 'ENFP',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
+    // 기본 사용자 프로필 생성
+    const userProfile = getDefaultUserProfile(userId);
 
     console.log('🔮 인연운 API 요청:', userId);
 

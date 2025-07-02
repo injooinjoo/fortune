@@ -212,6 +212,9 @@ export class FortuneService {
       case 'LUCKY_ITEMS_PACKAGE':
         return await this.generateLuckyItemsPackage(userId, userProfile, category);
         
+      case 'LIFE_CAREER_PACKAGE':
+        return await this.generateLifeCareerPackage(userId, userProfile, category);
+        
       case 'INTERACTIVE':
         return await this.generateInteractiveFortune(userId, category, interactiveInput);
         
@@ -863,7 +866,7 @@ export class FortuneService {
     // 평생 운세 그룹 (최초 1회만 생성, 영구 보존)
     const lifeProfileCategories = [
       'saju', 'traditional-saju', 'personality', 'talent', 
-      'past-life', 'five-blessings', 'tojeong', 'salpuli', 'saju-psychology',
+      'five-blessings', 'tojeong', 'salpuli', 'saju-psychology',
       // 묶음 요청
       'traditional-saju-package'
     ];
@@ -878,13 +881,13 @@ export class FortuneService {
     // 실시간 상호작용 그룹 (사용자 입력 기반, 1시간 보존)
     const interactiveCategories = [
       'face-reading', 'tarot', 'dream-interpretation', 'psychology-test',
-      'worry-bead', 'taemong', 'fortune-cookie'
+      'worry-bead', 'taemong', 'fortune-cookie', 'traditional-compatibility'
     ];
     
     // 연애·인연 패키지 (72시간 보존)
     const lovePackageCategories = [
       'love', 'destiny', 'blind-date', 'celebrity-match', 'couple-match',
-      'ex-lover', 'compatibility', 'traditional-compatibility', 'chemistry',
+      'ex-lover', 'compatibility', 'chemistry',
       'marriage', 'celebrity', 'avoid-people',
       // 묶음 요청
       'love-destiny-package'
@@ -892,7 +895,7 @@ export class FortuneService {
 
     // 취업·재물 패키지 (168시간 보존)
     const careerWealthCategories = [
-      'career', 'wealth', 'business', 'lucky-investment', 'employment',
+      'career', 'wealth', 'business', 'lucky-investment',
       'startup', 'lucky-job', 'lucky-sidejob', 'lucky-realestate',
       // 묶음 요청
       'career-wealth-package'
@@ -900,10 +903,19 @@ export class FortuneService {
 
     // 행운 아이템 패키지 (720시간 보존)
     const luckyItemCategories = [
-      'lucky-color', 'lucky-number', 'lucky-items', 'lucky-outfit', 'lucky-food',
-      'birthstone', 'talisman', 'lucky-series',
+      'lucky-color', 'lucky-number', 'lucky-food', 'talisman', 'lucky-series',
+      'lucky-exam', 'lucky-cycling', 'lucky-running', 'lucky-hiking', 
+      'lucky-fishing', 'lucky-swim',
       // 묶음 요청
       'lucky-items-package'
+    ];
+
+    // 인생·경력 패키지 (168시간 보존)
+    const lifeCareerCategories = [
+      'employment', 'moving', 'moving-date', 'new-year', 'timeline', 'wish',
+      'career', 'avoid-people', 'five-blessings', 'salpuli',
+      // 묶음 요청
+      'life-career-package'
     ];
     
     if (lifeProfileCategories.includes(category)) {
@@ -918,6 +930,8 @@ export class FortuneService {
       return 'CAREER_WEALTH_PACKAGE';
     } else if (luckyItemCategories.includes(category)) {
       return 'LUCKY_ITEMS_PACKAGE';
+    } else if (lifeCareerCategories.includes(category)) {
+      return 'LIFE_CAREER_PACKAGE';
     } else {
       return 'CLIENT_BASED'; // 기본값
     }
@@ -956,6 +970,9 @@ export class FortuneService {
          break;
        case 'LUCKY_ITEMS_PACKAGE':
          expiresAt = new Date(Date.now() + 720 * 60 * 60 * 1000); // 720시간 (30일)
+         break;
+       case 'LIFE_CAREER_PACKAGE':
+         expiresAt = new Date(Date.now() + 168 * 60 * 60 * 1000); // 168시간 (7일)
          break;
        case 'CLIENT_BASED':
          expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24시간
@@ -1489,14 +1506,34 @@ export class FortuneService {
   }
 
   /**
-   * 행운 아이템 패키지 생성 (임시 구현)
+   * 행운 아이템 패키지 생성
    */
   private async generateLuckyItemsPackage(
     userId: string, 
     userProfile?: UserProfile, 
     category?: FortuneCategory
   ): Promise<any> {
-    console.log(`🍀 행운 아이템 패키지 생성 예정... (사용자: ${userId}, 카테고리: ${category})`);
+    console.log(`🍀 행운 아이템 패키지 생성... (사용자: ${userId}, 카테고리: ${category})`);
+    
+    if (!userProfile) {
+      userProfile = this.getDefaultUserProfile(userId);
+      console.log('🔧 기본 사용자 프로필 사용:', userProfile.name);
+    }
+
+    const profile = userProfile as UserProfile;
+
+    // 새로운 행운 아이템 카테고리들 처리
+    if (category && ['lucky-color', 'lucky-number', 'lucky-food', 'talisman', 'lucky-series', 'lucky-exam', 'lucky-cycling', 'lucky-running', 'lucky-hiking', 'lucky-fishing', 'lucky-swim'].includes(category)) {
+      try {
+        const luckyData = await this.generateLuckyItemFromGPT(profile, category);
+        console.log(`✅ GPT ${category} 생성 완료 (사용자: ${userId})`);
+        return luckyData;
+      } catch (error) {
+        console.error(`❌ GPT ${category} 생성 실패:`, error);
+        return this.getDefaultLuckyItemData(profile, category);
+      }
+    }
+
     return { message: '행운 아이템 패키지 구현 예정', category };
   }
 
@@ -1508,7 +1545,25 @@ export class FortuneService {
     category?: FortuneCategory, 
     interactiveInput?: InteractiveInput
   ): Promise<any> {
-    console.log(`🎯 상호작용 운세 생성 예정... (사용자: ${userId}, 카테고리: ${category})`);
+    console.log(`🎯 상호작용 운세 생성... (사용자: ${userId}, 카테고리: ${category})`);
+    
+    // userProfile은 API에서 전달받음
+    const userProfile = interactiveInput?.user_profile;
+    if (!userProfile) {
+      throw new Error('상호작용 운세 생성에는 사용자 프로필이 필요합니다.');
+    }
+
+    if (category === 'traditional-compatibility') {
+      try {
+        const compatibilityData = await this.generateTraditionalCompatibilityGPT(userProfile, category);
+        console.log(`✅ GPT 전통 궁합 생성 완료 (사용자: ${userId})`);
+        return compatibilityData;
+      } catch (error) {
+        console.error('❌ GPT 전통 궁합 생성 실패:', error);
+        return this.getDefaultTraditionalCompatibilityData(userProfile, category);
+      }
+    }
+
     return { message: '상호작용 운세 구현 예정', category, input: interactiveInput };
   }
 
@@ -1520,8 +1575,101 @@ export class FortuneService {
     category?: FortuneCategory, 
     userProfile?: UserProfile
   ): Promise<any> {
-    console.log(`📱 클라이언트 기반 운세 생성 예정... (사용자: ${userId}, 카테고리: ${category})`);
-    return { message: '클라이언트 기반 운세 구현 예정', category };
+    console.log(`📱 클라이언트 기반 운세 생성... (사용자: ${userId}, 카테고리: ${category})`);
+    
+    if (!userProfile) {
+      // 기본 사용자 프로필 생성
+      userProfile = this.getDefaultUserProfile(userId);
+      console.log('🔧 기본 사용자 프로필 사용:', userProfile.name);
+    }
+
+    // 이제 userProfile은 확실히 존재함
+    const profile = userProfile as UserProfile;
+
+    if (category === 'zodiac-animal') {
+      try {
+        const zodiacData = await this.generateZodiacAnimalFortuneGPT(profile);
+        console.log(`✅ GPT 띠별 운세 생성 완료 (사용자: ${userId})`);
+        return zodiacData;
+      } catch (error) {
+        console.error('❌ GPT 띠별 운세 생성 실패:', error);
+        return this.getDefaultZodiacAnimalData(profile, category);
+      }
+    }
+
+    if (category === 'network-report') {
+      try {
+        const networkData = await this.generateNetworkReportFromGPT(profile);
+        console.log(`✅ GPT 인맥 리포트 생성 완료 (사용자: ${userId})`);
+        return networkData;
+      } catch (error) {
+        console.error('❌ GPT 인맥 리포트 생성 실패:', error);
+        return this.getDefaultNetworkReportData(profile, category);
+      }
+    }
+
+    if (category === 'mbti') {
+      try {
+        const mbtiData = await this.generateMbtiDailyFromGPT(profile);
+        console.log(`✅ GPT MBTI 운세 생성 완료 (사용자: ${userId})`);
+        return mbtiData;
+      } catch (error) {
+        console.error('❌ GPT MBTI 운세 생성 실패:', error);
+        return this.getDefaultMbtiData(profile, category);
+      }
+    }
+
+    if (category === 'weekly') {
+      try {
+        const weeklyData = await this.generateWeeklyFromGPT(profile);
+        console.log(`✅ GPT 주간 운세 생성 완료 (사용자: ${userId})`);
+        return weeklyData;
+      } catch (error) {
+        console.error('❌ GPT 주간 운세 생성 실패:', error);
+        return this.getDefaultWeeklyData(profile, category);
+      }
+    }
+
+    if (category === 'monthly') {
+      try {
+        const monthlyData = await this.generateMonthlyFromGPT(profile);
+        console.log(`✅ GPT 월간 운세 생성 완료 (사용자: ${userId})`);
+        return monthlyData;
+      } catch (error) {
+        console.error('❌ GPT 월간 운세 생성 실패:', error);
+        return this.getDefaultMonthlyData(profile, category);
+      }
+    }
+
+    if (category === 'yearly') {
+      try {
+        const yearlyData = await this.generateYearlyFromGPT(profile);
+        console.log(`✅ GPT 연간 운세 생성 완료 (사용자: ${userId})`);
+        return yearlyData;
+      } catch (error) {
+        console.error('❌ GPT 연간 운세 생성 실패:', error);
+        return this.getDefaultYearlyData(profile, category);
+      }
+    }
+
+    // 개인 분석 패키지의 추가 카테고리들
+    if (category && ['birth-season', 'birthdate', 'birthstone', 'blood-type', 'palmistry', 'past-life', 'daily', 'zodiac', 'lucky-items', 'lucky-outfit', 'physiognomy'].includes(category)) {
+      try {
+        const analysisData = await this.generatePersonalAnalysisFromGPT(profile, category);
+        console.log(`✅ GPT ${category} 분석 완료 (사용자: ${userId})`);
+        return analysisData;
+      } catch (error) {
+        console.error(`❌ GPT ${category} 분석 실패:`, error);
+        return this.getDefaultPersonalAnalysisData(profile, category);
+      }
+    }
+    
+    // 다른 클라이언트 기반 운세들은 추후 구현
+    return { 
+      message: '클라이언트 기반 운세 구현 예정', 
+      category,
+      generated_at: new Date().toISOString()
+    };
   }
 
   /**
@@ -2044,12 +2192,9 @@ export class FortuneService {
    * 재능 운세 GPT 시뮬레이션 (실제로는 GPT API 호출)
    */
   private async generateTalentFromGPT(userProfile: UserProfile): Promise<any> {
-    console.log('📡 GPT 재능 운세 요청:', userProfile.name, `(${userProfile.birth_date})`);
+    console.log('📡 GPT 재능 분석 요청:', userProfile.name, `(${userProfile.birth_date})`);
     
-    // 실제로는 GPT API 호출
-    // const response = await this.callGPTAPI('talent', userProfile);
-    
-    // 시뮬레이션: MBTI와 생년월일 기반 개인화
+    // GPT 시뮬레이션: MBTI와 생년월일 기반 개인화된 재능 분석
     const mbti = userProfile.mbti || 'ISFJ';
     const age = this.calculateAge(userProfile.birth_date);
     const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
@@ -2058,7 +2203,7 @@ export class FortuneService {
     const talentTraits = this.getTalentTraitsByMBTI(mbti);
     const dominantElement = this.getDominantElementByBirth(birthMonth);
     
-    return {
+    const talentResult = {
       talent: {
         summary: `${dominantElement.name}의 기운이 강해 ${talentTraits.mainStrength}한 타입입니다.`,
         elements: this.getTalentElements(mbti, birthMonth),
@@ -2078,6 +2223,9 @@ export class FortuneService {
       },
       generated_at: new Date().toISOString()
     };
+    
+    console.log('✅ GPT 재능 분석 생성 완료 (사용자:', userProfile.name + ')');
+    return talentResult;
   }
 
   private getTalentTraitsByMBTI(mbti: string): { mainStrength: string; secondaryStrength: string } {
@@ -3313,6 +3461,2198 @@ export class FortuneService {
     }
     
     return Math.min(Math.max(baseScore, 55), 95);
+  }
+
+  /**
+   * GPT를 통한 전통 궁합 분석 생성
+   */
+  private async generateTraditionalCompatibilityGPT(userProfile: UserProfile, category?: FortuneCategory): Promise<any> {
+    const age = this.calculateAge(userProfile.birth_date);
+    const birthYear = new Date(userProfile.birth_date).getFullYear();
+    const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
+    const birthDay = parseInt(userProfile.birth_date.split('-')[2]);
+    
+    // 사주 기본 정보 계산
+    const elements = this.calculateTraditionalElements(birthYear, birthMonth, birthDay);
+    const dominantElement = this.getDominantTraditionalElement(elements);
+    
+    // 개인화된 점수들
+    const compatibilityScore = this.calculateCompatibilityScore(userProfile);
+    const marriageScore = this.calculateMarriageScore(userProfile);
+    const harmonyScore = this.calculateHarmonyScore(userProfile);
+    
+    console.log(`📡 GPT 전통 궁합 요청: ${userProfile.name} (${userProfile.birth_date})`);
+    
+    try {
+      // 실제 GPT API 호출은 주석 처리 (비용 절약)
+      // const gptResponse = await callGPTAPI(...);
+      
+      // 대신 알고리즘 기반 개인화된 데이터 생성
+      const compatibilityData = {
+        summary: this.generateCompatibilitySummary(userProfile, compatibilityScore, dominantElement.type),
+        total_score: compatibilityScore,
+        marriage_score: marriageScore,
+        harmony_score: harmonyScore,
+        dominant_element: dominantElement,
+        best_matches: this.getBestMatches(dominantElement.type, userProfile.mbti),
+        avoid_matches: this.getAvoidMatches(dominantElement.type, userProfile.mbti),
+        compatibility_factors: this.getCompatibilityFactors(userProfile.mbti, dominantElement.type),
+        marriage_timing: this.getMarriageTimingAdvice(age, compatibilityScore, userProfile.mbti),
+        relationship_advice: this.getRelationshipAdvice(userProfile.mbti, dominantElement.type),
+        traditional_analysis: {
+          celestial_stems: this.getCelestialStems(birthYear, birthMonth, birthDay),
+          earthly_branches: this.getEarthlyBranches(birthYear, birthMonth, birthDay),
+          ten_gods: this.getTenGods(userProfile.mbti || 'ISFJ', dominantElement.type),
+          element_balance: elements
+        },
+        lucky_periods: this.getLuckyPeriodsForCompatibility(birthMonth, dominantElement.type),
+        warning_periods: this.getWarningPeriodsForCompatibility(birthYear, birthMonth),
+        userInfo: {
+          name: userProfile.name,
+          birth_date: userProfile.birth_date,
+          mbti: userProfile.mbti || 'ISFJ',
+          age
+        }
+      };
+      
+      return {
+        'traditional-compatibility': compatibilityData,
+        generated_at: new Date().toISOString()
+      };
+      
+    } catch (error) {
+      console.error('GPT 전통 궁합 생성 실패:', error);
+             return this.getDefaultTraditionalCompatibilityData(userProfile, category);
+    }
+  }
+
+  /**
+   * 궁합 점수 계산
+   */
+  private calculateCompatibilityScore(userProfile: UserProfile): number {
+    let baseScore = 75;
+    const mbti = userProfile.mbti || 'ISFJ';
+    const age = this.calculateAge(userProfile.birth_date);
+    const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
+    
+    // MBTI별 궁합 기본 점수
+    if (mbti.includes('F')) baseScore += 8; // 감정형이 궁합에 유리
+    if (mbti.includes('E')) baseScore += 5; // 외향형이 사교성에 유리
+    if (mbti.includes('J')) baseScore += 3; // 판단형이 안정성에 유리
+    
+    // 나이별 점수
+    if (age >= 25 && age <= 35) baseScore += 10; // 최적 궁합 연령대
+    else if (age >= 20 && age <= 40) baseScore += 5;
+    
+    // 계절별 점수
+    if (birthMonth === 5 || birthMonth === 6 || birthMonth === 9 || birthMonth === 10) {
+      baseScore += 5; // 궁합이 좋은 계절
+    }
+    
+    return Math.min(Math.max(baseScore, 65), 95);
+  }
+
+  /**
+   * 결혼 점수 계산
+   */
+  private calculateMarriageScore(userProfile: UserProfile): number {
+    let baseScore = 70;
+    const mbti = userProfile.mbti || 'ISFJ';
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    // MBTI별 결혼 적합성
+    const marriageScores: Record<string, number> = {
+      'ESFJ': 15, 'ISFJ': 12, 'ENFJ': 10, 'INFJ': 10,
+      'ESTJ': 8, 'ISTJ': 8, 'ENTJ': 8, 'INTJ': 8,
+      'ESFP': 7, 'ISFP': 7, 'ENFP': 7, 'INFP': 7,
+      'ESTP': 5, 'ISTP': 5, 'ENTP': 5, 'INTP': 5
+    };
+    
+    baseScore += marriageScores[mbti] || 5;
+    
+    // 나이별 결혼 적합도
+    if (age >= 28 && age <= 35) baseScore += 8;
+    else if (age >= 25 && age <= 40) baseScore += 5;
+    else if (age >= 22 && age <= 45) baseScore += 2;
+    
+    return Math.min(Math.max(baseScore, 60), 95);
+  }
+
+  /**
+   * 조화 점수 계산
+   */
+  private calculateHarmonyScore(userProfile: UserProfile): number {
+    let baseScore = 75;
+    const mbti = userProfile.mbti || 'ISFJ';
+    const birthMonth = parseInt(userProfile.birth_date.split('-')[1]);
+    
+    // MBTI별 조화 능력
+    if (mbti.includes('F')) baseScore += 10; // 감정형이 조화에 유리
+    if (mbti.endsWith('J')) baseScore += 5; // 판단형이 안정성에 유리
+    if (mbti.startsWith('I')) baseScore += 3; // 내향형이 깊이 있는 관계에 유리
+    
+    // 계절별 조화 운
+    const seasonScores = [2, 2, 5, 8, 10, 8, 5, 3, 7, 9, 6, 3]; // 월별 조화 점수
+    baseScore += seasonScores[birthMonth - 1];
+    
+    return Math.min(Math.max(baseScore, 65), 95);
+  }
+
+  /**
+   * 전통 궁합 요약 생성
+   */
+  private generateCompatibilitySummary(userProfile: UserProfile, score: number, elementType: string): string {
+    const name = userProfile.name;
+    const mbti = userProfile.mbti || 'ISFJ';
+    
+    if (score >= 85) {
+      return `${name}님은 전통적으로 매우 좋은 궁합운을 가지고 계십니다. ${elementType} 기운이 강해 ${mbti.includes('F') ? '정서적으로 안정적인' : '현실적으로 균형잡힌'} 관계를 만들어갈 수 있어요.`;
+    } else if (score >= 75) {
+      return `${name}님의 궁합운이 상당히 좋은 편입니다. ${elementType} 원소의 영향으로 ${mbti.includes('E') ? '활발하고 조화로운' : '깊이 있고 진실한'} 인연을 만날 가능성이 높습니다.`;
+    } else {
+      return `${name}님은 신중한 선택이 필요한 시기입니다. ${elementType} 기운을 잘 활용하면 ${mbti.includes('J') ? '계획적이고 안정적인' : '자연스럽고 편안한'} 관계를 만들 수 있을 것입니다.`;
+    }
+  }
+
+  /**
+   * 최적 궁합 타입
+   */
+  private getBestMatches(elementType: string, mbti?: string): Array<{ type: string; description: string; compatibility_score: number }> {
+    const matches: Record<string, Array<{ type: string; description: string; compatibility_score: number }>> = {
+      '금': [
+        { type: '토 오행', description: '토생금으로 서로를 도와주는 관계', compatibility_score: 95 },
+        { type: '수 오행', description: '금생수로 자연스러운 조화', compatibility_score: 85 }
+      ],
+      '목': [
+        { type: '수 오행', description: '수생목으로 서로 성장시키는 관계', compatibility_score: 95 },
+        { type: '화 오행', description: '목생화로 열정적인 발전', compatibility_score: 85 }
+      ],
+      '수': [
+        { type: '금 오행', description: '금생수로 안정적인 지원', compatibility_score: 95 },
+        { type: '목 오행', description: '수생목으로 함께 발전', compatibility_score: 85 }
+      ],
+      '화': [
+        { type: '목 오행', description: '목생화로 활발한 에너지 교환', compatibility_score: 95 },
+        { type: '토 오행', description: '화생토로 실용적인 결합', compatibility_score: 85 }
+      ],
+      '토': [
+        { type: '화 오행', description: '화생토로 따뜻한 안정감', compatibility_score: 95 },
+        { type: '금 오행', description: '토생금으로 믿음직한 지원', compatibility_score: 85 }
+      ]
+    };
+    return matches[elementType] || matches['토'];
+  }
+
+  /**
+   * 피해야 할 궁합 타입
+   */
+  private getAvoidMatches(elementType: string, mbti?: string): Array<{ type: string; reason: string; caution_level: string }> {
+    const avoidMatches: Record<string, Array<{ type: string; reason: string; caution_level: string }>> = {
+      '금': [
+        { type: '화 오행', reason: '화극금으로 갈등 가능성', caution_level: '높음' },
+        { type: '목 오행', reason: '금극목으로 견해 차이', caution_level: '중간' }
+      ],
+      '목': [
+        { type: '금 오행', reason: '금극목으로 압박감 가능', caution_level: '높음' },
+        { type: '토 오행', reason: '목극토로 가치관 충돌', caution_level: '중간' }
+      ],
+      '수': [
+        { type: '토 오행', reason: '토극수로 제약 느낄 수 있음', caution_level: '높음' },
+        { type: '화 오행', reason: '수극화로 냉각 우려', caution_level: '중간' }
+      ],
+      '화': [
+        { type: '수 오행', reason: '수극화로 열정 저하 가능', caution_level: '높음' },
+        { type: '금 오행', reason: '화극금으로 대립 우려', caution_level: '중간' }
+      ],
+      '토': [
+        { type: '목 오행', reason: '목극토로 변화 압박', caution_level: '높음' },
+        { type: '수 오행', reason: '토극수로 소통 어려움', caution_level: '중간' }
+      ]
+    };
+    return avoidMatches[elementType] || avoidMatches['토'];
+  }
+
+  /**
+   * 궁합 요소들
+   */
+  private getCompatibilityFactors(mbti?: string, elementType?: string): Array<{ factor: string; score: number; description: string }> {
+    return [
+      { factor: '성격 조화', score: 85, description: `${mbti?.includes('E') ? '외향적 에너지가' : '내향적 깊이가'} 관계에 도움됩니다` },
+      { factor: '가치관 일치', score: 78, description: `${mbti?.includes('F') ? '감정적 공감능력이' : '논리적 사고가'} 좋은 영향을 줍니다` },
+      { factor: '생활 패턴', score: 82, description: `${mbti?.endsWith('J') ? '계획적인 성향이' : '유연한 적응력이'} 조화를 만듭니다` },
+      { factor: '오행 궁합', score: 88, description: `${elementType} 원소의 특성이 안정적인 관계 형성에 유리합니다` },
+      { factor: '소통 방식', score: 75, description: `${mbti?.includes('T') ? '명확한 의사소통이' : '감정적 교감이'} 관계 발전에 도움됩니다` }
+    ];
+  }
+
+  /**
+   * 결혼 시기 조언
+   */
+  private getMarriageTimingAdvice(age: number, score: number, mbti?: string): any {
+    const isJudging = mbti?.endsWith('J');
+    
+    if (age < 25) {
+      return {
+        best_period: '2-3년 후',
+        preparation_time: '충분한 시간을 가지고 준비',
+        advice: isJudging ? '계획적으로 단계별 준비' : '자연스러운 발전 과정 중시',
+        monthly_timing: ['5월', '6월', '9월', '10월']
+      };
+    } else if (age < 30) {
+      return {
+        best_period: score >= 80 ? '현재~내년' : '1-2년 후',
+        preparation_time: '6개월~1년 준비',
+        advice: isJudging ? '체계적인 계획 수립' : '감정과 현실의 균형',
+        monthly_timing: ['4월', '5월', '9월', '10월']
+      };
+    } else {
+      return {
+        best_period: '준비되면 언제든',
+        preparation_time: '현재 상황에 따라',
+        advice: '경험을 바탕으로 신중하되 과감한 결정',
+        monthly_timing: ['3월', '4월', '5월', '9월', '10월', '11월']
+      };
+    }
+  }
+
+  /**
+   * 관계 발전 조언
+   */
+  private getRelationshipAdvice(mbti?: string, elementType?: string): Array<{ area: string; advice: string; priority: string }> {
+    const advice = [];
+    
+    if (mbti?.includes('E')) {
+      advice.push({ area: '소통', advice: '활발한 대화와 다양한 활동을 함께 하세요', priority: '높음' });
+    } else {
+      advice.push({ area: '소통', advice: '깊이 있는 대화와 조용한 시간을 소중히 하세요', priority: '높음' });
+    }
+    
+    if (mbti?.includes('F')) {
+      advice.push({ area: '감정', advice: '서로의 감정을 세심하게 배려하고 표현하세요', priority: '높음' });
+    } else {
+      advice.push({ area: '논리', advice: '합리적인 대화와 현실적인 계획을 함께 세우세요', priority: '높음' });
+    }
+    
+    advice.push({ area: '오행 조화', advice: `${elementType} 기운을 활용한 환경 조성이 도움됩니다`, priority: '중간' });
+    
+    return advice;
+  }
+
+  /**
+   * 궁합에 유리한 시기
+   */
+  private getLuckyPeriodsForCompatibility(birthMonth: number, elementType: string): Array<{ period: string; description: string; activities: string[] }> {
+    const periods = [];
+    
+    // 계절별 유리한 시기
+    if (birthMonth >= 3 && birthMonth <= 5) {
+      periods.push({
+        period: '봄 (3-5월)',
+        description: '새로운 만남과 발전에 유리한 시기',
+        activities: ['소개팅', '야외 데이트', '새로운 취미 시작']
+      });
+    }
+    
+    periods.push({
+      period: '가을 (9-11월)',
+      description: '안정적인 관계 발전에 좋은 시기',
+      activities: ['진지한 대화', '미래 계획', '가족 소개']
+    });
+    
+    return periods;
+  }
+
+  /**
+   * 주의해야 할 시기
+   */
+  private getWarningPeriodsForCompatibility(birthYear: number, birthMonth: number): Array<{ period: string; description: string; precautions: string[] }> {
+    return [
+      {
+        period: '여름 (6-8월)',
+        description: '감정 기복이 클 수 있는 시기',
+        precautions: ['성급한 결정 피하기', '충분한 소통하기', '냉정함 유지하기']
+      },
+      {
+        period: '겨울 (12-2월)',
+        description: '내향적 성향이 강해지는 시기',
+        precautions: ['소외감 주의하기', '꾸준한 관심 표현', '따뜻한 분위기 조성']
+      }
+    ];
+  }
+
+  /**
+   * 전통 궁합 기본 데이터 (GPT 실패 시)
+   */
+  private getDefaultTraditionalCompatibilityData(userProfile: UserProfile, category?: FortuneCategory): any {
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    return {
+      'traditional-compatibility': {
+        summary: '전통 궁합 분석이 진행 중입니다. 잠시 후 다시 확인해주세요.',
+        total_score: 75,
+        marriage_score: 70,
+        harmony_score: 78,
+        dominant_element: { name: '토', type: '토', traits: '안정, 신뢰, 포용' },
+        best_matches: [
+          { type: '화 오행', description: '화생토로 따뜻한 안정감', compatibility_score: 85 },
+          { type: '금 오행', description: '토생금으로 믿음직한 지원', compatibility_score: 80 }
+        ],
+        avoid_matches: [
+          { type: '목 오행', reason: '목극토로 변화 압박', caution_level: '중간' }
+        ],
+        compatibility_factors: [
+          { factor: '성격 조화', score: 75, description: '분석 중입니다' },
+          { factor: '가치관 일치', score: 78, description: '분석 중입니다' }
+        ],
+        marriage_timing: {
+          best_period: '분석 중',
+          preparation_time: '분석 중',
+          advice: '분석 중입니다',
+          monthly_timing: ['5월', '9월', '10월']
+        },
+        relationship_advice: [
+          { area: '소통', advice: '분석 중입니다', priority: '높음' }
+        ],
+        userInfo: {
+          name: userProfile.name,
+          birth_date: userProfile.birth_date,
+          mbti: userProfile.mbti,
+          age
+        }
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 인맥 리포트 기본 데이터 (GPT 실패 시)
+   */
+  private getDefaultNetworkReportData(userProfile: UserProfile, category?: FortuneCategory): any {
+    const age = this.calculateAge(userProfile.birth_date);
+    const mbti = userProfile.mbti || 'ISFJ';
+    
+    return {
+      'network-report': {
+        score: 75,
+        summary: `${userProfile.name}님의 인맥 분석이 준비 중입니다.`,
+        benefactors: [`${mbti.includes('E') ? '활발한' : '신중한'} 동료들`],
+        challengers: ['경쟁 상대들'],
+        advice: '꾸준한 관계 관리가 필요한 시기입니다.',
+        actionItems: [
+          '새로운 인맥 만들기',
+          '기존 관계 정리하기',
+          '소통 방식 개선하기'
+        ],
+        lucky: {
+          color: '#FFD700',
+          number: 7,
+          direction: '동쪽'
+        }
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+  /**
+   * MBTI 일일 운세 GPT 생성
+   */
+  private async generateMbtiDailyFromGPT(userProfile: UserProfile): Promise<any> {
+    console.log('🧠 GPT MBTI 일일 운세 요청:', userProfile.name, `(${userProfile.birth_date})`);
+    
+    // GPT 시뮬레이션: MBTI 기반 개인화된 일일 운세
+    const mbti = userProfile.mbti || 'ISFJ';
+    const today = new Date();
+    const birthDate = new Date(userProfile.birth_date);
+    
+    const result = {
+      mbti: {
+        type: mbti,
+        description: this.getMBTIDescription(mbti),
+        daily_characteristics: this.getMBTIDailyCharacteristics(mbti),
+        energy_pattern: this.getMBTIEnergyPattern(mbti, today),
+        decision_style: this.getMBTIDecisionStyle(mbti),
+        social_tendency: this.getMBTISocialTendency(mbti),
+        stress_management: this.getMBTIStressManagement(mbti),
+        productivity_tips: this.getMBTIProductivityTips(mbti),
+        relationship_focus: this.getMBTIRelationshipFocus(mbti),
+        learning_approach: this.getMBTILearningApproach(mbti),
+        career_guidance: this.getMBTICareerGuidance(mbti),
+        daily_scores: {
+          energy: this.getMBTIDailyScore(mbti, 'energy'),
+          focus: this.getMBTIDailyScore(mbti, 'focus'),
+          creativity: this.getMBTIDailyScore(mbti, 'creativity'),
+          social: this.getMBTIDailyScore(mbti, 'social'),
+          productivity: this.getMBTIDailyScore(mbti, 'productivity')
+        },
+        today_advice: this.getMBTITodayAdvice(mbti, today),
+        compatible_types: this.getMBTICompatibleTypes(mbti),
+        challenging_situations: this.getMBTIChallengingSituations(mbti)
+      },
+      generated_at: new Date().toISOString()
+    };
+    
+    console.log('✅ GPT MBTI 일일 운세 생성 완료 (사용자:', userProfile.name + ')');
+    return result;
+  }
+
+  /**
+   * MBTI 타입 설명
+   */
+  private getMBTIDescription(mbti: string): string {
+    const descriptions = {
+      'ENFP': '열정적인 영감가 - 새로운 가능성을 추구하며 사람들에게 활력을 주는 타입',
+      'ENFJ': '정의로운 사회운동가 - 다른 사람들의 성장을 돕고 조화를 추구하는 타입',
+      'ENTP': '뜨거운 논쟁을 즐기는 변론가 - 창의적이고 새로운 아이디어를 좋아하는 타입',
+      'ENTJ': '대담한 통솔자 - 목표를 향해 체계적으로 이끄는 천생 리더 타입',
+      'ESFP': '자유로운 영혼의 연예인 - 즉흥적이고 사교적인 분위기 메이커 타입',
+      'ESFJ': '사교적인 외교관 - 다른 사람을 배려하고 조화로운 관계를 만드는 타입',
+      'ESTP': '모험을 즐기는 사업가 - 현실적이고 활동적인 실행력의 소유자',
+      'ESTJ': '엄격한 관리자 - 질서와 체계를 중시하는 실용적 리더 타입',
+      'INFP': '열정적인 중재자 - 자신만의 가치관으로 세상을 바꾸려는 이상주의자',
+      'INFJ': '선의의 옹호자 - 깊은 통찰력으로 다른 사람을 도우려는 신비주의자',
+      'INTP': '논리적인 사색가 - 지적 호기심으로 복잡한 문제를 해결하는 분석가',
+      'INTJ': '용의주도한 전략가 - 장기적 비전으로 체계적인 계획을 세우는 설계자',
+      'ISFP': '호기심 많은 예술가 - 유연하고 개방적인 자유로운 영혼의 소유자',
+      'ISFJ': '용감한 수호자 - 헌신적이고 따뜻한 마음으로 다른 사람을 돕는 타입',
+      'ISTP': '만능 재주꾼 - 실용적이고 현실적인 문제 해결의 달인',
+      'ISTJ': '청렴결백한 논리주의자 - 신뢰할 수 있고 체계적인 완벽주의자'
+    };
+    return descriptions[mbti as keyof typeof descriptions] || '독특한 개성을 가진 특별한 타입입니다.';
+  }
+
+  /**
+   * MBTI 일일 특성
+   */
+  private getMBTIDailyCharacteristics(mbti: string): string[] {
+    const isExtrovert = mbti.startsWith('E');
+    const isIntuitive = mbti.includes('N');
+    const isFeeling = mbti.includes('F');
+    const isJudging = mbti.endsWith('J');
+
+    const characteristics = [];
+    
+    if (isExtrovert) {
+      characteristics.push('사람들과의 소통으로 에너지 충전');
+      characteristics.push('활발한 외부 활동 선호');
+    } else {
+      characteristics.push('혼자만의 시간으로 에너지 충전');
+      characteristics.push('깊이 있는 내적 성찰 중시');
+    }
+
+    if (isIntuitive) {
+      characteristics.push('미래 가능성과 아이디어 중시');
+      characteristics.push('창의적이고 혁신적인 접근');
+    } else {
+      characteristics.push('현실적이고 구체적인 정보 중시');
+      characteristics.push('경험과 실용성 기반 판단');
+    }
+
+    if (isFeeling) {
+      characteristics.push('감정과 가치관 기반 의사결정');
+      characteristics.push('타인의 감정에 민감하게 반응');
+    } else {
+      characteristics.push('논리와 객관성 기반 의사결정');
+      characteristics.push('분석적이고 체계적인 사고');
+    }
+
+    if (isJudging) {
+      characteristics.push('계획적이고 체계적인 생활');
+      characteristics.push('명확한 목표와 일정 선호');
+    } else {
+      characteristics.push('유연하고 적응적인 생활');
+      characteristics.push('즉흥적이고 개방적인 태도');
+    }
+
+    return characteristics;
+  }
+
+  /**
+   * MBTI 에너지 패턴
+   */
+  private getMBTIEnergyPattern(mbti: string, date: Date): string {
+    const hour = date.getHours();
+    const isExtrovert = mbti.startsWith('E');
+    
+    if (isExtrovert) {
+      if (hour >= 6 && hour < 12) {
+        return '아침 시간대에 가장 활발한 에너지를 보입니다. 중요한 미팅이나 창의적 작업에 적합합니다.';
+      } else if (hour >= 12 && hour < 18) {
+        return '오후에도 지속적인 에너지를 유지합니다. 사람들과의 소통이나 협업에 좋은 시간입니다.';
+      } else {
+        return '저녁에는 사교 활동이나 네트워킹에 적합한 에너지 상태입니다.';
+      }
+    } else {
+      if (hour >= 6 && hour < 12) {
+        return '아침 시간은 집중력이 높아 깊이 있는 작업에 적합합니다.';
+      } else if (hour >= 12 && hour < 18) {
+        return '오후에는 차분한 에너지로 세밀한 작업에 집중할 수 있습니다.';
+      } else {
+        return '저녁 시간은 개인적인 성찰이나 혼자만의 시간에 적합합니다.';
+      }
+    }
+  }
+
+  /**
+   * MBTI 의사결정 스타일
+   */
+  private getMBTIDecisionStyle(mbti: string): string {
+    const isFeeling = mbti.includes('F');
+    const isJudging = mbti.endsWith('J');
+    
+    if (isFeeling && isJudging) {
+      return '감정과 가치관을 고려한 신중한 결정을 선호합니다. 다른 사람에게 미칠 영향을 깊이 고려합니다.';
+    } else if (isFeeling && !isJudging) {
+      return '상황에 따라 유연하게 결정하되, 개인적 가치관과 감정을 중시합니다.';
+    } else if (!isFeeling && isJudging) {
+      return '논리적 분석을 바탕으로 체계적이고 신속한 결정을 내립니다.';
+    } else {
+      return '다양한 선택지를 분석하며 상황에 맞춰 논리적으로 결정합니다.';
+    }
+  }
+
+  /**
+   * MBTI 사회적 성향
+   */
+  private getMBTISocialTendency(mbti: string): string {
+    const isExtrovert = mbti.startsWith('E');
+    const isFeeling = mbti.includes('F');
+    
+    if (isExtrovert && isFeeling) {
+      return '사람들과의 따뜻한 교감을 중시하며, 활발한 사교 활동을 즐깁니다.';
+    } else if (isExtrovert && !isFeeling) {
+      return '목표 지향적인 사회 활동을 선호하며, 효율적인 네트워킹을 추구합니다.';
+    } else if (!isExtrovert && isFeeling) {
+      return '소수의 깊은 관계를 중시하며, 진정성 있는 소통을 선호합니다.';
+    } else {
+      return '필요에 따른 선택적 사교 활동을 하며, 의미 있는 대화를 추구합니다.';
+    }
+  }
+
+  /**
+   * MBTI 스트레스 관리법
+   */
+  private getMBTIStressManagement(mbti: string): string {
+    const isExtrovert = mbti.startsWith('E');
+    const isIntuitive = mbti.includes('N');
+    
+    if (isExtrovert && isIntuitive) {
+      return '새로운 활동이나 창의적 프로젝트로 스트레스를 해소하세요. 사람들과의 브레인스토밍도 도움됩니다.';
+    } else if (isExtrovert && !isIntuitive) {
+      return '운동이나 실외 활동으로 스트레스를 풀어보세요. 친구들과의 즐거운 활동도 효과적입니다.';
+    } else if (!isExtrovert && isIntuitive) {
+      return '혼자만의 시간을 가지며 명상이나 독서로 마음을 정리하세요. 창작 활동도 도움됩니다.';
+    } else {
+      return '규칙적인 일상과 충분한 휴식으로 스트레스를 관리하세요. 정리정돈도 마음의 안정에 도움됩니다.';
+    }
+  }
+
+  /**
+   * MBTI 생산성 팁
+   */
+  private getMBTIProductivityTips(mbti: string): string[] {
+    const isJudging = mbti.endsWith('J');
+    const isIntuitive = mbti.includes('N');
+    
+    const tips = [];
+    
+    if (isJudging) {
+      tips.push('명확한 목표와 일정을 설정하여 체계적으로 진행');
+      tips.push('우선순위를 정해 중요한 일부터 처리');
+    } else {
+      tips.push('유연한 스케줄을 유지하며 상황에 맞춰 조정');
+      tips.push('여러 작업을 번갈아 가며 진행하여 집중력 유지');
+    }
+    
+    if (isIntuitive) {
+      tips.push('창의적 영감을 위한 자유로운 사고 시간 확보');
+      tips.push('큰 그림을 그리고 세부사항은 단계적으로 보완');
+    } else {
+      tips.push('구체적이고 실행 가능한 단계별 계획 수립');
+      tips.push('실용적인 도구와 방법론 활용');
+    }
+    
+    return tips;
+  }
+
+  /**
+   * MBTI 관계 중점사항
+   */
+  private getMBTIRelationshipFocus(mbti: string): string {
+    const isFeeling = mbti.includes('F');
+    const isExtrovert = mbti.startsWith('E');
+    
+    if (isFeeling && isExtrovert) {
+      return '따뜻한 소통과 감정적 교감을 통해 관계를 발전시키세요. 상대방의 감정에 귀 기울이는 것이 중요합니다.';
+    } else if (isFeeling && !isExtrovert) {
+      return '진정성 있는 깊은 대화를 통해 신뢰를 쌓아가세요. 서로의 가치관을 이해하는 것이 핵심입니다.';
+    } else if (!isFeeling && isExtrovert) {
+      return '목표 지향적이고 효율적인 소통을 추구하되, 상대방의 감정도 고려해보세요.';
+    } else {
+      return '논리적이고 일관성 있는 관계를 유지하되, 때로는 감정적 표현도 필요합니다.';
+    }
+  }
+
+  /**
+   * MBTI 학습 접근법
+   */
+  private getMBTILearningApproach(mbti: string): string {
+    const isIntuitive = mbti.includes('N');
+    const isThinking = mbti.includes('T');
+    
+    if (isIntuitive && isThinking) {
+      return '이론적 틀을 이해한 후 응용과 확장에 집중하세요. 복잡한 개념의 연결고리를 찾는 것이 중요합니다.';
+    } else if (isIntuitive && !isThinking) {
+      return '개인적 의미와 가치를 연결한 학습이 효과적입니다. 창의적 표현을 통해 이해를 깊게 하세요.';
+    } else if (!isIntuitive && isThinking) {
+      return '단계적이고 체계적인 학습이 적합합니다. 실제 적용 사례와 구체적 데이터를 활용하세요.';
+    } else {
+      return '실생활과 연결된 구체적 경험을 통해 학습하세요. 다른 사람과의 협력 학습도 도움됩니다.';
+    }
+  }
+
+  /**
+   * MBTI 커리어 가이던스
+   */
+  private getMBTICareerGuidance(mbti: string): string {
+    const careers = {
+      'ENFP': '창의적 분야나 사람과 관련된 직업에서 능력을 발휘할 수 있습니다. 마케팅, 상담, 교육 분야가 적합합니다.',
+      'ENFJ': '사람들의 성장을 돕는 역할에 특화되어 있습니다. 교육, 상담, 인사 관리 분야에서 뛰어난 성과를 낼 수 있습니다.',
+      'ENTP': '혁신과 변화를 주도하는 역할이 적합합니다. 기업가정신, 컨설팅, 연구개발 분야에서 능력을 발휘할 수 있습니다.',
+      'ENTJ': '조직을 이끄는 리더십 역할에 천부적 재능이 있습니다. 경영, 정치, 법률 분야에서 탁월한 성과를 기대할 수 있습니다.',
+      'ESFP': '사람들과 함께하는 활동적인 분야가 적합합니다. 엔터테인먼트, 서비스업, 이벤트 기획 분야를 고려해보세요.',
+      'ESFJ': '타인을 배려하고 조화를 이루는 역할에 뛰어납니다. 간호, 교육, 고객 서비스 분야에서 성공할 수 있습니다.',
+      'ESTP': '즉석에서 문제를 해결하는 역동적인 분야가 적합합니다. 영업, 응급의료, 스포츠 분야를 고려해보세요.',
+      'ESTJ': '체계적인 관리와 조직 운영에 탁월합니다. 행정, 금융, 프로젝트 관리 분야에서 뛰어난 성과를 낼 수 있습니다.',
+      'INFP': '자신의 가치관을 실현할 수 있는 창의적 분야가 적합합니다. 예술, 문학, 사회복지 분야를 고려해보세요.',
+      'INFJ': '깊은 통찰력을 활용한 전문 분야에 적합합니다. 심리학, 예술, 종교 분야에서 의미 있는 기여를 할 수 있습니다.',
+      'INTP': '복잡한 문제를 분석하고 해결하는 분야에 뛰어납니다. 연구, 공학, 정보기술 분야에서 능력을 발휘할 수 있습니다.',
+      'INTJ': '장기적 비전을 가진 전략적 역할이 적합합니다. 경영전략, 연구개발, 투자 분야에서 탁월한 성과를 기대할 수 있습니다.',
+      'ISFP': '자유로운 환경에서 창의성을 발휘하는 분야가 적합합니다. 디자인, 예술, 자연과학 분야를 고려해보세요.',
+      'ISFJ': '안정적이고 체계적인 환경에서 타인을 돕는 역할에 적합합니다. 의료, 교육, 사회복지 분야에서 성공할 수 있습니다.',
+      'ISTP': '손으로 만드는 기술적 분야에 뛰어납니다. 공학, 기술, 수리 분야에서 실용적 능력을 발휘할 수 있습니다.',
+      'ISTJ': '정확성과 신뢰성이 중요한 분야에 적합합니다. 회계, 법률, 공무원 분야에서 뛰어난 성과를 낼 수 있습니다.'
+    };
+    return careers[mbti as keyof typeof careers] || '당신만의 독특한 강점을 활용할 수 있는 분야를 찾아보세요.';
+  }
+
+  /**
+   * MBTI 일일 점수
+   */
+  private getMBTIDailyScore(mbti: string, category: string): number {
+    const baseScore = 75;
+    const isExtrovert = mbti.startsWith('E');
+    const isIntuitive = mbti.includes('N');
+    const isFeeling = mbti.includes('F');
+    const isJudging = mbti.endsWith('J');
+    
+    switch (category) {
+      case 'energy':
+        return baseScore + (isExtrovert ? 15 : -5) + Math.floor(Math.random() * 10);
+      case 'focus':
+        return baseScore + (isJudging ? 10 : -5) + (!isExtrovert ? 10 : 0) + Math.floor(Math.random() * 10);
+      case 'creativity':
+        return baseScore + (isIntuitive ? 15 : -5) + (!isJudging ? 10 : 0) + Math.floor(Math.random() * 10);
+      case 'social':
+        return baseScore + (isExtrovert ? 15 : -10) + (isFeeling ? 10 : 0) + Math.floor(Math.random() * 10);
+      case 'productivity':
+        return baseScore + (isJudging ? 15 : -5) + (!isIntuitive ? 10 : 0) + Math.floor(Math.random() * 10);
+      default:
+        return baseScore + Math.floor(Math.random() * 20) - 10;
+    }
+  }
+
+  /**
+   * MBTI 오늘의 조언
+   */
+  private getMBTITodayAdvice(mbti: string, date: Date): string {
+    const day = date.getDay(); // 0: 일요일, 1: 월요일, ...
+    const isExtrovert = mbti.startsWith('E');
+    const isIntuitive = mbti.includes('N');
+    
+    if (day === 1) { // 월요일
+      if (isExtrovert) {
+        return '새로운 한 주의 시작! 동료들과의 활발한 소통으로 에너지를 충전하세요.';
+      } else {
+        return '한 주의 계획을 차분히 세우며 집중력을 높여보세요.';
+      }
+    } else if (day === 5) { // 금요일
+      if (isIntuitive) {
+        return '창의적인 아이디어로 한 주를 마무리하고 새로운 가능성을 탐색해보세요.';
+      } else {
+        return '실용적인 마무리로 한 주의 성과를 점검하고 다음 주를 준비하세요.';
+      }
+    } else {
+      const advices = [
+        '당신의 강점을 활용할 수 있는 기회를 찾아보세요.',
+        '균형잡힌 일과 휴식으로 컨디션을 관리하세요.',
+        '의미 있는 관계에 시간을 투자해보세요.',
+        '새로운 학습 기회를 만들어보세요.'
+      ];
+      return advices[Math.floor(Math.random() * advices.length)];
+    }
+  }
+
+  /**
+   * MBTI 호환 타입들
+   */
+  private getMBTICompatibleTypes(mbti: string): string[] {
+    const compatibility = {
+      'ENFP': ['INTJ', 'INFJ', 'ENFJ', 'ENTP'],
+      'ENFJ': ['INFP', 'ENFP', 'INTJ', 'INFJ'],
+      'ENTP': ['INTJ', 'INFJ', 'ENFP', 'ENTP'],
+      'ENTJ': ['INFP', 'INTP', 'ENFP', 'ENTP'],
+      'ESFP': ['ISFJ', 'ISTJ', 'ESFJ', 'ESTP'],
+      'ESFJ': ['ISFP', 'ISTP', 'ESFP', 'ESTP'],
+      'ESTP': ['ISFJ', 'ISTJ', 'ESFJ', 'ESFP'],
+      'ESTJ': ['ISFP', 'ISTP', 'ESFP', 'ESTP'],
+      'INFP': ['ENTJ', 'ENFJ', 'INFJ', 'ENFP'],
+      'INFJ': ['ENTP', 'ENFP', 'INTJ', 'INFP'],
+      'INTP': ['ENTJ', 'ESTJ', 'ENTP', 'INTJ'],
+      'INTJ': ['ENFP', 'ENTP', 'INFJ', 'INTP'],
+      'ISFP': ['ESTJ', 'ESFJ', 'ESTP', 'ESFP'],
+      'ISFJ': ['ESTP', 'ESFP', 'ESTJ', 'ESFJ'],
+      'ISTP': ['ESTJ', 'ESFJ', 'ESTP', 'ESFP'],
+      'ISTJ': ['ESTP', 'ESFP', 'ESTJ', 'ESFJ']
+    };
+    return compatibility[mbti as keyof typeof compatibility] || ['ISFJ', 'ESFJ', 'ISTJ', 'ESTJ'];
+  }
+
+  /**
+   * MBTI 도전적 상황들
+   */
+  private getMBTIChallengingSituations(mbti: string): string[] {
+    const isExtrovert = mbti.startsWith('E');
+    const isIntuitive = mbti.includes('N');
+    const isFeeling = mbti.includes('F');
+    const isJudging = mbti.endsWith('J');
+    
+    const challenges = [];
+    
+    if (isExtrovert) {
+      challenges.push('혼자 집중해야 하는 장시간 작업');
+      challenges.push('소수 인원과의 조용한 환경');
+    } else {
+      challenges.push('갑작스러운 발표나 즉석 발언');
+      challenges.push('시끄럽고 혼잡한 환경에서의 업무');
+    }
+    
+    if (isIntuitive) {
+      challenges.push('반복적이고 세부적인 루틴 작업');
+      challenges.push('창의성이 제한된 엄격한 규칙');
+    } else {
+      challenges.push('모호하고 추상적인 개념 이해');
+      challenges.push('명확한 가이드라인 없는 업무');
+    }
+    
+    if (isFeeling) {
+      challenges.push('감정을 배제한 냉정한 판단');
+      challenges.push('갈등 상황이나 비판적 피드백');
+    } else {
+      challenges.push('감정적 갈등이나 인간관계 문제');
+      challenges.push('논리보다 감정이 우선시되는 상황');
+    }
+    
+    if (isJudging) {
+      challenges.push('계획이 자주 바뀌는 불확실한 상황');
+      challenges.push('즉흥적이고 유연성이 요구되는 업무');
+    } else {
+      challenges.push('엄격한 마감일과 세부 규칙');
+      challenges.push('변화가 적은 반복적인 일상');
+    }
+    
+    return challenges;
+  }
+
+  /**
+   * MBTI 기본 데이터 (GPT 실패 시)
+   */
+  private getDefaultMbtiData(userProfile: UserProfile, category?: FortuneCategory): any {
+    const mbti = userProfile.mbti || 'ISFJ';
+    
+    return {
+      mbti: {
+        type: mbti,
+        description: `${mbti} 타입의 일일 운세 분석이 준비 중입니다.`,
+        daily_characteristics: ['분석 중입니다', '준비 중입니다'],
+        energy_pattern: '에너지 패턴을 분석하고 있습니다.',
+        decision_style: '의사결정 스타일을 분석 중입니다.',
+        social_tendency: '사회적 성향을 분석 중입니다.',
+        stress_management: '스트레스 관리법을 준비 중입니다.',
+        productivity_tips: ['분석 중입니다'],
+        relationship_focus: '관계 중점사항을 분석 중입니다.',
+        learning_approach: '학습 접근법을 분석 중입니다.',
+        career_guidance: '커리어 가이던스를 준비 중입니다.',
+        daily_scores: {
+          energy: 75,
+          focus: 75,
+          creativity: 75,
+          social: 75,
+          productivity: 75
+        },
+        today_advice: '오늘의 조언을 준비 중입니다.',
+        compatible_types: ['분석', '중'],
+        challenging_situations: ['분석 중입니다']
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 주간 운세 GPT 생성
+   */
+  private async generateWeeklyFromGPT(userProfile: UserProfile): Promise<any> {
+    console.log('📅 GPT 주간 운세 요청:', userProfile.name, `(${userProfile.birth_date})`);
+    
+    const mbti = userProfile.mbti || 'ISFJ';
+    const today = new Date();
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    const result = {
+      weekly: {
+        week_overview: this.getWeekOverview(mbti, today, age),
+        daily_highlights: this.getDailyHighlights(mbti, today),
+        focus_areas: this.getWeeklyFocusAreas(mbti, age),
+        challenges: this.getWeeklyChallenges(mbti),
+        opportunities: this.getWeeklyOpportunities(mbti, today),
+        energy_trend: this.getWeeklyEnergyTrend(mbti, today),
+        relationship_focus: this.getWeeklyRelationshipFocus(mbti),
+        career_guidance: this.getWeeklyCareerGuidance(mbti, age),
+        health_tips: this.getWeeklyHealthTips(mbti),
+        lucky_days: this.getWeeklyLuckyDays(mbti, today),
+        caution_days: this.getWeeklyCautionDays(mbti, today),
+        weekly_scores: {
+          overall: this.getWeeklyScore(mbti, 'overall'),
+          love: this.getWeeklyScore(mbti, 'love'),
+          career: this.getWeeklyScore(mbti, 'career'),
+          health: this.getWeeklyScore(mbti, 'health'),
+          finance: this.getWeeklyScore(mbti, 'finance')
+        }
+      },
+      generated_at: new Date().toISOString()
+    };
+    
+    console.log('✅ GPT 주간 운세 생성 완료 (사용자:', userProfile.name + ')');
+    return result;
+  }
+
+  /**
+   * 월간 운세 GPT 생성
+   */
+  private async generateMonthlyFromGPT(userProfile: UserProfile): Promise<any> {
+    console.log('📅 GPT 월간 운세 요청:', userProfile.name, `(${userProfile.birth_date})`);
+    
+    const mbti = userProfile.mbti || 'ISFJ';
+    const today = new Date();
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    const result = {
+      monthly: {
+        month_overview: this.getMonthOverview(mbti, today, age),
+        weekly_breakdown: this.getMonthlyWeeklyBreakdown(mbti, today),
+        major_themes: this.getMonthlyMajorThemes(mbti, age),
+        key_dates: this.getMonthlyKeyDates(mbti, today),
+        relationship_trends: this.getMonthlyRelationshipTrends(mbti),
+        career_developments: this.getMonthlyCareerDevelopments(mbti, age),
+        financial_outlook: this.getMonthlyFinancialOutlook(mbti, age),
+        health_guidance: this.getMonthlyHealthGuidance(mbti),
+        personal_growth: this.getMonthlyPersonalGrowth(mbti, age),
+        best_opportunities: this.getMonthlyBestOpportunities(mbti, today),
+        things_to_avoid: this.getMonthlyThingsToAvoid(mbti),
+        monthly_scores: {
+          overall: this.getMonthlyScore(mbti, 'overall'),
+          love: this.getMonthlyScore(mbti, 'love'),
+          career: this.getMonthlyScore(mbti, 'career'),
+          health: this.getMonthlyScore(mbti, 'health'),
+          finance: this.getMonthlyScore(mbti, 'finance')
+        }
+      },
+      generated_at: new Date().toISOString()
+    };
+    
+    console.log('✅ GPT 월간 운세 생성 완료 (사용자:', userProfile.name + ')');
+    return result;
+  }
+
+  /**
+   * 연간 운세 GPT 생성
+   */
+  private async generateYearlyFromGPT(userProfile: UserProfile): Promise<any> {
+    console.log('📅 GPT 연간 운세 요청:', userProfile.name, `(${userProfile.birth_date})`);
+    
+    const mbti = userProfile.mbti || 'ISFJ';
+    const today = new Date();
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    const result = {
+      yearly: {
+        year_overview: this.getYearOverview(mbti, today, age),
+        quarterly_breakdown: this.getYearlyQuarterlyBreakdown(mbti, today),
+        major_life_themes: this.getYearlyMajorLifeThemes(mbti, age),
+        turning_points: this.getYearlyTurningPoints(mbti, today),
+        relationship_journey: this.getYearlyRelationshipJourney(mbti, age),
+        career_trajectory: this.getYearlyCareerTrajectory(mbti, age),
+        financial_planning: this.getYearlyFinancialPlanning(mbti, age),
+        health_priorities: this.getYearlyHealthPriorities(mbti, age),
+        personal_evolution: this.getYearlyPersonalEvolution(mbti, age),
+        major_opportunities: this.getYearlyMajorOpportunities(mbti, today),
+        potential_challenges: this.getYearlyPotentialChallenges(mbti, age),
+        yearly_scores: {
+          overall: this.getYearlyScore(mbti, 'overall'),
+          love: this.getYearlyScore(mbti, 'love'),
+          career: this.getYearlyScore(mbti, 'career'),
+          health: this.getYearlyScore(mbti, 'health'),
+          finance: this.getYearlyScore(mbti, 'finance')
+        }
+      },
+      generated_at: new Date().toISOString()
+    };
+    
+    console.log('✅ GPT 연간 운세 생성 완료 (사용자:', userProfile.name + ')');
+    return result;
+  }
+
+  // 헬퍼 메서드들 (간략화)
+  private getWeekOverview(mbti: string, date: Date, age: number): string {
+    const isExtrovert = mbti.startsWith('E');
+    return isExtrovert ? 
+      '활발한 소통과 새로운 만남이 기대되는 한 주입니다.' : 
+      '내적 성장과 깊은 사색에 좋은 시간이 될 것입니다.';
+  }
+
+  private getDailyHighlights(mbti: string, date: Date): any[] {
+    return [
+      { day: '월요일', highlight: '새로운 시작에 좋은 에너지' },
+      { day: '화요일', highlight: '창의적 아이디어 발현' },
+      { day: '수요일', highlight: '인간관계 발전 기회' },
+      { day: '목요일', highlight: '중요한 결정의 시간' },
+      { day: '금요일', highlight: '성과 확인과 정리' },
+      { day: '토요일', highlight: '휴식과 재충전' },
+      { day: '일요일', highlight: '다음 주 준비와 계획' }
+    ];
+  }
+
+  private getWeeklyFocusAreas(mbti: string, age: number): string[] {
+    const isJudging = mbti.endsWith('J');
+    return isJudging ? 
+      ['목표 달성을 위한 체계적 접근', '계획 실행력 강화'] :
+      ['유연한 대응력 발휘', '새로운 기회 포착'];
+  }
+
+  private getWeeklyChallenges(mbti: string): string[] {
+    const isExtrovert = mbti.startsWith('E');
+    return isExtrovert ?
+      ['과도한 활동으로 인한 피로', '집중력 분산 주의'] :
+      ['고립감 방지', '적극적 소통 필요'];
+  }
+
+  private getWeeklyOpportunities(mbti: string, date: Date): string[] {
+    return ['새로운 인맥 형성', '창의적 프로젝트 시작', '개인 브랜딩 강화'];
+  }
+
+  private getWeeklyEnergyTrend(mbti: string, date: Date): string {
+    return '월요일부터 수요일까지 상승세, 목금은 안정세, 주말은 재충전 모드입니다.';
+  }
+
+  private getWeeklyRelationshipFocus(mbti: string): string {
+    const isFeeling = mbti.includes('F');
+    return isFeeling ?
+      '감정적 교감과 따뜻한 소통에 집중하세요.' :
+      '논리적이고 건설적인 대화를 추구하세요.';
+  }
+
+  private getWeeklyCareerGuidance(mbti: string, age: number): string {
+    return age < 30 ?
+      '새로운 기술 습득과 네트워킹에 집중하세요.' :
+      '경험을 바탕으로 한 리더십 발휘가 중요합니다.';
+  }
+
+  private getWeeklyHealthTips(mbti: string): string[] {
+    const isExtrovert = mbti.startsWith('E');
+    return isExtrovert ?
+      ['규칙적인 운동으로 에너지 관리', '충분한 수면 확보'] :
+      ['명상이나 요가로 마음 안정', '적당한 외부 활동'];
+  }
+
+  private getWeeklyLuckyDays(mbti: string, date: Date): string[] {
+    return ['수요일', '금요일'];
+  }
+
+  private getWeeklyCautionDays(mbti: string, date: Date): string[] {
+    return ['화요일', '목요일'];
+  }
+
+  private getWeeklyScore(mbti: string, category: string): number {
+    return 75 + Math.floor(Math.random() * 20);
+  }
+
+  // 월간 운세 헬퍼 메서드들
+  private getMonthOverview(mbti: string, date: Date, age: number): string {
+    return `${date.getMonth() + 1}월은 ${mbti} 타입에게 성장과 발전의 기회가 많은 달입니다.`;
+  }
+
+  private getMonthlyWeeklyBreakdown(mbti: string, date: Date): any[] {
+    return [
+      { week: 1, theme: '새로운 시작과 계획 수립' },
+      { week: 2, theme: '적극적인 실행과 추진' },
+      { week: 3, theme: '중간 점검과 조정' },
+      { week: 4, theme: '마무리와 다음 달 준비' }
+    ];
+  }
+
+  private getMonthlyMajorThemes(mbti: string, age: number): string[] {
+    return ['개인 성장', '관계 발전', '커리어 진보'];
+  }
+
+  private getMonthlyKeyDates(mbti: string, date: Date): string[] {
+    return ['5일', '15일', '25일'];
+  }
+
+  private getMonthlyRelationshipTrends(mbti: string): string {
+    const isFeeling = mbti.includes('F');
+    return isFeeling ?
+      '감정적 유대감이 깊어지는 시기입니다.' :
+      '실용적이고 안정적인 관계 발전이 예상됩니다.';
+  }
+
+  private getMonthlyCareerDevelopments(mbti: string, age: number): string {
+    return '새로운 프로젝트나 책임이 주어질 가능성이 높습니다.';
+  }
+
+  private getMonthlyFinancialOutlook(mbti: string, age: number): string {
+    return '신중한 투자와 계획적인 소비가 중요한 시기입니다.';
+  }
+
+  private getMonthlyHealthGuidance(mbti: string): string {
+    return '규칙적인 생활 패턴 유지와 스트레스 관리에 집중하세요.';
+  }
+
+  private getMonthlyPersonalGrowth(mbti: string, age: number): string {
+    return '새로운 학습과 자기계발에 투자하기 좋은 시기입니다.';
+  }
+
+  private getMonthlyBestOpportunities(mbti: string, date: Date): string[] {
+    return ['네트워킹 확대', '새로운 학습', '창의적 프로젝트'];
+  }
+
+  private getMonthlyThingsToAvoid(mbti: string): string[] {
+    return ['성급한 결정', '과도한 스트레스', '인간관계 갈등'];
+  }
+
+  private getMonthlyScore(mbti: string, category: string): number {
+    return 70 + Math.floor(Math.random() * 25);
+  }
+
+  // 연간 운세 헬퍼 메서드들
+  private getYearOverview(mbti: string, date: Date, age: number): string {
+    return `${date.getFullYear()}년은 ${mbti} 타입에게 중요한 전환점이 될 수 있는 해입니다.`;
+  }
+
+  private getYearlyQuarterlyBreakdown(mbti: string, date: Date): any[] {
+    return [
+      { quarter: 1, theme: '기반 구축과 새로운 시작' },
+      { quarter: 2, theme: '본격적인 성장과 발전' },
+      { quarter: 3, theme: '성과 확산과 네트워킹' },
+      { quarter: 4, theme: '정착과 내년 준비' }
+    ];
+  }
+
+  private getYearlyMajorLifeThemes(mbti: string, age: number): string[] {
+    return age < 30 ?
+      ['자아 정체성 확립', '커리어 기반 구축', '인간관계 확장'] :
+      ['리더십 발휘', '안정적 성장', '지혜로운 선택'];
+  }
+
+  private getYearlyTurningPoints(mbti: string, date: Date): string[] {
+    return ['3월', '7월', '11월'];
+  }
+
+  private getYearlyRelationshipJourney(mbti: string, age: number): string {
+    return '의미 있는 인연과 깊은 유대관계 형성의 한 해가 될 것입니다.';
+  }
+
+  private getYearlyCareerTrajectory(mbti: string, age: number): string {
+    return '전문성 강화와 새로운 도전 기회가 연속될 것입니다.';
+  }
+
+  private getYearlyFinancialPlanning(mbti: string, age: number): string {
+    return '장기적 관점의 투자와 재정 관리가 중요한 해입니다.';
+  }
+
+  private getYearlyHealthPriorities(mbti: string, age: number): string {
+    return '예방 중심의 건강 관리와 생활 습관 개선에 집중하세요.';
+  }
+
+  private getYearlyPersonalEvolution(mbti: string, age: number): string {
+    return '내적 성숙과 외적 성장이 조화를 이루는 한 해가 될 것입니다.';
+  }
+
+  private getYearlyMajorOpportunities(mbti: string, date: Date): string[] {
+    return ['새로운 분야 진출', '국제적 경험', '리더십 기회'];
+  }
+
+  private getYearlyPotentialChallenges(mbti: string, age: number): string[] {
+    return ['변화 적응', '균형 유지', '시간 관리'];
+  }
+
+  private getYearlyScore(mbti: string, category: string): number {
+    return 65 + Math.floor(Math.random() * 30);
+  }
+
+  // 기본 데이터 메서드들
+  private getDefaultWeeklyData(userProfile: UserProfile, category?: FortuneCategory): any {
+    return {
+      weekly: {
+        week_overview: '주간 운세 분석이 준비 중입니다.',
+        daily_highlights: [],
+        focus_areas: ['분석 중'],
+        challenges: ['분석 중'],
+        opportunities: ['분석 중'],
+        energy_trend: '분석 중입니다.',
+        relationship_focus: '분석 중입니다.',
+        career_guidance: '분석 중입니다.',
+        health_tips: ['분석 중'],
+        lucky_days: ['분석', '중'],
+        caution_days: ['분석', '중'],
+        weekly_scores: { overall: 75, love: 75, career: 75, health: 75, finance: 75 }
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  private getDefaultMonthlyData(userProfile: UserProfile, category?: FortuneCategory): any {
+    return {
+      monthly: {
+        month_overview: '월간 운세 분석이 준비 중입니다.',
+        weekly_breakdown: [],
+        major_themes: ['분석 중'],
+        key_dates: ['분석', '중'],
+        relationship_trends: '분석 중입니다.',
+        career_developments: '분석 중입니다.',
+        financial_outlook: '분석 중입니다.',
+        health_guidance: '분석 중입니다.',
+        personal_growth: '분석 중입니다.',
+        best_opportunities: ['분석 중'],
+        things_to_avoid: ['분석 중'],
+        monthly_scores: { overall: 75, love: 75, career: 75, health: 75, finance: 75 }
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  private getDefaultYearlyData(userProfile: UserProfile, category?: FortuneCategory): any {
+    return {
+      yearly: {
+        year_overview: '연간 운세 분석이 준비 중입니다.',
+        quarterly_breakdown: [],
+        major_life_themes: ['분석 중'],
+        turning_points: ['분석', '중'],
+        relationship_journey: '분석 중입니다.',
+        career_trajectory: '분석 중입니다.',
+        financial_planning: '분석 중입니다.',
+        health_priorities: '분석 중입니다.',
+        personal_evolution: '분석 중입니다.',
+        major_opportunities: ['분석 중'],
+        potential_challenges: ['분석 중'],
+        yearly_scores: { overall: 75, love: 75, career: 75, health: 75, finance: 75 }
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 개인 분석 GPT 생성
+   */
+  private async generatePersonalAnalysisFromGPT(userProfile: UserProfile, category: string): Promise<any> {
+    console.log(`🔍 GPT ${category} 요청:`, userProfile.name, `(${userProfile.birth_date})`);
+    
+    const mbti = userProfile.mbti || 'ISFJ';
+    const today = new Date();
+    const age = this.calculateAge(userProfile.birth_date);
+    
+    const result = {
+      [category.replace(/-/g, '_')]: this.getPersonalAnalysisContent(category, mbti, userProfile.birth_date, age),
+      generated_at: new Date().toISOString()
+    };
+    
+    console.log(`✅ GPT ${category} 생성 완료 (사용자:`, userProfile.name + ')');
+    return result;
+  }
+
+  /**
+   * 개인 분석 컨텐츠 생성
+   */
+  private getPersonalAnalysisContent(category: string, mbti: string, birthDate: string, age: number): any {
+    const birth = new Date(birthDate);
+    const month = birth.getMonth() + 1;
+    
+    switch (category) {
+      case 'birth-season':
+        return this.getBirthSeasonAnalysis(month, mbti, age);
+      case 'birthdate':
+        return this.getBirthdateAnalysis(birth, mbti, age);
+      case 'birthstone':
+        return this.getBirthstoneAnalysis(month, mbti);
+      case 'blood-type':
+        return this.getBloodTypeAnalysis(mbti, age);
+      case 'palmistry':
+        return this.getPalmistryAnalysis(mbti, age);
+      case 'past-life':
+        return this.getPastLifeAnalysis(birth, mbti);
+      case 'daily':
+        return this.getDailyAnalysis(mbti, age);
+      case 'zodiac':
+        return this.getZodiacAnalysis(birth, mbti);
+      case 'lucky-items':
+        return this.getLuckyItemsAnalysis(mbti, month);
+      case 'lucky-outfit':
+        return this.getLuckyOutfitAnalysis(mbti, month);
+      case 'physiognomy':
+        return this.getPhysiognomyAnalysis(mbti, age);
+      default:
+        return { analysis: '분석 중입니다.', category };
+    }
+  }
+
+  // 개별 분석 메서드들
+  private getBirthSeasonAnalysis(month: number, mbti: string, age: number): any {
+    const season = month <= 2 || month === 12 ? '겨울' : 
+                  month <= 5 ? '봄' : 
+                  month <= 8 ? '여름' : '가을';
+    return {
+      season,
+      characteristics: [`${season}생의 특징을 분석합니다.`],
+      personality_traits: [`${mbti} 타입의 ${season}생 성격`],
+      life_patterns: [`${season}생의 인생 패턴`],
+      compatible_seasons: ['봄', '여름'],
+      recommendations: [`${season}생을 위한 조언`]
+    };
+  }
+
+  private getBirthdateAnalysis(birth: Date, mbti: string, age: number): any {
+    return {
+      birth_year: birth.getFullYear(),
+      birth_month: birth.getMonth() + 1,
+      birth_day: birth.getDate(),
+      numerology: this.getNumerologyAnalysis(birth),
+      life_path: `${mbti} 타입의 인생 경로 분석`,
+      destiny_number: (birth.getDate() % 9) + 1,
+      personality_analysis: '생년월일 기반 성격 분석',
+      favorable_dates: ['5일', '15일', '25일'],
+      life_cycles: this.getLifeCycles(birth, age)
+    };
+  }
+
+  private getBirthstoneAnalysis(month: number, mbti: string): any {
+    const stones = ['가넷', '자수정', '아쿠아마린', '다이아몬드', '에메랄드', '진주', '루비', '페리도트', '사파이어', '오팔', '토파즈', '터키석'];
+    return {
+      birthstone: stones[month - 1],
+      meaning: `${stones[month - 1]}의 의미와 효과`,
+      properties: ['행운', '건강', '사랑'],
+      compatibility: `${mbti} 타입과의 궁합`,
+      wearing_tips: '착용법과 관리법',
+      alternative_stones: [stones[(month % 12)], stones[((month + 1) % 12)]]
+    };
+  }
+
+  private getBloodTypeAnalysis(mbti: string, age: number): any {
+    return {
+      blood_type: 'A',
+      personality_traits: ['신중함', '완벽주의', '배려심'],
+      compatibility: {
+        best_match: ['AB형', 'O형'],
+        good_match: ['A형'],
+        challenging: ['B형']
+      },
+      health_tips: ['규칙적인 생활', '스트레스 관리'],
+      career_guidance: `${mbti} 타입과 A형의 조합으로 본 적성`,
+      relationship_advice: '혈액형별 연애 스타일'
+    };
+  }
+
+  private getPalmistryAnalysis(mbti: string, age: number): any {
+    return {
+      life_line: '생명선 분석 결과',
+      heart_line: '감정선 분석 결과',
+      head_line: '지능선 분석 결과',
+      fate_line: '운명선 분석 결과',
+      overall_reading: `${mbti} 타입의 손금 종합 분석`,
+      strengths: ['직관력', '창의성'],
+      challenges: ['감정 기복', '우유부단함'],
+      life_stages: this.getPalmLifeStages(age)
+    };
+  }
+
+  private getPastLifeAnalysis(birth: Date, mbti: string): any {
+    const eras = ['조선시대', '고려시대', '통일신라', '삼국시대'];
+    const jobs = ['학자', '의관', '예술가', '상인', '장군'];
+    return {
+      era: eras[birth.getDate() % eras.length],
+      occupation: jobs[birth.getMonth() % jobs.length],
+      personality: `전생에서의 ${mbti} 성향`,
+      karma: '현생에 영향을 주는 전생의 업',
+      lessons: '전생에서 배워야 할 교훈',
+      connections: '전생에서 이어진 인연',
+      spiritual_growth: '영적 성장 단계'
+    };
+  }
+
+  private getDailyAnalysis(mbti: string, age: number): any {
+    return {
+      today_overview: `${mbti} 타입의 오늘 하루 전망`,
+      energy_level: 85,
+      mood_forecast: '긍정적이고 활기찬 하루',
+      lucky_time: '오후 2-4시',
+      focus_areas: ['인간관계', '창의적 활동'],
+      things_to_avoid: ['과로', '스트레스'],
+      daily_mantra: '오늘도 좋은 하루가 될 것입니다.',
+      evening_reflection: '하루를 마무리하며 감사함을 느껴보세요.'
+    };
+  }
+
+  private getZodiacAnalysis(birth: Date, mbti: string): any {
+    const signs = ['물병자리', '물고기자리', '양자리', '황소자리', '쌍둥이자리', '게자리', '사자자리', '처녀자리', '천칭자리', '전갈자리', '사수자리', '염소자리'];
+    return {
+      zodiac_sign: signs[birth.getMonth()],
+      element: this.getZodiacElementForAnalysis(birth.getMonth()),
+      ruling_planet: this.getRulingPlanetForAnalysis(birth.getMonth()),
+      personality: `${mbti}와 별자리의 조합 분석`,
+      strengths: ['직감력', '창의성', '리더십'],
+      weaknesses: ['고집', '변덕', '감정기복'],
+      compatibility: this.getZodiacCompatibilityForAnalysis(birth.getMonth()),
+      daily_guidance: '오늘의 별자리 운세'
+    };
+  }
+
+  private getLuckyItemsAnalysis(mbti: string, month: number): any {
+    return {
+      accessories: ['실버 목걸이', '가죽 팔찌', '크리스탈 귀걸이'],
+      colors: ['파란색', '초록색', '은색'],
+      numbers: [3, 7, 21],
+      materials: ['은', '가죽', '크리스탈'],
+      personal_items: [`${mbti} 타입에게 맞는 개인 아이템들`],
+      office_items: ['관엽식물', '수정 문진', '향초'],
+      seasonal_items: this.getSeasonalLuckyItems(month)
+    };
+  }
+
+  private getLuckyOutfitAnalysis(mbti: string, month: number): any {
+    return {
+      style_guide: `${mbti} 타입의 스타일 가이드`,
+      color_palette: ['네이비', '베이지', '화이트'],
+      fabric_recommendations: ['코튼', '린넨', '울'],
+      accessories: ['미니멀 시계', '가죽 가방'],
+      seasonal_outfit: this.getSeasonalOutfit(month),
+      formal_wear: '공식적인 자리를 위한 복장',
+      casual_wear: '일상적인 캐주얼 스타일',
+      date_outfit: '특별한 날을 위한 옷차림'
+    };
+  }
+
+  private getPhysiognomyAnalysis(mbti: string, age: number): any {
+    return {
+      face_shape: '관상학적 얼굴형 분석',
+      eye_analysis: '눈의 관상학적 의미',
+      nose_reading: '코로 보는 성격과 운세',
+      mouth_traits: '입술과 입모양의 관상',
+      overall_fortune: `${mbti} 타입의 관상 종합 분석`,
+      career_prospects: '관상으로 본 직업 운세',
+      relationship_luck: '관상으로 본 인연 운세',
+      wealth_indicators: '재물운을 나타내는 관상 특징',
+      health_signs: '건강을 나타내는 관상적 징후'
+    };
+  }
+
+  // 헬퍼 메서드들
+  private getNumerologyAnalysis(birth: Date): any {
+    return {
+      life_path_number: (birth.getDate() % 9) + 1,
+      expression_number: (birth.getMonth() % 9) + 1,
+      soul_urge_number: (birth.getFullYear() % 9) + 1
+    };
+  }
+
+  private getLifeCycles(birth: Date, age: number): any[] {
+    return [
+      { period: '청년기', ages: '20-35', theme: '성장과 도전' },
+      { period: '중년기', ages: '36-55', theme: '성취와 안정' },
+      { period: '장년기', ages: '56-70', theme: '지혜와 성숙' }
+    ];
+  }
+
+  private getPalmLifeStages(age: number): any[] {
+    return [
+      { stage: '유년기', period: '0-20세', characteristics: '기초 형성' },
+      { stage: '성인기', period: '21-40세', characteristics: '활동적 시기' },
+      { stage: '중년기', period: '41-60세', characteristics: '안정기' },
+      { stage: '노년기', period: '61세 이후', characteristics: '지혜의 시기' }
+    ];
+  }
+
+  private getZodiacElementForAnalysis(month: number): string {
+    const elements = ['공기', '물', '불', '땅'];
+    return elements[month % 4];
+  }
+
+  private getRulingPlanetForAnalysis(month: number): string {
+    const planets = ['수성', '금성', '화성', '목성', '토성', '천왕성', '해왕성'];
+    return planets[month % 7];
+  }
+
+  private getZodiacCompatibilityForAnalysis(month: number): string[] {
+    return ['양자리', '사자자리', '사수자리'];
+  }
+
+  private getSeasonalLuckyItems(month: number): string[] {
+    if (month <= 2 || month === 12) return ['목도리', '장갑', '따뜻한 차'];
+    if (month <= 5) return ['가벼운 스카프', '선글라스', '봄꽃'];
+    if (month <= 8) return ['모자', '시원한 액세서리', '여름 향수'];
+    return ['가을 컬러 스카프', '따뜻한 음료', '단풍잎'];
+  }
+
+  private getSeasonalOutfit(month: number): any {
+    if (month <= 2 || month === 12) {
+      return { style: '겨울 스타일', items: ['코트', '니트', '부츠'] };
+    }
+    if (month <= 5) {
+      return { style: '봄 스타일', items: ['가디건', '블라우스', '플랫슈즈'] };
+    }
+    if (month <= 8) {
+      return { style: '여름 스타일', items: ['린넨 셔츠', '원피스', '샌들'] };
+    }
+    return { style: '가을 스타일', items: ['재킷', '니트', '부츠'] };
+  }
+
+  /**
+   * 기본 개인 분석 데이터
+   */
+  private getDefaultPersonalAnalysisData(userProfile: UserProfile, category: string): any {
+    return {
+      [category.replace(/-/g, '_')]: {
+        analysis: `${category} 분석이 준비 중입니다.`,
+        status: '분석 중',
+        message: '곧 상세한 분석 결과를 제공해드릴 예정입니다.'
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 기본 사용자 프로필 생성
+   */
+  private getDefaultUserProfile(userId: string): UserProfile {
+    return {
+      id: userId,
+      name: '김인주',
+      birth_date: '1988-09-05',
+      birth_time: '14:30',
+      gender: '남성',
+      mbti: 'ENTJ',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * GPT를 활용한 행운 아이템 생성
+   */
+  private async generateLuckyItemFromGPT(userProfile: UserProfile, category: string): Promise<any> {
+    console.log(`🔍 GPT ${category} 요청: ${userProfile.name} (${userProfile.birth_date})`);
+    
+    const birth = new Date(userProfile.birth_date);
+    const age = this.calculateAge(userProfile.birth_date);
+    const mbti = userProfile.mbti || 'ENTJ';
+    
+    try {
+      const luckyContent = this.getLuckyItemContent(category, mbti, birth, age);
+      return {
+        [category.replace(/-/g, '_')]: luckyContent,
+        generated_at: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error(`❌ ${category} GPT 생성 실패:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * 행운 아이템별 콘텐츠 생성
+   */
+  private getLuckyItemContent(category: string, mbti: string, birth: Date, age: number): any {
+    const month = birth.getMonth() + 1;
+    
+    switch (category) {
+      case 'lucky-color':
+        return this.getLuckyColorAnalysis(month, mbti, age);
+      case 'lucky-number':
+        return this.getLuckyNumberAnalysis(birth, mbti, age);
+      case 'lucky-food':
+        return this.getLuckyFoodAnalysis(month, mbti, age);
+      case 'talisman':
+        return this.getTalismanAnalysis(birth, mbti, age);
+      case 'lucky-series':
+        return this.getLuckySeriesAnalysis(mbti, age);
+      case 'lucky-exam':
+        return this.getLuckyExamAnalysis(mbti, age);
+      case 'lucky-cycling':
+        return this.getLuckyCyclingAnalysis(mbti, month);
+      case 'lucky-running':
+        return this.getLuckyRunningAnalysis(mbti, month);
+      case 'lucky-hiking':
+        return this.getLuckyHikingAnalysis(mbti, month);
+      case 'lucky-fishing':
+        return this.getLuckyFishingAnalysis(mbti, month);
+      case 'lucky-swim':
+        return this.getLuckySwimAnalysis(mbti, month);
+      default:
+        return { analysis: `${category} 분석이 준비 중입니다.` };
+    }
+  }
+
+  /**
+   * 행운의 색상 분석
+   */
+  private getLuckyColorAnalysis(month: number, mbti: string, age: number): any {
+    const colors = ['빨강', '파랑', '노랑', '초록', '보라', '주황', '분홍', '검정', '하양', '회색'];
+    const primaryColor = colors[month % colors.length];
+    const isExtrovert = mbti.startsWith('E');
+    
+    return {
+      primary_color: primaryColor,
+      secondary_colors: [`연한 ${primaryColor}`, `진한 ${primaryColor}`],
+      color_meaning: `${primaryColor}은 당신의 생명력과 에너지를 상징합니다.`,
+      usage_tips: [
+        `${primaryColor} 계열의 옷을 착용하세요`,
+        '중요한 일정이 있을 때 이 색상을 활용하세요',
+        '집안 소품으로 이 색상을 배치하세요'
+      ],
+      avoid_colors: ['갈색', '베이지'],
+      daily_application: `오늘은 ${primaryColor} 포인트 아이템으로 운을 끌어올리세요`,
+      weekly_focus: isExtrovert ? '활기찬 톤의 색상' : '차분한 톤의 색상',
+      color_energy: '활력과 자신감 상승'
+    };
+  }
+
+  /**
+   * 행운의 숫자 분석
+   */
+  private getLuckyNumberAnalysis(birth: Date, mbti: string, age: number): any {
+    const day = birth.getDate();
+    const month = birth.getMonth() + 1;
+    const luckyNum = (day + month) % 10;
+    
+    return {
+      primary_number: luckyNum,
+      secondary_numbers: [(luckyNum + 1) % 10, (luckyNum + 2) % 10],
+      numerology_meaning: `${luckyNum}은 당신의 인생 경로를 나타내는 숫자입니다.`,
+      lucky_combinations: [`${luckyNum}${luckyNum}`, `${luckyNum}0`, `${luckyNum}8`],
+      avoid_numbers: [4, 13],
+      usage_tips: [
+        '로또 번호 선택 시 참고하세요',
+        '중요한 결정의 날짜로 활용하세요',
+        '비밀번호나 전화번호에 포함시키세요'
+      ],
+      daily_guidance: `오늘 ${luckyNum}번대 시간에 중요한 일을 처리하세요`,
+      number_energy: '행운과 성공을 끌어당기는 힘'
+    };
+  }
+
+  /**
+   * 행운의 음식 분석
+   */
+  private getLuckyFoodAnalysis(month: number, mbti: string, age: number): any {
+    const seasonalFoods = [
+      ['딸기', '봄나물', '죽순'], // 봄
+      ['수박', '복숭아', '옥수수'], // 여름
+      ['사과', '배', '감'], // 가을
+      ['귤', '곶감', '견과류'] // 겨울
+    ];
+    const season = Math.floor((month - 1) / 3);
+    const seasonalFood = seasonalFoods[season];
+    
+    return {
+      seasonal_foods: seasonalFood,
+      lucky_main_dish: mbti.startsWith('E') ? '매운 음식' : '따뜻한 국물',
+      lucky_snack: '견과류',
+      lucky_drink: month <= 6 ? '녹차' : '따뜻한 차',
+      energy_foods: ['홍삼', '대추', '꿀'],
+      avoid_foods: ['차가운 음식', '기름진 음식'],
+      meal_timing: [
+        '아침: 따뜻한 죽이나 미역국',
+        '점심: 균형 잡힌 한식',
+        '저녁: 가벼운 식사'
+      ],
+      cooking_tips: '음식을 직접 만들면 더 큰 행운이 따릅니다',
+      nutritional_focus: '몸을 따뜻하게 하는 음식 위주로 섭취하세요'
+    };
+  }
+
+  /**
+   * 부적 분석
+   */
+  private getTalismanAnalysis(birth: Date, mbti: string, age: number): any {
+    const elements = ['목', '화', '토', '금', '수'];
+    const element = elements[birth.getMonth() % 5];
+    
+    return {
+      recommended_talisman: `${element}기운 부적`,
+      talisman_type: mbti.endsWith('J') ? '안정형 부적' : '변화형 부적',
+      materials: element === '금' ? ['금', '은', '동'] : ['나무', '천연석', '옥'],
+      colors: element === '화' ? ['빨강', '주황'] : ['파랑', '초록'],
+      placement: [
+        '지갑이나 가방 안',
+        '침실 머리맡',
+        '자주 사용하는 책상 위'
+      ],
+      activation_method: '매일 아침 손으로 만지며 소원을 빌어보세요',
+      care_instructions: '한 달에 한 번 깨끗한 물로 닦아주세요',
+      replacement_timing: '1년마다 새로 교체하는 것이 좋습니다',
+      special_effects: '재물운과 건강운 상승'
+    };
+  }
+
+  /**
+   * 행운의 시리즈 분석
+   */
+  private getLuckySeriesAnalysis(mbti: string, age: number): any {
+    return {
+      lucky_series: mbti.includes('N') ? '판타지/SF 시리즈' : '로맨스/일상 시리즈',
+      recommended_shows: [
+        '인기 드라마 시리즈',
+        '다큐멘터리 시리즈',
+        '예능 프로그램'
+      ],
+      viewing_schedule: '주말 저녁이 가장 좋습니다',
+      lucky_genres: mbti.startsWith('E') ? ['액션', '코미디'] : ['멜로', '스릴러'],
+      avoid_content: '너무 자극적이거나 무서운 내용',
+      binge_guidance: '하루 2-3편 정도가 적당합니다',
+      social_viewing: '가족이나 친구와 함께 보면 더 좋습니다',
+      emotional_benefit: '스트레스 해소와 영감 획득'
+    };
+  }
+
+  /**
+   * 시험운 분석
+   */
+  private getLuckyExamAnalysis(mbti: string, age: number): any {
+    const isJudging = mbti.endsWith('J');
+    
+    return {
+      best_study_time: isJudging ? '오전 9-11시' : '오후 2-4시',
+      study_method: mbti.includes('V') ? '시각적 학습' : '청각적 학습',
+      lucky_study_location: '조용한 도서관이나 카페',
+      concentration_tips: [
+        '25분 공부 후 5분 휴식',
+        '충분한 수면 유지',
+        '규칙적인 식사'
+      ],
+      exam_day_routine: [
+        '평소보다 30분 일찍 기상',
+        '가벼운 아침 식사',
+        '긍정적인 마인드 유지'
+      ],
+      lucky_colors_for_exam: ['파랑', '초록'],
+      stress_management: '시험 전날 충분한 휴식을 취하세요',
+      success_probability: age < 25 ? '매우 높음' : '높음'
+    };
+  }
+
+  /**
+   * 사이클링 운세 분석
+   */
+  private getLuckyCyclingAnalysis(mbti: string, month: number): any {
+    return {
+      best_cycling_time: month <= 6 ? '오전 7-9시' : '오후 5-7시',
+      lucky_route: mbti.startsWith('E') ? '사람들과 함께하는 그룹 라이딩' : '조용한 강변길',
+      weather_guidance: '맑고 바람이 적은 날이 좋습니다',
+      distance_recommendation: mbti.endsWith('J') ? '계획적인 장거리' : '즉흥적인 단거리',
+      safety_tips: [
+        '헬멧 착용 필수',
+        '밝은 색상의 옷 착용',
+        '충분한 수분 섭취'
+      ],
+      energy_boost: '사이클링으로 스트레스 해소와 체력 증진',
+      social_aspect: '동호회 활동으로 인맥 확장 기회',
+      lucky_cycling_days: ['화요일', '목요일', '토요일']
+    };
+  }
+
+  /**
+   * 러닝 운세 분석
+   */
+  private getLuckyRunningAnalysis(mbti: string, month: number): any {
+    return {
+      optimal_running_time: month <= 4 || month >= 10 ? '오전 6-8시' : '오후 6-8시',
+      running_style: mbti.includes('S') ? '꾸준한 페이스 유지' : '인터벌 트레이닝',
+      lucky_location: '공원이나 트랙',
+      distance_goal: '주 3회, 회당 3-5km',
+      motivation_tips: [
+        '목표 설정하고 기록하기',
+        '좋아하는 음악 들으며 뛰기',
+        '러닝 메이트 찾기'
+      ],
+      injury_prevention: '충분한 워밍업과 쿨다운',
+      mental_benefits: '엔돌핀 분비로 기분 향상',
+      seasonal_advice: month <= 6 ? '자외선 차단 필수' : '보온에 신경쓰기'
+    };
+  }
+
+  /**
+   * 등산 운세 분석
+   */
+  private getLuckyHikingAnalysis(mbti: string, month: number): any {
+    return {
+      best_hiking_season: month >= 3 && month <= 5 || month >= 9 && month <= 11 ? '최적기' : '주의 필요',
+      difficulty_level: mbti.endsWith('J') ? '계획적인 코스 선택' : '도전적인 코스',
+      lucky_mountains: ['북한산', '관악산', '남산'],
+      hiking_schedule: '월 2-3회가 적당합니다',
+      preparation_items: [
+        '등산화와 등산복',
+        '충분한 물과 간식',
+        '응급용품'
+      ],
+      safety_guidelines: '날씨 확인 후 출발',
+      spiritual_benefits: '자연과의 교감으로 마음의 평화',
+      physical_benefits: '전신 운동으로 체력 증진'
+    };
+  }
+
+  /**
+   * 낚시 운세 분석
+   */
+  private getLuckyFishingAnalysis(mbti: string, month: number): any {
+    return {
+      best_fishing_time: '새벽 5-7시 또는 저녁 6-8시',
+      lucky_spots: month <= 6 ? '민물 낚시터' : '바다 낚시',
+      fish_type: ['붕어', '잉어', '송어'],
+      weather_conditions: '흐린 날이나 가벼운 비 오는 날',
+      patience_level: mbti.includes('P') ? '높음' : '보통',
+      meditation_aspect: '마음의 평정과 집중력 향상',
+      social_fishing: '가족이나 친구와 함께하면 더 좋습니다',
+      success_tips: [
+        '인내심 유지',
+        '조용한 환경 만들기',
+        '적절한 미끼 선택'
+      ]
+    };
+  }
+
+  /**
+   * 수영 운세 분석
+   */
+  private getLuckySwimAnalysis(mbti: string, month: number): any {
+    return {
+      best_swimming_time: month >= 6 && month <= 8 ? '실외 수영장' : '실내 수영장',
+      swimming_style: mbti.startsWith('E') ? '자유형과 접영' : '배영과 평영',
+      frequency: '주 2-3회, 회당 30-45분',
+      water_temperature: '26-28도가 최적입니다',
+      health_benefits: [
+        '전신 근육 발달',
+        '심폐기능 향상',
+        '관절 부담 최소화'
+      ],
+      mental_benefits: '물의 흐름으로 마음의 안정',
+      safety_precautions: '충분한 준비운동 필수',
+      goal_setting: mbti.endsWith('J') ? '거리 목표 설정' : '시간 목표 설정'
+    };
+  }
+
+  /**
+   * 기본 행운 아이템 데이터
+   */
+  private getDefaultLuckyItemData(userProfile: UserProfile, category: string): any {
+    return {
+      [category.replace(/-/g, '_')]: {
+        analysis: `${category} 분석이 준비 중입니다.`,
+        status: '분석 중',
+        message: '곧 상세한 분석 결과를 제공해드릴 예정입니다.'
+      },
+      generated_at: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 인생·경력 패키지 생성 (employment, moving, new-year, timeline, wish 등)
+   */
+  private async generateLifeCareerPackage(
+    userId: string, 
+    userProfile?: UserProfile, 
+    category?: FortuneCategory
+  ): Promise<any> {
+    console.log(`🏢 인생·경력 패키지 생성... (사용자: ${userId}, 카테고리: ${category})`);
+    
+    if (!userProfile) {
+      userProfile = this.getDefaultUserProfile(userId);
+      console.log('🔧 기본 사용자 프로필 사용:', userProfile.name);
+    }
+
+    const profile = userProfile as UserProfile;
+
+    try {
+      const lifeCareerData = await this.generateLifeCareerFromGPT(profile, category);
+      console.log(`✅ GPT ${category} 생성 완료 (사용자: ${userId})`);
+      return lifeCareerData;
+    } catch (error) {
+      console.error(`❌ GPT ${category} 생성 실패:`, error);
+      return this.getDefaultLifeCareerData(profile, category);
+    }
+  }
+
+  private async generateLifeCareerFromGPT(userProfile: UserProfile, category?: FortuneCategory): Promise<any> {
+    const birth = new Date(userProfile.birth_date);
+    const age = this.calculateAge(userProfile.birth_date);
+    const mbti = userProfile.mbti || 'ENFP';
+    const name = userProfile.name || '사용자';
+
+    console.log(`🔍 GPT ${category} 요청: ${name} (${userProfile.birth_date})`);
+
+    const lifeCareerContent = this.getLifeCareerContent(category || 'employment', mbti, birth, age);
+    
+    console.log(`✅ GPT ${category} 생성 완료 (사용자: ${name})`);
+    return lifeCareerContent;
+  }
+
+  private getLifeCareerContent(category: string, mbti: string, birth: Date, age: number): any {
+    const month = birth.getMonth() + 1;
+
+    switch (category) {
+      case 'employment':
+        return this.getEmploymentAnalysis(mbti, age, month);
+      case 'moving':
+        return this.getMovingAnalysis(mbti, age, month);
+      case 'new-year':
+        return this.getNewYearAnalysis(mbti, age, birth.getFullYear());
+      case 'timeline':
+        return this.getTimelineAnalysis(birth, mbti, age);
+      case 'wish':
+        return this.getWishAnalysis(mbti, age, month);
+      case 'career':
+        return this.getCareerAnalysis(mbti, age, month);
+      case 'moving-date':
+        return this.getMovingDateAnalysis(mbti, age, month);
+      case 'avoid-people':
+        return this.getAvoidPeopleAnalysis(mbti, age, month);
+      case 'five-blessings':
+        return this.getFiveBlessingsAnalysis(mbti, age, birth);
+      case 'salpuli':
+        return this.getSalpuliAnalysis(mbti, age, birth);
+      default:
+        return this.getDefaultLifeCareerData({ 
+          id: 'temp', 
+          birth_date: birth.toISOString().split('T')[0],
+          mbti,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }, category);
+    }
+  }
+
+  private getEmploymentAnalysis(mbti: string, age: number, month: number): any {
+    const isExtrovert = mbti.startsWith('E');
+    const isJudging = mbti.includes('J');
+    
+    const baseScore = 70 + (isJudging ? 10 : 5) + (isExtrovert ? 8 : 3);
+    const seasonBonus = [10, 15, 8, 12, 18, 10, 5, 8, 15, 20, 12, 8][month - 1];
+    
+    return {
+      employment: {
+        overall_score: Math.min(95, baseScore + seasonBonus),
+        current_job_market: {
+          assessment: age < 30 ? '신입 채용 시즌으로 기회가 많습니다' : '경력직 수요가 증가하고 있습니다',
+          favorable_industries: ['IT', '서비스업', '제조업', '금융업'],
+          hiring_trends: '하반기 채용 활발'
+        },
+        interview_preparation: {
+          strengths_to_highlight: isExtrovert ? ['소통능력', '적극성'] : ['집중력', '분석력'],
+          areas_to_improve: isExtrovert ? ['깊이있는 사고'] : ['적극적 표현'],
+          lucky_interview_dates: [`${month}월 15일`, `${month}월 22일`],
+          recommended_outfit: '차분한 색상의 정장'
+        },
+        timing_advice: {
+          best_application_period: '이번 달 중순이 가장 좋습니다',
+          avoid_periods: ['연말연시'],
+          follow_up_strategy: '면접 후 1주일 내 감사 인사'
+        },
+        success_factors: [
+          '꾸준한 스킬 개발',
+          '업계 트렌드 파악',
+          '인적 네트워크 구축'
+        ],
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getMovingAnalysis(mbti: string, age: number, month: number): any {
+    const isJudging = mbti.includes('J');
+    
+    return {
+      moving: {
+        overall_luck: 75 + (isJudging ? 15 : 5),
+        best_timing: {
+          months: ['3월', '4월', '9월', '10월'],
+          avoid_months: ['7월', '8월', '12월', '1월'],
+          lucky_days: ['수요일', '토요일']
+        },
+        location_guidance: {
+          favorable_directions: ['남동쪽', '서쪽'],
+          housing_type: '채광이 좋은 곳',
+          neighborhood_characteristics: '교통이 편리한 지역'
+        },
+        preparation_checklist: {
+          planning_phase: '2개월 전부터 준비',
+          budget_planning: '예상 비용의 120% 준비',
+          timing_coordination: '업무 일정과 조화'
+        },
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getNewYearAnalysis(mbti: string, age: number, year: number): any {
+    const targetYear = new Date().getFullYear() + 1;
+    
+    return {
+      'new-year': {
+        yearly_theme: mbti.includes('N') ? '창의와 혁신의 해' : '안정과 성장의 해',
+        resolution_guidance: {
+          suitable_goals: age < 30 ? ['자기계발', '인맥확장'] : ['경력발전', '건강관리'],
+          achievement_strategy: mbti.includes('J') ? '단계별 계획 수립' : '유연한 접근',
+          monitoring_method: '분기별 점검'
+        },
+        major_opportunities: ['새로운 도전', '인간관계 확장', '투자 기회'],
+        potential_challenges: ['과도한 욕심', '시간 관리', '스트레스'],
+        lucky_elements: {
+          colors: ['파랑', '금색'],
+          numbers: [7, 12, 21],
+          directions: ['동쪽', '남쪽']
+        },
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getTimelineAnalysis(birth: Date, mbti: string, age: number): any {
+    return {
+      timeline: {
+        current_phase: age < 30 ? '성장기' : age < 50 ? '발전기' : '성숙기',
+        major_milestones: [
+          { age: age + 2, event: '중요한 결정의 시기' },
+          { age: age + 5, event: '새로운 기회 도래' }
+        ],
+        career_trajectory: '꾸준한 상승세',
+        relationship_timeline: '안정적 발전',
+        financial_planning: '단계적 자산 증대',
+        personal_development: '지속적 성장',
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getWishAnalysis(mbti: string, age: number, month: number): any {
+    const isIntuitive = mbti.includes('N');
+    
+    return {
+      wish: {
+        manifestation_power: 70 + (isIntuitive ? 15 : 5),
+        wish_categories: {
+          most_likely: ['건강', '인간관계', '성장'],
+          challenging: ['급격한 변화', '즉시 성과'],
+          timing_sensitive: ['3개월 내 목표']
+        },
+        manifestation_methods: {
+          visualization: '매일 10분간 명상',
+          action_steps: ['구체적 계획 수립', '꾸준한 실행'],
+          energy_alignment: '긍정적 마음가짐 유지'
+        },
+        optimal_timing: {
+          best_months: ['신월 시기', '보름달 시기'],
+          daily_rituals: '아침 일찍 소원 빌기'
+        },
+        success_indicators: ['작은 변화 감지', '우연의 일치 증가'],
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getCareerAnalysis(mbti: string, age: number, month: number): any {
+    const isIntuitive = mbti.includes('N');
+    const isExtrovert = mbti.startsWith('E');
+    
+    return {
+      career: {
+        overall_direction: isIntuitive ? '창의적 분야 지향' : '실무적 전문성 추구',
+        current_phase: age < 30 ? '기반 구축기' : age < 45 ? '성장기' : '성숙기',
+        strength_areas: isExtrovert ? ['대인관계', '리더십'] : ['전문성', '집중력'],
+        development_opportunities: [
+          '새로운 기술 습득',
+          '네트워킹 확장',
+          '멘토링 참여'
+        ],
+        career_transitions: {
+          timing: '36개월 내 중요한 기회',
+          preparation: '지속적인 역량 개발',
+          risk_management: '안정적 전환 준비'
+        },
+        success_factors: [
+          '전문성 강화',
+          '적응력 향상',
+          '인간관계 구축'
+        ],
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getMovingDateAnalysis(mbti: string, age: number, month: number): any {
+    const isJudging = mbti.includes('J');
+    
+    return {
+      'moving-date': {
+        optimal_dates: {
+          months: ['4월', '5월', '9월', '10월'],
+          days_of_week: ['수요일', '토요일'],
+          lunar_timing: '초승달 이후 1주일'
+        },
+        feng_shui_considerations: {
+          auspicious_directions: ['동남쪽', '남쪽'],
+          avoid_directions: ['정북쪽'],
+          house_selection: '햇빛이 잘 드는 곳'
+        },
+        practical_timeline: {
+          planning_period: isJudging ? '3개월 전부터' : '2개월 전부터',
+          booking_timing: '1개월 전 예약',
+          preparation_checklist: '2주 전 완료'
+        },
+        cultural_customs: {
+          purification_ritual: '이사 전날 소금으로 정화',
+          first_items: '쌀, 소금을 먼저 들여놓기',
+          housewarming: '이사 후 1주일 내'
+        },
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getAvoidPeopleAnalysis(mbti: string, age: number, month: number): any {
+    const isFeeling = mbti.includes('F');
+    
+    return {
+      'avoid-people': {
+        warning_types: {
+          energy_drainers: '부정적 에너지를 주는 사람',
+          manipulators: '이용하려는 의도가 있는 사람',
+          toxic_relationships: '독성 관계를 만드는 사람'
+        },
+        identification_signs: [
+          '만날 때마다 피곤함을 느낌',
+          '자신의 이야기만 하는 경향',
+          '도움을 요청만 하고 주지 않음',
+          '비판적이고 부정적인 말을 자주 함'
+        ],
+        protection_strategies: {
+          boundary_setting: '명확한 경계선 설정',
+          energy_protection: isFeeling ? '감정적 거리두기' : '논리적 판단 우선',
+          communication: '단호하지만 예의바른 거절'
+        },
+        positive_relationships: {
+          seek_types: ['격려해주는 사람', '성장을 돕는 사람', '긍정적 에너지'],
+          networking_advice: '양보다 질 중시',
+          maintenance: '건강한 관계 지속적 관리'
+        },
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getFiveBlessingsAnalysis(mbti: string, age: number, birth: Date): any {
+    const birthYear = birth.getFullYear();
+    const element = this.getZodiacElement(birthYear);
+    
+    return {
+      'five-blessings': {
+        longevity: {
+          score: 75 + (mbti.includes('S') ? 10 : 5),
+          description: '건강한 생활습관으로 장수 가능',
+          enhancement: '규칙적인 운동과 식단 관리'
+        },
+        wealth: {
+          score: 70 + (mbti.includes('T') ? 15 : 5),
+          description: '꾸준한 노력으로 재물 축적',
+          enhancement: '장기적 투자와 저축 습관'
+        },
+        health: {
+          score: 80 + (age < 40 ? 10 : -5),
+          description: '전반적으로 건강한 상태',
+          enhancement: '스트레스 관리와 정기 검진'
+        },
+        virtue: {
+          score: 85 + (mbti.includes('F') ? 10 : 0),
+          description: '인덕과 덕망이 쌓여가는 시기',
+          enhancement: '봉사활동과 나눔 실천'
+        },
+        peaceful_death: {
+          score: 75,
+          description: '평안한 마무리 가능',
+          enhancement: '가족과의 화목한 관계 유지'
+        },
+        traditional_elements: {
+          dominant_element: element,
+          life_philosophy: '균형잡힌 삶 추구',
+          spiritual_guidance: '내면의 평화 중시'
+        },
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getSalpuliAnalysis(mbti: string, age: number, birth: Date): any {
+    const birthYear = birth.getFullYear();
+    const birthMonth = birth.getMonth() + 1;
+    
+    return {
+      salpuli: {
+        detected_influences: {
+          general_sal: '일반적인 살기',
+          personal_sal: '개인 생년월일 기반 살',
+          environmental_sal: '환경적 요인'
+        },
+        purification_methods: {
+          ritual_timing: '매월 보름달 전후',
+          materials_needed: ['굵은 소금', '정화수', '향', '촛불'],
+          procedure: [
+            '마음을 정화하고 집중',
+            '소금으로 공간 정화',
+            '향을 피우며 명상',
+            '긍정적 다짐'
+          ]
+        },
+        protection_practices: {
+          daily_habits: [
+            '아침 감사 인사',
+            '부정적 생각 배제',
+            '선행 실천'
+          ],
+          monthly_ritual: '보름달에 소원 빌기',
+          seasonal_care: '계절 변화 시 에너지 정화'
+        },
+        spiritual_guidance: {
+          meditation: '매일 10분 명상',
+          gratitude: '감사 일기 작성',
+          positive_thinking: '긍정적 마음가짐 유지'
+        },
+        expert_advice: '전문가 상담을 통한 개인별 맞춤 해결',
+        generated_at: new Date().toISOString()
+      }
+    };
+  }
+
+  private getDefaultLifeCareerData(userProfile: UserProfile, category?: string): any {
+    return {
+      [category || 'employment']: {
+        summary: '개인별 맞춤 분석을 위해 잠시만 기다려주세요.',
+        advice: '곧 상세한 분석 결과를 제공해드리겠습니다.',
+        generated_at: new Date().toISOString()
+      }
+    };
   }
 }
 

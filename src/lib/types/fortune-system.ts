@@ -8,23 +8,33 @@ export type FortuneGroupType =
   | 'CLIENT_BASED'           // 그룹 4: 클라이언트 기반
   | 'LOVE_PACKAGE'           // 그룹 5: 연애·인연 패키지 (72시간)
   | 'CAREER_WEALTH_PACKAGE'  // 그룹 6: 취업·재물 패키지 (168시간)
-  | 'LUCKY_ITEMS_PACKAGE';   // 그룹 7: 행운 아이템 패키지 (720시간)
+  | 'LUCKY_ITEMS_PACKAGE'    // 그룹 7: 행운 아이템 패키지 (720시간)
+  | 'LIFE_CAREER_PACKAGE';   // 그룹 8: 인생·경력 패키지 (168시간)
 
 export type FortuneCategory = 
   // 그룹 1: 평생 고정 정보
   | 'saju' | 'traditional-saju' | 'tojeong' | 'past-life' 
-  | 'personality' | 'destiny' | 'salpuli' | 'five-blessings' | 'talent'
-  | 'saju-psychology' | 'network-report' | 'tojeong'
+  | 'personality' | 'destiny' | 'talent'
+  | 'saju-psychology' | 'network-report'
   // 그룹 2: 일일 정보
-  | 'daily' | 'tomorrow' | 'hourly' | 'wealth' | 'love' | 'career'
-  | 'lucky-number' | 'lucky-color' | 'lucky-food' | 'biorhythm'
-  | 'zodiac-animal' | 'mbti'
+  | 'daily' | 'today' | 'tomorrow' | 'hourly' | 'wealth' | 'love' | 'career'
+  | 'biorhythm' | 'zodiac-animal' | 'mbti' | 'birth-season' | 'birthdate' | 'birthstone'
+  | 'blood-type' | 'palmistry' | 'weekly' | 'monthly' | 'yearly' | 'zodiac'
+  | 'lucky-items' | 'lucky-outfit' | 'physiognomy'
   // 그룹 3: 실시간 상호작용
   | 'dream-interpretation' | 'tarot' | 'compatibility' | 'worry-bead'
   // 그룹 5: 연애·인연 패키지
   | 'marriage' | 'blind-date' | 'celebrity-match' | 'couple-match'
   | 'ex-lover' | 'traditional-compatibility' | 'chemistry' | 'celebrity'
-  | 'avoid-people';
+  | 'avoid-people'
+  // 그룹 7: 행운 아이템 패키지
+  | 'lucky-number' | 'lucky-color' | 'lucky-food' | 'talisman' | 'lucky-series'
+  | 'lucky-exam' | 'lucky-cycling' | 'lucky-running' | 'lucky-hiking' 
+  | 'lucky-fishing' | 'lucky-swim'
+  // 그룹 8: 인생·경력 패키지
+  | 'employment' | 'moving' | 'moving-date' | 'new-year' 
+  | 'timeline' | 'wish' | 'career' | 'avoid-people' 
+  | 'five-blessings' | 'salpuli';
 
 export interface UserProfile {
   id: string;

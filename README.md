@@ -1,4 +1,4 @@
-# 행운 (Fortune Compass)
+# 행운 (Fortune)
 
 **모든 운명은 당신의 선택에 달려있습니다.**
 

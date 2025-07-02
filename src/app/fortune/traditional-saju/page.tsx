@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,9 +24,15 @@ interface DetailItem {
 
 interface TraditionalSajuData {
   summary: string;
-  totalFortune: string;
+  total_fortune?: string;
+  totalFortune?: string; // 백워드 호환성
   elements: { subject: string; value: number }[];
-  lifeCycles: {
+  life_cycles?: {
+    youth: string;
+    middle: string;
+    old: string;
+  };
+  lifeCycles?: { // 백워드 호환성
     youth: string;
     middle: string;
     old: string;
@@ -36,54 +42,83 @@ interface TraditionalSajuData {
   details: DetailItem[];
 }
 
-// TODO: Replace with Genkit API
-const mockData: TraditionalSajuData = {
-  summary: "타고난 물(水)의 기운이 강해 섬세하면서도 포용력이 뛰어납니다.",
-  totalFortune:
-    "전체적인 운세 흐름은 안정적이지만 중요한 국면마다 결단력이 필요합니다.",
-  elements: [
-    { subject: "木", value: 55 },
-    { subject: "火", value: 35 },
-    { subject: "土", value: 50 },
-    { subject: "金", value: 40 },
-    { subject: "水", value: 80 },
-  ],
-  lifeCycles: {
-    youth:
-      "학업과 인간관계의 폭이 넓어지는 시기로, 다양한 경험이 후일 큰 자산이 됩니다.",
-    middle:
-      "직장과 가정에서 중요한 전환점을 맞이하며, 선택에 따라 성취의 폭이 달라집니다.",
-    old:
-      "쌓아온 지혜가 빛을 발하며 주변의 존경을 받는 시기입니다. 마음의 여유를 찾게 됩니다.",
-  },
-  blessings: [
-    { name: "천을귀인", description: "귀인의 도움을 받아 위기를 기회로 바꾸는 복." },
-    { name: "문창귀인", description: "학문과 예술 분야에서 재능을 꽃피우는 복." },
-  ],
-  curses: [
-    { name: "백호살", description: "충동적인 성향으로 인해 갈등이 생기기 쉬움." },
-    { name: "역마살", description: "이동과 변동이 잦아 한곳에 머무르기 어려움." },
-  ],
-  details: [
-    {
-      subject: "재물운",
-      text: "꾸준한 재물 흐름이 있으나 과감한 투자는 신중히 결정하세요.",
-    },
-    {
-      subject: "애정운",
-      text: "배려심이 큰 편이나 때때로 우유부단함이 문제 될 수 있습니다.",
-      premium: true,
-    },
-    {
-      subject: "건강운",
-      text: "스트레스 관리에 유의하면 큰 탈 없이 지낼 수 있습니다.",
-    },
-  ],
-};
-
 export default function TraditionalSajuPage() {
-  const data = mockData; // 추후 API 연동 예정
+  const [data, setData] = useState<TraditionalSajuData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+
+  useEffect(() => {
+    const fetchTraditionalSaju = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/fortune/traditional-saju?userId=user_123');
+        const result = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(result.error || '전통 사주를 가져오는 중 오류가 발생했습니다.');
+        }
+        
+        if (result.success && result.data) {
+          // API 응답 구조에 맞게 데이터 변환
+          const traditionSajuData = result.data['traditional-saju'] || result.data;
+          setData(traditionSajuData);
+        } else {
+          throw new Error('데이터를 찾을 수 없습니다.');
+        }
+      } catch (err) {
+        console.error('❌ 전통 사주 데이터 로딩 실패:', err);
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTraditionalSaju();
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <AppHeader title="전통 사주" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
+        <div className="pb-32 px-4 pt-4 flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <p className="text-sm text-muted-foreground">전통 사주를 분석하고 있습니다...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <>
+        <AppHeader title="전통 사주" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
+        <div className="pb-32 px-4 pt-4 flex items-center justify-center min-h-[400px]">
+          <div className="text-center space-y-3">
+            <p className="text-sm text-red-600">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // 백워드 호환성을 위한 데이터 변환
+  const totalFortune = data.total_fortune || data.totalFortune || "전통 사주 분석이 완료되었습니다.";
+  const lifeCycles = data.life_cycles || data.lifeCycles || {
+    youth: "초년운이 분석 중입니다.",
+    middle: "중년운이 분석 중입니다.", 
+    old: "말년운이 분석 중입니다."
+  };
 
   return (
     <>
@@ -108,7 +143,7 @@ export default function TraditionalSajuPage() {
 
           <TabsContent value="general" className="mt-4">
             <p className="leading-relaxed text-sm text-muted-foreground">
-              {data.totalFortune}
+              {totalFortune}
             </p>
           </TabsContent>
 
@@ -129,7 +164,7 @@ export default function TraditionalSajuPage() {
                 <CardTitle>초년운</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{data.lifeCycles.youth}</p>
+                <p className="text-sm text-muted-foreground">{lifeCycles.youth}</p>
               </CardContent>
             </Card>
             <Card>
@@ -137,7 +172,7 @@ export default function TraditionalSajuPage() {
                 <CardTitle>중년운</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{data.lifeCycles.middle}</p>
+                <p className="text-sm text-muted-foreground">{lifeCycles.middle}</p>
               </CardContent>
             </Card>
             <Card>
@@ -145,7 +180,7 @@ export default function TraditionalSajuPage() {
                 <CardTitle>말년운</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">{data.lifeCycles.old}</p>
+                <p className="text-sm text-muted-foreground">{lifeCycles.old}</p>
               </CardContent>
             </Card>
           </TabsContent>
