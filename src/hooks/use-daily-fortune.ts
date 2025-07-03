@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DailyFortuneService } from '@/lib/daily-fortune-service';
-import { DailyFortuneData, FortuneResult } from '@/lib/schemas';
+import { DailyFortuneData, FortuneResult, UserInfoSchema } from '@/lib/schemas'; // UserInfoSchema 추가
 import { useToast } from './use-toast';
+import { z } from 'zod';
 
 interface UseDailyFortuneProps {
   fortuneType: string;
@@ -24,6 +25,15 @@ interface UseDailyFortuneReturn {
   // 헬퍼
   hasTodayFortune: boolean;
   canRegenerate: boolean;
+  
+  // Genkit API 호출 함수 추가
+  generateFortuneFromGenkit: (
+    requestType: 'onboarding_complete' | 'daily_refresh' | 'user_direct_request',
+    requestedCategories: string[],
+    userProfile: z.infer<typeof UserInfoSchema>, // 사용자 프로필 타입
+    additionalInput?: any,
+    generationContext?: any
+  ) => Promise<any | null>;
 }
 
 export function useDailyFortune({ 
@@ -35,6 +45,41 @@ export function useDailyFortune({
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Genkit API 호출 함수
+  const generateFortuneFromGenkit = useCallback(async (
+    requestType: 'onboarding_complete' | 'daily_refresh' | 'user_direct_request',
+    requestedCategories: string[],
+    userProfile: z.infer<typeof UserInfoSchema>,
+    additionalInput?: any,
+    generationContext?: any
+  ): Promise<any | null> => {
+    setIsGenerating(true);
+    setError(null);
+    try {
+      const payload = {
+        request_type: requestType,
+        requested_categories: requestedCategories,
+        user_profile: userProfile,
+        additional_input: additionalInput,
+        generation_context: generationContext,
+      };
+      const response = await DailyFortuneService.callGenkitFortuneAPI(payload);
+      return response;
+    } catch (err: any) {
+      const errorMessage = `운세 생성 중 오류가 발생했습니다: ${err.message || '알 수 없는 오류'}`;
+      setError(errorMessage);
+      toast({
+        title: "운세 생성 실패",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      console.error('Genkit 운세 생성 실패:', err);
+      return null;
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [toast]);
 
   // 오늘 운세 로드
   const loadTodayFortune = useCallback(async () => {

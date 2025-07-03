@@ -265,25 +265,7 @@ export const MBTIResultSchema = FortuneResultSchema.extend({
 
 export type MBTIResult = z.infer<typeof MBTIResultSchema>;
 
-// 타로카드 특화 스키마
-export const TarotCardSchema = z.object({
-  position: z.string(),
-  card_name: z.string(),
-  card_number: z.number(),
-  is_reversed: z.boolean(),
-  image_url: z.string().optional(),
-  keywords: z.array(z.string()),
-  interpretation: z.string(),
-});
 
-export const TarotResultSchema = FortuneResultSchema.extend({
-  spread_type: z.string(),
-  question: z.string(),
-  cards: z.array(TarotCardSchema),
-  overall_message: z.string(),
-});
-
-export type TarotResult = z.infer<typeof TarotResultSchema>;
 
 // 관상 분석 특화 스키마
 export const FaceAnalysisSchema = z.object({
@@ -660,3 +642,130 @@ export const PastLifeResultSchema = FortuneResultSchema.extend({
 });
 
 export type PastLifeResult = z.infer<typeof PastLifeResultSchema>;
+
+// 관상 분석 특화 스키마
+export const FaceReadingFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+    life_fortune: z.object({
+      wealth: z.number().min(0).max(100),
+      love: z.number().min(0).max(100),
+      career: z.number().min(0).max(100),
+      health: z.number().min(0).max(100),
+    }),
+  }),
+  insights: z.object({
+    face_shape: z.string(),
+    eye_analysis: z.object({ shape: z.string(), meaning: z.string(), fortune: z.string() }),
+    nose_analysis: z.object({ shape: z.string(), meaning: z.string(), fortune: z.string() }),
+    mouth_analysis: z.object({ shape: z.string(), meaning: z.string(), fortune: z.string() }),
+    personality_traits: z.array(z.string()),
+    lucky_advice: z.string(),
+  }),
+  metadata: z.object({
+    gender: z.string(),
+    image_url: z.string(),
+  }).optional(),
+});
+
+export type FaceReadingFortuneResult = z.infer<typeof FaceReadingFortuneResultSchema>;
+
+// 혈액형 운세 특화 스키마
+export const BloodTypeFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+    personality_match: z.number().min(0).max(100),
+    love_match: z.number().min(0).max(100),
+    career_match: z.number().min(0).max(100),
+    health_match: z.number().min(0).max(100),
+  }),
+  insights: z.object({
+    blood_type_traits: z.string(),
+    lucky_advice: z.string(),
+  }),
+  lucky_items: z.object({
+    compatible_blood_types: z.array(z.string()),
+  }),
+  metadata: z.object({
+    blood_type: z.string(),
+  }).optional(),
+});
+
+export type BloodTypeFortuneResult = z.infer<typeof BloodTypeFortuneResultSchema>;
+
+// 심리 테스트 운세 특화 스키마
+export const PsychologyTestFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+  }),
+  insights: z.object({
+    test_result_type: z.string(),
+    result_summary: z.string(),
+    result_details: z.string(),
+    advice: z.string(),
+  }),
+  lucky_items: z.object({
+    lucky_elements: z.array(z.string()),
+  }),
+  metadata: z.object({
+    answers: z.record(z.string()),
+  }).optional(),
+});
+
+export type PsychologyTestFortuneResult = z.infer<typeof PsychologyTestFortuneResultSchema>;
+
+// 고민 구슬 운세 특화 스키마
+export const WorryBeadFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+    peace_score: z.number().min(0).max(100),
+  }),
+  insights: z.object({
+    worry_analysis: z.string(),
+    solution_advice: z.string(),
+  }),
+  lucky_items: z.object({
+    lucky_elements: z.array(z.string()),
+  }),
+  metadata: z.object({
+    worry_content: z.string(),
+  }).optional(),
+});
+
+export type WorryBeadFortuneResult = z.infer<typeof WorryBeadFortuneResultSchema>;
+
+// 태몽 운세 특화 스키마
+export const TaemongFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+  }),
+  insights: z.object({
+    taemong_summary: z.string(),
+    taemong_interpretation: z.string(),
+    child_gender_prediction: z.string(),
+    child_characteristics: z.array(z.string()),
+    lucky_advice: z.string(),
+  }),
+  metadata: z.object({
+    taemong_content: z.string(),
+  }).optional(),
+});
+
+export type TaemongFortuneResult = z.infer<typeof TaemongFortuneResultSchema>;
+
+// 포춘 쿠키 운세 특화 스키마
+export const FortuneCookieFortuneResultSchema = FortuneResultSchema.extend({
+  fortune_scores: z.object({
+    overall_luck: z.number().min(0).max(100),
+  }),
+  insights: z.object({
+    fortune_message: z.string(),
+    advice: z.string(),
+  }),
+  lucky_items: z.object({
+    lucky_numbers: z.array(z.number()),
+    lucky_color: z.string(),
+  }),
+});
+
+export type FortuneCookieFortuneResult = z.infer<typeof FortuneCookieFortuneResultSchema>;

@@ -8,6 +8,14 @@ export const FORTUNE_TYPES = [
   // MBTI & 성격 분석
   "mbti", "personality", "blood-type", 
   
+  // 인터랙티브 운세
+  "face-reading",
+  "tarot",
+  "psychology-test",
+  "worry-bead",
+  "taemong",
+  "fortune-cookie",
+
   // 별자리 & 띠 운세
   "zodiac", "zodiac-animal", "birth-season", "birthstone", "birthdate",
   
@@ -168,6 +176,68 @@ export const FORTUNE_METADATA: Record<FortuneType, {
     tags: ["손금", "전통", "인생"]
   },
 
+  // 인터랙티브 운세
+  "face-reading": {
+    title: "관상 분석",
+    description: "AI가 당신의 얼굴을 분석하여 운세를 알려드립니다.",
+    category: "interactive",
+    icon: "Face",
+    color: "purple",
+    difficulty: "medium",
+    timeToComplete: "3분",
+    tags: ["관상", "AI", "얼굴"]
+  },
+  "tarot": {
+    title: "타로 운세",
+    description: "타로 카드가 당신의 질문에 대한 깊은 통찰을 제공합니다.",
+    category: "interactive",
+    icon: "Sparkles",
+    color: "pink",
+    difficulty: "medium",
+    timeToComplete: "3분",
+    tags: ["타로", "질문", "통찰"]
+  },
+  "psychology-test": {
+    title: "심리 테스트",
+    description: "간단한 질문으로 당신의 심리 유형을 분석해드립니다.",
+    category: "interactive",
+    icon: "Brain",
+    color: "teal",
+    difficulty: "medium",
+    timeToComplete: "3분",
+    tags: ["심리", "테스트", "분석"]
+  },
+  "worry-bead": {
+    title: "고민 구슬",
+    description: "당신의 고민을 입력하면 해결책을 찾아드립니다.",
+    category: "interactive",
+    icon: "Gem",
+    color: "yellow",
+    difficulty: "medium",
+    timeToComplete: "3분",
+    tags: ["고민", "해결", "조언"]
+  },
+  "taemong": {
+    title: "태몽",
+    description: "당신의 태몽에 숨겨진 의미를 AI가 해석해드립니다.",
+    category: "interactive",
+    icon: "Baby",
+    color: "pink",
+    difficulty: "medium",
+    timeToComplete: "3분",
+    tags: ["태몽", "해석", "아이"]
+  },
+  "fortune-cookie": {
+    title: "포춘 쿠키",
+    description: "오늘의 행운 메시지를 확인하세요.",
+    category: "interactive",
+    icon: "Cookie",
+    color: "orange",
+    difficulty: "easy",
+    timeToComplete: "1분",
+    tags: ["포춘쿠키", "행운", "메시지"]
+  },
+
   // MBTI & 성격
   "mbti": {
     title: "MBTI 운세",
@@ -188,6 +258,16 @@ export const FORTUNE_METADATA: Record<FortuneType, {
     difficulty: "medium",
     timeToComplete: "3분",
     tags: ["성격", "분석", "자아"]
+  },
+  "blood-type": {
+    title: "혈액형 궁합",
+    description: "혈액형으로 보는 성격 궁합",
+    category: "love",
+    icon: "Droplet",
+    color: "red",
+    difficulty: "easy",
+    timeToComplete: "1분",
+    tags: ["혈액형", "궁합", "간단"]
   },
   "blood-type": {
     title: "혈액형 궁합",

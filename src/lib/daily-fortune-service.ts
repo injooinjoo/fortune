@@ -262,4 +262,32 @@ export class DailyFortuneService {
     const authUserId = await this.getCurrentUserId();
     return authUserId || this.getGuestUserId();
   }
+
+  /**
+   * Genkit 백엔드로 운세 생성 요청을 보냅니다.
+   * @param payload Genkit API에 보낼 요청 페이로드
+   * @returns Genkit API 응답 데이터
+   */
+  static async callGenkitFortuneAPI(payload: any): Promise<any> {
+    try {
+      const response = await fetch('/api/fortune/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Genkit API 호출 실패:', errorData);
+        throw new Error(`Genkit API error: ${errorData.message || response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Genkit API 호출 중 예외 발생:', error);
+      throw error;
+    }
+  }
 } 

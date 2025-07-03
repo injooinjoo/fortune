@@ -1,249 +1,655 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import AppHeader from '@/components/AppHeader';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import AppHeader from "@/components/AppHeader";
+import { useFortuneStream } from "@/hooks/use-fortune-stream";
+import { useDailyFortune } from "@/hooks/use-daily-fortune";
+import { FortuneResult } from "@/lib/schemas";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { cn } from '@/lib/utils';
+  Sparkles, 
+  Star, 
+  ArrowRight,
+  Shuffle,
+  Users,
+  Crown,
+  BarChart3,
+  Activity,
+  Shield,
+  RotateCcw,
+  CheckCircle,
+  ArrowLeft,
+  MessageCircle,
+  BookOpen
+} from "lucide-react";
+import { 
+  getYearOptions, 
+  getMonthOptions, 
+  getDayOptions, 
+  formatKoreanDate,
+  koreanToIsoDate,
+} from "@/lib/utils";
 
-interface TarotCard {
-  id: number;
+interface TarotInfo {
   name: string;
-  image: string;
-  keywords: string[];
+  birthYear: string;
+  birthMonth: string;
+  birthDay: string;
+  question: string;
+  spreadType: string;
 }
 
-interface SelectedCard extends TarotCard {
-  orientation: 'upright' | 'reversed';
+interface TarotFortune {
+  overall_luck: number;
+  spread_type: string;
+  question: string;
+  cards: { position: string; card_name: string; is_reversed: boolean; interpretation: string; }[];
+  overall_message: string;
 }
 
-interface TarotReading {
-  position: string;
-  text: string;
-}
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
 
-const tarotCards: TarotCard[] = [
-  {
-    id: 1,
-    name: 'THE FOOL',
-    image: 'https://via.placeholder.com/150x240?text=The+Fool',
-    keywords: ['새출발', '순수'],
-  },
-  {
-    id: 2,
-    name: 'THE MAGICIAN',
-    image: 'https://via.placeholder.com/150x240?text=Magician',
-    keywords: ['능력', '집중'],
-  },
-  {
-    id: 3,
-    name: 'THE HIGH PRIESTESS',
-    image: 'https://via.placeholder.com/150x240?text=Priestess',
-    keywords: ['직관', '비밀'],
-  },
-  {
-    id: 4,
-    name: 'THE EMPRESS',
-    image: 'https://via.placeholder.com/150x240?text=Empress',
-    keywords: ['풍요', '모성'],
-  },
-  {
-    id: 5,
-    name: 'THE EMPEROR',
-    image: 'https://via.placeholder.com/150x240?text=Emperor',
-    keywords: ['권위', '안정'],
-  },
-  {
-    id: 6,
-    name: 'THE LOVERS',
-    image: 'https://via.placeholder.com/150x240?text=Lovers',
-    keywords: ['사랑', '조화'],
-  },
-  {
-    id: 7,
-    name: 'THE CHARIOT',
-    image: 'https://via.placeholder.com/150x240?text=Chariot',
-    keywords: ['승리', '의지'],
-  },
-  {
-    id: 8,
-    name: 'STRENGTH',
-    image: 'https://via.placeholder.com/150x240?text=Strength',
-    keywords: ['용기', '인내'],
-  },
-  {
-    id: 9,
-    name: 'THE HERMIT',
-    image: 'https://via.placeholder.com/150x240?text=Hermit',
-    keywords: ['탐구', '고독'],
-  },
-  {
-    id: 10,
-    name: 'WHEEL OF FORTUNE',
-    image: 'https://via.placeholder.com/150x240?text=Wheel+of+Fortune',
-    keywords: ['기회', '변화'],
-  },
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring" as const,
+      stiffness: 100,
+      damping: 10
+    }
+  }
+};
+
+const spreadTypes = ["원 카드 스프레드", "투 카드 스프레드", "쓰리 카드 스프레드", "켈틱 크로스 스프레드"];
+const tarotCards = [
+  "광대", "마법사", "고위 여사제", "여황제", "황제", "교황", "연인", "전차", "힘", "은둔자",
+  "운명의 수레바퀴", "정의", "매달린 남자", "죽음", "절제", "악마", "탑", "별", "달", "태양",
+  "심판", "세계"
 ];
 
-function getTarotReading(selected: SelectedCard[]): Promise<TarotReading[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          position: '과거',
-          text: `${selected[0].name} 카드가 과거의 영향을 나타냅니다.`,
-        },
-        {
-          position: '현재',
-          text: `${selected[1].name} 카드가 현재 상황을 보여줍니다.`,
-        },
-        {
-          position: '미래',
-          text: `${selected[2].name} 카드가 미래의 가능성을 암시합니다.`,
-        },
-      ]);
-    }, 1000);
+const getLuckColor = (score: number) => {
+  if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
+  if (score >= 70) return "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30";
+  if (score >= 55) return "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/30";
+  return "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30";
+};
+
+const getLuckText = (score: number) => {
+  if (score >= 85) return "매우 긍정적";
+  if (score >= 70) return "긍정적";
+  if (score >= 55) return "보통";
+  return "주의 필요";
+};
+
+export default function TarotPage() {
+  const [step, setStep] = useState<'form' | 'result'>('form');
+  const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [formData, setFormData] = useState<TarotInfo>({
+    name: '',
+    birthYear: '',
+    birthMonth: '',
+    birthDay: '',
+    question: '',
+    spreadType: '쓰리 카드 스프레드',
   });
-}
-
-export default function InteractiveTarotPage() {
-  const [step, setStep] = useState<'question' | 'shuffling' | 'selection' | 'result'>('question');
-  const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
-  const [readings, setReadings] = useState<TarotReading[]>([]);
+  const [result, setResult] = useState<TarotFortune | null>(null);
+  
+  useFortuneStream();
+  
+  const {
+    todayFortune,
+    isLoading: isDailyLoading,
+    isGenerating: isDailyGenerating,
+    hasTodayFortune,
+    saveFortune,
+    regenerateFortune,
+    canRegenerate
+  } = useDailyFortune({ fortuneType: 'tarot' });
 
   useEffect(() => {
-    if (step === 'shuffling') {
-      const t = setTimeout(() => setStep('selection'), 2500);
-      return () => clearTimeout(t);
+    if (hasTodayFortune && todayFortune && step === 'form') {
+      const savedData = todayFortune.fortune_data as any;
+      const metadata = savedData.metadata || {};
+      
+      setFormData({
+        name: savedData.user_info?.name || '',
+        birthYear: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[0] : '',
+        birthMonth: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[1] : '',
+        birthDay: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[2] : '',
+        question: metadata.question || '',
+        spreadType: metadata.spread_type || '쓰리 카드 스프레드',
+      });
+      
+      if (savedData.fortune_scores) {
+        const restoredResult: TarotFortune = {
+          overall_luck: savedData.fortune_scores.overall_luck,
+          spread_type: savedData.spread_type || '',
+          question: savedData.question || '',
+          cards: savedData.cards || [],
+          overall_message: savedData.overall_message || '',
+        };
+        setResult(restoredResult);
+        setStep('result');
+      }
     }
-  }, [step]);
+  }, [hasTodayFortune, todayFortune, step]);
 
-  useEffect(() => {
-    if (step === 'result') {
-      getTarotReading(selectedCards).then(setReadings);
+  const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
+    switch (size) {
+      case 'small':
+        return {
+          text: 'text-sm',
+          title: 'text-lg',
+          heading: 'text-xl',
+          score: 'text-4xl',
+          label: 'text-xs'
+        };
+      case 'large':
+        return {
+          text: 'text-lg',
+          title: 'text-2xl',
+          heading: 'text-3xl',
+          score: 'text-8xl',
+          label: 'text-base'
+        };
+      default: // medium
+        return {
+          text: 'text-base',
+          title: 'text-xl',
+          heading: 'text-2xl',
+          score: 'text-6xl',
+          label: 'text-sm'
+        };
     }
-  }, [step, selectedCards]);
-
-  const handleSelectCard = (card: TarotCard) => {
-    if (selectedCards.find((c) => c.id === card.id) || selectedCards.length >= 3) {
-      return;
-    }
-    const orientation: 'upright' | 'reversed' = Math.random() > 0.5 ? 'upright' : 'reversed';
-    setSelectedCards([...selectedCards, { ...card, orientation }]);
   };
 
-  const reset = () => {
-    setSelectedCards([]);
-    setReadings([]);
-    setStep('question');
+  const fontClasses = getFontSizeClasses(fontSize);
+
+  const analyzeTarotFortune = async (): Promise<TarotFortune> => {
+    const baseScore = Math.floor(Math.random() * 25) + 60;
+    const numCards = formData.spreadType === "원 카드 스프레드" ? 1 : 
+                     formData.spreadType === "투 카드 스프레드" ? 2 : 
+                     formData.spreadType === "쓰리 카드 스프레드" ? 3 : 5; // 켈틱 크로스
+    
+    const selectedCards = [];
+    const cardPositions = ["과거", "현재", "미래", "장애물", "조언"];
+
+    for (let i = 0; i < numCards; i++) {
+      const randomCard = tarotCards[Math.floor(Math.random() * tarotCards.length)];
+      const isReversed = Math.random() > 0.5;
+      selectedCards.push({
+        position: cardPositions[i] || `카드 ${i + 1}`,
+        card_name: randomCard,
+        is_reversed: isReversed,
+        interpretation: `${randomCard} ${isReversed ? '역방향' : '정방향'} 해석입니다.`
+      });
+    }
+
+    return {
+      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
+      spread_type: formData.spreadType,
+      question: formData.question,
+      cards: selectedCards,
+      overall_message: "타로 카드가 당신의 질문에 대한 깊은 통찰을 제공합니다.",
+    };
+  };
+
+  const yearOptions = getYearOptions();
+  const monthOptions = getMonthOptions();
+  const dayOptions = getDayOptions(
+    formData.birthYear ? parseInt(formData.birthYear) : undefined,
+    formData.birthMonth ? parseInt(formData.birthMonth) : undefined
+  );
+
+  const handleSubmit = async () => {
+    if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.question) {
+      alert('이름, 생년월일, 질문을 모두 입력해주세요.');
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const birthDate = koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay);
+      
+      if (hasTodayFortune && todayFortune) {
+        const savedData = todayFortune.fortune_data as any;
+        const restoredResult: TarotFortune = {
+          overall_luck: savedData.fortune_scores?.overall_luck || 0,
+          spread_type: savedData.spread_type || '',
+          question: savedData.question || '',
+          cards: savedData.cards || [],
+          overall_message: savedData.overall_message || '',
+        };
+        setResult(restoredResult);
+      } else {
+        const fortuneResult = await analyzeTarotFortune();
+        setResult(fortuneResult);
+        
+        const fortuneData: FortuneResult = {
+          user_info: {
+            name: formData.name,
+            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+          },
+          fortune_scores: {
+            overall_luck: fortuneResult.overall_luck,
+          },
+          insights: {
+            spread_type: fortuneResult.spread_type,
+            question: fortuneResult.question,
+            overall_message: fortuneResult.overall_message,
+          },
+          metadata: {
+            cards: fortuneResult.cards,
+          }
+        };
+        
+        await saveFortune(fortuneData);
+      }
+      
+      setStep('result');
+    } catch (error) {
+      console.error('타로 운세 분석 실패:', error);
+      alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleReset = () => {
+    setStep('form');
+    setResult(null);
+    setFormData({
+      name: '',
+      birthYear: '',
+      birthMonth: '',
+      birthDay: '',
+      question: '',
+      spreadType: '쓰리 카드 스프레드',
+    });
   };
 
   return (
-    <>
-      <AppHeader title="타로 카드" showBack={false} />
-      <div className="pb-32 flex flex-col items-center bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 text-gray-900 dark:text-gray-100 p-4 space-y-6 pt-4 min-h-screen">
-        {step === 'question' && (
-          <div className="text-center space-y-4">
-            <p className="text-lg text-gray-800 dark:text-gray-200">마음속으로 궁금한 질문 하나에 집중해주세요.</p>
-            <Button 
-              onClick={() => setStep('shuffling')}
-              className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white"
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-800 pb-20">
+      <AppHeader 
+        title="타로 운세" 
+        onFontSizeChange={setFontSize}
+        currentFontSize={fontSize}
+      />
+      
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="px-6 pt-6"
+      >
+        <AnimatePresence mode="wait">
+          {step === 'form' && (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              className="space-y-6"
             >
-              카드 섞기
-            </Button>
-          </div>
-        )}
+              {/* 헤더 */}
+              <motion.div variants={itemVariants} className="text-center mb-8">
+                <motion.div
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4"
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.8 }}
+                >
+                  <Sparkles className="w-10 h-10 text-white" />
+                </motion.div>
+                <h1 className={`${fontClasses.heading} font-bold text-gray-900 dark:text-gray-100 mb-2`}>타로 운세</h1>
+                <p className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>타로 카드가 당신의 질문에 대한 깊은 통찰을 제공합니다.</p>
+              </motion.div>
 
-        {step === 'shuffling' && (
-          <div className="flex flex-col items-center space-y-4">
-            <p className="text-lg text-gray-800 dark:text-gray-200">카드를 섞고 있습니다...</p>
-            <div className="animate-spin h-10 w-10 border-4 border-purple-600 dark:border-purple-400 border-t-transparent rounded-full" />
-          </div>
-        )}
+              {/* 기본 정보 */}
+              <motion.div variants={itemVariants}>
+                <Card className="border-purple-200 dark:border-purple-700 dark:bg-gray-800">
+                  <CardHeader className="pb-4">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-purple-700 dark:text-purple-400`}>
+                      <Users className="w-5 h-5" />
+                      기본 정보
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="name" className={`${fontClasses.text} dark:text-gray-300`}>이름</Label>
+                      <Input
+                        id="name"
+                        placeholder="이름"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        className={`${fontClasses.text} mt-1`}
+                      />
+                    </div>
 
-        {step === 'selection' && (
-          <div className="w-full max-w-md space-y-4">
-            <p className="text-center text-gray-800 dark:text-gray-200">가장 마음이 이끌리는 카드 3장을 선택해주세요.</p>
-            <div className="grid grid-cols-5 gap-2">
-              {tarotCards.map((card) => {
-                const selected = selectedCards.some((c) => c.id === card.id);
-                return (
-                  <div
-                    key={card.id}
-                    className={cn(
-                      'relative cursor-pointer rounded-md overflow-hidden border-2 transition-all',
-                      selected 
-                        ? 'ring-2 ring-purple-500 dark:ring-purple-400 border-purple-500 dark:border-purple-400' 
-                        : 'border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500'
+                    {/* 년도 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생년</Label>
+                      <Select 
+                        value={formData.birthYear} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthYear: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="년도 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {yearOptions.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}년
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 월 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생월</Label>
+                      <Select 
+                        value={formData.birthMonth} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthMonth: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="월 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {monthOptions.map((month) => (
+                            <SelectItem key={month} value={month.toString()}>
+                              {month}월
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 일 선택 */}
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생일</Label>
+                      <Select 
+                        value={formData.birthDay} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthDay: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="일 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {dayOptions.map((day) => (
+                            <SelectItem key={day} value={day.toString()}>
+                              {day}일
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 선택된 생년월일 표시 */}
+                    {formData.birthYear && formData.birthMonth && formData.birthDay && (
+                      <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                        <p className={`${fontClasses.text} font-medium text-purple-800 dark:text-purple-300 text-center`}>
+                          {formatKoreanDate(formData.birthYear, formData.birthMonth, formData.birthDay)}
+                        </p>
+                      </div>
                     )}
-                    onClick={() => handleSelectCard(card)}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="https://via.placeholder.com/150x240?text=Tarot"
-                      alt="Tarot card"
-                      className="w-full h-auto transition-transform hover:scale-105"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <Button
-              disabled={selectedCards.length !== 3}
-              onClick={() => setStep('result')}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 dark:bg-purple-500 dark:hover:bg-purple-600 dark:disabled:bg-gray-600 text-white"
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* 질문 및 스프레드 선택 */}
+              <motion.div variants={itemVariants}>
+                <Card className="border-pink-200 dark:border-pink-700 dark:bg-gray-800">
+                  <CardHeader className="pb-4">
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-pink-700 dark:text-pink-400`}>
+                      <MessageCircle className="w-5 h-5" />
+                      질문 및 스프레드
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="question" className={`${fontClasses.text} dark:text-gray-300`}>타로에게 물어볼 질문</Label>
+                      <Input
+                        id="question"
+                        placeholder="예: 저의 연애운은 어떻게 될까요?"
+                        value={formData.question}
+                        onChange={(e) => setFormData(prev => ({ ...prev, question: e.target.value }))}
+                        className={`${fontClasses.text} mt-1`}
+                      />
+                    </div>
+                    <div>
+                      <Label className={`${fontClasses.text} dark:text-gray-300`}>스프레드 방식</Label>
+                      <Select 
+                        value={formData.spreadType} 
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, spreadType: value }))}
+                      >
+                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
+                          <SelectValue placeholder="스프레드 방식 선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {spreadTypes.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* 분석 버튼 */}
+              <motion.div variants={itemVariants} className="pt-4">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={isGenerating || isDailyGenerating}
+                  className={`w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 ${fontClasses.title} font-semibold`}
+                >
+                  {(isGenerating || isDailyGenerating) ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <Shuffle className="w-5 h-5" />
+                      {hasTodayFortune ? '불러오는 중...' : '분석 중...'}
+                    </motion.div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      {hasTodayFortune ? (
+                        <>
+                          <CheckCircle className="w-5 h-5" />
+                          오늘의 타로 운세 보기
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5" />
+                          타로 운세 분석하기
+                        </>
+                      )}
+                    </div>
+                  )}
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {step === 'result' && result && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              className="space-y-6"
             >
-              결과 보기
-            </Button>
-          </div>
-        )}
+              {/* 전체 운세 */}
+              <motion.div variants={itemVariants}>
+                <Card className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                  <CardContent className="text-center py-8">
+                    <div className={`flex items-center justify-center gap-2 mb-4`}>
+                      <Sparkles className="w-6 h-6" />
+                      <span className={`${fontClasses.title} font-medium`}>{formData.name}님의 타로 운세</span>
+                    </div>
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.3, type: "spring" }}
+                      className={`${fontClasses.score} font-bold mb-2`}
+                    >
+                      {result.overall_luck}점
+                    </motion.div>
+                    <Badge variant="secondary" className={`${fontClasses.text} bg-white/20 text-white border-white/30`}>
+                      {getLuckText(result.overall_luck)}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-        {step === 'result' && (
-          <div className="w-full max-w-md space-y-6">
-            <div className="flex justify-center space-x-2">
-              {selectedCards.map((card) => (
-                <div key={card.id} className="text-center w-24">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={card.image} alt={card.name} className="w-24 h-auto mx-auto mb-2" />
-                  <p className="text-sm font-semibold">{card.name}</p>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    {card.orientation === 'upright' ? '정방향' : '역방향'}
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-1">
-                    {card.keywords.map((k) => (
-                      <Badge key={k} variant="secondary">
-                        {k}
-                      </Badge>
+              {/* 질문 및 전체 메시지 */}
+              <motion.div variants={itemVariants}>
+                <Card className="dark:bg-gray-800 dark:border-gray-700">
+                  <CardHeader>
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-purple-600 dark:text-purple-400`}>
+                      <MessageCircle className="w-5 h-5" />
+                      질문 및 전체 메시지
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+                      <h4 className={`${fontClasses.text} font-medium text-purple-800 dark:text-purple-300 mb-2 flex items-center gap-2`}>
+                        <BookOpen className="w-4 h-4" />
+                        질문
+                      </h4>
+                      <p className={`${fontClasses.text} text-purple-700 dark:text-purple-400`}>{result.question}</p>
+                    </div>
+                    <div className="p-4 bg-pink-50 dark:bg-pink-900/30 rounded-lg">
+                      <h4 className={`${fontClasses.text} font-medium text-pink-800 dark:text-pink-300 mb-2 flex items-center gap-2`}>
+                        <Sparkles className="w-4 h-4" />
+                        전체 메시지
+                      </h4>
+                      <p className={`${fontClasses.text} text-pink-700 dark:text-pink-400`}>{result.overall_message}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* 카드 해석 */}
+              <motion.div variants={itemVariants}>
+                <Card className="dark:bg-gray-800 dark:border-gray-700">
+                  <CardHeader>
+                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-indigo-600 dark:text-indigo-400`}>
+                      <BookOpen className="w-5 h-5" />
+                      카드 해석
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {result.cards.map((card, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 + index * 0.1 }}
+                        className="p-4 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg space-y-2"
+                      >
+                        <h4 className={`${fontClasses.text} font-medium text-indigo-800 dark:text-indigo-300 flex items-center gap-2`}>
+                          {card.position} - {card.card_name} {card.is_reversed ? '(역방향)' : '(정방향)'}
+                        </h4>
+                        <p className={`${fontClasses.text} text-indigo-700 dark:text-indigo-400`}>{card.interpretation}</p>
+                      </motion.div>
                     ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-            <Accordion type="single" collapsible className="w-full">
-              {readings.map((r) => (
-                <AccordionItem key={r.position} value={r.position}>
-                  <AccordionTrigger>{r.position}</AccordionTrigger>
-                  <AccordionContent>
-                    <p>{r.text}</p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+              {/* 다시 분석하기 및 재생성 버튼 */}
+              <motion.div variants={itemVariants} className="pt-4 space-y-3">
+                {canRegenerate && (
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        const analysisResult = await analyzeTarotFortune();
+                        
+                        const fortuneResult: FortuneResult = {
+                          user_info: {
+                            name: formData.name,
+                            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+                          },
+                          fortune_scores: {
+                            overall_luck: analysisResult.overall_luck,
+                          },
+                          insights: {
+                            spread_type: analysisResult.spread_type,
+                            question: analysisResult.question,
+                            overall_message: analysisResult.overall_message,
+                          },
+                          metadata: {
+                            cards: analysisResult.cards,
+                          }
+                        };
 
-            <Button onClick={reset} className="w-full">
-              다시하기
-            </Button>
-          </div>
-        )}
-      </div>
-    </>
+                        const success = await regenerateFortune(fortuneResult);
+                        if (success) {
+                          setResult(analysisResult);
+                        }
+                      } catch (error) {
+                        console.error('재생성 중 오류:', error);
+                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+                      }
+                    }}
+                    disabled={isGenerating}
+                    className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
+                  >
+                    {isGenerating ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Shuffle className="w-4 h-4" />
+                        재생성 중...
+                      </motion.div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <RotateCcw className="w-4 h-4" />
+                        오늘 운세 다시 생성하기
+                      </div>
+                    )}
+                  </Button>
+                )}
+                <Button
+                  onClick={handleReset}
+                  variant="outline"
+                  className={`w-full border-purple-300 dark:border-purple-700 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 py-3 ${fontClasses.text}`}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  다른 분석하기
+                </Button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
   );
 }
-
