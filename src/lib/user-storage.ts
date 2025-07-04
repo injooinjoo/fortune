@@ -1,3 +1,5 @@
+import { supabase } from "./supabase";
+
 export interface UserInfo {
   name: string;
   birthDate: string;
@@ -7,19 +9,18 @@ export interface UserInfo {
   bloodType?: string;
   zodiacSign?: string;
   job?: string;
-  location?: string;
 }
 
 export interface UserProfile {
   id: string;
-  email: string;
   name: string;
-  avatar_url?: string;
-  provider: string;
-  created_at: string;
-  subscription_status: 'free' | 'premium' | 'premium_plus';
-  fortune_count?: number;
-  favorite_fortune_types?: string[];
+  email?: string;
+  birth_date?: string;
+  birth_time?: string;
+  gender?: 'male' | 'female' | 'other';
+  mbti?: string;
+  onboarding_completed: boolean;
+  [key: string]: any;
 }
 
 const USER_INFO_KEY = 'fortune_user_info';
@@ -55,7 +56,6 @@ export const getUserInfo = (): UserInfo => {
     bloodType: '',
     zodiacSign: '',
     job: '',
-    location: ''
   };
 };
 
@@ -135,28 +135,90 @@ export const isPremiumUser = (user?: UserProfile | null): boolean => {
   return user.subscription_status === 'premium' || user.subscription_status === 'premium_plus';
 };
 
-// 로컬 스토리지에서 사용자 프로필 가져오기
-export const getUserProfile = (): UserProfile | null => {
+/**
+ * 로컬 스토리지에서 사용자 프로필을 안전하게 가져옵니다.
+ * 데이터가 없거나 형식이 잘못된 경우 null을 반환합니다.
+ */
+export function getUserProfile(): UserProfile | null {
   try {
-    const stored = localStorage.getItem('userProfile');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-    return null;
-  } catch (error) {
-    console.error('사용자 프로필 로드 실패:', error);
-    return null;
-  }
-};
+    const userProfileJson = localStorage.getItem('userProfile');
+    if (!userProfileJson) return null;
 
-// 로컬 스토리지에 사용자 프로필 저장
-export const saveUserProfile = (profile: UserProfile): void => {
-  try {
-    localStorage.setItem('userProfile', JSON.stringify(profile));
+    const parsed = JSON.parse(userProfileJson);
+
+    // 간단한 타입 가드: 필수 필드가 있는지 확인
+    if (parsed && typeof parsed === 'object' && 'id' in parsed && 'name' in parsed && 'onboarding_completed' in parsed) {
+       return parsed as UserProfile;
+    }
+    
+    return null;
   } catch (error) {
-    console.error('사용자 프로필 저장 실패:', error);
+    console.error("로컬 프로필 파싱 실패:", error);
+    localStorage.removeItem('userProfile'); // 잘못된 데이터는 삭제
+    return null;
   }
-};
+}
+
+/**
+ * 사용자 프로필을 로컬 스토리지에 저장합니다.
+ */
+export function saveUserProfile(profile: UserProfile | null) {
+  if (profile) {
+    localStorage.setItem('userProfile', JSON.stringify(profile));
+  } else {
+    localStorage.removeItem('userProfile');
+  }
+}
+
+/**
+ * DB에서 최신 프로필을 가져와 로컬 스토리지와 동기화하고, 최신 프로필을 반환합니다.
+ */
+export async function syncUserProfile(): Promise<UserProfile | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // 로그인하지 않은 경우, 로컬 프로필도 삭제하는 것이 안전합니다.
+      saveUserProfile(null);
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single(); // 결과는 하나여야 하므로 single() 사용
+
+    if (error) {
+      if (error.code === 'PGRST116') { // 행이 없는 경우, 오류가 아님
+        console.log('DB에 프로필이 아직 없습니다. 로컬 데이터를 사용합니다.');
+        return getUserProfile();
+      }
+      // 그 외 실제 DB 오류
+      console.error('DB에서 프로필 조회 실패:', error);
+      return getUserProfile(); // DB 실패 시 일단 로컬 데이터 반환
+    }
+
+    if (data) {
+       const dbProfile: UserProfile = {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        birth_date: data.birth_date,
+        birth_time: data.birth_time,
+        gender: data.gender,
+        mbti: data.mbti,
+        onboarding_completed: data.onboarding_completed || false,
+      };
+      saveUserProfile(dbProfile); // 최신 DB 데이터로 로컬 스토리지 덮어쓰기
+      return dbProfile;
+    }
+    
+    return getUserProfile(); // DB에 데이터가 없는 경우 로컬 데이터 반환
+  } catch (err) {
+    console.error('syncUserProfile 함수에서 예외 발생:', err);
+    return getUserProfile(); // 모든 예외 발생 시 로컬 데이터 반환
+  }
+}
 
 // 사용자 운세 조회 횟수 증가
 export const incrementFortuneCount = (): void => {
@@ -211,5 +273,46 @@ export const incrementDailyUsage = (): void => {
     localStorage.setItem('dailyFortuneUsage', JSON.stringify(usage));
   } catch (error) {
     console.error('일일 사용량 업데이트 실패:', error);
+  }
+};
+
+/**
+ * 온보딩 데이터를 기반으로 Supabase의 사용자 프로필을 업데이트합니다.
+ */
+export const updateUserProfileFromOnboarding = async (): Promise<{ success: boolean; error?: any }> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      // 로그인하지 않은 사용자는 DB 업데이트를 시도하지 않음
+      return { success: true }; 
+    }
+
+    const userInfo = getUserInfo();
+    const updateData: any = {};
+
+    if (userInfo.name) updateData.full_name = userInfo.name;
+    if (userInfo.birthDate) updateData.birth_date = userInfo.birthDate;
+    if (userInfo.gender) updateData.gender = userInfo.gender;
+    if (userInfo.mbti) updateData.mbti = userInfo.mbti;
+    if (userInfo.birthTime) updateData.birth_time = userInfo.birthTime;
+    if (userInfo.job) updateData.job = userInfo.job;
+    if (userInfo.bloodType) updateData.blood_type = userInfo.bloodType;
+
+    const { error } = await supabase.auth.updateUser({
+      data: updateData
+    });
+
+    if (error) {
+      console.error('DB 프로필 업데이트 실패:', error);
+      return { success: false, error };
+    }
+
+    // 로컬 스토리지와도 동기화
+    await syncUserProfile();
+
+    return { success: true };
+  } catch (error) {
+    console.error('프로필 업데이트 중 예외 발생:', error);
+    return { success: false, error };
   }
 }; 

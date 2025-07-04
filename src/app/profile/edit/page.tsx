@@ -18,9 +18,12 @@ import {
   Save,
   ArrowLeft,
   Smartphone,
-  MapPin
+  Clock,
+  Brain,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getZodiacSign, getChineseZodiac } from "@/lib/user-storage";
 
 interface UserProfile {
   id: string;
@@ -28,10 +31,9 @@ interface UserProfile {
   name: string;
   avatar_url?: string;
   provider: string;
-  phone?: string;
-  bio?: string;
-  location?: string;
   birth_date?: string;
+  birth_time?: string;
+  mbti?: string;
 }
 
 const containerVariants = {
@@ -66,10 +68,9 @@ export default function ProfileEditPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    phone: '',
-    bio: '',
-    location: '',
-    birth_date: ''
+    birth_date: '',
+    birth_time: '',
+    mbti: '',
   });
 
   useEffect(() => {
@@ -80,31 +81,59 @@ export default function ProfileEditPage() {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       
-      if (authUser) {
+      if (!authUser) {
+        router.push('/auth/selection');
+        return;
+      }
+
+      // 1. user_profiles 테이블에서 프로필 정보와 온보딩 완료 여부 조회
+      const { data: profileDataArray, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', authUser.id);
+
+      // --- 디버깅용 로그 추가 ---
+      console.log("Supabase profile fetch error:", profileError);
+      console.log("Supabase profile fetch data:", profileDataArray);
+      // ------------------------
+
+      // DB 조회 시 에러 발생
+      if (profileError) {
+        throw profileError;
+      }
+      
+      const profileData = profileDataArray && profileDataArray[0];
+
+      // 프로필이 존재하고 온보딩이 완료된 경우에만 페이지 표시
+      if (profileData && profileData.onboarding_completed) {
         const userProfile: UserProfile = {
           id: authUser.id,
           email: authUser.email || '',
-          name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || '',
-          avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture,
+          name: profileData.name || '',
+          avatar_url: profileData.avatar_url || authUser.user_metadata?.avatar_url,
           provider: authUser.app_metadata?.provider || 'google',
-          phone: authUser.user_metadata?.phone || '',
-          bio: authUser.user_metadata?.bio || '',
-          location: authUser.user_metadata?.location || '',
-          birth_date: authUser.user_metadata?.birth_date || ''
+          birth_date: profileData.birth_date || '',
+          birth_time: profileData.birth_time || '',
+          mbti: profileData.mbti || '',
         };
-        
         setUser(userProfile);
         setFormData({
           name: userProfile.name,
           email: userProfile.email,
-          phone: userProfile.phone || '',
-          bio: userProfile.bio || '',
-          location: userProfile.location || '',
-          birth_date: userProfile.birth_date || ''
+          birth_date: userProfile.birth_date || '',
+          birth_time: userProfile.birth_time || '',
+          mbti: userProfile.mbti || '',
         });
+      } else {
+        // 프로필 정보가 없거나 온보딩이 미완료된 경우, 온보딩 페이지로 리다이렉트
+        router.push('/onboarding/profile');
       }
-    } catch (error) {
-      console.error('사용자 프로필 로드 실패:', error);
+
+    } catch (error: any) {
+      console.error('사용자 프로필 로드 실패 (상세):', error);
+      // 사용자에게 에러 알림
+      alert(`프로필 정보를 불러오는 중 오류가 발생했습니다: ${error.message || '알 수 없는 오류'}`);
+      router.push('/home'); // 에러 발생 시 홈으로 이동
     } finally {
       setIsLoading(false);
     }
@@ -115,18 +144,30 @@ export default function ProfileEditPage() {
 
     setIsSaving(true);
     try {
-      // 실제로는 Supabase에서 프로필 업데이트
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          full_name: formData.name,
-          phone: formData.phone,
-          bio: formData.bio,
-          location: formData.location,
-          birth_date: formData.birth_date
-        }
-      });
+      // 1. user_profiles 테이블에 직접 업데이트
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          name: formData.name,
+          birth_date: formData.birth_date,
+          birth_time: formData.birth_time,
+          mbti: formData.mbti.toUpperCase(),
+        })
+        .eq('id', user.id);
 
       if (error) throw error;
+      
+      // 2. auth.user 메타데이터도 함께 업데이트 (선택적이지만 일관성을 위해)
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          full_name: formData.name,
+          birth_date: formData.birth_date,
+          birth_time: formData.birth_time,
+          mbti: formData.mbti.toUpperCase(),
+        }
+      });
+      
+      if (authError) throw authError;
 
       // 성공 시 뒤로 가기
       router.back();
@@ -244,21 +285,6 @@ export default function ProfileEditPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">전화번호</Label>
-                <div className="relative">
-                  <Smartphone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="pl-10"
-                    placeholder="전화번호를 입력하세요"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="birth_date">생년월일</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
@@ -268,44 +294,74 @@ export default function ProfileEditPage() {
                     value={formData.birth_date}
                     onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
                     className="pl-10"
+                    placeholder="YYYY-MM-DD"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">거주지</Label>
+                <Label htmlFor="birth_time">태어난 시</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Clock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                   <select 
+                    id="birth_time"
+                    value={formData.birth_time} 
+                    onChange={(e) => setFormData(prev => ({ ...prev, birth_time: e.target.value }))}
+                    className="w-full p-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">태어난 시 선택</option>
+                    <option value="모름">모름</option>
+                    <option value="자시 (23:30~01:29)">자시 (23:30~01:29)</option>
+                    <option value="축시 (01:30~03:29)">축시 (01:30~03:29)</option>
+                    <option value="인시 (03:30~05:29)">인시 (03:30~05:29)</option>
+                    <option value="묘시 (05:30~07:29)">묘시 (05:30~07:29)</option>
+                    <option value="진시 (07:30~09:29)">진시 (07:30~09:29)</option>
+                    <option value="사시 (09:30~11:29)">사시 (09:30~11:29)</option>
+                    <option value="오시 (11:30~13:29)">오시 (11:30~13:29)</option>
+                    <option value="미시 (13:30~15:29)">미시 (13:30~15:29)</option>
+                    <option value="신시 (15:30~17:29)">신시 (15:30~17:29)</option>
+                    <option value="유시 (17:30~19:29)">유시 (17:30~19:29)</option>
+                    <option value="술시 (19:30~21:29)">술시 (19:30~21:29)</option>
+                    <option value="해시 (21:30~23:29)">해시 (21:30~23:29)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mbti">MBTI</Label>
+                 <div className="relative">
+                  <Brain className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                   <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    id="mbti"
+                    value={formData.mbti}
+                    onChange={(e) => setFormData(prev => ({ ...prev, mbti: e.target.value.toUpperCase() }))}
                     className="pl-10"
-                    placeholder="거주지를 입력하세요"
+                    placeholder="MBTI를 입력하세요 (예: INFP)"
                   />
                 </div>
               </div>
+
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* 소개 */}
+        {/* 자동 계산 정보 */}
         <motion.div variants={itemVariants}>
           <Card>
             <CardHeader>
-              <CardTitle>소개</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-500" />
+                자동 분석 정보
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="bio">자기소개</Label>
-                <Textarea
-                  id="bio"
-                  value={formData.bio}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder="자신에 대해 간단히 소개해주세요"
-                  className="min-h-[100px]"
-                />
-                <p className="text-xs text-gray-500">최대 200자까지 입력 가능합니다.</p>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                <Label>띠</Label>
+                <span className="font-semibold">{getChineseZodiac(formData.birth_date) || '생년월일 입력 필요'}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
+                <Label>별자리</Label>
+                <span className="font-semibold">{getZodiacSign(formData.birth_date) || '생년월일 입력 필요'}</span>
               </div>
             </CardContent>
           </Card>

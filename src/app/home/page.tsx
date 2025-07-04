@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { auth } from "@/lib/supabase";
-import { getUserProfile, isPremiumUser, saveUserProfile } from "@/lib/user-storage";
+import { auth, supabase } from "@/lib/supabase";
+import { getUserProfile, isPremiumUser, saveUserProfile, syncUserProfile, UserProfile } from "@/lib/user-storage";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
 import AppHeader from "@/components/AppHeader";
 import { 
@@ -161,7 +161,7 @@ export default function HomePage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showAdLoading, setShowAdLoading] = useState(false);
   const [pendingFortune, setPendingFortune] = useState<{ path: string; title: string } | null>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -206,24 +206,23 @@ export default function HomePage() {
 
   // 사용자 프로필 상태 실시간 업데이트
   useEffect(() => {
-    const updateUserProfile = () => {
-      const profile = getUserProfile();
-      if (profile) {
-        setUserProfile(profile);
-      }
+    const updateUserProfile = async () => {
+      const freshProfile = await syncUserProfile();
+      setUserProfile(freshProfile);
     };
 
-    // 초기 로드
+    const handleStorageChange = () => {
+      const localProfile = getUserProfile();
+      setUserProfile(localProfile);
+    };
+    
     updateUserProfile();
 
-    // storage 이벤트 리스너 (다른 탭에서 변경 시)
-    window.addEventListener('storage', updateUserProfile);
-    
-    // 포커스 시 업데이트 (같은 탭에서 프로필 페이지에서 돌아올 때)
+    window.addEventListener('storage', handleStorageChange);
     window.addEventListener('focus', updateUserProfile);
 
     return () => {
-      window.removeEventListener('storage', updateUserProfile);
+      window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('focus', updateUserProfile);
     };
   }, []);

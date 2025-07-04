@@ -1,87 +1,162 @@
-import { defineFlow, run } from 'genkit';
-import { geminiPro } from '@genkit-ai/googleai';
-import { z } from 'zod';
-
-// 사용자 프로필 스키마 (간소화)
-const UserProfileSchema = z.object({
-  name: z.string(),
-  birthDate: z.string(),
-  // ... 필요한 다른 프로필 정보
-});
-
-// 운세 결과 스키마 (간소화)
-const FortuneResultSchema = z.object({
-  overall_luck: z.number(),
-  summary: z.string(),
-  // ... 운세별 상세 결과
-});
+import { ai } from '@/ai/genkit';
+import {
+  UserProfileSchema,
+  LifeProfileResultSchema,
+  DailyFortuneInputSchema,
+  DailyFortuneResultSchema,
+  InteractiveFortuneInputSchema,
+  InteractiveFortuneOutputSchema,
+  GroupFortuneInputSchema,
+  GroupFortuneOutputSchema,
+} from '@/lib/types/fortune-schemas';
 
 // 1. 평생 운세 패키지 생성 플로우
-export const generateLifeProfile = defineFlow(
+export const generateLifeProfile = ai.defineFlow(
   {
     name: 'generateLifeProfile',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-    }),
-    outputSchema: z.record(FortuneResultSchema), // 여러 운세 결과를 포함하는 레코드
+    inputSchema: UserProfileSchema,
+    outputSchema: LifeProfileResultSchema,
   },
-  async (input) => {
-    // 실제 GPT 호출 로직 (예시)
-    const prompt = `사용자 ${input.userProfile.name}의 생년월일 ${input.userProfile.birthDate}를 기반으로 사주, 전통 사주, 전생 운세 등 평생 운세 패키지를 생성해줘.`;
-    const llmResponse = await run(geminiPro, prompt);
+  async (userProfile) => {
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${userProfile.name}
+      - 생년월일: ${userProfile.birthDate}
+      - 성별: ${userProfile.gender}
+      ${userProfile.mbti ? `- MBTI: ${userProfile.mbti}` : ''}
 
-    // 응답 파싱 및 구조화 (예시)
-    return {
-      saju: { overall_luck: 80, summary: '사주 요약...' },
-      traditionalSaju: { overall_luck: 75, summary: '전통 사주 요약...' },
-      pastLife: { overall_luck: 70, summary: '전생 요약...' },
-      // ... 다른 평생 운세 결과
-    };
+      위 프로필을 바탕으로 사용자의 평생 운세 정보를 분석해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+    
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: LifeProfileResultSchema },
+    });
+
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
+    }
+    return output;
   }
 );
 
 // 2. 종합 일일 운세 생성 플로우
-export const generateComprehensiveDailyFortune = defineFlow(
+export const generateComprehensiveDailyFortune = ai.defineFlow(
   {
     name: 'generateComprehensiveDailyFortune',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-      date: z.string(),
-    }),
-    outputSchema: z.record(FortuneResultSchema), // 여러 운세 결과를 포함하는 레코드
+    inputSchema: DailyFortuneInputSchema,
+    outputSchema: DailyFortuneResultSchema,
   },
   async (input) => {
-    // 실제 GPT 호출 로직 (예시)
-    const prompt = `사용자 ${input.userProfile.name}의 ${input.date} 일일 운세 (총운, 애정운, 재물운 등)를 생성해줘.`;
-    const llmResponse = await run(geminiPro, prompt);
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${input.userProfile.name}
+      - 생년월일: ${input.userProfile.birthDate}
+      - 성별: ${input.userProfile.gender}
+      ${input.userProfile.mbti ? `- MBTI: ${input.userProfile.mbti}` : ''}
 
-    // 응답 파싱 및 구조화 (예시)
-    return {
-      daily: { overall_luck: 85, summary: '오늘의 운세 요약...' },
-      love: { overall_luck: 70, summary: '오늘의 애정운 요약...' },
-      wealth: { overall_luck: 90, summary: '오늘의 재물운 요약...' },
-      // ... 다른 일일 운세 결과
-    };
+      요청 날짜: ${input.date}
+
+      ${input.lifeProfileResult ? `
+      참고용 평생 운세 데이터:
+      - 사주 요약: ${input.lifeProfileResult.saju.summary}
+      - 타고난 재능: ${input.lifeProfileResult.talent.summary}
+      이 평생 운세 정보를 바탕으로 오늘의 운세를 더 깊이 있게 해석해줘.
+      ` : ''}
+
+      위 정보를 종합하여 ${input.date}의 종합적인 일일 운세를 분석해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+    
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: DailyFortuneResultSchema },
+    });
+
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
+    }
+    return output;
   }
 );
 
-// 3. 인터랙티브 운세 생성 플로우 (예시)
-export const generateInteractiveFortune = defineFlow(
+// 3. 인터랙티브 운세 생성 플로우 (예: 타로)
+export const generateInteractiveFortune = ai.defineFlow(
   {
     name: 'generateInteractiveFortune',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-      category: z.string(), // 예: 'tarot', 'dream-interpretation'
-      input: z.any(), // 사용자 입력 (예: 꿈 내용, 타로 질문)
-    }),
-    outputSchema: FortuneResultSchema,
+    inputSchema: InteractiveFortuneInputSchema,
+    outputSchema: InteractiveFortuneOutputSchema,
   },
   async (input) => {
-    // 실제 GPT 호출 로직 (예시)
-    const prompt = `사용자 ${input.userProfile.name}의 ${input.category} 운세를 생성해줘. 입력: ${JSON.stringify(input.input)}`;
-    const llmResponse = await run(geminiPro, prompt);
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${input.userProfile.name}
+      - 생년월일: ${input.userProfile.birthDate}
 
-    // 응답 파싱 및 구조화 (예시)
-    return { overall_luck: 75, summary: `${input.category} 결과 요약...` };
+      운세 종류: ${input.category}
+      사용자 질문/내용: ${input.question}
+
+      위 정보를 바탕으로 운세를 해석하고 조언해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: InteractiveFortuneOutputSchema },
+    });
+    
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
+    }
+    return output;
+  }
+);
+
+// 4. 그룹 운세 생성 플로우 (예: 띠별, 혈액형별)
+export const generateGroupFortune = ai.defineFlow(
+  {
+    name: 'generateGroupFortune',
+    inputSchema: GroupFortuneInputSchema,
+    outputSchema: GroupFortuneOutputSchema,
+  },
+  async (input) => {
+    let fortuneTypeName = '';
+    switch(input.fortuneType) {
+      case 'zodiac':
+        fortuneTypeName = '띠별';
+        break;
+      case 'bloodType':
+        fortuneTypeName = '혈액형';
+        break;
+      case 'zodiacAnimal':
+        fortuneTypeName = '12간지';
+        break;
+    }
+    const groupKeyName = input.groupKey; // 예: "용띠", "A형"
+
+    const prompt = `
+      요청 날짜: ${input.date}
+      운세 종류: ${fortuneTypeName}
+      운세 그룹: ${groupKeyName}
+
+      위 정보를 바탕으로 해당 그룹의 오늘의 운세를 생성해줘.
+      운세 내용은 "총운"에 대한 것으로 간주하고, 상세하고 흥미롭게 작성해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: GroupFortuneOutputSchema },
+    });
+    
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
+    }
+    return output;
   }
 );
