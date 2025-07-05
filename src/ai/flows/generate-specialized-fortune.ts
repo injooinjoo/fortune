@@ -1,19 +1,20 @@
-import { defineFlow } from 'genkit';
+import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import {
+  UserProfileSchema,
+  LifeProfileResultSchema,
+  DailyFortuneInputSchema,
+  DailyFortuneResultSchema,
+  InteractiveFortuneInputSchema,
+  InteractiveFortuneOutputSchema,
+  GroupFortuneInputSchema,
+  GroupFortuneOutputSchema,
+} from '@/lib/types/fortune-schemas';
 import { 
   generateBatchFortunes, 
   generateSingleFortune, 
   generateImageBasedFortune 
 } from '../openai-client';
-
-// 사용자 프로필 스키마 (상세화)
-const UserProfileSchema = z.object({
-  name: z.string(),
-  birthDate: z.string(),
-  gender: z.string().optional(),
-  mbti: z.string().optional(),
-  blood_type: z.string().optional(),
-});
 
 // 운세 결과 스키마 (상세화)
 const FortuneResultSchema = z.object({
@@ -32,7 +33,7 @@ const FortuneResultSchema = z.object({
 });
 
 // 배치 운세 생성 플로우 (회원가입 시 사용)
-export const generateSignupBatchFortunes = defineFlow(
+export const generateSignupBatchFortunes = ai.defineFlow(
   {
     name: 'generateSignupBatchFortunes',
     inputSchema: z.object({
@@ -66,7 +67,7 @@ export const generateSignupBatchFortunes = defineFlow(
 );
 
 // 일일 배치 운세 생성 플로우
-export const generateDailyBatchFortunes = defineFlow(
+export const generateDailyBatchFortunes = ai.defineFlow(
   {
     name: 'generateDailyBatchFortunes',
     inputSchema: z.object({
@@ -183,145 +184,177 @@ function createKoreanFortunePrompt(category: string, userProfile: any, additiona
 }
 
 // 1. 평생 운세 패키지 생성 플로우
-export const generateLifeProfile = defineFlow(
+export const generateLifeProfile = ai.defineFlow(
   {
     name: 'generateLifeProfile',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-      category: z.string().optional(),
-    }),
-    outputSchema: FortuneResultSchema,
+    inputSchema: UserProfileSchema,
+    outputSchema: LifeProfileResultSchema,
   },
-  async (input) => {
-    try {
-      const category = input.category || 'saju';
-      const prompt = createKoreanFortunePrompt(category, input.userProfile);
-      
-      console.log(`🔮 평생 운세 생성 중: ${category}`);
-      
-      // OpenAI GPT로 단일 운세 생성
-      const result = await generateSingleFortune(category, input.userProfile);
-      
-      console.log(`✨ 평생 운세 생성 완료: ${category}`);
-      return result;
-      
-    } catch (error) {
-      console.error('평생 운세 생성 실패:', error);
-      return createFallbackResponse(input.category || 'saju', input.userProfile);
+  async (userProfile) => {
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${userProfile.name}
+      - 생년월일: ${userProfile.birthDate}
+      - 성별: ${userProfile.gender}
+      ${userProfile.mbti ? `- MBTI: ${userProfile.mbti}` : ''}
+
+      위 프로필을 바탕으로 사용자의 평생 운세 정보를 분석해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+    
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: LifeProfileResultSchema },
+    });
+
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
     }
+    return output;
   }
 );
 
 // 2. 종합 일일 운세 생성 플로우
-export const generateComprehensiveDailyFortune = defineFlow(
+export const generateComprehensiveDailyFortune = ai.defineFlow(
   {
     name: 'generateComprehensiveDailyFortune',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-      date: z.string(),
-      category: z.string().optional(),
-    }),
-    outputSchema: FortuneResultSchema,
+    inputSchema: DailyFortuneInputSchema,
+    outputSchema: DailyFortuneResultSchema,
   },
   async (input) => {
-    try {
-      const category = input.category || 'daily';
-      const prompt = createKoreanFortunePrompt(category, input.userProfile, { date: input.date });
-      
-      console.log(`📅 일일 운세 생성 중: ${category} (${input.date})`);
-      
-      // OpenAI GPT로 단일 운세 생성
-      const result = await generateSingleFortune(category, input.userProfile);
-      
-      console.log(`✨ 일일 운세 생성 완료: ${category}`);
-      return result;
-      
-    } catch (error) {
-      console.error('일일 운세 생성 실패:', error);
-      return createFallbackResponse(input.category || 'daily', input.userProfile);
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${input.userProfile.name}
+      - 생년월일: ${input.userProfile.birthDate}
+      - 성별: ${input.userProfile.gender}
+      ${input.userProfile.mbti ? `- MBTI: ${input.userProfile.mbti}` : ''}
+
+      요청 날짜: ${input.date}
+
+      ${input.lifeProfileResult ? `
+      참고용 평생 운세 데이터:
+      - 사주 요약: ${input.lifeProfileResult.saju.summary}
+      - 타고난 재능: ${input.lifeProfileResult.talent.summary}
+      이 평생 운세 정보를 바탕으로 오늘의 운세를 더 깊이 있게 해석해줘.
+      ` : ''}
+
+      위 정보를 종합하여 ${input.date}의 종합적인 일일 운세를 분석해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+    
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: DailyFortuneResultSchema },
+    });
+
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
     }
+    return output;
   }
 );
 
-// 3. 인터랙티브 운세 생성 플로우
-export const generateInteractiveFortune = defineFlow(
+// 3. 인터랙티브 운세 생성 플로우 (예: 타로)
+export const generateInteractiveFortune = ai.defineFlow(
   {
     name: 'generateInteractiveFortune',
-    inputSchema: z.object({
-      userProfile: UserProfileSchema,
-      category: z.string(),
-      input: z.any(),
-    }),
-    outputSchema: FortuneResultSchema,
+    inputSchema: InteractiveFortuneInputSchema,
+    outputSchema: InteractiveFortuneOutputSchema,
   },
   async (input) => {
-    try {
-      console.log(`🎯 인터랙티브 운세 생성 중: ${input.category}`);
-      
-      // OpenAI GPT로 인터랙티브 운세 생성
-      const result = await generateSingleFortune(
-        input.category, 
-        input.userProfile, 
-        input.input
-      );
-      
-      console.log(`✨ 인터랙티브 운세 생성 완료: ${input.category}`);
-      return result;
-      
-    } catch (error) {
-      console.error('인터랙티브 운세 생성 실패:', error);
-      return createFallbackResponse(input.category, input.userProfile);
+    const prompt = `
+      사용자 프로필:
+      - 이름: ${input.userProfile.name}
+      - 생년월일: ${input.userProfile.birthDate}
+
+      운세 종류: ${input.category}
+      사용자 질문/내용: ${input.question}
+
+      위 정보를 바탕으로 운세를 해석하고 조언해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: InteractiveFortuneOutputSchema },
+    });
+    
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
     }
+    return output;
   }
 );
 
-// AI 응답 파싱 함수
+// 4. 그룹 운세 생성 플로우 (예: 띠별, 혈액형별)
+export const generateGroupFortune = ai.defineFlow(
+  {
+    name: 'generateGroupFortune',
+    inputSchema: GroupFortuneInputSchema,
+    outputSchema: GroupFortuneOutputSchema,
+  },
+  async (input) => {
+    const prompt = `
+      그룹 운세 생성 요청:
+      - 카테고리: ${input.category}
+      - 그룹 타입: ${input.groupType}
+      - 날짜: ${input.date}
+
+      ${input.category}에 대한 ${input.groupType}별 운세를 생성해줘.
+      반드시 JSON 객체로만 응답해야 해. 다른 텍스트는 절대 포함하지 마.
+    `;
+
+    const response = await ai.generate({
+        prompt,
+        output: { format: 'json', schema: GroupFortuneOutputSchema },
+    });
+    
+    const output = response.output;
+    if (!output) {
+      throw new Error('AI 응답 생성에 실패했습니다.');
+    }
+    return output;
+  }
+);
+
+// 레거시 지원을 위한 추가 함수들
 function parseFortuneResponse(response: string, category: string): any {
   try {
-    // AI 응답에서 숫자와 텍스트 추출
-    const overallLuckMatch = response.match(/(?:전체|종합|운세).*?(?:점수|점|수치).*?(\d+)/i);
-    const loveLuckMatch = response.match(/(?:애정|연애|사랑).*?(?:점수|점|수치).*?(\d+)/i);
-    const moneyLuckMatch = response.match(/(?:금전|재물|돈|경제).*?(?:점수|점|수치).*?(\d+)/i);
-    const healthLuckMatch = response.match(/(?:건강|몸|체력).*?(?:점수|점|수치).*?(\d+)/i);
-    const workLuckMatch = response.match(/(?:직장|업무|학업|일).*?(?:점수|점|수치).*?(\d+)/i);
-    
-    const colorMatch = response.match(/(?:행운|럭키).*?(?:색깔|색상|컬러).*?([가-힣]+색?|red|blue|green|yellow|purple|orange|pink|black|white)/i);
-    const numberMatch = response.match(/(?:행운|럭키).*?(?:숫자|번호|수).*?(\d+)/i);
-    
-    // 응답을 적절한 길이로 요약
-    const summaryMatch = response.match(/(.{50,200})/);
-    const summary = summaryMatch ? summaryMatch[1].trim() : response.substring(0, 150) + '...';
-    
-    const adviceMatch = response.match(/(?:조언|추천|권유|팁).*?([^\.]+\.)/i);
-    const advice = adviceMatch ? adviceMatch[1].trim() : "긍정적인 마음가짐으로 하루를 시작하세요.";
-
-    return {
-      overall_luck: overallLuckMatch ? parseInt(overallLuckMatch[1]) : Math.floor(Math.random() * 21) + 70,
-      summary: summary,
-      advice: advice,
-      lucky_color: colorMatch ? colorMatch[1] : ["파란색", "빨간색", "노란색", "초록색"][Math.floor(Math.random() * 4)],
-      lucky_number: numberMatch ? parseInt(numberMatch[1]) : Math.floor(Math.random() * 9) + 1,
-      love_luck: loveLuckMatch ? parseInt(loveLuckMatch[1]) : undefined,
-      money_luck: moneyLuckMatch ? parseInt(moneyLuckMatch[1]) : undefined,
-      health_luck: healthLuckMatch ? parseInt(healthLuckMatch[1]) : undefined,
-      work_luck: workLuckMatch ? parseInt(workLuckMatch[1]) : undefined,
-    };
-    
+    const parsed = JSON.parse(response);
+    return parsed;
   } catch (error) {
-    console.error('AI 응답 파싱 실패:', error);
+    console.error('운세 응답 파싱 실패:', error);
     return createFallbackResponse(category);
   }
 }
 
-// Fallback 응답 생성 함수
 function createFallbackResponse(category: string, userProfile?: any): any {
-  const userName = userProfile?.name || '사용자';
-  
-  return {
-    overall_luck: Math.floor(Math.random() * 21) + 70, // 70-90점
-    summary: `${userName}님의 ${category} 운세 분석이 준비되었습니다. AI 분석을 통해 더 정확한 결과를 제공하겠습니다.`,
-    advice: "긍정적인 마음가짐이 좋은 운을 가져다 줍니다.",
-    lucky_color: ["파란색", "빨간색", "노란색", "초록색", "보라색"][Math.floor(Math.random() * 5)],
-    lucky_number: Math.floor(Math.random() * 9) + 1,
+  const fallbackResponses = {
+    saju: {
+      overall_luck: 75,
+      summary: '안정적인 운세를 보이고 있습니다.',
+      advice: '꾸준함을 유지하시면 좋은 결과가 있을 것입니다.',
+      lucky_color: '파란색',
+      lucky_number: 7,
+      personality: '성실하고 책임감이 강한 성격',
+      strengths: ['끈기', '성실함', '책임감'],
+      challenges: ['완벽주의', '스트레스 관리']
+    },
+    daily: {
+      overall_luck: 70,
+      summary: '평범하지만 안정적인 하루가 될 것 같습니다.',
+      advice: '새로운 시도보다는 기존 일에 집중하는 것이 좋겠습니다.',
+      love_luck: 65,
+      money_luck: 75,
+      health_luck: 80,
+      work_luck: 70,
+      lucky_color: '초록색',
+      lucky_number: 3
+    }
   };
+  
+  return fallbackResponses[category as keyof typeof fallbackResponses] || fallbackResponses.daily;
 }

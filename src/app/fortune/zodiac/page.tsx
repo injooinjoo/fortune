@@ -1,150 +1,101 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
-import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   StarIcon, 
-  TrendingUpIcon, 
-  HeartIcon, 
-  BriefcaseIcon, 
-  CoinsIcon,
-  UserIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-  MoonIcon,
-  SunIcon,
   SparklesIcon,
-  CalendarIcon
+  Loader2,
+  AlertCircleIcon,
 } from "lucide-react";
+import { useSharedFortune } from "@/hooks/use-shared-fortune";
 
-// 별자리 데이터
-const ZODIAC_SIGNS = {
-  aries: { name: "양자리", period: "3.21 - 4.19", color: "red", emoji: "♈", element: "불" },
-  taurus: { name: "황소자리", period: "4.20 - 5.20", color: "green", emoji: "♉", element: "땅" },
-  gemini: { name: "쌍둥이자리", period: "5.21 - 6.21", color: "yellow", emoji: "♊", element: "공기" },
-  cancer: { name: "게자리", period: "6.22 - 7.22", color: "blue", emoji: "♋", element: "물" },
-  leo: { name: "사자자리", period: "7.23 - 8.22", color: "orange", emoji: "♌", element: "불" },
-  virgo: { name: "처녀자리", period: "8.23 - 9.22", color: "emerald", emoji: "♍", element: "땅" },
-  libra: { name: "천칭자리", period: "9.23 - 10.22", color: "pink", emoji: "♎", element: "공기" },
-  scorpio: { name: "전갈자리", period: "10.23 - 11.21", color: "purple", emoji: "♏", element: "물" },
-  sagittarius: { name: "사수자리", period: "11.22 - 12.21", color: "indigo", emoji: "♐", element: "불" },
-  capricorn: { name: "염소자리", period: "12.22 - 1.19", color: "gray", emoji: "♑", element: "땅" },
-  aquarius: { name: "물병자리", period: "1.20 - 2.18", color: "cyan", emoji: "♒", element: "공기" },
-  pisces: { name: "물고기자리", period: "2.19 - 3.20", color: "teal", emoji: "♓", element: "물" }
+const ZODIAC_SIGNS: { [key: string]: { name: string; period: string; emoji: string; } } = {
+  aries: { name: "양자리", period: "3.21 - 4.19", emoji: "♈" },
+  taurus: { name: "황소자리", period: "4.20 - 5.20", emoji: "♉" },
+  gemini: { name: "쌍둥이자리", period: "5.21 - 6.21", emoji: "♊" },
+  cancer: { name: "게자리", period: "6.22 - 7.22", emoji: "♋" },
+  leo: { name: "사자자리", period: "7.23 - 8.22", emoji: "♌" },
+  virgo: { name: "처녀자리", period: "8.23 - 9.22", emoji: "♍" },
+  libra: { name: "천칭자리", period: "9.23 - 10.22", emoji: "♎" },
+  scorpio: { name: "전갈자리", period: "10.23 - 11.21", emoji: "♏" },
+  sagittarius: { name: "사수자리", period: "11.22 - 12.21", emoji: "♐" },
+  capricorn: { name: "염소자리", period: "12.22 - 1.19", emoji: "♑" },
+  aquarius: { name: "물병자리", period: "1.20 - 2.18", emoji: "♒" },
+  pisces: { name: "물고기자리", period: "2.19 - 3.20", emoji: "♓" }
 };
 
-const MONTHLY_FORTUNE = {
-  leo: {
-    overall: 88,
-    love: 92,
-    career: 85,
-    wealth: 80,
-    summary: "태양의 힘이 가장 강한 시기, 당신의 매력이 빛나는 한 달입니다.",
-    keyword: ["리더십", "창의성", "자신감"],
-    advice: "자신감을 가지고 앞으로 나아가세요. 당신의 카리스마가 주변 사람들을 이끌 것입니다.",
-    luckyStone: "페리도트",
-    luckyColor: "골드",
-    luckyDay: "일요일"
-  },
-  scorpio: {
-    overall: 82,
-    love: 88,
-    career: 78,
-    wealth: 85,
-    summary: "직감과 통찰력이 뛰어난 시기, 숨겨진 기회를 발견할 것입니다.",
-    keyword: ["직감", "변화", "깊이"],
-    advice: "표면적인 것에 속지 마세요. 당신의 직감을 믿고 깊이 있게 탐구하세요.",
-    luckyStone: "토파즈",
-    luckyColor: "진홍색",
-    luckyDay: "화요일"
-  },
-  pisces: {
-    overall: 75,
-    love: 90,
-    career: 65,
-    wealth: 70,
-    summary: "감성과 직감이 발달하는 시기, 예술적 영감이 풍부해집니다.",
-    keyword: ["감성", "직감", "영감"],
-    advice: "논리보다는 감정과 직감을 따라가세요. 예술적 활동이 도움이 될 것입니다.",
-    luckyStone: "아쿠아마린",
-    luckyColor: "바다색",
-    luckyDay: "목요일"
+const ZodiacFortuneResult = ({ groupKey }: { groupKey: string }) => {
+  const { fortuneData, isLoading, isGenerating, error, refresh } = useSharedFortune({
+    fortuneType: 'zodiac',
+    groupKey,
+    enabled: !!groupKey,
+  });
+
+  if (isLoading || isGenerating) {
+    return (
+      <div className="text-center p-8 flex flex-col items-center justify-center min-h-[200px]">
+        <Loader2 className="w-8 h-8 animate-spin text-indigo-500 mb-4" />
+        <p className="font-semibold">{isGenerating ? '운세 생성 중...' : '운세 로딩 중...'}</p>
+        <p className="text-sm text-muted-foreground">AI가 오늘의 별자리 운세를 분석하고 있습니다.</p>
+      </div>
+    );
   }
+
+  if (error) {
+    return (
+       <div className="text-center p-8 text-red-500">
+        <AlertCircleIcon className="w-8 h-8 mx-auto mb-2" />
+        <p className="font-semibold">오류 발생</p>
+        <p className="text-sm">{error}</p>
+      </div>
+    );
+  }
+  
+  if (!fortuneData) {
+    return <div className="text-center p-8 text-muted-foreground">운세 정보를 불러올 수 없습니다.</div>;
+  }
+
+  return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+        <Card>
+            <CardHeader>
+                <CardTitle>오늘의 {ZODIAC_SIGNS[groupKey].name} 운세</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <h3 className="font-bold mb-2">요약</h3>
+                <p className="text-muted-foreground mb-4">{fortuneData.summary}</p>
+                <h3 className="font-bold mb-2">상세 설명</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">{fortuneData.details}</p>
+            </CardContent>
+        </Card>
+        <Button onClick={refresh} variant="outline" className="w-full">다시 불러오기</Button>
+      </motion.div>
+  );
 };
+
 
 export default function ZodiacFortunePage() {
   const [selectedZodiac, setSelectedZodiac] = useState<string>("");
-  const [currentFortune, setCurrentFortune] = useState<any>(null);
-  const [currentMonth] = useState(() => {
-    const now = new Date();
-    return `${String(now.getFullYear()).padStart(4, '0')}년 ${String(now.getMonth() + 1).padStart(2, '0')}월`;
-  });
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
-
-  useEffect(() => {
-    // 로컬 스토리지에서 사용자 별자리 불러오기
-    const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        if (profile.zodiac) {
-          setSelectedZodiac(profile.zodiac);
-          setCurrentFortune(MONTHLY_FORTUNE[profile.zodiac as keyof typeof MONTHLY_FORTUNE] || MONTHLY_FORTUNE.leo);
-        }
-      } catch (error) {
-        console.error("Failed to parse user profile:", error);
-      }
-    }
-  }, []);
-
-  const handleZodiacSelect = (zodiac: string) => {
-    setSelectedZodiac(zodiac);
-    setCurrentFortune(MONTHLY_FORTUNE[zodiac as keyof typeof MONTHLY_FORTUNE] || MONTHLY_FORTUNE.leo);
-    
-    // 사용자 프로필에 별자리 저장
-    const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile) {
-      try {
-        const profile = JSON.parse(savedProfile);
-        profile.zodiac = zodiac;
-        localStorage.setItem("userProfile", JSON.stringify(profile));
-      } catch (error) {
-        console.error("Failed to save zodiac:", error);
-      }
-    }
-  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100
-      }
-    }
+    visible: { y: 0, opacity: 1 }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-indigo-900/20 dark:to-purple-900/20">
       <AppHeader 
-        title="별자리 월간운세"
+        title="오늘의 띠별 운세"
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
       />
@@ -155,73 +106,67 @@ export default function ZodiacFortunePage() {
         initial="hidden"
         animate="visible"
       >
-        {/* 헤더 섹션 */}
         <motion.div variants={itemVariants} className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <StarIcon className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-              별자리 월간운세
+              오늘의 별자리 운세
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            {currentMonth} 별이 전하는 메시지를 확인해보세요
-          </p>
         </motion.div>
 
-        {/* 별자리 선택 */}
-        {!selectedZodiac && (
-          <motion.div variants={itemVariants}>
-            <Card className="mb-8 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
-              <CardHeader>
-                <CardTitle className="text-center flex items-center justify-center gap-2 text-gray-900 dark:text-gray-100">
-                  <SparklesIcon className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                  당신의 별자리를 선택해주세요
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                  {Object.entries(ZODIAC_SIGNS).map(([sign, info]) => (
-                    <motion.div
-                      key={sign}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Button
-                        variant="outline"
-                        className="h-auto p-4 flex flex-col items-center gap-2 w-full bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600"
-                        onClick={() => handleZodiacSelect(sign)}
+        <AnimatePresence mode="wait">
+          {!selectedZodiac ? (
+            <motion.div
+              key="selection"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Card className="mb-8 bg-white dark:bg-gray-800">
+                <CardHeader>
+                  <CardTitle className="text-center flex items-center justify-center gap-2">
+                    <SparklesIcon className="h-5 w-5 text-indigo-500" />
+                    별자리를 선택해주세요
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {Object.entries(ZODIAC_SIGNS).map(([sign, info]) => (
+                      <motion.div
+                        key={sign}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                       >
-                        <span className="text-3xl">{info.emoji}</span>
-                        <span className="font-bold text-sm">{info.name}</span>
-                        <span className="text-xs text-gray-600 dark:text-gray-400">{info.period}</span>
-                      </Button>
-                    </motion.div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-
-        {/* 선택된 별자리 정보 */}
-        {selectedZodiac && currentFortune && (
-          <>
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6 border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50">
+                        <Button
+                          variant="outline"
+                          className="h-auto p-4 flex flex-col items-center gap-2 w-full"
+                          onClick={() => setSelectedZodiac(sign)}
+                        >
+                          <span className="text-4xl">{info.emoji}</span>
+                          <span className="font-bold">{info.name}</span>
+                        </Button>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="max-w-2xl mx-auto"
+            >
+              <Card className="mb-6">
                 <CardHeader className="text-center">
                   <div className="flex items-center justify-center gap-3 mb-2">
-                    <span className="text-5xl">{ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.emoji}</span>
-                    <div>
+                    <span className="text-5xl">{ZODIAC_SIGNS[selectedZodiac].emoji}</span>
                       <h2 className="text-2xl font-bold text-indigo-700">
-                        {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.name}
+                        {ZODIAC_SIGNS[selectedZodiac].name}
                       </h2>
-                      <p className="text-indigo-600">
-                        {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.period}
-                      </p>
-                      <Badge variant="outline" className="mt-1">
-                        {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element} 원소
-                      </Badge>
-                    </div>
                   </div>
                   <Button 
                     variant="outline" 
@@ -233,244 +178,10 @@ export default function ZodiacFortunePage() {
                   </Button>
                 </CardHeader>
               </Card>
+              <ZodiacFortuneResult groupKey={selectedZodiac} />
             </motion.div>
-
-            {/* 이번 달 종합 운세 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6 border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50">
-                <CardHeader className="text-center">
-                  <CardTitle className="flex items-center justify-center gap-2 text-purple-700">
-                    <CalendarIcon className="h-5 w-5" />
-                    {currentMonth} 종합 운세
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <div className="text-4xl font-bold text-purple-600 mb-2">{currentFortune.overall}점</div>
-                  <Progress value={currentFortune.overall} className="mb-4" />
-                  <p className="text-sm text-gray-600 mb-4">
-                    {currentFortune.summary}
-                  </p>
-                  
-                  <div className="flex flex-wrap justify-center gap-2">
-                    {currentFortune.keyword.map((keyword: string, index: number) => (
-                      <motion.div
-                        key={keyword}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.6 + index * 0.1 }}
-                      >
-                        <Badge variant="secondary" className="bg-white/20 text-purple-700 border-purple-300">
-                          #{keyword}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 분야별 운세 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="text-center">분야별 월간 운세</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-pink-50 rounded-lg">
-                      <HeartIcon className="h-6 w-6 text-pink-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-pink-600">{currentFortune.love}</div>
-                      <div className="text-sm text-gray-600">연애운</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-lg">
-                      <BriefcaseIcon className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-blue-600">{currentFortune.career}</div>
-                      <div className="text-sm text-gray-600">취업운</div>
-                    </div>
-                    <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                      <CoinsIcon className="h-6 w-6 text-yellow-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-yellow-600">{currentFortune.wealth}</div>
-                      <div className="text-sm text-gray-600">금전운</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 별자리별 특화 조언 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <StarIcon className="h-5 w-5 text-indigo-600" />
-                    {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.name} 맞춤 조언
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg">
-                    <p className="text-sm text-indigo-700 leading-relaxed">
-                      {currentFortune.advice}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 이번 달 주요 운세 포인트 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MoonIcon className="h-5 w-5 text-blue-600" />
-                    이번 달 주요 운세 포인트
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-blue-800 mb-2">상반기 (1-15일)</h4>
-                      <p className="text-sm text-blue-700">
-                        새로운 시작에 유리한 시기입니다. 계획했던 일들을 실행에 옮기기 좋은 때입니다.
-                      </p>
-                    </div>
-                    
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-purple-800 mb-2">하반기 (16-31일)</h4>
-                      <p className="text-sm text-purple-700">
-                        인간관계에 집중하는 시기입니다. 소통과 협력을 통해 좋은 결과를 얻을 수 있습니다.
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 이번 달 추천 활동 */}
-            <motion.div variants={itemVariants}>
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <SunIcon className="h-5 w-5 text-yellow-500" />
-                    이번 달 추천 활동
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '불' && (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                          <StarIcon className="h-5 w-5 text-orange-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">적극적인 도전</div>
-                            <div className="text-sm text-gray-600">새로운 프로젝트나 활동에 적극적으로 참여하세요</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-red-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">리더십 발휘</div>
-                            <div className="text-sm text-gray-600">팀이나 그룹에서 주도적인 역할을 맡아보세요</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    
-                    {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '물' && (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-                          <MoonIcon className="h-5 w-5 text-blue-500 dark:text-blue-400 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-gray-800 dark:text-gray-200">감정 정리</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">내면의 목소리에 귀 기울이고 감정을 정리하는 시간</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-teal-50 dark:bg-teal-900/30 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-teal-500 dark:text-teal-400 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-gray-800 dark:text-gray-200">창작 활동</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">예술이나 창작 활동을 통해 영감을 표현하세요</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    
-                    {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '공기' && (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-sky-50 rounded-lg">
-                          <UserIcon className="h-5 w-5 text-sky-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">소통 강화</div>
-                            <div className="text-sm text-gray-600">다양한 사람들과의 대화와 교류에 집중하세요</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-cyan-50 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-cyan-500 mt-0.5" />
-                          <div>
-                            <div className="font-medium">학습과 연구</div>
-                            <div className="text-sm text-gray-600">새로운 지식 습득이나 연구 활동이 도움이 됩니다</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                    
-                    {ZODIAC_SIGNS[selectedZodiac as keyof typeof ZODIAC_SIGNS]?.element === '땅' && (
-                      <>
-                        <div className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                          <CheckCircleIcon className="h-5 w-5 text-green-500 dark:text-green-400 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-gray-800 dark:text-gray-200">안정적인 계획</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">체계적이고 실용적인 계획 수립에 집중하세요</div>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg">
-                          <AlertCircleIcon className="h-5 w-5 text-emerald-500 dark:text-emerald-400 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-gray-800 dark:text-gray-200">건강 관리</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">규칙적인 생활과 건강 관리에 신경 쓰세요</div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* 이번 달 행운 아이템 */}
-            <motion.div variants={itemVariants}>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <SparklesIcon className="h-5 w-5 text-yellow-500" />
-                    이번 달 행운 아이템
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <div className="text-sm font-medium text-purple-800">행운의 보석</div>
-                      <div className="text-lg font-bold text-purple-600">{currentFortune.luckyStone}</div>
-                    </div>
-                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                      <div className="text-sm font-medium text-yellow-800">행운의 색상</div>
-                      <div className="text-lg font-bold text-yellow-600">{currentFortune.luckyColor}</div>
-                    </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-sm font-medium text-blue-800">행운의 요일</div>
-                      <div className="text-lg font-bold text-blue-600">{currentFortune.luckyDay}</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-sm font-medium text-green-800">행운의 숫자</div>
-                      <div className="text-lg font-bold text-green-600">
-                        {selectedZodiac === 'leo' ? '5' : selectedZodiac === 'scorpio' ? '8' : '3'}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </>
-        )}
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );

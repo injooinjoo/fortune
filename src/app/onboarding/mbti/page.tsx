@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Brain, Star, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { saveUserInfo, updateUserProfileFromOnboarding } from "@/lib/user-storage";
 
 const MBTI_TYPES = [
   { type: 'INTJ', title: 'Architect', description: '전략적 사고가' },
@@ -41,7 +42,7 @@ export default function MbtiPage() {
     setIsModalOpen(false);
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (!selectedMbti || !selectedGender || !selectedBirthTime) {
       toast({
         title: "모든 필드를 선택해주세요",
@@ -51,18 +52,31 @@ export default function MbtiPage() {
       return;
     }
 
-    // 모든 정보를 로컬 스토리지에 저장
-    localStorage.setItem("mbti", selectedMbti);
-    localStorage.setItem("gender", selectedGender);
-    localStorage.setItem("birthTime", selectedBirthTime);
-    
-    // 홈페이지로 이동
-    router.push("/home");
-    
-    toast({
-      title: "온보딩 완료!",
-      description: "이제 개인화된 운세를 확인해보세요.",
+    // 모든 정보를 user-storage를 통해 한번에 저장
+    saveUserInfo({
+      mbti: selectedMbti,
+      gender: selectedGender,
+      birthTime: selectedBirthTime
     });
+
+    // DB와 프로필 동기화
+    const { success, error } = await updateUserProfileFromOnboarding();
+
+    if (success) {
+      toast({
+        title: "온보딩 완료!",
+        description: "이제 개인화된 운세를 확인해보세요.",
+      });
+      // 홈페이지로 이동
+      router.push("/home");
+    } else {
+      toast({
+        title: "프로필 저장 실패",
+        description: "프로필을 DB에 저장하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        variant: "destructive",
+      });
+      console.error("DB 동기화 실패:", error);
+    }
   };
 
   const selectedMbtiInfo = MBTI_TYPES.find(type => type.type === selectedMbti);
