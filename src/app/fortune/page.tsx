@@ -10,6 +10,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
+import { useScrollSpy } from "@/hooks/use-scroll-spy";
+import { useHaptic } from "@/hooks/use-haptic";
 import { 
   Heart, 
   Star,
@@ -53,7 +55,118 @@ interface FortuneCategory {
   gradient: string;
   badge?: string;
   category: FortuneCategoryType;
+  detailedDescription?: string; // 포커스 시 표시될 상세 설명
+  theme?: {
+    concept: string;
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+    focusGradient: string;
+    backgroundGradient: string;
+    emoji: string;
+    cardShape?: string; // clip-path or custom shape
+    specialEffect?: string; // unique effect type
+    animation?: string; // custom animation
+  };
 }
+
+// 기본 테마 정의 함수 (카드 모양 통일)
+const getDefaultTheme = (category: FortuneCategoryType) => {
+  const themes = {
+    love: {
+      concept: "사랑과 인연의 기운",
+      primaryColor: "#ec4899",
+      secondaryColor: "#f9a8d4", 
+      accentColor: "#fbbf24",
+      focusGradient: "from-pink-100 via-rose-100 to-red-100",
+      backgroundGradient: "from-pink-50/80 via-rose-50/60 to-red-50/40",
+      emoji: "💖",
+      specialEffect: "heart-particles",
+      animation: "love-pulse"
+    },
+    career: {
+      concept: "성공과 발전의 기운",
+      primaryColor: "#3b82f6",
+      secondaryColor: "#93c5fd",
+      accentColor: "#c0c7d1",
+      focusGradient: "from-blue-100 via-indigo-100 to-slate-100",
+      backgroundGradient: "from-blue-50/80 via-indigo-50/60 to-slate-50/40",
+      emoji: "🚀",
+      specialEffect: "success-particles",
+      animation: "success-rise"
+    },
+    money: {
+      concept: "풍요와 번영의 기운",
+      primaryColor: "#f59e0b",
+      secondaryColor: "#fcd34d",
+      accentColor: "#10b981",
+      focusGradient: "from-yellow-100 via-amber-100 to-orange-100",
+      backgroundGradient: "from-yellow-50/80 via-amber-50/60 to-orange-50/40",
+      emoji: "💰",
+      specialEffect: "coin-particles",
+      animation: "wealth-shine"
+    },
+    health: {
+      concept: "자연과 생명의 기운",
+      primaryColor: "#10b981",
+      secondaryColor: "#6ee7b7",
+      accentColor: "#3b82f6",
+      focusGradient: "from-green-100 via-emerald-100 to-teal-100",
+      backgroundGradient: "from-green-50/80 via-emerald-50/60 to-teal-50/40",
+      emoji: "🌿",
+      specialEffect: "energy-particles",
+      animation: "nature-breathe"
+    },
+    traditional: {
+      concept: "전통과 신비의 기운",
+      primaryColor: "#d97706",
+      secondaryColor: "#fbbf24",
+      accentColor: "#7c3aed",
+      focusGradient: "from-amber-100 via-orange-100 to-yellow-100",
+      backgroundGradient: "from-amber-50/80 via-orange-50/60 to-yellow-50/40",
+      emoji: "🏛️",
+      specialEffect: "mystical-particles",
+      animation: "traditional-rotate"
+    },
+    lifestyle: {
+      concept: "일상의 마법과 행복",
+      primaryColor: "#8b5cf6",
+      secondaryColor: "#c4b5fd",
+      accentColor: "#06b6d4",
+      focusGradient: "from-violet-100 via-purple-100 to-indigo-100",
+      backgroundGradient: "from-violet-50/80 via-purple-50/60 to-indigo-50/40",
+      emoji: "✨",
+      specialEffect: "magic-particles",
+      animation: "sparkle-twinkle"
+    }
+  };
+  return themes[category] || themes.lifestyle;
+};
+
+// 각 운세별 상세 설명 텍스트
+const getDetailedDescription = (category: FortuneCategoryType, title: string) => {
+  const descriptions: Record<string, string> = {
+    // 연애·인연
+    love: "새로운 사랑의 시작과 기존 관계의 발전 가능성을 살펴봅니다. 당신의 마음이 열리고 상대방과의 깊은 연결을 느낄 수 있는 시기입니다.",
+    marriage: "평생의 동반자를 만날 수 있는 운명적 만남의 시기와 결혼 생활의 행복도를 확인해보세요.",
+    // 취업·사업  
+    career: "직업적 성장과 새로운 기회의 문이 열리는 시기입니다. 당신의 능력이 인정받고 성공으로 이어질 가능성을 살펴봅니다.",
+    business: "창업이나 사업 확장에 유리한 시기와 투자 타이밍을 확인할 수 있습니다.",
+    // 재물·투자
+    wealth: "금전적 풍요와 재물 증식의 기회가 찾아올 시기입니다. 현명한 투자와 저축으로 안정적인 미래를 준비하세요.",
+    // 건강·라이프
+    biorhythm: "몸과 마음의 자연스러운 리듬을 이해하고 최적의 컨디션을 유지할 수 있는 방법을 알려드립니다.",
+    moving: "새로운 환경에서의 행복한 시작과 긍정적인 변화를 맞이할 수 있는 최적의 시기를 찾아보세요.",
+    // 전통·사주
+    saju: "타고난 운명과 사주에 담긴 깊은 의미를 통해 인생의 방향을 찾고 현명한 선택을 할 수 있도록 도와드립니다.",
+    tojeong: "전통 토정비결의 지혜로 새해의 길흉을 미리 살펴보고 준비할 수 있습니다.",
+    // 생활·운세
+    today: "오늘 하루를 더욱 의미있게 보낼 수 있는 조언과 긍정적인 에너지를 받아보세요.",
+    hourly: "시간대별로 달라지는 운의 흐름을 파악하여 중요한 일정을 최적의 시간에 배치하세요."
+  };
+  
+  return descriptions[title.toLowerCase()] || descriptions[category] || "당신만을 위한 특별한 운세 해석을 통해 더 나은 미래를 준비하세요.";
+};
 
 // 필터 카테고리 정의
 const filterCategories = [
@@ -71,67 +184,133 @@ const fortuneCategories: FortuneCategory[] = [
   {
     id: "love",
     title: "연애운",
-    description: "사랑과 인연의 흐름을 확인하세요",
+    description: "💕 사랑과 인연의 흐름을 확인하세요",
     icon: Heart,
     route: "/fortune/love",
     color: "pink",
     gradient: "from-pink-50 to-red-50",
     badge: "인기",
-    category: "love"
+    category: "love",
+    detailedDescription: "새로운 사랑의 시작과 기존 관계의 발전 가능성을 살펴봅니다. 당신의 마음이 열리고 상대방과의 깊은 연결을 느낄 수 있는 시기입니다.",
+    theme: {
+      concept: "로맨틱한 설렘과 따뜻한 사랑",
+      primaryColor: "#ec4899", // pink-500
+      secondaryColor: "#f9a8d4", // pink-300
+      accentColor: "#fbbf24", // amber-400 (황금)
+      focusGradient: "from-pink-100 via-rose-100 to-red-100",
+      backgroundGradient: "from-pink-50/80 via-rose-50/60 to-red-50/40",
+      emoji: "💖",
+      specialEffect: "heart-particles",
+      animation: "love-pulse"
+    }
   },
   {
     id: "marriage",
     title: "결혼운",
-    description: "평생의 동반자와의 인연을 확인하세요",
+    description: "💍 평생의 동반자와의 인연을 확인하세요",
     icon: Heart,
     route: "/fortune/marriage",
     color: "rose",
     gradient: "from-rose-50 to-pink-50",
     badge: "특별",
-    category: "love"
+    category: "love",
+    detailedDescription: "평생의 동반자를 만날 수 있는 운명적 만남의 시기와 결혼 생활의 행복도를 확인해보세요.",
+    theme: {
+      concept: "영원한 사랑과 약속",
+      primaryColor: "#f43f5e", // rose-500
+      secondaryColor: "#fda4af", // rose-300
+      accentColor: "#fbbf24", // amber-400 (황금)
+      focusGradient: "from-rose-100 via-pink-100 to-red-100",
+      backgroundGradient: "from-rose-50/80 via-pink-50/60 to-red-50/40",
+      emoji: "💍",
+      specialEffect: "ring-sparkle",
+      animation: "wedding-bells"
+    }
   },
   {
     id: "compatibility",
     title: "궁합",
-    description: "두 사람의 궁합을 확인하세요",
+    description: "💑 두 사람의 궁합을 확인하세요",
     icon: Users,
     route: "/fortune/compatibility",
     color: "pink",
     gradient: "from-pink-50 to-rose-50",
-    category: "love"
+    category: "love",
+    theme: {
+      concept: "조화로운 인연의 만남",
+      primaryColor: "#ec4899", // pink-500
+      secondaryColor: "#f9a8d4", // pink-300
+      accentColor: "#8b5cf6", // violet-500
+      focusGradient: "from-pink-100 via-rose-100 to-violet-100",
+      backgroundGradient: "from-pink-50/80 via-rose-50/60 to-violet-50/40",
+      emoji: "💑"
+    }
   },
   // 취업·사업
   {
     id: "career",
     title: "취업운",
-    description: "커리어와 성공의 길을 찾아보세요",
+    description: "💼 커리어와 성공의 길을 찾아보세요",
     icon: Briefcase,
     route: "/fortune/career",
     color: "blue",
     gradient: "from-blue-50 to-indigo-50",
-    category: "career"
+    category: "career",
+    detailedDescription: "직업적 성장과 새로운 기회의 문이 열리는 시기입니다. 당신의 능력이 인정받고 성공으로 이어질 가능성을 살펴봅니다.",
+    theme: {
+      concept: "전문성과 성공의 상승",
+      primaryColor: "#3b82f6", // blue-500
+      secondaryColor: "#93c5fd", // blue-300
+      accentColor: "#c0c7d1", // slate-300 (실버)
+      focusGradient: "from-blue-100 via-indigo-100 to-slate-100",
+      backgroundGradient: "from-blue-50/80 via-indigo-50/60 to-slate-50/40",
+      emoji: "🚀",
+      specialEffect: "stair-climb",
+      animation: "success-rise"
+    }
   },
   {
     id: "business",
     title: "사업운",
-    description: "성공적인 창업과 사업 운영을 위한 운세를 확인하세요",
+    description: "📈 성공적인 창업과 사업 운영을 위한 운세를 확인하세요",
     icon: TrendingUp,
     route: "/fortune/business",
     color: "indigo",
     gradient: "from-indigo-50 to-purple-50",
     badge: "추천",
-    category: "career"
+    category: "career",
+    theme: {
+      concept: "야망과 혁신의 도전",
+      primaryColor: "#6366f1", // indigo-500
+      secondaryColor: "#a5b4fc", // indigo-300
+      accentColor: "#c0c7d1", // slate-300 (실버)
+      focusGradient: "from-indigo-100 via-purple-100 to-slate-100",
+      backgroundGradient: "from-indigo-50/80 via-purple-50/60 to-slate-50/40",
+      emoji: "💪"
+    }
   },
   // 재물·투자
   {
     id: "wealth",
     title: "금전운",
-    description: "재물과 투자의 운을 살펴보세요",
+    description: "💰 재물과 투자의 운을 살펴보세요",
     icon: Coins,
     route: "/fortune/wealth",
     color: "yellow",
     gradient: "from-yellow-50 to-orange-50",
-    category: "money"
+    category: "money",
+    detailedDescription: "금전적 풍요와 재물 증식의 기회가 찾아올 시기입니다. 현명한 투자와 저축으로 안정적인 미래를 준비하세요.",
+    theme: {
+      concept: "황금빛 풍요와 번영",
+      primaryColor: "#f59e0b", // amber-500
+      secondaryColor: "#fcd34d", // amber-300
+      accentColor: "#10b981", // emerald-500
+      focusGradient: "from-yellow-100 via-amber-100 to-orange-100",
+      backgroundGradient: "from-yellow-50/80 via-amber-50/60 to-orange-50/40",
+      emoji: "✨",
+      specialEffect: "coin-waterfall",
+      animation: "wealth-shine"
+    }
   },
   {
     id: "lucky-investment",
@@ -604,9 +783,16 @@ export default function FortunePage() {
   const [selectedCategory, setSelectedCategory] = useState<FortuneCategoryType>('all');
   const [showAdLoading, setShowAdLoading] = useState(false);
   const [pendingFortune, setPendingFortune] = useState<{ route: string; title: string } | null>(null);
+  const [focusedCardId, setFocusedCardId] = useState<string | null>(null);
+  const [currentCategoryTitle, setCurrentCategoryTitle] = useState<string>('');
+  const [currentTheme, setCurrentTheme] = useState<string>('');
+  const [clickedCardId, setClickedCardId] = useState<string | null>(null);
   
   // 최근 본 운세 추가를 위한 hook
   useFortuneStream();
+  
+  // 햅틱 피드백 훅
+  const { snapFeedback, selectFeedback } = useHaptic();
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -642,10 +828,38 @@ export default function FortunePage() {
     ? fortuneCategories 
     : fortuneCategories.filter(category => category.category === selectedCategory);
 
-const handleCategoryClick = (route: string, title: string) => {
+  // 카드 ID 목록 생성
+  const cardIds = filteredCategories.map(category => `fortune-card-${category.id}`);
+
+  // 스크롤 스파이 - 화면 중앙의 카드 추적
+  const activeCardId = useScrollSpy(cardIds, {
+    rootMargin: '-45% 0px -45% 0px', // 화면 중앙 10% 영역만 감지
+    threshold: 0.5,
+    onActiveChange: (activeId) => {
+      const cardId = activeId?.replace('fortune-card-', '');
+      const activeCard = filteredCategories.find(card => card.id === cardId);
+      if (activeCard && focusedCardId !== cardId) {
+        setFocusedCardId(cardId || null);
+        setCurrentCategoryTitle(activeCard.title);
+        setCurrentTheme(activeCard.category);
+        snapFeedback(); // 햅틱 피드백
+      }
+    }
+  });
+
+  const handleCategoryClick = (route: string, title: string, cardId: string) => {
     // 프리미엄, 일반 사용자 모두 로딩 화면 표시 (분석하는 척)
-    setPendingFortune({ route, title });
-    setShowAdLoading(true);
+    selectFeedback(); // 선택 햅틱 피드백
+    
+    // 클릭 효과 애니메이션 트리거
+    setClickedCardId(cardId);
+    
+    // 500ms 후 클릭 효과 제거하고 페이지 전환
+    setTimeout(() => {
+      setClickedCardId(null);
+      setPendingFortune({ route, title });
+      setShowAdLoading(true);
+    }, 500);
   };
 
   // 광고 로딩 완료 후 운세 페이지로 이동
@@ -668,7 +882,7 @@ const handleCategoryClick = (route: string, title: string) => {
     router.push('/membership');
   };
 
-// 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
+  // Check if ad loading screen should be displayed
   if (showAdLoading && pendingFortune) {
     const userProfile = getUserProfile();
     const isPremium = isPremiumUser(userProfile);
@@ -684,16 +898,25 @@ const handleCategoryClick = (route: string, title: string) => {
     );
   }
 
+  // Generate conditional class names
+  const themeClass = currentTheme 
+    ? `theme-${currentTheme}` 
+    : 'bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50';
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-25 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
+    <div 
+      className="min-h-screen"
+    >
       <AppHeader
         title="운세"
         showBack={false}
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
+        dynamicTitle={currentCategoryTitle}
+        showDynamicTitle={!!currentCategoryTitle}
       />
       <motion.div
-        className="pb-32 px-4 space-y-6 pt-4"
+        className="fortune-scroll-container pb-[50vh] pt-[40vh] px-4 min-h-screen overflow-y-auto"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -818,50 +1041,224 @@ const handleCategoryClick = (route: string, title: string) => {
               )}
             </div>
             
-            <div className="grid grid-cols-1 gap-4">
-              {filteredCategories.map((category, index) => (
-                <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleCategoryClick(category.route, category.title)}
-                  className="cursor-pointer"
-                >
-                  <Card className="hover:shadow-md transition-all duration-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 hover:border-purple-300 dark:hover:border-purple-500">
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4">
-                        <div className="bg-purple-100 dark:bg-purple-900/30 rounded-full w-12 h-12 flex items-center justify-center flex-shrink-0">
-                          <category.icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 truncate`}>
-                              {category.title}
-                            </h3>
-                            {category.badge && (
-                              <Badge 
-                                variant="secondary" 
-                                className="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs"
-                              >
-                                {category.badge}
-                              </Badge>
-                            )}
+            <div className="grid grid-cols-1 gap-8">
+              {filteredCategories.map((category, index) => {
+                const isFocused = focusedCardId === category.id;
+                const theme = category.theme || getDefaultTheme(category.category);
+                
+                const getIconAnimationClass = () => {
+                  switch (category.category) {
+                    case 'love': return 'fortune-icon-love';
+                    case 'money': return 'fortune-icon-money';
+                    case 'health': return 'fortune-icon-health';
+                    case 'traditional': return 'fortune-icon-traditional';
+                    case 'lifestyle': return 'fortune-icon-lifestyle';
+                    case 'career': return 'fortune-icon-career';
+                    default: return '';
+                  }
+                };
+
+                return (
+                  <motion.div
+                    key={category.id}
+                    id={`fortune-card-${category.id}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: 0,
+                      scale: isFocused ? 1.08 : 1
+                    }}
+                    transition={{ 
+                      delay: index * 0.05,
+                      scale: { duration: 0.4, ease: "easeOut" }
+                    }}
+                    whileHover={{ scale: isFocused ? 1.1 : 1.03, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleCategoryClick(category.route, category.title, category.id)}
+                    className="fortune-card-snap cursor-pointer"
+                    style={{
+                      minHeight: isFocused ? '140px' : '120px'
+                    }}
+                  >
+                    <Card 
+                      className={`
+                        card-hover-lift card-click-effect hover:shadow-lg transition-all duration-500 border-2 relative overflow-hidden rounded-2xl
+                        ${isFocused 
+                          ? `fortune-card-focused shadow-${category.category} border-opacity-60` 
+                          : 'bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 shadow-md'
+                        }
+                        ${category.category}
+                      `}
+                      style={{
+                        background: isFocused 
+                          ? `linear-gradient(135deg, ${theme.primaryColor}10, ${theme.secondaryColor}20, ${theme.accentColor}10)`
+                          : undefined,
+                        borderColor: isFocused ? theme.primaryColor : undefined,
+                        boxShadow: isFocused 
+                          ? `0 20px 60px ${theme.primaryColor}20, 0 8px 20px ${theme.primaryColor}15` 
+                          : undefined,
+                        minHeight: isFocused ? '160px' : '120px'
+                      }}
+                    >
+                      <CardContent className="p-6 relative overflow-hidden h-full flex flex-col">
+                        {/* 카드 글로우 효과 */}
+                        <div className={`card-glow ${category.category}`} />
+                        
+                        {/* 간소화된 파티클 효과 */}
+                        {isFocused && (
+                          <div className="absolute inset-0 pointer-events-none">
+                            <div className="gold-sparkles">
+                              {[...Array(3)].map((_, i) => (
+                                <div
+                                  key={i}
+                                  className="gold-sparkle"
+                                  style={{
+                                    left: `${20 + i * 30}%`,
+                                    top: `${30 + (i % 2) * 20}%`,
+                                    animationDelay: `${i * 0.4}s`,
+                                  }}
+                                />
+                              ))}
+                            </div>
                           </div>
-                          <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400 leading-relaxed`}>
-                            {category.description}
-                          </p>
+                        )}
+                        
+                        {/* 클릭 시 특수 효과 */}
+                        {clickedCardId === category.id && (
+                          <>
+                            {category.category === 'love' && <div className="love-burst" />}
+                            {category.category === 'career' && <div className="career-success-trail" />}
+                            {category.category === 'money' && <div className="money-coin-shower" />}
+                            {category.category === 'health' && <div className="health-energy-wave" />}
+                            {category.category === 'traditional' && <div className="traditional-mystical" />}
+                            {category.category === 'lifestyle' && <div className="lifestyle-dreams" />}
+                          </>
+                        )}
+
+                        {/* 제목 영역 - 포커스 시 상단으로 이동 */}
+                        <motion.div 
+                          className="relative z-20"
+                          animate={{
+                            y: isFocused ? -10 : 0,
+                            scale: isFocused ? 0.9 : 1
+                          }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                        >
+                          <div className="flex items-center gap-3">
+                            <motion.div 
+                              className={`
+                                rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300
+                                ${isFocused ? 'w-10 h-10' : 'w-12 h-12'}
+                              `}
+                              style={{
+                                background: isFocused 
+                                  ? `linear-gradient(135deg, ${theme.primaryColor}30, ${theme.secondaryColor}40)`
+                                  : `${theme.primaryColor}15`,
+                                border: isFocused ? `2px solid ${theme.primaryColor}40` : 'none'
+                              }}
+                            >
+                              <category.icon 
+                                className={`
+                                  transition-all duration-300
+                                  ${isFocused ? 'w-5 h-5' : 'w-6 h-6'}
+                                `}
+                                style={{ color: isFocused ? theme.primaryColor : theme.secondaryColor }}
+                              />
+                            </motion.div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <motion.h3 
+                                  className={`
+                                    ${isFocused ? fontClasses.text : fontClasses.title} 
+                                    font-bold text-gray-900 dark:text-gray-100 truncate transition-all duration-300
+                                  `}
+                                  style={{
+                                    color: isFocused ? theme.primaryColor : undefined
+                                  }}
+                                animate={isFocused ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+                                transition={{ duration: 0.3 }}
+                              >
+                                {isFocused ? `${theme.emoji} ${category.title}` : category.title}
+                              </motion.h3>
+                              {category.badge && (
+                                <Badge 
+                                  variant="secondary" 
+                                  className="text-xs transition-all duration-300"
+                                  style={{
+                                    background: isFocused ? `${theme.primaryColor}20` : undefined,
+                                    color: isFocused ? theme.primaryColor : undefined,
+                                    borderColor: isFocused ? `${theme.primaryColor}30` : undefined
+                                  }}
+                                >
+                                  {category.badge}
+                                </Badge>
+                              )}
+                              </div>
+                              {!isFocused && (
+                                <motion.p 
+                                  className={`${fontClasses.label} text-gray-600 dark:text-gray-400 mt-1`}
+                                  initial={{ opacity: 1 }}
+                                  animate={{ opacity: isFocused ? 0 : 1 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  {category.description}
+                                </motion.p>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                        
+                        {/* 중앙 설명 영역 - 포커스 시에만 표시 */}
+                        {isFocused && (
+                          <motion.div 
+                            className="flex-1 flex items-center justify-center relative z-10 mt-4"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                          >
+                            <div className="text-center px-4">
+                              <motion.div
+                                className="mb-3"
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                              >
+                                <span className="text-4xl">{theme.emoji}</span>
+                              </motion.div>
+                              <motion.p 
+                                className={`${fontClasses.text} leading-relaxed text-center`}
+                                style={{ color: theme.primaryColor }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.4, duration: 0.6 }}
+                              >
+                                {category.detailedDescription || getDetailedDescription(category.category, category.title)}
+                              </motion.p>
+                            </div>
+                          </motion.div>
+                        )}
+                        
+                        {/* 하단 화살표 - 항상 표시 */}
+                        <div className="flex justify-end items-end relative z-10 mt-auto">
+                          <motion.div
+                            animate={isFocused ? { x: [0, 8, 0] } : { x: 0 }}
+                            transition={{ duration: 1.5, repeat: isFocused ? Infinity : 0 }}
+                          >
+                            <ArrowRight 
+                              className={`
+                                transition-all duration-300
+                                ${isFocused ? 'w-6 h-6' : 'w-5 h-5'}
+                              `}
+                              style={{ 
+                                color: isFocused ? theme.primaryColor : '#94a3b8' 
+                              }}
+                            />
+                          </motion.div>
                         </div>
-                        <div className="flex items-center">
-                          <ArrowRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </motion.div>

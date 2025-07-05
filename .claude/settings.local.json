@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Bash(pkill:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:reactjs.org)",
+      "WebFetch(domain:legacy.reactjs.org)",
+      "WebFetch(domain:react.dev)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(true)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(kill:*)",
+      "Bash(npm install:*)",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
+      "Bash(timeout 30s npm run build)",
+      "Bash(sed:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": []
+  }
+}

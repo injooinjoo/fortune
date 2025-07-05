@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-sf-pro), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
 
 @layer base {
@@ -299,6 +299,1108 @@ body {
   }
 }
 
+/* Fortune Page Scroll Snap */
+.fortune-scroll-container {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-padding-top: 40vh; /* 카드가 중앙에 오도록 */
+  scroll-padding-bottom: 40vh;
+}
+
+.fortune-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.fortune-card-snap {
+  scroll-snap-align: center; /* 중앙 정렬 */
+  scroll-snap-stop: always;
+  min-height: 20vh; /* 최소 높이 보장 */
+}
+
+/* Fortune Card Focus Animation */
+.fortune-card-focused {
+  transform: scale(1.08) translateZ(20px);
+  backdrop-filter: blur(20px);
+  will-change: transform, box-shadow;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.dark .fortune-card-focused {
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* 3D Card Effects */
+.card-3d-hover {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.card-3d-hover:hover {
+  transform: rotateY(5deg) rotateX(-5deg) translateZ(10px);
+}
+
+/* Card Shadows by Type */
+.shadow-love {
+  box-shadow: 
+    0 10px 30px rgba(236, 72, 153, 0.2),
+    0 20px 60px rgba(236, 72, 153, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.shadow-career {
+  box-shadow: 
+    0 10px 30px rgba(59, 130, 246, 0.2),
+    0 20px 60px rgba(59, 130, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.shadow-money {
+  box-shadow: 
+    0 10px 30px rgba(245, 158, 11, 0.3),
+    0 20px 60px rgba(245, 158, 11, 0.15),
+    inset 0 2px 4px rgba(251, 191, 36, 0.3);
+}
+
+.shadow-health {
+  box-shadow: 
+    0 10px 30px rgba(16, 185, 129, 0.2),
+    0 20px 60px rgba(16, 185, 129, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.shadow-traditional {
+  box-shadow: 
+    0 10px 30px rgba(217, 119, 6, 0.2),
+    0 20px 60px rgba(217, 119, 6, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.shadow-lifestyle {
+  box-shadow: 
+    0 10px 30px rgba(139, 92, 246, 0.2),
+    0 20px 60px rgba(139, 92, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Card Shapes - Disabled for Unified Design */
+/* .card-shape-heart {
+  clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+  transform: scale(8);
+} */
+
+/* .card-shape-diamond {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+} */
+
+/* .card-shape-rectangle-sharp {
+  clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%);
+  border-radius: 0;
+} */
+
+/* .card-shape-gold-bar {
+  clip-path: polygon(5% 0%, 95% 0%, 100% 20%, 100% 80%, 95% 100%, 5% 100%, 0% 80%, 0% 20%);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  box-shadow: 
+    inset 0 2px 4px rgba(251, 191, 36, 0.5),
+    inset 0 -2px 4px rgba(217, 119, 6, 0.5),
+    0 4px 16px rgba(245, 158, 11, 0.3);
+} */
+
+/* .card-shape-hexagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+} */
+
+/* .card-shape-octagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+} */
+
+/* .card-shape-circle {
+  border-radius: 50%;
+  aspect-ratio: 1;
+} */
+
+/* .card-shape-shield {
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 50% 85%, 18% 100%, 0% 38%);
+} */
+
+/* .card-shape-scroll {
+  border-radius: 4px 24px 4px 24px;
+  position: relative;
+}
+
+.card-shape-scroll::before,
+.card-shape-scroll::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 10%;
+  background: inherit;
+  filter: brightness(0.8);
+}
+
+.card-shape-scroll::before {
+  top: 0;
+  border-radius: 24px 24px 0 0;
+}
+
+.card-shape-scroll::after {
+  bottom: 0;
+  border-radius: 0 0 24px 24px;
+} */
+
+/* Dynamic Fortune Background */
+.fortune-page-background {
+  transition: background 0.8s ease-in-out;
+  will-change: background;
+}
+
+.fortune-page-background.theme-love {
+  background: linear-gradient(135deg, 
+    rgba(252, 231, 243, 0.3) 0%,
+    rgba(254, 242, 242, 0.2) 50%,
+    rgba(255, 228, 230, 0.1) 100%
+  );
+}
+
+.fortune-page-background.theme-career {
+  background: linear-gradient(135deg, 
+    rgba(219, 234, 254, 0.3) 0%,
+    rgba(224, 231, 255, 0.2) 50%,
+    rgba(248, 250, 252, 0.1) 100%
+  );
+}
+
+.fortune-page-background.theme-money {
+  background: linear-gradient(135deg, 
+    rgba(254, 243, 199, 0.3) 0%,
+    rgba(255, 237, 213, 0.2) 50%,
+    rgba(255, 251, 235, 0.1) 100%
+  );
+}
+
+.fortune-page-background.theme-health {
+  background: linear-gradient(135deg, 
+    rgba(209, 250, 229, 0.3) 0%,
+    rgba(167, 243, 208, 0.2) 50%,
+    rgba(204, 251, 241, 0.1) 100%
+  );
+}
+
+.fortune-page-background.theme-traditional {
+  background: linear-gradient(135deg, 
+    rgba(254, 243, 199, 0.3) 0%,
+    rgba(255, 237, 213, 0.2) 50%,
+    rgba(254, 252, 232, 0.1) 100%
+  );
+}
+
+.fortune-page-background.theme-lifestyle {
+  background: linear-gradient(135deg, 
+    rgba(237, 233, 254, 0.3) 0%,
+    rgba(221, 214, 254, 0.2) 50%,
+    rgba(224, 231, 255, 0.1) 100%
+  );
+}
+
+/* Fortune Type Specific Animations */
+@keyframes heart-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes love-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.4));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 40px rgba(236, 72, 153, 0.6));
+  }
+}
+
+@keyframes wedding-bells {
+  0%, 100% { transform: rotate(-5deg); }
+  25% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes success-rise {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+@keyframes wealth-shine {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 10px rgba(245, 158, 11, 0.4));
+  }
+  50% { 
+    filter: brightness(1.2) drop-shadow(0 0 20px rgba(245, 158, 11, 0.8));
+  }
+}
+
+@keyframes coin-flip {
+  0% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+@keyframes energy-wave {
+  0% { transform: scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.5) rotate(360deg); opacity: 0; }
+}
+
+@keyframes traditional-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+@keyframes career-rise {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
+}
+
+/* Fortune Type Icons */
+.fortune-icon-love { animation: heart-pulse 2s ease-in-out infinite; }
+.fortune-icon-money { animation: coin-flip 3s ease-in-out infinite; }
+.fortune-icon-health { animation: energy-wave 2s ease-in-out infinite; }
+.fortune-icon-traditional { animation: traditional-rotate 8s linear infinite; }
+.fortune-icon-lifestyle { animation: sparkle-twinkle 1.5s ease-in-out infinite; }
+.fortune-icon-career { animation: career-rise 2s ease-in-out infinite alternate; }
+
+/* Enhanced Particle Effects */
+.heart-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heart-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ec4899;
+  border-radius: 50%;
+  animation: float-up 2.5s ease-out infinite;
+  filter: drop-shadow(0 0 3px rgba(236, 72, 153, 0.4));
+}
+
+.heart-particle::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ec4899;
+  border-radius: 50%;
+  top: -4px;
+  left: -4px;
+  transform: rotate(45deg);
+}
+
+.heart-particle::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #ec4899;
+  border-radius: 50%;
+  top: -4px;
+  right: -4px;
+  transform: rotate(-45deg);
+}
+
+/* Rose Petals for Love Theme */
+.rose-petals {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.rose-petal {
+  position: absolute;
+  width: 10px;
+  height: 6px;
+  background: linear-gradient(45deg, #f9a8d4, #ec4899);
+  border-radius: 50% 50% 50% 0;
+  animation: petal-fall 3s ease-out infinite;
+  transform-origin: center;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-30px) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-60px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Coin Particles */
+.coin-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.coin-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  border-radius: 50%;
+  animation: coin-fall 1.5s ease-out infinite;
+}
+
+@keyframes coin-fall {
+  0% {
+    transform: translateY(-60px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(60px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(30px) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(80px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Career Success Arrows */
+.success-arrows {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.success-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid #3b82f6;
+  animation: arrow-rise 2s ease-out infinite;
+  filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.4));
+}
+
+@keyframes arrow-rise {
+  0% {
+    transform: translateY(60px) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Special Effects */
+.heart-explosion {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.heart-explosion::after {
+  content: '💖💕💗💓💞';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  opacity: 0;
+  animation: explode-hearts 1s ease-out;
+}
+
+@keyframes explode-hearts {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+.ring-sparkle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ring-sparkle::before {
+  content: '';
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #fbbf24 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  animation: sparkle-pulse 2s ease-in-out infinite;
+}
+
+.stair-climb {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stair-climb::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  animation: climb-progress 2s ease-in-out infinite;
+}
+
+@keyframes climb-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.coin-waterfall {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.coin-waterfall::before,
+.coin-waterfall::after {
+  content: '💰';
+  position: absolute;
+  font-size: 1.5rem;
+  animation: waterfall-coins 1.5s ease-in infinite;
+}
+
+.coin-waterfall::before {
+  left: 30%;
+  animation-delay: 0s;
+}
+
+.coin-waterfall::after {
+  left: 70%;
+  animation-delay: 0.75s;
+}
+
+@keyframes waterfall-coins {
+  0% {
+    top: -20%;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 120%;
+    opacity: 0;
+    transform: rotate(360deg);
+  }
+}
+
+/* Gold Sparkles for Money Theme */
+.gold-sparkles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gold-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(45deg, #fbbf24, #f59e0b);
+  border-radius: 50%;
+  animation: sparkle-twinkle 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.6));
+}
+
+.gold-sparkle::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fbbf24, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.gold-sparkle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 8px;
+  background: linear-gradient(0deg, transparent, #fbbf24, transparent);
+  transform: translate(-50%, -50%);
+}
+
+/* Enhanced Click Effects */
+.card-click-effect {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-click-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+
+.card-click-effect:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Theme-specific click effects */
+.card-click-effect.love::before {
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%);
+}
+
+.card-click-effect.career::before {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+}
+
+.card-click-effect.money::before {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+}
+
+.card-click-effect.health::before {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+}
+
+.card-click-effect.traditional::before {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.2) 0%, transparent 70%);
+}
+
+.card-click-effect.lifestyle::before {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+}
+
+/* Enhanced Hover Effects */
+.card-hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, filter;
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
+}
+
+.card-hover-lift:hover .card-glow {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Card Glow Effect */
+.card-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Theme-specific card glows */
+.card-glow.love {
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.15) 0%, transparent 70%);
+}
+
+.card-glow.career {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+}
+
+.card-glow.money {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%);
+}
+
+.card-glow.health {
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+}
+
+.card-glow.traditional {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+}
+
+.card-glow.lifestyle {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+}
+
+/* Special Click Effects for Each Fortune Type */
+.love-burst {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.love-burst::before {
+  content: '💖💕💗💓💞';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: love-burst-effect 1.2s ease-out;
+}
+
+@keyframes love-burst-effect {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.3) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
+  }
+}
+
+.career-success-trail {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.career-success-trail::before {
+  content: '🚀📈💼⭐🏆';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: career-trail-rise 1.5s ease-out;
+}
+
+@keyframes career-trail-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px);
+  }
+}
+
+.money-coin-shower {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.money-coin-shower::before {
+  content: '💰🪙💸💵🏦';
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.4rem;
+  opacity: 0;
+  animation: money-shower-fall 1.8s ease-out;
+}
+
+@keyframes money-shower-fall {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px) rotate(0deg);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(20px) rotate(180deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(80px) rotate(360deg);
+  }
+}
+
+.health-energy-wave {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.health-energy-wave::before {
+  content: '⚡💚🌿🧘‍♀️✨';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.3rem;
+  opacity: 0;
+  animation: health-wave-pulse 1.6s ease-out;
+}
+
+@keyframes health-wave-pulse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+.traditional-mystical {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.traditional-mystical::before {
+  content: '🔮🌟📿🎋🏮';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: traditional-circle-spin 2s ease-out;
+}
+
+@keyframes traditional-circle-spin {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(180deg) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(360deg) scale(0.7);
+  }
+}
+
+.lifestyle-dreams {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lifestyle-dreams::before {
+  content: '🌈🎨🎭🎪🎡';
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.1rem;
+  opacity: 0;
+  animation: lifestyle-dream-float 1.4s ease-out;
+}
+
+@keyframes lifestyle-dream-float {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px) scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-40px) scale(0.9);
+  }
+}
+
+/* Energy Wave */
+.energy-wave {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #10b981;
+  border-radius: 50%;
+  animation: energy-ripple 2s ease-out infinite;
+}
+
+@keyframes energy-ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Header Title Animation */
+.header-title-enter {
+  animation: title-slide-in 0.3s ease-out forwards;
+}
+
+.header-title-exit {
+  animation: title-slide-out 0.3s ease-out forwards;
+}
+
+@keyframes title-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes title-slide-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Mobile Performance Optimizations */
+.fortune-scroll-container {
+  /* 모바일 스크롤 최적화 */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+  transform: translateZ(0); /* 하드웨어 가속 */
+}
+
+.fortune-card-snap {
+  /* 카드별 최적화 */
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 애니메이션 성능 개선 */
+.fortune-icon-love,
+.fortune-icon-money,
+.fortune-icon-health,
+.fortune-icon-traditional,
+.fortune-icon-lifestyle,
+.fortune-icon-career {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* 파티클 효과 최적화 */
+.heart-particles,
+.coin-particles {
+  will-change: contents;
+  contain: layout style paint;
+}
+
+.heart-particle,
+.coin-particle,
+.energy-wave {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* 모바일 터치 최적화 */
+.fortune-card-snap {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px; /* 최소 터치 영역 */
+}
+
+/* 반응형 디자인 및 모바일 최적화 */
+@media (max-width: 768px) {
+  .fortune-scroll-container {
+    padding: 30vh 1rem 40vh 1rem;
+  }
+  
+  .fortune-card-snap {
+    min-height: 140px !important;
+  }
+  
+  /* 포커스된 카드 크기 조정 */
+  .fortune-card-focused {
+    min-height: 180px !important;
+  }
+  
+  /* 텍스트 크기 조정 */
+  .text-4xl {
+    font-size: 2.5rem;
+  }
+  
+  /* 터치 영역 최적화 */
+  .card-hover-lift {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 480px) {
+  .fortune-scroll-container {
+    padding: 25vh 0.75rem 35vh 0.75rem;
+  }
+  
+  .fortune-card-snap {
+    min-height: 120px !important;
+  }
+  
+  .fortune-card-focused {
+    min-height: 160px !important;
+  }
+  
+  /* 작은 화면에서 파티클 효과 최소화 */
+  .gold-sparkles {
+    display: none;
+  }
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card-glow {
+    filter: blur(0.5px);
+  }
+}
+
+/* 다크모드 터치 최적화 */
+@media (prefers-color-scheme: dark) {
+  .card-click-effect:active::before {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  }
+}\n\n/* 배터리 절약 - 뷰포트 밖 애니메이션 일시정지 */
+@media (prefers-reduced-motion: reduce) {
+  .fortune-icon-love,
+  .fortune-icon-money,
+  .fortune-icon-health,
+  .fortune-icon-traditional,
+  .fortune-icon-lifestyle,
+  .fortune-icon-career,
+  .heart-particle,
+  .coin-particle,
+  .energy-wave {
+    animation: none !important;
+  }
+}
+
+/* 고해상도 디스플레이 최적화 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .fortune-card-focused {
+    border-width: 0.5px;
+  }
+}
+
 @keyframes liquid-glow {
   0%, 100% {
     box-shadow: 
@@ -354,22 +1456,27 @@ body {
   background: var(--glass-border);
 }
 
-/* Typography - SF Pro Style */
+/* Typography - System Font Style */
 .text-glass-title {
-  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
 .text-glass-body {
-  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 400;
   letter-spacing: -0.01em;
 }
 
 .text-glass-caption {
-  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 510;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
   font-size: 14px;
   line-height: 22px;
+}
+
+/* Monospace font for code */
+.font-mono {
+  font-family: var(--font-geist-mono), 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 }

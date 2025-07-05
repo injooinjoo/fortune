@@ -11,13 +11,17 @@ interface AppHeaderProps {
   showBack?: boolean;
   onFontSizeChange?: (size: 'small' | 'medium' | 'large') => void;
   currentFontSize?: 'small' | 'medium' | 'large';
+  dynamicTitle?: string;
+  showDynamicTitle?: boolean;
 }
 
 export default function AppHeader({ 
   title = "Fortune", 
   showBack,
   onFontSizeChange,
-  currentFontSize = 'medium'
+  currentFontSize = 'medium',
+  dynamicTitle,
+  showDynamicTitle = false
 }: AppHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -114,9 +118,16 @@ export default function AppHeader({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate px-4">
-            {title}
-          </h1>
+          <motion.h1 
+            className="text-lg font-bold text-gray-900 dark:text-gray-100 truncate px-4"
+            key={showDynamicTitle ? dynamicTitle : title}
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {showDynamicTitle && dynamicTitle ? dynamicTitle : title}
+          </motion.h1>
         </motion.div>
 
         {/* 오른쪽: 글씨크기 조절 & 공유 버튼 */}

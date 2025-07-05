@@ -14,6 +14,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import { 
   Mountain, 
   Star, 
@@ -94,8 +96,7 @@ const hikingLevels = [
   "전문가 (12시간 이상)", "암벽등반", "빙벽등반"
 ];
 
-const trails = ["능선길", "계곡길", "임도", "샛길", "암릉길"];
-const mountains = ["지리산", "설악산", "한라산", "북한산", "계룡산"];
+// 하드코딩된 배열 제거됨 - GPT API에서 데이터 제공
 
 const getLuckColor = (score: number) => {
   if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
@@ -125,6 +126,7 @@ export default function LuckyHikingPage() {
     current_goal: ''
   });
   const [result, setResult] = useState<HikingFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   // 최근 본 운세 추가를 위한 hook
   useFortuneStream();
@@ -159,16 +161,25 @@ export default function LuckyHikingPage() {
       
       // 운세 결과 복원
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.fortune_scores.summit_luck || 
+            !savedData.fortune_scores.weather_luck || !savedData.fortune_scores.safety_luck || 
+            !savedData.fortune_scores.endurance_luck || !savedData.lucky_items?.lucky_trail || 
+            !savedData.lucky_items?.lucky_mountain || !savedData.lucky_items?.lucky_hiking_time || 
+            !savedData.lucky_items?.lucky_weather) {
+          throw new FortuneServiceError('lucky-hiking');
+        }
+        
         const restoredResult: HikingFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
           summit_luck: savedData.fortune_scores.summit_luck,
           weather_luck: savedData.fortune_scores.weather_luck,
           safety_luck: savedData.fortune_scores.safety_luck,
           endurance_luck: savedData.fortune_scores.endurance_luck,
-          lucky_trail: savedData.lucky_items?.lucky_trail || '',
-          lucky_mountain: savedData.lucky_items?.lucky_mountain || '',
-          lucky_hiking_time: savedData.lucky_items?.lucky_hiking_time || '',
-          lucky_weather: savedData.lucky_items?.lucky_weather || ''
+          lucky_trail: savedData.lucky_items.lucky_trail,
+          lucky_mountain: savedData.lucky_items.lucky_mountain,
+          lucky_hiking_time: savedData.lucky_items.lucky_hiking_time,
+          lucky_weather: savedData.lucky_items.lucky_weather
         };
         setResult(restoredResult);
         setStep('result');
@@ -209,19 +220,24 @@ export default function LuckyHikingPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeHikingFortune = async (): Promise<HikingFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['lucky-hiking'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      summit_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      weather_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      safety_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      endurance_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      lucky_trail: trails[Math.floor(Math.random() * trails.length)],
-      lucky_mountain: mountains[Math.floor(Math.random() * mountains.length)],
-      lucky_hiking_time: ["새벽 출발", "오전 출발", "이른 아침", "해뜨기 전"][Math.floor(Math.random() * 4)],
-      lucky_weather: ["맑음", "약간 흐림", "선선한 날", "바람 없는 날"][Math.floor(Math.random() * 4)]
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'lucky-hiking',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        birth_time_period: formData.birthTimePeriod,
+        hiking_level: formData.hiking_level,
+        current_goal: formData.current_goal
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -246,16 +262,26 @@ export default function LuckyHikingPage() {
       if (hasTodayFortune && todayFortune) {
         // 기존 운세 데이터를 HikingFortune 형식으로 변환
         const savedData = todayFortune.fortune_data as any;
+        
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.fortune_scores?.summit_luck || 
+            !savedData.fortune_scores?.weather_luck || !savedData.fortune_scores?.safety_luck || 
+            !savedData.fortune_scores?.endurance_luck || !savedData.lucky_items?.lucky_trail || 
+            !savedData.lucky_items?.lucky_mountain || !savedData.lucky_items?.lucky_hiking_time || 
+            !savedData.lucky_items?.lucky_weather) {
+          throw new FortuneServiceError('lucky-hiking');
+        }
+        
         const restoredResult: HikingFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          summit_luck: savedData.fortune_scores?.summit_luck || 0,
-          weather_luck: savedData.fortune_scores?.weather_luck || 0,
-          safety_luck: savedData.fortune_scores?.safety_luck || 0,
-          endurance_luck: savedData.fortune_scores?.endurance_luck || 0,
-          lucky_trail: savedData.lucky_items?.lucky_trail || '',
-          lucky_mountain: savedData.lucky_items?.lucky_mountain || '',
-          lucky_hiking_time: savedData.lucky_items?.lucky_hiking_time || '',
-          lucky_weather: savedData.lucky_items?.lucky_weather || ''
+          overall_luck: savedData.fortune_scores.overall_luck,
+          summit_luck: savedData.fortune_scores.summit_luck,
+          weather_luck: savedData.fortune_scores.weather_luck,
+          safety_luck: savedData.fortune_scores.safety_luck,
+          endurance_luck: savedData.fortune_scores.endurance_luck,
+          lucky_trail: savedData.lucky_items.lucky_trail,
+          lucky_mountain: savedData.lucky_items.lucky_mountain,
+          lucky_hiking_time: savedData.lucky_items.lucky_hiking_time,
+          lucky_weather: savedData.lucky_items.lucky_weather
         };
         setResult(restoredResult);
       } else {
@@ -295,7 +321,13 @@ export default function LuckyHikingPage() {
       setStep('result');
     } catch (error) {
       console.error('등산 운세 분석 실패:', error);
-      alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -314,6 +346,23 @@ export default function LuckyHikingPage() {
       current_goal: ''
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="행운의 등산" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="행운의 등산 운세 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-green-900 dark:to-gray-800 pb-20">
@@ -697,7 +746,7 @@ export default function LuckyHikingPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
+                    onClick={() => void (async () => {
                       try {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                         const analysisResult = await analyzeHikingFortune();
@@ -734,7 +783,7 @@ export default function LuckyHikingPage() {
                         console.error('재생성 중 오류:', error);
                         alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
                       }
-                    }}
+                    })()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

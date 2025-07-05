@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateSpecializedFortune } from '@/ai/flows/generate-specialized-fortune';
+import { generateSingleFortune } from '@/ai/openai-client';
 
 // 요청 본문의 타입을 정의합니다.
 interface RealEstateRequest {
@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       goals: body.investment_goals,
     };
 
-    // generateSpecializedFortune 함수를 호출하여 운세 결과를 받습니다.
-    const fortuneResult = await generateSpecializedFortune(
+    // generateSingleFortune 함수를 호출하여 운세 결과를 받습니다.
+    const fortuneResult = await generateSingleFortune(
       'lucky-realestate',
       userInfo
     );

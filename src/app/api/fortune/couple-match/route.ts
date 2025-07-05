@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateSpecializedFortune } from '@/ai/flows/generate-specialized-fortune';
+import { generateSingleFortune } from '@/ai/openai-client';
 
 interface PersonInfo {
     name: string;
@@ -41,8 +41,8 @@ export async function POST(req: NextRequest) {
         concern: concern,
     };
 
-    // generateSpecializedFortune 함수를 호출하여 운세 결과를 받습니다.
-    const fortuneResult = await generateSpecializedFortune(
+    // generateSingleFortune 함수를 호출하여 운세 결과를 받습니다.
+    const fortuneResult = await generateSingleFortune(
       'couple-match',
       userInfo
     );

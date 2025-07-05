@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Brain, 
   Star, 
@@ -71,52 +73,7 @@ const itemVariants = {
   }
 };
 
-const psychologyQuestions = [
-  {
-    id: "q1",
-    question: "당신은 새로운 사람들과 어울리는 것을 즐기나요?",
-    options: [
-      { value: "매우 그렇다", label: "매우 그렇다" },
-      { value: "그렇다", label: "그렇다" },
-      { value: "보통이다", label: "보통이다" },
-      { value: "아니다", label: "아니다" },
-      { value: "전혀 아니다", label: "전혀 아니다" },
-    ],
-  },
-  {
-    id: "q2",
-    question: "계획을 세우고 그 계획을 따르는 것을 선호하나요?",
-    options: [
-      { value: "매우 그렇다", label: "매우 그렇다" },
-      { value: "그렇다", label: "그렇다" },
-      { value: "보통이다", label: "보통이다" },
-      { value: "아니다", label: "아니다" },
-      { value: "전혀 아니다", label: "전혀 아니다" },
-    ],
-  },
-  {
-    id: "q3",
-    question: "어려운 결정을 내릴 때, 논리보다는 감정에 의존하는 편인가요?",
-    options: [
-      { value: "매우 그렇다", label: "매우 그렇다" },
-      { value: "그렇다", label: "그렇다" },
-      { value: "보통이다", label: "보통이다" },
-      { value: "아니다", label: "아니다" },
-      { value: "전혀 아니다", label: "전혀 아니다" },
-    ],
-  },
-  {
-    id: "q4",
-    question: "새로운 아이디어를 탐색하고 상상하는 것을 좋아하나요?",
-    options: [
-      { value: "매우 그렇다", label: "매우 그렇다" },
-      { value: "그렇다", label: "그렇다" },
-      { value: "보통이다", label: "보통이다" },
-      { value: "아니다", label: "아니다" },
-      { value: "전혀 아니다", label: "전혀 아니다" },
-    ],
-  },
-];
+// 하드코딩된 심리테스트 질문들 제거됨 - GPT API에서 동적 질문 제공 예정
 
 const getLuckColor = (score: number) => {
   if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
@@ -144,6 +101,7 @@ export default function PsychologyTestPage() {
     answers: {},
   });
   const [result, setResult] = useState<PsychologyTestFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   useFortuneStream();
   
@@ -171,13 +129,20 @@ export default function PsychologyTestPage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.test_result_type || 
+            !savedData.insights?.result_summary || !savedData.insights?.result_details || 
+            !savedData.insights?.advice || !savedData.lucky_items?.lucky_elements) {
+          throw new FortuneServiceError('psychology-test');
+        }
+        
         const restoredResult: PsychologyTestFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          test_result_type: savedData.insights?.test_result_type || '',
-          result_summary: savedData.insights?.result_summary || '',
-          result_details: savedData.insights?.result_details || '',
-          advice: savedData.insights?.advice || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
+          test_result_type: savedData.insights.test_result_type,
+          result_summary: savedData.insights.result_summary,
+          result_details: savedData.insights.result_details,
+          advice: savedData.insights.advice,
+          lucky_elements: savedData.lucky_items.lucky_elements,
         };
         setResult(restoredResult);
         setStep('result');
@@ -217,20 +182,22 @@ export default function PsychologyTestPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzePsychologyTestFortune = async (): Promise<PsychologyTestFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const resultTypes = ["외향적이고 사교적인 사람", "내향적이고 신중한 사람", "논리적이고 분석적인 사람", "감성적이고 창의적인 사람"];
-    const luckyElements = ["새로운 도전", "명상", "독서", "여행"];
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['psychology-test'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    const selectedResultType = resultTypes[Math.floor(Math.random() * resultTypes.length)];
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'psychology-test',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        answers: formData.answers
+      }
+    });
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      test_result_type: selectedResultType,
-      result_summary: `${selectedResultType}의 특성을 가지고 있습니다.`, 
-      result_details: `당신은 ${selectedResultType}으로, 이러한 특성들이 당신의 삶에 긍정적인 영향을 미칠 것입니다.`, 
-      advice: "자신의 강점을 이해하고 활용하면 더욱 행복한 삶을 살 수 있습니다.",
-      lucky_elements: Array.from({ length: 2 }, () => luckyElements[Math.floor(Math.random() * luckyElements.length)]),
-    };
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -239,6 +206,49 @@ export default function PsychologyTestPage() {
     formData.birthYear ? parseInt(formData.birthYear) : undefined,
     formData.birthMonth ? parseInt(formData.birthMonth) : undefined
   );
+
+  const handleRegenerate = useCallback(async (): Promise<void> => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const analysisResult = await analyzePsychologyTestFortune();
+      
+      const fortuneResult: FortuneResult = {
+        user_info: {
+          name: formData.name,
+          birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+        },
+        fortune_scores: {
+          overall_luck: analysisResult.overall_luck,
+        },
+        insights: {
+          test_result_type: analysisResult.test_result_type,
+          result_summary: analysisResult.result_summary,
+          result_details: analysisResult.result_details,
+          advice: analysisResult.advice,
+        },
+        lucky_items: {
+          lucky_elements: analysisResult.lucky_elements,
+        },
+        metadata: {
+          answers: formData.answers,
+        }
+      };
+
+      const success = await regenerateFortune(fortuneResult);
+      if (success) {
+        setResult(analysisResult);
+      }
+    } catch (error) {
+      console.error('재생성 중 오류:', error);
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  }, [formData, regenerateFortune]);
 
   const handleAnswerChange = (questionId: string, value: string) => {
     setFormData(prev => ({
@@ -251,8 +261,8 @@ export default function PsychologyTestPage() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || Object.keys(formData.answers).length !== psychologyQuestions.length) {
-      alert('이름, 생년월일, 모든 질문에 답변해주세요.');
+    if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
+      alert('이름과 생년월일을 입력해주세요.');
       return;
     }
 
@@ -263,13 +273,20 @@ export default function PsychologyTestPage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.test_result_type || 
+            !savedData.insights?.result_summary || !savedData.insights?.result_details || 
+            !savedData.insights?.advice || !savedData.lucky_items?.lucky_elements) {
+          throw new FortuneServiceError('psychology-test');
+        }
+        
         const restoredResult: PsychologyTestFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          test_result_type: savedData.insights?.test_result_type || '',
-          result_summary: savedData.insights?.result_summary || '',
-          result_details: savedData.insights?.result_details || '',
-          advice: savedData.insights?.advice || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
+          overall_luck: savedData.fortune_scores.overall_luck,
+          test_result_type: savedData.insights.test_result_type,
+          result_summary: savedData.insights.result_summary,
+          result_details: savedData.insights.result_details,
+          advice: savedData.insights.advice,
+          lucky_elements: savedData.lucky_items.lucky_elements,
         };
         setResult(restoredResult);
       } else {
@@ -304,7 +321,13 @@ export default function PsychologyTestPage() {
       setStep('result');
     } catch (error) {
       console.error('심리 테스트 분석 실패:', error);
-      alert('심리 테스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('심리 테스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -321,6 +344,23 @@ export default function PsychologyTestPage() {
       answers: {},
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-teal-50 to-blue-50 dark:from-gray-900 dark:via-green-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="심리 테스트" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="심리 테스트 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-teal-50 to-blue-50 dark:from-gray-900 dark:via-green-900 dark:to-gray-800 pb-20">
@@ -611,42 +651,7 @@ export default function PsychologyTestPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        const analysisResult = await analyzePsychologyTestFortune();
-                        
-                        const fortuneResult: FortuneResult = {
-                          user_info: {
-                            name: formData.name,
-                            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
-                          },
-                          fortune_scores: {
-                            overall_luck: analysisResult.overall_luck,
-                          },
-                          insights: {
-                            test_result_type: analysisResult.test_result_type,
-                            result_summary: analysisResult.result_summary,
-                            result_details: analysisResult.result_details,
-                            advice: analysisResult.advice,
-                          },
-                          lucky_items: {
-                            lucky_elements: analysisResult.lucky_elements,
-                          },
-                          metadata: {
-                            answers: formData.answers,
-                          }
-                        };
-
-                        const success = await regenerateFortune(fortuneResult);
-                        if (success) {
-                          setResult(analysisResult);
-                        }
-                      } catch (error) {
-                        console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
-                      }
-                    }}
+                    onClick={() => void handleRegenerate()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

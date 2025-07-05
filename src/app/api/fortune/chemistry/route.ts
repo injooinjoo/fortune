@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateSpecializedFortune } from '@/ai/flows/generate-specialized-fortune';
+import { generateSingleFortune } from '@/ai/openai-client';
 
 interface PersonInfo {
     name: string;
@@ -29,25 +29,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Genkit 플로우에 전달할 사용자 정보 객체를 생성합니다.
-    const userInfo = {
-        person1: body.person1,
-        person2: body.person2,
-        relationship_duration: body.relationship_duration,
-        intimacy_level: body.intimacy_level,
-        concerns: body.concerns,
+    console.log(`💕 속궁합 분석 시작: ${body.person1.name} ↔️ ${body.person2.name}`);
+
+    // 기본 프로필 구성
+    const profile = {
+      name: `${body.person1.name} & ${body.person2.name}`,
+      birthDate: '1990-01-01' // 기본값
     };
 
-    // generateSpecializedFortune 함수를 호출하여 운세 결과를 받습니다.
-    const fortuneResult = await generateSpecializedFortune(
-      'chemistry',
-      userInfo
-    );
+    // OpenAI를 사용한 속궁합 분석
+    const fortuneResult = await generateSingleFortune('chemistry', profile, body);
+
+    console.log('✅ 속궁합 분석 완료');
 
     return NextResponse.json({
       success: true,
-      analysis: fortuneResult,
-      timestamp: new Date().toISOString()
+      data: {
+        type: 'chemistry',
+        person1: body.person1,
+        person2: body.person2,
+        relationship_info: {
+          duration: body.relationship_duration,
+          intimacy_level: body.intimacy_level,
+          concerns: body.concerns
+        },
+        ...fortuneResult,
+        generated_at: new Date().toISOString()
+      }
     });
 
   } catch (error: any) {

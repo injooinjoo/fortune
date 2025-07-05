@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Gem, 
   Star, 
@@ -96,6 +98,7 @@ export default function WorryBeadPage() {
     worry: '',
   });
   const [result, setResult] = useState<WorryBeadFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   useFortuneStream();
   
@@ -123,12 +126,19 @@ export default function WorryBeadPage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.worry_analysis || 
+            !savedData.insights?.solution_advice || !savedData.lucky_items?.lucky_elements || 
+            !savedData.fortune_scores.peace_score) {
+          throw new FortuneServiceError('worry-bead');
+        }
+        
         const restoredResult: WorryBeadFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          worry_analysis: savedData.insights?.worry_analysis || '',
-          solution_advice: savedData.insights?.solution_advice || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
-          peace_score: savedData.fortune_scores.peace_score || 0,
+          worry_analysis: savedData.insights.worry_analysis,
+          solution_advice: savedData.insights.solution_advice,
+          lucky_elements: savedData.lucky_items.lucky_elements,
+          peace_score: savedData.fortune_scores.peace_score,
         };
         setResult(restoredResult);
         setStep('result');
@@ -168,16 +178,22 @@ export default function WorryBeadPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeWorryBeadFortune = async (): Promise<WorryBeadFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const luckyElements = ["명상", "산책", "대화", "휴식"];
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['worry-bead'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      worry_analysis: `'${formData.worry.substring(0, 20)}...' 고민에 대한 분석입니다.`, 
-      solution_advice: `이 고민은 당신의 성장에 필요한 과정입니다. 다음 조언을 통해 해결책을 찾아보세요.`, 
-      lucky_elements: Array.from({ length: 2 }, () => luckyElements[Math.floor(Math.random() * luckyElements.length)]),
-      peace_score: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 10))),
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'worry-bead',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        worry_content: formData.worry
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -186,6 +202,48 @@ export default function WorryBeadPage() {
     formData.birthYear ? parseInt(formData.birthYear) : undefined,
     formData.birthMonth ? parseInt(formData.birthMonth) : undefined
   );
+
+  const handleRegenerate = useCallback(async (): Promise<void> => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const analysisResult = await analyzeWorryBeadFortune();
+      
+      const fortuneResult: FortuneResult = {
+        user_info: {
+          name: formData.name,
+          birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+        },
+        fortune_scores: {
+          overall_luck: analysisResult.overall_luck,
+          peace_score: analysisResult.peace_score,
+        },
+        insights: {
+          worry_analysis: analysisResult.worry_analysis,
+          solution_advice: analysisResult.solution_advice,
+        },
+        lucky_items: {
+          lucky_elements: analysisResult.lucky_elements,
+        },
+        metadata: {
+          worry_content: formData.worry,
+        }
+      };
+
+      const success = await regenerateFortune(fortuneResult);
+      if (success) {
+        setResult(analysisResult);
+      }
+    } catch (error) {
+      console.error('재생성 중 오류:', error);
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  }, [formData, regenerateFortune]);
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.worry) {
@@ -200,12 +258,19 @@ export default function WorryBeadPage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.worry_analysis || 
+            !savedData.insights?.solution_advice || !savedData.lucky_items?.lucky_elements || 
+            !savedData.fortune_scores?.peace_score) {
+          throw new FortuneServiceError('worry-bead');
+        }
+        
         const restoredResult: WorryBeadFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          worry_analysis: savedData.insights?.worry_analysis || '',
-          solution_advice: savedData.insights?.solution_advice || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
-          peace_score: savedData.fortune_scores?.peace_score || 0,
+          overall_luck: savedData.fortune_scores.overall_luck,
+          worry_analysis: savedData.insights.worry_analysis,
+          solution_advice: savedData.insights.solution_advice,
+          lucky_elements: savedData.lucky_items.lucky_elements,
+          peace_score: savedData.fortune_scores.peace_score,
         };
         setResult(restoredResult);
       } else {
@@ -239,7 +304,13 @@ export default function WorryBeadPage() {
       setStep('result');
     } catch (error) {
       console.error('고민 구슬 분석 실패:', error);
-      alert('고민 구슬 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('고민 구슬 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -256,6 +327,23 @@ export default function WorryBeadPage() {
       worry: '',
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-yellow-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="고민 구슬" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="고민 구슬 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-yellow-900 dark:to-gray-800 pb-20">
@@ -534,41 +622,7 @@ export default function WorryBeadPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        const analysisResult = await analyzeWorryBeadFortune();
-                        
-                        const fortuneResult: FortuneResult = {
-                          user_info: {
-                            name: formData.name,
-                            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
-                          },
-                          fortune_scores: {
-                            overall_luck: analysisResult.overall_luck,
-                            peace_score: analysisResult.peace_score,
-                          },
-                          insights: {
-                            worry_analysis: analysisResult.worry_analysis,
-                            solution_advice: analysisResult.solution_advice,
-                          },
-                          lucky_items: {
-                            lucky_elements: analysisResult.lucky_elements,
-                          },
-                          metadata: {
-                            worry_content: formData.worry,
-                          }
-                        };
-
-                        const success = await regenerateFortune(fortuneResult);
-                        if (success) {
-                          setResult(analysisResult);
-                        }
-                      } catch (error) {
-                        console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
-                      }
-                    }}
+                    onClick={() => void handleRegenerate()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

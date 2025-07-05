@@ -101,14 +101,14 @@ export function useDailyFortune({
     }
   }, [fortuneType, enabled]);
 
-  // 새 운세 저장
+  // 새 운세 저장 (upsert 방식으로 중복 방지)
   const saveFortune = useCallback(async (fortuneData: FortuneResult): Promise<boolean> => {
     setIsGenerating(true);
     setError(null);
     
     try {
       const userId = await DailyFortuneService.getUserId();
-      const savedFortune = await DailyFortuneService.saveTodayFortune(
+      const savedFortune = await DailyFortuneService.upsertTodayFortune(
         userId, 
         fortuneType, 
         fortuneData
@@ -139,18 +139,16 @@ export function useDailyFortune({
     }
   }, [fortuneType, toast]);
 
-  // 운세 재생성 (업데이트)
+  // 운세 재생성 (upsert 방식으로 중복 방지)
   const regenerateFortune = useCallback(async (fortuneData: FortuneResult): Promise<boolean> => {
-    if (!todayFortune?.id) {
-      return saveFortune(fortuneData);
-    }
-    
     setIsGenerating(true);
     setError(null);
     
     try {
-      const updatedFortune = await DailyFortuneService.updateTodayFortune(
-        todayFortune.id, 
+      const userId = await DailyFortuneService.getUserId();
+      const updatedFortune = await DailyFortuneService.upsertTodayFortune(
+        userId, 
+        fortuneType, 
         fortuneData
       );
       
@@ -177,7 +175,7 @@ export function useDailyFortune({
     } finally {
       setIsGenerating(false);
     }
-  }, [todayFortune, fortuneType, toast, saveFortune]);
+  }, [fortuneType, toast]);
 
   // 에러 클리어
   const clearError = useCallback(() => {
@@ -207,6 +205,7 @@ export function useDailyFortune({
     saveFortune,
     regenerateFortune,
     clearError,
+    generateFortuneFromGenkit,
     
     // 헬퍼
     hasTodayFortune,

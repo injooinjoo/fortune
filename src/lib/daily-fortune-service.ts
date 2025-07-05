@@ -126,6 +126,98 @@ export class DailyFortuneService {
     }
   }
 
+  /**
+   * 운세 upsert: 존재하면 업데이트, 없으면 새로 생성
+   * 중복 생성 방지를 위한 원자적 연산
+   */
+  static async upsertTodayFortune(
+    userId: string, 
+    fortuneType: string, 
+    fortuneData: FortuneResult
+  ): Promise<DailyFortuneData | null> {
+    // 개발 모드에서는 로컬 스토리지 사용
+    if (this.isDevelopmentMode()) {
+      // 로컬 스토리지에서는 기존 데이터 확인 후 업데이트 또는 생성
+      const existing = this.getLocalFortune(userId, fortuneType);
+      if (existing) {
+        // 기존 데이터 업데이트
+        return this.updateLocalFortune(existing.id, fortuneData);
+      } else {
+        // 새 데이터 생성
+        return this.saveLocalFortune(userId, fortuneType, fortuneData);
+      }
+    }
+
+    const today = format(new Date(), 'yyyy-MM-dd');
+    
+    // 최대 3번 재시도
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const { data, error } = await supabase
+          .from('daily_fortunes')
+          .upsert({
+            user_id: userId,
+            fortune_type: fortuneType,
+            fortune_data: fortuneData,
+            created_date: today,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id,fortune_type,created_date'
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error(`운세 upsert 실패 (시도 ${attempt}/3):`, error);
+          if (attempt === 3) {
+            return null;
+          }
+          // 지수 백오프로 재시도
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+          continue;
+        }
+
+        console.log(`✅ 운세 upsert 성공 (시도 ${attempt}/3)`);
+        return data;
+      } catch (error) {
+        console.error(`운세 upsert 중 예외 발생 (시도 ${attempt}/3):`, error);
+        if (attempt === 3) {
+          return null;
+        }
+        // 지수 백오프로 재시도
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * 로컬 운세 데이터 업데이트 (개발 모드용)
+   */
+  private static updateLocalFortune(id: string, fortuneData: FortuneResult): DailyFortuneData | null {
+    if (typeof window === 'undefined') return null;
+    
+    const keys = Object.keys(localStorage).filter(key => key.startsWith('daily_fortune_'));
+    for (const key of keys) {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          if (data.id === id) {
+            data.fortune_data = fortuneData;
+            data.updated_at = new Date().toISOString();
+            localStorage.setItem(key, JSON.stringify(data));
+            return data;
+          }
+        } catch (error) {
+          console.error('로컬 데이터 업데이트 실패:', error);
+        }
+      }
+    }
+    return null;
+  }
+
 /**
    * 기존 운세 업데이트 (같은 날 다시 생성하는 경우)
    */

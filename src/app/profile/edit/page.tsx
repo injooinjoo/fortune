@@ -9,6 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/AppHeader";
 import {
   User,
@@ -18,9 +21,21 @@ import {
   Save,
   ArrowLeft,
   Smartphone,
-  MapPin
+  MapPin,
+  Heart,
+  Droplets,
+  Clock,
+  Briefcase,
+  Star,
+  CheckCircle2
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getUserInfo, saveUserInfo, UserInfo } from "@/lib/user-storage";
+import { 
+  checkOverallProfileCompleteness, 
+  getCompletionStatusMessage,
+  FIELD_LABELS 
+} from "@/lib/profile-completeness";
 
 interface UserProfile {
   id: string;
@@ -63,21 +78,42 @@ export default function ProfileEditPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
-  const [formData, setFormData] = useState({
+  const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
-    email: '',
-    phone: '',
-    bio: '',
-    location: '',
-    birth_date: ''
+    birthDate: '',
+    birthTime: '',
+    gender: '',
+    mbti: '',
+    bloodType: '',
+    zodiacSign: '',
+    job: '',
+    location: ''
+  });
+  const [profileCompleteness, setProfileCompleteness] = useState({
+    percentage: 0,
+    message: ''
   });
 
   useEffect(() => {
     loadUserProfile();
   }, []);
 
+  // 프로필 완성도 계산
+  useEffect(() => {
+    const completeness = checkOverallProfileCompleteness(userInfo);
+    setProfileCompleteness({
+      percentage: completeness.completionPercentage,
+      message: getCompletionStatusMessage(completeness.completionPercentage)
+    });
+  }, [userInfo]);
+
   const loadUserProfile = async () => {
     try {
+      // 로컬 스토리지에서 운세 관련 정보 로드
+      const storedUserInfo = getUserInfo();
+      setUserInfo(storedUserInfo);
+
+      // Supabase에서 계정 정보 로드
       const { data: { user: authUser } } = await supabase.auth.getUser();
       
       if (authUser) {
@@ -94,14 +130,15 @@ export default function ProfileEditPage() {
         };
         
         setUser(userProfile);
-        setFormData({
-          name: userProfile.name,
-          email: userProfile.email,
-          phone: userProfile.phone || '',
-          bio: userProfile.bio || '',
-          location: userProfile.location || '',
-          birth_date: userProfile.birth_date || ''
-        });
+        
+        // 저장된 정보와 계정 정보 병합
+        const mergedInfo: UserInfo = {
+          ...storedUserInfo,
+          name: storedUserInfo.name || userProfile.name,
+          birthDate: storedUserInfo.birthDate || userProfile.birth_date || '',
+          location: storedUserInfo.location || userProfile.location || ''
+        };
+        setUserInfo(mergedInfo);
       }
     } catch (error) {
       console.error('사용자 프로필 로드 실패:', error);
@@ -115,14 +152,15 @@ export default function ProfileEditPage() {
 
     setIsSaving(true);
     try {
-      // 실제로는 Supabase에서 프로필 업데이트
+      // 로컬 스토리지에 운세 관련 정보 저장
+      saveUserInfo(userInfo);
+
+      // Supabase에 기본 계정 정보 업데이트
       const { error } = await supabase.auth.updateUser({
         data: {
-          full_name: formData.name,
-          phone: formData.phone,
-          bio: formData.bio,
-          location: formData.location,
-          birth_date: formData.birth_date
+          full_name: userInfo.name,
+          location: userInfo.location,
+          birth_date: userInfo.birthDate
         }
       });
 
@@ -136,6 +174,10 @@ export default function ProfileEditPage() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const updateUserInfo = (field: keyof UserInfo, value: string) => {
+    setUserInfo(prev => ({ ...prev, [field]: value }));
   };
 
   const handleAvatarUpload = () => {
@@ -170,7 +212,7 @@ export default function ProfileEditPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-indigo-900/20 pb-20">
-      <AppHeader title="프로필 수정" />
+      <AppHeader title="프로필 관리" />
       
       <motion.div
         variants={containerVariants}
@@ -178,29 +220,59 @@ export default function ProfileEditPage() {
         animate="visible"
         className="p-6 space-y-6"
       >
+        {/* 프로필 완성도 */}
+        <motion.div variants={itemVariants}>
+          <Card className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-0">
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-lg">프로필 완성도</h3>
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-white/20 text-white border-white/30"
+                  >
+                    {profileCompleteness.percentage}%
+                  </Badge>
+                </div>
+                <Progress 
+                  value={profileCompleteness.percentage} 
+                  className="h-3 bg-white/20"
+                />
+                <p className="text-white/90 text-sm">{profileCompleteness.message}</p>
+                {profileCompleteness.percentage === 100 && (
+                  <div className="flex items-center gap-2 text-green-100">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span className="text-sm">모든 정보가 완성되었습니다!</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* 아바타 섹션 */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600">
+          <Card>
             <CardContent className="p-6">
-              <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <Avatar className="w-24 h-24">
-                    <AvatarImage src={user.avatar_url} alt={user.name} />
-                    <AvatarFallback className="text-2xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                      {user.name.charAt(0).toUpperCase()}
+                  <Avatar className="w-16 h-16">
+                    <AvatarImage src={user?.avatar_url} alt={userInfo.name} />
+                    <AvatarFallback className="text-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                      {userInfo.name.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <Button
                     size="sm"
                     onClick={handleAvatarUpload}
-                    className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
+                    className="absolute -bottom-1 -right-1 rounded-full w-6 h-6 p-0 bg-purple-600 hover:bg-purple-700"
                   >
-                    <Camera className="w-4 h-4" />
+                    <Camera className="w-3 h-3" />
                   </Button>
                 </div>
-                <div className="text-center">
-                  <h3 className="font-semibold text-lg">{user.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg">{userInfo.name || '이름을 입력해주세요'}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{user?.email}</p>
                 </div>
               </div>
             </CardContent>
@@ -218,58 +290,146 @@ export default function ProfileEditPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">이름</Label>
+                <Label htmlFor="name">이름 *</Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                  value={userInfo.name}
+                  onChange={(e) => updateUserInfo('name', e.target.value)}
                   placeholder="이름을 입력하세요"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">이메일</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    disabled
-                    className="pl-10 bg-gray-50 dark:bg-gray-800"
-                    placeholder="이메일"
-                  />
-                </div>
-                <p className="text-xs text-gray-500">이메일은 변경할 수 없습니다.</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">전화번호</Label>
-                <div className="relative">
-                  <Smartphone className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    className="pl-10"
-                    placeholder="전화번호를 입력하세요"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="birth_date">생년월일</Label>
+                <Label htmlFor="birth_date">생년월일 *</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                   <Input
                     id="birth_date"
                     type="date"
-                    value={formData.birth_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
+                    value={userInfo.birthDate}
+                    onChange={(e) => updateUserInfo('birthDate', e.target.value)}
                     className="pl-10"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="birth_time">출생시간</Label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Select value={userInfo.birthTime} onValueChange={(value) => updateUserInfo('birthTime', value)}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="출생시간을 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="자시">자시 (23:30-01:30)</SelectItem>
+                      <SelectItem value="축시">축시 (01:30-03:30)</SelectItem>
+                      <SelectItem value="인시">인시 (03:30-05:30)</SelectItem>
+                      <SelectItem value="묘시">묘시 (05:30-07:30)</SelectItem>
+                      <SelectItem value="진시">진시 (07:30-09:30)</SelectItem>
+                      <SelectItem value="사시">사시 (09:30-11:30)</SelectItem>
+                      <SelectItem value="오시">오시 (11:30-13:30)</SelectItem>
+                      <SelectItem value="미시">미시 (13:30-15:30)</SelectItem>
+                      <SelectItem value="신시">신시 (15:30-17:30)</SelectItem>
+                      <SelectItem value="유시">유시 (17:30-19:30)</SelectItem>
+                      <SelectItem value="술시">술시 (19:30-21:30)</SelectItem>
+                      <SelectItem value="해시">해시 (21:30-23:30)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-xs text-gray-500">사주 운세에 필요합니다</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender">성별</Label>
+                <div className="relative">
+                  <Heart className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Select value={userInfo.gender} onValueChange={(value) => updateUserInfo('gender', value)}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="성별을 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="남성">남성</SelectItem>
+                      <SelectItem value="여성">여성</SelectItem>
+                      <SelectItem value="선택 안함">선택 안함</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* 성격 및 특성 정보 */}
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                성격 및 특성
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="mbti">MBTI</Label>
+                <Select value={userInfo.mbti} onValueChange={(value) => updateUserInfo('mbti', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="MBTI를 선택하세요" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {['ENFP', 'ENFJ', 'ENTP', 'ENTJ', 'ESFP', 'ESFJ', 'ESTP', 'ESTJ',
+                      'INFP', 'INFJ', 'INTP', 'INTJ', 'ISFP', 'ISFJ', 'ISTP', 'ISTJ'].map(type => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">성격 분석 운세에 활용됩니다</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="blood_type">혈액형</Label>
+                <div className="relative">
+                  <Droplets className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Select value={userInfo.bloodType} onValueChange={(value) => updateUserInfo('bloodType', value)}>
+                    <SelectTrigger className="pl-10">
+                      <SelectValue placeholder="혈액형을 선택하세요" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A형">A형</SelectItem>
+                      <SelectItem value="B형">B형</SelectItem>
+                      <SelectItem value="AB형">AB형</SelectItem>
+                      <SelectItem value="O형">O형</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* 직업 및 생활 정보 */}
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5" />
+                직업 및 생활
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="job">직업</Label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="job"
+                    value={userInfo.job}
+                    onChange={(e) => updateUserInfo('job', e.target.value)}
+                    className="pl-10"
+                    placeholder="직업을 입력하세요"
+                  />
+                </div>
+                <p className="text-xs text-gray-500">직업운세에 활용됩니다</p>
               </div>
 
               <div className="space-y-2">
@@ -278,34 +438,13 @@ export default function ProfileEditPage() {
                   <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                   <Input
                     id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    value={userInfo.location}
+                    onChange={(e) => updateUserInfo('location', e.target.value)}
                     className="pl-10"
                     placeholder="거주지를 입력하세요"
                   />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* 소개 */}
-        <motion.div variants={itemVariants}>
-          <Card>
-            <CardHeader>
-              <CardTitle>소개</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <Label htmlFor="bio">자기소개</Label>
-                <Textarea
-                  id="bio"
-                  value={formData.bio}
-                  onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  placeholder="자신에 대해 간단히 소개해주세요"
-                  className="min-h-[100px]"
-                />
-                <p className="text-xs text-gray-500">최대 200자까지 입력 가능합니다.</p>
+                <p className="text-xs text-gray-500">지역 기반 운세에 활용됩니다</p>
               </div>
             </CardContent>
           </Card>
@@ -315,7 +454,7 @@ export default function ProfileEditPage() {
         <motion.div variants={itemVariants} className="pt-4 space-y-3">
           <Button
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || !userInfo.name || !userInfo.birthDate}
             className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3"
           >
             {isSaving ? (
@@ -330,7 +469,7 @@ export default function ProfileEditPage() {
             ) : (
               <div className="flex items-center gap-2">
                 <Save className="w-4 h-4" />
-                저장하기
+                프로필 저장
               </div>
             )}
           </Button>
@@ -343,6 +482,12 @@ export default function ProfileEditPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             취소
           </Button>
+          
+          {(!userInfo.name || !userInfo.birthDate) && (
+            <div className="text-center">
+              <p className="text-sm text-red-500">* 이름과 생년월일은 필수 입력 사항입니다</p>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </div>

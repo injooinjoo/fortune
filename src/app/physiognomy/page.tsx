@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
 import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import { 
   Eye, 
   Star, 
@@ -106,6 +108,7 @@ export default function PhysiognomyPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [result, setResult] = useState<PhysiognomyAnalysis | null>(null);
   const [userName, setUserName] = useState('');
+  const [error, setError] = useState<Error | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // 최근 본 운세 추가를 위한 hook
@@ -155,109 +158,21 @@ export default function PhysiognomyPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzePhysiognomy = async (): Promise<PhysiognomyAnalysis> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    
-    const facePartDescriptions = {
-      forehead: [
-        { desc: "넓고 평평한 이마", meaning: "지혜롭고 포용력이 큰 성격" },
-        { desc: "높고 둥근 이마", meaning: "창의적이고 직관력이 뛰어남" },
-        { desc: "각진 이마", meaning: "결단력 있고 리더십이 강함" }
-      ],
-      eyebrows: [
-        { desc: "진하고 일자형 눈썹", meaning: "의지가 강하고 끈기가 있음" },
-        { desc: "아치형 눈썹", meaning: "감정이 풍부하고 예술적 재능" },
-        { desc: "촘촘한 눈썹", meaning: "꼼꼼하고 신중한 성격" }
-      ],
-      eyes: [
-        { desc: "크고 또렷한 눈", meaning: "총명하고 관찰력이 뛰어남" },
-        { desc: "가늘고 긴 눈", meaning: "침착하고 판단력이 우수함" },
-        { desc: "쌍꺼풀이 있는 눈", meaning: "사교적이고 매력적인 성격" }
-      ],
-      nose: [
-        { desc: "오똑하고 높은 콧대", meaning: "자존심이 강하고 재물운이 좋음" },
-        { desc: "둥근 콧날", meaning: "온화하고 인정이 많음" },
-        { desc: "날렵한 콧날", meaning: "예민하고 감각이 뛰어남" }
-      ],
-      mouth: [
-        { desc: "도톰하고 균형 잡힌 입술", meaning: "인간관계가 원만하고 복이 많음" },
-        { desc: "작고 예쁜 입", meaning: "섬세하고 조심스러운 성격" },
-        { desc: "큰 입", meaning: "활발하고 표현력이 뛰어남" }
-      ],
-      chin: [
-        { desc: "둥글고 살집 있는 턱", meaning: "복이 많고 인복이 좋음" },
-        { desc: "각진 턱", meaning: "의지가 강하고 추진력이 있음" },
-        { desc: "뾰족한 턱", meaning: "예민하고 감성적인 성격" }
-      ]
-    };
+    // 입력 검증
+    if (!imageFile || !userName.trim()) {
+      throw new Error('이름과 사진이 필요합니다.');
+    }
 
-    const getRandomDescription = (part: keyof typeof facePartDescriptions) => {
-      const options = facePartDescriptions[part];
-      return options[Math.floor(Math.random() * options.length)];
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'physiognomy',
+      userInfo: {
+        name: userName,
+        image: imageFile
+      }
+    });
 
-    const forehead = getRandomDescription('forehead');
-    const eyebrows = getRandomDescription('eyebrows');
-    const eyes = getRandomDescription('eyes');
-    const nose = getRandomDescription('nose');
-    const mouth = getRandomDescription('mouth');
-    const chin = getRandomDescription('chin');
-
-    return {
-      overall_score: Math.max(60, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      personality_traits: {
-        leadership: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-        creativity: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-        sociability: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-        wisdom: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20))),
-        kindness: Math.max(60, Math.min(100, baseScore + Math.floor(Math.random() * 15) + 5))
-      },
-      face_parts: {
-        forehead: { 
-          score: Math.max(60, Math.min(95, baseScore + Math.floor(Math.random() * 15))), 
-          description: forehead.desc, 
-          meaning: forehead.meaning 
-        },
-        eyebrows: { 
-          score: Math.max(55, Math.min(90, baseScore + Math.floor(Math.random() * 20) - 5)), 
-          description: eyebrows.desc, 
-          meaning: eyebrows.meaning 
-        },
-        eyes: { 
-          score: Math.max(65, Math.min(100, baseScore + Math.floor(Math.random() * 15) + 5)), 
-          description: eyes.desc, 
-          meaning: eyes.meaning 
-        },
-        nose: { 
-          score: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20))), 
-          description: nose.desc, 
-          meaning: nose.meaning 
-        },
-        mouth: { 
-          score: Math.max(60, Math.min(100, baseScore + Math.floor(Math.random() * 15) + 5)), 
-          description: mouth.desc, 
-          meaning: mouth.meaning 
-        },
-        chin: { 
-          score: Math.max(55, Math.min(90, baseScore + Math.floor(Math.random() * 20))), 
-          description: chin.desc, 
-          meaning: chin.meaning 
-        }
-      },
-      fortune_aspects: {
-        wealth_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-        career_luck: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-        love_luck: Math.max(45, Math.min(90, baseScore + Math.floor(Math.random() * 25) - 10)),
-        health_luck: Math.max(60, Math.min(95, baseScore + Math.floor(Math.random() * 15) + 5)),
-        social_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20)))
-      },
-      overall_interpretation: "당신의 관상은 전체적으로 균형이 잘 잡혀 있으며, 특히 인간관계와 사회생활에서 좋은 운을 가지고 있습니다. 타고난 매력과 지혜로움이 돋보이며, 꾸준한 노력을 통해 큰 성취를 이룰 수 있는 관상입니다.",
-      life_advice: [
-        "자신의 직감을 믿고 과감한 도전을 해보세요",
-        "인간관계를 소중히 여기면 더 큰 기회가 찾아올 것입니다",
-        "꾸준한 자기계발로 타고난 재능을 발전시키세요",
-        "건강 관리에 신경쓰면서 균형 잡힌 생활을 유지하세요"
-      ]
-    };
+    return gptResult;
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -324,7 +239,13 @@ const handleAnalyze = async () => {
       }
     } catch (error) {
       console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -335,6 +256,64 @@ const handleReset = () => {
     setImageFile(null);
     setUserName('');
   };
+
+  const handleRegenerate = useCallback(async (): Promise<void> => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const analysisResult = await analyzePhysiognomy();
+      
+      const fortuneResult: FortuneResult = {
+        user_info: {
+          name: userName,
+          birth_date: new Date().toISOString().split('T')[0],
+        },
+        fortune_scores: {
+          overall_luck: analysisResult.overall_score,
+          ...analysisResult.fortune_aspects,
+        },
+        lucky_items: {
+          overall_interpretation: analysisResult.overall_interpretation,
+          life_advice: analysisResult.life_advice.join(', '),
+        },
+        metadata: {
+          personality_traits: analysisResult.personality_traits,
+          face_parts: analysisResult.face_parts,
+        }
+      };
+
+      const success = await regenerateFortune(fortuneResult);
+      if (success) {
+        setResult(analysisResult);
+      }
+    } catch (error) {
+      console.error('재분석 중 오류:', error);
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('재분석에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  }, [userName, imageFile, regenerateFortune]);
+
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-25 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 pb-32">
+        <AppHeader 
+          title="AI 관상 분석" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="AI 관상 분석 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   // 분석 화면에서 프리미엄 사용자 확인
   if (step === 'analyzing') {
@@ -727,39 +706,7 @@ const handleReset = () => {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        const analysisResult = await analyzePhysiognomy();
-                        
-                        const fortuneResult: FortuneResult = {
-                          user_info: {
-                            name: userName,
-                            birth_date: new Date().toISOString().split('T')[0],
-                          },
-                          fortune_scores: {
-                            overall_luck: analysisResult.overall_score,
-                            ...analysisResult.fortune_aspects,
-                          },
-                          lucky_items: {
-                            overall_interpretation: analysisResult.overall_interpretation,
-                            life_advice: analysisResult.life_advice.join(', '),
-                          },
-                          metadata: {
-                            personality_traits: analysisResult.personality_traits,
-                            face_parts: analysisResult.face_parts,
-                          }
-                        };
-
-                        const success = await regenerateFortune(fortuneResult);
-                        if (success) {
-                          setResult(analysisResult);
-                        }
-                      } catch (error) {
-                        console.error('재분석 중 오류:', error);
-                        alert('재분석에 실패했습니다. 다시 시도해주세요.');
-                      }
-                    }}
+                    onClick={() => void handleRegenerate()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white py-3 ${fontClasses.text}`}
                   >

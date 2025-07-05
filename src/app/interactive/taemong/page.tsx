@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Baby, 
   Star, 
@@ -97,6 +99,7 @@ export default function TaemongPage() {
     taemongContent: '',
   });
   const [result, setResult] = useState<TaemongFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   useFortuneStream();
   
@@ -124,13 +127,20 @@ export default function TaemongPage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.taemong_summary || 
+            !savedData.insights?.taemong_interpretation || !savedData.insights?.child_gender_prediction || 
+            !savedData.insights?.child_characteristics || !savedData.insights?.lucky_advice) {
+          throw new FortuneServiceError('taemong');
+        }
+        
         const restoredResult: TaemongFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          taemong_summary: savedData.insights?.taemong_summary || '',
-          taemong_interpretation: savedData.insights?.taemong_interpretation || '',
-          child_gender_prediction: savedData.insights?.child_gender_prediction || '',
-          child_characteristics: savedData.insights?.child_characteristics || [],
-          lucky_advice: savedData.insights?.lucky_advice || '',
+          taemong_summary: savedData.insights.taemong_summary,
+          taemong_interpretation: savedData.insights.taemong_interpretation,
+          child_gender_prediction: savedData.insights.child_gender_prediction,
+          child_characteristics: savedData.insights.child_characteristics,
+          lucky_advice: savedData.insights.lucky_advice,
         };
         setResult(restoredResult);
         setStep('result');
@@ -170,18 +180,22 @@ export default function TaemongPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeTaemongFortune = async (): Promise<TaemongFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const genderPrediction = Math.random() > 0.5 ? "아들" : "딸";
-    const characteristics = ["건강함", "총명함", "리더십", "예술적 재능", "온화함"];
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['taemong'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      taemong_summary: `'${formData.taemongContent.substring(0, 20)}...' 태몽에 대한 요약입니다.`, 
-      taemong_interpretation: `입력하신 태몽은 ${genderPrediction}을(를) 암시하며, 아이는 ${characteristics[Math.floor(Math.random() * characteristics.length)]} 등의 특성을 가질 것입니다.`, 
-      child_gender_prediction: genderPrediction,
-      child_characteristics: Array.from({ length: 2 }, () => characteristics[Math.floor(Math.random() * characteristics.length)]),
-      lucky_advice: "태몽의 좋은 기운을 받아 건강하고 행복한 아이를 맞이하세요.",
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'taemong',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        taemong_content: formData.taemongContent
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -190,6 +204,47 @@ export default function TaemongPage() {
     formData.birthYear ? parseInt(formData.birthYear) : undefined,
     formData.birthMonth ? parseInt(formData.birthMonth) : undefined
   );
+
+  const handleRegenerate = useCallback(async (): Promise<void> => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const analysisResult = await analyzeTaemongFortune();
+      
+      const fortuneResult: FortuneResult = {
+        user_info: {
+          name: formData.name,
+          birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+        },
+        fortune_scores: {
+          overall_luck: analysisResult.overall_luck,
+        },
+        insights: {
+          taemong_summary: analysisResult.taemong_summary,
+          taemong_interpretation: analysisResult.taemong_interpretation,
+          child_gender_prediction: analysisResult.child_gender_prediction,
+          child_characteristics: analysisResult.child_characteristics,
+          lucky_advice: analysisResult.lucky_advice,
+        },
+        metadata: {
+          taemong_content: formData.taemongContent,
+        }
+      };
+
+      const success = await regenerateFortune(fortuneResult);
+      if (success) {
+        setResult(analysisResult);
+      }
+    } catch (error) {
+      console.error('재생성 중 오류:', error);
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  }, [formData, regenerateFortune]);
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.taemongContent) {
@@ -204,13 +259,20 @@ export default function TaemongPage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.taemong_summary || 
+            !savedData.insights?.taemong_interpretation || !savedData.insights?.child_gender_prediction || 
+            !savedData.insights?.child_characteristics || !savedData.insights?.lucky_advice) {
+          throw new FortuneServiceError('taemong');
+        }
+        
         const restoredResult: TaemongFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          taemong_summary: savedData.insights?.taemong_summary || '',
-          taemong_interpretation: savedData.insights?.taemong_interpretation || '',
-          child_gender_prediction: savedData.insights?.child_gender_prediction || '',
-          child_characteristics: savedData.insights?.child_characteristics || [],
-          lucky_advice: savedData.insights?.lucky_advice || '',
+          overall_luck: savedData.fortune_scores.overall_luck,
+          taemong_summary: savedData.insights.taemong_summary,
+          taemong_interpretation: savedData.insights.taemong_interpretation,
+          child_gender_prediction: savedData.insights.child_gender_prediction,
+          child_characteristics: savedData.insights.child_characteristics,
+          lucky_advice: savedData.insights.lucky_advice,
         };
         setResult(restoredResult);
       } else {
@@ -243,7 +305,13 @@ export default function TaemongPage() {
       setStep('result');
     } catch (error) {
       console.error('태몽 분석 실패:', error);
-      alert('태몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('태몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -260,6 +328,23 @@ export default function TaemongPage() {
       taemongContent: '',
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-red-50 dark:from-gray-900 dark:via-pink-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="태몽" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="태몽 해석 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-red-50 dark:from-gray-900 dark:via-pink-900 dark:to-gray-800 pb-20">
@@ -545,40 +630,7 @@ export default function TaemongPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        const analysisResult = await analyzeTaemongFortune();
-                        
-                        const fortuneResult: FortuneResult = {
-                          user_info: {
-                            name: formData.name,
-                            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
-                          },
-                          fortune_scores: {
-                            overall_luck: analysisResult.overall_luck,
-                          },
-                          insights: {
-                            taemong_summary: analysisResult.taemong_summary,
-                            taemong_interpretation: analysisResult.taemong_interpretation,
-                            child_gender_prediction: analysisResult.child_gender_prediction,
-                            child_characteristics: analysisResult.child_characteristics,
-                            lucky_advice: analysisResult.lucky_advice,
-                          },
-                          metadata: {
-                            taemong_content: formData.taemongContent,
-                          }
-                        };
-
-                        const success = await regenerateFortune(fortuneResult);
-                        if (success) {
-                          setResult(analysisResult);
-                        }
-                      } catch (error) {
-                        console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
-                      }
-                    }}
+                    onClick={() => void handleRegenerate()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

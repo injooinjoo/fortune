@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Camera, 
   User, 
@@ -80,11 +82,7 @@ const itemVariants = {
   }
 };
 
-const faceShapes = ["둥근형", "각진형", "긴형", "역삼각형", "계란형"];
-const eyeShapes = ["큰 눈", "작은 눈", "가늘고 긴 눈", "쌍꺼풀 진 눈"];
-const noseShapes = ["높은 코", "낮은 코", "복코", "매부리코"];
-const mouthShapes = ["큰 입", "작은 입", "두꺼운 입술", "얇은 입술"];
-const personalityTraits = ["온화함", "사교성", "리더십", "분석적", "창의적", "현실적"];
+// 하드코딩된 관상 특징 배열 제거됨 - GPT API에서 데이터 제공
 
 const getLuckColor = (score: number) => {
   if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";
@@ -113,6 +111,7 @@ export default function FaceReadingPage() {
     image: null,
   });
   const [result, setResult] = useState<FaceReadingFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   useFortuneStream();
@@ -142,15 +141,23 @@ export default function FaceReadingPage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.face_shape || 
+            !savedData.insights?.eye_analysis || !savedData.insights?.nose_analysis || 
+            !savedData.insights?.mouth_analysis || !savedData.insights?.personality_traits || 
+            !savedData.fortune_scores.life_fortune || !savedData.insights?.lucky_advice) {
+          throw new FortuneServiceError('face-reading');
+        }
+        
         const restoredResult: FaceReadingFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          face_shape: savedData.insights?.face_shape || '',
-          eye_analysis: savedData.insights?.eye_analysis || { shape: '', meaning: '', fortune: '' },
-          nose_analysis: savedData.insights?.nose_analysis || { shape: '', meaning: '', fortune: '' },
-          mouth_analysis: savedData.insights?.mouth_analysis || { shape: '', meaning: '', fortune: '' },
-          personality_traits: savedData.insights?.personality_traits || [],
-          life_fortune: savedData.fortune_scores.life_fortune || { wealth: 0, love: 0, career: 0, health: 0 },
-          lucky_advice: savedData.insights?.lucky_advice || '',
+          face_shape: savedData.insights.face_shape,
+          eye_analysis: savedData.insights.eye_analysis,
+          nose_analysis: savedData.insights.nose_analysis,
+          mouth_analysis: savedData.insights.mouth_analysis,
+          personality_traits: savedData.insights.personality_traits,
+          life_fortune: savedData.fortune_scores.life_fortune,
+          lucky_advice: savedData.insights.lucky_advice,
           image_url: savedData.metadata?.image_url || '',
         };
         setResult(restoredResult);
@@ -191,44 +198,27 @@ export default function FaceReadingPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeFaceReadingFortune = async (imageFile: File): Promise<FaceReadingFortune> => {
-    // Simulate Teachable Machine and GPT API calls
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const randomFaceShape = faceShapes[Math.floor(Math.random() * faceShapes.length)];
-    const randomEyeShape = eyeShapes[Math.floor(Math.random() * eyeShapes.length)];
-    const randomNoseShape = noseShapes[Math.floor(Math.random() * noseShapes.length)];
-    const randomMouthShape = mouthShapes[Math.floor(Math.random() * mouthShapes.length)];
-    const randomPersonalityTraits = Array.from({ length: 3 }, () => personalityTraits[Math.floor(Math.random() * personalityTraits.length)]);
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['face-reading'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    const imageUrl = URL.createObjectURL(imageFile);
+    if (!imageFile) {
+      throw new Error('관상 분석을 위한 사진이 필요합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      face_shape: randomFaceShape,
-      eye_analysis: {
-        shape: randomEyeShape,
-        meaning: "감성적이고 표현력이 풍부함",
-        fortune: "대인관계운이 좋음"
-      },
-      nose_analysis: {
-        shape: randomNoseShape,
-        meaning: "의지가 강하고 리더십이 있음",
-        fortune: "재물운과 명예운이 좋음"
-      },
-      mouth_analysis: {
-        shape: randomMouthShape,
-        meaning: "균형감각이 뛰어남",
-        fortune: "말복이 있어 주변에 도움을 많이 받음"
-      },
-      personality_traits: randomPersonalityTraits,
-      life_fortune: {
-        wealth: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 10))),
-        love: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 10))),
-        career: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 10))),
-        health: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 10))),
-      },
-      lucky_advice: "자신의 강점을 살려 대인관계를 원만히 하고, 꾸준히 노력하면 좋은 운이 따를 것입니다.",
-      image_url: imageUrl,
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'face-reading',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        gender: formData.gender,
+        image: imageFile
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -257,15 +247,23 @@ export default function FaceReadingPage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.face_shape || 
+            !savedData.insights?.eye_analysis || !savedData.insights?.nose_analysis || 
+            !savedData.insights?.mouth_analysis || !savedData.insights?.personality_traits || 
+            !savedData.fortune_scores?.life_fortune || !savedData.insights?.lucky_advice) {
+          throw new FortuneServiceError('face-reading');
+        }
+        
         const restoredResult: FaceReadingFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          face_shape: savedData.insights?.face_shape || '',
-          eye_analysis: savedData.insights?.eye_analysis || { shape: '', meaning: '', fortune: '' },
-          nose_analysis: savedData.insights?.nose_analysis || { shape: '', meaning: '', fortune: '' },
-          mouth_analysis: savedData.insights?.mouth_analysis || { shape: '', meaning: '', fortune: '' },
-          personality_traits: savedData.insights?.personality_traits || [],
-          life_fortune: savedData.fortune_scores?.life_fortune || { wealth: 0, love: 0, career: 0, health: 0 },
-          lucky_advice: savedData.insights?.lucky_advice || '',
+          overall_luck: savedData.fortune_scores.overall_luck,
+          face_shape: savedData.insights.face_shape,
+          eye_analysis: savedData.insights.eye_analysis,
+          nose_analysis: savedData.insights.nose_analysis,
+          mouth_analysis: savedData.insights.mouth_analysis,
+          personality_traits: savedData.insights.personality_traits,
+          life_fortune: savedData.fortune_scores.life_fortune,
+          lucky_advice: savedData.insights.lucky_advice,
           image_url: savedData.metadata?.image_url || '',
         };
         setResult(restoredResult);
@@ -302,7 +300,13 @@ export default function FaceReadingPage() {
       setStep('result');
     } catch (error) {
       console.error('관상 분석 실패:', error);
-      alert('관상 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('관상 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -323,6 +327,23 @@ export default function FaceReadingPage() {
       fileInputRef.current.value = '';
     }
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="관상 분석" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="관상 분석 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-800 pb-20">
@@ -709,7 +730,7 @@ export default function FaceReadingPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
+                    onClick={() => void (async () => {
                       try {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                         const analysisResult = await analyzeFaceReadingFortune(formData.image!); // Use existing image
@@ -745,7 +766,7 @@ export default function FaceReadingPage() {
                         console.error('재생성 중 오류:', error);
                         alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
                       }
-                    }}
+                    })()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

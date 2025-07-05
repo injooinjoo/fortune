@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Cookie, 
   Star, 
@@ -94,6 +96,7 @@ export default function FortuneCookiePage() {
     birthDay: '',
   });
   const [result, setResult] = useState<FortuneCookieFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   useFortuneStream();
   
@@ -120,12 +123,19 @@ export default function FortuneCookiePage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.fortune_message || 
+            !savedData.lucky_items?.lucky_numbers || !savedData.lucky_items?.lucky_color || 
+            !savedData.insights?.advice) {
+          throw new FortuneServiceError('fortune-cookie');
+        }
+        
         const restoredResult: FortuneCookieFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          fortune_message: savedData.insights?.fortune_message || '',
-          lucky_numbers: savedData.lucky_items?.lucky_numbers || [],
-          lucky_color: savedData.lucky_items?.lucky_color || '',
-          advice: savedData.insights?.advice || '',
+          fortune_message: savedData.insights.fortune_message,
+          lucky_numbers: savedData.lucky_items.lucky_numbers,
+          lucky_color: savedData.lucky_items.lucky_color,
+          advice: savedData.insights.advice,
         };
         setResult(restoredResult);
         setStep('result');
@@ -165,23 +175,21 @@ export default function FortuneCookiePage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeFortuneCookieFortune = async (): Promise<FortuneCookieFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const messages = [
-      "오늘은 당신의 행운이 가득한 날입니다.",
-      "새로운 기회가 찾아올 것입니다. 놓치지 마세요.",
-      "노력은 배신하지 않습니다. 꾸준히 나아가세요.",
-      "주변 사람들에게 감사하는 마음을 가지세요.",
-      "작은 변화가 큰 행복을 가져다줄 것입니다."
-    ];
-    const colors = ["빨간색", "파란색", "초록색", "노란색", "보라색"];
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['fortune-cookie'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      fortune_message: messages[Math.floor(Math.random() * messages.length)],
-      lucky_numbers: Array.from({ length: 3 }, () => Math.floor(Math.random() * 45) + 1),
-      lucky_color: colors[Math.floor(Math.random() * colors.length)],
-      advice: "긍정적인 마음으로 하루를 시작하면 좋은 일들이 가득할 것입니다.",
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'fortune-cookie',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -190,6 +198,48 @@ export default function FortuneCookiePage() {
     formData.birthYear ? parseInt(formData.birthYear) : undefined,
     formData.birthMonth ? parseInt(formData.birthMonth) : undefined
   );
+
+  const handleRegenerate = useCallback(async (): Promise<void> => {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      const analysisResult = await analyzeFortuneCookieFortune();
+      
+      const fortuneResult: FortuneResult = {
+        user_info: {
+          name: formData.name,
+          birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
+        },
+        fortune_scores: {
+          overall_luck: analysisResult.overall_luck,
+        },
+        insights: {
+          fortune_message: analysisResult.fortune_message,
+          advice: analysisResult.advice,
+        },
+        lucky_items: {
+          lucky_numbers: analysisResult.lucky_numbers,
+          lucky_color: analysisResult.lucky_color,
+        },
+        metadata: {
+          // No specific metadata needed for fortune cookie beyond user info
+        }
+      };
+
+      const success = await regenerateFortune(fortuneResult);
+      if (success) {
+        setResult(analysisResult);
+      }
+    } catch (error) {
+      console.error('재생성 중 오류:', error);
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  }, [formData, regenerateFortune]);
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
@@ -204,12 +254,19 @@ export default function FortuneCookiePage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.fortune_message || 
+            !savedData.lucky_items?.lucky_numbers || !savedData.lucky_items?.lucky_color || 
+            !savedData.insights?.advice) {
+          throw new FortuneServiceError('fortune-cookie');
+        }
+        
         const restoredResult: FortuneCookieFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          fortune_message: savedData.insights?.fortune_message || '',
-          lucky_numbers: savedData.lucky_items?.lucky_numbers || [],
-          lucky_color: savedData.lucky_items?.lucky_color || '',
-          advice: savedData.insights?.advice || '',
+          overall_luck: savedData.fortune_scores.overall_luck,
+          fortune_message: savedData.insights.fortune_message,
+          lucky_numbers: savedData.lucky_items.lucky_numbers,
+          lucky_color: savedData.lucky_items.lucky_color,
+          advice: savedData.insights.advice,
         };
         setResult(restoredResult);
       } else {
@@ -243,7 +300,13 @@ export default function FortuneCookiePage() {
       setStep('result');
     } catch (error) {
       console.error('포춘 쿠키 분석 실패:', error);
-      alert('포춘 쿠키 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('포춘 쿠키 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -259,6 +322,23 @@ export default function FortuneCookiePage() {
       birthDay: '',
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 dark:from-gray-900 dark:via-orange-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="포춘 쿠키" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="포춘 쿠키 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-amber-50 dark:from-gray-900 dark:via-orange-900 dark:to-gray-800 pb-20">
@@ -509,41 +589,7 @@ export default function FortuneCookiePage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
-                      try {
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        const analysisResult = await analyzeFortuneCookieFortune();
-                        
-                        const fortuneResult: FortuneResult = {
-                          user_info: {
-                            name: formData.name,
-                            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
-                          },
-                          fortune_scores: {
-                            overall_luck: analysisResult.overall_luck,
-                          },
-                          insights: {
-                            fortune_message: analysisResult.fortune_message,
-                            advice: analysisResult.advice,
-                          },
-                          lucky_items: {
-                            lucky_numbers: analysisResult.lucky_numbers,
-                            lucky_color: analysisResult.lucky_color,
-                          },
-                          metadata: {
-                            // No specific metadata needed for fortune cookie beyond user info
-                          }
-                        };
-
-                        const success = await regenerateFortune(fortuneResult);
-                        if (success) {
-                          setResult(analysisResult);
-                        }
-                      } catch (error) {
-                        console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
-                      }
-                    }}
+                    onClick={() => void handleRegenerate()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,9 +8,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { auth } from "@/lib/supabase";
-import { getUserProfile, isPremiumUser, saveUserProfile } from "@/lib/user-storage";
+import { getUserProfile, isPremiumUser, saveUserProfile, getUserInfo } from "@/lib/user-storage";
+import { checkFortuneProfileCompleteness } from "@/lib/profile-completeness";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
 import AppHeader from "@/components/AppHeader";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
+import { FortuneServiceError } from "@/lib/fortune-utils";
+import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { 
   Sparkles, 
   Camera, 
@@ -162,6 +166,9 @@ export default function HomePage() {
   const [showAdLoading, setShowAdLoading] = useState(false);
   const [pendingFortune, setPendingFortune] = useState<{ path: string; title: string } | null>(null);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [todayFortuneError, setTodayFortuneError] = useState<Error | null>(null);
+  const [todayFortune, setTodayFortune] = useState<any>(null);
+  const loadingRef = useRef<boolean>(false);
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -370,34 +377,95 @@ export default function HomePage() {
 
   const timeInfo = getTimeGreeting();
 
-  // 오늘의 운세 새로고침
-  const refreshFortune = async () => {
-    setIsRefreshing(true);
-    // 실제로는 API 호출이 있겠지만, 여기서는 시뮬레이션
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
-  };
-
-  const today = {
-    score: 85,
-    keywords: ["도전", "결실", "행운"],
-    summary: "새로운 시도가 좋은 결과로 이어지는 날입니다. 오늘은 특히 인간관계에서 좋은 소식이 있을 것 같습니다.",
-    luckyColor: "#8B5CF6",
-    luckyNumber: 7,
-    energy: 92,
-    mood: "활기참",
-    advice: "오전에 중요한 결정을 내리세요",
-    caution: "서두르지 말고 신중하게",
-    bestTime: "14:00 - 16:00",
-    compatibility: "ENFP, 물병자리",
-    elements: {
-      love: 88,
-      career: 75,
-      money: 90,
-      health: 82
+  // 오늘의 운세 로드 (중복 요청 방지)
+  const loadTodayFortune = useCallback(async () => {
+    // 이미 로딩 중이면 중복 요청 방지
+    if (loadingRef.current) {
+      console.log('🔄 이미 로딩 중 - 중복 요청 방지');
+      return;
     }
-  };
+    
+    try {
+      loadingRef.current = true;
+      setIsRefreshing(true);
+      setTodayFortuneError(null);
+      
+      // 사용자 프로필 정보 확인
+      const userInfo = getUserInfo();
+      const { isComplete } = checkFortuneProfileCompleteness(userInfo, 'today');
+      
+      let response;
+      
+      if (!isComplete) {
+        // 프로필 정보가 부족한 경우 - 기본 프로필로 체험 운세 제공
+        console.log('📝 프로필 정보 부족 - 체험 운세 제공');
+        response = await fetch('/api/fortune/today', {
+          method: 'GET', // 기본 프로필 사용
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } else {
+        // 완전한 프로필 정보가 있는 경우 - 개인화된 운세 제공
+        console.log('✅ 완전한 프로필 - 개인화된 운세 제공');
+        response = await fetch('/api/fortune/today', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userInfo: userInfo
+          }),
+        });
+      }
+      
+      if (!response.ok) {
+        throw new Error(`API 오류: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.error || '운세 데이터를 가져오는데 실패했습니다.');
+      }
+      
+      // 성공적으로 운세 데이터 로드
+      const fortuneData = {
+        ...result.data,
+        isPersonalized: isComplete, // 개인화 여부 표시
+        // 필수 필드 기본값 보장
+        overall_score: result.data?.overall_score || result.data?.overall_luck || 75,
+        love_score: result.data?.love_score || result.data?.love_luck || 70,
+        career_score: result.data?.career_score || result.data?.work_luck || 70,
+        money_score: result.data?.money_score || result.data?.money_luck || 70,
+        health_score: result.data?.health_score || result.data?.health_luck || 70,
+        summary: result.data?.summary || '오늘 하루의 운세가 준비되었습니다.',
+        advice: result.data?.advice || '긍정적인 마음가짐으로 하루를 시작하세요.',
+        lucky_items: result.data?.lucky_items || ['행운의 색깔', '작은 선물']
+      };
+      setTodayFortune(fortuneData);
+      console.log('✅ 오늘의 운세 로드 성공:', result.cached ? '캐시됨' : '새로 생성됨', isComplete ? '(개인화됨)' : '(체험용)');
+      console.log('📊 운세 데이터 구조:', fortuneData);
+      
+    } catch (error) {
+      console.error('❌ 오늘의 운세 로드 실패:', error);
+      setTodayFortuneError(error instanceof Error ? error : new Error('알 수 없는 오류가 발생했습니다.'));
+    } finally {
+      setIsRefreshing(false);
+      loadingRef.current = false;
+    }
+  }, []);
+
+  // 페이지 로드 시 오늘의 운세 시도 (중복 방지)
+  useEffect(() => {
+    loadTodayFortune();
+  }, [loadTodayFortune]);
+
+  // 오늘의 운세 새로고침
+  const refreshFortune = useCallback(async () => {
+    setTodayFortuneError(null);
+    await loadTodayFortune();
+  }, [loadTodayFortune]);
 
 // 광고 로딩 화면 표시 중이면 AdLoadingScreen 렌더링
   if (showAdLoading && pendingFortune) {
@@ -441,223 +509,262 @@ export default function HomePage() {
         animate="visible"
         className="px-6 pt-4"
       >
-        {/* 오늘의 운세 카드 - 새롭게 디자인 */}
+        {/* 오늘의 운세 카드 */}
         <motion.div variants={itemVariants} className="mb-8">
-          <motion.div
-            variants={cardVariants}
-            whileHover="hover"
-            whileTap={{ scale: 0.98 }}
-          >
-            <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-2xl overflow-hidden relative">
-              {/* 배경 패턴 */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-4 right-4 w-32 h-32 rounded-full border border-white/20"></div>
-                <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white/20"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-white/10"></div>
-              </div>
+          {todayFortuneError ? (
+            <motion.div
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 shadow-2xl overflow-hidden relative border-dashed border-2 border-gray-300 dark:border-gray-600">
+                {/* 배경 패턴 */}
+                <div className="absolute inset-0 opacity-5">
+                  <div className="absolute top-4 right-4 w-32 h-32 rounded-full border border-gray-400"></div>
+                  <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-gray-400"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-gray-300"></div>
+                </div>
 
-              <CardHeader className="pb-4 relative z-10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                      className="bg-white/20 rounded-full p-2"
+                <CardHeader className="pb-4 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        className="bg-gray-200 dark:bg-gray-600 rounded-full p-2"
+                      >
+                        <timeInfo.icon className="w-6 h-6 text-gray-500 dark:text-gray-400" />
+                      </motion.div>
+                      <div>
+                        <CardTitle className={`${fontClasses.title} font-bold text-gray-700 dark:text-gray-300`}>
+                          {timeInfo.greeting} 운세
+                        </CardTitle>
+                        <p className={`${fontClasses.label} text-gray-500 dark:text-gray-400`}>
+                          {currentTime ? (
+                            <>
+                              {currentTime.toLocaleDateString('ko-KR', { 
+                                month: 'long', 
+                                day: 'numeric',
+                                weekday: 'short'
+                              })} • {currentTime.toLocaleTimeString('ko-KR', { 
+                                hour: '2-digit', 
+                                minute: '2-digit'
+                              })}
+                            </>
+                          ) : (
+                            '로딩 중...'
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <motion.button
+                      onClick={refreshFortune}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="bg-gray-200 dark:bg-gray-600 rounded-full p-2 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+                      disabled={isRefreshing}
                     >
-                      <timeInfo.icon className="w-6 h-6" />
-                    </motion.div>
-                    <div>
-                      <CardTitle className={`${fontClasses.title} font-bold`}>
-                        {timeInfo.greeting} 운세
-                      </CardTitle>
-                      <p className={`${fontClasses.label} text-white/80`}>
-                        {currentTime ? (
-                          <>
-                            {currentTime.toLocaleDateString('ko-KR', { 
-                              month: 'long', 
-                              day: 'numeric',
-                              weekday: 'short'
-                            })} • {currentTime.toLocaleTimeString('ko-KR', { 
-                              hour: '2-digit', 
-                              minute: '2-digit'
-                            })}
-                          </>
-                        ) : (
-                          '로딩 중...'
-                        )}
+                      <motion.div
+                        animate={isRefreshing ? { rotate: 360 } : {}}
+                        transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0 }}
+                      >
+                        <RefreshCw className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                      </motion.div>
+                    </motion.button>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-6 relative z-10">
+                  <FortuneErrorBoundary 
+                    error={todayFortuneError} 
+                    reset={() => {
+                      setTodayFortuneError(null);
+                      loadTodayFortune();
+                    }}
+                    fallbackMessage={todayFortuneError.message}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : todayFortune && typeof todayFortune.overall_score === 'number' ? (
+            // 성공적으로 운세 데이터를 불러온 경우
+            <motion.div
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-2xl overflow-hidden relative">
+                {/* 배경 장식 */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-4 right-4 w-32 h-32 rounded-full border border-white"></div>
+                  <div className="absolute bottom-4 left-4 w-24 h-24 rounded-full border border-white"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-white/50"></div>
+                </div>
+
+                <CardHeader className="pb-4 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                        className="bg-white/20 rounded-full p-2"
+                      >
+                        <timeInfo.icon className="w-6 h-6 text-white" />
+                      </motion.div>
+                      <div>
+                        <CardTitle className={`${fontClasses.title} font-bold text-white`}>
+                          {timeInfo.greeting} 운세
+                        </CardTitle>
+                        <p className={`${fontClasses.label} text-white/80`}>
+                          {currentTime ? (
+                            <>
+                              {currentTime.toLocaleDateString('ko-KR', { 
+                                month: 'long', 
+                                day: 'numeric',
+                                weekday: 'short'
+                              })} • {currentTime.toLocaleTimeString('ko-KR', { 
+                                hour: '2-digit', 
+                                minute: '2-digit'
+                              })}
+                            </>
+                          ) : (
+                            '로딩 중...'
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <motion.button
+                      onClick={refreshFortune}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className="bg-white/20 rounded-full p-2 hover:bg-white/30 transition-colors"
+                      disabled={isRefreshing}
+                    >
+                      <motion.div
+                        animate={isRefreshing ? { rotate: 360 } : {}}
+                        transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0 }}
+                      >
+                        <RefreshCw className="w-5 h-5 text-white" />
+                      </motion.div>
+                    </motion.button>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-6 relative z-10">
+                  {/* 개인화 안내 */}
+                  {!todayFortune.isPersonalized && (
+                    <div className="bg-white/10 border border-white/20 rounded-lg p-3">
+                      <p className={`${fontClasses.label} text-white/90 text-center`}>
+                        🌟 체험용 운세입니다. <Link href="/profile/edit" className="underline font-medium">프로필을 완성</Link>하면 더 정확한 개인화된 운세를 받을 수 있어요!
                       </p>
                     </div>
-                  </div>
-                  <motion.button
-                    onClick={refreshFortune}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="bg-white/20 rounded-full p-2 hover:bg-white/30 transition-colors"
-                  >
-                    <motion.div
-                      animate={isRefreshing ? { rotate: 360 } : {}}
-                      transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0 }}
-                    >
-                      <RefreshCw className="w-5 h-5" />
-                    </motion.div>
-                  </motion.button>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-6 relative z-10">
-                {/* 메인 운세 점수와 기분 */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <motion.div 
-                      className="bg-white/20 rounded-full px-4 py-2 flex items-center gap-2"
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ repeat: Infinity, duration: 3 }}
-                    >
-                      <span className={`${fontClasses.title} font-bold`}>{today.score}점</span>
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    </motion.div>
-                    <div className="bg-white/20 rounded-full px-3 py-1">
-                      <span className={`${fontClasses.text} font-medium`}>{today.mood}</span>
-                    </div>
-                  </div>
-                  <motion.div 
-                    className="flex items-center gap-1"
-                    animate={{ y: [0, -2, 0] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                  >
-                    <Zap className="w-4 h-4 text-yellow-300" />
-                    <span className={`${fontClasses.label} text-yellow-300`}>에너지 {today.energy}%</span>
-                  </motion.div>
-                </div>
-
-                {/* 운세 요약 */}
-                <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-                  <p className={`${fontClasses.text} text-white/95 leading-relaxed mb-3`}>{today.summary}</p>
+                  )}
                   
-                  {/* 키워드 태그 */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {today.keywords.map((keyword, index) => (
-                      <motion.div
-                        key={keyword}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.6 + index * 0.1 }}
-                      >
-                        <Badge variant="secondary" className={`${fontClasses.label} bg-white/20 text-white border-white/30 hover:bg-white/30 transition-colors`}>
-                          #{keyword}
-                        </Badge>
-                      </motion.div>
+                  {/* 전체 운세 점수 */}
+                  <div className="text-center">
+                    <div className="text-4xl font-bold mb-2 text-white">
+                      {todayFortune.overall_score}점
+                    </div>
+                    <p className={`${fontClasses.text} text-white/90`}>
+                      {todayFortune.summary || '오늘 하루의 전체적인 운세입니다.'}
+                    </p>
+                  </div>
+
+                  {/* 세부 운세 */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { key: 'love', label: '연애운', icon: Heart, score: todayFortune.love_score || 70 },
+                      { key: 'career', label: '직업운', icon: Briefcase, score: todayFortune.career_score || 70 },
+                      { key: 'money', label: '금전운', icon: Coins, score: todayFortune.money_score || 70 },
+                      { key: 'health', label: '건강운', icon: Shield, score: todayFortune.health_score || 70 }
+                    ].map((item) => (
+                      <div key={item.key} className="bg-white/10 rounded-lg p-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <item.icon className="w-4 h-4 text-white/80" />
+                          <span className={`${fontClasses.label} font-medium text-white/90`}>
+                            {item.label}
+                          </span>
+                        </div>
+                        <div className="text-lg font-bold text-white">
+                          {item.score}점
+                        </div>
+                      </div>
                     ))}
                   </div>
 
-                  {/* 조언과 주의사항 */}
-                  <div className="grid grid-cols-1 gap-2">
-                    <div className="flex items-center gap-2">
-                      <Lightbulb className="w-4 h-4 text-yellow-300" />
-                      <span className={`${fontClasses.label} text-white/90`}>{today.advice}</span>
+                  {/* 오늘의 조언 */}
+                  {todayFortune.advice && (
+                    <div className="bg-white/10 rounded-lg p-4">
+                      <h4 className={`${fontClasses.text} font-semibold text-white mb-2`}>
+                        오늘의 조언
+                      </h4>
+                      <p className={`${fontClasses.label} text-white/90`}>
+                        {todayFortune.advice}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4 text-orange-300" />
-                      <span className={`${fontClasses.label} text-white/90`}>{today.caution}</span>
-                    </div>
-                  </div>
-                </div>
+                  )}
 
-                {/* 운세 세부 영역 */}
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.entries(today.elements).map(([key, value], index) => {
-                    const icons = {
-                      love: Heart,
-                      career: Briefcase,
-                      money: Coins,
-                      health: Activity
-                    };
-                    const names = {
-                      love: "연애",
-                      career: "직업",
-                      money: "금전",
-                      health: "건강"
-                    };
-                    const Icon = icons[key as keyof typeof icons];
-                    
-                    return (
-                      <motion.div
-                        key={key}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.8 + index * 0.1 }}
-                        className="bg-white/10 rounded-lg p-3 backdrop-blur-sm"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Icon className="w-4 h-4" />
-                            <span className={`${fontClasses.label} text-white/90`}>
-                              {names[key as keyof typeof names]}
-                            </span>
-                          </div>
-                          <span className={`${fontClasses.label} font-semibold text-white`}>{value}%</span>
-                        </div>
-                        <div className="mt-2 bg-white/20 rounded-full h-1.5 overflow-hidden">
-                          <motion.div
-                            className="h-full bg-gradient-to-r from-white to-yellow-300 rounded-full"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${value}%` }}
-                            transition={{ delay: 1 + index * 0.1, duration: 0.8 }}
-                          />
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* 하단 정보 */}
-                <div className="flex items-center justify-between pt-4 border-t border-white/20">
-                  <div className="flex items-center gap-4">
+                  {/* 행운 아이템 */}
+                  {todayFortune.lucky_items && Array.isArray(todayFortune.lucky_items) && todayFortune.lucky_items.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <motion.div 
-                        className="w-4 h-4 rounded-full border-2 border-white"
-                        style={{ backgroundColor: today.luckyColor }}
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
-                      />
-                      <span className={fontClasses.label}>행운의 색</span>
+                      <Sparkles className="w-4 h-4 text-yellow-300" />
+                      <span className={`${fontClasses.label} text-white/90`}>
+                        행운 아이템: {todayFortune.lucky_items.join(', ')}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4" />
-                      <span className={fontClasses.label}>행운의 숫자: {today.luckyNumber}</span>
-                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : isRefreshing ? (
+            // 로딩 중일 때
+            <motion.div
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-2xl overflow-hidden relative">
+                <CardContent className="p-6">
+                  <div className="text-center py-8">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="inline-block mb-4"
+                    >
+                      <Sparkles className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <p className={`${fontClasses.text} text-white/90`}>
+                      개인화된 운세를 생성하고 있습니다...
+                    </p>
                   </div>
-                  <motion.div
-                    onClick={() => handleFortuneClick('/fortune/today', '오늘의 상세 운세')}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="bg-white/20 rounded-full px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-white/30 transition-colors"
-                  >
-                    <span className={`${fontClasses.label} font-medium`}>자세히 보기</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </motion.div>
-                </div>
-
-                {/* 최적 시간과 궁합 정보 */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Clock className="w-4 h-4" />
-                      <span className={`${fontClasses.label} text-white/90`}>최적 시간</span>
-                    </div>
-                    <span className={`${fontClasses.text} font-semibold text-white`}>{today.bestTime}</span>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : (
+            // 초기 로딩 상태
+            <motion.div
+              variants={cardVariants}
+              whileHover="hover"
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-2xl overflow-hidden relative">
+                <CardContent className="p-6">
+                  <div className="text-center py-8">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="inline-block mb-4"
+                    >
+                      <Sparkles className="w-8 h-8 text-white" />
+                    </motion.div>
+                    <p className={`${fontClasses.text} text-white/90`}>
+                      운세 데이터를 불러오는 중...
+                    </p>
                   </div>
-                  <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Users className="w-4 h-4" />
-                      <span className={`${fontClasses.label} text-white/90`}>궁합</span>
-                    </div>
-                    <span className={`${fontClasses.text} font-semibold text-white`}>{today.compatibility}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* 주요 메뉴 */}

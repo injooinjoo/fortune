@@ -94,14 +94,14 @@ export default function LoginModal({ trigger }: LoginModalProps) {
                 ? 'bg-gray-800 border-gray-600 text-white hover:bg-gray-700' 
                 : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'
             }`}
-            onClick={() => handleSocialLogin("google")}
+            onClick={() => void handleSocialLogin("google")}
           >
             <GoogleIcon className="h-5 w-5" />
             <span>Google로 시작하기</span>
           </Button>
           <Button
             className="w-full py-3 bg-[#FEE500] hover:bg-[#f7d900] text-black font-medium flex items-center justify-center space-x-3 transition-colors"
-            onClick={() => handleSocialLogin("kakao")}
+            onClick={() => void handleSocialLogin("kakao")}
           >
             <KakaoIcon className="h-5 w-5" />
             <span>카카오로 시작하기</span>

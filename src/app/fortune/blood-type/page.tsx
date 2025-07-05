@@ -4,16 +4,16 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
 import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
+import { useProfileCompletion } from "@/hooks/use-profile-completion";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
+import ProfileCompletionModal from "@/components/ProfileCompletionModal";
+import { getUserInfo } from "@/lib/user-storage";
 import { 
   Droplet, 
   Star, 
@@ -25,23 +25,11 @@ import {
   BarChart3,
   Activity,
   Shield,
-  CloudRain,
-  Compass,
-  TreePine,
   RotateCcw,
   CheckCircle,
   ArrowLeft,
-  MapPin,
-  Sunrise
+  AlertCircle
 } from "lucide-react";
-import { 
-  getYearOptions, 
-  getMonthOptions, 
-  getDayOptions, 
-  formatKoreanDate,
-  koreanToIsoDate,
-  TIME_PERIODS
-} from "@/lib/utils";
 
 interface BloodTypeInfo {
   name: string;
@@ -106,14 +94,8 @@ export default function BloodTypeFortunePage() {
   const [step, setStep] = useState<'form' | 'result'>('form');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [formData, setFormData] = useState<BloodTypeInfo>({
-    name: '',
-    birthYear: '',
-    birthMonth: '',
-    birthDay: '',
-    bloodType: ''
-  });
   const [result, setResult] = useState<BloodTypeFortune | null>(null);
+  const [hasProfileInfo, setHasProfileInfo] = useState(false);
   
   useFortuneStream();
   
@@ -127,29 +109,38 @@ export default function BloodTypeFortunePage() {
     canRegenerate
   } = useDailyFortune({ fortuneType: 'blood-type' });
 
+  const {
+    isModalOpen,
+    currentFortune,
+    checkProfileCompletion,
+    requireProfileCompletion,
+    handleProfileComplete,
+    closeModal
+  } = useProfileCompletion();
+
+  // 프로필 정보 확인
   useEffect(() => {
-    if (hasTodayFortune && todayFortune && step === 'form') {
+    const { isComplete } = checkProfileCompletion('blood-type');
+    setHasProfileInfo(isComplete);
+    
+    if (hasTodayFortune && todayFortune && step === 'form' && isComplete) {
       const savedData = todayFortune.fortune_data as any;
-      const metadata = savedData.metadata || {};
-      
-      setFormData({
-        name: savedData.user_info?.name || '',
-        birthYear: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[0] : '',
-        birthMonth: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[1] : '',
-        birthDay: savedData.user_info?.birth_date ? savedData.user_info.birth_date.split('-')[2] : '',
-        bloodType: metadata.blood_type || ''
-      });
       
       if (savedData.fortune_scores) {
+        if (!savedData.insights?.blood_type_traits || !savedData.insights?.lucky_advice || 
+            !savedData.lucky_items?.compatible_blood_types) {
+          throw new FortuneServiceError('혈액형');
+        }
+        
         const restoredResult: BloodTypeFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
           personality_match: savedData.fortune_scores.personality_match,
           love_match: savedData.fortune_scores.love_match,
           career_match: savedData.fortune_scores.career_match,
           health_match: savedData.fortune_scores.health_match,
-          blood_type_traits: savedData.insights?.blood_type_traits || '',
-          lucky_advice: savedData.insights?.lucky_advice || '',
-          compatible_blood_types: savedData.lucky_items?.compatible_blood_types || []
+          blood_type_traits: savedData.insights.blood_type_traits,
+          lucky_advice: savedData.insights.lucky_advice,
+          compatible_blood_types: savedData.lucky_items.compatible_blood_types
         };
         setResult(restoredResult);
         setStep('result');
@@ -189,32 +180,24 @@ export default function BloodTypeFortunePage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeBloodTypeFortune = async (): Promise<BloodTypeFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    const userInfo = getUserInfo();
+    
+    // 프로필 정보 검증
+    if (!userInfo.name || !userInfo.birthDate || !userInfo.bloodType) {
+      throw new Error('프로필 정보가 부족합니다.');
+    }
 
-    const traitsMap: { [key: string]: string } = {
-      "A형": "신중하고 책임감이 강하며, 배려심이 깊습니다. 때로는 소심하거나 완벽주의적인 경향이 있습니다.",
-      "B형": "자유분방하고 창의적이며, 솔직하고 낙천적입니다. 때로는 자기중심적이거나 변덕스러운 면이 있습니다.",
-      "O형": "사교적이고 리더십이 있으며, 활발하고 긍정적입니다. 때로는 고집이 세거나 단순한 면이 있습니다.",
-      "AB형": "합리적이고 분석적이며, 독특하고 개성이 강합니다. 때로는 이중적이거나 비판적인 면이 있습니다."
-    };
+    // GPT API 호출
+    const gptResult = await callGPTFortuneAPI({
+      type: 'blood-type',
+      userInfo: {
+        name: userInfo.name,
+        birth_date: userInfo.birthDate,
+        blood_type: userInfo.bloodType
+      }
+    });
 
-    const compatibleMap: { [key: string]: string[] } = {
-      "A형": ["O형", "AB형"],
-      "B형": ["O형", "AB형"],
-      "O형": ["A형", "B형", "O형", "AB형"],
-      "AB형": ["A형", "B형", "AB형"]
-    };
-
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      personality_match: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      love_match: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      career_match: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      health_match: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-      blood_type_traits: traitsMap[formData.bloodType] || "혈액형 특성 정보 없음",
-      lucky_advice: "자신의 혈액형 특성을 이해하고 강점을 살리면 좋은 운을 만들 수 있습니다.",
-      compatible_blood_types: compatibleMap[formData.bloodType] || []
-    };
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -225,41 +208,44 @@ export default function BloodTypeFortunePage() {
   );
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.bloodType) {
-      alert('이름, 생년월일, 혈액형을 모두 입력해주세요.');
-      return;
-    }
+    // 프로필 완성도 체크 후 운세 생성
+    requireProfileCompletion('blood-type', '혈액형 운세', async () => {
+      setIsGenerating(true);
 
-    setIsGenerating(true);
-
-    try {
-      const birthDate = koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay);
-      
-      if (hasTodayFortune && todayFortune) {
-        const savedData = todayFortune.fortune_data as any;
-        const restoredResult: BloodTypeFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          personality_match: savedData.fortune_scores?.personality_match || 0,
-          love_match: savedData.fortune_scores?.love_match || 0,
-          career_match: savedData.fortune_scores?.career_match || 0,
-          health_match: savedData.fortune_scores?.health_match || 0,
-          blood_type_traits: savedData.insights?.blood_type_traits || '',
-          lucky_advice: savedData.insights?.lucky_advice || '',
-          compatible_blood_types: savedData.lucky_items?.compatible_blood_types || []
-        };
-        setResult(restoredResult);
-      } else {
-        const fortuneResult = await analyzeBloodTypeFortune();
-        setResult(fortuneResult);
+      try {
+        const userInfo = getUserInfo();
         
-        const fortuneData: FortuneResult = {
-          user_info: {
-            name: formData.name,
-            birth_date: koreanToIsoDate(formData.birthYear, formData.birthMonth, formData.birthDay),
-          },
-          fortune_scores: {
-            overall_luck: fortuneResult.overall_luck,
-            personality_match: fortuneResult.personality_match,
+        if (hasTodayFortune && todayFortune) {
+          const savedData = todayFortune.fortune_data as any;
+          if (!savedData.fortune_scores || !savedData.insights?.blood_type_traits || 
+              !savedData.insights?.lucky_advice || !savedData.lucky_items?.compatible_blood_types) {
+            throw new FortuneServiceError('혈액형');
+          }
+          
+          const restoredResult: BloodTypeFortune = {
+            overall_luck: savedData.fortune_scores.overall_luck,
+            personality_match: savedData.fortune_scores.personality_match,
+            love_match: savedData.fortune_scores.love_match,
+            career_match: savedData.fortune_scores.career_match,
+            health_match: savedData.fortune_scores.health_match,
+            blood_type_traits: savedData.insights.blood_type_traits,
+            lucky_advice: savedData.insights.lucky_advice,
+            compatible_blood_types: savedData.lucky_items.compatible_blood_types
+          };
+          setResult(restoredResult);
+        } else {
+          // 실제 GPT API 호출
+          const fortuneResult = await analyzeBloodTypeFortune();
+          setResult(fortuneResult);
+          
+          const fortuneData: FortuneResult = {
+            user_info: {
+              name: userInfo.name,
+              birth_date: userInfo.birthDate,
+            },
+            fortune_scores: {
+              overall_luck: fortuneResult.overall_luck,
+              personality_match: fortuneResult.personality_match,
             love_match: fortuneResult.love_match,
             career_match: fortuneResult.career_match,
             health_match: fortuneResult.health_match,
@@ -272,7 +258,7 @@ export default function BloodTypeFortunePage() {
             compatible_blood_types: fortuneResult.compatible_blood_types,
           },
           metadata: {
-            blood_type: formData.bloodType,
+            blood_type: userInfo.bloodType,
           }
         };
         
@@ -280,25 +266,44 @@ export default function BloodTypeFortunePage() {
       }
       
       setStep('result');
-    } catch (error) {
-      console.error('혈액형 운세 분석 실패:', error);
-      alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
-    } finally {
-      setIsGenerating(false);
-    }
+      } catch (error) {
+        console.error('혈액형 운세 분석 실패:', error);
+        
+        // FortuneServiceError인 경우 에러 상태로 설정
+        if (error instanceof FortuneServiceError) {
+          setError(error);
+        } else {
+          alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+      } finally {
+        setIsGenerating(false);
+      }
+    });
   };
 
   const handleReset = () => {
     setStep('form');
     setResult(null);
-    setFormData({
-      name: '',
-      birthYear: '',
-      birthMonth: '',
-      birthDay: '',
-      bloodType: ''
-    });
   };
+
+  const [error, setError] = useState<Error | null>(null);
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 dark:from-gray-900 dark:via-red-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="혈액형 운세" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="혈액형 운세 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 dark:from-gray-900 dark:via-red-900 dark:to-gray-800 pb-20">
@@ -336,127 +341,64 @@ export default function BloodTypeFortunePage() {
                 <p className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>혈액형으로 보는 당신의 성격과 운세</p>
               </motion.div>
 
-              {/* 기본 정보 */}
-              <motion.div variants={itemVariants}>
-                <Card className="border-red-200 dark:border-red-700 dark:bg-gray-800">
-                  <CardHeader className="pb-4">
-                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-red-700 dark:text-red-400`}>
-                      <Users className="w-5 h-5" />
-                      기본 정보
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="name" className={`${fontClasses.text} dark:text-gray-300`}>이름</Label>
-                      <Input
-                        id="name"
-                        placeholder="이름"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className={`${fontClasses.text} mt-1`}
-                      />
-                    </div>
-
-                    {/* 년도 선택 */}
-                    <div>
-                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생년</Label>
-                      <Select 
-                        value={formData.birthYear} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthYear: value }))}
-                      >
-                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
-                          <SelectValue placeholder="년도 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {yearOptions.map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}년
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* 월 선택 */}
-                    <div>
-                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생월</Label>
-                      <Select 
-                        value={formData.birthMonth} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthMonth: value }))}
-                      >
-                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
-                          <SelectValue placeholder="월 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {monthOptions.map((month) => (
-                            <SelectItem key={month} value={month.toString()}>
-                              {month}월
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* 일 선택 */}
-                    <div>
-                      <Label className={`${fontClasses.text} dark:text-gray-300`}>생일</Label>
-                      <Select 
-                        value={formData.birthDay} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, birthDay: value }))}
-                      >
-                        <SelectTrigger className={`${fontClasses.text} mt-1`}>
-                          <SelectValue placeholder="일 선택" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dayOptions.map((day) => (
-                            <SelectItem key={day} value={day.toString()}>
-                              {day}일
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* 선택된 생년월일 표시 */}
-                    {formData.birthYear && formData.birthMonth && formData.birthDay && (
-                      <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
-                        <p className={`${fontClasses.text} font-medium text-red-800 dark:text-red-300 text-center`}>
-                          {formatKoreanDate(formData.birthYear, formData.birthMonth, formData.birthDay)}
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-
-              {/* 혈액형 선택 */}
-              <motion.div variants={itemVariants}>
-                <Card className="border-pink-200 dark:border-pink-700 dark:bg-gray-800">
-                  <CardHeader className="pb-4">
-                    <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-pink-700 dark:text-pink-400`}>
-                      <Droplet className="w-5 h-5" />
-                      혈액형 선택
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label className={`${fontClasses.text} dark:text-gray-300`}>당신의 혈액형은?</Label>
-                      <RadioGroup 
-                        value={formData.bloodType} 
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, bloodType: value }))}
-                        className="mt-2 grid grid-cols-2 gap-2"
-                      >
-                        {bloodTypes.map((type) => (
-                          <div key={type} className="flex items-center space-x-2">
-                            <RadioGroupItem value={type} id={type} />
-                            <Label htmlFor={type} className={`${fontClasses.label} dark:text-gray-300`}>{type}</Label>
+              {/* 프로필 정보 표시 */}
+              {hasProfileInfo && (
+                <motion.div variants={itemVariants}>
+                  <Card className="border-red-200 dark:border-red-700 dark:bg-gray-800">
+                    <CardHeader className="pb-4">
+                      <CardTitle className={`${fontClasses.title} flex items-center gap-2 text-red-700 dark:text-red-400`}>
+                        <Users className="w-5 h-5" />
+                        프로필 정보
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {(() => {
+                        const userInfo = getUserInfo();
+                        return (
+                          <div className="space-y-3">
+                            <div className="flex justify-between items-center">
+                              <span className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>이름</span>
+                              <span className={`${fontClasses.text} font-medium`}>{userInfo.name}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>생년월일</span>
+                              <span className={`${fontClasses.text} font-medium`}>{userInfo.birthDate}</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className={`${fontClasses.text} text-gray-600 dark:text-gray-400`}>혈액형</span>
+                              <Badge variant="outline" className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">
+                                {userInfo.bloodType}
+                              </Badge>
+                            </div>
                           </div>
-                        ))}
-                      </RadioGroup>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                        );
+                      })()}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* 프로필 정보 부족 안내 */}
+              {!hasProfileInfo && (
+                <motion.div variants={itemVariants}>
+                  <Card className="border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20">
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-3 mb-4">
+                        <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                        <h3 className={`${fontClasses.title} font-semibold text-amber-800 dark:text-amber-200`}>
+                          추가 정보 필요
+                        </h3>
+                      </div>
+                      <p className={`${fontClasses.text} text-amber-700 dark:text-amber-300 mb-4`}>
+                        혈액형 운세를 확인하려면 이름, 생년월일, 혈액형 정보가 필요합니다.
+                      </p>
+                      <p className={`${fontClasses.label} text-amber-600 dark:text-amber-400`}>
+                        아래 버튼을 클릭하면 필요한 정보를 입력할 수 있습니다.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
 
               {/* 분석 버튼 */}
               <motion.div variants={itemVariants} className="pt-4">
@@ -619,7 +561,7 @@ export default function BloodTypeFortunePage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
+                    onClick={() => void (async () => {
                       try {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                         const analysisResult = await analyzeBloodTypeFortune();
@@ -654,9 +596,15 @@ export default function BloodTypeFortunePage() {
                         }
                       } catch (error) {
                         console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+                        
+                        // FortuneServiceError인 경우 에러 상태로 설정
+                        if (error instanceof FortuneServiceError) {
+                          setError(error);
+                        } else {
+                          alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+                        }
                       }
-                    }}
+                    })()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >
@@ -690,6 +638,15 @@ export default function BloodTypeFortunePage() {
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* 프로필 완성 모달 */}
+      <ProfileCompletionModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onComplete={handleProfileComplete}
+        fortuneCategory={currentFortune?.category || 'blood-type'}
+        fortuneTitle={currentFortune?.title}
+      />
     </div>
   );
 }

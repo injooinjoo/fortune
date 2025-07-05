@@ -11,6 +11,8 @@ import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
 import { FortuneResult } from "@/lib/schemas";
+import { callGPTFortuneAPI, validateUserInput, FORTUNE_REQUIRED_FIELDS, FortuneServiceError } from "@/lib/fortune-utils";
+import { FortuneErrorBoundary } from "@/components/FortuneErrorBoundary";
 import {
   Moon, 
   Star, 
@@ -95,6 +97,7 @@ export default function DreamInterpretationPage() {
     dreamContent: '',
   });
   const [result, setResult] = useState<DreamInterpretationFortune | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   
   useFortuneStream();
   
@@ -122,12 +125,19 @@ export default function DreamInterpretationPage() {
       });
       
       if (savedData.fortune_scores) {
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores.overall_luck || !savedData.insights?.dream_summary || 
+            !savedData.insights?.dream_interpretation || !savedData.lucky_items?.lucky_elements || 
+            !savedData.insights?.advice) {
+          throw new FortuneServiceError('dream');
+        }
+        
         const restoredResult: DreamInterpretationFortune = {
           overall_luck: savedData.fortune_scores.overall_luck,
-          dream_summary: savedData.insights?.dream_summary || '',
-          dream_interpretation: savedData.insights?.dream_interpretation || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
-          advice: savedData.insights?.advice || '',
+          dream_summary: savedData.insights.dream_summary,
+          dream_interpretation: savedData.insights.dream_interpretation,
+          lucky_elements: savedData.lucky_items.lucky_elements,
+          advice: savedData.insights.advice,
         };
         setResult(restoredResult);
         setStep('result');
@@ -167,16 +177,22 @@ export default function DreamInterpretationPage() {
   const fontClasses = getFontSizeClasses(fontSize);
 
   const analyzeDreamInterpretationFortune = async (): Promise<DreamInterpretationFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
-    const luckyElements = ["금전운", "애정운", "건강운", "학업운", "직업운"];
+    // 입력 검증
+    if (!validateUserInput(formData, FORTUNE_REQUIRED_FIELDS['dream'])) {
+      throw new Error('필수 입력 정보가 부족합니다.');
+    }
 
-    return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      dream_summary: `'${formData.dreamContent.substring(0, 20)}...' 꿈에 대한 요약입니다.`, 
-      dream_interpretation: `입력하신 꿈 내용에 대한 AI의 심층 해석입니다. 이 꿈은 당신의 현재 심리 상태와 미래에 대한 잠재적 메시지를 담고 있습니다.`, 
-      lucky_elements: Array.from({ length: 2 }, () => luckyElements[Math.floor(Math.random() * luckyElements.length)]),
-      advice: "꿈의 메시지를 잘 이해하고 현실에 적용하면 좋은 결과를 얻을 수 있습니다.",
-    };
+    // GPT API 호출 (현재는 에러를 발생시켜 가짜 데이터 생성 방지)
+    const gptResult = await callGPTFortuneAPI({
+      type: 'dream',
+      userInfo: {
+        name: formData.name,
+        birth_date: `${formData.birthYear}-${formData.birthMonth}-${formData.birthDay}`,
+        dream_content: formData.dreamContent
+      }
+    });
+
+    return gptResult;
   };
 
   const yearOptions = getYearOptions();
@@ -199,12 +215,19 @@ export default function DreamInterpretationPage() {
       
       if (hasTodayFortune && todayFortune) {
         const savedData = todayFortune.fortune_data as any;
+        // 운세 데이터가 불완전하면 에러 발생
+        if (!savedData.fortune_scores?.overall_luck || !savedData.insights?.dream_summary || 
+            !savedData.insights?.dream_interpretation || !savedData.lucky_items?.lucky_elements || 
+            !savedData.insights?.advice) {
+          throw new FortuneServiceError('dream');
+        }
+        
         const restoredResult: DreamInterpretationFortune = {
-          overall_luck: savedData.fortune_scores?.overall_luck || 0,
-          dream_summary: savedData.insights?.dream_summary || '',
-          dream_interpretation: savedData.insights?.dream_interpretation || '',
-          lucky_elements: savedData.lucky_items?.lucky_elements || [],
-          advice: savedData.insights?.advice || '',
+          overall_luck: savedData.fortune_scores.overall_luck,
+          dream_summary: savedData.insights.dream_summary,
+          dream_interpretation: savedData.insights.dream_interpretation,
+          lucky_elements: savedData.lucky_items.lucky_elements,
+          advice: savedData.insights.advice,
         };
         setResult(restoredResult);
       } else {
@@ -238,7 +261,13 @@ export default function DreamInterpretationPage() {
       setStep('result');
     } catch (error) {
       console.error('꿈 해몽 분석 실패:', error);
-      alert('꿈 해몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // FortuneServiceError인 경우 에러 상태로 설정
+      if (error instanceof FortuneServiceError) {
+        setError(error);
+      } else {
+        alert('꿈 해몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -255,6 +284,23 @@ export default function DreamInterpretationPage() {
       dreamContent: '',
     });
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-gray-800 pb-20">
+        <AppHeader 
+          title="꿈 해몽" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <FortuneErrorBoundary 
+          error={error} 
+          reset={() => setError(null)}
+          fallbackMessage="꿈 해몽 서비스는 현재 준비 중입니다. 실제 AI 분석을 곧 제공할 예정입니다."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-gray-800 pb-20">
@@ -531,7 +577,7 @@ export default function DreamInterpretationPage() {
               <motion.div variants={itemVariants} className="pt-4 space-y-3">
                 {canRegenerate && (
                   <Button
-                    onClick={async () => {
+                    onClick={() => void (async () => {
                       try {
                         await new Promise(resolve => setTimeout(resolve, 3000));
                         const analysisResult = await analyzeDreamInterpretationFortune();
@@ -565,7 +611,7 @@ export default function DreamInterpretationPage() {
                         console.error('재생성 중 오류:', error);
                         alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
                       }
-                    }}
+                    })()}
                     disabled={isGenerating}
                     className={`w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white py-3 ${fontClasses.text}`}
                   >
