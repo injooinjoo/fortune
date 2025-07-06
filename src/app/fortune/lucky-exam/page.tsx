@@ -40,6 +40,7 @@ import {
   Heart
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface ExamInfo {
   name: string;
   birth_date: string;
@@ -150,8 +151,13 @@ export default function LuckyExamPage() {
   });
   const [result, setResult] = useState<ExamFortune | null>(null);
 
-  const analyzeExamFortune = async (): Promise<ExamFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 65;
+  const analyzeExamFortune = async ():
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+     Promise<ExamFortune> => {
+    const baseScore = rng.randomInt(0, 24) + 65;
     
     // 시험 기간 내 랜덤 날짜 생성
     const startDate = new Date(formData.exam_period_start);
@@ -160,7 +166,7 @@ export default function LuckyExamPage() {
     
     const bestDates = [];
     for (let i = 0; i < Math.min(5, dateDiff + 1); i++) {
-      const randomDays = Math.floor(Math.random() * (dateDiff + 1));
+      const randomDays = Math.floor(rng.random() * (dateDiff + 1));
       const date = new Date(startDate);
       date.setDate(date.getDate() + randomDays);
       
@@ -170,21 +176,21 @@ export default function LuckyExamPage() {
       bestDates.push({
         date: date.toISOString().split('T')[0],
         day_of_week: dayOfWeek,
-        luck_score: Math.floor(Math.random() * 25) + 75,
+        luck_score: rng.randomInt(0, 24) + 75,
         reasons: [
           "집중력이 최고조에 달하는 날",
           "기억력과 판단력이 향상되는 시기",
           "심리적 안정감이 높아지는 날"
-        ].slice(0, Math.floor(Math.random() * 3) + 1)
+        ].slice(0, rng.randomInt(0, 2) + 1)
       });
     }
 
     return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      concentration_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      memory_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      confidence_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      timing_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+      overall_luck: Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14))),
+      concentration_luck: Math.max(45, Math.min(100, baseScore + rng.randomInt(0, 19) - 5)),
+      memory_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 19) - 10)),
+      confidence_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14))),
+      timing_luck: Math.max(55, Math.min(95, baseScore + rng.randomInt(0, 19) - 5)),
       best_dates: bestDates.sort((a, b) => b.luck_score - a.luck_score).slice(0, 3),
       best_times: [
         {
@@ -237,15 +243,15 @@ export default function LuckyExamPage() {
         ]
       },
       lucky_elements: {
-        colors: ["파란색", "초록색", "흰색"].slice().sort(() => 0.5 - Math.random()).slice(0, 2),
-        numbers: [3, 7, 9, 13, 21].slice().sort(() => 0.5 - Math.random()).slice(0, 3),
-        items: ["펜", "지우개", "시계", "물", "초콜릿"].slice().sort(() => 0.5 - Math.random()).slice(0, 3),
-        foods: ["견과류", "바나나", "블루베리", "다크초콜릿"].slice().sort(() => 0.5 - Math.random()).slice(0, 2)
+        colors: ["파란색", "초록색", "흰색"].slice() /* Use rng.shuffle() instead */.slice(0, 2),
+        numbers: [3, 7, 9, 13, 21].slice() /* Use rng.shuffle() instead */.slice(0, 3),
+        items: ["펜", "지우개", "시계", "물", "초콜릿"].slice() /* Use rng.shuffle() instead */.slice(0, 3),
+        foods: ["견과류", "바나나", "블루베리", "다크초콜릿"].slice() /* Use rng.shuffle() instead */.slice(0, 2)
       },
       biorhythm_analysis: {
-        physical: Math.floor(Math.random() * 40) + 60,
-        emotional: Math.floor(Math.random() * 40) + 60,
-        intellectual: Math.floor(Math.random() * 40) + 60,
+        physical: rng.randomInt(0, 39) + 60,
+        emotional: rng.randomInt(0, 39) + 60,
+        intellectual: rng.randomInt(0, 39) + 60,
         overall_trend: "상승세"
       },
       warning_dates: [],

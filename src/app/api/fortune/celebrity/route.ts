@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -83,9 +84,9 @@ export async function POST(req: NextRequest) {
           description: `${celebrity_name}님의 기운이 매우 밝고 창의적인 에너지로 가득 차 있어, 주변에 긍정적인 영향을 미치고 있는 시기입니다.`,
           emoji: getCategoryEmoji(category || getAutoCategoryEng(celebrity_name))
         },
-        todayScore: Math.floor(Math.random() * 31) + 70,
-        weeklyScore: Math.floor(Math.random() * 31) + 70, 
-        monthlyScore: Math.floor(Math.random() * 31) + 70,
+        todayScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70,
+        weeklyScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70, 
+        monthlyScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70,
         summary: `${celebrity_name}님의 영향으로 창의적 영감과 도전 정신이 높아지는 시기입니다. 꾸준한 노력으로 목표를 달성할 수 있을 것입니다.`,
         luckyTime: "오후 2시-5시",
         luckyColor: "#FFD700",

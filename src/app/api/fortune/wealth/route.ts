@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
+import { createDeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 
 interface WealthInfo {
   name: string;
@@ -469,7 +470,12 @@ function generateWealthSuccessFactors(info: WealthInfo): string[] {
     '전문가 조언 활용과 학습'
   ];
 
-  return factors.sort(() => 0.5 - Math.random()).slice(0, 5);
+  // Create deterministic random for consistent results
+  const userId = info.name || 'guest';
+  const dateString = getTodayDateString();
+  const rng = createDeterministicRandom(userId, dateString, 'wealth-success');
+  
+  return rng.shuffle(factors).slice(0, 5);
 }
 
 function generateWealthWarningSignsForJob(info: WealthInfo): string[] {

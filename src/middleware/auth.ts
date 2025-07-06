@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { supabase } from '@/lib/supabase';
 
 export interface AuthenticatedRequest extends NextRequest {
   userId?: string;
@@ -22,7 +22,6 @@ export async function withAuth(
     }
 
     // Check for authenticated user via Supabase
-    const supabase = createClient();
     const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error || !user) {

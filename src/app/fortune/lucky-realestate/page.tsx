@@ -45,6 +45,7 @@ import {
   TrendingDown
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface RealEstateInfo {
   name: string;
   birth_date: string;
@@ -164,7 +165,12 @@ export default function LuckyRealEstatePage() {
   });
   const [result, setResult] = useState<RealEstateFortune | null>(null);
 
-  const analyzeRealEstateFortune = async (): Promise<RealEstateFortune> => {
+  const analyzeRealEstateFortune = async ():
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+     Promise<RealEstateFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-realestate', {
         method: 'POST',
@@ -189,11 +195,11 @@ export default function LuckyRealEstatePage() {
       const propertyTypes = ["아파트", "오피스텔", "주택"];
       
       return {
-        overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-        buying_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-        selling_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-        rental_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-        location_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+        overall_luck: Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14))),
+        buying_luck: Math.max(45, Math.min(100, baseScore + rng.randomInt(0, 19) - 5)),
+        selling_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 19) - 10)),
+        rental_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14))),
+        location_luck: Math.max(55, Math.min(95, baseScore + rng.randomInt(0, 19) - 5)),
         analysis: {
           strength: "부동산 시장에 대한 직감이 좋고, 장기적인 안목으로 투자할 수 있는 인내심을 가지고 있습니다.",
           weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 결단력이 필요합니다.",

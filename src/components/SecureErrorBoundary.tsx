@@ -2,6 +2,7 @@
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { errorHandler } from '@/lib/error-handler';
+import * as Sentry from '@sentry/nextjs';
 
 interface Props {
   children: ReactNode;
@@ -42,6 +43,16 @@ export class SecureErrorBoundary extends Component<Props, State> {
     
     // Promise 렌더링 에러가 아닌 경우만 상세 처리
     if (this.state.errorType !== 'promise-render') {
+      // Sentry로 에러 보고
+      Sentry.withScope((scope) => {
+        scope.setContext('errorBoundary', {
+          errorType: this.state.errorType,
+          componentStack: errorInfo.componentStack,
+        });
+        scope.setLevel('error');
+        Sentry.captureException(error);
+      });
+      
       if (process.env.NODE_ENV === 'development') {
         console.warn('Error caught by boundary:', errorHandler.getUserFriendlyMessage(error));
       }

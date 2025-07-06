@@ -66,7 +66,7 @@ export async function callGPTFortuneAPI(params: {
       success: false,
       type: params.type,
       result: {
-        overall_luck: Math.floor(Math.random() * 31) + 70, // 70-100점
+        overall_luck: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70, // 70-100점
         summary: `${params.userInfo?.name || '사용자'}님의 ${params.type} 운세 분석을 준비 중입니다.`,
         advice: "잠시 후 다시 시도해보세요.",
         generated_at: new Date().toISOString(),
@@ -119,7 +119,7 @@ export function createSafeFortuneResult(type: string): FortuneResult {
 }
 
 /**
- * Math.random() 사용을 방지하는 함수
+ * /* TODO: Use rng.random() */ Math.random() 사용을 방지하는 함수
  */
 export function generateSecureScore(): never {
   throw new FortuneServiceError('점수 생성');

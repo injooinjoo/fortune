@@ -20,6 +20,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface SwimInfo {
   name: string;
   birth_date: string;
@@ -100,17 +101,22 @@ export default function LuckySwimPage() {
   });
   const [result, setResult] = useState<SwimFortune | null>(null);
 
-  const analyzeSwimFortune = async (): Promise<SwimFortune> => {
+  const analyzeSwimFortune = async ():
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+     Promise<SwimFortune> => {
     const score = calculateWaterScore(formData.birth_date);
-    const shuffledDays = weekDays.sort(() => 0.5 - Math.random());
+    const shuffledDays = weekDays.sort(() => 0.5 - rng.random());
     return {
       water_score: score,
       water_energy: getWaterEnergy(score),
       best_days: shuffledDays.slice(0, 3),
-      lucky_time: times[Math.floor(Math.random() * times.length)],
-      health_tips: healthTipPool.sort(() => 0.5 - Math.random()).slice(0, 3),
-      lucky_color: colors[Math.floor(Math.random() * colors.length)],
-      recommended_laps: Math.floor(Math.random() * 20) + 10,
+      lucky_time: rng.randomElement(times),
+      health_tips: healthTipPool.sort(() => 0.5 - rng.random()).slice(0, 3),
+      lucky_color: rng.randomElement(colors),
+      recommended_laps: rng.randomInt(0, 19) + 10,
     };
   };
 

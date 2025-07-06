@@ -18,6 +18,7 @@ import { FortuneServiceError } from '../fortune-utils';
 import { centralizedFortuneService } from './centralized-fortune-service';
 import { FORTUNE_PACKAGES } from '@/config/fortune-packages';
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export class FortuneService {
   private static instance: FortuneService;
   private supabase: any;
@@ -331,12 +332,12 @@ export class FortuneService {
       groupType,
       generated_at: new Date().toISOString(),
       ai_source: 'fallback',
-      overall_score: Math.floor(Math.random() * 41) + 60, // 60-100점 (UI 기대 필드명)
+      overall_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60, // 60-100점 (UI 기대 필드명)
       summary: `${userName}님의 ${category} 운세가 준비되었습니다. 더 정확한 분석을 위해 잠시 후 다시 시도해보세요.`,
       advice: "긍정적인 마음가짐으로 하루를 시작하세요.",
-      lucky_items: [["파란색 아이템", "행운의 펜", "작은 선물"][Math.floor(Math.random() * 3)]],
-      lucky_color: ["파란색", "초록색", "금색"][Math.floor(Math.random() * 3)],
-      lucky_number: Math.floor(Math.random() * 9) + 1
+      lucky_items: [["파란색 아이템", "행운의 펜", "작은 선물"][/* TODO: Use rng.randomInt(0, 2) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 3)]],
+      lucky_color: ["파란색", "초록색", "금색"][/* TODO: Use rng.randomInt(0, 2) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 3)],
+      lucky_number: /* TODO: Use rng.randomInt(0, 8) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 9) + 1
     };
 
     // 그룹별 특화 데이터 추가
@@ -344,10 +345,10 @@ export class FortuneService {
       case 'DAILY_COMPREHENSIVE':
         return {
           ...baseData,
-          love_score: Math.floor(Math.random() * 41) + 60,    // UI 기대 필드명
-          money_score: Math.floor(Math.random() * 41) + 60,   // UI 기대 필드명
-          health_score: Math.floor(Math.random() * 41) + 60,  // UI 기대 필드명
-          career_score: Math.floor(Math.random() * 41) + 60   // UI 기대 필드명 (work_luck -> career_score)
+          love_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,    // UI 기대 필드명
+          money_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,   // UI 기대 필드명
+          health_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,  // UI 기대 필드명
+          career_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60   // UI 기대 필드명 (work_luck -> career_score)
         };
         
       case 'LIFE_PROFILE':

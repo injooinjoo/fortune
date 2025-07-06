@@ -17,6 +17,7 @@ import {
 } from "@/lib/utils";
 import { auth, userProfileService, guestProfileService, fortuneCompletionService } from "@/lib/supabase";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export default function DashboardPage() {
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
@@ -107,7 +108,7 @@ export default function DashboardPage() {
         "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
       ];
       
-      const randomResult = results[Math.floor(Math.random() * results.length)];
+      const randomResult = results[Math.floor(/* TODO: Use rng.random() */ Math.random() * results.length)];
       setFortuneResult(randomResult);
       setShowResult(true);
       
@@ -128,7 +129,7 @@ export default function DashboardPage() {
         "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
       ];
       
-      const randomResult = results[Math.floor(Math.random() * results.length)];
+      const randomResult = results[Math.floor(/* TODO: Use rng.random() */ Math.random() * results.length)];
       setFortuneResult(randomResult);
       setShowResult(true);
     } finally {

@@ -46,6 +46,7 @@ import {
   TrendingDown
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface InvestmentInfo {
   name: string;
   birth_date: string;
@@ -161,7 +162,12 @@ export default function LuckyInvestmentPage() {
   });
   const [result, setResult] = useState<InvestmentFortune | null>(null);
 
-  const analyzeInvestmentFortune = async (): Promise<InvestmentFortune> => {
+  const analyzeInvestmentFortune = async ():
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+     Promise<InvestmentFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-investment', {
         method: 'POST',
@@ -183,14 +189,14 @@ export default function LuckyInvestmentPage() {
       // Fallback: 기본 응답 반환
       const baseScore = 70;
       const assets = ["주식", "부동산", "채권", "금/귀금속", "펀드", "ETF", "암호화폐"];
-      const shuffledAssets = [...assets].sort(() => 0.5 - Math.random());
+      const shuffledAssets = [...assets].sort(() => 0.5 - rng.random());
       
       return {
-        overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-        investment_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-        trading_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-        profit_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-        timing_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+        overall_luck: Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14))),
+        investment_luck: Math.max(45, Math.min(100, baseScore + rng.randomInt(0, 19) - 5)),
+        trading_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 19) - 10)),
+        profit_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14))),
+        timing_luck: Math.max(55, Math.min(95, baseScore + rng.randomInt(0, 19) - 5)),
         analysis: {
           strength: "신중하고 분석적인 투자 성향으로 리스크를 잘 관리할 수 있는 능력을 가지고 있습니다.",
           weakness: "때로는 과도한 신중함으로 인해 좋은 기회를 놓칠 수 있으니 적절한 행동력이 필요합니다.",

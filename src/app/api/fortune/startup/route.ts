@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface StartupRequest {
   name: string;
   birth_date: string;
@@ -56,7 +57,7 @@ function generateStartupScore(request: StartupRequest): number {
   if (request.mbti.includes('N')) baseScore += 8; // 직관적 - 창업에 유리
   if (request.mbti.includes('P')) baseScore += 5; // 인식형 - 유연성
   
-  return Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 15) - 7));
+  return Math.max(40, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
 }
 
 function generateBestIndustries(request: StartupRequest): string[] {

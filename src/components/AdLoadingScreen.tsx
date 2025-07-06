@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import GoogleAdsense from "@/components/ads/GoogleAdsense";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 // 컴포넌트 외부에 정의하여 재생성 방지
 const loadingSteps = [
   { icon: Sparkles, text: "운세 데이터를 분석하고 있어요", duration: 1500 },
@@ -138,17 +139,17 @@ export default function AdLoadingScreen({
             className="absolute w-2 h-2 bg-white rounded-full opacity-20"
             animate={{
               y: [-100, 800],
-              x: [Math.random() * 400, Math.random() * 400],
+              x: [/* TODO: Use rng.random() */ Math.random() * 400, /* TODO: Use rng.random() */ Math.random() * 400],
               opacity: [0, 1, 0]
             }}
             transition={{
-              duration: Math.random() * 3 + 2,
+              duration: /* TODO: Use rng.random() */ Math.random() * 3 + 2,
               repeat: Infinity,
-              delay: Math.random() * 2
+              delay: /* TODO: Use rng.random() */ Math.random() * 2
             }}
             style={{
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%'
+              left: /* TODO: Use rng.random() */ Math.random() * 100 + '%',
+              top: /* TODO: Use rng.random() */ Math.random() * 100 + '%'
             }}
           />
         ))}

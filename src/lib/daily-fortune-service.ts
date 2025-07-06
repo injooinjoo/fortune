@@ -2,6 +2,7 @@ import { supabase } from './supabase';
 import { DailyFortuneData, FortuneResult } from './schemas';
 import { format } from 'date-fns';
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export class DailyFortuneService {
   /**
    * 개발 모드인지 확인
@@ -334,7 +335,7 @@ export class DailyFortuneService {
    */
   static getGuestUserId(): string {
     if (typeof window === 'undefined') {
-      return `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return `temp_${Date.now()}_${/* TODO: Use rng.random() */ Math.random().toString(36).substr(2, 9)}`;
     }
 
     const guestId = localStorage.getItem('guest_user_id');
@@ -342,7 +343,7 @@ export class DailyFortuneService {
       return guestId;
     }
 
-    const newGuestId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const newGuestId = `guest_${Date.now()}_${/* TODO: Use rng.random() */ Math.random().toString(36).substr(2, 9)}`;
     localStorage.setItem('guest_user_id', newGuestId);
     return newGuestId;
   }

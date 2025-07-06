@@ -21,6 +21,7 @@ import {
   Trophy
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface RunningInfo {
   name: string;
   birth_date: string;
@@ -115,7 +116,12 @@ export default function LuckyRunningPage() {
   });
   const [result, setResult] = useState<RunningFortune | null>(null);
 
-  const analyzeRunningFortune = async (): Promise<RunningFortune> => {
+  const analyzeRunningFortune = async ():
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+     Promise<RunningFortune> => {
     const birth = new Date(formData.birth_date);
     const today = new Date();
     const forecast = [] as { date: string; physical: number; emotional: number }[];
@@ -130,23 +136,23 @@ export default function LuckyRunningPage() {
       .slice(0, 3)
       .map(day => formatDate(day.date));
 
-    const base = 60 + Math.floor(Math.random() * 25);
+    const base = 60 + rng.randomInt(0, 24);
     return {
       overall_luck: base,
-      stamina_luck: Math.min(100, base + Math.floor(Math.random() * 10 - 5)),
-      speed_luck: Math.min(100, base + Math.floor(Math.random() * 10 - 5)),
-      injury_risk: Math.max(0, 100 - (base + Math.floor(Math.random() * 10))),
+      stamina_luck: Math.min(100, base + Math.floor(rng.random() * 10 - 5)),
+      speed_luck: Math.min(100, base + Math.floor(rng.random() * 10 - 5)),
+      injury_risk: Math.max(0, 100 - (base + rng.randomInt(0, 9))),
       best_days: bestDays,
-      lucky_direction: ["북쪽", "동쪽", "남쪽", "서쪽"][Math.floor(Math.random() * 4)],
-      lucky_time: ["이른 아침", "오전", "오후", "저녁"][Math.floor(Math.random() * 4)],
-      lucky_weather: ["맑은 날", "흐린 날", "바람 부는 날", "선선한 날"][Math.floor(Math.random() * 4)],
+      lucky_direction: ["북쪽", "동쪽", "남쪽", "서쪽"][rng.randomInt(0, 3)],
+      lucky_time: ["이른 아침", "오전", "오후", "저녁"][rng.randomInt(0, 3)],
+      lucky_weather: ["맑은 날", "흐린 날", "바람 부는 날", "선선한 날"][rng.randomInt(0, 3)],
       tips: [
         "충분한 수분 섭취와 스트레칭을 잊지 마세요",
         "호흡 리듬을 일정하게 유지하세요",
         "달리기 전후로 가벼운 근력운동을 해보세요",
         "규칙적인 수면으로 컨디션을 관리하세요",
         "몸 상태에 맞게 페이스를 조절하세요"
-      ].sort(() => 0.5 - Math.random()).slice(0, 3)
+      ].sort(() => 0.5 - rng.random()).slice(0, 3)
     };
   };
 

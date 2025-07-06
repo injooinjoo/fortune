@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface InvestmentRequest {
   name: string;
   birth_date: string;
@@ -66,7 +67,7 @@ function generateOverallLuck(request: InvestmentRequest): number {
   // 투자 목표 다양성
   if (request.investment_goals.length >= 3) baseScore += 5;
   
-  return Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15) - 7));
+  return Math.max(50, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
 }
 
 function generateInvestmentLuck(request: InvestmentRequest): number {
@@ -83,7 +84,7 @@ function generateInvestmentLuck(request: InvestmentRequest): number {
   else if (request.investment_period.includes('5년')) baseScore += 5;
   else if (request.investment_period.includes('1년 이하')) baseScore -= 5;
   
-  return Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10));
+  return Math.max(45, Math.min(100, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
 }
 
 function generateTradingLuck(request: InvestmentRequest): number {
@@ -99,7 +100,7 @@ function generateTradingLuck(request: InvestmentRequest): number {
   else if (request.risk_tolerance.includes('중위험')) baseScore += 5;
   else if (request.risk_tolerance.includes('안정형')) baseScore -= 5;
   
-  return Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10));
+  return Math.max(40, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
 }
 
 function generateProfitLuck(request: InvestmentRequest): number {
@@ -113,7 +114,7 @@ function generateProfitLuck(request: InvestmentRequest): number {
   if (request.financial_goal.includes('안정') || request.financial_goal.includes('꾸준')) baseScore += 8;
   else if (request.financial_goal.includes('단기') || request.financial_goal.includes('급격')) baseScore -= 5;
   
-  return Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15) - 7));
+  return Math.max(50, Math.min(100, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
 }
 
 function generateTimingLuck(request: InvestmentRequest): number {
@@ -132,7 +133,7 @@ function generateTimingLuck(request: InvestmentRequest): number {
   if (request.current_situation.includes('안정') || request.current_situation.includes('여유')) baseScore += 10;
   else if (request.current_situation.includes('어려움') || request.current_situation.includes('급함')) baseScore -= 5;
   
-  return Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10));
+  return Math.max(55, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
 }
 
 function generateLuckyAssets(request: InvestmentRequest): string[] {

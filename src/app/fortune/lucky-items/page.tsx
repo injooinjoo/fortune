@@ -42,6 +42,7 @@ import {
   Briefcase
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface UserInfo {
   name: string;
   birth_date: string;
@@ -205,10 +206,10 @@ export default function LuckyItemsPage() {
       }
     ];
 
-    const selectedMainItem = items[Math.floor(Math.random() * items.length)];
+    const selectedMainItem = rng.randomElement(items);
     const remainingItems = items.filter(item => item !== selectedMainItem);
     const selectedSecondaryItems = remainingItems
-      .sort(() => 0.5 - Math.random())
+      .sort(() => 0.5 - rng.random())
       .slice(0, 3);
 
     return {
@@ -235,7 +236,7 @@ export default function LuckyItemsPage() {
         "부정적인 기운을 느낄 때는 소금물에 담가 정화해주세요",
         "사용하지 않을 때는 천이나 상자에 정중히 보관하세요"
       ],
-      compatibility_score: Math.floor(Math.random() * 20) + 80
+      compatibility_score: rng.randomInt(0, 19) + 80
     };
   };
 
