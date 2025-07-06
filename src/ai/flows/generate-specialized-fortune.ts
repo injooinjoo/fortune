@@ -135,14 +135,67 @@ function createKoreanFortunePrompt(category: string, userProfile: any, additiona
     case 'love':
     case 'marriage':
       return `${baseInfo}${extraInfo}${bloodInfo}의 연애운과 결혼운을 분석해주세요.
-      다음 항목들을 포함해서 분석해주세요:
-      - 연애운 점수 (0-100점)
-      - 현재 연애 상황 분석
-      - 이상형과 궁합
-      - 연애할 때 장점과 주의점
-      - 결혼 시기와 조건
-      - 연애 조언
-      구체적이고 현실적인 연애 조언을 해주세요.`;
+
+당신은 한국의 전문 운세 상담사입니다. 아래 예시들을 참고하여 비슷한 형식과 깊이로 분석해주세요.
+
+=== 예시 1 (20대 여성, ENFP) ===
+{
+  "overall_score": 87,
+  "love_score": 85,
+  "weekly_score": 82,
+  "monthly_score": 90,
+  "summary": "새로운 인연의 기운이 강하게 느껴지는 시기입니다. 특히 이번 달 중순 이후 매력이 상승하여 주변 사람들의 관심을 받게 될 것입니다.",
+  "advice": "평소보다 적극적인 자세로 사람들과 교류하세요. 단, 너무 서두르지 말고 상대방을 충분히 알아가는 시간을 가지는 것이 중요합니다.",
+  "lucky_time": "오후 2시~5시",
+  "lucky_place": "북쪽 방향의 카페, 서점, 문화센터",
+  "lucky_color": "#FF69B4",
+  "compatibility": {
+    "best": "ISTP",
+    "good": ["INTJ", "INFJ", "ESTP"],
+    "avoid": "ESFJ"
+  },
+  "predictions": {
+    "today": "오늘은 솔직한 대화를 통해 관계가 진전될 수 있는 날입니다. 망설이던 말을 꺼내보세요.",
+    "this_week": "주중에 예상치 못한 만남이 있을 수 있습니다. 평소와 다른 장소를 방문해보세요.",
+    "this_month": "이번 달은 연애운이 상승세를 타고 있어 새로운 시작에 유리합니다."
+  },
+  "action_items": [
+    "매주 새로운 취미 활동이나 모임에 참여하기",
+    "외모 관리에 신경쓰되 자연스러운 매력 살리기",
+    "연락이 뜸했던 지인들과 안부 나누기"
+  ]
+}
+
+=== 예시 2 (30대 남성, ISTJ) ===
+{
+  "overall_score": 72,
+  "love_score": 70,
+  "weekly_score": 68,
+  "monthly_score": 75,
+  "summary": "안정적인 관계 발전을 위한 시기입니다. 급진적인 변화보다는 꾸준한 노력이 필요하며, 기존 관계를 더욱 돈독히 하는 것이 중요합니다.",
+  "advice": "상대방의 작은 변화나 노력을 알아차리고 표현해주세요. 당신의 진심 어린 관심이 관계를 한층 깊게 만들 것입니다.",
+  "lucky_time": "저녁 7시~9시",
+  "lucky_place": "조용한 레스토랑, 산책로, 집 근처 공원",
+  "lucky_color": "#4169E1",
+  "compatibility": {
+    "best": "ESFJ",
+    "good": ["ISFJ", "ESTJ", "ENFJ"],
+    "avoid": "ENFP"
+  },
+  "predictions": {
+    "today": "오늘은 평소의 루틴을 유지하며 안정감을 주는 것이 좋습니다.",
+    "this_week": "주말에 특별한 이벤트를 준비한다면 좋은 반응을 얻을 수 있습니다.",
+    "this_month": "월말로 갈수록 연애운이 상승하니 그때를 위한 계획을 세워보세요."
+  },
+  "action_items": [
+    "일주일에 한 번은 특별한 데이트 계획하기",
+    "상대방의 관심사에 대해 깊이 알아보기",
+    "감정 표현을 조금 더 적극적으로 하기"
+  ]
+}
+
+위 예시들을 참고하여, 이 사용자에게 맞는 연애운을 분석해주세요.
+중요: 반드시 위와 동일한 JSON 구조로 응답하고, 각 필드는 구체적이고 실용적인 내용으로 채워주세요.`;
       
     case 'dream':
       const dreamContent = additionalInfo?.dreamContent || additionalInfo?.input?.dreamContent || '꿈 내용 없음';

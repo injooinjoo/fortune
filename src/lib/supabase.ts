@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import AuthSessionManager from './auth-session-manager';
 
 // 타입 정의
 export interface UserProfile {
@@ -103,6 +104,10 @@ export class SecureStorage {
   // 안전한 데이터 저장
   static setItem(key: string, value: any): boolean {
     try {
+      if (typeof window === 'undefined') {
+        return false;
+      }
+
       if (!this.isValidKey(key)) {
         console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
         return false;
@@ -130,6 +135,10 @@ export class SecureStorage {
   // 안전한 데이터 조회
   static getItem(key: string): any {
     try {
+      if (typeof window === 'undefined') {
+        return null;
+      }
+
       if (!this.isValidKey(key)) {
         console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
         return null;
@@ -164,6 +173,10 @@ export class SecureStorage {
   // 데이터 삭제
   static removeItem(key: string): boolean {
     try {
+      if (typeof window === 'undefined') {
+        return false;
+      }
+      
       if (!this.isValidKey(key)) {
         return false;
       }
@@ -178,6 +191,10 @@ export class SecureStorage {
   // 만료된 데이터 정리
   private static cleanup(): void {
     try {
+      if (typeof window === 'undefined') {
+        return;
+      }
+      
       const keys = Object.keys(localStorage);
       keys.forEach(key => {
         if (key.startsWith(this.KEY_PREFIX)) {
@@ -235,38 +252,45 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true,
-    flowType: 'pkce'
+    detectSessionInUrl: true, // URL에서 세션 자동 감지 활성화
+    flowType: 'pkce',
+    debug: process.env.NODE_ENV === 'development',
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+    storageKey: 'fortune-auth-token', // 명시적인 storage key 설정
   }
 });
 
-// 데모 모드 여부 확인
+// 로컬 모드 여부 확인 (항상 로컬 모드 사용)
 const isDemoMode = () => {
-  return supabaseUrl.includes('demo-project') || supabaseAnonKey.includes('demo-anon-key');
+  return true; // 항상 로컬 스토리지 사용
 };
 
 // 사용자 프로필 관리 함수들
 export const userProfileService = {
   // 사용자 프로필 조회
   async getProfile(userId: string): Promise<UserProfile | null> {
-    if (isDemoMode()) {
-      // 데모 모드에서는 로컬 스토리지에서 조회
-      const profile = localStorage.getItem(`demo_profile_${userId}`);
-      return profile ? JSON.parse(profile) : null;
-    }
-
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
-    if (error) {
-      console.error('프로필 조회 오류:', error);
+    // 항상 로컬 스토리지에서 조회
+    try {
+      // 먼저 demo_profile 키로 시도
+      let profile = localStorage.getItem(`demo_profile_${userId}`);
+      if (profile) {
+        return JSON.parse(profile);
+      }
+      
+      // 기본 userProfile 키로 시도
+      profile = localStorage.getItem('userProfile');
+      if (profile) {
+        const parsedProfile = JSON.parse(profile);
+        if (parsedProfile.id === userId) {
+          return parsedProfile;
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('로컬 프로필 조회 오류:', error);
       return null;
     }
-
-    return data;
   },
 
   // 사용자 프로필 생성/업데이트
@@ -382,24 +406,11 @@ export const fortuneCompletionService = {
       created_date: new Date().toISOString().split('T')[0]
     };
 
-    if (isDemoMode()) {
-      const id = `completion_${Date.now()}`;
-      localStorage.setItem(`demo_completion_${id}`, JSON.stringify({ ...completion, id }));
-      return id;
-    }
-
-    const { data, error } = await supabase
-      .from('fortune_completions')
-      .insert(completion)
-      .select('id')
-      .single();
-
-    if (error) {
-      console.error('운세 시작 기록 오류:', error);
-      return null;
-    }
-
-    return data.id;
+    // 항상 로컬 스토리지 사용
+    const id = `completion_${Date.now()}`;
+    localStorage.setItem(`demo_completion_${id}`, JSON.stringify({ ...completion, id }));
+    console.log('💾 운세 시작 기록을 로컬 스토리지에 저장했습니다.');
+    return id;
   },
 
   // 운세 완성 기록
@@ -414,22 +425,20 @@ export const fortuneCompletionService = {
       feedback: feedback
     };
 
-    if (isDemoMode()) {
+    // 항상 로컬 스토리지 사용
+    try {
       const completion = localStorage.getItem(`demo_completion_${completionId}`);
       if (completion) {
         const updated = { ...JSON.parse(completion), ...updateData };
         localStorage.setItem(`demo_completion_${completionId}`, JSON.stringify(updated));
+        console.log('💾 운세 완성 기록을 로컬 스토리지에 업데이트했습니다.');
         return true;
       }
       return false;
+    } catch (error) {
+      console.error('운세 완성 기록 오류:', error);
+      return false;
     }
-
-    const { error } = await supabase
-      .from('fortune_completions')
-      .update(updateData)
-      .eq('id', completionId);
-
-    return !error;
   },
 
   // 사용자의 운세 기록 조회
@@ -480,34 +489,42 @@ export const auth = {
   currentUser: null,
   signInWithGoogle: async () => {
     try {
-      // 데모 세션 정리
+      // 인증 전 스토리지 준비
+      AuthSessionManager.prepareForAuth();
       clearDemoSession();
+      
+      // 현재 URL을 기반으로 올바른 콜백 URL 생성
+      const origin = window.location.origin;
+      const callbackUrl = `${origin}/auth/callback`;
+      
+      console.log('🚀 Starting Google OAuth with callback:', callbackUrl);
       
       // 실제 Supabase 구글 로그인
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'select_account',
           },
-          skipBrowserRedirect: false
+          skipBrowserRedirect: false,
+          // PKCE 관련 추가 옵션
+          scopes: 'email profile'
         }
       });
       
       if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Google 로그인 실패:', error);
-        }
+        console.error('🚨 Google 로그인 실패:', error);
+        AuthSessionManager.resetAuthStorage(); // 실패 시 정리
         return { error };
       }
       
+      console.log('✅ Google OAuth initiated successfully');
       return { data, error: null };
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Google 로그인 예외:', error);
-      }
+      console.error('🚨 Google 로그인 예외:', error);
+      AuthSessionManager.resetAuthStorage(); // 예외 시 정리
       return { error };
     }
   },

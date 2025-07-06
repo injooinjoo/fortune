@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import AppHeader from "@/components/AppHeader";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import {
   User,
   Mail,
@@ -21,9 +22,13 @@ import {
   Clock,
   Brain,
   Sparkles,
+  MapPin,
+  Briefcase,
+  Heart,
+  Users,
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { getZodiacSign, getChineseZodiac } from "@/lib/user-storage";
+import { getZodiacSign, getChineseZodiac, getUserProfile, saveUserProfile, updateUserProfile, syncUserProfile, isGuestUser } from "@/lib/user-storage";
+import { type UserProfile as StoredUserProfile } from "@/lib/supabase";
 
 interface UserProfile {
   id: string;
@@ -34,6 +39,10 @@ interface UserProfile {
   birth_date?: string;
   birth_time?: string;
   mbti?: string;
+  gender?: 'male' | 'female' | 'other';
+  blood_type?: 'A' | 'B' | 'AB' | 'O';
+  job?: string;
+  location?: string;
 }
 
 const containerVariants = {
@@ -71,6 +80,10 @@ export default function ProfileEditPage() {
     birth_date: '',
     birth_time: '',
     mbti: '',
+    gender: '' as 'male' | 'female' | 'other' | '',
+    blood_type: '' as 'A' | 'B' | 'AB' | 'O' | '',
+    job: '',
+    location: '',
   });
 
   useEffect(() => {
@@ -79,61 +92,46 @@ export default function ProfileEditPage() {
 
   const loadUserProfile = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      // syncUserProfile을 사용하여 자동 동기화
+      const profile = await syncUserProfile();
       
-      if (!authUser) {
-        router.push('/auth/selection');
+      // 프로필이 없거나 온보딩이 완료되지 않았으면 온보딩으로
+      if (!profile || !profile.onboarding_completed) {
+        router.push('/onboarding');
         return;
       }
 
-      // 1. user_profiles 테이블에서 프로필 정보와 온보딩 완료 여부 조회
-      const { data: profileDataArray, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', authUser.id);
-
-      // --- 디버깅용 로그 추가 ---
-      console.log("Supabase profile fetch error:", profileError);
-      console.log("Supabase profile fetch data:", profileDataArray);
-      // ------------------------
-
-      // DB 조회 시 에러 발생
-      if (profileError) {
-        throw profileError;
-      }
+      const userProfile: UserProfile = {
+        id: profile.id,
+        email: profile.email || '',
+        name: profile.name,
+        avatar_url: profile.avatar_url,
+        provider: isGuestUser(profile) ? 'local' : 'supabase',
+        birth_date: profile.birth_date || '',
+        birth_time: profile.birth_time || '',
+        mbti: profile.mbti || '',
+        gender: profile.gender,
+        blood_type: profile.blood_type,
+        job: profile.job || '',
+        location: profile.location || '',
+      };
       
-      const profileData = profileDataArray && profileDataArray[0];
-
-      // 프로필이 존재하고 온보딩이 완료된 경우에만 페이지 표시
-      if (profileData && profileData.onboarding_completed) {
-        const userProfile: UserProfile = {
-          id: authUser.id,
-          email: authUser.email || '',
-          name: profileData.name || '',
-          avatar_url: profileData.avatar_url || authUser.user_metadata?.avatar_url,
-          provider: authUser.app_metadata?.provider || 'google',
-          birth_date: profileData.birth_date || '',
-          birth_time: profileData.birth_time || '',
-          mbti: profileData.mbti || '',
-        };
-        setUser(userProfile);
-        setFormData({
-          name: userProfile.name,
-          email: userProfile.email,
-          birth_date: userProfile.birth_date || '',
-          birth_time: userProfile.birth_time || '',
-          mbti: userProfile.mbti || '',
-        });
-      } else {
-        // 프로필 정보가 없거나 온보딩이 미완료된 경우, 온보딩 페이지로 리다이렉트
-        router.push('/onboarding/profile');
-      }
+      setUser(userProfile);
+      setFormData({
+        name: userProfile.name,
+        email: userProfile.email,
+        birth_date: userProfile.birth_date || '',
+        birth_time: userProfile.birth_time || '',
+        mbti: userProfile.mbti || '',
+        gender: userProfile.gender || '',
+        blood_type: userProfile.blood_type || '',
+        job: userProfile.job || '',
+        location: userProfile.location || '',
+      });
 
     } catch (error: any) {
-      console.error('사용자 프로필 로드 실패 (상세):', error);
-      // 사용자에게 에러 알림
-      alert(`프로필 정보를 불러오는 중 오류가 발생했습니다: ${error.message || '알 수 없는 오류'}`);
-      router.push('/home'); // 에러 발생 시 홈으로 이동
+      console.error('사용자 프로필 로드 실패:', error);
+      router.push('/onboarding');
     } finally {
       setIsLoading(false);
     }
@@ -144,33 +142,46 @@ export default function ProfileEditPage() {
 
     setIsSaving(true);
     try {
-      // 1. user_profiles 테이블에 직접 업데이트
-      const { error } = await supabase
-        .from('user_profiles')
-        .update({
-          name: formData.name,
-          birth_date: formData.birth_date,
-          birth_time: formData.birth_time,
-          mbti: formData.mbti.toUpperCase(),
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
+      const updates = {
+        name: formData.name,
+        birth_date: formData.birth_date,
+        birth_time: formData.birth_time,
+        mbti: formData.mbti.toUpperCase(),
+        gender: formData.gender || undefined,
+        blood_type: formData.blood_type || undefined,
+        job: formData.job,
+        location: formData.location,
+        zodiac_sign: getZodiacSign(formData.birth_date),
+        chinese_zodiac: getChineseZodiac(formData.birth_date),
+      };
       
-      // 2. auth.user 메타데이터도 함께 업데이트 (선택적이지만 일관성을 위해)
-      const { error: authError } = await supabase.auth.updateUser({
-        data: {
-          full_name: formData.name,
-          birth_date: formData.birth_date,
-          birth_time: formData.birth_time,
-          mbti: formData.mbti.toUpperCase(),
+      // 1. 로컬 스토리지 업데이트
+      const updatedProfile = updateUserProfile(updates);
+      
+      // 2. 인증된 사용자이면 Supabase에도 저장
+      if (user.provider === 'supabase' && updatedProfile) {
+        try {
+          const { auth, userProfileService } = await import('@/lib/supabase');
+          const { data } = await auth.getSession();
+          if (data?.session?.user) {
+            await userProfileService.upsertProfile({
+              id: data.session.user.id,
+              email: data.session.user.email || '',
+              ...updates
+            });
+            console.log('🔄 Supabase에 프로필 동기화 완료');
+          }
+        } catch (supabaseError) {
+          console.error('🔄 Supabase 동기화 실패:', supabaseError);
+          // Supabase 저장 실패에도 로컬 데이터는 유지
         }
-      });
+      }
       
-      if (authError) throw authError;
-
-      // 성공 시 뒤로 가기
-      router.back();
+      if (updatedProfile) {
+        router.back();
+      } else {
+        throw new Error('프로필 업데이트에 실패했습니다.');
+      }
     } catch (error) {
       console.error('프로필 저장 실패:', error);
       alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
@@ -285,18 +296,13 @@ export default function ProfileEditPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="birth_date">생년월일</Label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="birth_date"
-                    type="date"
-                    value={formData.birth_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
-                    className="pl-10"
-                    placeholder="YYYY-MM-DD"
-                  />
-                </div>
+                <KoreanDatePicker
+                  value={formData.birth_date}
+                  onChange={(date) => setFormData(prev => ({ ...prev, birth_date: date }))}
+                  label="생년월일"
+                  placeholder="생년월일을 선택하세요"
+                  required={false}
+                />
               </div>
 
               <div className="space-y-2">
@@ -337,6 +343,71 @@ export default function ProfileEditPage() {
                     onChange={(e) => setFormData(prev => ({ ...prev, mbti: e.target.value.toUpperCase() }))}
                     className="pl-10"
                     placeholder="MBTI를 입력하세요 (예: INFP)"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gender">성별</Label>
+                <div className="relative">
+                  <Users className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <select 
+                    id="gender"
+                    value={formData.gender} 
+                    onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value as any }))}
+                    className="w-full p-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">성별 선택</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                    <option value="other">기타</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="blood_type">혈액형</Label>
+                <div className="relative">
+                  <Heart className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <select 
+                    id="blood_type"
+                    value={formData.blood_type} 
+                    onChange={(e) => setFormData(prev => ({ ...prev, blood_type: e.target.value as any }))}
+                    className="w-full p-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-purple-500 dark:focus:border-purple-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  >
+                    <option value="">혈액형 선택</option>
+                    <option value="A">A형</option>
+                    <option value="B">B형</option>
+                    <option value="AB">AB형</option>
+                    <option value="O">O형</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="job">직업</Label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="job"
+                    value={formData.job}
+                    onChange={(e) => setFormData(prev => ({ ...prev, job: e.target.value }))}
+                    className="pl-10"
+                    placeholder="직업을 입력하세요 (예: 개발자, 학생)"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">거주지</Label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                  <Input
+                    id="location"
+                    value={formData.location}
+                    onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                    className="pl-10"
+                    placeholder="거주지를 입력하세요 (예: 서울, 부산)"
                   />
                 </div>
               </div>

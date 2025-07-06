@@ -27,7 +27,7 @@ import {
   ArrowRight,
   Gem
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { getUserProfile, saveUserProfile } from "@/lib/user-storage";
 
 interface SubscriptionPlan {
   id: string;
@@ -117,16 +117,17 @@ export default function MembershipPage() {
     loadUserSubscription();
   }, []);
 
-  const loadUserSubscription = async () => {
+  const loadUserSubscription = () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      // 로컬 스토리지에서 사용자 프로필 로드
+      const userProfile = getUserProfile();
       
-      if (authUser) {
-        setUser(authUser);
-        // 실제로는 DB에서 구독 정보를 조회
-        // const subscription = await getUserSubscription(authUser.id);
-        // setCurrentPlan(subscription?.plan_id || 'free');
-        setCurrentPlan('free'); // 임시
+      if (userProfile) {
+        setUser(userProfile);
+        setCurrentPlan(userProfile.subscription_status || 'free');
+      } else {
+        // 프로필이 없으면 메인 페이지로 리다이렉트
+        router.push('/');
       }
     } catch (error) {
       console.error('구독 정보 로드 실패:', error);
@@ -135,23 +136,28 @@ export default function MembershipPage() {
     }
   };
 
-  const handleSubscribe = async (planId: string) => {
-    if (planId === 'free') {
-      // 무료 플랜으로 다운그레이드
-      setCurrentPlan('free');
-      return;
-    }
-
+  const handleSubscribe = (planId: string) => {
     try {
-      // 실제로는 결제 처리 API 호출
-      console.log('구독 처리:', planId);
-      // await processSubscription(planId, isYearly);
-      
-      // 성공 시 현재 플랜 업데이트
-      setCurrentPlan(planId);
-      
-      // 성공 메시지 표시
-      alert('구독이 성공적으로 처리되었습니다!');
+      // 로컬 스토리지의 사용자 프로필 업데이트
+      const currentProfile = getUserProfile();
+      if (currentProfile) {
+        const updatedProfile = {
+          ...currentProfile,
+          subscription_status: planId as 'free' | 'premium' | 'enterprise',
+          updated_at: new Date().toISOString()
+        };
+        
+        saveUserProfile(updatedProfile);
+        setCurrentPlan(planId);
+        setUser(updatedProfile);
+        
+        // 성공 메시지 표시
+        if (planId === 'free') {
+          alert('무료 플랜으로 변경되었습니다.');
+        } else {
+          alert('구독이 성공적으로 처리되었습니다! (데모 모드)');
+        }
+      }
     } catch (error) {
       console.error('구독 처리 실패:', error);
       alert('구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.');

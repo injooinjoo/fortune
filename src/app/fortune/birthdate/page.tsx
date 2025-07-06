@@ -3,12 +3,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
-import { getUserInfo, saveUserInfo, getUserProfile, isPremiumUser } from "@/lib/user-storage";
+import { isPremiumUser } from "@/lib/user-storage";
+import { useUserProfile, hasUserBirthDate } from "@/hooks/use-user-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Cake } from "lucide-react";
+import { Cake, CheckCircle } from "lucide-react";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
 
 interface BirthdateFortune {
@@ -85,14 +87,16 @@ export default function BirthdateFortunePage() {
   const [step, setStep] = useState<'input' | 'loading' | 'result'>('input');
   const [birthDate, setBirthDate] = useState('');
   const [result, setResult] = useState<BirthdateFortune | null>(null);
+  
+  // 사용자 프로필 훅 사용
+  const { profile, isLoading: profileLoading } = useUserProfile();
 
-  // 컴포넌트 마운트 시 저장된 사용자 정보 불러오기
+  // 프로필 데이터로 생년월일 초기화
   useEffect(() => {
-    const savedUserInfo = getUserInfo();
-    if (savedUserInfo.birthDate) {
-      setBirthDate(savedUserInfo.birthDate);
+    if (!profileLoading && profile && hasUserBirthDate(profile)) {
+      setBirthDate(profile.birth_date!);
     }
-  }, []);
+  }, [profile, profileLoading]);
 
   const handleSubmit = () => {
     if (!birthDate) {
@@ -100,11 +104,7 @@ export default function BirthdateFortunePage() {
       return;
     }
 
-    // 사용자 정보 저장
-    saveUserInfo({ birthDate });
-
-    const userProfile = getUserProfile();
-    const isPremium = isPremiumUser(userProfile);
+    const isPremium = isPremiumUser(profile);
     
     if (isPremium) {
       // 프리미엄 사용자는 바로 결과 표시
@@ -197,13 +197,12 @@ export default function BirthdateFortunePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="birth_date">생년월일</Label>
-                      <Input
-                        id="birth_date"
-                        type="date"
+                      <KoreanDatePicker
                         value={birthDate}
-                        onChange={(e) => setBirthDate(e.target.value)}
-                        className="mt-1"
+                        onChange={(date) => setBirthDate(date)}
+                        label="생년월일"
+                        placeholder="생년월일을 선택하세요"
+                        required={true}
                       />
                     </div>
                     <div className="text-right">

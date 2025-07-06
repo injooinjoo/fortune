@@ -19,6 +19,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import {
   Heart,
@@ -201,12 +202,12 @@ export default function CelebrityMatchPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="birth">생년월일</Label>
-                      <Input
-                        id="birth"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={info.birthDate}
-                        onChange={(e) => setInfo((prev) => ({ ...prev, birthDate: e.target.value }))}
+                        onChange={(date) => setInfo((prev) => ({ ...prev, birthDate: date }))}
+                        placeholder="생년월일을 선택하세요"
+                        required
                         className="mt-1"
                       />
                     </div>

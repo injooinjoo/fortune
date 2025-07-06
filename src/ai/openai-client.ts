@@ -185,7 +185,10 @@ export async function generateSingleFortune(
       messages: [
         {
           role: "system",
-          content: "You are a Korean traditional fortune teller expert. Provide accurate analysis in Korean language. Always respond in JSON format."
+          content: `당신은 30년 경력의 한국 전통 운세 전문가입니다. 
+사주, 타로, 별자리, MBTI 등을 종합적으로 분석하여 실용적이고 구체적인 조언을 제공합니다.
+항상 JSON 형식으로 정확하게 응답하며, 긍정적이면서도 현실적인 관점을 유지합니다.
+모든 응답은 한국어로 작성하되, 사용자의 상황과 성격을 고려한 맞춤형 조언을 제공합니다.`
         },
         {
           role: "user",
@@ -193,8 +196,8 @@ export async function generateSingleFortune(
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 500,
+      temperature: 0.8,  // 다양성을 위해 약간 높임
+      max_tokens: fortuneType === 'love' ? 2000 : 500,  // 연애운은 더 상세한 응답 필요
     });
 
     const result = JSON.parse(completion.choices[0].message.content || '{}');
@@ -287,6 +290,82 @@ Please respond in Korean language with JSON format: { overall_score, summary, pa
 Partner birth date: ${partnerBirthDate}
 Please respond in Korean language with JSON format: { compatibility_score, summary, strengths, challenges, advice }`;
         
+      case 'love':
+      case 'marriage':
+        const mbti = profile.mbti ? `, MBTI: ${profile.mbti}` : '';
+        const gender = profile.gender ? `, Gender: ${profile.gender}` : '';
+        return `당신은 한국의 전문 운세 상담사입니다. 사용자 정보: ${baseInfo}${mbti}${gender}
+
+아래 예시를 참고하여 사용자의 기본 운세 데이터를 따뜻하고 깊이 있는 조언으로 재구성해주세요.
+
+=== 새로운 응답 형식 예시 ===
+{
+  "overall_score": 75,
+  "love_score": 75,
+  "weekly_score": 70,
+  "monthly_score": 80,
+  "summary": "연애운이 상승세를 보이고 있습니다",
+  "emotional_tagline": "진심이 이끄는 설레는 하루",
+  "advice": "진정성 있는 마음으로 상대방에게 다가가세요",
+  "lucky_time": "오후 3시 ~ 6시",
+  "lucky_place": "카페, 공원",
+  "lucky_color": "#FF69B4",
+  "compatibility": {
+    "best": "물병자리",
+    "good": ["쌍둥이자리", "천칭자리"],
+    "avoid": "전갈자리"
+  },
+  "predictions": {
+    "today": "좋은 만남의 기회가 있을 것입니다",
+    "this_week": "특별한 인연을 만날 수 있습니다",
+    "this_month": "중요한 결정을 내리게 될 것입니다"
+  },
+  "action_items": [
+    "적극적인 자세로 임하기",
+    "새로운 활동에 참여하기", 
+    "진솔한 대화 나누기"
+  ],
+  "solo_fortune": {
+    "new_meeting_stars": 4,
+    "new_meeting_detail": "예상치 못한 곳에서 인연의 실마리를 발견할 수 있습니다. 평소에 잘 가지 않던 서점이나 동네 카페를 방문해 보세요. 우연이 필연이 되는 날입니다.",
+    "charm_appeal": "꾸민 모습보다는 당신의 솔직하고 진솔한 대화가 상대방의 마음을 움직일 거예요. 오늘만큼은 마음을 열고 다가가세요.",
+    "person_to_watch": "차분하고 지적인 분위기를 가진 물병자리와 좋은 대화가 통할 수 있습니다. 당신의 이야기에 귀 기울여줄 사람이에요."
+  },
+  "couple_fortune": {
+    "relationship_stars": 4,
+    "relationship_detail": "안정적인 흐름 속에서 서로에 대한 신뢰가 깊어지는 날입니다. 사소한 칭찬 한마디가 관계의 윤활유가 될 거예요.",
+    "conflict_warning": "사소한 약속을 잊지 않도록 주의하세요. 특히 전갈자리 지인과의 만남에서 불필요한 오해가 생길 수 있으니 유의하는 것이 좋습니다.",
+    "relationship_tip": "함께 공원을 산책하며 미래에 대한 가벼운 대화를 나눠보세요. 핑크 계열의 커플 아이템을 착용하면 애정운이 더욱 상승합니다."
+  },
+  "reunion_fortune": {
+    "reconciliation_stars": 3,
+    "reconciliation_detail": "과거의 인연과 다시 연결될 수 있는 시기입니다. 용기를 내어 첫걸음을 떼어보세요.",
+    "approach_advice": "진솔한 마음으로 다가가되, 서두르지 말고 천천히 관계를 회복해 나가는 것이 중요합니다."
+  },
+  "lucky_booster": {
+    "time_detail": "이 시간에 보내는 연락은 성공률 UP!",
+    "place_detail": "마음이 편안해지고 대화가 잘 풀려요",
+    "color_detail": "부드럽고 온화한 매력을 더해줘요"
+  },
+  "action_mission": [
+    {
+      "action": "새로운 활동에 참여하기",
+      "meaning": "예상치 못한 기회가 숨어있어요"
+    },
+    {
+      "action": "진솔한 대화 나누기", 
+      "meaning": "마음의 거리가 가까워져요"
+    },
+    {
+      "action": "나를 위한 작은 선물 사기",
+      "meaning": "나의 자존감이 가장 강력한 매력!"
+    }
+  ],
+  "deeper_advice": "오늘은 감수성이 풍부해지는 날입니다. 이 에너지를 상대를 의심하는 데 쓰기보다, 영화를 보거나 음악을 들으며 당신의 마음을 먼저 채워보세요. 스스로가 행복해야 좋은 인연도 끌어당기는 법입니다. '진정성 있는 마음'은 꾸며내는 것이 아니라, 스스로를 아끼는 마음에서 시작됩니다."
+}
+
+위 형식을 반드시 따라서 이 사용자에게 맞는 연애운을 분석해주세요. 모든 필드를 포함하되, 구체적이고 실용적이며 감성적인 내용으로 채워주세요. 별점은 1-5점으로 표현하고, 각 상황(솔로/커플/재회)에 맞는 현실적인 조언을 제공해주세요.`;
+
       case 'today':
         return `Please provide today's comprehensive fortune reading for person with ${baseInfo}.
 Include detailed analysis for love, career, health, and money.

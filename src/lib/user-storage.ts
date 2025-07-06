@@ -1,84 +1,120 @@
-import { supabase } from "./supabase";
+// User storage utilities for local and Supabase data management
 
-export interface UserInfo {
-  name: string;
-  birthDate: string;
-  birthTime?: string;
-  gender?: string;
-  mbti?: string;
-  bloodType?: string;
-  zodiacSign?: string;
-  job?: string;
-}
+// 데이터 유효성 검사 함수들
+export const validateUserProfile = (profile: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!profile) {
+    errors.push('프로필이 비어있습니다.');
+    return { isValid: false, errors };
+  }
+  
+  if (!profile.id) errors.push('ID가 누락되었습니다.');
+  if (!profile.name || profile.name.trim() === '') errors.push('이름이 누락되었습니다.');
+  if (typeof profile.onboarding_completed !== 'boolean') errors.push('온보딩 완료 상태가 올바르지 않습니다.');
+  
+  // 생년월일 검증
+  if (profile.birth_date) {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(profile.birth_date)) {
+      errors.push('생년월일 형식이 올바르지 않습니다 (YYYY-MM-DD).');
+    } else {
+      const date = new Date(profile.birth_date);
+      if (isNaN(date.getTime())) {
+        errors.push('생년월일이 유효하지 않습니다.');
+      }
+    }
+  }
+  
+  // MBTI 검증
+  if (profile.mbti && profile.mbti.length !== 4) {
+    errors.push('MBTI는 4자리여야 합니다.');
+  }
+  
+  // 이메일 검증
+  if (profile.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(profile.email)) {
+      errors.push('이메일 형식이 올바르지 않습니다.');
+    }
+  }
+  
+  return { isValid: errors.length === 0, errors };
+};
+
+// 데이터 마이그레이션 함수 (구버전 -> 신버전)
+export const migrateUserProfile = (profile: any): UserProfile | null => {
+  if (!profile) return null;
+  
+  try {
+    // 구버전 필드명 변환
+    const migrated: UserProfile = {
+      id: profile.id || `migrated_${Date.now()}`,
+      name: profile.name || '',
+      email: profile.email || '',
+      birth_date: profile.birth_date || profile.birthDate || profile.birthdate || '',
+      birth_time: profile.birth_time || profile.birthTime || '',
+      gender: profile.gender as 'male' | 'female' | 'other' | undefined,
+      mbti: profile.mbti || '',
+      blood_type: profile.blood_type || profile.bloodType as 'A' | 'B' | 'AB' | 'O' | undefined,
+      zodiac_sign: profile.zodiac_sign || profile.zodiacSign || '',
+      chinese_zodiac: profile.chinese_zodiac || profile.chineseZodiac || '',
+      job: profile.job || '',
+      location: profile.location || '',
+      subscription_status: profile.subscription_status || 'free',
+      fortune_count: profile.fortune_count || profile.fortuneCount || 0,
+      favorite_fortune_types: profile.favorite_fortune_types || profile.favoriteFortuneTypes || [],
+      onboarding_completed: profile.onboarding_completed ?? false,
+      privacy_settings: profile.privacy_settings || {
+        show_profile: true,
+        share_fortune: false,
+        email_notifications: true
+      },
+      created_at: profile.created_at || profile.createdAt || new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // 별자리와 띠 자동 계산
+    if (migrated.birth_date) {
+      migrated.zodiac_sign = migrated.zodiac_sign || getZodiacSign(migrated.birth_date);
+      migrated.chinese_zodiac = migrated.chinese_zodiac || getChineseZodiac(migrated.birth_date);
+    }
+    
+    return migrated;
+  } catch (error) {
+    console.error('프로필 마이그레이션 실패:', error);
+    return null;
+  }
+};
 
 export interface UserProfile {
   id: string;
   name: string;
   email?: string;
+  avatar_url?: string;
   birth_date?: string;
   birth_time?: string;
+  birth_hour?: string;
   gender?: 'male' | 'female' | 'other';
   mbti?: string;
+  blood_type?: 'A' | 'B' | 'AB' | 'O';
+  zodiac_sign?: string;
+  chinese_zodiac?: string;
+  job?: string;
+  location?: string;
+  subscription_status?: 'free' | 'premium' | 'premium_plus' | 'enterprise';
+  fortune_count?: number;
+  premium_fortunes_count?: number;
+  favorite_fortune_types?: string[];
   onboarding_completed: boolean;
-  [key: string]: any;
-}
-
-const USER_INFO_KEY = 'fortune_user_info';
-
-// 사용자 정보 저장
-export const saveUserInfo = (userInfo: Partial<UserInfo>): void => {
-  try {
-    const existingInfo = getUserInfo();
-    const updatedInfo = { ...existingInfo, ...userInfo };
-    localStorage.setItem(USER_INFO_KEY, JSON.stringify(updatedInfo));
-  } catch (error) {
-    console.error('사용자 정보 저장 실패:', error);
-  }
-};
-
-// 사용자 정보 불러오기
-export const getUserInfo = (): UserInfo => {
-  try {
-    const stored = localStorage.getItem(USER_INFO_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('사용자 정보 불러오기 실패:', error);
-  }
-  
-  return {
-    name: '',
-    birthDate: '',
-    birthTime: '',
-    gender: '',
-    mbti: '',
-    bloodType: '',
-    zodiacSign: '',
-    job: '',
+  privacy_settings?: {
+    show_profile: boolean;
+    share_fortune: boolean;
+    email_notifications: boolean;
   };
-};
-
-// 특정 필드만 불러오기
-export const getUserField = (field: keyof UserInfo): string => {
-  const userInfo = getUserInfo();
-  return userInfo[field] || '';
-};
-
-// 사용자 정보 초기화
-export const clearUserInfo = (): void => {
-  try {
-    localStorage.removeItem(USER_INFO_KEY);
-  } catch (error) {
-    console.error('사용자 정보 초기화 실패:', error);
-  }
-};
-
-// 사용자 정보가 있는지 확인
-export const hasUserInfo = (): boolean => {
-  const userInfo = getUserInfo();
-  return !!(userInfo.name && userInfo.birthDate);
-};
+  created_at?: string;
+  updated_at?: string;
+}
 
 // 생년월일에서 나이 계산
 export const calculateAge = (birthDate: string): number => {
@@ -129,15 +165,10 @@ export const getChineseZodiac = (birthDate: string): string => {
   return animals[year % 12];
 };
 
-// 사용자 프리미엄 상태 확인
-export const isPremiumUser = (user?: UserProfile | null): boolean => {
-  if (!user) return false;
-  return user.subscription_status === 'premium' || user.subscription_status === 'premium_plus';
-};
 
 /**
  * 로컬 스토리지에서 사용자 프로필을 안전하게 가져옵니다.
- * 데이터가 없거나 형식이 잘못된 경우 null을 반환합니다.
+ * 데이터 검증 및 마이그레이션을 포함합니다.
  */
 export function getUserProfile(): UserProfile | null {
   try {
@@ -146,77 +177,134 @@ export function getUserProfile(): UserProfile | null {
 
     const parsed = JSON.parse(userProfileJson);
 
-    // 간단한 타입 가드: 필수 필드가 있는지 확인
-    if (parsed && typeof parsed === 'object' && 'id' in parsed && 'name' in parsed && 'onboarding_completed' in parsed) {
-       return parsed as UserProfile;
+    // 데이터 마이그레이션 시도
+    const migrated = migrateUserProfile(parsed);
+    if (!migrated) {
+      console.warn('프로필 마이그레이션 실패, 데이터 삭제');
+      localStorage.removeItem('userProfile');
+      return null;
     }
     
-    return null;
+    // 데이터 검증
+    const validation = validateUserProfile(migrated);
+    if (!validation.isValid) {
+      console.warn('프로필 검증 실패:', validation.errors);
+      // 심각한 오류가 아니면 수정된 데이터 사용
+      const criticalErrors = validation.errors.filter(err => 
+        err.includes('ID가 누락') || err.includes('온보딩 완료 상태')
+      );
+      
+      if (criticalErrors.length > 0) {
+        localStorage.removeItem('userProfile');
+        return null;
+      }
+    }
+    
+    // 마이그레이션된 데이터가 원본과 다르면 저장
+    if (JSON.stringify(parsed) !== JSON.stringify(migrated)) {
+      console.log('프로필 데이터 마이그레이션 완료');
+      localStorage.setItem('userProfile', JSON.stringify(migrated));
+    }
+    
+    return migrated;
   } catch (error) {
     console.error("로컬 프로필 파싱 실패:", error);
-    localStorage.removeItem('userProfile'); // 잘못된 데이터는 삭제
+    localStorage.removeItem('userProfile');
     return null;
   }
 }
 
 /**
  * 사용자 프로필을 로컬 스토리지에 저장합니다.
+ * 저장 전 데이터 검증을 수행합니다.
  */
 export function saveUserProfile(profile: UserProfile | null) {
   if (profile) {
-    localStorage.setItem('userProfile', JSON.stringify(profile));
+    // 데이터 검증
+    const validation = validateUserProfile(profile);
+    if (!validation.isValid) {
+      console.error('프로필 저장 실패 - 검증 오류:', validation.errors);
+      throw new Error(`프로필 검증 실패: ${validation.errors.join(', ')}`);
+    }
+    
+    // 타임스탬프 업데이트
+    const profileToSave = {
+      ...profile,
+      updated_at: new Date().toISOString()
+    };
+    
+    localStorage.setItem('userProfile', JSON.stringify(profileToSave));
+    console.log('💾 프로필 저장 완료:', profileToSave.name);
   } else {
     localStorage.removeItem('userProfile');
+    console.log('💾 프로필 삭제 완료');
   }
 }
 
 /**
- * DB에서 최신 프로필을 가져와 로컬 스토리지와 동기화하고, 최신 프로필을 반환합니다.
+ * 로컬 스토리지와 Supabase 간 사용자 프로필을 동기화합니다.
+ * Supabase가 우선이며, 실패 시 로컬 스토리지를 사용합니다.
  */
 export async function syncUserProfile(): Promise<UserProfile | null> {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      // 로그인하지 않은 경우, 로컬 프로필도 삭제하는 것이 안전합니다.
-      saveUserProfile(null);
-      return null;
-    }
-
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single(); // 결과는 하나여야 하므로 single() 사용
-
-    if (error) {
-      if (error.code === 'PGRST116') { // 행이 없는 경우, 오류가 아님
-        console.log('DB에 프로필이 아직 없습니다. 로컬 데이터를 사용합니다.');
-        return getUserProfile();
+    // 1. 로컬 프로필 확인
+    const localProfile = getUserProfile();
+    
+    // 2. Supabase 세션 확인 시도
+    try {
+      const { supabase, userProfileService } = await import('@/lib/supabase');
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (sessionData?.session?.user) {
+        console.log('🔄 Supabase 세션 확인, 프로필 동기화 시작');
+        
+        // 3. Supabase에서 프로필 가져오기
+        const supabaseProfile = await userProfileService.getProfile(sessionData.session.user.id);
+        
+        if (supabaseProfile) {
+          // 4. Supabase 프로필이 있으면 로컬에 동기화
+          const mergedProfile = {
+            ...localProfile,
+            ...supabaseProfile,
+            updated_at: new Date().toISOString()
+          };
+          
+          saveUserProfile(mergedProfile);
+          console.log('✅ Supabase → 로컬 동기화 완료');
+          return mergedProfile;
+        } else if (localProfile && localProfile.onboarding_completed) {
+          // 5. Supabase에 프로필이 없지만 로컬에 있으면 업로드
+          await userProfileService.upsertProfile({
+            id: sessionData.session.user.id,
+            email: sessionData.session.user.email || '',
+            name: localProfile.name,
+            birth_date: localProfile.birth_date,
+            birth_time: localProfile.birth_time,
+            mbti: localProfile.mbti,
+            gender: localProfile.gender,
+            onboarding_completed: localProfile.onboarding_completed
+          });
+          
+          console.log('✅ 로컬 → Supabase 동기화 완료');
+          return localProfile;
+        }
       }
-      // 그 외 실제 DB 오류
-      console.error('DB에서 프로필 조회 실패:', error);
-      return getUserProfile(); // DB 실패 시 일단 로컬 데이터 반환
-    }
-
-    if (data) {
-       const dbProfile: UserProfile = {
-        id: data.id,
-        name: data.name,
-        email: data.email,
-        birth_date: data.birth_date,
-        birth_time: data.birth_time,
-        gender: data.gender,
-        mbti: data.mbti,
-        onboarding_completed: data.onboarding_completed || false,
-      };
-      saveUserProfile(dbProfile); // 최신 DB 데이터로 로컬 스토리지 덮어쓰기
-      return dbProfile;
+    } catch (supabaseError) {
+      console.log('🔐 게스트 사용자 또는 Supabase 연결 실패:', supabaseError);
     }
     
-    return getUserProfile(); // DB에 데이터가 없는 경우 로컬 데이터 반환
+    // 6. Supabase 사용 불가 시 로컬 프로필 반환
+    if (localProfile) {
+      console.log('💾 로컬 프로필 사용 (게스트 모드)');
+      return localProfile;
+    }
+    
+    console.log('❌ 프로필 없음');
+    return null;
+    
   } catch (err) {
     console.error('syncUserProfile 함수에서 예외 발생:', err);
-    return getUserProfile(); // 모든 예외 발생 시 로컬 데이터 반환
+    return getUserProfile();
   }
 }
 
@@ -271,48 +359,239 @@ export const incrementDailyUsage = (): void => {
     
     usage.count += 1;
     localStorage.setItem('dailyFortuneUsage', JSON.stringify(usage));
+    
+    // 전체 사용량도 업데이트
+    incrementFortuneCount();
   } catch (error) {
     console.error('일일 사용량 업데이트 실패:', error);
   }
 };
 
 /**
- * 온보딩 데이터를 기반으로 Supabase의 사용자 프로필을 업데이트합니다.
+ * 애플리케이션 시작 시 데이터 검사 및 정리
  */
-export const updateUserProfileFromOnboarding = async (): Promise<{ success: boolean; error?: any }> => {
+export const initializeUserData = (): void => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      // 로그인하지 않은 사용자는 DB 업데이트를 시도하지 않음
-      return { success: true }; 
+    // 데이터 일관성 검사
+    const consistencyCheck = checkAndFixDataConsistency();
+    if (consistencyCheck.issues.length > 0) {
+      console.log('🔧 데이터 일관성 문제 발견:', consistencyCheck.issues);
     }
-
-    const userInfo = getUserInfo();
-    const updateData: any = {};
-
-    if (userInfo.name) updateData.full_name = userInfo.name;
-    if (userInfo.birthDate) updateData.birth_date = userInfo.birthDate;
-    if (userInfo.gender) updateData.gender = userInfo.gender;
-    if (userInfo.mbti) updateData.mbti = userInfo.mbti;
-    if (userInfo.birthTime) updateData.birth_time = userInfo.birthTime;
-    if (userInfo.job) updateData.job = userInfo.job;
-    if (userInfo.bloodType) updateData.blood_type = userInfo.bloodType;
-
-    const { error } = await supabase.auth.updateUser({
-      data: updateData
+    
+    // 오래된 임시 데이터 정리 (30일 이상)
+    const keys = Object.keys(localStorage);
+    const now = Date.now();
+    const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
+    
+    keys.forEach(key => {
+      if (key.startsWith('temp_') || key.startsWith('guest_')) {
+        try {
+          const data = JSON.parse(localStorage.getItem(key) || '{}');
+          const createdAt = data.created_at ? new Date(data.created_at).getTime() : 0;
+          
+          if (createdAt < thirtyDaysAgo) {
+            localStorage.removeItem(key);
+            console.log('🗑️ 오래된 임시 데이터 삭제:', key);
+          }
+        } catch {
+          // 파싱 실패하면 삭제
+          localStorage.removeItem(key);
+        }
+      }
     });
-
-    if (error) {
-      console.error('DB 프로필 업데이트 실패:', error);
-      return { success: false, error };
-    }
-
-    // 로컬 스토리지와도 동기화
-    await syncUserProfile();
-
-    return { success: true };
+    
+    console.log('✅ 사용자 데이터 초기화 완료');
   } catch (error) {
-    console.error('프로필 업데이트 중 예외 발생:', error);
-    return { success: false, error };
+    console.error('사용자 데이터 초기화 실패:', error);
   }
+};
+
+// 구대 getUserInfo 호환성을 위한 새로운 함수
+export const hasUserProfile = (): boolean => {
+  const profile = getUserProfile();
+  return !!(profile && profile.name && profile.birth_date && profile.onboarding_completed);
+};
+
+// 전체 사용자 데이터 초기화
+export const clearAllUserData = (): void => {
+  try {
+    const keysToRemove = [
+      'userProfile',
+      'dailyFortuneUsage',
+      'fortune_cache',
+      'app_settings'
+    ];
+    
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+    });
+    
+    // 임시 데이터도 모두 삭제
+    const allKeys = Object.keys(localStorage);
+    allKeys.forEach(key => {
+      if (key.startsWith('temp_') || key.startsWith('guest_') || key.startsWith('fortune_')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    console.log('💾 모든 사용자 데이터가 삭제되었습니다.');
+  } catch (error) {
+    console.error('사용자 데이터 삭제 실패:', error);
+  }
+};
+
+/**
+ * 빈 사용자 프로필 템플릿 생성
+ */
+export const createEmptyUserProfile = (id?: string, email?: string): UserProfile => {
+  return {
+    id: id || `guest_${Date.now()}`,
+    name: '',
+    email: email || '',
+    birth_date: '',
+    birth_time: '',
+    gender: undefined,
+    mbti: '',
+    blood_type: undefined,
+    zodiac_sign: '',
+    chinese_zodiac: '',
+    job: '',
+    location: '',
+    subscription_status: 'free',
+    fortune_count: 0,
+    favorite_fortune_types: [],
+    onboarding_completed: false,
+    privacy_settings: {
+      show_profile: true,
+      share_fortune: false,
+      email_notifications: true
+    },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+};
+
+/**
+ * 사용자 프로필 업데이트 (기존 데이터와 병합)
+ * 자동으로 별자리와 띠를 재계산합니다.
+ */
+export const updateUserProfile = (updates: Partial<UserProfile>): UserProfile | null => {
+  try {
+    const currentProfile = getUserProfile();
+    
+    if (!currentProfile) {
+      // 프로필이 없으면 새로 생성
+      const newProfile = createEmptyUserProfile(updates.id, updates.email);
+      const updatedProfile = { ...newProfile, ...updates };
+      
+      // 별자리와 띠 자동 계산
+      if (updatedProfile.birth_date) {
+        updatedProfile.zodiac_sign = getZodiacSign(updatedProfile.birth_date);
+        updatedProfile.chinese_zodiac = getChineseZodiac(updatedProfile.birth_date);
+      }
+      
+      saveUserProfile(updatedProfile);
+      return updatedProfile;
+    }
+    
+    // 기존 프로필 업데이트
+    const updatedProfile: UserProfile = {
+      ...currentProfile,
+      ...updates,
+      updated_at: new Date().toISOString()
+    };
+    
+    // 생년월일이 변경되면 별자리와 띠 재계산
+    if (updates.birth_date && updates.birth_date !== currentProfile.birth_date) {
+      updatedProfile.zodiac_sign = getZodiacSign(updates.birth_date);
+      updatedProfile.chinese_zodiac = getChineseZodiac(updates.birth_date);
+    }
+    
+    saveUserProfile(updatedProfile);
+    return updatedProfile;
+  } catch (error) {
+    console.error('프로필 업데이트 실패:', error);
+    return null;
+  }
+};
+
+/**
+ * 데이터 일관성 검사 및 복구
+ */
+export const checkAndFixDataConsistency = (): { fixed: boolean; issues: string[] } => {
+  const issues: string[] = [];
+  let fixed = false;
+  
+  try {
+    const profile = getUserProfile();
+    if (!profile) {
+      return { fixed: false, issues: ['프로필이 존재하지 않습니다.'] };
+    }
+    
+    let needsUpdate = false;
+    const updatedProfile = { ...profile };
+    
+    // 별자리 재계산
+    if (profile.birth_date) {
+      const correctZodiac = getZodiacSign(profile.birth_date);
+      if (profile.zodiac_sign !== correctZodiac) {
+        updatedProfile.zodiac_sign = correctZodiac;
+        issues.push(`별자리 수정: ${profile.zodiac_sign} → ${correctZodiac}`);
+        needsUpdate = true;
+      }
+      
+      const correctChinese = getChineseZodiac(profile.birth_date);
+      if (profile.chinese_zodiac !== correctChinese) {
+        updatedProfile.chinese_zodiac = correctChinese;
+        issues.push(`띠 수정: ${profile.chinese_zodiac} → ${correctChinese}`);
+        needsUpdate = true;
+      }
+    }
+    
+    // MBTI 대문자 변환
+    if (profile.mbti && profile.mbti !== profile.mbti.toUpperCase()) {
+      updatedProfile.mbti = profile.mbti.toUpperCase();
+      issues.push(`MBTI 대문자 변환: ${profile.mbti} → ${updatedProfile.mbti}`);
+      needsUpdate = true;
+    }
+    
+    // 기본 설정 추가
+    if (!profile.privacy_settings) {
+      updatedProfile.privacy_settings = {
+        show_profile: true,
+        share_fortune: false,
+        email_notifications: true
+      };
+      issues.push('기본 개인정보 설정 추가');
+      needsUpdate = true;
+    }
+    
+    if (needsUpdate) {
+      saveUserProfile(updatedProfile);
+      fixed = true;
+      console.log('💡 데이터 일관성 문제 수정 완료');
+    }
+    
+    return { fixed, issues };
+  } catch (error) {
+    console.error('데이터 일관성 검사 실패:', error);
+    return { fixed: false, issues: ['일관성 검사 중 오류 발생'] };
+  }
+};
+
+/**
+ * 게스트 사용자인지 확인합니다.
+ * 게스트 사용자는 이메일이 없거나 id가 'guest_'로 시작합니다.
+ */
+export const isGuestUser = (profile: UserProfile | null): boolean => {
+  if (!profile) return true;
+  return !profile.email || profile.id.startsWith('guest_');
+};
+
+/**
+ * 프리미엄 사용자인지 확인합니다.
+ */
+export const isPremiumUser = (profile: UserProfile | null): boolean => {
+  if (!profile) return false;
+  return profile.subscription_status === 'premium' || profile.subscription_status === 'premium_plus';
 }; 

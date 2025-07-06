@@ -44,15 +44,15 @@ export default function BottomNavigationBar() {
 
   return (
     <motion.nav 
-      className="fixed bottom-6 left-0 right-0 z-50 flex justify-center"
+      className="fixed bottom-2 left-0 right-0 z-50 flex justify-center"
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <div className="relative">
         {/* Main Navigation Container */}
-        <div className="liquid-glass-nav px-6 py-4">
-          <div className="flex items-center justify-center space-x-8">
+        <div className="liquid-glass-nav px-4 py-2">
+          <div className="flex items-center justify-center space-x-6">
             {navigationItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (pathname && pathname.startsWith(item.href + '/'));
@@ -88,7 +88,7 @@ export default function BottomNavigationBar() {
 
                     {/* Icon Container */}
                     <div className={cn(
-                      "relative p-3 rounded-2xl transition-all duration-300",
+                      "relative p-2 rounded-xl transition-all duration-300",
                       "backdrop-blur-sm",
                       isActive 
                         ? "bg-white/30 shadow-lg" 
@@ -96,7 +96,7 @@ export default function BottomNavigationBar() {
                     )}>
                       <Icon 
                         className={cn(
-                          "h-6 w-6 transition-all duration-300",
+                          "h-5 w-5 transition-all duration-300",
                           isActive 
                             ? "text-white drop-shadow-sm" 
                             : "text-gray-300 group-hover:text-white"
@@ -107,7 +107,7 @@ export default function BottomNavigationBar() {
                       <AnimatePresence>
                         {isActive && (
                           <motion.div
-                            className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full shadow-lg"
+                            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-white rounded-full shadow-lg"
                             initial={{ scale: 0, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0, opacity: 0 }}

@@ -425,18 +425,25 @@ export default function PremiumSajuPage() {
   useEffect(() => {
     async function loadProfile() {
       try {
-        const res = await fetch('/api/profile');
-        if (!res.ok) return;
-        const json = await res.json();
-        if (json.success && json.data) {
-          const { name, birth_date, birth_time, gender } = json.data;
-          const [year, month, day] = birth_date.split('-');
-          const genderValue = gender === '남성' ? 'male' : gender === '여성' ? 'female' : '';
+        const { auth, userProfileService } = await import('@/lib/supabase');
+        const { data: sessionData } = await auth.getSession();
+        
+        if (!sessionData?.session?.user) {
+          console.log('로그인된 사용자가 없음');
+          return;
+        }
+
+        const profile = await userProfileService.getProfile(sessionData.session.user.id);
+        
+        if (profile) {
+          const { name, birth_date, birth_time, gender } = profile;
+          const [year, month, day] = birth_date?.split('-') || ['', '', ''];
+          const genderValue = gender === 'male' ? 'male' : gender === 'female' ? 'female' : '';
           setFormData({
-            name,
-            birthYear: year,
-            birthMonth: month.replace(/^0/, ''),
-            birthDay: day.replace(/^0/, ''),
+            name: name || '',
+            birthYear: year || '',
+            birthMonth: month?.replace(/^0/, '') || '',
+            birthDay: day?.replace(/^0/, '') || '',
             birthTimePeriod: birth_time || '',
             gender: genderValue
           });

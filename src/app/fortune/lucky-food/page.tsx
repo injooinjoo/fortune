@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 // import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -345,13 +346,12 @@ export default function LuckyFoodPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="birth_date">생년월일</Label>
-                      <Input
-                        id="birth_date"
-                        type="date"
+                      <KoreanDatePicker
                         value={formData.birth_date}
-                        onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
-                        className="mt-1"
+                        onChange={(date) => setFormData(prev => ({ ...prev, birth_date: date }))}
+                        label="생년월일"
+                        placeholder="생년월일을 선택하세요"
+                        required={true}
                       />
                     </div>
                   </div>

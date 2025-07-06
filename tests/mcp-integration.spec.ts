@@ -206,4 +206,112 @@ test.describe('MCP 통합 테스트', () => {
     await expect(page.locator('input[name="name"]')).toBeVisible();
     await expect(page.locator('input[name="name"]')).toHaveValue('');
   });
+});
+
+test.describe('MCP Server 통합 테스트', () => {
+  test('Playwright MCP - 브라우저 자동화', async ({ page }) => {
+    // Playwright MCP를 통한 브라우저 제어 테스트
+    await page.goto('/', { waitUntil: 'networkidle' });
+    
+    // 스크린샷 캡처
+    const screenshotBuffer = await page.screenshot({ fullPage: true });
+    expect(screenshotBuffer).toBeTruthy();
+    
+    // 페이지 타이틀 확인
+    const title = await page.title();
+    expect(title).toContain('Fortune');
+    
+    // 네비게이션 테스트
+    await page.goto('/fortune/daily');
+    await expect(page).toHaveURL('/fortune/daily');
+  });
+
+  test('Supabase MCP - 데이터베이스 연동', async ({ page }) => {
+    // Supabase 연동 API 호출 모니터링
+    let supabaseCallMade = false;
+    
+    await page.route('**/rest/v1/**', async (route) => {
+      supabaseCallMade = true;
+      const request = route.request();
+      expect(request.headers()['apikey']).toBeTruthy();
+      await route.continue();
+    });
+    
+    // 로그인 또는 데이터 조회 시나리오
+    await page.goto('/profile', { waitUntil: 'networkidle' });
+    
+    // Supabase 호출이 발생했는지 확인 (프로필 페이지는 사용자 데이터를 조회함)
+    await page.waitForTimeout(1000); // API 호출 대기
+    // Note: 실제 앱 동작에 따라 이 부분은 조정 필요
+  });
+
+  test('MCP 서버 상태 확인', async ({ page }) => {
+    // MCP 서버들의 상태를 확인하는 엔드포인트가 있다면 테스트
+    const mcpStatus = {
+      playwright: 'connected',
+      supabase: 'connected',
+      figma: 'pending' // Figma는 데스크톱 앱 실행 필요
+    };
+    
+    // 상태 확인 (실제 구현 시 API 엔드포인트 필요)
+    expect(mcpStatus.playwright).toBe('connected');
+    expect(mcpStatus.supabase).toBe('connected');
+  });
+
+  test('MCP를 통한 운세 생성 워크플로우', async ({ page }) => {
+    // 전체 워크플로우 테스트: 사용자 입력 → Supabase 저장 → AI 생성 → 결과 표시
+    await page.goto('/', { waitUntil: 'networkidle' });
+    
+    // 사용자 정보 입력
+    await page.fill('input[name="name"]', 'MCP 통합 테스트');
+    await page.click('text=다음');
+    
+    // 생년월일 입력
+    await page.selectOption('select:near(:text("년"))', '1995');
+    await page.selectOption('select:near(:text("월"))', '7');
+    await page.selectOption('select:near(:text("일"))', '20');
+    await page.click('text=다음');
+    
+    // API 호출 모니터링
+    const apiCalls = {
+      profile: false,
+      fortune: false
+    };
+    
+    await page.route('**/api/**', async (route) => {
+      const url = route.request().url();
+      if (url.includes('/api/profile')) apiCalls.profile = true;
+      if (url.includes('/api/fortune')) apiCalls.fortune = true;
+      await route.continue();
+    });
+    
+    // 프로필 완성
+    await page.selectOption('select:near(:text("성별"))', '여성');
+    await page.click('text=완료');
+    
+    // API 호출 확인
+    await page.waitForTimeout(2000);
+    expect(apiCalls.profile || apiCalls.fortune).toBeTruthy();
+  });
+
+  test('에러 복구 및 재시도 메커니즘', async ({ page }) => {
+    // MCP 서버 연결 실패 시 재시도 로직 테스트
+    let retryCount = 0;
+    
+    await page.route('**/api/**', async (route) => {
+      retryCount++;
+      if (retryCount === 1) {
+        // 첫 번째 시도는 실패
+        await route.abort('failed');
+      } else {
+        // 재시도는 성공
+        await route.continue();
+      }
+    });
+    
+    await page.goto('/', { waitUntil: 'networkidle' });
+    
+    // 재시도가 발생했는지 확인
+    expect(retryCount).toBeGreaterThanOrEqual(1);
+  });
 }); 

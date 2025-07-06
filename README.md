@@ -1057,3 +1057,67 @@ iOS: PWA 지원 및 네이티브 앱 개발 예정
 ```
 
 ---
+
+## 🚀 GPT 호출 최적화
+
+Fortune 앱은 중앙 집중식 GPT 호출 시스템을 통해 토큰 사용량을 최적화합니다.
+
+### 주요 기능
+
+- **묶음 요청**: 관련된 운세들을 한 번의 API 호출로 생성
+- **토큰 절약**: 65-85%의 토큰 사용량 감소
+- **스마트 캐싱**: 패키지별 최적화된 캐시 전략
+- **비용 모니터링**: 실시간 토큰 사용량 및 비용 추적
+
+### 운세 패키지
+
+1. **전통·사주 패키지** (1년 캐시)
+   - 사주, 전통사주, 토정비결, 살풀이, 전생
+   
+2. **일일 종합 패키지** (24시간 캐시)
+   - 오늘의 운세, 시간별 운세, 내일의 운세
+
+3. **연애·인연 패키지** (72시간 캐시)
+   - 연애운, 인연운, 소개팅운, 연예인 궁합
+
+4. **취업·재물 패키지** (7일 캐시)
+   - 취업운, 금전운, 사업운, 투자운
+
+5. **행운 아이템 패키지** (30일 캐시)
+   - 행운의 색, 숫자, 아이템, 의상, 음식
+
+### API 사용법
+
+```typescript
+// 배치 운세 생성
+const response = await fetch('/api/fortune/generate-batch', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    request_type: 'daily_refresh',
+    user_profile: {
+      id: userId,
+      name: userName,
+      birth_date: birthDate
+    },
+    generation_context: {
+      cache_duration_hours: 24
+    }
+  })
+});
+```
+
+### 토큰 사용량 모니터링
+
+관리자는 토큰 사용량과 비용을 실시간으로 모니터링할 수 있습니다:
+
+```typescript
+// 토큰 사용량 통계 조회
+const tokenMonitor = new TokenMonitor();
+const stats = await tokenMonitor.getUsageStats(userId);
+
+// 패키지별 효율성 분석
+const efficiency = await tokenMonitor.analyzePackageEfficiency();
+```
+
+---

@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import {
   Rocket,
   Briefcase,
@@ -197,8 +198,14 @@ export default function StartupFortunePage() {
                         <Input id="name" placeholder="이름" value={formData.name} onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))} className="mt-1" />
                       </div>
                       <div>
-                        <Label htmlFor="birth">생년월일</Label>
-                        <Input id="birth" type="date" value={formData.birth_date} onChange={e => setFormData(prev => ({ ...prev, birth_date: e.target.value }))} className="mt-1" />
+                        <KoreanDatePicker
+                          label="생년월일"
+                          value={formData.birth_date}
+                          onChange={(date) => setFormData(prev => ({ ...prev, birth_date: date }))}
+                          placeholder="생년월일을 선택하세요"
+                          required
+                          className="mt-1"
+                        />
                       </div>
                     </div>
                     <div>

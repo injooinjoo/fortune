@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,8 +103,12 @@ export default function LuckyNumberPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Label htmlFor="birth" className="sr-only">birth</Label>
-                    <Input id="birth" type="date" value={birth} onChange={(e) => setBirth(e.target.value)} />
+                    <KoreanDatePicker
+                      value={birth}
+                      onChange={(date) => setBirth(date)}
+                      placeholder="생년월일을 선택하세요"
+                      required={true}
+                    />
                   </CardContent>
                 </Card>
               </motion.div>

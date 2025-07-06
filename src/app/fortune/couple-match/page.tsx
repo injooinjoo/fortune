@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { Heart, Users, Sparkles, ArrowRight, Shuffle, TrendingUp } from "lucide-react";
 
@@ -193,12 +194,12 @@ export default function CoupleMatchPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="p1-birth">생년월일</Label>
-                      <Input
-                        id="p1-birth"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={formData.person1.birthDate}
-                        onChange={e => setFormData(prev => ({ ...prev, person1: { ...prev.person1, birthDate: e.target.value } }))}
+                        onChange={(date) => setFormData(prev => ({ ...prev, person1: { ...prev.person1, birthDate: date } }))}
+                        placeholder="생년월일을 선택하세요"
+                        required
                         className="mt-1"
                       />
                     </div>
@@ -236,12 +237,12 @@ export default function CoupleMatchPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="p2-birth">생년월일</Label>
-                      <Input
-                        id="p2-birth"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={formData.person2.birthDate}
-                        onChange={e => setFormData(prev => ({ ...prev, person2: { ...prev.person2, birthDate: e.target.value } }))}
+                        onChange={(date) => setFormData(prev => ({ ...prev, person2: { ...prev.person2, birthDate: date } }))}
+                        placeholder="생년월일을 선택하세요"
+                        required
                         className="mt-1"
                       />
                     </div>

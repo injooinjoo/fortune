@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { Gem, ArrowRight } from "lucide-react";
 
@@ -83,8 +84,14 @@ export default function BirthstonePage() {
                 <p className="text-gray-600">생일을 입력하면 당신의 탄생석과 의미를 알려드려요</p>
               </motion.div>
               <motion.div variants={itemVariants}>
-                <Label htmlFor="birth" className="block mb-2">생일</Label>
-                <Input id="birth" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="mb-4" />
+                <KoreanDatePicker
+                  label="생일"
+                  value={birthDate}
+                  onChange={setBirthDate}
+                  placeholder="생년월일을 선택하세요"
+                  required
+                  className="mb-4"
+                />
                 <Button onClick={handleSubmit} className="w-full flex gap-2">
                   다음 단계
                   <ArrowRight className="w-4 h-4" />

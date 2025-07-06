@@ -15,6 +15,8 @@ import {
   FortuneCategoryGroup
 } from '../types/fortune-system';
 import { FortuneServiceError } from '../fortune-utils';
+import { centralizedFortuneService } from './centralized-fortune-service';
+import { FORTUNE_PACKAGES } from '@/config/fortune-packages';
 
 export class FortuneService {
   private static instance: FortuneService;
@@ -111,9 +113,8 @@ export class FortuneService {
         success: true,
         data: newData,
         cached: false,
-        cache_source: 'ai_generated',
-        generated_at: new Date().toISOString(),
-        processing_time_ms: endTime - startTime
+        cache_source: 'fresh',
+        generated_at: new Date().toISOString()
       };
 
     } catch (error) {
@@ -124,8 +125,7 @@ export class FortuneService {
         success: false,
         error: error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.',
         cached: false,
-        generated_at: new Date().toISOString(),
-        processing_time_ms: endTime - startTime
+        generated_at: new Date().toISOString()
       };
     }
   }
@@ -239,34 +239,73 @@ export class FortuneService {
     try {
       console.log(`🤖 AI 운세 생성 시작: ${category} (그룹: ${groupType})`);
 
-      // OpenAI 클라이언트 동적 import (서버 환경에서만)
-      const { generateSingleFortune } = await import('../../ai/openai-client');
+      // 관련 운세들을 함께 요청할지 결정
+      const relatedFortunes = this.getRelatedFortunes(category);
       
-      // 기본 사용자 프로필 구성
-      const defaultProfile = {
-        name: userProfile?.name || '사용자',
-        birthDate: userProfile?.birth_date || '1990-01-01',
-        gender: userProfile?.gender || 'unknown',
-        mbti: userProfile?.mbti || null,
-        blood_type: userProfile?.blood_type || null
-      };
+      if (relatedFortunes.length > 1 && !interactiveInput) {
+        // 묶음 요청을 통한 최적화
+        console.log(`📦 묶음 운세 생성: ${relatedFortunes.join(', ')}`);
+        
+        const batchResponse = await centralizedFortuneService.callGenkitFortuneAPI({
+          request_type: 'user_direct_request',
+          user_profile: {
+            id: userId,
+            name: userProfile?.name || '사용자',
+            birth_date: userProfile?.birth_date || '1990-01-01',
+            birth_time: userProfile?.birth_time,
+            gender: userProfile?.gender,
+            mbti: userProfile?.mbti,
+            zodiac_sign: userProfile?.zodiac_sign
+          },
+          fortune_types: relatedFortunes,
+          target_date: new Date().toISOString().split('T')[0],
+          generation_context: {
+            is_user_initiated: true,
+            cache_duration_hours: this.getCacheDuration(category) / 3600000
+          }
+        });
+        
+        // 요청된 운세 데이터 추출
+        const result = batchResponse.analysis_results[category];
+        
+        console.log(`✅ 묶음 운세 생성 완료: ${category}`);
+        
+        // 메타데이터 추가
+        return {
+          ...result,
+          category,
+          groupType,
+          generated_at: batchResponse.generated_at,
+          user_id: userId,
+          ai_source: 'centralized_batch',
+          batch_id: batchResponse.request_id
+        };
+        
+      } else {
+        // 단일 운세 생성 (기존 방식 유지)
+        const { generateSingleFortune } = await import('../../ai/openai-client');
+        
+        const defaultProfile = {
+          name: userProfile?.name || '사용자',
+          birthDate: userProfile?.birth_date || '1990-01-01',
+          gender: userProfile?.gender || 'unknown',
+          mbti: userProfile?.mbti || null
+        };
 
-      let result: any;
+        const result = await generateSingleFortune(category, defaultProfile, interactiveInput);
 
-      // OpenAI를 사용한 단일 운세 생성
-      result = await generateSingleFortune(category, defaultProfile, interactiveInput);
-
-      console.log(`✅ AI 운세 생성 완료: ${category}`);
-      
-      // 메타데이터 추가
-      return {
-        ...result,
-        category,
-        groupType,
-        generated_at: new Date().toISOString(),
-        user_id: userId,
-        ai_source: 'openai_gpt'
-      };
+        console.log(`✅ AI 운세 생성 완료: ${category}`);
+        
+        // 메타데이터 추가
+        return {
+          ...result,
+          category,
+          groupType,
+          generated_at: new Date().toISOString(),
+          user_id: userId,
+          ai_source: 'openai_gpt'
+        };
+      }
 
     } catch (error) {
       console.error(`❌ AI 운세 생성 실패 (${category}):`, error);
@@ -464,14 +503,10 @@ export class FortuneService {
       'timeline': 'DAILY_COMPREHENSIVE',
 
       // 그룹 3: 실시간 상호작용 (INTERACTIVE)
-      'dream': 'INTERACTIVE',
+      'dream-interpretation': 'INTERACTIVE',
       'tarot': 'INTERACTIVE',
-      'fortune-cookie': 'INTERACTIVE',
       'worry-bead': 'INTERACTIVE',
-      'taemong': 'INTERACTIVE',
-      'psychology-test': 'INTERACTIVE',
       'physiognomy': 'INTERACTIVE',
-      'face-reading': 'INTERACTIVE',
 
       // 그룹 4: 연애 패키지 (LOVE_PACKAGE)
       'love': 'LOVE_PACKAGE',
@@ -530,6 +565,34 @@ export class FortuneService {
     };
 
     return categoryGroups[category] || 'INTERACTIVE';
+  }
+
+  /**
+   * 관련 운세 찾기
+   */
+  private getRelatedFortunes(fortuneCategory: FortuneCategory): string[] {
+    // 패키지 설정에서 관련 운세 찾기
+    for (const config of Object.values(FORTUNE_PACKAGES)) {
+      if (config.fortunes.includes(fortuneCategory)) {
+        return config.fortunes;
+      }
+    }
+    return [fortuneCategory];
+  }
+
+  /**
+   * 캐시 지속 시간 가져오기
+   */
+  private getCacheDuration(fortuneCategory: FortuneCategory): number {
+    // 패키지 설정에서 캐시 기간 찾기
+    for (const config of Object.values(FORTUNE_PACKAGES)) {
+      if (config.fortunes.includes(fortuneCategory)) {
+        return config.cacheDuration;
+      }
+    }
+    
+    // 기본 캐시 시간 (24시간)
+    return 24 * 60 * 60 * 1000;
   }
 }
 

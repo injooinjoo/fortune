@@ -10,6 +10,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { 
   Home, 
   MapPin, 
@@ -204,12 +205,12 @@ export default function MovingDatePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <DateInput
+                  <KoreanDatePicker
+                    label="생년월일"
                     value={birthDate}
                     onChange={setBirthDate}
-                    label="생년월일"
                     placeholder="태어난 날짜를 선택해주세요"
-                    type="date"
+                    required
                   />
                   
                   <DateInput

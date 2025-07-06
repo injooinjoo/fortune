@@ -15,13 +15,23 @@ import {
   Crown,
   Loader2
 } from "lucide-react";
+import GoogleAdsense from "@/components/ads/GoogleAdsense";
+
+// 컴포넌트 외부에 정의하여 재생성 방지
+const loadingSteps = [
+  { icon: Sparkles, text: "운세 데이터를 분석하고 있어요", duration: 1500 },
+  { icon: Star, text: "당신만의 특별한 점괘를 찾고 있어요", duration: 1500 },
+  { icon: Zap, text: "AI가 운세를 해석하고 있어요", duration: 1500 },
+  { icon: Eye, text: "미래의 흐름을 읽고 있어요", duration: 1000 }
+];
 
 interface AdLoadingScreenProps {
   fortuneType: string;
   fortuneTitle: string;
-  onComplete: () => void;
+  onComplete: (data?: any) => void;
   onSkip?: () => void;
   isPremium?: boolean;
+  fetchData?: () => Promise<any>;
 }
 
 export default function AdLoadingScreen({ 
@@ -29,21 +39,33 @@ export default function AdLoadingScreen({
   fortuneTitle, 
   onComplete, 
   onSkip,
-  isPremium = false
+  isPremium = false,
+  fetchData
 }: AdLoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [canSkip, setCanSkip] = useState(false);
   const [timeLeft, setTimeLeft] = useState(5);
+  const [fetchedData, setFetchedData] = useState<any>(null);
+  const [fetchError, setFetchError] = useState<Error | null>(null);
 
-  const loadingSteps = [
-    { icon: Sparkles, text: "운세 데이터를 분석하고 있어요", duration: 1500 },
-    { icon: Star, text: "당신만의 특별한 점괘를 찾고 있어요", duration: 1500 },
-    { icon: Zap, text: "AI가 운세를 해석하고 있어요", duration: 1500 },
-    { icon: Eye, text: "미래의 흐름을 읽고 있어요", duration: 1000 }
-  ];
 
-// 진행률 업데이트
+// 데이터 페칭 시작
+  useEffect(() => {
+    if (fetchData) {
+      fetchData()
+        .then(data => {
+          setFetchedData(data);
+          console.log('✅ 운세 데이터 페칭 완료');
+        })
+        .catch(error => {
+          console.error('❌ 운세 데이터 페칭 실패:', error);
+          setFetchError(error);
+        });
+    }
+  }, [fetchData]);
+
+  // 진행률 업데이트
   useEffect(() => {
     const totalDuration = loadingSteps.reduce((sum, step) => sum + step.duration, 0);
     let elapsed = 0;
@@ -66,18 +88,21 @@ export default function AdLoadingScreen({
       if (elapsed >= totalDuration) {
         clearInterval(timer);
         setCanSkip(true);
-        
-        // 프리미엄 사용자는 자동으로 완료
-        if (isPremium) {
-          setTimeout(() => {
-            onComplete();
-          }, 500); // 0.5초 후 자동 이동
-        }
       }
     }, 50);
 
     return () => clearInterval(timer);
-  }, []); // 의존성 배열 제거
+  }, []); // 의존성 배열 간소화
+
+  // 프리미엄 사용자 자동 완료 처리
+  useEffect(() => {
+    if (isPremium && canSkip && (!fetchData || fetchedData || fetchError)) {
+      const timer = setTimeout(() => {
+        onComplete(fetchedData);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isPremium, canSkip, fetchData, fetchedData, fetchError, onComplete]);
 
   // 스킵 버튼 활성화 타이머
   useEffect(() => {
@@ -104,7 +129,7 @@ export default function AdLoadingScreen({
   const currentStepData = loadingSteps[currentStep];
 
   return (
-    <div className="min-h-screen max-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* 배경 애니메이션 */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(20)].map((_, i) => (
@@ -134,7 +159,7 @@ export default function AdLoadingScreen({
         initial={{ scale: 0.8, opacity: 1 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-sm sm:max-w-md relative z-10 max-h-[80vh] overflow-y-auto scrollbar-hide"
+        className="w-full max-w-sm sm:max-w-md relative z-10"
       >
         <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
           <CardContent className="p-3 sm:p-4 text-center space-y-3 sm:space-y-4">
@@ -162,10 +187,12 @@ export default function AdLoadingScreen({
                 className="space-y-2"
               >
                 <p className="text-sm font-medium">{currentStepData.text}</p>
-                <div className="flex items-center justify-center gap-2">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  <span className="text-xs text-white/80">잠시만 기다려주세요...</span>
-                </div>
+                {progress < 100 && (
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span className="text-xs text-white/80">잠시만 기다려주세요...</span>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -173,11 +200,11 @@ export default function AdLoadingScreen({
             <div className="space-y-1">
               <div 
                 className={`relative h-8 bg-white/20 rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ${
-                  progress >= 100 ? 'hover:bg-white/30 active:scale-[0.98]' : 'cursor-not-allowed'
+                  progress >= 100 ? 'hover:bg-white/30' : 'cursor-not-allowed'
                 }`}
                 onClick={() => {
-                  if (progress >= 100) {
-                    onComplete();
+                  if (progress >= 100 && (!fetchData || fetchedData || fetchError)) {
+                    onComplete(fetchedData);
                   }
                 }}
               >
@@ -215,8 +242,8 @@ export default function AdLoadingScreen({
                 )}
               </div>
               
-              {progress < 100 && (
-                <p className="text-xs text-white/70">프로그래스바가 완료되면 클릭하세요</p>
+              {fetchError && (
+                <p className="text-xs text-red-300 mt-2">데이터 로딩 중 오류가 발생했습니다</p>
               )}
             </div>
 
@@ -228,13 +255,23 @@ export default function AdLoadingScreen({
                   <span className="text-xs font-medium">광고를 보고 무료로 이용하세요</span>
                 </div>
                 
-                {/* 실제 광고 영역 - AdSense/AdMob */}
+                {/* 실제 광고 영역 - Google AdSense */}
                 <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 min-h-[100px] sm:min-h-[120px] flex items-center justify-center">
-                  <div className="text-center space-y-1">
-                    <div className="text-xl sm:text-2xl">📱</div>
-                    <p className="text-xs text-white/80">광고 영역</p>
-                    <p className="text-xs text-white/60 hidden sm:block">AdSense/AdMob 광고가 여기에 표시됩니다</p>
-                  </div>
+                  <GoogleAdsense
+                    slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID || ""}
+                    style={{ display: "block", width: "100%", height: "100px" }}
+                    format="auto"
+                    responsive={true}
+                    className="ad-loading-screen"
+                    testMode={process.env.NODE_ENV === 'development'}
+                    fallback={
+                      <div className="text-center space-y-1">
+                        <div className="text-xl sm:text-2xl">📱</div>
+                        <p className="text-xs text-white/80">광고 영역</p>
+                        <p className="text-xs text-white/60 hidden sm:block">광고를 불러오는 중...</p>
+                      </div>
+                    }
+                  />
                 </div>
               </div>
             )}

@@ -10,8 +10,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
+// Supabase auth는 필요할 때만 import
 
 interface LoginModalProps {
   trigger: React.ReactNode
@@ -50,29 +51,29 @@ function KakaoIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function LoginModal({ trigger }: LoginModalProps) {
   const { theme } = useTheme()
+  const router = useRouter()
   const isDarkMode = theme === 'dark'
   
   const handleSocialLogin = async (provider: "google" | "kakao") => {
     try {
       if (provider === "google") {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`
-          }
-        });
+        const { auth } = await import('@/lib/supabase');
+        const { data, error } = await auth.signInWithGoogle();
         
         if (error) {
           console.error('Google 로그인 오류:', error);
           alert('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+          return;
         }
+        
+        // 성공 시 auth callback에서 리다이렉트 처리
+        console.log('Google 로그인 성공');
       } else if (provider === "kakao") {
-        // 카카오 로그인은 나중에 구현
         alert('카카오 로그인은 준비 중입니다.');
       }
     } catch (error) {
-      console.error('로그인 오류:', error);
-      alert('로그인 중 오류가 발생했습니다.');
+      console.error('로그인 처리 오류:', error);
+      alert('처리 중 오류가 발생했습니다.');
     }
   }
 

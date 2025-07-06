@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { 
   Brain, 
@@ -334,12 +335,12 @@ export default function PersonalityPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="birth_date">생년월일 *</Label>
-                        <Input
-                          id="birth_date"
-                          type="date"
+                        <KoreanDatePicker
+                          label="생년월일"
                           value={formData.birth_date}
-                          onChange={(e) => setFormData(prev => ({ ...prev, birth_date: e.target.value }))}
+                          onChange={(date) => setFormData(prev => ({ ...prev, birth_date: date }))}
+                          placeholder="생년월일을 선택하세요"
+                          required
                         />
                       </div>
                     </div>

@@ -32,21 +32,9 @@ import {
   Globe,
   Zap
 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-import { getUserProfile, saveUserProfile } from "@/lib/user-storage";
+import { getUserProfile, saveUserProfile, syncUserProfile, isGuestUser } from "@/lib/user-storage";
+import { type UserProfile } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-
-interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  avatar_url?: string;
-  provider: string;
-  created_at: string;
-  subscription_status?: 'free' | 'premium' | 'premium_plus';
-  fortune_count?: number;
-  favorite_fortune_types?: string[];
-}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -95,38 +83,24 @@ export default function ProfilePage() {
 
   const loadUserProfile = async () => {
     try {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      console.log('🔍 프로필 로드 시작');
       
-      if (authUser) {
-        // 실제 사용자 데이터 구성
-        const userProfile: UserProfile = {
-          id: authUser.id,
-          email: authUser.email || 'user@example.com',
-          name: authUser.user_metadata?.full_name || authUser.user_metadata?.name || '사용자',
-          avatar_url: authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture,
-          provider: authUser.app_metadata?.provider || 'google',
-          created_at: authUser.created_at,
-          subscription_status: 'free', // 실제로는 DB에서 조회
-          fortune_count: 42, // 실제로는 DB에서 조회
-          favorite_fortune_types: ['daily', 'love', 'career'] // 실제로는 DB에서 조회
-        };
-        setUser(userProfile);
+      // user-storage.ts의 syncUserProfile 사용하여 자동 동기화
+      const profile = await syncUserProfile();
+      
+      if (profile && profile.onboarding_completed) {
+        console.log('✅ 프로필 로드 성공:', profile.name);
+        setUser(profile);
+      } else if (profile && !profile.onboarding_completed) {
+        console.log('⚠️ 온보딩 미완료, 온보딩 페이지로 이동');
+        router.push('/onboarding');
       } else {
-        // 게스트 사용자 또는 비로그인 상태
-        const guestProfile: UserProfile = {
-          id: 'guest',
-          email: 'guest@fortune.app',
-          name: '게스트 사용자',
-          provider: 'guest',
-          created_at: new Date().toISOString(),
-          subscription_status: 'free',
-          fortune_count: 5,
-          favorite_fortune_types: ['daily']
-        };
-        setUser(guestProfile);
+        console.log('❌ 프로필 없음, 메인 페이지로 이동');
+        router.push('/');
       }
     } catch (error) {
-      console.error('사용자 프로필 로드 실패:', error);
+      console.error('🚨 프로필 로드 실패:', error);
+      router.push('/');
     } finally {
       setIsLoading(false);
     }
@@ -143,16 +117,12 @@ export default function ProfilePage() {
     }
   };
 
-  const getProviderBadge = (provider: string) => {
-    switch (provider) {
-      case 'google':
-        return <Badge variant="outline" className="text-blue-600 border-blue-200">Google</Badge>;
-      case 'kakao':
-        return <Badge variant="outline" className="text-yellow-600 border-yellow-200">Kakao</Badge>;
-      case 'apple':
-        return <Badge variant="outline" className="text-gray-600 border-gray-200">Apple</Badge>;
-      default:
-        return <Badge variant="outline">게스트</Badge>;
+  const getProviderBadge = (user: UserProfile) => {
+    // user-storage.ts의 isGuestUser 함수 사용
+    if (!isGuestUser(user)) {
+      return <Badge variant="outline" className="text-blue-600 border-blue-200">Google</Badge>;
+    } else {
+      return <Badge variant="outline">게스트</Badge>;
     }
   };
 
@@ -174,10 +144,34 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('🚪 로그아웃 시작');
+      
+      // user-storage.ts의 함수들을 통해 안전하게 로그아웃 처리
+      const currentUser = getUserProfile();
+      
+      // Supabase 로그아웃 시도 (게스트가 아닌 경우만)
+      if (currentUser && !isGuestUser(currentUser)) {
+        try {
+          const supabase = (await import('@/lib/supabase')).supabase;
+          await supabase.auth.signOut();
+          console.log('✅ Supabase 로그아웃 성공');
+        } catch (error) {
+          console.error('Supabase 로그아웃 오류:', error);
+        }
+      }
+      
+      // 로컬 스토리지 정리
+      saveUserProfile(null);
+      localStorage.removeItem('daily_fortunes');
+      localStorage.removeItem('fortune_history');
+      
+      console.log('✅ 로그아웃 완료');
       router.push("/");
     } catch (error) {
-      console.error('로그아웃 실패:', error);
+      console.error('🚨 로그아웃 실패:', error);
+      // 실패해도 로컬 데이터는 정리하고 메인 페이지로 이동
+      saveUserProfile(null);
+      router.push("/");
     }
   };
 
@@ -266,13 +260,13 @@ export default function ProfilePage() {
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
                     <h2 className="text-xl font-bold">{user.name}</h2>
-                    {getProviderBadge(user.provider)}
+                    {getProviderBadge(user)}
                   </div>
-                  <p className="text-white/80 text-sm">{user.email}</p>
+                  <p className="text-white/80 text-sm">{user.email || '게스트 사용자'}</p>
                   <div className="flex items-center gap-2">
                     {getSubscriptionBadge(user.subscription_status)}
                     <span className="text-white/60 text-xs">
-                      • {new Date(user.created_at).getFullYear()}년 가입
+                      • {user.created_at ? new Date(user.created_at).getFullYear() : new Date().getFullYear()}년 가입
                     </span>
                   </div>
                 </div>
@@ -302,7 +296,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center p-3 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl border border-gray-200 dark:border-gray-600">
                   <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {user.fortune_count}
+                    {user.fortune_count || 0}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-300">운세 조회</div>
                 </div>

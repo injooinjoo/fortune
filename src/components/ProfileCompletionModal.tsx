@@ -23,6 +23,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { FortuneCategory } from "@/lib/types/fortune-system";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { UserInfo, getUserInfo, saveUserInfo } from "@/lib/user-storage";
 import { 
   checkFortuneProfileCompleteness, 
@@ -158,11 +159,11 @@ export default function ProfileCompletionModal({
 
       case 'birthDate':
         return (
-          <Input
-            type="date"
+          <KoreanDatePicker
             value={value}
-            onChange={(e) => handleFieldUpdate(field, e.target.value)}
-            className="text-lg p-4"
+            onChange={(date) => handleFieldUpdate(field, date)}
+            placeholder="생년월일을 선택하세요"
+            required={true}
           />
         );
 

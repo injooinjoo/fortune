@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { auth, supabase } from "@/lib/supabase";
-import { getUserProfile, isPremiumUser, saveUserProfile, syncUserProfile, UserProfile } from "@/lib/user-storage";
+import { getUserProfile, isPremiumUser, saveUserProfile, UserProfile, syncUserProfile } from "@/lib/user-storage";
+import { logLocalStorageStatus, cleanupLocalStorage } from "@/lib/db-health-check";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
 import AppHeader from "@/components/AppHeader";
 import { 
@@ -204,11 +204,11 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  // 사용자 프로필 상태 실시간 업데이트
+  // 사용자 프로필 상태 로컬 스토리지에서 로드
   useEffect(() => {
-    const updateUserProfile = async () => {
-      const freshProfile = await syncUserProfile();
-      setUserProfile(freshProfile);
+    const updateUserProfile = () => {
+      const localProfile = getUserProfile();
+      setUserProfile(localProfile);
     };
 
     const handleStorageChange = () => {
@@ -325,35 +325,43 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    const { data: { subscription } } = auth.onAuthStateChanged((currentUser: any) => {
-      if (!currentUser) {
-        router.push("/");
-      } else {
-        // 기존 사용자 프로필 확인
+    const initializeApp = async () => {
+      try {
+        // 1. 로컬 스토리지 상태 체크 (개발 환경에서만)
+        if (process.env.NODE_ENV === 'development') {
+          logLocalStorageStatus();
+          
+          // 오래된 데이터 정리
+          const cleanup = cleanupLocalStorage();
+          if (cleanup.cleaned > 0) {
+            console.log(`🧹 정리 완료: ${cleanup.cleaned}개 항목, ${Math.round(cleanup.freedSpace / 1024)}KB 확보`);
+          }
+        }
+        
+        // 2. 프로필 동기화 (Supabase와 로컬)
+        const profile = await syncUserProfile();
+        
+        if (profile && profile.onboarding_completed) {
+          setName(profile.name);
+          setUserProfile(profile);
+        } else {
+          // 온보딩이 완료되지 않은 경우 메인 페이지로 리다이렉트
+          router.push("/");
+        }
+      } catch (error) {
+        console.error('앱 초기화 실패:', error);
+        // 오류 발생시 로컬 스토리지로 fallback
         const existingProfile = getUserProfile();
-        
-        // 사용자 프로필 생성 또는 업데이트 (기존 설정 유지)
-        const userProfile = {
-          id: currentUser.id,
-          email: currentUser.email || 'user@example.com',
-          name: currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || '사용자',
-          avatar_url: currentUser.user_metadata?.avatar_url || currentUser.user_metadata?.picture,
-          provider: currentUser.app_metadata?.provider || 'google',
-          created_at: currentUser.created_at,
-          // 기존 프로필이 있으면 구독 상태 유지, 없으면 무료로 시작
-          subscription_status: existingProfile?.subscription_status || 'free' as const,
-          fortune_count: existingProfile?.fortune_count || 0,
-          favorite_fortune_types: existingProfile?.favorite_fortune_types || []
-        };
-        
-        // 로컬 스토리지에 저장
-        saveUserProfile(userProfile);
-        setName(userProfile.name);
-        setUserProfile(userProfile);
+        if (!existingProfile || !existingProfile.onboarding_completed) {
+          router.push("/");
+        } else {
+          setName(existingProfile.name);
+          setUserProfile(existingProfile);
+        }
       }
-    });
+    };
 
-    return () => subscription?.unsubscribe();
+    initializeApp();
   }, [router]);
 
   // 시간대별 인사말과 아이콘

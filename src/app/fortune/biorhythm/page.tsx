@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/AppHeader";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { 
   Activity, 
   Heart, 
@@ -124,79 +125,6 @@ const formatKoreanDate = (dateString: string): string => {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}년 ${month}월 ${day}일`;
-};
-
-// 날짜 입력 컴포넌트
-const DateInput = ({ 
-  value, 
-  onChange, 
-  label, 
-  placeholder = "날짜를 선택해주세요" 
-}: { 
-  value: string; 
-  onChange: (value: string) => void; 
-  label: string;
-  placeholder?: string;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [tempDate, setTempDate] = useState(value);
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = e.target.value;
-    setTempDate(newDate);
-    onChange(newDate);
-    setIsOpen(false);
-  };
-
-  return (
-    <div className="relative">
-      <Label className="text-gray-700 dark:text-gray-300 font-medium mb-2 block">
-        {label}
-      </Label>
-      <motion.div
-        className="relative"
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
-      >
-        <div
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-200 dark:focus-within:ring-blue-800"
-        >
-          <div className="flex items-center justify-between">
-            <span className={`${value ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'} font-medium`}>
-              {value ? formatKoreanDate(value) : placeholder}
-            </span>
-            <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500" />
-          </div>
-        </div>
-        
-        {/* 숨겨진 실제 date input */}
-        <input
-          type="date"
-          value={tempDate}
-          onChange={handleDateChange}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          style={{ zIndex: isOpen ? 10 : -1 }}
-        />
-      </motion.div>
-      
-      {/* 선택된 날짜 미리보기 */}
-      {value && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700"
-        >
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-              선택된 날짜: {formatKoreanDate(value)}
-            </span>
-          </div>
-        </motion.div>
-      )}
-    </div>
-  );
 };
 
 export default function BiorhythmPage() {
@@ -506,18 +434,20 @@ export default function BiorhythmPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <DateInput
+                  <KoreanDatePicker
                     value={birthDate}
                     onChange={setBirthDate}
                     label="생년월일"
                     placeholder="태어난 날짜를 선택해주세요"
+                    required={true}
                   />
                   
-                  <DateInput
+                  <KoreanDatePicker
                     value={targetDate}
                     onChange={setTargetDate}
                     label="분석할 날짜"
                     placeholder="분석하고 싶은 날짜를 선택해주세요"
+                    required={true}
                   />
                   
                   {/* 분석 설명 */}

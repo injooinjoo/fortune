@@ -8,8 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
-import { getUserProfile, isPremiumUser } from "@/lib/user-storage";
-import AdLoadingScreen from "@/components/AdLoadingScreen";
 import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useHaptic } from "@/hooks/use-haptic";
 import { 
@@ -781,12 +779,11 @@ export default function FortunePage() {
   const router = useRouter();
   const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
   const [selectedCategory, setSelectedCategory] = useState<FortuneCategoryType>('all');
-  const [showAdLoading, setShowAdLoading] = useState(false);
-  const [pendingFortune, setPendingFortune] = useState<{ route: string; title: string } | null>(null);
   const [focusedCardId, setFocusedCardId] = useState<string | null>(null);
   const [currentCategoryTitle, setCurrentCategoryTitle] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [clickedCardId, setClickedCardId] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false); // 중복 클릭 방지용 상태
   
   // 최근 본 운세 추가를 위한 hook
   useFortuneStream();
@@ -833,7 +830,7 @@ export default function FortunePage() {
 
   // 스크롤 스파이 - 화면 중앙의 카드 추적
   const activeCardId = useScrollSpy(cardIds, {
-    rootMargin: '-45% 0px -45% 0px', // 화면 중앙 10% 영역만 감지
+    rootMargin: '-40% 0px -40% 0px', // 화면 중앙 20% 영역만 감지
     threshold: 0.5,
     onActiveChange: (activeId) => {
       const cardId = activeId?.replace('fortune-card-', '');
@@ -848,55 +845,28 @@ export default function FortunePage() {
   });
 
   const handleCategoryClick = (route: string, title: string, cardId: string) => {
+    // 이미 처리 중이면 클릭 무시
+    if (isProcessing) {
+      console.log('이미 처리 중입니다. 중복 클릭 방지됨.');
+      return;
+    }
+    
+    // 중복 클릭 방지 플래그 설정
+    setIsProcessing(true);
+    
     // 프리미엄, 일반 사용자 모두 로딩 화면 표시 (분석하는 척)
     selectFeedback(); // 선택 햅틱 피드백
     
     // 클릭 효과 애니메이션 트리거
     setClickedCardId(cardId);
     
-    // 500ms 후 클릭 효과 제거하고 페이지 전환
+    // 바로 운세 페이지로 이동 (각 운세 페이지에서 광고 화면 처리)
     setTimeout(() => {
-      setClickedCardId(null);
-      setPendingFortune({ route, title });
-      setShowAdLoading(true);
-    }, 500);
+      router.push(route);
+    }, 300); // 애니메이션을 위한 짧은 지연
   };
 
-  // 광고 로딩 완료 후 운세 페이지로 이동
-  const handleAdComplete = () => {
-    if (pendingFortune) {
-      // 먼저 페이지 이동을 시작하고
-      router.push(pendingFortune.route);
-      // 그 다음에 상태 정리 (이렇게 하면 중간에 운세 페이지가 보이지 않음)
-      setTimeout(() => {
-        setShowAdLoading(false);
-        setPendingFortune(null);
-      }, 100);
-    }
-  };
-
-  // 프리미엄 업그레이드 페이지로 이동
-  const handleUpgradeToPremium = () => {
-    setShowAdLoading(false);
-    setPendingFortune(null);
-    router.push('/membership');
-  };
-
-  // Check if ad loading screen should be displayed
-  if (showAdLoading && pendingFortune) {
-    const userProfile = getUserProfile();
-    const isPremium = isPremiumUser(userProfile);
-    
-    return (
-      <AdLoadingScreen
-        fortuneType={pendingFortune.route.split('/').pop() || 'fortune'}
-        fortuneTitle={pendingFortune.title}
-        onComplete={handleAdComplete}
-        onSkip={handleUpgradeToPremium}
-        isPremium={isPremium}
-      />
-    );
-  }
+  // 광고 로딩 화면은 이제 각 운세 페이지에서 직접 처리
 
   // Generate conditional class names
   const themeClass = currentTheme 
@@ -905,7 +875,7 @@ export default function FortunePage() {
   
   return (
     <div 
-      className="min-h-screen"
+      className="min-h-screen overflow-y-auto"
     >
       <AppHeader
         title="운세"
@@ -916,7 +886,7 @@ export default function FortunePage() {
         showDynamicTitle={!!currentCategoryTitle}
       />
       <motion.div
-        className="fortune-scroll-container pb-[50vh] pt-[40vh] px-4 min-h-screen overflow-y-auto"
+        className="fortune-scroll-container pb-32 pt-16 px-4 min-h-screen snap-y snap-mandatory"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -1041,7 +1011,7 @@ export default function FortunePage() {
               )}
             </div>
             
-            <div className="grid grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 gap-32">
               {filteredCategories.map((category, index) => {
                 const isFocused = focusedCardId === category.id;
                 const theme = category.theme || getDefaultTheme(category.category);
@@ -1066,18 +1036,18 @@ export default function FortunePage() {
                     animate={{ 
                       opacity: 1, 
                       y: 0,
-                      scale: isFocused ? 1.08 : 1
+                      scale: isFocused ? 1.15 : 0.95
                     }}
                     transition={{ 
                       delay: index * 0.05,
-                      scale: { duration: 0.4, ease: "easeOut" }
+                      scale: { duration: 0.5, ease: "easeOut" }
                     }}
-                    whileHover={{ scale: isFocused ? 1.1 : 1.03, y: -4 }}
+                    whileHover={{ scale: isFocused ? 1.18 : 1.05, y: -4 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleCategoryClick(category.route, category.title, category.id)}
-                    className="fortune-card-snap cursor-pointer"
+                    className="fortune-card-snap cursor-pointer snap-center"
                     style={{
-                      minHeight: isFocused ? '140px' : '120px'
+                      minHeight: isFocused ? '200px' : '150px'
                     }}
                   >
                     <Card 
@@ -1097,7 +1067,7 @@ export default function FortunePage() {
                         boxShadow: isFocused 
                           ? `0 20px 60px ${theme.primaryColor}20, 0 8px 20px ${theme.primaryColor}15` 
                           : undefined,
-                        minHeight: isFocused ? '160px' : '120px'
+                        minHeight: isFocused ? '200px' : '150px'
                       }}
                     >
                       <CardContent className="p-6 relative overflow-hidden h-full flex flex-col">
@@ -1137,12 +1107,13 @@ export default function FortunePage() {
 
                         {/* 제목 영역 - 포커스 시 상단으로 이동 */}
                         <motion.div 
-                          className="relative z-20"
+                          className={`relative z-20 ${isFocused ? 'absolute top-4 left-4' : ''}`}
                           animate={{
-                            y: isFocused ? -10 : 0,
-                            scale: isFocused ? 0.9 : 1
+                            y: isFocused ? 0 : 0,
+                            x: isFocused ? 0 : 0,
+                            scale: isFocused ? 0.85 : 1
                           }}
-                          transition={{ duration: 0.4, ease: "easeOut" }}
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
                         >
                           <div className="flex items-center gap-3">
                             <motion.div 
@@ -1211,10 +1182,10 @@ export default function FortunePage() {
                         {/* 중앙 설명 영역 - 포커스 시에만 표시 */}
                         {isFocused && (
                           <motion.div 
-                            className="flex-1 flex items-center justify-center relative z-10 mt-4"
-                            initial={{ opacity: 0, y: 20 }}
+                            className="flex-1 flex items-center justify-center relative z-10 mt-16"
+                            initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2, duration: 0.5 }}
+                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
                           >
                             <div className="text-center px-4">
                               <motion.div
@@ -1225,11 +1196,11 @@ export default function FortunePage() {
                                 <span className="text-4xl">{theme.emoji}</span>
                               </motion.div>
                               <motion.p 
-                                className={`${fontClasses.text} leading-relaxed text-center`}
+                                className={`${fontClasses.text} leading-relaxed text-center font-medium`}
                                 style={{ color: theme.primaryColor }}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.4, duration: 0.6 }}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
                               >
                                 {category.detailedDescription || getDetailedDescription(category.category, category.title)}
                               </motion.p>

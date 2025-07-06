@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import {
   Select,
   SelectContent,
@@ -435,12 +436,11 @@ export default function WealthPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="birth_date">생년월일 *</Label>
-                      <Input
-                        id="birth_date"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={formData.birth_date}
-                        onChange={(e) => setFormData({...formData, birth_date: e.target.value})}
+                        onChange={(date) => setFormData({...formData, birth_date: date})}
+                        placeholder="생년월일을 선택하세요"
                         required
                       />
                     </div>

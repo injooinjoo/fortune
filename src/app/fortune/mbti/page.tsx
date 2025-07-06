@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
 import toast from 'react-hot-toast';
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
+import { useUserProfile, hasUserMBTI, hasUserName } from "@/hooks/use-user-profile";
 import AppHeader from "@/components/AppHeader";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,6 +61,9 @@ export default function MbtiFortunePage() {
   const [selectedMBTI, setSelectedMBTI] = useState<string>("");
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [lastGenerated, setLastGenerated] = useState<Date | null>(null);
+  
+  // 사용자 프로필 훅 사용
+  const { profile, isLoading: profileLoading } = useUserProfile();
 
   // Context7 최적화 패턴: useForm 활용
   const { control, handleSubmit, watch, setValue, reset } = useForm<MBTIFormData>({
@@ -104,40 +108,23 @@ export default function MbtiFortunePage() {
     }
   });
 
-  // Context7 패턴: useCallback으로 함수 최적화
-  const loadUserData = useCallback(() => {
-    try {
-      const { getUserInfo } = require("@/lib/user-storage");
-      const userInfo = getUserInfo();
-      
-      if (userInfo.mbti) {
-        setSelectedMBTI(userInfo.mbti);
-        setValue('mbti', userInfo.mbti);
-      }
-      if (userInfo.name) {
-        setValue('name', userInfo.name);
-      }
-    } catch (error) {
-      console.warn("사용자 데이터 로드 실패:", error);
-    }
-  }, [setValue]);
-
+  // 프로필 데이터로 폼 초기화
   useEffect(() => {
-    loadUserData();
-  }, [loadUserData]);
+    if (!profileLoading && profile) {
+      if (hasUserMBTI(profile)) {
+        setSelectedMBTI(profile.mbti!);
+        setValue('mbti', profile.mbti!);
+      }
+      if (hasUserName(profile)) {
+        setValue('name', profile.name);
+      }
+    }
+  }, [profile, profileLoading, setValue]);
 
   // Context7 패턴: 메모이제이션된 MBTI 선택 핸들러
   const handleMBTISelect = useCallback((mbti: string) => {
     setSelectedMBTI(mbti);
     setValue('mbti', mbti);
-    
-    // 사용자 스토리지에 저장
-    try {
-      const { saveUserInfo } = require("@/lib/user-storage");
-      saveUserInfo({ mbti });
-    } catch (error) {
-      console.warn("MBTI 저장 실패:", error);
-    }
   }, [setValue]);
 
   // Context7 패턴: Promise toast를 활용한 운세 생성
@@ -451,6 +438,15 @@ export default function MbtiFortunePage() {
                       변경
                     </Button>
                   </div>
+
+                  {profile && hasUserMBTI(profile) && hasUserName(profile) && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-700 flex items-center gap-2">
+                        <CheckCircleIcon className="h-4 w-4" />
+                        프로필 정보를 사용하여 자동으로 입력되었습니다
+                      </p>
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium mb-2">이름</label>

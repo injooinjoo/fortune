@@ -303,11 +303,12 @@ body {
 .fortune-scroll-container {
   scroll-snap-type: y mandatory;
   scroll-behavior: smooth;
-  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-padding-top: 40vh; /* 카드가 중앙에 오도록 */
   scroll-padding-bottom: 40vh;
+  /* 스크롤은 상위 컨테이너가 처리하므로 여기서는 제거 */
+  overflow: visible;
 }
 
 .fortune-scroll-container::-webkit-scrollbar {
@@ -1272,13 +1273,22 @@ body {
   }
 }
 
-/* Mobile Performance Optimizations */
+/* Mobile Performance Optimizations - Additional properties for fortune-scroll-container */
 .fortune-scroll-container {
   /* 모바일 스크롤 최적화 */
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
   will-change: scroll-position;
   transform: translateZ(0); /* 하드웨어 가속 */
+  
+  /* Header height adjustment for mobile */
+  scroll-padding-top: 80px; /* Account for header */
+}
+
+/* Smooth scroll snap */
+@supports (scroll-snap-type: y mandatory) {
+  .fortune-scroll-container {
+    overscroll-behavior-y: contain;
+  }
 }
 
 .fortune-card-snap {
@@ -1287,6 +1297,10 @@ body {
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  
+  /* Snap alignment */
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 
 /* 애니메이션 성능 개선 */
@@ -1324,7 +1338,9 @@ body {
 /* 반응형 디자인 및 모바일 최적화 */
 @media (max-width: 768px) {
   .fortune-scroll-container {
-    padding: 30vh 1rem 40vh 1rem;
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    scroll-padding-top: 70px;
   }
   
   .fortune-card-snap {
@@ -1333,7 +1349,7 @@ body {
   
   /* 포커스된 카드 크기 조정 */
   .fortune-card-focused {
-    min-height: 180px !important;
+    min-height: 220px !important;
   }
   
   /* 텍스트 크기 조정 */
@@ -1350,7 +1366,9 @@ body {
 
 @media (max-width: 480px) {
   .fortune-scroll-container {
-    padding: 25vh 0.75rem 35vh 0.75rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    scroll-padding-top: 60px;
   }
   
   .fortune-card-snap {
@@ -1399,6 +1417,53 @@ body {
   .fortune-card-focused {
     border-width: 0.5px;
   }
+}
+
+/* Enhanced focused card shadows */
+.fortune-card-focused {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fortune-card-focused.shadow-love {
+  box-shadow: 
+    0 30px 80px -20px rgba(236, 72, 153, 0.4),
+    0 10px 30px -10px rgba(236, 72, 153, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fortune-card-focused.shadow-career {
+  box-shadow: 
+    0 30px 80px -20px rgba(59, 130, 246, 0.4),
+    0 10px 30px -10px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fortune-card-focused.shadow-money {
+  box-shadow: 
+    0 30px 80px -20px rgba(245, 158, 11, 0.4),
+    0 10px 30px -10px rgba(245, 158, 11, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fortune-card-focused.shadow-health {
+  box-shadow: 
+    0 30px 80px -20px rgba(16, 185, 129, 0.4),
+    0 10px 30px -10px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fortune-card-focused.shadow-traditional {
+  box-shadow: 
+    0 30px 80px -20px rgba(217, 119, 6, 0.4),
+    0 10px 30px -10px rgba(217, 119, 6, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fortune-card-focused.shadow-lifestyle {
+  box-shadow: 
+    0 30px 80px -20px rgba(139, 92, 246, 0.4),
+    0 10px 30px -10px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 @keyframes liquid-glow {

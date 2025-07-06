@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
+import { ko } from "date-fns/locale"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -15,9 +16,19 @@ function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  // 미래 날짜 비활성화 함수
+  const disableFutureDates = React.useCallback((date: Date) => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // 오늘 끝까지 허용
+    return date > today;
+  }, []);
+
   return (
     <DayPicker
+      locale={ko} // 한국어 locale 설정
+      weekStartsOn={0} // 일요일부터 시작
       showOutsideDays={showOutsideDays}
+      disabled={disableFutureDates} // 미래 날짜 비활성화
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",

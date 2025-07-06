@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import {
   Users,
@@ -230,17 +231,17 @@ export default function TraditionalCompatibilityPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="p1-birth">생년월일</Label>
-                      <Input
-                        id="p1-birth"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={person1.birthDate}
-                        onChange={(e) =>
+                        onChange={(date) =>
                           setPerson1((prev) => ({
                             ...prev,
-                            birthDate: e.target.value,
+                            birthDate: date,
                           }))
                         }
+                        placeholder="생년월일을 선택하세요"
+                        required
                         className="mt-1"
                       />
                     </div>
@@ -300,17 +301,17 @@ export default function TraditionalCompatibilityPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="p2-birth">생년월일</Label>
-                      <Input
-                        id="p2-birth"
-                        type="date"
+                      <KoreanDatePicker
+                        label="생년월일"
                         value={person2.birthDate}
-                        onChange={(e) =>
+                        onChange={(date) =>
                           setPerson2((prev) => ({
                             ...prev,
-                            birthDate: e.target.value,
+                            birthDate: date,
                           }))
                         }
+                        placeholder="생년월일을 선택하세요"
+                        required
                         className="mt-1"
                       />
                     </div>

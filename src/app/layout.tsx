@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import Providers from '@/components/providers';
 import ConditionalLayout from '@/components/ConditionalLayout';
 import SecureErrorBoundary from '@/components/SecureErrorBoundary';
+import AdSenseProvider from '@/components/ads/AdSenseProvider';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -60,6 +61,7 @@ export default function RootLayout({
             </ConditionalLayout>
           </SecureErrorBoundary>
           <Toaster />
+          <AdSenseProvider />
         </Providers>
       </body>
     </html>

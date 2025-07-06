@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
+import { useUserProfile, hasUserName, hasUserBirthDate } from "@/hooks/use-user-profile";
 import { 
   Heart, 
   Users, 
@@ -94,6 +95,21 @@ export default function CompatibilityPage() {
   const [person2, setPerson2] = useState<PersonInfo>({ name: '', birthDate: '' });
   const [result, setResult] = useState<CompatibilityResult | null>(null);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  
+  // 사용자 프로필 훅 사용
+  const { profile, isLoading: profileLoading } = useUserProfile();
+  
+  // 프로필 데이터로 첫 번째 사람 정보 초기화
+  useEffect(() => {
+    if (!profileLoading && profile) {
+      if (hasUserName(profile) && hasUserBirthDate(profile)) {
+        setPerson1({
+          name: profile.name,
+          birthDate: profile.birth_date!
+        });
+      }
+    }
+  }, [profile, profileLoading]);
 
   const calculateCompatibility = async (): Promise<CompatibilityResult> => {
     try {
@@ -243,13 +259,12 @@ export default function CompatibilityPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="person1-birth">생년월일</Label>
-                      <Input
-                        id="person1-birth"
-                        type="date"
+                      <KoreanDatePicker
                         value={person1.birthDate}
-                        onChange={(e) => setPerson1(prev => ({ ...prev, birthDate: e.target.value }))}
-                        className="mt-1"
+                        onChange={(date) => setPerson1(prev => ({ ...prev, birthDate: date }))}
+                        label="생년월일"
+                        placeholder="생년월일을 선택하세요"
+                        required={true}
                       />
                     </div>
                   </CardContent>
@@ -291,13 +306,12 @@ export default function CompatibilityPage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="person2-birth">생년월일</Label>
-                      <Input
-                        id="person2-birth"
-                        type="date"
+                      <KoreanDatePicker
                         value={person2.birthDate}
-                        onChange={(e) => setPerson2(prev => ({ ...prev, birthDate: e.target.value }))}
-                        className="mt-1"
+                        onChange={(date) => setPerson2(prev => ({ ...prev, birthDate: date }))}
+                        label="생년월일"
+                        placeholder="생년월일을 선택하세요"
+                        required={true}
                       />
                     </div>
                   </CardContent>
@@ -416,11 +430,11 @@ export default function CompatibilityPage() {
                     <div className="grid gap-4">
                       <div className="p-4 bg-rose-50 rounded-lg">
                         <h4 className="font-medium text-rose-800 mb-2">{person1.name}님</h4>
-                        <p className="text-gray-700">{result.personality.person1}</p>
+                        <p className="text-gray-700">{result.personality?.person1 || '성격 분석 중입니다...'}</p>
                       </div>
                       <div className="p-4 bg-pink-50 rounded-lg">
                         <h4 className="font-medium text-pink-800 mb-2">{person2.name}님</h4>
-                        <p className="text-gray-700">{result.personality.person2}</p>
+                        <p className="text-gray-700">{result.personality?.person2 || '성격 분석 중입니다...'}</p>
                       </div>
                     </div>
                   </CardContent>

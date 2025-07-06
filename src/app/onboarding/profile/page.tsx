@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, User, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AppHeader from "@/components/AppHeader";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 
 interface UserProfileForm {
   name: string;
@@ -62,49 +63,7 @@ export default function ProfileOnboardingPage() {
     }));
   };
 
-  // 생년월일 부분별 값 가져오기
-  const getBirthDatePart = (part: 'year' | 'month' | 'day'): string => {
-    const dateParts = formData.birth_date.split('-');
-    switch (part) {
-      case 'year': return dateParts[0] || '';
-      case 'month': return dateParts[1] || '';
-      case 'day': return dateParts[2] || '';
-      default: return '';
-    }
-  };
-
-  // 생년월일 부분별 업데이트
-  const updateBirthDate = (part: 'year' | 'month' | 'day', value: string) => {
-    // 숫자만 허용
-    const numericValue = value.replace(/\D/g, '');
-    
-    const currentParts = formData.birth_date.split('-');
-    const year = part === 'year' ? numericValue : (currentParts[0] || '');
-    const month = part === 'month' ? numericValue.padStart(2, '0') : (currentParts[1] || '');
-    const day = part === 'day' ? numericValue.padStart(2, '0') : (currentParts[2] || '');
-
-    // 유효성 검사
-    if (part === 'month' && numericValue && (parseInt(numericValue) < 1 || parseInt(numericValue) > 12)) {
-      return;
-    }
-    if (part === 'day' && numericValue && (parseInt(numericValue) < 1 || parseInt(numericValue) > 31)) {
-      return;
-    }
-    if (part === 'year' && numericValue && numericValue.length === 4 && (parseInt(numericValue) < 1900 || parseInt(numericValue) > new Date().getFullYear())) {
-      return;
-    }
-
-    // 완전한 날짜가 입력된 경우에만 저장
-    let newDate = '';
-    if (year && month && day) {
-      newDate = `${year}-${month}-${day}`;
-    } else if (year || month || day) {
-      // 부분적으로 입력된 경우 임시 저장
-      newDate = `${year}-${month}-${day}`;
-    }
-
-    updateFormData('birth_date', newDate);
-  };
+  // 날짜 관련 함수들은 KoreanDatePicker가 내부적으로 처리
 
   // 프로필 저장
   const saveProfile = async () => {
@@ -136,28 +95,50 @@ export default function ProfileOnboardingPage() {
 
       setLoading(true);
 
-      // API 호출하여 프로필 저장
-      const response = await fetch('/api/profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
+      // Supabase 직접 호출하여 프로필 저장
+      const { auth, userProfileService } = await import('@/lib/supabase');
+      const { data: sessionData } = await auth.getSession();
+      
+      if (!sessionData?.session?.user) {
         toast({
-          title: "프로필 저장 완료",
-          description: "이제 운세를 확인할 수 있습니다!"
+          title: "로그인이 필요합니다",
+          description: "프로필 저장을 위해 로그인해주세요.",
+          variant: "destructive"
         });
-        
-        // 사주 페이지로 이동
-        window.location.href = '/fortune/saju';
-      } else {
-        throw new Error(result.error || '프로필 저장 실패');
+        return;
       }
+
+      const user = sessionData.session.user;
+      
+      // 프로필 데이터 구성
+      const profileData = {
+        id: user.id,
+        email: user.email,
+        name: formData.name.trim(),
+        birth_date: formData.birth_date,
+        birth_time: formData.birth_time,
+        gender: formData.gender === '남성' ? 'male' : formData.gender === '여성' ? 'female' : undefined,
+        mbti: formData.mbti,
+        onboarding_completed: true,
+        avatar_url: user.user_metadata?.avatar_url,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const result = await userProfileService.upsertProfile(profileData);
+      
+      if (!result) {
+        throw new Error('프로필 저장에 실패했습니다.');
+      }
+
+      // 프로필 저장 성공
+      toast({
+        title: "프로필 저장 완료",
+        description: "이제 운세를 확인할 수 있습니다!"
+      });
+      
+      // 사주 페이지로 이동
+      window.location.href = '/fortune/saju';
 
     } catch (error) {
       toast({
@@ -202,33 +183,13 @@ export default function ProfileOnboardingPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="birth_date">생년월일 (양력) *</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  placeholder="0000"
-                  maxLength={4}
-                  value={getBirthDatePart('year')}
-                  onChange={(e) => updateBirthDate('year', e.target.value)}
-                  className="flex-1"
-                />
-                <span className="text-sm text-muted-foreground">년</span>
-                <Input
-                  placeholder="00"
-                  maxLength={2}
-                  value={getBirthDatePart('month')}
-                  onChange={(e) => updateBirthDate('month', e.target.value)}
-                  className="w-16"
-                />
-                <span className="text-sm text-muted-foreground">월</span>
-                <Input
-                  placeholder="00"
-                  maxLength={2}
-                  value={getBirthDatePart('day')}
-                  onChange={(e) => updateBirthDate('day', e.target.value)}
-                  className="w-16"
-                />
-                <span className="text-sm text-muted-foreground">일</span>
-              </div>
+              <KoreanDatePicker
+                value={formData.birth_date}
+                onChange={(date) => updateFormData('birth_date', date)}
+                label="생년월일 (양력)"
+                placeholder="생년월일을 선택하세요"
+                required={true}
+              />
             </div>
 
             <div className="space-y-2">

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import {
   Accordion,
   AccordionContent,
@@ -218,17 +219,13 @@ export default function TomorrowFortunePage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="birth_date" className="text-gray-700 dark:text-gray-300 font-medium">
-                            생년월일 <span className="text-red-500">*</span>
-                          </Label>
-                          <div className="relative">
-                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <Input
-                              {...register("birth_date", { required: "생년월일을 입력해주세요" })}
-                              type="date"
-                              className="pl-10 border-gray-200 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-500"
-                            />
-                          </div>
+                          <KoreanDatePicker
+                            label="생년월일"
+                            value={watch("birth_date")}
+                            onChange={(date) => setValue("birth_date", date)}
+                            placeholder="생년월일을 선택하세요"
+                            required
+                          />
                           {errors.birth_date && (
                             <p className="text-red-500 text-sm">{errors.birth_date.message}</p>
                           )}

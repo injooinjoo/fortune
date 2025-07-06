@@ -28,7 +28,8 @@ import {
   koreanToIsoDate,
   TIME_PERIODS
 } from "@/lib/utils";
-import { auth, userProfileService, guestProfileService } from "@/lib/supabase";
+import { saveUserProfile, getZodiacSign, getChineseZodiac } from "@/lib/user-storage";
+import { type UserProfile } from "@/lib/supabase";
 
 const formSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요."),
@@ -64,14 +65,19 @@ export default function OnboardingPage() {
   useEffect(() => {
     // 현재 사용자 정보 확인
     const checkUser = async () => {
-      const { data } = await auth.getSession();
-      if (data?.session?.user) {
-        setCurrentUser(data.session.user);
-        // 사용자 이름을 폼에 미리 채우기
-        const userName = data.session.user.user_metadata?.full_name || 
-                        data.session.user.user_metadata?.name || 
-                        data.session.user.email?.split('@')[0] || '';
-        form.setValue('name', userName);
+      try {
+        const { auth } = await import('@/lib/supabase');
+        const { data } = await auth.getSession();
+        if (data?.session?.user) {
+          setCurrentUser(data.session.user);
+          // 사용자 이름을 폼에 미리 채우기
+          const userName = data.session.user.user_metadata?.full_name || 
+                          data.session.user.user_metadata?.name || 
+                          data.session.user.email?.split('@')[0] || '';
+          form.setValue('name', userName);
+        }
+      } catch (error) {
+        console.log('게스트 사용자로 진행');
       }
     };
     
@@ -105,45 +111,54 @@ export default function OnboardingPage() {
       // 한국식 날짜를 ISO 형식으로 변환
       const isoDate = koreanToIsoDate(values.birthYear, values.birthMonth, values.birthDay);
       
-      const profileData = {
+      // 프로필 데이터 준비
+      const profileData: UserProfile = {
+        id: currentUser?.id || `guest_${Date.now()}`,
         name: values.name,
+        email: currentUser?.email || '',
         birth_date: isoDate,
-        birth_time: values.birthTimePeriod || undefined,
-        mbti: values.mbti || undefined,
-        gender: (values.gender as 'male' | 'female' | 'other') || undefined,
-        onboarding_completed: true
+        birth_time: values.birthTimePeriod || '',
+        birth_hour: '',
+        mbti: values.mbti || '',
+        gender: (values.gender as 'male' | 'female' | 'other') || 'other',
+        zodiac_sign: getZodiacSign(isoDate),
+        chinese_zodiac: getChineseZodiac(isoDate),
+        onboarding_completed: true,
+        subscription_status: 'free',
+        fortune_count: 0,
+        premium_fortunes_count: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
 
+      // user-storage.ts를 통해 저장
+      saveUserProfile(profileData);
+
+      // 인증된 사용자의 경우 Supabase에도 저장 시도
       if (currentUser) {
-        // 로그인된 사용자의 경우 user_profiles 테이블에 저장
-        await userProfileService.upsertProfile({
-          id: currentUser.id,
-          email: currentUser.email,
-          ...profileData
-        });
-        
-        console.log('사용자 프로필 저장 완료');
-      } else {
-        // 로그인하지 않은 사용자의 경우 로컬 스토리지에만 저장
-        console.log('비로그인 사용자 - 로컬 스토리지에만 저장');
+        try {
+          const { userProfileService } = await import('@/lib/supabase');
+          await userProfileService.upsertProfile({
+            id: currentUser.id,
+            email: currentUser.email,
+            name: values.name,
+            birth_date: isoDate,
+            birth_time: values.birthTimePeriod || undefined,
+            mbti: values.mbti || undefined,
+            gender: (values.gender as 'male' | 'female' | 'other') || undefined,
+            onboarding_completed: true
+          });
+          console.log('🔄 Supabase에 프로필 동기화 완료');
+        } catch (supabaseError) {
+          console.error('Supabase 동기화 실패:', supabaseError);
+          // Supabase 실패해도 로컬 저장은 성공했으므로 계속 진행
+        }
       }
       
-      // 로컬 스토리지에도 백업 저장 (호환성)
-      localStorage.setItem("userProfile", JSON.stringify({
-        ...values,
-        birthdate: isoDate
-      }));
-      
-      router.push("/dashboard");
+      router.push("/home");
     } catch (error) {
       console.error('프로필 저장 실패:', error);
-      // 오류가 발생해도 로컬 스토리지에 저장하고 진행
-      const isoDate = koreanToIsoDate(values.birthYear, values.birthMonth, values.birthDay);
-      localStorage.setItem("userProfile", JSON.stringify({
-        ...values,
-        birthdate: isoDate
-      }));
-      router.push("/dashboard");
+      alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }

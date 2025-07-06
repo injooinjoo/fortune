@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: result.data,
+      ...result.data,  // data 객체의 내용을 직접 펼침
       cached: result.cached,
       cache_source: result.cache_source,
       generated_at: result.generated_at

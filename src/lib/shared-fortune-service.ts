@@ -1,4 +1,3 @@
-import { supabase } from './supabase';
 import { 
   generateGroupFortune, 
 } from '@/ai/flows/generate-specialized-fortune';
@@ -19,55 +18,56 @@ export type SharedFortuneData = {
 
 export class SharedFortuneService {
   /**
-   * DB에서 특정 그룹의 오늘 운세를 가져옵니다.
+   * 로컬 스토리지에서 특정 그룹의 운세를 가져옵니다.
    */
-  static async getSharedFortune(
+  static getSharedFortune(
     groupKey: string,
     fortuneType: string,
     date: string
-  ): Promise<SharedFortuneData | null> {
-    const { data, error } = await supabase
-      .from('shared_fortunes')
-      .select('*')
-      .eq('group_key', groupKey)
-      .eq('fortune_type', fortuneType)
-      .eq('date', date)
-      .single();
-
-    if (error && error.code !== 'PGRST116') { // PGRST116: no rows found
-      console.error('Error fetching shared fortune:', error);
-      throw new Error('공유 운세 조회 중 오류가 발생했습니다.');
+  ): SharedFortuneData | null {
+    try {
+      const key = `shared_fortune_${groupKey}_${fortuneType}_${date}`;
+      const stored = localStorage.getItem(key);
+      
+      if (stored) {
+        return JSON.parse(stored);
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('로컬 공유 운세 조회 오류:', error);
+      return null;
     }
-    
-    return data;
   }
 
   /**
-   * 생성된 그룹 운세를 DB에 저장합니다.
+   * 생성된 그룹 운세를 로컬 스토리지에 저장합니다.
    */
-  static async saveSharedFortune(
+  static saveSharedFortune(
     groupKey: string,
     fortuneType: string,
     date: string,
     fortuneData: z.infer<typeof GroupFortuneOutputSchema>
-  ): Promise<SharedFortuneData | null> {
-    const { data, error } = await supabase
-      .from('shared_fortunes')
-      .insert({
+  ): SharedFortuneData | null {
+    try {
+      const sharedFortuneData: SharedFortuneData = {
+        id: Date.now(),
+        created_at: new Date().toISOString(),
         group_key: groupKey,
         fortune_type: fortuneType,
         date: date,
-        fortune_data: fortuneData,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error saving shared fortune:', error);
-      throw new Error('공유 운세 저장 중 오류가 발생했습니다.');
+        fortune_data: fortuneData
+      };
+      
+      const key = `shared_fortune_${groupKey}_${fortuneType}_${date}`;
+      localStorage.setItem(key, JSON.stringify(sharedFortuneData));
+      
+      console.log('✅ 공유 운세를 로컬 스토리지에 저장했습니다.');
+      return sharedFortuneData;
+    } catch (error) {
+      console.error('로컬 공유 운세 저장 오류:', error);
+      return null;
     }
-
-    return data;
   }
 
   /**
@@ -79,18 +79,19 @@ export class SharedFortuneService {
     
     const { groupKey, fortuneType, date } = input;
     
-    // 1. DB에서 캐시 확인
-    const existingFortune = await this.getSharedFortune(groupKey, fortuneType, date);
+    // 1. 로컬 스토리지에서 캐시 확인
+    const existingFortune = this.getSharedFortune(groupKey, fortuneType, date);
     if (existingFortune) {
+      console.log('🔄 캐시된 공유 운세를 반환합니다.');
       return existingFortune.fortune_data;
     }
 
     // 2. 캐시 없으면 AI로 생성
     const newFortuneData = await generateGroupFortune(input);
 
-    // 3. 생성된 운세 DB에 저장 (오류가 발생해도 무시하고 결과는 반환)
+    // 3. 생성된 운세 로컬 스토리지에 저장
     try {
-        await this.saveSharedFortune(groupKey, fortuneType, date, newFortuneData);
+        this.saveSharedFortune(groupKey, fortuneType, date, newFortuneData);
     } catch (e) {
         console.error("공유 운세 저장 실패(진행에 영향 없음):", e);
     }

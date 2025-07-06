@@ -79,106 +79,6 @@ export const GPT_MODELS = {
 } as const;
 
 // =============================================================================
-// Teachable Machine 모델 설정
-// =============================================================================
-
-export const TEACHABLE_MACHINE_MODELS = {
-  // 관상 분석 모델
-  FACE_READING: {
-    modelUrl: 'https://teachablemachine.withgoogle.com/models/YOUR_FACE_MODEL/',
-    type: 'image' as const,
-    description: '얼굴형, 눈썹, 입술 등을 분석하여 성격과 운세 예측',
-    classes: [
-      '복상 (부유한 상)',
-      '귀상 (고귀한 상)', 
-      '수상 (장수하는 상)',
-      '지혜상 (지적인 상)',
-      '인덕상 (인기가 많은 상)',
-      '예술상 (예술적 재능)',
-      '리더상 (지도력이 있는 상)',
-      '평범상 (일반적인 상)'
-    ],
-    accuracy: 0.85,
-    trainingData: '10,000+ 한국인 관상 데이터'
-  },
-
-  // 손금 분석 모델
-  PALM_READING: {
-    modelUrl: 'https://teachablemachine.withgoogle.com/models/YOUR_PALM_MODEL/',
-    type: 'image' as const,
-    description: '손금의 생명선, 감정선, 지능선 등을 분석',
-    classes: [
-      '장수형 (긴 생명선)',
-      '단명형 (짧은 생명선)',
-      '감정풍부형 (깊은 감정선)',
-      '이성적형 (명확한 지능선)',
-      '예술가형 (복잡한 손금)',
-      '사업가형 (태양선 발달)',
-      '학자형 (수성구 발달)',
-      '일반형 (평범한 손금)'
-    ],
-    accuracy: 0.78,
-    trainingData: '8,000+ 손금 이미지 데이터'
-  },
-
-  // 출생차트 분석 모델 
-  BIRTH_CHART: {
-    modelUrl: 'https://teachablemachine.withgoogle.com/models/YOUR_CHART_MODEL/',
-    type: 'image' as const,
-    description: '서양 점성술 출생차트의 행성 배치 패턴 인식',
-    classes: [
-      '물상 (수성 강세)',
-      '화상 (화성 강세)',
-      '목상 (목성 강세)',
-      '금상 (금성 강세)',
-      '토상 (토성 강세)',
-      '그랜드트라인 (대삼각)',
-      '그랜드크로스 (대십자)',
-      '균형형 (고른 배치)'
-    ],
-    accuracy: 0.72,
-    trainingData: '5,000+ 출생차트 데이터'
-  },
-
-  // 타로카드 인식 모델
-  TAROT_CARD: {
-    modelUrl: 'https://teachablemachine.withgoogle.com/models/YOUR_TAROT_MODEL/',
-    type: 'image' as const,
-    description: '타로카드 78장을 자동으로 인식하고 정/역방향 판단',
-    classes: [
-      // 메이저 아르카나 22장
-      'The Fool', 'The Magician', 'The High Priestess', 'The Empress',
-      'The Emperor', 'The Hierophant', 'The Lovers', 'The Chariot',
-      'Strength', 'The Hermit', 'Wheel of Fortune', 'Justice',
-      'The Hanged Man', 'Death', 'Temperance', 'The Devil',
-      'The Tower', 'The Star', 'The Moon', 'The Sun',
-      'Judgement', 'The World',
-      // 마이너 아르카나는 수트별로 분류
-      'Cups Suit', 'Wands Suit', 'Pentacles Suit', 'Swords Suit'
-    ],
-    accuracy: 0.92,
-    trainingData: '15,000+ 타로카드 이미지'
-  },
-
-  // 사주 한자 인식 모델
-  SAJU_CHARACTERS: {
-    modelUrl: 'https://teachablemachine.withgoogle.com/models/YOUR_SAJU_MODEL/',
-    type: 'image' as const,
-    description: '사주팔자의 한자들을 인식하여 디지털 변환',
-    classes: [
-      // 십간
-      '갑(甲)', '을(乙)', '병(丙)', '정(丁)', '무(戊)',
-      '기(己)', '경(庚)', '신(辛)', '임(壬)', '계(癸)',
-      // 십이지
-      '자(子)', '축(丑)', '인(寅)', '묘(卯)', '진(辰)', '사(巳)',
-      '오(午)', '미(未)', '신(申)', '유(酉)', '술(戌)', '해(亥)'
-    ],
-    accuracy: 0.95,
-    trainingData: '20,000+ 사주 한자 데이터'
-  }
-} as const;
-
-// =============================================================================
 // 모델 선택 로직
 // =============================================================================
 
@@ -213,24 +113,6 @@ export function selectGPTModel(fortuneType: FortuneType, inputType: InputType) {
 
   // 기본적인 운세는 경제적인 모델 사용
   return GPT_MODELS.BASIC;
-}
-
-/**
- * 운세 타입에 따라 사용할 Teachable Machine 모델 선택
- */
-export function selectTeachableModel(fortuneType: FortuneType) {
-  switch (fortuneType) {
-    case 'physiognomy':
-      return TEACHABLE_MACHINE_MODELS.FACE_READING;
-    case 'palmistry':
-      return TEACHABLE_MACHINE_MODELS.PALM_READING;
-    case 'tarot':
-      return TEACHABLE_MACHINE_MODELS.TAROT_CARD;
-    case 'saju':
-      return TEACHABLE_MACHINE_MODELS.SAJU_CHARACTERS;
-    default:
-      return null;
-  }
 }
 
 // =============================================================================
@@ -289,70 +171,6 @@ export async function callGPTAPI(
 
   const data = await response.json();
   return JSON.parse(data.choices[0].message.content);
-}
-
-/**
- * Teachable Machine 모델 호출 함수
- */
-export async function callTeachableMachine(
-  imageUrl: string,
-  model: typeof TEACHABLE_MACHINE_MODELS[keyof typeof TEACHABLE_MACHINE_MODELS]
-) {
-  try {
-    // Teachable Machine 모델 로드
-    const modelUrl = model.modelUrl + 'model.json';
-    const metadataUrl = model.modelUrl + 'metadata.json';
-    
-    // 브라우저 환경에서 실행 (클라이언트 사이드)
-    if (typeof window !== 'undefined') {
-      const tf = await import('@tensorflow/tfjs');
-      const tmImage = await import('@teachablemachine/image');
-      
-      const loadedModel = await tmImage.load(modelUrl, metadataUrl);
-      
-      // 이미지 로드 및 예측
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = imageUrl;
-      
-      return new Promise((resolve, reject) => {
-        img.onload = async () => {
-          try {
-            const prediction = await loadedModel.predict(img);
-            const results = prediction.map((p: any, index: number) => ({
-              class: model.classes[index],
-              probability: p.probability,
-              confidence: Math.round(p.probability * 100)
-            }));
-            
-            // 가장 높은 확률의 결과 반환
-            const bestMatch = results.reduce((prev: any, current: any) => 
-              (prev.probability > current.probability) ? prev : current
-            );
-            
-            resolve({
-              prediction: bestMatch,
-              allResults: results,
-              modelInfo: {
-                name: model.description,
-                accuracy: model.accuracy,
-                trainingData: model.trainingData
-              }
-            });
-          } catch (error) {
-            reject(error);
-          }
-        };
-        
-        img.onerror = () => reject(new Error('이미지 로드 실패'));
-      });
-    } else {
-      throw new Error('Teachable Machine은 클라이언트 사이드에서만 실행 가능합니다.');
-    }
-  } catch (error) {
-    console.error('Teachable Machine 호출 오류:', error);
-    throw error;
-  }
 }
 
 // =============================================================================
@@ -442,11 +260,8 @@ JSON 형식으로 응답해주세요:
 
 export default {
   GPT_MODELS,
-  TEACHABLE_MACHINE_MODELS,
   selectGPTModel,
-  selectTeachableModel,
   callGPTAPI,
-  callTeachableMachine,
   trackAPIUsage,
   PROMPT_TEMPLATES
 }; 

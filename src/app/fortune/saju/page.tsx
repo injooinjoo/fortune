@@ -15,21 +15,19 @@ import {
   Radar,
   ResponsiveContainer,
 } from "recharts";
-import { useDailyFortune } from "@/hooks/use-daily-fortune";
+import { useDailyFortune } from "@/hooks/use-daily-fortune-legacy";
 import { LifeProfileResultSchema, UserProfileSchema } from "@/ai/flows/generate-specialized-fortune";
 import { z } from "zod";
-
-// TODO: This should come from a global state/user context
-const MOCK_USER_PROFILE: z.infer<typeof UserProfileSchema> = {
-  name: "홍길동",
-  gender: 'male',
-  birthDate: "1990-01-01",
-  mbti: "INFP",
-};
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { useRouter } from "next/navigation";
 
 export default function SajuAnalysisPage() {
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const { toast } = useToast();
+  const router = useRouter();
+  
+  // 사용자 프로필 훅 사용
+  const { profile, isLoading: profileLoading, hasCompleteProfile } = useUserProfile();
 
   const { 
     todayFortune, 
@@ -47,9 +45,26 @@ export default function SajuAnalysisPage() {
   const sajuResult = todayFortune?.fortune_data as z.infer<typeof LifeProfileResultSchema> | undefined;
 
   const handleLoad = async (forceRefresh = false) => {
+    if (!profile || !hasCompleteProfile) {
+      toast({ 
+        title: "프로필 필요", 
+        description: "사주 분석을 위해 프로필을 완성해주세요.",
+        variant: "destructive"
+      });
+      router.push('/onboarding');
+      return;
+    }
+    
+    const userProfile: z.infer<typeof UserProfileSchema> = {
+      name: profile.name,
+      gender: profile.gender || 'other',
+      birthDate: profile.birth_date!,
+      mbti: profile.mbti || undefined,
+    };
+    
     if (forceRefresh) {
       toast({ title: "사주 재생성 중...", description: "AI가 당신의 운명을 다시 분석합니다." });
-      await generateNewLifeProfile(MOCK_USER_PROFILE);
+      await generateNewLifeProfile(userProfile);
       return;
     }
     
@@ -59,18 +74,27 @@ export default function SajuAnalysisPage() {
   
   // 데이터가 로드되었지만, 실제 운세 데이터가 없는 경우 (처음 방문)
   useEffect(() => {
-    if (!isLoading && !hasTodayFortune && !isGenerating && !error) {
+    if (!isLoading && !hasTodayFortune && !isGenerating && !error && profile && hasCompleteProfile) {
+      const userProfile: z.infer<typeof UserProfileSchema> = {
+        name: profile.name,
+        gender: profile.gender || 'other',
+        birthDate: profile.birth_date!,
+        mbti: profile.mbti || undefined,
+      };
+      
       toast({ title: "첫 방문을 환영합니다!", description: "AI가 당신의 평생 사주를 생성합니다." });
-      generateNewLifeProfile(MOCK_USER_PROFILE);
+      generateNewLifeProfile(userProfile);
     }
-  }, [isLoading, hasTodayFortune, isGenerating, error, generateNewLifeProfile]);
+  }, [isLoading, hasTodayFortune, isGenerating, error, generateNewLifeProfile, profile, hasCompleteProfile]);
 
-  // 최초 로드
+  // 최초 로드 - 프로필이 로드된 후 실행
   useEffect(() => {
-    handleLoad();
-  }, []);
+    if (!profileLoading && profile) {
+      handleLoad();
+    }
+  }, [profileLoading, profile]);
 
-  if (isLoading || isGenerating) {
+  if (profileLoading || isLoading || isGenerating) {
     return (
       <>
         <AppHeader 
@@ -138,9 +162,39 @@ export default function SajuAnalysisPage() {
     );
   }
 
+  // 데이터가 없으면 빈 페이지 반환
+  if (!sajuResult || !sajuResult.saju) {
+    return (
+      <>
+        <AppHeader 
+          title="사주팔자" 
+          onFontSizeChange={setFontSize}
+          currentFontSize={fontSize}
+        />
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700 flex items-center justify-center">
+          <Card className="max-w-md w-full mx-4">
+            <CardContent className="pt-6 text-center">
+              <p className="text-gray-600 dark:text-gray-400">
+                운세 데이터를 불러올 수 없습니다. 새로고침해주세요.
+              </p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="mt-4"
+              >
+                새로고침
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    );
+  }
+
   // TODO: RadarChart 데이터 구조를 새로운 스키마에 맞게 변경해야 함.
   // 현재 sajuResult.saju.keywords 등을 활용할 수 있음.
-  const chartData = sajuResult.saju.keywords.map(kw => ({ subject: kw, A: Math.random() * 100, fullMark: 100 }));
+  const chartData = sajuResult.saju.keywords && sajuResult.saju.keywords.length > 0 
+    ? sajuResult.saju.keywords.map(kw => ({ subject: kw, A: Math.random() * 100, fullMark: 100 }))
+    : [];
 
   return (
     <>

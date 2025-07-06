@@ -22,7 +22,8 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
     '/about',
     '/support',
     '/policy',
-    '/membership'
+    '/membership',
+    '/dashboard'
   ].some(path => pathname?.startsWith(path));
 
   // 랜딩 페이지나 인증 페이지에서는 네비게이션 숨김

@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { 
   Palette, 
   Star, 
@@ -328,17 +329,18 @@ export default function LuckyColorPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">생년월일</label>
                     <Controller
                       control={control}
                       name="birthDate"
                       rules={{ required: '생년월일을 입력해주세요' }}
                       render={({ field, fieldState }) => (
                         <div>
-                          <input
-                            {...field}
-                            type="date"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                          <KoreanDatePicker
+                            label="생년월일"
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder="생년월일을 선택하세요"
+                            required
                           />
                           {fieldState.error && (
                             <p className="text-red-500 text-sm mt-1">{fieldState.error.message}</p>

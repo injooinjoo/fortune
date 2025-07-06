@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 
 interface SajuFortuneFormProps {
   onSubmit: (birthDate: string) => void;
@@ -17,12 +18,12 @@ export default function SajuFortuneForm({ onSubmit }: SajuFortuneFormProps) {
   return (
     <section>
       <h3 className="text-lg font-semibold mb-2">사주 운세 보기</h3>
-      <form onSubmit={handleSubmit} className="flex items-center gap-2">
-        <input
-          type="date"
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <KoreanDatePicker
           value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          className="border rounded px-2 py-1"
+          onChange={(date) => setBirthDate(date)}
+          placeholder="생년월일을 선택하세요"
+          required={true}
         />
         <button type="submit" className="px-3 py-1 bg-primary text-white rounded">
           결과 보기

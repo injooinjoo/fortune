@@ -10,6 +10,7 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { getUserInfo, saveUserInfo, getZodiacSign, calculateAge } from "@/lib/user-storage";
 import { User, Calendar, Briefcase, ArrowRight, Info } from "lucide-react";
+import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 
 export interface UserFormData {
   name: string;
@@ -161,6 +162,17 @@ export default function UserInfoForm({
             ))}
           </SelectContent>
         </Select>
+      );
+    }
+
+    if (field.type === 'date') {
+      return (
+        <KoreanDatePicker
+          value={String(value)}
+          onChange={(date) => handleInputChange(String(field.key), date)}
+          placeholder={field.placeholder || `${field.label}을 선택하세요`}
+          required={field.required}
+        />
       );
     }
 
