@@ -16,7 +16,10 @@
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "postdev:check": "./scripts/post-dev-check.sh",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "test:coverage": "playwright test --reporter=html"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",
@@ -59,6 +62,7 @@
     "genkitx-openai": "^0.23.0",
     "lucide-react": "^0.475.0",
     "next": "^15.2.3",
+    "next-google-adsense": "^1.0.13",
     "next-themes": "^0.4.6",
     "openai": "^5.8.2",
     "patch-package": "^8.0.0",
@@ -75,6 +79,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.7.2",
     "@chromatic-com/storybook": "^4.0.0",
+    "@playwright/mcp": "^0.0.29",
     "@playwright/test": "^1.53.1",
     "@storybook/addon-a11y": "^9.0.12",
     "@storybook/addon-docs": "^9.0.12",
