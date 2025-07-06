@@ -1,6 +1,11 @@
 # Fortune App Security Documentation
 
-## Current Security Status ⚠️
+## 🚨 CRITICAL SECURITY ALERT (2025년 7월 6일)
+
+**🔴 URGENT**: 현재 Fortune 앱은 심각한 보안 취약점을 가지고 있습니다!
+- 모든 API 엔드포인트가 인증 없이 공개
+- OpenAI API 비용이 무제한으로 발생할 수 있음
+- 즉각적인 조치가 필요합니다!
 
 **WARNING**: The application currently has minimal security implementation. All API endpoints are publicly accessible without authentication. This document outlines the current state and planned security improvements.
 

@@ -34,20 +34,23 @@ const requestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. 인증 확인 (기존 API 라우트 패턴 따름)
-    const authHeader = request.headers.get('Authorization');
-    const cookies = request.headers.get('cookie') || '';
+    // 1. API Key 인증 확인 (batch 작업은 관리자/크론만 허용)
+    const apiKey = request.headers.get('x-api-key');
+    const cronSecret = request.headers.get('x-cron-secret');
+    const expectedApiKey = process.env.INTERNAL_API_KEY;
+    const expectedCronSecret = process.env.CRON_SECRET;
     
-    let userId: string | null = null;
+    // Cron job 또는 내부 API 호출만 허용
+    const isAuthorized = 
+      (expectedApiKey && apiKey === expectedApiKey) ||
+      (expectedCronSecret && cronSecret === expectedCronSecret);
     
-    // URL 파라미터에서 userId 확인 (테스트용)
-    const url = new URL(request.url);
-    const urlUserId = url.searchParams.get('userId');
-    if (urlUserId) {
-      userId = urlUserId;
+    if (!isAuthorized) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Batch generation requires admin access.' },
+        { status: 401 }
+      );
     }
-    
-    // Authorization 헤더 확인
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       try {

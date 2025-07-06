@@ -105,12 +105,34 @@
 6. **taemong** - 태몽 ✅
 7. **fortune-cookie** - 포춘쿠키 ✅
 
-## 🎯 다음 단계: 최적화 및 개선 작업
+## 🚨 긴급 개선 작업 (2025년 7월 6일 기준)
 
-### 1. ⚠️ Math.random() 제거 작업 (HIGH PRIORITY)
-- **현재 상태**: 42개 파일에서 여전히 Math.random() 사용 중
-- **필요 작업**: 서버사이드 생성으로 전환하여 일관된 운세 결과 보장
-- **영향받는 페이지**: 대부분의 운세 페이지에서 점수, 행운 아이템 등 생성 시 사용
+### 0. ⚠️ API 보안 구현 (CRITICAL - P0)
+- **현재 상태**: 모든 API 엔드포인트가 인증 없이 공개
+- **위험**: OpenAI API 비용 폭발, 서비스 남용 가능
+- **필요 작업**: 
+  - Supabase Auth 또는 NextAuth 즉시 구현
+  - 모든 /api/fortune/* 엔드포인트에 인증 미들웨어 추가
+  - API 키 기반 인증 시스템 구축
+
+### 1. ⚠️ Math.random() 제거 작업 (HIGH PRIORITY - P1)
+- **현재 상태**: 40개 파일에서 여전히 Math.random() 사용 중
+- **문제점**: 
+  - 동일 사용자가 새로고침할 때마다 다른 결과
+  - 운세의 신뢰성 저하
+  - 캐싱 효율성 감소
+- **필요 작업**: 
+  - 사용자 ID + 날짜 기반 시드 생성
+  - 서버사이드 결정적 랜덤 함수로 전환
+  - 모든 클라이언트 사이드 Math.random() 제거
+- **영향받는 주요 파일**:
+  ```
+  src/app/fortune/lucky-food/page.tsx
+  src/app/fortune/startup/page.tsx
+  src/app/fortune/celebrity-match/page.tsx
+  src/app/fortune/lucky-items/page.tsx
+  ... 외 36개 파일
+  ```
 
 ### 2. 🔒 보안 강화 (HIGH PRIORITY)
 - **API 인증**: 현재 공개 API로 운영 중 → 인증 미들웨어 구현 필요
