@@ -425,7 +425,7 @@ function generateCourseRecommendations(baseScore: number): string[] {
   return recommendations;
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body = await request.json();
     
@@ -442,9 +442,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(golfFortune);
   } catch (error) {
     console.error('골프 운세 분석 오류:', error);
-    return NextResponse.json(
-      { error: '운세 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '운세 분석 중 오류가 발생했습니다.');
   }
-} 
+});

@@ -77,7 +77,7 @@ interface WealthFortune {
   warning_signs: string[];
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const wealthInfo: WealthInfo = await request.json();
     
@@ -94,10 +94,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Wealth API error:', error);
-    return NextResponse.json(
-      { error: '금전운 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '금전운 분석 중 오류가 발생했습니다.');
   }
 }
 
@@ -489,4 +486,4 @@ function generateWealthWarningSignsForJob(info: WealthInfo): string[] {
     '신용카드 과다 사용 주의',
     '재정 계획 없는 투자 금지'
   ];
-} 
+});

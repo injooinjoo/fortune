@@ -8,6 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
 import AdLoadingScreen from "@/components/AdLoadingScreen";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuth } from '@/contexts/auth-context';
+import { getSupabaseBrowserClient } from '@/lib/supabase-browser';
 import { 
   Heart, 
   Star, 
@@ -96,7 +99,8 @@ const itemVariants = {
   }
 };
 
-export default function LoveFortunePage() {
+function LoveFortunePage() {
+  const { session } = useAuth();
   const [data, setData] = useState<LoveFortuneData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -120,10 +124,22 @@ export default function LoveFortunePage() {
     try {
       console.log('연애운 데이터 요청 시작...');
       
+      // Supabase 클라이언트에서 세션 가져오기
+      const supabase = getSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+      if (session) {
+        console.log('세션 토큰:', session.access_token?.substring(0, 20) + '...');
+      }
+      
       const response = await fetch('/api/fortune/love', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          ...(session?.access_token && {
+            'Authorization': `Bearer ${session.access_token}`
+          })
         },
       });
 
@@ -535,5 +551,13 @@ export default function LoveFortunePage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoveFortunePageWrapper() {
+  return (
+    <ProtectedRoute>
+      <LoveFortunePage />
+    </ProtectedRoute>
   );
 } 

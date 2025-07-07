@@ -62,7 +62,14 @@
 - [x] 주요 기능 파악 완료
 - [x] 우선순위별 작업 계획 수립
 - [x] Context Engineering 설정 완료 ✨
-- [ ] 환경 변수 보안 강화 진행 중
+- [x] API 인증 미들웨어 완성 및 모든 엔드포인트 적용 ✅ (2025.01.07)
+  - 72개 Fortune API 모두 보호
+  - 게스트 사용자 제한적 접근 허용
+  - withFortuneAuth 보안 래퍼 구현
+- [ ] Rate Limiting 시스템 Redis 기반으로 개선
+- [ ] 환경 변수 보안 검증
+- [ ] SQL Injection 및 XSS 방어 강화
+- [ ] Math.random() 완전 제거
 
 ## 다음 단계
 1. 가장 우선순위가 높은 작업부터 시작

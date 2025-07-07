@@ -141,3 +141,107 @@ export function shuffleArray<T>(
   const rng = new DeterministicRandom(userId, date, type);
   return rng.shuffle(array);
 }
+
+/**
+ * Helper functions for common fortune patterns
+ */
+
+/**
+ * Generate multiple lucky numbers for a user
+ */
+export function generateLuckyNumbers(
+  userId: string,
+  date: string,
+  count: number = 7,
+  min: number = 1,
+  max: number = 45
+): number[] {
+  const rng = new DeterministicRandom(userId, date, 'lucky-numbers');
+  const numbers: number[] = [];
+  const used = new Set<number>();
+  
+  while (numbers.length < count && used.size < (max - min + 1)) {
+    const num = rng.randomInt(min, max);
+    if (!used.has(num)) {
+      used.add(num);
+      numbers.push(num);
+    }
+  }
+  
+  return numbers.sort((a, b) => a - b);
+}
+
+/**
+ * Generate fortune scores for multiple categories
+ */
+export function generateFortuneScores(
+  userId: string,
+  date: string,
+  fortuneType: string,
+  categories: string[]
+): Record<string, number> {
+  const scores: Record<string, number> = {};
+  
+  categories.forEach((category, index) => {
+    const rng = new DeterministicRandom(userId, date, `${fortuneType}-${category}-${index}`);
+    scores[category] = rng.randomScore(0, 100);
+  });
+  
+  return scores;
+}
+
+/**
+ * Generate weighted random selection based on user profile
+ */
+export function weightedRandomSelect<T>(
+  userId: string,
+  date: string,
+  fortuneType: string,
+  items: Array<{ item: T; weight: number }>
+): T {
+  const rng = new DeterministicRandom(userId, date, fortuneType);
+  const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+  let randomWeight = rng.random() * totalWeight;
+  
+  for (const { item, weight } of items) {
+    randomWeight -= weight;
+    if (randomWeight <= 0) {
+      return item;
+    }
+  }
+  
+  // Fallback to last item
+  return items[items.length - 1].item;
+}
+
+/**
+ * Replace Math.random() with deterministic equivalent
+ * This function helps with migration from Math.random()
+ */
+export function replaceMathRandom(
+  userId: string,
+  date: string,
+  context: string
+): number {
+  const rng = new DeterministicRandom(userId, date, context);
+  return rng.random();
+}
+
+/**
+ * Validate that deterministic random is working correctly
+ */
+export function validateDeterministicBehavior(): boolean {
+  const testUserId = 'test-user';
+  const testDate = '2024-01-01';
+  const testType = 'test';
+  
+  // Generate values twice with same parameters
+  const rng1 = new DeterministicRandom(testUserId, testDate, testType);
+  const rng2 = new DeterministicRandom(testUserId, testDate, testType);
+  
+  const values1 = Array.from({ length: 10 }, () => rng1.random());
+  const values2 = Array.from({ length: 10 }, () => rng2.random());
+  
+  // Values should be identical
+  return values1.every((val, index) => val === values2[index]);
+}

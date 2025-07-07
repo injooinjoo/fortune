@@ -168,12 +168,11 @@ export default function LuckyFishingPage() {
   });
   const [result, setResult] = useState<FishingFortune | null>(null);
 
-  const analyzeFishingFortune = async ():
+  const analyzeFishingFortune = async (): Promise<FishingFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<FishingFortune> => {
     const baseScore = rng.randomInt(0, 24) + 60;
 
     return {

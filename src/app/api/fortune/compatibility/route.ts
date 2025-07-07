@@ -13,7 +13,7 @@ interface CompatibilityRequest {
     person2: PersonInfo;
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('💕 궁합 운세 API 요청');
   
   try {
@@ -53,15 +53,12 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('❌ 궁합 분석 실패:', error);
-    return NextResponse.json(
-      { error: '궁합 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '궁합 분석 중 오류가 발생했습니다.');
   }
 }
 
 // GET 요청 (기본 정보 제공)
-export async function GET() {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   return NextResponse.json({
     name: '궁합 운세',
     description: '두 사람의 궁합을 종합적으로 분석',
@@ -91,4 +88,4 @@ export async function GET() {
       }
     }
   });
-} 
+});

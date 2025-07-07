@@ -18,7 +18,7 @@ interface ChemistryInfo {
     concerns?: string;
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: ChemistryInfo = await req.json();
 
@@ -60,9 +60,6 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Chemistry fortune API error:', error);
-    return NextResponse.json(
-      { error: '속궁합 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '속궁합 분석 중 오류가 발생했습니다.');
   }
-} 
+});

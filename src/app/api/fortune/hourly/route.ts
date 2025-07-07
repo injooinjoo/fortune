@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
 
 // 개발용 기본 사용자 프로필 생성 함수
 const getDefaultUserProfile = (userId: string): UserProfile => ({
@@ -15,27 +17,22 @@ const getDefaultUserProfile = (userId: string): UserProfile => ({
   updated_at: new Date().toISOString()
 });
 
-export async function GET(request: NextRequest) {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     console.log('⏰ 시간별 운세 API 요청');
     
-    // URL에서 사용자 ID 추출 (테스트용)
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || `guest_${Date.now()}`; // 동적 기본값
-    
-    console.log(`🔍 시간별 운세 요청: 사용자 ID = ${userId}`);
+    console.log(`🔍 시간별 운세 요청: 사용자 ID = ${request.userId}`);
     
     // 기본 사용자 프로필 생성
-    const userProfile = getDefaultUserProfile(userId);
+    const userProfile = getDefaultUserProfile(request.userId!);
     
-    const fortuneService = new FortuneService();
     const result = await fortuneService.getOrCreateFortune(
-      userId, 
+      request.userId!, 
       'hourly',
       userProfile
     );
     
-    console.log('✅ 시간별 운세 API 응답 완료:', userId);
+    console.log('✅ 시간별 운세 API 응답 완료:', request.userId);
     
     return NextResponse.json({
       success: true,
@@ -46,14 +43,6 @@ export async function GET(request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('❌ 시간별 운세 API 오류:', error);
-    
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: '시간별 운세를 가져오는 중 오류가 발생했습니다.' 
-      },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '시간별 운세를 가져오는 중 오류가 발생했습니다.');
   }
-} 
+}); 

@@ -28,10 +28,10 @@ export class FortuneService {
     console.log('FortuneService 초기화 - DB 전용 모드');
     
     // Supabase 클라이언트 초기화
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       this.supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       );
       console.log('✅ Supabase 연결 활성화');
     } else {
@@ -109,6 +109,7 @@ export class FortuneService {
 
       const endTime = Date.now();
       console.log(`⚡ 운세 생성 완료 (${endTime - startTime}ms): ${fortuneCategory}`);
+      console.log('🔍 Generated newData:', JSON.stringify(newData, null, 2));
       
       return {
         success: true,
@@ -270,6 +271,32 @@ export class FortuneService {
         const result = batchResponse.analysis_results[category];
         
         console.log(`✅ 묶음 운세 생성 완료: ${category}`);
+        console.log('📊 Batch response analysis_results keys:', Object.keys(batchResponse.analysis_results));
+        console.log(`📊 Result for ${category}:`, result);
+        
+        if (!result) {
+          console.warn(`⚠️ No result found for category ${category} in batch response`);
+          // Fallback to single fortune generation
+          const { generateSingleFortune } = await import('../../ai/openai-client');
+          
+          const defaultProfile = {
+            name: userProfile?.name || '사용자',
+            birthDate: userProfile?.birth_date || '1990-01-01',
+            gender: userProfile?.gender || 'unknown',
+            mbti: userProfile?.mbti || null
+          };
+
+          const singleResult = await generateSingleFortune(category, defaultProfile, interactiveInput);
+          
+          return {
+            ...singleResult,
+            category,
+            groupType,
+            generated_at: new Date().toISOString(),
+            user_id: userId,
+            ai_source: 'openai_gpt_fallback'
+          };
+        }
         
         // 메타데이터 추가
         return {

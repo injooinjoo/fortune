@@ -1,6 +1,6 @@
-import { 
-  generateGroupFortune, 
-} from '@/ai/flows/generate-specialized-fortune';
+// import { 
+//   generateGroupFortune, 
+// } from '@/ai/flows/generate-specialized-fortune';
 import { 
   GroupFortuneInputSchema,
   GroupFortuneOutputSchema 
@@ -86,8 +86,18 @@ export class SharedFortuneService {
       return existingFortune.fortune_data;
     }
 
-    // 2. 캐시 없으면 AI로 생성
-    const newFortuneData = await generateGroupFortune(input);
+    // 2. 캐시 없으면 API로 생성
+    const response = await fetch('/api/fortune/group', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to generate group fortune');
+    }
+    
+    const newFortuneData = await response.json();
 
     // 3. 생성된 운세 로컬 스토리지에 저장
     try {

@@ -5,6 +5,7 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from '@/contexts/auth-context';
 
 export default function Providers({ children }: PropsWithChildren) {
   const [queryClient] = React.useState(() => new QueryClient({
@@ -17,14 +18,15 @@ export default function Providers({ children }: PropsWithChildren) {
   
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem={true}
-        disableTransitionOnChange={false}
-      >
-        {children}
-        <Toaster
+      <AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          disableTransitionOnChange={false}
+        >
+          {children}
+          <Toaster
           position="top-center"
           reverseOrder={false}
           gutter={8}
@@ -73,7 +75,8 @@ export default function Providers({ children }: PropsWithChildren) {
             },
           }}
         />
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

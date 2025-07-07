@@ -9,24 +9,21 @@ export async function GET(request: NextRequest) {
     console.log('📅 일일 운세 API 요청');
     
     try {
-      // Use authenticated userId if available, otherwise use guest identifier
-      const userId = req.userId || `guest_${req.headers.get('x-forwarded-for') || 'unknown'}`;
-      
-      console.log('🔍 일일 운세 요청: 사용자 ID =', userId, '(Guest:', req.isGuest, ')');
-      
-      // For guest users, add cache headers to reduce API calls
-      const result = await fortuneService.getOrCreateFortune(userId, 'daily');
-      
-      console.log('✅ 일일 운세 API 응답 완료:', userId);
-      
-      const response = NextResponse.json(result);
-      
-      // Add cache headers for guest users
-      if (req.isGuest) {
-        response.headers.set('Cache-Control', 'public, max-age=3600'); // 1 hour cache
+      // 인증된 사용자만 접근 가능
+      if (!req.userId || req.userId === 'guest') {
+        return NextResponse.json(
+          { error: '로그인이 필요합니다.' },
+          { status: 401 }
+        );
       }
       
-      return response;
+      console.log('🔍 일일 운세 요청: 사용자 ID =', req.userId);
+      
+      const result = await fortuneService.getOrCreateFortune(req.userId, 'daily');
+      
+      console.log('✅ 일일 운세 API 응답 완료:', req.userId);
+      
+      return NextResponse.json(result);
       
     } catch (error) {
       console.error('❌ 일일 운세 API 오류:', error);

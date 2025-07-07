@@ -331,29 +331,11 @@ export class DailyFortuneService {
   }
 
   /**
-   * 게스트 사용자를 위한 임시 ID 생성 (로컬 스토리지 기반)
+   * 사용자 ID 가져오기 (인증된 사용자만)
    */
-  static getGuestUserId(): string {
-    if (typeof window === 'undefined') {
-      return `temp_${Date.now()}_${/* TODO: Use rng.random() */ Math.random().toString(36).substr(2, 9)}`;
-    }
-
-    const guestId = localStorage.getItem('guest_user_id');
-    if (guestId) {
-      return guestId;
-    }
-
-    const newGuestId = `guest_${Date.now()}_${/* TODO: Use rng.random() */ Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('guest_user_id', newGuestId);
-    return newGuestId;
-  }
-
-  /**
-   * 사용자 ID 가져오기 (인증된 사용자 우선, 없으면 게스트)
-   */
-  static async getUserId(): Promise<string> {
+  static async getUserId(): Promise<string | null> {
     const authUserId = await this.getCurrentUserId();
-    return authUserId || this.getGuestUserId();
+    return authUserId;
   }
 
   /**

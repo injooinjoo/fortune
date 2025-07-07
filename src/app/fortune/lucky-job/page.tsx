@@ -122,12 +122,11 @@ export default function LuckyJobPage() {
   });
   const [result, setResult] = useState<JobFortune | null>(null);
 
-  const analyzeJobFortune = async ():
+  const analyzeJobFortune = async (): Promise<JobFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<JobFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-job', {
         method: 'POST',

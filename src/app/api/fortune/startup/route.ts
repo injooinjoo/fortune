@@ -283,7 +283,7 @@ function generatePersonalizedStartupFortune(request: StartupRequest): StartupFor
   };
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: StartupRequest = await request.json();
     
@@ -309,9 +309,6 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Startup API error:', error);
-    return NextResponse.json(
-      { error: '창업운 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '창업운 분석 중 오류가 발생했습니다.');
   }
-} 
+});

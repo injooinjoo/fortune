@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
-
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
-export async function POST(req: NextRequest) {
+
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    const body = await req.json();
-    const { celebrity_name, user_name = "게스트", birth_date, category } = body;
+    const body = await request.json();
+    const { celebrity_name, user_name, birth_date, category } = body;
 
     if (!celebrity_name) {
       return NextResponse.json(
@@ -109,10 +112,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Celebrity fortune API error:', error);
-    return NextResponse.json(
-      { error: '운세 생성 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '운세 생성 중 오류가 발생했습니다.');
   }
 }
 
@@ -165,4 +165,4 @@ function getCategoryEmoji(category: string): string {
     case "entertainer": return "📺";
     default: return "⭐";
   }
-} 
+});

@@ -19,7 +19,12 @@
     "build-storybook": "storybook build",
     "postdev:check": "./scripts/post-dev-check.sh",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "test:coverage": "playwright test --reporter=html"
+    "test:coverage": "playwright test --reporter=html",
+    "security:check": "node scripts/security-check.js",
+    "security:audit": "npm audit && node scripts/security-check.js",
+    "test:database": "node scripts/test-database.js",
+    "test:redis": "node scripts/test-redis.js",
+    "setup:database": "node scripts/setup-database.js"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",
@@ -49,9 +54,12 @@
     "@sentry/nextjs": "^9.35.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
     "@tanstack/react-query": "^5.66.0",
     "@types/seedrandom": "^3.0.8",
+    "@upstash/ratelimit": "^2.0.5",
+    "@upstash/redis": "^1.35.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",

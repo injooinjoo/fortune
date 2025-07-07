@@ -165,12 +165,11 @@ export default function LuckyRealEstatePage() {
   });
   const [result, setResult] = useState<RealEstateFortune | null>(null);
 
-  const analyzeRealEstateFortune = async ():
+  const analyzeRealEstateFortune = async (): Promise<RealEstateFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<RealEstateFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-realestate', {
         method: 'POST',

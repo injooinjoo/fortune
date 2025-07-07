@@ -101,12 +101,11 @@ export default function LuckySwimPage() {
   });
   const [result, setResult] = useState<SwimFortune | null>(null);
 
-  const analyzeSwimFortune = async ():
+  const analyzeSwimFortune = async (): Promise<SwimFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<SwimFortune> => {
     const score = calculateWaterScore(formData.birth_date);
     const shuffledDays = weekDays.sort(() => 0.5 - rng.random());
     return {

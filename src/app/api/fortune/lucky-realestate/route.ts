@@ -16,7 +16,7 @@ interface RealEstateRequest {
   // investment_timeline, current_situation, concerns
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: RealEstateRequest = await request.json();
     
@@ -54,9 +54,6 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('Lucky realestate API error:', error);
-    return NextResponse.json(
-      { error: '부동산운 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '부동산운 분석 중 오류가 발생했습니다.');
   }
-} 
+});

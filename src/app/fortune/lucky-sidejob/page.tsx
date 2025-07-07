@@ -134,12 +134,11 @@ export default function LuckySideJobPage() {
   });
   const [result, setResult] = useState<SidejobFortune | null>(null);
 
-  const analyzeSidejobFortune = async ():
+  const analyzeSidejobFortune = async (): Promise<SidejobFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<SidejobFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-sidejob', {
         method: 'POST',

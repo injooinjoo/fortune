@@ -151,12 +151,11 @@ export default function LuckyExamPage() {
   });
   const [result, setResult] = useState<ExamFortune | null>(null);
 
-  const analyzeExamFortune = async ():
+  const analyzeExamFortune = async (): Promise<ExamFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
-    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const dateString = getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<ExamFortune> => {
     const baseScore = rng.randomInt(0, 24) + 65;
     
     // 시험 기간 내 랜덤 날짜 생성

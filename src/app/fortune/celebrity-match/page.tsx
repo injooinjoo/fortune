@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 import {
   Card,
   CardContent,
@@ -113,7 +114,14 @@ export default function CelebrityMatchPage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const score = Math.floor(Math.random() * 61) + 20; // 20 ~ 80
+      // Initialize deterministic random for consistent daily results
+      const rng = new DeterministicRandom(
+        `${info.name}-${info.celebrity}`, // Combine both names for unique seed
+        getTodayDateString(),
+        'celebrity-match'
+      );
+      
+      const score = rng.randomInt(20, 80); // 20 ~ 80
       const comments = [
         "이 조합, 팬미팅에서 자주 보게 될 운명?!",
         "마치 예능 한 장면 같은 케미입니다.",
@@ -125,9 +133,9 @@ export default function CelebrityMatchPage() {
 
       return {
         score,
-        comment: comments[Math.floor(Math.random() * comments.length)],
-        luckyColor: colors[Math.floor(Math.random() * colors.length)],
-        luckyItem: items[Math.floor(Math.random() * items.length)],
+        comment: rng.randomElement(comments),
+        luckyColor: rng.randomElement(colors),
+        luckyItem: rng.randomElement(items),
       };
     }
   };

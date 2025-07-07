@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from '@/contexts/auth-context';
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +37,7 @@ interface TojeongData {
 }
 
 export default function TojeongPage() {
+  const { session } = useAuth();
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [data, setData] = useState<TojeongData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,14 +49,23 @@ export default function TojeongPage() {
         setLoading(true);
         console.log('토정비결 데이터 요청 시작...');
         
+        // AuthContext에서 세션 가져오기
+        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        
         const response = await fetch('/api/fortune/tojeong', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            ...(session?.access_token && {
+              'Authorization': `Bearer ${session.access_token}`
+            })
           },
         });
 
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('로그인이 필요합니다.');
+          }
           throw new Error(`운세 요청 실패: ${response.status}`);
         }
 
@@ -65,7 +76,7 @@ export default function TojeongPage() {
           throw new Error(result.error || '토정비결 생성에 실패했습니다');
         }
 
-        setData(result.data.tojeong);
+        setData(result.data);
         setError(null);
       } catch (err) {
         console.error('토정비결 API 오류:', err);
@@ -76,7 +87,7 @@ export default function TojeongPage() {
     };
 
     fetchTojeongFortune();
-  }, []);
+  }, [session]);
 
   if (loading) {
     return (

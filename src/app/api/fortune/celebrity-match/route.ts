@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body = await req.json();
     const { name, birthDate, celebrity } = body;
@@ -53,10 +53,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Celebrity match fortune API error:', error);
-    return NextResponse.json(
-      { error: '연예인 궁합 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '연예인 궁합 분석 중 오류가 발생했습니다.');
   }
 }
 
@@ -191,4 +188,4 @@ function generateLuckyItem(celebrity: string): string {
   ];
   
   return defaultItems[Math.floor(/* TODO: Use rng.random() */ Math.random() * defaultItems.length)];
-} 
+});

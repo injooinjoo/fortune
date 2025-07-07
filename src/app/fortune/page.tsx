@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
-import { useScrollSpy } from "@/hooks/use-scroll-spy";
 import { useHaptic } from "@/hooks/use-haptic";
 import { 
   Heart, 
@@ -779,17 +778,13 @@ export default function FortunePage() {
   const router = useRouter();
   const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium");
   const [selectedCategory, setSelectedCategory] = useState<FortuneCategoryType>('all');
-  const [focusedCardId, setFocusedCardId] = useState<string | null>(null);
-  const [currentCategoryTitle, setCurrentCategoryTitle] = useState<string>('');
-  const [currentTheme, setCurrentTheme] = useState<string>('');
-  const [clickedCardId, setClickedCardId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false); // 중복 클릭 방지용 상태
   
   // 최근 본 운세 추가를 위한 hook
   useFortuneStream();
   
   // 햅틱 피드백 훅
-  const { snapFeedback, selectFeedback } = useHaptic();
+  const { selectFeedback } = useHaptic();
 
   // 폰트 크기 클래스 매핑
   const getFontSizeClasses = (size: 'small' | 'medium' | 'large') => {
@@ -825,26 +820,7 @@ export default function FortunePage() {
     ? fortuneCategories 
     : fortuneCategories.filter(category => category.category === selectedCategory);
 
-  // 카드 ID 목록 생성
-  const cardIds = filteredCategories.map(category => `fortune-card-${category.id}`);
-
-  // 스크롤 스파이 - 화면 중앙의 카드 추적
-  const activeCardId = useScrollSpy(cardIds, {
-    rootMargin: '-40% 0px -40% 0px', // 화면 중앙 20% 영역만 감지
-    threshold: 0.5,
-    onActiveChange: (activeId) => {
-      const cardId = activeId?.replace('fortune-card-', '');
-      const activeCard = filteredCategories.find(card => card.id === cardId);
-      if (activeCard && focusedCardId !== cardId) {
-        setFocusedCardId(cardId || null);
-        setCurrentCategoryTitle(activeCard.title);
-        setCurrentTheme(activeCard.category);
-        snapFeedback(); // 햅틱 피드백
-      }
-    }
-  });
-
-  const handleCategoryClick = (route: string, title: string, cardId: string) => {
+  const handleCategoryClick = (route: string, title: string) => {
     // 이미 처리 중이면 클릭 무시
     if (isProcessing) {
       console.log('이미 처리 중입니다. 중복 클릭 방지됨.');
@@ -857,36 +833,24 @@ export default function FortunePage() {
     // 프리미엄, 일반 사용자 모두 로딩 화면 표시 (분석하는 척)
     selectFeedback(); // 선택 햅틱 피드백
     
-    // 클릭 효과 애니메이션 트리거
-    setClickedCardId(cardId);
-    
     // 바로 운세 페이지로 이동 (각 운세 페이지에서 광고 화면 처리)
     setTimeout(() => {
       router.push(route);
-    }, 300); // 애니메이션을 위한 짧은 지연
+    }, 100); // 짧은 지연
   };
 
   // 광고 로딩 화면은 이제 각 운세 페이지에서 직접 처리
-
-  // Generate conditional class names
-  const themeClass = currentTheme 
-    ? `theme-${currentTheme}` 
-    : 'bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50';
   
   return (
-    <div 
-      className="min-h-screen overflow-y-auto"
-    >
+    <div className="min-h-screen bg-gray-50">
       <AppHeader
         title="운세"
         showBack={false}
         onFontSizeChange={setFontSize}
         currentFontSize={fontSize}
-        dynamicTitle={currentCategoryTitle}
-        showDynamicTitle={!!currentCategoryTitle}
       />
       <motion.div
-        className="fortune-scroll-container pb-32 pt-16 px-4 min-h-screen snap-y snap-mandatory"
+        className="pb-32 pt-16 px-4 max-w-4xl mx-auto"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -909,22 +873,22 @@ export default function FortunePage() {
 
         {/* 오늘의 추천 */}
         <motion.div variants={itemVariants}>
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 border-purple-200 dark:border-purple-700 dark:bg-gray-800">
+          <Card className="bg-white border border-gray-200">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <CardTitle className={`${fontClasses.title} text-purple-800 dark:text-purple-300`}>오늘의 추천</CardTitle>
+                <TrendingUp className="w-5 h-5 text-gray-700" />
+                <CardTitle className={`${fontClasses.title} text-gray-900`}>오늘의 추천</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className={`${fontClasses.text} font-semibold text-purple-900 dark:text-purple-200 mb-1`}>연애운</h3>
-                  <p className={`${fontClasses.label} text-purple-700 dark:text-purple-400`}>
+                  <h3 className={`${fontClasses.text} font-semibold text-gray-900 mb-1`}>연애운</h3>
+                  <p className={`${fontClasses.label} text-gray-600`}>
                     새로운 만남의 기회가 열리는 날입니다
                   </p>
                 </div>
-                <Badge className={`${fontClasses.label} bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/70`}>
+                <Badge className={`${fontClasses.label} bg-gray-100 text-gray-700`}>
                   85점
                 </Badge>
               </div>
@@ -1011,219 +975,52 @@ export default function FortunePage() {
               )}
             </div>
             
-            <div className="grid grid-cols-1 gap-32">
+            <div className="grid grid-cols-2 gap-4">
               {filteredCategories.map((category, index) => {
-                const isFocused = focusedCardId === category.id;
-                const theme = category.theme || getDefaultTheme(category.category);
-                
-                const getIconAnimationClass = () => {
-                  switch (category.category) {
-                    case 'love': return 'fortune-icon-love';
-                    case 'money': return 'fortune-icon-money';
-                    case 'health': return 'fortune-icon-health';
-                    case 'traditional': return 'fortune-icon-traditional';
-                    case 'lifestyle': return 'fortune-icon-lifestyle';
-                    case 'career': return 'fortune-icon-career';
-                    default: return '';
-                  }
-                };
 
                 return (
                   <motion.div
                     key={category.id}
-                    id={`fortune-card-${category.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ 
                       opacity: 1, 
-                      y: 0,
-                      scale: isFocused ? 1.15 : 0.95
+                      y: 0
                     }}
                     transition={{ 
-                      delay: index * 0.05,
-                      scale: { duration: 0.5, ease: "easeOut" }
+                      delay: index * 0.05
                     }}
-                    whileHover={{ scale: isFocused ? 1.18 : 1.05, y: -4 }}
+                    whileHover={{ y: -4 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => handleCategoryClick(category.route, category.title, category.id)}
-                    className="fortune-card-snap cursor-pointer snap-center"
-                    style={{
-                      minHeight: isFocused ? '200px' : '150px'
-                    }}
+                    onClick={() => handleCategoryClick(category.route, category.title)}
+                    className="cursor-pointer"
                   >
                     <Card 
-                      className={`
-                        card-hover-lift card-click-effect hover:shadow-lg transition-all duration-500 border-2 relative overflow-hidden rounded-2xl
-                        ${isFocused 
-                          ? `fortune-card-focused shadow-${category.category} border-opacity-60` 
-                          : 'bg-white/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 shadow-md'
-                        }
-                        ${category.category}
-                      `}
-                      style={{
-                        background: isFocused 
-                          ? `linear-gradient(135deg, ${theme.primaryColor}10, ${theme.secondaryColor}20, ${theme.accentColor}10)`
-                          : undefined,
-                        borderColor: isFocused ? theme.primaryColor : undefined,
-                        boxShadow: isFocused 
-                          ? `0 20px 60px ${theme.primaryColor}20, 0 8px 20px ${theme.primaryColor}15` 
-                          : undefined,
-                        minHeight: isFocused ? '200px' : '150px'
-                      }}
+                      className="bg-white hover:shadow-md transition-all duration-200 border border-gray-200 overflow-hidden rounded-lg aspect-square"
                     >
-                      <CardContent className="p-6 relative overflow-hidden h-full flex flex-col">
-                        {/* 카드 글로우 효과 */}
-                        <div className={`card-glow ${category.category}`} />
-                        
-                        {/* 간소화된 파티클 효과 */}
-                        {isFocused && (
-                          <div className="absolute inset-0 pointer-events-none">
-                            <div className="gold-sparkles">
-                              {[...Array(3)].map((_, i) => (
-                                <div
-                                  key={i}
-                                  className="gold-sparkle"
-                                  style={{
-                                    left: `${20 + i * 30}%`,
-                                    top: `${30 + (i % 2) * 20}%`,
-                                    animationDelay: `${i * 0.4}s`,
-                                  }}
-                                />
-                              ))}
-                            </div>
+                      <CardContent className="p-4 relative h-full flex flex-col justify-between">
+                        {/* 상단 영역: 아이콘과 제목 */}
+                        <div className="flex flex-col items-center text-center">
+                          <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
+                            <category.icon className="w-8 h-8 text-gray-700" />
                           </div>
-                        )}
+                          <h3 className={`${fontClasses.title} font-bold text-gray-900 mb-1`}>
+                            {category.title}
+                          </h3>
+                          {category.badge && (
+                            <Badge variant="secondary" className="text-xs mb-2">
+                              {category.badge}
+                            </Badge>
+                          )}
+                        </div>
                         
-                        {/* 클릭 시 특수 효과 */}
-                        {clickedCardId === category.id && (
-                          <>
-                            {category.category === 'love' && <div className="love-burst" />}
-                            {category.category === 'career' && <div className="career-success-trail" />}
-                            {category.category === 'money' && <div className="money-coin-shower" />}
-                            {category.category === 'health' && <div className="health-energy-wave" />}
-                            {category.category === 'traditional' && <div className="traditional-mystical" />}
-                            {category.category === 'lifestyle' && <div className="lifestyle-dreams" />}
-                          </>
-                        )}
-
-                        {/* 제목 영역 - 포커스 시 상단으로 이동 */}
-                        <motion.div 
-                          className={`relative z-20 ${isFocused ? 'absolute top-4 left-4' : ''}`}
-                          animate={{
-                            y: isFocused ? 0 : 0,
-                            x: isFocused ? 0 : 0,
-                            scale: isFocused ? 0.85 : 1
-                          }}
-                          transition={{ duration: 0.6, ease: "easeInOut" }}
-                        >
-                          <div className="flex items-center gap-3">
-                            <motion.div 
-                              className={`
-                                rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300
-                                ${isFocused ? 'w-10 h-10' : 'w-12 h-12'}
-                              `}
-                              style={{
-                                background: isFocused 
-                                  ? `linear-gradient(135deg, ${theme.primaryColor}30, ${theme.secondaryColor}40)`
-                                  : `${theme.primaryColor}15`,
-                                border: isFocused ? `2px solid ${theme.primaryColor}40` : 'none'
-                              }}
-                            >
-                              <category.icon 
-                                className={`
-                                  transition-all duration-300
-                                  ${isFocused ? 'w-5 h-5' : 'w-6 h-6'}
-                                `}
-                                style={{ color: isFocused ? theme.primaryColor : theme.secondaryColor }}
-                              />
-                            </motion.div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <motion.h3 
-                                  className={`
-                                    ${isFocused ? fontClasses.text : fontClasses.title} 
-                                    font-bold text-gray-900 dark:text-gray-100 truncate transition-all duration-300
-                                  `}
-                                  style={{
-                                    color: isFocused ? theme.primaryColor : undefined
-                                  }}
-                                animate={isFocused ? { scale: [1, 1.05, 1] } : { scale: 1 }}
-                                transition={{ duration: 0.3 }}
-                              >
-                                {isFocused ? `${theme.emoji} ${category.title}` : category.title}
-                              </motion.h3>
-                              {category.badge && (
-                                <Badge 
-                                  variant="secondary" 
-                                  className="text-xs transition-all duration-300"
-                                  style={{
-                                    background: isFocused ? `${theme.primaryColor}20` : undefined,
-                                    color: isFocused ? theme.primaryColor : undefined,
-                                    borderColor: isFocused ? `${theme.primaryColor}30` : undefined
-                                  }}
-                                >
-                                  {category.badge}
-                                </Badge>
-                              )}
-                              </div>
-                              {!isFocused && (
-                                <motion.p 
-                                  className={`${fontClasses.label} text-gray-600 dark:text-gray-400 mt-1`}
-                                  initial={{ opacity: 1 }}
-                                  animate={{ opacity: isFocused ? 0 : 1 }}
-                                  transition={{ duration: 0.3 }}
-                                >
-                                  {category.description}
-                                </motion.p>
-                              )}
-                            </div>
-                          </div>
-                        </motion.div>
+                        {/* 중앙 영역: 설명 */}
+                        <p className={`${fontClasses.label} text-gray-600 text-center px-2 line-clamp-2`}>
+                          {category.description}
+                        </p>
                         
-                        {/* 중앙 설명 영역 - 포커스 시에만 표시 */}
-                        {isFocused && (
-                          <motion.div 
-                            className="flex-1 flex items-center justify-center relative z-10 mt-16"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
-                          >
-                            <div className="text-center px-4">
-                              <motion.div
-                                className="mb-3"
-                                animate={{ scale: [1, 1.1, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                              >
-                                <span className="text-4xl">{theme.emoji}</span>
-                              </motion.div>
-                              <motion.p 
-                                className={`${fontClasses.text} leading-relaxed text-center font-medium`}
-                                style={{ color: theme.primaryColor }}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-                              >
-                                {category.detailedDescription || getDetailedDescription(category.category, category.title)}
-                              </motion.p>
-                            </div>
-                          </motion.div>
-                        )}
-                        
-                        {/* 하단 화살표 - 항상 표시 */}
-                        <div className="flex justify-end items-end relative z-10 mt-auto">
-                          <motion.div
-                            animate={isFocused ? { x: [0, 8, 0] } : { x: 0 }}
-                            transition={{ duration: 1.5, repeat: isFocused ? Infinity : 0 }}
-                          >
-                            <ArrowRight 
-                              className={`
-                                transition-all duration-300
-                                ${isFocused ? 'w-6 h-6' : 'w-5 h-5'}
-                              `}
-                              style={{ 
-                                color: isFocused ? theme.primaryColor : '#94a3b8' 
-                              }}
-                            />
-                          </motion.div>
+                        {/* 하단 영역: 화살표 */}
+                        <div className="flex justify-center">
+                          <ArrowRight className="w-4 h-4 text-gray-400" />
                         </div>
                       </CardContent>
                     </Card>
@@ -1236,39 +1033,31 @@ export default function FortunePage() {
 
         {/* 특별 서비스 */}
         <motion.div variants={itemVariants}>
-          <h2 className={`${fontClasses.title} font-bold text-gray-900 dark:text-gray-100 mb-4`}>특별 서비스</h2>
+          <h2 className={`${fontClasses.title} font-bold text-gray-900 mb-4`}>특별 서비스</h2>
           <div className="grid grid-cols-2 gap-4">
             <Card
-              className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-indigo-900/20 dark:to-purple-900/20 border-indigo-200 dark:border-indigo-700"
+              className="cursor-pointer hover:shadow-md transition-shadow bg-white border border-gray-200 aspect-square"
               onClick={() => router.push("/premium")}
             >
-              <CardContent className="p-4 text-center">
-                <motion.div
-                  className="bg-indigo-100 dark:bg-indigo-900/30 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Sparkles className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
-                </motion.div>
-                <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>프리미엄사주</h3>
-                <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>만화로 보는 사주</p>
+              <CardContent className="p-4 h-full flex flex-col items-center justify-center text-center">
+                <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
+                  <Sparkles className="w-8 h-8 text-gray-700" />
+                </div>
+                <h3 className={`${fontClasses.text} font-semibold text-gray-900 mb-1`}>프리미엄사주</h3>
+                <p className={`${fontClasses.label} text-gray-600`}>만화로 보는 사주</p>
               </CardContent>
             </Card>
 
             <Card
-              className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-green-50 to-emerald-50 dark:bg-gradient-to-br dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-700"
+              className="cursor-pointer hover:shadow-md transition-shadow bg-white border border-gray-200 aspect-square"
               onClick={() => router.push("/physiognomy")}
             >
-              <CardContent className="p-4 text-center">
-                <motion.div
-                  className="bg-green-100 dark:bg-green-900/30 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3"
-                  whileHover={{ rotate: 360 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <User className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </motion.div>
-                <h3 className={`${fontClasses.text} font-semibold text-gray-900 dark:text-gray-100 mb-1`}>AI 관상</h3>
-                <p className={`${fontClasses.label} text-gray-600 dark:text-gray-400`}>얼굴로 보는 운세</p>
+              <CardContent className="p-4 h-full flex flex-col items-center justify-center text-center">
+                <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mb-3">
+                  <User className="w-8 h-8 text-gray-700" />
+                </div>
+                <h3 className={`${fontClasses.text} font-semibold text-gray-900 mb-1`}>AI 관상</h3>
+                <p className={`${fontClasses.label} text-gray-600`}>얼굴로 보는 운세</p>
               </CardContent>
             </Card>
           </div>

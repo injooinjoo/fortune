@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createServerClient } from '@supabase/ssr';
 
 export interface AuthenticatedRequest extends NextRequest {
   userId?: string;
-  isGuest?: boolean;
+  userEmail?: string;
+  isPremium?: boolean;
 }
 
 export async function withAuth(
@@ -13,45 +14,86 @@ export async function withAuth(
   try {
     // Check for API key in development/admin endpoints
     const apiKey = request.headers.get('x-api-key');
+    const cronSecret = request.headers.get('x-cron-secret');
     const expectedApiKey = process.env.INTERNAL_API_KEY;
+    const expectedCronSecret = process.env.CRON_SECRET;
     
-    if (expectedApiKey && apiKey === expectedApiKey) {
-      // Admin/internal access
-      (request as AuthenticatedRequest).userId = 'admin';
+    // Admin/internal/cron access
+    if ((expectedApiKey && apiKey === expectedApiKey) || 
+        (expectedCronSecret && cronSecret === expectedCronSecret)) {
+      (request as AuthenticatedRequest).userId = 'system';
       return handler(request as AuthenticatedRequest);
     }
 
-    // Check for authenticated user via Supabase
-    const { data: { user }, error } = await supabase.auth.getUser();
+    // Create Supabase client for server-side auth
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value;
+          },
+          set() {
+            // Not needed for auth checks
+          },
+          remove() {
+            // Not needed for auth checks
+          },
+        },
+      }
+    );
+
+    // Check for Bearer token in Authorization header
+    const authHeader = request.headers.get('authorization');
+    let user = null;
+    let error = null;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const result = await supabase.auth.getUser(token);
+      user = result.data.user;
+      error = result.error;
+    } else {
+      // Fallback to session from cookies
+      const result = await supabase.auth.getUser();
+      user = result.data.user;
+      error = result.error;
+    }
 
     if (error || !user) {
-      // Allow limited guest access for certain endpoints
-      const pathname = request.nextUrl.pathname;
-      const guestAllowedPaths = [
-        '/api/fortune/daily',
-        '/api/fortune/compatibility'
-      ];
-      
-      if (guestAllowedPaths.some(path => pathname.includes(path))) {
-        (request as AuthenticatedRequest).isGuest = true;
-        return handler(request as AuthenticatedRequest);
-      }
-
+      // 인증되지 않은 사용자는 로그인 필요
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { 
+          error: '로그인이 필요합니다.',
+          code: 'AUTHENTICATION_REQUIRED',
+          requireAuth: true
+        },
         { status: 401 }
       );
     }
 
+    // Check premium status
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('premium_until')
+      .eq('id', user.id)
+      .single();
+
+    const isPremium = profile?.premium_until && new Date(profile.premium_until) > new Date();
+
     // Authenticated user
     (request as AuthenticatedRequest).userId = user.id;
+    (request as AuthenticatedRequest).userEmail = user.email;
+    (request as AuthenticatedRequest).isPremium = isPremium;
+    
     return handler(request as AuthenticatedRequest);
 
   } catch (error) {
     console.error('Auth middleware error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { error: 'Authentication service temporarily unavailable' },
+      { status: 503 }
     );
   }
 }

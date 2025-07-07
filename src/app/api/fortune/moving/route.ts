@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateMovingFortune } from '@/ai/openai-client';
 
 // POST 요청 (상세 이사 정보로 분석)
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('🏠 이사운 API 요청 (상세 분석)');
   
   try {
@@ -58,15 +58,12 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ 이사운 분석 실패:', error);
-    return NextResponse.json(
-      { error: '이사운 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '이사운 분석 중 오류가 발생했습니다.');
   }
 }
 
 // GET 요청 (기본 정보 제공)
-export async function GET() {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   return NextResponse.json({
     name: '이사 운세',
     description: '이사 시기와 방향을 종합적으로 분석하여 최적의 이사 조언 제공',
@@ -96,4 +93,4 @@ export async function GET() {
       reason: '직장 이전'
     }
   });
-} 
+});

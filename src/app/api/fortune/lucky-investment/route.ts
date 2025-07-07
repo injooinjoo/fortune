@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
+import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
 
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface InvestmentRequest {
@@ -67,7 +68,9 @@ function generateOverallLuck(request: InvestmentRequest): number {
   // 투자 목표 다양성
   if (request.investment_goals.length >= 3) baseScore += 5;
   
-  return Math.max(50, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
+  // deterministic random 사용
+  const rng = createDeterministicRandom(request.name, getTodayDateString(), 'overall-luck');
+  return Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14) - 7));
 }
 
 function generateInvestmentLuck(request: InvestmentRequest): number {
@@ -84,7 +87,9 @@ function generateInvestmentLuck(request: InvestmentRequest): number {
   else if (request.investment_period.includes('5년')) baseScore += 5;
   else if (request.investment_period.includes('1년 이하')) baseScore -= 5;
   
-  return Math.max(45, Math.min(100, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
+  // deterministic random 사용
+  const rng = createDeterministicRandom(request.name, getTodayDateString(), 'investment-luck');
+  return Math.max(45, Math.min(100, baseScore + rng.randomInt(0, 19) - 10));
 }
 
 function generateTradingLuck(request: InvestmentRequest): number {
@@ -100,7 +105,9 @@ function generateTradingLuck(request: InvestmentRequest): number {
   else if (request.risk_tolerance.includes('중위험')) baseScore += 5;
   else if (request.risk_tolerance.includes('안정형')) baseScore -= 5;
   
-  return Math.max(40, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
+  // deterministic random 사용
+  const rng = createDeterministicRandom(request.name, getTodayDateString(), 'trading-luck');
+  return Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 19) - 10));
 }
 
 function generateProfitLuck(request: InvestmentRequest): number {
@@ -114,7 +121,9 @@ function generateProfitLuck(request: InvestmentRequest): number {
   if (request.financial_goal.includes('안정') || request.financial_goal.includes('꾸준')) baseScore += 8;
   else if (request.financial_goal.includes('단기') || request.financial_goal.includes('급격')) baseScore -= 5;
   
-  return Math.max(50, Math.min(100, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
+  // deterministic random 사용
+  const rng = createDeterministicRandom(request.name, getTodayDateString(), 'profit-luck');
+  return Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14) - 7));
 }
 
 function generateTimingLuck(request: InvestmentRequest): number {
@@ -133,7 +142,9 @@ function generateTimingLuck(request: InvestmentRequest): number {
   if (request.current_situation.includes('안정') || request.current_situation.includes('여유')) baseScore += 10;
   else if (request.current_situation.includes('어려움') || request.current_situation.includes('급함')) baseScore -= 5;
   
-  return Math.max(55, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 19) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 20) - 10));
+  // deterministic random 사용
+  const rng = createDeterministicRandom(request.name, getTodayDateString(), 'timing-luck');
+  return Math.max(55, Math.min(95, baseScore + rng.randomInt(0, 19) - 10));
 }
 
 function generateLuckyAssets(request: InvestmentRequest): string[] {
@@ -397,27 +408,37 @@ function generatePersonalizedInvestmentFortune(request: InvestmentRequest): Inve
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body: InvestmentRequest = await request.json();
-    
-    // 필수 필드 검증
-    if (!body.name || !body.birth_date || !body.risk_tolerance) {
+  return withAuth(request, async (req: AuthenticatedRequest) => {
+    try {
+      // 인증된 사용자만 접근 가능
+      if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
+        return NextResponse.json(
+          { error: '로그인이 필요합니다.' },
+          { status: 401 }
+        );
+      }
+
+      const body: InvestmentRequest = await request.json();
+      
+      // 필수 필드 검증
+      if (!body.name || !body.birth_date || !body.risk_tolerance) {
+        return NextResponse.json(
+          { error: '필수 정보가 누락되었습니다.' },
+          { status: 400 }
+        );
+      }
+
+      // Mock 응답 (GPT 연동 시 실제 응답으로 대체)
+      const fortuneResult = await analyzeInvestmentFortune(body);
+
+      return NextResponse.json(fortuneResult);
+      
+    } catch (error) {
+      console.error('Lucky investment API error:', error);
       return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
-        { status: 400 }
+        { error: '투자운 분석 중 오류가 발생했습니다.' },
+        { status: 500 }
       );
     }
-
-    // Mock 응답 (GPT 연동 시 실제 응답으로 대체)
-    const fortuneResult = await analyzeInvestmentFortune(body);
-
-    return NextResponse.json(fortuneResult);
-    
-  } catch (error) {
-    console.error('Lucky investment API error:', error);
-    return NextResponse.json(
-      { error: '투자운 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
-  }
+  });
 } 

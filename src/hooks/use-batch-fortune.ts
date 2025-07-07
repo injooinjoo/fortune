@@ -71,8 +71,9 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
 
   // 배치 운세 생성
   const generateBatchFortune = useCallback(async (overrideOptions?: UseBatchFortuneOptions) => {
-    if (!user || !profile) {
-      setError('로그인이 필요합니다.');
+    // 로그인 체크를 일시적으로 완화 (개발 중)
+    if (!profile) {
+      console.log('프로필 정보가 없어 배치 운세 생성을 건너뜁니다.');
       return;
     }
 
@@ -93,14 +94,14 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
       const request: BatchFortuneRequest = {
         request_type: 'user_direct_request',
         user_profile: {
-          id: user.id,
+          id: user?.id || profile.id || 'anonymous',
           name: profile.name || '사용자',
-          birth_date: profile.birth_date || '1990-01-01',
-          birth_time: profile.birth_time,
+          birth_date: profile.birth_date || profile.birthDate || '1990-01-01',
+          birth_time: profile.birth_time || profile.birthTime,
           gender: profile.gender,
           mbti: profile.mbti,
-          zodiac_sign: profile.zodiac_sign,
-          relationship_status: profile.relationship_status
+          zodiac_sign: profile.zodiac_sign || profile.zodiacSign,
+          relationship_status: profile.relationship_status || profile.relationshipStatus
         },
         fortune_types: types,
         requested_categories: finalOptions.packageName ? [finalOptions.packageName] : undefined,
@@ -124,11 +125,18 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
         throw new Error(errorData.error || '운세 생성에 실패했습니다.');
       }
 
-      const data: BatchFortuneResponse = await response.json();
-      setFortuneData(data);
+      const result = await response.json();
       
-      // 캐시 저장
-      saveToCache(data, types);
+      // 표준화된 응답 형식 처리
+      if (result.success && result.data) {
+        const data: BatchFortuneResponse = result.data;
+        setFortuneData(data);
+        
+        // 캐시 저장
+        saveToCache(data, types);
+      } else {
+        throw new Error(result.error || '운세 생성에 실패했습니다.');
+      }
     } catch (err) {
       console.error('배치 운세 생성 오류:', err);
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
@@ -154,12 +162,13 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
     await generateBatchFortune();
   }, [fortuneTypes, getCacheKey, generateBatchFortune]);
 
-  // 초기 로드
+  // 초기 로드 - 프로필이 있을 때만
   useEffect(() => {
-    if (user && profile && !fortuneData && !loading) {
-      generateBatchFortune();
+    if (profile && !fortuneData && !loading) {
+      // 초기 로드는 건너뛰고 명시적 호출을 기다림
+      console.log('배치 운세 준비 완료, 명시적 호출을 기다립니다.');
     }
-  }, [user, profile, fortuneData, loading, generateBatchFortune]);
+  }, [profile, fortuneData, loading]);
 
   return {
     fortuneData,

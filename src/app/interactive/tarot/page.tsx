@@ -7,20 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AppHeader from "@/components/AppHeader";
-import { 
-  InteractiveFortuneInputSchema,
-  InteractiveFortuneOutputSchema,
-  UserProfileSchema,
-  generateInteractiveFortune,
-} from "@/ai/flows/generate-specialized-fortune";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { Loader2, Sparkles, RotateCcw, MessageCircle, BookOpen, Wand2 } from "lucide-react";
 
-type TarotResult = z.infer<typeof InteractiveFortuneOutputSchema>;
+interface TarotResult {
+  situation: string;
+  cards: Array<{
+    name: string;
+    meaning: string;
+    position: string;
+  }>;
+  interpretation: string;
+  advice: string;
+}
 
 // TODO: This should come from a global state/user context
-const MOCK_USER_PROFILE: z.infer<typeof UserProfileSchema> = {
+const MOCK_USER_PROFILE = {
   name: "홍길동",
   gender: 'male',
   birthDate: "1990-01-01",
@@ -53,13 +56,25 @@ export default function TarotPage() {
     const loadingToast = toast.loading("AI가 타로 카드를 해석하고 있습니다...");
 
     try {
-      const requestData: z.infer<typeof InteractiveFortuneInputSchema> = {
+      const requestData = {
         userProfile: MOCK_USER_PROFILE,
         category: "tarot",
         question: question,
       };
 
-      const finalResult = await generateInteractiveFortune(requestData);
+      const response = await fetch('/api/fortune/interactive', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      const finalResult = await response.json();
       
       setResult(finalResult);
       setStep('result');

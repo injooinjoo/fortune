@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 import {
   Card,
   CardContent,
@@ -124,16 +125,24 @@ export default function CelebrityFortunePage() {
         "주변과의 조화를 이루며 영향력을 확대하는 단계입니다."
       ];
 
+      // Initialize deterministic random for consistent daily results
+      // Use celebrity name as part of the seed to ensure different results for different celebrities
+      const rng = new DeterministicRandom(
+        info.name, // Use celebrity name as the "user" identifier
+        getTodayDateString(),
+        'celebrity'
+      );
+
       return {
         celebrity: {
           name: info.name,
           category,
-          description: descriptions[Math.floor(Math.random() * descriptions.length)],
+          description: rng.randomElement(descriptions),
           emoji: getEmoji(category),
         },
-        todayScore: Math.floor(Math.random() * 30) + 70,
-        weeklyScore: Math.floor(Math.random() * 30) + 70,
-        monthlyScore: Math.floor(Math.random() * 30) + 70,
+        todayScore: rng.randomInt(70, 100),
+        weeklyScore: rng.randomInt(70, 100),
+        monthlyScore: rng.randomInt(70, 100),
         summary: `${info.name}님의 운세는 전반적으로 상승세를 보이고 있습니다. 특히 창의적인 활동에서 좋은 결과를 얻을 수 있을 것입니다.`,
         luckyTime: "오후 3시 ~ 6시",
         luckyColor: "#FFD700",

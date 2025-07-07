@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImageBasedFortune } from '@/ai/openai-client';
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('📸 관상 운세 API 요청');
   
   try {
@@ -47,15 +47,12 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ 관상 분석 실패:', error);
-    return NextResponse.json(
-      { error: '관상 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '관상 분석 중 오류가 발생했습니다.');
   }
 }
 
 // GET 요청 (기본 정보 제공)
-export async function GET() {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   return NextResponse.json({
     name: '관상 운세',
     description: '얼굴 사진을 통한 관상학적 분석',
@@ -71,4 +68,4 @@ export async function GET() {
       ]
     }
   });
-}
+});

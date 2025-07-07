@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
+import { useAuth } from '@/contexts/auth-context';
 import {
   Sparkles,
   TrendingUp,
@@ -61,6 +62,7 @@ const itemVariants = {
 };
 
 export default function DestinyFortunePage() {
+  const { session } = useAuth();
   const [data, setData] = useState<DestinyFortuneData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,30 +76,45 @@ export default function DestinyFortunePage() {
     const fetchDestinyData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/fortune/destiny');
+        
+        // AuthContext에서 세션 가져오기
+        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        
+        const response = await fetch('/api/fortune/destiny', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session?.access_token && {
+              'Authorization': `Bearer ${session.access_token}`
+            })
+          },
+        });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('로그인이 필요합니다.');
+          }
           throw new Error('인연운 데이터를 가져오는데 실패했습니다');
         }
         
         const result = await response.json();
         
-        if (result.success && result.data?.destiny) {
-          const destinyData = result.data.destiny;
+        if (result.success && result.data) {
+          const destinyData = result.data;
           setData({
-            destinyScore: destinyData.destiny_score,
-            summary: destinyData.summary,
-            advice: destinyData.advice,
-            meetingPeriod: destinyData.meeting_period,
-            meetingPlace: destinyData.meeting_place,
-            partnerTraits: destinyData.partner_traits,
-            developmentChance: destinyData.development_chance,
+            destinyScore: destinyData.destiny_score || destinyData.overall_score || 0,
+            summary: destinyData.summary || '',
+            advice: destinyData.advice || '',
+            meetingPeriod: destinyData.meeting_period || '',
+            meetingPlace: destinyData.meeting_place || '',
+            partnerTraits: destinyData.partner_traits || [],
+            developmentChance: destinyData.development_chance || 0,
             predictions: {
-              firstMeeting: destinyData.predictions.first_meeting,
-              relationship: destinyData.predictions.relationship,
-              longTerm: destinyData.predictions.long_term
+              firstMeeting: destinyData.predictions?.first_meeting || '',
+              relationship: destinyData.predictions?.relationship || '',
+              longTerm: destinyData.predictions?.long_term || ''
             },
-            actionItems: destinyData.action_items
+            actionItems: destinyData.action_items || []
           });
         } else {
           throw new Error('잘못된 응답 형식입니다');
@@ -110,7 +127,7 @@ export default function DestinyFortunePage() {
     };
 
     fetchDestinyData();
-  }, []);
+  }, [session]);
 
   if (loading) {
     return (

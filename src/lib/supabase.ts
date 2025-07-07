@@ -25,22 +25,6 @@ export interface UserProfile {
   updated_at?: string;
 }
 
-export interface GuestProfile {
-  id: string;
-  name: string;
-  birth_date?: string;
-  birth_time?: string;
-  gender?: 'male' | 'female' | 'other';
-  mbti?: string;
-  blood_type?: 'A' | 'B' | 'AB' | 'O';
-  zodiac_sign?: string;
-  chinese_zodiac?: string;
-  job?: string;
-  location?: string;
-  session_data?: any;
-  created_at?: string;
-  expires_at?: string;
-}
 
 export interface FortuneCompletion {
   id?: string;
@@ -235,14 +219,14 @@ export class SecureStorage {
   }
 }
 
-// Supabase 설정 - 임시로 직접 설정
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://hayjukwfcsdmppairazc.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxMDIyNzUsImV4cCI6MjA2MzY3ODI3NX0.nV--LlLk8VOUyz0Vmu_26dRn1vRD9WFxPg0BIYS7ct0';
+// Supabase 설정
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-  // 환경변수 검증 (fallback 키 사용시 경고)
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn('⚠️ 환경변수가 설정되지 않아 fallback 키를 사용합니다. 프로덕션에서는 환경변수를 설정해주세요.');
-  }
+// 환경변수 검증
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('⚠️ Supabase 환경변수가 설정되지 않았습니다. NEXT_PUBLIC_SUPABASE_URL과 NEXT_PUBLIC_SUPABASE_ANON_KEY를 확인해주세요.');
+}
 
 if (process.env.NODE_ENV === 'development') {
   console.log('🔧 Supabase configured successfully');
@@ -254,7 +238,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true, // URL에서 세션 자동 감지 활성화
     flowType: 'pkce',
-    debug: process.env.NODE_ENV === 'development',
+    debug: false, // 디버그 로그 비활성화 (GoTrueClient 무한 로그 방지)
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     storageKey: 'fortune-auth-token', // 명시적인 storage key 설정
   }
@@ -340,60 +324,6 @@ export const userProfileService = {
   }
 };
 
-// 게스트 프로필 관리 함수들
-export const guestProfileService = {
-  // 게스트 프로필 생성
-  async createGuestProfile(profile: Partial<GuestProfile>): Promise<GuestProfile | null> {
-    const guestId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const guestProfile = {
-      id: guestId,
-      name: profile.name || '게스트',
-      ...profile,
-      created_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7일 후 만료
-    };
-
-    if (isDemoMode()) {
-      // 데모 모드에서는 로컬 스토리지에 저장
-      localStorage.setItem(`demo_guest_${guestId}`, JSON.stringify(guestProfile));
-      return guestProfile;
-    }
-
-    const { data, error } = await supabase
-      .from('guest_profiles')
-      .insert(guestProfile)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('게스트 프로필 생성 오류:', error);
-      return null;
-    }
-
-    return data;
-  },
-
-  // 게스트 프로필 조회
-  async getGuestProfile(guestId: string): Promise<GuestProfile | null> {
-    if (isDemoMode()) {
-      const profile = localStorage.getItem(`demo_guest_${guestId}`);
-      return profile ? JSON.parse(profile) : null;
-    }
-
-    const { data, error } = await supabase
-      .from('guest_profiles')
-      .select('*')
-      .eq('id', guestId)
-      .single();
-
-    if (error) {
-      console.error('게스트 프로필 조회 오류:', error);
-      return null;
-    }
-
-    return data;
-  }
-};
 
 // 운세 완성 기록 관리 함수들
 export const fortuneCompletionService = {
@@ -534,17 +464,17 @@ export const auth = {
   },
   onAuthStateChanged: (callback: (user: any) => void) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Auth state changed:', event, session?.user?.email);
+      // 로그인/로그아웃 이벤트만 로그 (디버그 모드 비활성화 상태에서도 최소한의 로그)
+      if (process.env.NODE_ENV === 'development' && 
+          (event === 'SIGNED_IN' || event === 'SIGNED_OUT')) {
+        console.log(`Auth event: ${event}`);
       }
       
       try {
         const user = session?.user || null;
         callback(user);
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Auth callback error:', error);
-        }
+        // 에러는 조용히 처리
       }
     });
     
@@ -555,16 +485,12 @@ export const auth = {
       const { data, error } = await supabase.auth.getSession();
       
       if (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.error('세션 조회 실패:', error);
-        }
+        // 세션 관련 에러는 조용히 처리
         return { data: { session: null }, error };
       }
       return { data, error: null };
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('세션 조회 예외:', error);
-      }
+      // 예외도 조용히 처리
       return { data: { session: null }, error };
     }
   },

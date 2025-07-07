@@ -116,12 +116,11 @@ export default function LuckyRunningPage() {
   });
   const [result, setResult] = useState<RunningFortune | null>(null);
 
-  const analyzeRunningFortune = async ():
+  const analyzeRunningFortune = async (): Promise<RunningFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<RunningFortune> => {
     const birth = new Date(formData.birth_date);
     const today = new Date();
     const forecast = [] as { date: string; physical: number; emotional: number }[];

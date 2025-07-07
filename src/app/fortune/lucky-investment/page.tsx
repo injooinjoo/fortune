@@ -162,12 +162,11 @@ export default function LuckyInvestmentPage() {
   });
   const [result, setResult] = useState<InvestmentFortune | null>(null);
 
-  const analyzeInvestmentFortune = async ():
+  const analyzeInvestmentFortune = async (): Promise<InvestmentFortune> => {
     // Create deterministic random generator based on user and date
     const userId = formData.name || 'guest';
     const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
     const rng = createDeterministicRandom(userId, dateString, 'page');
-     Promise<InvestmentFortune> => {
     try {
       const response = await fetch('/api/fortune/lucky-investment', {
         method: 'POST',

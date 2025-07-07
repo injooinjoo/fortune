@@ -2,30 +2,32 @@
 // 작성일: 2024-12-19
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fortuneService } from '@/lib/services/fortune-service';
+import { FortuneService } from '@/lib/services/fortune-service';
 import { FortuneCategory, InteractiveInput } from '@/lib/types/fortune-system';
 import { getUserProfile, getAllProfiles } from '@/lib/mock-storage';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
 
 // 임시로 인증 우회 (개발용)
-async function getCurrentUser(request?: NextRequest) {
+async function getCurrentUser(request?: AuthenticatedRequest) {
   // 실제 프로덕션에서는 Supabase 인증을 사용
   // 지금은 개발 단계이므로 임시 사용자 반환
   const userId = request?.url ? new URL(request.url).searchParams.get('userId') : null;
   return {
-    id: userId || `guest_${Date.now()}`,
+    id: userId || request?.userId || 'guest',
     email: 'dev@example.com'
   };
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ category: string }> }
-) {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     // 임시 사용자 정보 가져오기 (개발용)
     const user = await getCurrentUser(request);
 
-    const { category } = await params;
+    // Extract category from URL path
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const category = pathParts[pathParts.length - 1];
     console.log(`운세 요청: ${category}, 사용자: ${user.id}`);
     
     // 공유 메모리에서 직접 프로필 조회
@@ -60,27 +62,19 @@ export async function GET(
 
   } catch (error) {
     console.error('운세 API 오류:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
-        cached: false,
-        generated_at: new Date().toISOString()
-      },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
   }
-}
+});
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ category: string }> }
-) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     // 임시 사용자 정보 가져오기 (개발용)
     const user = await getCurrentUser(request);
 
-    const { category } = await params;
+    // Extract category from URL path
+    const url = new URL(request.url);
+    const pathParts = url.pathname.split('/');
+    const category = pathParts[pathParts.length - 1];
     const requestBody = await request.json();
 
     // 공유 메모리에서 직접 프로필 조회
@@ -131,14 +125,6 @@ export async function POST(
 
   } catch (error) {
     console.error('운세 API 오류:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
-        cached: false,
-        generated_at: new Date().toISOString()
-      },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
   }
-} 
+});
