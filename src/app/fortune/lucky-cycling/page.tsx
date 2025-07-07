@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Bike, MapPin, Shield, Palette, Clock, Sparkles } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface CyclingInfo {
   name: string;
   birth_date: string;
@@ -66,7 +67,7 @@ const safetyTipsBase = [
 
 function shuffle<T>(array: T[]): T[] {
   return array
-    .map((value) => ({ value, sort: Math.random() }))
+    .map((value) => ({ value, sort: rng.random() }))
     .sort((a, b) => a.sort - b.sort)
     .map(({ value }) => value);
 }
@@ -79,7 +80,7 @@ export default function LuckyCyclingPage() {
 
   const generateFortune = (): CyclingFortune => {
     const day = new Date(formData.birth_date).getDate() || 1;
-    const rand = Math.floor(Math.random() * 20);
+    const rand = rng.randomInt(0, 19);
     const score = Math.max(50, Math.min(95, 60 + ((day + rand) % 30)));
     const course = courses[(day + rand) % courses.length];
     const luckyColor = colors[(day * rand) % colors.length];

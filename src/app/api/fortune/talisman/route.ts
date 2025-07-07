@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
 
-const fortuneService = new FortuneService();
 
-export async function GET(request: NextRequest) {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('🧿 부적 운세 API 요청');
   
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || 'test_user';
+    const userId = request.userId!;
     
     console.log('🔍 부적 운세 요청: 사용자 ID =', userId);
     
@@ -19,9 +20,6 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error('❌ 부적 운세 API 오류:', error);
-    return NextResponse.json(
-      { error: '부적 운세 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '부적 운세 분석 중 오류가 발생했습니다.');
   }
-} 
+});

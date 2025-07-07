@@ -19,7 +19,27 @@ interface GoogleAdsenseProps {
 declare global {
   interface Window {
     adsbygoogle: any[];
+    __adSenseScriptLoaded?: boolean;
+    __adSenseScriptLoading?: boolean;
+    __adSenseSlots?: Set<string>;
   }
+}
+
+// 광고 로드 상태를 전역으로 관리하기 위한 헬퍼 함수
+function getAdSlotKey(clientId: string, adSlot: string): string {
+  return `${clientId}-${adSlot}`;
+}
+
+function isAdSlotLoaded(clientId: string, adSlot: string): boolean {
+  if (typeof window === 'undefined') return false;
+  window.__adSenseSlots = window.__adSenseSlots || new Set();
+  return window.__adSenseSlots.has(getAdSlotKey(clientId, adSlot));
+}
+
+function markAdSlotLoaded(clientId: string, adSlot: string): void {
+  if (typeof window === 'undefined') return;
+  window.__adSenseSlots = window.__adSenseSlots || new Set();
+  window.__adSenseSlots.add(getAdSlotKey(clientId, adSlot));
 }
 
 export default function GoogleAdsense({
@@ -34,11 +54,12 @@ export default function GoogleAdsense({
   fallback = null,
   testMode = false,
 }: GoogleAdsenseProps) {
-  const pathname = usePathname();
   const [isAdBlockerDetected, setIsAdBlockerDetected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScriptReady, setIsScriptReady] = useState(false);
   const adRef = useRef<HTMLDivElement>(null);
-  const isAdLoadedRef = useRef(false);
+  const loadAttemptRef = useRef(0);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   // 슬롯 ID 선택 (2개만 사용)
   const getAdSlot = () => {
@@ -72,46 +93,85 @@ export default function GoogleAdsense({
     detectAdBlocker();
   }, []);
 
+  // AdSense 스크립트 로드 상태 모니터링
   useEffect(() => {
-    // 이미 광고가 로드되었으면 스킵
-    if (isAdLoadedRef.current) {
+    const checkScriptStatus = () => {
+      if (window.__adSenseScriptLoaded) {
+        setIsScriptReady(true);
+      }
+    };
+
+    // 초기 체크
+    checkScriptStatus();
+
+    // 스크립트가 아직 로드되지 않았다면 폴링
+    if (!window.__adSenseScriptLoaded) {
+      const interval = setInterval(checkScriptStatus, 500);
+      return () => clearInterval(interval);
+    }
+  }, []);
+
+  // 광고 로드 로직 (디바운싱 적용)
+  useEffect(() => {
+    const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;
+    const adSlot = getAdSlot();
+    
+    if (!clientId || !adSlot || !isScriptReady || isAdBlockerDetected) {
       return;
     }
 
-    try {
-      // AdSense 스크립트가 로드되었는지 확인
-      if (typeof window !== "undefined" && window.adsbygoogle && !isAdBlockerDetected && adRef.current) {
-        // 컨테이너의 너비를 체크하여 fluid 광고의 최소 너비 요구사항 확인
+    // 이미 이 슬롯에 광고가 로드되었는지 확인
+    if (isAdSlotLoaded(clientId, adSlot)) {
+      console.log(`✅ 광고 슬롯 ${adSlot}은 이미 로드됨`);
+      return;
+    }
+
+    // 타임아웃 설정으로 무한 로딩 방지
+    timeoutRef.current = setTimeout(() => {
+      try {
+        if (!adRef.current) return;
+
+        // 컨테이너 너비 체크
         const adContainer = adRef.current;
         if (adContainer && adContainer.clientWidth < 250 && format === "auto") {
-          console.warn("Fluid responsive ads require at least 250px width. Current width:", adContainer.clientWidth);
+          console.warn("광고 컨테이너 너비 부족:", adContainer.clientWidth);
           return;
         }
-        
-        // 현재 컨테이너 내부의 ins 요소가 이미 광고를 가지고 있는지 확인
+
+        // ins 요소 상태 확인
         const insElement = adRef.current.querySelector('ins.adsbygoogle');
         if (insElement) {
           const adStatus = insElement.getAttribute('data-ad-status');
           if (adStatus === 'filled' || adStatus === 'unfilled') {
-            isAdLoadedRef.current = true;
+            markAdSlotLoaded(clientId, adSlot);
             return;
           }
         }
-        
-        // 광고 로드
-        window.adsbygoogle.push({});
-        isAdLoadedRef.current = true;
-      }
-    } catch (error) {
-      console.error("AdSense 광고 로드 실패:", error);
-    }
 
-    // Cleanup 함수
+        // 최대 시도 횟수 제한
+        if (loadAttemptRef.current >= 3) {
+          console.warn(`❌ 광고 로드 최대 시도 횟수 초과: ${adSlot}`);
+          return;
+        }
+
+        // 광고 로드
+        if (window.adsbygoogle && window.adsbygoogle.push) {
+          window.adsbygoogle.push({});
+          markAdSlotLoaded(clientId, adSlot);
+          loadAttemptRef.current++;
+          console.log(`✅ 광고 로드 시도: ${adSlot}`);
+        }
+      } catch (error) {
+        console.error("❌ AdSense 광고 로드 실패:", error);
+      }
+    }, 1000); // 1초 디바운스
+
     return () => {
-      // 컴포넌트 언마운트 시 광고 로드 상태 초기화
-      isAdLoadedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [pathname, isAdBlockerDetected, format]);
+  }, [isScriptReady, isAdBlockerDetected, format]);
 
   // 클라이언트 ID가 없으면 fallback 표시
   const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID;

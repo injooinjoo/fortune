@@ -38,6 +38,7 @@ import {
   LightbulbIcon
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface SidejobInfo {
   name: string;
   birth_date: string;
@@ -134,6 +135,10 @@ export default function LuckySideJobPage() {
   const [result, setResult] = useState<SidejobFortune | null>(null);
 
   const analyzeSidejobFortune = async (): Promise<SidejobFortune> => {
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
     try {
       const response = await fetch('/api/fortune/lucky-sidejob', {
         method: 'POST',
@@ -153,13 +158,13 @@ export default function LuckySideJobPage() {
       console.error('부업 운세 분석 오류:', error);
       
       // 백업 로직
-      const baseScore = Math.floor(Math.random() * 25) + 65;
+      const baseScore = rng.randomInt(0, 24) + 65;
       return {
         overall_luck: baseScore,
-        income_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 10) - 5)),
-        time_management_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 12) - 6)),
-        opportunity_luck: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15) - 7)),
-        networking_luck: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 8) - 4)),
+        income_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 9) - 5)),
+        time_management_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 11) - 6)),
+        opportunity_luck: Math.max(45, Math.min(95, baseScore + rng.randomInt(0, 14) - 7)),
+        networking_luck: Math.max(55, Math.min(100, baseScore + rng.randomInt(0, 7) - 4)),
         recommended_sidejobs: {
           top_recommendation: {
             category: '온라인 비즈니스',

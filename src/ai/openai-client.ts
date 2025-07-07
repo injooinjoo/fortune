@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 
 // OpenAI 클라이언트 초기화
 const openai = new OpenAI({
@@ -88,11 +89,14 @@ function createBatchFortunePrompt(request: BatchFortuneRequest): string {
       case 'destiny':
         return `"destiny": 운명 분석`;
       case 'daily':
-        return `"daily": 오늘의 운세 (총운, 애정운, 금전운, 건강운)`;
+      case 'today':
+        return `"${fortune}": 오늘의 상세 운세 분석`;
       case 'love':
         return `"love": 연애운`;
       case 'career':
         return `"career": 직업운`;
+      case 'wealth':
+        return `"wealth": 금전운`;
       default:
         return `"${fortune}": ${fortune} 운세`;
     }
@@ -104,14 +108,33 @@ function createBatchFortunePrompt(request: BatchFortuneRequest): string {
 다음 운세들을 한 번에 분석해주세요:
 ${fortuneDescriptions}
 
-각 운세는 다음 형식으로 작성:
-- overall_luck: 0-100 점수 (해당되는 경우)
-- summary: 간단한 요약 (50자 이내)
-- advice: 실용적 조언 (50자 이내)
-- 기타 운세별 특화 정보
+중요: 각 운세는 반드시 구체적이고 개인화된 내용으로 작성하세요. 뻔한 조언이나 일반적인 말은 피하세요.
+
+daily/today 운세는 다음 형식으로 작성:
+{
+  "score": 75,
+  "keywords": ["구체적키워드1", "구체적키워드2", "구체적키워드3"],
+  "summary": "오늘 ${profile.name}님께는 [구체적인 상황]이 예상됩니다. [실제적인 조언]",
+  "luckyColor": "#색상코드",
+  "luckyNumber": 숫자,
+  "energy": 에너지레벨(0-100),
+  "mood": "구체적인 감정상태",
+  "advice": "${profile.name}님의 성격을 고려할 때, [맞춤형 조언]",
+  "caution": "오늘은 특히 [구체적 주의사항]",
+  "bestTime": "시간대와 이유",
+  "compatibility": "${profile.name}님과 잘 맞는 [구체적인 유형]의 사람",
+  "elements": {
+    "love": 점수,
+    "career": 점수,
+    "money": 점수,
+    "health": 점수
+  }
+}
+
+다른 운세들도 각각의 특성에 맞게 구체적이고 실용적인 내용으로 작성하세요.
+"좋은 사람들과 함께"같은 뻔한 표현 대신, 사용자의 MBTI나 생년월일을 고려한 맞춤형 조언을 제공하세요.
 
 JSON 형식으로 응답하되, 각 운세를 키로 하는 객체로 반환하세요.
-토큰을 절약하기 위해 짧고 핵심적으로 작성하세요.
 `;
 }
 
@@ -157,11 +180,14 @@ export async function generateImageBasedFortune(
 function parseImageFortuneResponse(response: string | null, fortuneType: string): any {
   if (!response) return null;
   
+  // Deterministic random for consistent results
+  const rng = new DeterministicRandom('system', getTodayDateString(), fortuneType);
+  
   // 기본 구조 생성
   return {
     type: fortuneType,
     analysis: response,
-    overall_luck: Math.floor(Math.random() * 21) + 70, // 70-90
+    overall_luck: rng.randomInt(70, 90), // 70-90
     summary: response.substring(0, 100) + '...',
     advice: "더 자세한 분석을 원하시면 전문가와 상담하세요.",
     generated_at: new Date().toISOString()

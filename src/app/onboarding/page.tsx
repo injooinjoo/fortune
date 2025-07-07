@@ -113,7 +113,7 @@ export default function OnboardingPage() {
       
       // 프로필 데이터 준비
       const profileData: UserProfile = {
-        id: currentUser?.id || `guest_${Date.now()}`,
+        id: currentUser?.id || '',
         name: values.name,
         email: currentUser?.email || '',
         birth_date: isoDate,

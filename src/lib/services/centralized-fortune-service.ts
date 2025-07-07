@@ -248,7 +248,10 @@ export class CentralizedFortuneService {
     request: BatchFortuneRequest,
     packageConfig: FortunePackageConfig
   ): BatchFortuneResponse {
-    const requestId = `batch_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    // 결정적 ID 생성 (사용자 ID와 타임스탬프 기반)
+    const timestamp = Date.now();
+    const userHash = this.hashString(request.user_profile.id);
+    const requestId = `batch_${timestamp}_${userHash}`;
     const now = new Date();
     const expiresAt = new Date(now.getTime() + packageConfig.cacheDuration);
     
@@ -310,12 +313,13 @@ export class CentralizedFortuneService {
 
   private async saveToDatabase(response: BatchFortuneResponse): Promise<void> {
     try {
-      // 배치 레코드 저장
+      // 배치 레코드 저장 (analysis_results 포함)
       const { error: batchError } = await supabase.from('fortune_batches').insert({
         batch_id: response.request_id,
         user_id: response.user_id,
         request_type: response.request_type,
         fortune_types: Object.keys(response.analysis_results),
+        analysis_results: response.analysis_results, // 전체 분석 결과 저장
         token_usage: response.token_usage,
         generated_at: response.generated_at,
         expires_at: response.cache_info.expires_at
@@ -325,21 +329,8 @@ export class CentralizedFortuneService {
         console.error('배치 레코드 저장 오류:', batchError);
       }
       
-      // 개별 운세 레코드 저장
-      const fortunes = Object.entries(response.analysis_results).map(([type, data]) => ({
-        user_id: response.user_id,
-        fortune_type: type,
-        fortune_data: data,
-        batch_id: response.request_id,
-        generated_at: response.generated_at,
-        expires_at: response.cache_info.expires_at
-      }));
-      
-      const { error: fortunesError } = await supabase.from('user_fortunes').insert(fortunes);
-      
-      if (fortunesError) {
-        console.error('개별 운세 저장 오류:', fortunesError);
-      }
+      // 개별 운세는 메모리 캐시에만 저장 (user_fortunes 테이블 대신)
+      // 배치에서 개별 운세를 가져올 수 있도록 fortune_batches 테이블에 전체 데이터 저장
     } catch (error) {
       console.error('데이터베이스 저장 실패:', error);
     }
@@ -365,21 +356,11 @@ export class CentralizedFortuneService {
         return null;
       }
 
-      // 개별 운세 데이터 가져오기
-      const { data: fortunes } = await supabase
-        .from('user_fortunes')
-        .select('*')
-        .eq('batch_id', data[0].batch_id);
-
-      if (!fortunes) {
-        return null;
-      }
-
-      // 응답 재구성
-      const analysisResults: { [key: string]: any } = {};
-      fortunes.forEach(fortune => {
-        analysisResults[fortune.fortune_type] = fortune.fortune_data;
-      });
+      // fortune_batches 테이블에 전체 분석 결과가 저장되어 있다고 가정
+      const batchData = data[0];
+      
+      // analysis_results가 직접 저장되어 있는지 확인
+      const analysisResults = batchData.analysis_results || {};
 
       return {
         request_id: data[0].batch_id,
@@ -427,6 +408,17 @@ export class CentralizedFortuneService {
     });
     
     return fortunes;
+  }
+
+  // 문자열을 결정적으로 해시하는 헬퍼 함수
+  private hashString(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36);
   }
 }
 

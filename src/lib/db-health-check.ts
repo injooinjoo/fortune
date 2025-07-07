@@ -21,8 +21,7 @@ export const checkLocalStorageHealth = (): LocalStorageHealthStatus => {
 
     // 2. 사용자 데이터 존재 여부 확인
     const userProfileStr = localStorage.getItem('userProfile');
-    const guestUserId = localStorage.getItem('guest_user_id');
-    const hasUserData = !!(userProfileStr || guestUserId);
+    const hasUserData = !!userProfileStr;
     
     let userProfile = null;
     if (userProfileStr) {
@@ -70,7 +69,7 @@ export const checkLocalStorageHealth = (): LocalStorageHealthStatus => {
     let oldDataCount = 0;
     
     storageKeys.forEach(key => {
-      if (key.startsWith('temp_') || key.startsWith('guest_')) {
+      if (key.startsWith('temp_')) {
         try {
           const data = JSON.parse(localStorage.getItem(key) || '{}');
           if (data.created_at && new Date(data.created_at).getTime() < thirtyDaysAgo) {
@@ -108,11 +107,22 @@ export const checkLocalStorageHealth = (): LocalStorageHealthStatus => {
   }
 };
 
-export const logLocalStorageStatus = (): void => {
+export const logLocalStorageStatus = (verbose: boolean = false): void => {
   if (typeof window === 'undefined') return;
   
   const status = checkLocalStorageHealth();
   
+  // 간단한 요약만 출력 (기본)
+  if (!verbose) {
+    if (status.isAvailable && status.hasUserData) {
+      console.log(`💾 Storage: ${Math.round(status.dataSize / 1024)}KB used, ${status.dataCount} items${status.issues.length > 0 ? `, ${status.issues.length} issues` : ''}`);
+    } else if (!status.isAvailable) {
+      console.error('❌ Local Storage unavailable');
+    }
+    return;
+  }
+  
+  // 상세 로그 (verbose 모드)
   console.group('🏥 Local Storage Health Check');
   
   if (status.isAvailable) {
@@ -170,19 +180,6 @@ export const cleanupLocalStorage = (): { cleaned: number; freedSpace: number } =
         }
       }
       
-      // 오래된 게스트 데이터 정리
-      if (key.startsWith('guest_')) {
-        try {
-          const data = JSON.parse(localStorage.getItem(key) || '{}');
-          if (data.created_at && new Date(data.created_at).getTime() < thirtyDaysAgo) {
-            const value = localStorage.getItem(key);
-            if (value) {
-              freedSpace += value.length;
-              keysToRemove.push(key);
-            }
-          }
-        } catch {}
-      }
     });
     
     // 안전하게 제거

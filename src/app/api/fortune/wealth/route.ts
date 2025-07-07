@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
+import { createDeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 
 interface WealthInfo {
   name: string;
@@ -76,7 +77,7 @@ interface WealthFortune {
   warning_signs: string[];
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const wealthInfo: WealthInfo = await request.json();
     
@@ -93,10 +94,7 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Wealth API error:', error);
-    return NextResponse.json(
-      { error: '금전운 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '금전운 분석 중 오류가 발생했습니다.');
   }
 }
 
@@ -469,7 +467,12 @@ function generateWealthSuccessFactors(info: WealthInfo): string[] {
     '전문가 조언 활용과 학습'
   ];
 
-  return factors.sort(() => 0.5 - Math.random()).slice(0, 5);
+  // Create deterministic random for consistent results
+  const userId = info.name || 'guest';
+  const dateString = getTodayDateString();
+  const rng = createDeterministicRandom(userId, dateString, 'wealth-success');
+  
+  return rng.shuffle(factors).slice(0, 5);
 }
 
 function generateWealthWarningSignsForJob(info: WealthInfo): string[] {
@@ -483,4 +486,4 @@ function generateWealthWarningSignsForJob(info: WealthInfo): string[] {
     '신용카드 과다 사용 주의',
     '재정 계획 없는 투자 금지'
   ];
-} 
+});

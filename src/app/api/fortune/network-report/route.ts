@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
 
 // 개발용 기본 사용자 프로필 생성 함수
 const getDefaultUserProfile = (userId: string) => ({
@@ -14,20 +16,19 @@ const getDefaultUserProfile = (userId: string) => ({
   updated_at: new Date().toISOString()
 });
 
-export async function GET(request: NextRequest) {
+export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     console.log('🤝 인맥보고서 API 요청 접수');
     
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId') || `guest_${Date.now()}`;
+    const userId = request.userId!;
     
     console.log(`🔍 인맥보고서 요청: 사용자 ID = ${userId}`);
 
     // 기본 사용자 프로필 생성
     const userProfile = getDefaultUserProfile(userId);
 
-    const fortuneService = new FortuneService();
-    const result = await fortuneService.getOrCreateFortune(
+        const result = await fortuneService.getOrCreateFortune(
       userId,
       'network-report',
       userProfile
@@ -55,4 +56,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-} 
+});

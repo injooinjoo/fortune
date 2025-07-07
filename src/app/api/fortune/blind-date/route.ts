@@ -14,7 +14,7 @@ interface BlindDateInfo {
     concerns?: string;
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: BlindDateInfo = await req.json();
 
@@ -53,9 +53,6 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Blind date fortune API error:', error);
-    return NextResponse.json(
-      { error: '소개팅 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '소개팅 분석 중 오류가 발생했습니다.');
   }
-} 
+});

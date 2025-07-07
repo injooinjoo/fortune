@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppHeader from "@/components/AppHeader";
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 import { 
   UtensilsCrossed, 
   ChefHat, 
@@ -162,7 +163,12 @@ export default function LuckyFoodPage() {
   }, []);
 
   const analyzeFoodFortune = async (): Promise<FoodFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 65;
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate.toISOString().split('T')[0];
+    const rng = createDeterministicRandom(userId, dateString, 'lucky-food');
+    
+    const baseScore = rng.randomInt(65, 89);
     
     const luckyMainDishes = ["삼겹살", "갈비찜", "김치찌개", "파스타", "스테이크", "초밥", "짜장면", "카레"];
     const luckySideDishes = ["김치", "나물", "샐러드", "버섯볶음", "두부조림", "계란찜", "마카로니"];
@@ -171,20 +177,20 @@ export default function LuckyFoodPage() {
     const luckySnacks = ["견과류", "과일", "요거트", "치즈", "다크초콜릿", "팝콘", "과자"];
 
     return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      health_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      wealth_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      love_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      career_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+      overall_luck: Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14))),
+      health_luck: Math.max(45, Math.min(100, baseScore + rng.randomInt(-5, 14))),
+      wealth_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(-10, 9))),
+      love_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14))),
+      career_luck: Math.max(55, Math.min(95, baseScore + rng.randomInt(-5, 14))),
       lucky_foods: {
-        main_dish: luckyMainDishes[Math.floor(Math.random() * luckyMainDishes.length)],
-        side_dish: luckySideDishes[Math.floor(Math.random() * luckySideDishes.length)],
-        beverage: luckyBeverages[Math.floor(Math.random() * luckyBeverages.length)],
-        dessert: luckyDesserts[Math.floor(Math.random() * luckyDesserts.length)],
-        snack: luckySnacks[Math.floor(Math.random() * luckySnacks.length)]
+        main_dish: rng.randomElement(luckyMainDishes),
+        side_dish: rng.randomElement(luckySideDishes),
+        beverage: rng.randomElement(luckyBeverages),
+        dessert: rng.randomElement(luckyDesserts),
+        snack: rng.randomElement(luckySnacks)
       },
-      lucky_ingredients: ["마늘", "생강", "고추", "참기름", "꿀", "레몬"].slice().sort(() => 0.5 - Math.random()).slice(0, 3),
-      lucky_cooking_methods: ["볶음", "찜", "구이", "조림", "무침"].slice().sort(() => 0.5 - Math.random()).slice(0, 2),
+      lucky_ingredients: rng.randomElements(["마늘", "생강", "고추", "참기름", "꿀", "레몬"], 3),
+      lucky_cooking_methods: rng.randomElements(["볶음", "찜", "구이", "조림", "무침"], 2),
       meal_timing_guide: {
         breakfast: "가벼운 과일과 견과류로 시작하세요",
         lunch: "든든한 식사로 에너지를 충전하세요",

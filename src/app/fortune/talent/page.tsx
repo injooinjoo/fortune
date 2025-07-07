@@ -5,6 +5,7 @@ import AppHeader from "@/components/AppHeader";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Droplet } from "lucide-react";
+import { useAuth } from '@/contexts/auth-context';
 import {
   RadarChart,
   PolarGrid,
@@ -37,6 +38,7 @@ interface TalentReport {
 }
 
 export default function TalentPage() {
+  const { session } = useAuth();
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [data, setData] = useState<TalentReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -46,16 +48,31 @@ export default function TalentPage() {
     const fetchTalentData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/fortune/talent');
+        
+        // AuthContext에서 세션 가져오기
+        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        
+        const response = await fetch('/api/fortune/talent', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session?.access_token && {
+              'Authorization': `Bearer ${session.access_token}`
+            })
+          },
+        });
         
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('로그인이 필요합니다.');
+          }
           throw new Error('재능 운세 데이터를 가져오는데 실패했습니다.');
         }
         
         const result = await response.json();
         
-        if (result.success && result.data?.talent) {
-          setData(result.data.talent);
+        if (result.success && result.data) {
+          setData(result.data);
         } else {
           throw new Error('재능 운세 데이터가 올바르지 않습니다.');
         }
@@ -68,7 +85,7 @@ export default function TalentPage() {
     };
 
     fetchTalentData();
-  }, []);
+  }, [session]);
 
   if (loading) {
     return (

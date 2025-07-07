@@ -4,19 +4,21 @@
 
 Fortune Premium offers an enhanced, ad-free experience with exclusive features for users who want deeper insights and unlimited access to fortune services. This document outlines the premium features, implementation, and future roadmap.
 
-## Current Implementation Status
+## Current Implementation Status (2025년 7월 6일)
 
 ### ✅ Implemented
 - Premium UI pages (`/premium`, `/membership`)
 - Local storage-based subscription management (demo)
 - Ad-free experience logic
 - Premium feature flags
+- 가격 정책 및 티어 설계
 
-### 🚧 Pending
-- Real payment integration
-- Server-side subscription validation
-- Premium-exclusive fortune types
-- Advanced analytics dashboard
+### ⚠️ NOT Implemented (수익화 불가 상태)
+- ❌ **결제 시스템** - 실제 결제 불가능
+- ❌ **서버 검증** - 클라이언트만으로 우회 가능
+- ❌ **구독 관리** - 갱신/취소 시스템 없음
+- ❌ **프리미엄 API** - 무료/유료 구분 없음
+- ❌ **사용량 제한** - 무제한 사용 가능
 
 ## Premium Tiers
 
@@ -353,25 +355,36 @@ interface MonthlyReport {
 - **Loyalty Rewards**: Discounts for long-term subscribers
 - **Community Access**: Premium user forums
 
-## Implementation Roadmap
+## 🚀 Implementation Roadmap (2025)
 
-### Phase 1: Payment Integration (Q1 2025)
-- [ ] Integrate Toss Payments / Stripe
-- [ ] Implement subscription management API
-- [ ] Create payment success/failure flows
-- [ ] Add subscription webhooks
+### 🔴 Phase 0: 긴급 기반 구축 (1-2주)
+- [ ] **API 보안** - 인증/인가 시스템 (선행 필수!)
+- [ ] **Rate Limiting** - 무료/프리미엄 차등 제한
+- [ ] **사용량 추적** - 일일 운세 조회 카운트
+- [ ] **서버 검증** - 구독 상태 서버사이드 체크
 
-### Phase 2: Premium Features (Q2 2025)
-- [ ] Advanced analytics dashboard
-- [ ] AI personal assistant
-- [ ] Custom report generation
-- [ ] API access system
+### Phase 1: 결제 시스템 구축 (Q1 2025)
+- [ ] Toss Payments 연동 (한국 시장)
+- [ ] Stripe 연동 (해외 시장)
+- [ ] 구독 관리 API 구현
+- [ ] 결제 성공/실패 플로우
+- [ ] Webhook 처리 (구독 갱신/취소)
+- [ ] 영수증 발행 시스템
 
-### Phase 3: Growth Features (Q3 2025)
-- [ ] Referral system
-- [ ] Gift subscriptions
-- [ ] Corporate packages
-- [ ] White-label options
+### Phase 2: 프리미엄 기능 활성화 (Q2 2025)
+- [ ] 고급 분석 대시보드
+- [ ] AI 개인 비서 (채팅)
+- [ ] 월간 운세 리포트 (PDF)
+- [ ] API 액세스 시스템
+- [ ] 가족 공유 기능
+- [ ] 오프라인 모드
+
+### Phase 3: 성장 기능 (Q3 2025)
+- [ ] 추천인 프로그램
+- [ ] 선물 구독
+- [ ] 기업 패키지 (B2B)
+- [ ] 화이트라벨 옵션
+- [ ] 연간 구독 할인
 
 ## Metrics & KPIs
 
@@ -417,7 +430,24 @@ trackPremiumEvent('upgrade_initiated', {
 - API documentation
 - Troubleshooting guide
 
+## 💰 예상 수익 모델
+
+### 목표 지표 (2025년 말)
+- **MAU**: 100만명
+- **프리미엄 전환율**: 5%
+- **프리미엄 사용자**: 50,000명
+- **월 매출**: 5억원 (50,000 × 9,900원)
+- **연 매출**: 60억원
+
+### 손익분기점
+- **OpenAI API 비용**: 월 5,000만원
+- **인프라 비용**: 월 1,000만원
+- **인건비**: 월 2,000만원
+- **마케팅**: 월 2,000만원
+- **필요 유료 사용자**: 10,000명
+
 ---
 
 *Last updated: 2025-07-06*
-*Status: 🚧 UI Implemented, Payment Integration Pending*
+*Status: 🚧 UI만 구현됨, 실제 결제 불가능*
+*Priority: Phase 0 보안 구현 후 즉시 착수 필요*

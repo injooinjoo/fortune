@@ -11,6 +11,7 @@ export default function AuthCallbackPage() {
   const [isProcessing, setIsProcessing] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
   // 클라이언트 사이드 마운트 확인 (hydration 오류 방지)
   useEffect(() => {
@@ -21,13 +22,26 @@ export default function AuthCallbackPage() {
     if (!isClient) return;
 
     let isProcessed = false; // 중복 처리 방지 플래그
+    let timeoutId: NodeJS.Timeout;
+
+    // 10초 타임아웃 설정
+    timeoutId = setTimeout(() => {
+      if (!isProcessed) {
+        console.error('⏱️ 인증 처리 타임아웃');
+        setTimeoutReached(true);
+        setIsProcessing(false);
+        setErrorMessage('인증 처리가 너무 오래 걸리고 있습니다.');
+        setTimeout(() => router.replace('/'), 3000);
+      }
+    }, 10000);
 
     const handleAuthCallback = async () => {
       if (isProcessed) return; // 이미 처리된 경우 중단
       isProcessed = true;
 
       try {
-        console.log('🔄 Auth callback started');
+        console.log('🔄 Auth callback started at:', new Date().toISOString());
+        console.log('📍 Full URL:', window.location.href);
         
         // URL에서 직접 파라미터 추출
         const urlParams = new URLSearchParams(window.location.search);
@@ -99,6 +113,9 @@ export default function AuthCallbackPage() {
             if (data?.session?.user) {
               const user = data.session.user;
               console.log('✅ User authenticated:', user.email);
+              
+              // 타임아웃 클리어
+              clearTimeout(timeoutId);
             
             // 사용자 프로필 확인
             const existingProfile = await userProfileService.getProfile(user.id);
@@ -132,6 +149,7 @@ export default function AuthCallbackPage() {
                 saveUserProfile(existingProfile);
               }
               
+              setIsProcessing(false);
               router.replace('/home');
             } else {
               // 신규 사용자 또는 온보딩 미완료
@@ -169,6 +187,7 @@ export default function AuthCallbackPage() {
                 }
               }
               
+              setIsProcessing(false);
               router.replace('/onboarding');
             }
             } else {
@@ -228,6 +247,7 @@ export default function AuthCallbackPage() {
                 saveUserProfile(existingProfile);
               }
               
+              setIsProcessing(false);
               router.replace('/home');
             } else {
               console.log('🆕 New user with session, redirecting to onboarding');
@@ -261,24 +281,34 @@ export default function AuthCallbackPage() {
                 }
               }
               
+              setIsProcessing(false);
               router.replace('/onboarding');
             }
           } else {
             console.log('❌ No session found, redirecting to main page');
+            setIsProcessing(false);
             router.replace('/');
           }
         }
       } catch (error) {
         console.error('🚨 Auth callback processing error:', error);
+        console.error('Error stack:', (error as Error).stack);
         setErrorMessage('인증 처리 중 예기치 않은 오류가 발생했습니다.');
         setIsProcessing(false);
+        clearTimeout(timeoutId);
         setTimeout(() => router.replace('/'), 3000);
+      } finally {
+        // 어떤 경우든 타임아웃은 클리어
+        if (timeoutId) clearTimeout(timeoutId);
       }
     };
 
     // 약간의 지연을 두어 DOM이 완전히 로드된 후 실행
     const timer = setTimeout(handleAuthCallback, 100);
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [router, isClient]);
 
   return (
@@ -291,6 +321,17 @@ export default function AuthCallbackPage() {
             <p className="text-sm text-gray-600">
               인증 정보를 확인하고 있습니다...
             </p>
+            {timeoutReached && (
+              <div className="mt-4">
+                <p className="text-sm text-yellow-600">처리가 예상보다 오래 걸리고 있습니다...</p>
+                <button
+                  onClick={() => router.replace('/')}
+                  className="mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
+                >
+                  메인 페이지로 돌아가기
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <>

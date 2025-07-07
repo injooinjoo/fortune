@@ -7,7 +7,7 @@ import {
 } from '@/ai/flows/generate-specialized-fortune';
 import { generateBatchFortunes, generateSingleFortune } from '@/ai/openai-client';
 
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('🎯 통합 운세 생성 API 요청');
   
   try {
@@ -109,9 +109,6 @@ export async function POST(req: NextRequest) {
     
   } catch (error: any) {
     console.error('❌ 통합 운세 생성 실패:', error);
-    return NextResponse.json(
-      { error: '운세 생성 중 오류가 발생했습니다.', details: error.message }, 
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '운세 생성 중 오류가 발생했습니다.');
   }
-}
+});

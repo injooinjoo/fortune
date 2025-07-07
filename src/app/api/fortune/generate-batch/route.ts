@@ -3,9 +3,9 @@ import { centralizedFortuneService } from '@/lib/services/centralized-fortune-se
 import { BatchFortuneRequest } from '@/types/batch-fortune';
 import { supabase } from '@/lib/supabase';
 import { z } from 'zod';
+import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
+import { withRateLimit } from '@/middleware/rate-limit';
 
-// 메모리 기반 Rate Limiting
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 // 요청 검증 스키마
 const requestSchema = z.object({
@@ -33,57 +33,22 @@ const requestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  try {
-    // 1. 인증 확인 (기존 API 라우트 패턴 따름)
-    const authHeader = request.headers.get('Authorization');
-    const cookies = request.headers.get('cookie') || '';
-    
-    let userId: string | null = null;
-    
-    // URL 파라미터에서 userId 확인 (테스트용)
-    const url = new URL(request.url);
-    const urlUserId = url.searchParams.get('userId');
-    if (urlUserId) {
-      userId = urlUserId;
-    }
-    
-    // Authorization 헤더 확인
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.substring(7);
+  return withAuth(request, async (req: AuthenticatedRequest) => {
+    return withRateLimit(req, async () => {
       try {
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        if (!error && user) {
-          userId = user.id;
+        // 인증된 사용자만 접근 가능
+        if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
+          return NextResponse.json(
+            {
+              success: false,
+              error: '로그인이 필요합니다',
+              data: null
+            },
+            { status: 401 }
+          );
         }
-      } catch (error) {
-        console.error('토큰 검증 오류:', error);
-      }
-    }
-    
-    // 쿠키에서 Supabase 세션 확인
-    if (!userId && cookies) {
-      const sessionMatch = cookies.match(/sb-[^-]+-auth-token=([^;]+)/);
-      if (sessionMatch) {
-        try {
-          const sessionData = JSON.parse(decodeURIComponent(sessionMatch[1]));
-          if (sessionData.access_token) {
-            const { data: { user }, error } = await supabase.auth.getUser(sessionData.access_token);
-            if (!error && user) {
-              userId = user.id;
-            }
-          }
-        } catch (error) {
-          console.error('쿠키 파싱 오류:', error);
-        }
-      }
-    }
-    
-    if (!userId) {
-      return NextResponse.json(
-        { error: '인증이 필요합니다' },
-        { status: 401 }
-      );
-    }
+
+        const userId = req.userId;
 
     // 2. 요청 본문 파싱 및 검증
     const body = await request.json();
@@ -91,29 +56,29 @@ export async function POST(request: NextRequest) {
     
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: '잘못된 요청 형식', details: validationResult.error },
+        {
+          success: false,
+          error: '잘못된 요청 형식',
+          details: validationResult.error,
+          data: null
+        },
         { status: 400 }
       );
     }
 
-    const batchRequest: BatchFortuneRequest = validationResult.data;
-    
-    // 3. 사용자 ID 검증
-    if (batchRequest.user_profile.id !== userId && !isAdminUser(userId)) {
-      return NextResponse.json(
-        { error: '권한이 없습니다' },
-        { status: 403 }
-      );
-    }
-
-    // 4. Rate limiting 확인
-    const rateLimitOk = await checkRateLimit(userId, batchRequest.request_type);
-    if (!rateLimitOk) {
-      return NextResponse.json(
-        { error: '요청 한도 초과. 잠시 후 다시 시도해주세요.' },
-        { status: 429 }
-      );
-    }
+        const batchRequest: BatchFortuneRequest = validationResult.data;
+        
+        // 3. 사용자 ID 검증
+        if (batchRequest.user_profile.id !== userId && !isAdminUser(userId)) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: '권한이 없습니다',
+              data: null
+            },
+            { status: 403 }
+          );
+        }
 
     // 5. 중앙 서비스 호출
     const response = await centralizedFortuneService.callGenkitFortuneAPI(batchRequest);
@@ -131,55 +96,34 @@ export async function POST(request: NextRequest) {
       headers.set('Cache-Control', `private, max-age=${maxAge}`);
     }
 
-    return NextResponse.json(response, { headers, status: 200 });
+    // 표준화된 응답 형식으로 래핑
+    return NextResponse.json({
+      success: true,
+      data: response,
+      cached: false,
+      generated_at: new Date().toISOString()
+    }, { headers, status: 200 });
     
-  } catch (error) {
-    console.error('배치 운세 생성 오류:', error);
-    
-    // 에러 로깅
-    await logError(error, request);
-    
-    return NextResponse.json(
-      { 
-        error: '운세 생성 중 오류가 발생했습니다',
-        message: error instanceof Error ? error.message : '알 수 없는 오류'
-      },
-      { status: 500 }
-    );
-  }
+      } catch (error) {
+        console.error('배치 운세 생성 오류:', error);
+        
+        // 에러 로깅
+        await logError(error, req);
+        
+        return NextResponse.json(
+          {
+            success: false,
+            error: '운세 생성 중 오류가 발생했습니다',
+            message: error instanceof Error ? error.message : '알 수 없는 오류',
+            data: null
+          },
+          { status: 500 }
+        );
+      }
+    }, { limit: 2, windowMs: 3600000 }); // 시간당 2회 제한
+  });
 }
 
-// Rate limiting 함수
-async function checkRateLimit(userId: string, requestType: string): Promise<boolean> {
-  const limits = {
-    'onboarding_complete': { max: 1, window: 86400 }, // 하루 1회
-    'daily_refresh': { max: 2, window: 86400 }, // 하루 2회  
-    'user_direct_request': { max: 10, window: 3600 } // 시간당 10회
-  };
-  
-  const limit = limits[requestType as keyof typeof limits];
-  if (!limit) return true;
-  
-  const now = Date.now();
-  const key = `ratelimit:${requestType}:${userId}`;
-  
-  // 기존 rate limit 정보 가져오기
-  let rateLimitInfo = rateLimitStore.get(key);
-  
-  // 초기화 또는 리셋
-  if (!rateLimitInfo || now > rateLimitInfo.resetTime) {
-    rateLimitInfo = {
-      count: 0,
-      resetTime: now + (limit.window * 1000)
-    };
-    rateLimitStore.set(key, rateLimitInfo);
-  }
-  
-  // 카운트 증가
-  rateLimitInfo.count++;
-  
-  return rateLimitInfo.count <= limit.max;
-}
 
 // 관리자 확인
 function isAdminUser(userId: string): boolean {

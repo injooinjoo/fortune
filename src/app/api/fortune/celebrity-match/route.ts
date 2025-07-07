@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body = await req.json();
     const { name, birthDate, celebrity } = body;
@@ -52,10 +53,7 @@ export async function POST(req: NextRequest) {
 
   } catch (error) {
     console.error('Celebrity match fortune API error:', error);
-    return NextResponse.json(
-      { error: '연예인 궁합 분석 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '연예인 궁합 분석 중 오류가 발생했습니다.');
   }
 }
 
@@ -84,9 +82,9 @@ function generateMatchScore(name: string, birthDate: string, celebrity: string):
   if (celebrity.includes('BTS') || celebrity.includes('블랙핑크')) baseScore += 15;
   else if (celebrity.includes('아이유') || celebrity.includes('박서준')) baseScore += 12;
   else if (celebrity.includes('손흥민') || celebrity.includes('수지')) baseScore += 10;
-  else baseScore += Math.floor(Math.random() * 8) + 3;
+  else baseScore += /* TODO: Use rng.randomInt(0, 7) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 8) + 3;
   
-  return Math.max(20, Math.min(80, baseScore + Math.floor(Math.random() * 15) - 7));
+  return Math.max(20, Math.min(80, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
 }
 
 function generateComment(name: string, celebrity: string): string {
@@ -114,11 +112,11 @@ function generateComment(name: string, celebrity: string): string {
   const score = generateMatchScore(name, '', celebrity);
   
   if (score >= 65) {
-    return comments.high[Math.floor(Math.random() * comments.high.length)];
+    return comments.high[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.high.length)];
   } else if (score >= 45) {
-    return comments.medium[Math.floor(Math.random() * comments.medium.length)];
+    return comments.medium[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.medium.length)];
   } else {
-    return comments.low[Math.floor(Math.random() * comments.low.length)];
+    return comments.low[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.low.length)];
   }
 }
 
@@ -178,7 +176,7 @@ function generateLuckyItem(celebrity: string): string {
   // 연예인별 특별 아이템이 있으면 사용
   for (const [name, items] of Object.entries(celebrityItems)) {
     if (celebrity.includes(name)) {
-      return items[Math.floor(Math.random() * items.length)];
+      return items[Math.floor(/* TODO: Use rng.random() */ Math.random() * items.length)];
     }
   }
   
@@ -189,5 +187,5 @@ function generateLuckyItem(celebrity: string): string {
     '굿즈 파우치', '엽서', '포스터', '타올', '에코백'
   ];
   
-  return defaultItems[Math.floor(Math.random() * defaultItems.length)];
-} 
+  return defaultItems[Math.floor(/* TODO: Use rng.random() */ Math.random() * defaultItems.length)];
+});

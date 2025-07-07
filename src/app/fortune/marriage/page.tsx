@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
+import AdLoadingScreen from "@/components/AdLoadingScreen";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { useAuth } from '@/contexts/auth-context';
 import {
   Heart,
   TrendingUp,
@@ -89,110 +92,111 @@ const itemVariants = {
   }
 };
 
-export default function MarriageFortunePage() {
+function MarriageFortunePage() {
+  const { session } = useAuth();
   const [data, setData] = useState<MarriageFortuneData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'thisWeek' | 'thisMonth' | 'thisYear'>('today');
   const [selectedPrep, setSelectedPrep] = useState<'emotional' | 'practical' | 'financial'>('emotional');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
 
-  useEffect(() => {
-    const fetchMarriageFortune = async () => {
-      try {
-        setLoading(true);
-        console.log('결혼운 데이터 요청 시작...');
-        
-        const response = await fetch('/api/fortune/marriage', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+  const fetchMarriageFortune = async () => {
+    try {
+      console.log('결혼운 데이터 요청 시작...');
+      
+      // AuthContext에서 세션 가져오기
+      // session은 이미 useAuth()에서 가져왔음
+      
+      const response = await fetch('/api/fortune/marriage', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token && {
+            'Authorization': `Bearer ${session.access_token}`
+          })
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error(`운세 요청 실패: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`운세 요청 실패: ${response.status}`);
+      }
 
-        const result = await response.json();
-        console.log('결혼운 API 응답:', result);
-        
-        if (!result.success) {
-          throw new Error(result.error || '결혼운 생성에 실패했습니다');
-        }
+      const result = await response.json();
+      console.log('결혼운 API 응답:', result);
+      
+      if (!result.success) {
+        throw new Error(result.error || '결혼운 생성에 실패했습니다');
+      }
 
-        // API 응답을 MarriageFortuneData 형식으로 변환
-        const marriageData: MarriageFortuneData = {
-          todayScore: result.data.marriage?.current_score || 85,
-          weeklyScore: result.data.marriage?.weekly_score || 80,
-          monthlyScore: result.data.marriage?.monthly_score || 90,
-          yearlyScore: result.data.marriage?.yearly_score || 88,
-          summary: result.data.marriage?.summary || '결혼운이 상승세를 보이고 있습니다.',
-          advice: result.data.marriage?.advice || '신중하게 계획을 세우고 상대방과 소통하세요.',
-          luckyTime: result.data.marriage?.lucky_time || '오후 4시 ~ 7시',
-          luckyPlace: result.data.marriage?.lucky_place || '카페, 레스토랑, 공원',
-          luckyColor: result.data.marriage?.lucky_color || '#FFB6C1',
-          bestMarriageMonth: result.data.marriage?.best_months || ['5월', '6월', '10월'],
+      // API 응답을 MarriageFortuneData 형식으로 변환
+      const marriageData: MarriageFortuneData = {
+          todayScore: result.data.current_score || result.data.overall_score || 85,
+          weeklyScore: result.data.weekly_score || 80,
+          monthlyScore: result.data.monthly_score || 90,
+          yearlyScore: result.data.yearly_score || 88,
+          summary: result.data.summary || '결혼운이 상승세를 보이고 있습니다.',
+          advice: result.data.advice || '신중하게 계획을 세우고 상대방과 소통하세요.',
+          luckyTime: result.data.lucky_time || '오후 4시 ~ 7시',
+          luckyPlace: result.data.lucky_place || '카페, 레스토랑, 공원',
+          luckyColor: result.data.lucky_color || '#FFB6C1',
+          bestMarriageMonth: result.data.best_months || ['5월', '6월', '10월'],
           compatibility: {
-            bestAge: result.data.marriage?.compatibility?.best_age || '25-30세',
-            goodSeasons: result.data.marriage?.compatibility?.good_seasons || ['봄', '가을'],
-            idealPartner: result.data.marriage?.compatibility?.ideal_partner || ['안정적인 성격'],
-            avoid: result.data.marriage?.compatibility?.avoid || ['성급한 결정']
+            bestAge: result.data.compatibility?.best_age || '25-30세',
+            goodSeasons: result.data.compatibility?.good_seasons || ['봄', '가을'],
+            idealPartner: result.data.compatibility?.ideal_partner || ['안정적인 성격'],
+            avoid: result.data.compatibility?.avoid || ['성급한 결정']
           },
           timeline: {
-            engagement: result.data.marriage?.timeline?.engagement || '이번 년도 하반기',
-            wedding: result.data.marriage?.timeline?.wedding || '내년 봄~가을',
-            honeymoon: result.data.marriage?.timeline?.honeymoon || '결혼 후 3개월 이내',
-            newHome: result.data.marriage?.timeline?.new_home || '결혼 전 6개월'
+            engagement: result.data.timeline?.engagement || '이번 년도 하반기',
+            wedding: result.data.timeline?.wedding || '내년 봄~가을',
+            honeymoon: result.data.timeline?.honeymoon || '결혼 후 3개월 이내',
+            newHome: result.data.timeline?.new_home || '결혼 전 6개월'
           },
           predictions: {
-            today: result.data.marriage?.predictions?.today || '좋은 소식이 있을 것입니다.',
-            thisWeek: result.data.marriage?.predictions?.this_week || '관계가 깊어질 것입니다.',
-            thisMonth: result.data.marriage?.predictions?.this_month || '중요한 결정의 시기입니다.',
-            thisYear: result.data.marriage?.predictions?.this_year || '인생의 전환점이 될 것입니다.'
+            today: result.data.predictions?.today || '좋은 소식이 있을 것입니다.',
+            thisWeek: result.data.predictions?.this_week || '관계가 깊어질 것입니다.',
+            thisMonth: result.data.predictions?.this_month || '중요한 결정의 시기입니다.',
+            thisYear: result.data.predictions?.this_year || '인생의 전환점이 될 것입니다.'
           },
           preparation: {
-            emotional: result.data.marriage?.preparation?.emotional || ['마음가짐 정리하기'],
-            practical: result.data.marriage?.preparation?.practical || ['예식장 예약하기'],
-            financial: result.data.marriage?.preparation?.financial || ['결혼 자금 계획하기']
+            emotional: result.data.preparation?.emotional || ['마음가짐 정리하기'],
+            practical: result.data.preparation?.practical || ['예식장 예약하기'],
+            financial: result.data.preparation?.financial || ['결혼 자금 계획하기']
           },
-          warnings: result.data.marriage?.warnings || ['성급한 결정은 금물입니다']
+          warnings: result.data.warnings || ['성급한 결정은 금물입니다']
         };
 
-        setData(marriageData);
         console.log('결혼운 데이터 설정 완료:', marriageData);
+        return marriageData;
         
       } catch (err) {
         console.error('결혼운 데이터 로딩 실패:', err);
-        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
-      } finally {
-        setLoading(false);
+        throw err;
       }
     };
 
-    fetchMarriageFortune();
-  }, []);
-
-  if (loading) {
+  // 광고 로딩 스크린 표시
+  if (showLoadingScreen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <AppHeader 
-          title="결혼운" 
-          onFontSizeChange={setFontSize}
-          currentFontSize={fontSize}
-        />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-4">
-            <motion.div
-              className="w-16 h-16 border-4 border-pink-200 border-t-pink-600 rounded-full mx-auto"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <p className="text-pink-700 dark:text-pink-300">결혼운을 분석하고 있습니다...</p>
-          </div>
-        </div>
-      </div>
+      <AdLoadingScreen
+        fortuneType="marriage"
+        fortuneTitle="결혼운"
+        fetchData={fetchMarriageFortune}
+        onComplete={(fetchedData) => {
+          setShowLoadingScreen(false);
+          if (fetchedData) {
+            setData(fetchedData);
+          }
+        }}
+        onSkip={() => {
+          // 프리미엄 페이지로 이동
+          window.location.href = '/premium';
+        }}
+        isPremium={false}
+      />
     );
   }
 
@@ -628,5 +632,13 @@ export default function MarriageFortunePage() {
         </motion.div>
       </motion.div>
     </div>
+  );
+}
+
+export default function MarriageFortunePageWrapper() {
+  return (
+    <ProtectedRoute>
+      <MarriageFortunePage />
+    </ProtectedRoute>
   );
 } 

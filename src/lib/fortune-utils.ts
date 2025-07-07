@@ -2,6 +2,8 @@
  * 운세 관련 공통 유틸리티 함수들
  */
 
+import { createDeterministicRandom, getTodayDateString } from './deterministic-random';
+
 /**
  * 가짜 운세 데이터 생성을 방지하는 에러 클래스
  */
@@ -61,12 +63,15 @@ export async function callGPTFortuneAPI(params: {
   } catch (error) {
     console.error(`❌ GPT 운세 분석 실패 (${params.type}):`, error);
     
-    // AI 실패 시 기본 응답 반환
+    // AI 실패 시 기본 응답 반환 - deterministic random 사용
+    const userId = params.userInfo?.id || 'fallback-user';
+    const rng = createDeterministicRandom(userId, getTodayDateString(), `${params.type}-fallback`);
+    
     return {
       success: false,
       type: params.type,
       result: {
-        overall_luck: Math.floor(Math.random() * 31) + 70, // 70-100점
+        overall_luck: rng.randomInt(70, 100), // 70-100점
         summary: `${params.userInfo?.name || '사용자'}님의 ${params.type} 운세 분석을 준비 중입니다.`,
         advice: "잠시 후 다시 시도해보세요.",
         generated_at: new Date().toISOString(),
@@ -120,6 +125,7 @@ export function createSafeFortuneResult(type: string): FortuneResult {
 
 /**
  * Math.random() 사용을 방지하는 함수
+ * TODO: Use rng.random()
  */
 export function generateSecureScore(): never {
   throw new FortuneServiceError('점수 생성');

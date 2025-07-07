@@ -1,8 +1,10 @@
-# Google AdSense Integration Guide
+# 📊 Google AdSense 기술 레퍼런스
 
-## Overview
+> **참고**: 실제 구현 가이드는 [ADSENSE_IMPLEMENTATION.md](./ADSENSE_IMPLEMENTATION.md)를 참조하세요.
 
-The Fortune app has successfully integrated Google AdSense for monetization. This document covers the implementation details, best practices, and optimization strategies.
+## 개요
+
+Fortune 앱의 Google AdSense 통합에 대한 심화 기술 문서입니다. 고급 최적화, 분석, 수익화 전략을 다룹니다.
 
 ## Current Implementation
 

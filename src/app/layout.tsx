@@ -6,6 +6,7 @@ import Providers from '@/components/providers';
 import ConditionalLayout from '@/components/ConditionalLayout';
 import SecureErrorBoundary from '@/components/SecureErrorBoundary';
 import AdSenseProvider from '@/components/ads/AdSenseProvider';
+import { ChunkLoadErrorBoundary } from '@/components/ads/AdErrorBoundary';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -54,15 +55,17 @@ export default function RootLayout({
             `,
           }}
         />
-        <Providers>
-          <SecureErrorBoundary>
-            <ConditionalLayout>
-              {children}
-            </ConditionalLayout>
-          </SecureErrorBoundary>
-          <Toaster />
-          <AdSenseProvider />
-        </Providers>
+        <ChunkLoadErrorBoundary>
+          <Providers>
+            <SecureErrorBoundary>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </SecureErrorBoundary>
+            <Toaster />
+            <AdSenseProvider />
+          </Providers>
+        </ChunkLoadErrorBoundary>
       </body>
     </html>
   );

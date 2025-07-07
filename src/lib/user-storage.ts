@@ -202,7 +202,7 @@ export function getUserProfile(): UserProfile | null {
     
     // 마이그레이션된 데이터가 원본과 다르면 저장
     if (JSON.stringify(parsed) !== JSON.stringify(migrated)) {
-      console.log('프로필 데이터 마이그레이션 완료');
+      // 마이그레이션 성공 - 로그 제거
       localStorage.setItem('userProfile', JSON.stringify(migrated));
     }
     
@@ -234,10 +234,10 @@ export function saveUserProfile(profile: UserProfile | null) {
     };
     
     localStorage.setItem('userProfile', JSON.stringify(profileToSave));
-    console.log('💾 프로필 저장 완료:', profileToSave.name);
+    // 프로필 저장 완료
   } else {
     localStorage.removeItem('userProfile');
-    console.log('💾 프로필 삭제 완료');
+    // 프로필 삭제 완료
   }
 }
 
@@ -256,7 +256,7 @@ export async function syncUserProfile(): Promise<UserProfile | null> {
       const { data: sessionData } = await supabase.auth.getSession();
       
       if (sessionData?.session?.user) {
-        console.log('🔄 Supabase 세션 확인, 프로필 동기화 시작');
+        // Supabase 세션 확인, 프로필 동기화 시작
         
         // 3. Supabase에서 프로필 가져오기
         const supabaseProfile = await userProfileService.getProfile(sessionData.session.user.id);
@@ -270,7 +270,7 @@ export async function syncUserProfile(): Promise<UserProfile | null> {
           };
           
           saveUserProfile(mergedProfile);
-          console.log('✅ Supabase → 로컬 동기화 완료');
+          // Supabase → 로컬 동기화 완료
           return mergedProfile;
         } else if (localProfile && localProfile.onboarding_completed) {
           // 5. Supabase에 프로필이 없지만 로컬에 있으면 업로드
@@ -285,21 +285,21 @@ export async function syncUserProfile(): Promise<UserProfile | null> {
             onboarding_completed: localProfile.onboarding_completed
           });
           
-          console.log('✅ 로컬 → Supabase 동기화 완료');
+          // 로컬 → Supabase 동기화 완료
           return localProfile;
         }
       }
     } catch (supabaseError) {
-      console.log('🔐 게스트 사용자 또는 Supabase 연결 실패:', supabaseError);
+      // 게스트 사용자 또는 Supabase 연결 실패 - 정상적인 상황
     }
     
     // 6. Supabase 사용 불가 시 로컬 프로필 반환
     if (localProfile) {
-      console.log('💾 로컬 프로필 사용 (게스트 모드)');
+      // 로컬 프로필 사용 (게스트 모드)
       return localProfile;
     }
     
-    console.log('❌ 프로필 없음');
+    // 프로필 없음
     return null;
     
   } catch (err) {
@@ -375,7 +375,7 @@ export const initializeUserData = (): void => {
     // 데이터 일관성 검사
     const consistencyCheck = checkAndFixDataConsistency();
     if (consistencyCheck.issues.length > 0) {
-      console.log('🔧 데이터 일관성 문제 발견:', consistencyCheck.issues);
+      // 데이터 일관성 문제 발견
     }
     
     // 오래된 임시 데이터 정리 (30일 이상)
@@ -384,14 +384,14 @@ export const initializeUserData = (): void => {
     const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
     
     keys.forEach(key => {
-      if (key.startsWith('temp_') || key.startsWith('guest_')) {
+      if (key.startsWith('temp_')) {
         try {
           const data = JSON.parse(localStorage.getItem(key) || '{}');
           const createdAt = data.created_at ? new Date(data.created_at).getTime() : 0;
           
           if (createdAt < thirtyDaysAgo) {
             localStorage.removeItem(key);
-            console.log('🗑️ 오래된 임시 데이터 삭제:', key);
+            // 오래된 임시 데이터 삭제
           }
         } catch {
           // 파싱 실패하면 삭제
@@ -400,7 +400,7 @@ export const initializeUserData = (): void => {
       }
     });
     
-    console.log('✅ 사용자 데이터 초기화 완료');
+    // 사용자 데이터 초기화 완료
   } catch (error) {
     console.error('사용자 데이터 초기화 실패:', error);
   }
@@ -429,12 +429,12 @@ export const clearAllUserData = (): void => {
     // 임시 데이터도 모두 삭제
     const allKeys = Object.keys(localStorage);
     allKeys.forEach(key => {
-      if (key.startsWith('temp_') || key.startsWith('guest_') || key.startsWith('fortune_')) {
+      if (key.startsWith('temp_') || key.startsWith('fortune_')) {
         localStorage.removeItem(key);
       }
     });
     
-    console.log('💾 모든 사용자 데이터가 삭제되었습니다.');
+    // 모든 사용자 데이터가 삭제되었습니다.
   } catch (error) {
     console.error('사용자 데이터 삭제 실패:', error);
   }
@@ -445,7 +445,7 @@ export const clearAllUserData = (): void => {
  */
 export const createEmptyUserProfile = (id?: string, email?: string): UserProfile => {
   return {
-    id: id || `guest_${Date.now()}`,
+    id: id || '',
     name: '',
     email: email || '',
     birth_date: '',
@@ -569,7 +569,7 @@ export const checkAndFixDataConsistency = (): { fixed: boolean; issues: string[]
     if (needsUpdate) {
       saveUserProfile(updatedProfile);
       fixed = true;
-      console.log('💡 데이터 일관성 문제 수정 완료');
+      // 데이터 일관성 문제 수정 완료
     }
     
     return { fixed, issues };
@@ -579,14 +579,6 @@ export const checkAndFixDataConsistency = (): { fixed: boolean; issues: string[]
   }
 };
 
-/**
- * 게스트 사용자인지 확인합니다.
- * 게스트 사용자는 이메일이 없거나 id가 'guest_'로 시작합니다.
- */
-export const isGuestUser = (profile: UserProfile | null): boolean => {
-  if (!profile) return true;
-  return !profile.email || profile.id.startsWith('guest_');
-};
 
 /**
  * 프리미엄 사용자인지 확인합니다.

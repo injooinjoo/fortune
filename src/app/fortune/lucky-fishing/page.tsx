@@ -40,6 +40,7 @@ import {
   Anchor
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface FishingInfo {
   name: string;
   birth_date: string;
@@ -168,24 +169,28 @@ export default function LuckyFishingPage() {
   const [result, setResult] = useState<FishingFortune | null>(null);
 
   const analyzeFishingFortune = async (): Promise<FishingFortune> => {
-    const baseScore = Math.floor(Math.random() * 25) + 60;
+    // Create deterministic random generator based on user and date
+    const userId = formData.name || 'guest';
+    const dateString = selectedDate ? selectedDate.toISOString().split('T')[0] : getTodayDateString();
+    const rng = createDeterministicRandom(userId, dateString, 'page');
+    const baseScore = rng.randomInt(0, 24) + 60;
 
     return {
-      overall_luck: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-      catch_luck: Math.max(45, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-      location_luck: Math.max(40, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-      weather_luck: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-      equipment_luck: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
+      overall_luck: Math.max(50, Math.min(95, baseScore + rng.randomInt(0, 14))),
+      catch_luck: Math.max(45, Math.min(100, baseScore + rng.randomInt(0, 19) - 5)),
+      location_luck: Math.max(40, Math.min(95, baseScore + rng.randomInt(0, 19) - 10)),
+      weather_luck: Math.max(50, Math.min(100, baseScore + rng.randomInt(0, 14))),
+      equipment_luck: Math.max(55, Math.min(95, baseScore + rng.randomInt(0, 19) - 5)),
       analysis: {
         strength: "침착하고 끈기 있는 성격으로 큰 고기를 낚을 때까지 기다릴 수 있는 인내력이 뛰어납니다.",
         weakness: "때로는 욕심이 과해서 욕심부리다가 놓치는 경우가 있으니 적당한 선에서 만족하는 것이 좋습니다.",
         opportunity: "자연과 조화를 이루는 능력이 뛰어나 좋은 포인트를 찾아내는 감각이 있습니다.",
         challenge: "날씨 변화에 민감할 수 있지만, 경험을 쌓으면서 다양한 상황에 적응할 수 있습니다."
       },
-      lucky_bait: baits[Math.floor(Math.random() * baits.length)],
-      lucky_fishing_spot: fishingSpots[Math.floor(Math.random() * fishingSpots.length)],
-      lucky_fishing_time: ["새벽 5시", "오전 7시", "오후 5시", "일몰 시간"][Math.floor(Math.random() * 4)],
-      lucky_weather: ["맑음", "흐림", "비온 후", "바람 없는 날"][Math.floor(Math.random() * 4)],
+      lucky_bait: rng.randomElement(baits),
+      lucky_fishing_spot: rng.randomElement(fishingSpots),
+      lucky_fishing_time: ["새벽 5시", "오전 7시", "오후 5시", "일몰 시간"][rng.randomInt(0, 3)],
+      lucky_weather: ["맑음", "흐림", "비온 후", "바람 없는 날"][rng.randomInt(0, 3)],
       recommendations: {
         technique_tips: [
           "미끼를 자주 바꿔주어 물고기의 관심을 끌어보세요",

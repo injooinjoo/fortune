@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,9 @@ import {
   Loader2
 } from "lucide-react";
 import GoogleAdsense from "@/components/ads/GoogleAdsense";
+import AdErrorBoundary from "@/components/ads/AdErrorBoundary";
+
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 
 // 컴포넌트 외부에 정의하여 재생성 방지
 const loadingSteps = [
@@ -24,6 +27,12 @@ const loadingSteps = [
   { icon: Zap, text: "AI가 운세를 해석하고 있어요", duration: 1500 },
   { icon: Eye, text: "미래의 흐름을 읽고 있어요", duration: 1000 }
 ];
+
+// 애니메이션을 위한 고정 랜덤 값 생성
+function generateAnimationSeeds(count: number): number[] {
+  const rng = createDeterministicRandom('animation', getTodayDateString(), 'background');
+  return Array.from({ length: count }, () => rng.random());
+}
 
 interface AdLoadingScreenProps {
   fortuneType: string;
@@ -48,19 +57,37 @@ export default function AdLoadingScreen({
   const [timeLeft, setTimeLeft] = useState(5);
   const [fetchedData, setFetchedData] = useState<any>(null);
   const [fetchError, setFetchError] = useState<Error | null>(null);
+  const fetchStartedRef = useRef(false);
+  const isMountedRef = useRef(true);
+  const onCompleteCalledRef = useRef(false);
+  
+  // 애니메이션을 위한 고정 랜덤 값
+  const animationSeeds = useRef(generateAnimationSeeds(20));
 
-
-// 데이터 페칭 시작
+  // 컴포넌트 언마운트 시 플래그 설정
   useEffect(() => {
-    if (fetchData) {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // 데이터 페칭 시작 (중복 요청 방지)
+  useEffect(() => {
+    if (fetchData && !fetchStartedRef.current) {
+      fetchStartedRef.current = true;
+      
       fetchData()
         .then(data => {
-          setFetchedData(data);
-          console.log('✅ 운세 데이터 페칭 완료');
+          if (isMountedRef.current) {
+            setFetchedData(data);
+            console.log('✅ 운세 데이터 페칭 완료');
+          }
         })
         .catch(error => {
-          console.error('❌ 운세 데이터 페칭 실패:', error);
-          setFetchError(error);
+          if (isMountedRef.current) {
+            console.error('❌ 운세 데이터 페칭 실패:', error);
+            setFetchError(error);
+          }
         });
     }
   }, [fetchData]);
@@ -88,17 +115,29 @@ export default function AdLoadingScreen({
       if (elapsed >= totalDuration) {
         clearInterval(timer);
         setCanSkip(true);
+        // 로딩 완료 시 자동으로 onComplete 호출 (중복 방지)
+        if (!isPremium && !onCompleteCalledRef.current) {
+          onCompleteCalledRef.current = true;
+          setTimeout(() => {
+            if (isMountedRef.current) {
+              onComplete(fetchedData);
+            }
+          }, 500);
+        }
       }
     }, 50);
 
     return () => clearInterval(timer);
-  }, []); // 의존성 배열 간소화
+  }, [isPremium, onComplete, fetchedData]);
 
   // 프리미엄 사용자 자동 완료 처리
   useEffect(() => {
-    if (isPremium && canSkip && (!fetchData || fetchedData || fetchError)) {
+    if (isPremium && canSkip && (!fetchData || fetchedData || fetchError) && !onCompleteCalledRef.current) {
+      onCompleteCalledRef.current = true;
       const timer = setTimeout(() => {
-        onComplete(fetchedData);
+        if (isMountedRef.current) {
+          onComplete(fetchedData);
+        }
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -132,26 +171,33 @@ export default function AdLoadingScreen({
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-4 overflow-hidden">
       {/* 배경 애니메이션 */}
       <div className="absolute inset-0 overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-white rounded-full opacity-20"
-            animate={{
-              y: [-100, 800],
-              x: [Math.random() * 400, Math.random() * 400],
-              opacity: [0, 1, 0]
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2
-            }}
-            style={{
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%'
-            }}
-          />
-        ))}
+        {[...Array(20)].map((_, i) => {
+          const seed = animationSeeds.current[i];
+          const seed2 = (seed * 1000) % 1;
+          const seed3 = (seed * 10000) % 1;
+          const seed4 = (seed * 100000) % 1;
+          
+          return (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-white rounded-full opacity-20"
+              animate={{
+                y: [-100, 800],
+                x: [seed * 400, seed2 * 400],
+                opacity: [0, 1, 0]
+              }}
+              transition={{
+                duration: seed3 * 3 + 2,
+                repeat: Infinity,
+                delay: seed4 * 2
+              }}
+              style={{
+                left: seed * 100 + '%',
+                top: seed2 * 100 + '%'
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* 메인 카드 */}
@@ -203,7 +249,8 @@ export default function AdLoadingScreen({
                   progress >= 100 ? 'hover:bg-white/30' : 'cursor-not-allowed'
                 }`}
                 onClick={() => {
-                  if (progress >= 100 && (!fetchData || fetchedData || fetchError)) {
+                  if (progress >= 100 && (!fetchData || fetchedData || fetchError) && !onCompleteCalledRef.current) {
+                    onCompleteCalledRef.current = true;
                     onComplete(fetchedData);
                   }
                 }}
@@ -257,21 +304,31 @@ export default function AdLoadingScreen({
                 
                 {/* 실제 광고 영역 - Google AdSense */}
                 <div className="bg-gray-800/50 rounded-lg p-2 sm:p-3 min-h-[100px] sm:min-h-[120px] flex items-center justify-center">
-                  <GoogleAdsense
-                    slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID || ""}
-                    style={{ display: "block", width: "100%", height: "100px" }}
-                    format="auto"
-                    responsive={true}
-                    className="ad-loading-screen"
-                    testMode={process.env.NODE_ENV === 'development'}
+                  <AdErrorBoundary
                     fallback={
                       <div className="text-center space-y-1">
-                        <div className="text-xl sm:text-2xl">📱</div>
-                        <p className="text-xs text-white/80">광고 영역</p>
-                        <p className="text-xs text-white/60 hidden sm:block">광고를 불러오는 중...</p>
+                        <div className="text-xl sm:text-2xl">⚠️</div>
+                        <p className="text-xs text-white/80">광고를 불러올 수 없습니다</p>
+                        <p className="text-xs text-white/60 hidden sm:block">잠시 후 다시 시도해주세요</p>
                       </div>
                     }
-                  />
+                  >
+                    <GoogleAdsense
+                      slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_ID || ""}
+                      style={{ display: "block", width: "100%", height: "100px" }}
+                      format="auto"
+                      responsive={true}
+                      className="ad-loading-screen"
+                      testMode={process.env.NODE_ENV === 'development'}
+                      fallback={
+                        <div className="text-center space-y-1">
+                          <div className="text-xl sm:text-2xl">📱</div>
+                          <p className="text-xs text-white/80">광고 영역</p>
+                          <p className="text-xs text-white/60 hidden sm:block">광고를 불러오는 중...</p>
+                        </div>
+                      }
+                    />
+                  </AdErrorBoundary>
                 </div>
               </div>
             )}

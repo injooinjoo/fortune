@@ -16,7 +16,7 @@ interface SidejobInfo {
   goals: string[];
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: SidejobInfo = await request.json();
     
@@ -51,9 +51,6 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('Lucky sidejob API error:', error);
-    return NextResponse.json(
-      { error: '부업운 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '부업운 분석 중 오류가 발생했습니다.');
   }
-} 
+});

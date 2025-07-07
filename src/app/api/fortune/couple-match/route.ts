@@ -14,7 +14,7 @@ interface CoupleMatchInfo {
     concern?: string;
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
     const body: CoupleMatchInfo = await req.json();
     const { person1, person2, status, duration, concern } = body;
@@ -55,9 +55,6 @@ export async function POST(req: NextRequest) {
 
   } catch (error: any) {
     console.error('Couple match fortune API error:', error);
-    return NextResponse.json(
-      { error: '짝궁합 분석 중 오류가 발생했습니다.', details: error.message },
-      { status: 500 }
-    );
+    return createSafeErrorResponse(error, '짝궁합 분석 중 오류가 발생했습니다.');
   }
-} 
+});

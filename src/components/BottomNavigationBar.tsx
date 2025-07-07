@@ -51,8 +51,8 @@ export default function BottomNavigationBar() {
     >
       <div className="relative">
         {/* Main Navigation Container */}
-        <div className="liquid-glass-nav px-4 py-2">
-          <div className="flex items-center justify-center space-x-6">
+        <div className="liquid-glass-nav px-4 py-1.5">
+          <div className="flex items-center justify-center space-x-5">
             {navigationItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || (pathname && pathname.startsWith(item.href + '/'));
@@ -88,7 +88,7 @@ export default function BottomNavigationBar() {
 
                     {/* Icon Container */}
                     <div className={cn(
-                      "relative p-2 rounded-xl transition-all duration-300",
+                      "relative p-1.5 rounded-xl transition-all duration-300",
                       "backdrop-blur-sm",
                       isActive 
                         ? "bg-white/30 shadow-lg" 
@@ -103,36 +103,7 @@ export default function BottomNavigationBar() {
                         )} 
                       />
                       
-                      {/* Active Indicator Dot */}
-                      <AnimatePresence>
-                        {isActive && (
-                          <motion.div
-                            className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-white rounded-full shadow-lg"
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                          />
-                        )}
-                      </AnimatePresence>
                     </div>
-
-                    {/* Label */}
-                    <motion.span 
-                      className={cn(
-                        "text-xs font-medium mt-1 transition-all duration-300",
-                        isActive 
-                          ? "text-white opacity-100" 
-                          : "text-gray-400 opacity-0 group-hover:opacity-100"
-                      )}
-                      animate={{ 
-                        y: isActive ? 0 : 8,
-                        opacity: isActive ? 1 : 0 
-                      }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {item.name}
-                    </motion.span>
                   </Link>
                 </motion.div>
               );

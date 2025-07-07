@@ -24,6 +24,7 @@ import {
   Watch
 } from "lucide-react";
 
+import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface StyleInfo {
   name: string;
   birth_date: string;
@@ -137,7 +138,7 @@ export default function LuckyOutfitPage() {
       },
     ];
 
-    const selected = outfits[Math.floor(Math.random() * outfits.length)];
+    const selected = rng.randomElement(outfits);
 
     return {
       main_outfit: selected,

@@ -32,7 +32,7 @@ import {
   Globe,
   Zap
 } from "lucide-react";
-import { getUserProfile, saveUserProfile, syncUserProfile, isGuestUser } from "@/lib/user-storage";
+import { getUserProfile, saveUserProfile, syncUserProfile } from "@/lib/user-storage";
 import { type UserProfile } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 
@@ -118,12 +118,8 @@ export default function ProfilePage() {
   };
 
   const getProviderBadge = (user: UserProfile) => {
-    // user-storage.ts의 isGuestUser 함수 사용
-    if (!isGuestUser(user)) {
-      return <Badge variant="outline" className="text-blue-600 border-blue-200">Google</Badge>;
-    } else {
-      return <Badge variant="outline">게스트</Badge>;
-    }
+    // 로그인된 사용자만 Google 배지 표시
+    return <Badge variant="outline" className="text-blue-600 border-blue-200">Google</Badge>;
   };
 
   const handleEditProfile = () => {
