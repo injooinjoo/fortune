@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import {
   Rocket,
   Briefcase,
@@ -79,6 +80,14 @@ const itemVariants = {
 };
 
 export default function StartupFortunePage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<StartupInfo>({
@@ -120,10 +129,10 @@ export default function StartupFortunePage() {
       console.error('API 호출 중 오류:', error);
       
       // Fallback: 기본 응답 반환
-      const score = Math.floor(Math.random() * 30) + 60;
+      const score = deterministicRandom.randomInt(60, 60 + 30 - 1);
       const mbtiKey = formData.mbti.charAt(0).toUpperCase();
       const recIndustries = mbtiMap[mbtiKey] || industries.slice(0, 3);
-      const startMonth = ['3월', '5월', '8월', '10월'][Math.floor(Math.random() * 4)];
+      const startMonth = ['3월', '5월', '8월', '10월'][deterministicRandom.randomInt(0, 4 - 1)];
       const startTime = `${new Date().getFullYear() + 1}년 ${startMonth}`;
       
       return {

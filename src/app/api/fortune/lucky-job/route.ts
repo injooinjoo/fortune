@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 // 요청 본문의 타입을 정의합니다.
 interface JobInfo {
@@ -22,10 +26,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     // 필수 필드 검증
     if (!body.name || !body.birth_date || !body.job_experience || !body.career_goals) {
-      return NextResponse.json(
-        { error: '필수 정보(이름, 생년월일, 경력, 목표)가 누락되었습니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('필수 정보(이름, 생년월일, 경력, 목표)가 누락되었습니다.', undefined, undefined, 400);
     }
 
     // Genkit 플로우에 전달할 사용자 정보 객체를 생성합니다.

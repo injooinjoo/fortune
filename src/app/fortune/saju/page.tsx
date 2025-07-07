@@ -19,9 +19,19 @@ import { useDailyFortune } from "@/hooks/use-daily-fortune-legacy";
 import { LifeProfileResultSchema, UserProfileSchema } from "@/ai/flows/generate-specialized-fortune";
 import { z } from "zod";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 
 export default function SajuAnalysisPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const { toast } = useToast();
   const router = useRouter();
@@ -193,7 +203,7 @@ export default function SajuAnalysisPage() {
   // TODO: RadarChart 데이터 구조를 새로운 스키마에 맞게 변경해야 함.
   // 현재 sajuResult.saju.keywords 등을 활용할 수 있음.
   const chartData = sajuResult.saju.keywords && sajuResult.saju.keywords.length > 0 
-    ? sajuResult.saju.keywords.map(kw => ({ subject: kw, A: Math.random() * 100, fullMark: 100 }))
+    ? sajuResult.saju.keywords.map(kw => ({ subject: kw, A: deterministicRandom.random() * 100, fullMark: 100 }))
     : [];
 
   return (

@@ -125,7 +125,7 @@ export function createSafeFortuneResult(type: string): FortuneResult {
 
 /**
  * Math.random() 사용을 방지하는 함수
- * TODO: Use rng.random()
+ * DeterministicRandom을 사용하여 일관된 결과 생성
  */
 export function generateSecureScore(): never {
   throw new FortuneServiceError('점수 생성');

@@ -2,20 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
-import { getUserProfile } from '@/lib/mock-storage';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
+import { getUserProfileForAPI } from '@/lib/api-utils';
 
-// 개발용 기본 사용자 프로필 생성 함수
-const getDefaultUserProfile = (userId: string) => ({
-  id: userId,
-  name: '김인주',
-  birth_date: '1988-09-05',
-  birth_time: '인시',
-  gender: '남성' as const,
-  mbti: 'ENTJ',
-  zodiac_sign: '처녀자리',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
-});
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
@@ -28,22 +17,28 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
     
     console.log(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);
 
-    // 사용자 프로필 조회 (없으면 기본 프로필 사용)
-    let userProfile = getUserProfile(userId);
-    if (!userProfile) {
-      userProfile = getDefaultUserProfile(userId);
-      console.log('🔧 기본 사용자 프로필 사용');
+    // 실제 사용자 프로필을 가져옴
+    const { profile, needsOnboarding } = await getUserProfileForAPI(userId);
+    
+    if (needsOnboarding || !profile) {
+      return createErrorResponse(
+        '프로필 설정이 필요합니다.',
+        undefined,
+        { needsOnboarding: true },
+        403
+      );
     }
 
     // 사주 심리분석 데이터 가져오기 (캐시 우선)
     const result = await fortuneService.getOrCreateFortune(
       userId, 
       'saju-psychology',
-      userProfile
+      profile
     );
 
     console.log('✅ 사주 심리분석 API 응답 완료:', userId);
-    return NextResponse.json(result);
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
+    );
 
   } catch (error: any) {
     console.error('❌ 사주 심리분석 API 오류:', error);

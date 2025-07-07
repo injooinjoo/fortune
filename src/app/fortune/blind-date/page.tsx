@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppHeader from "@/components/AppHeader";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   Coffee, 
   Heart, 
@@ -108,6 +109,14 @@ const personalityOptions = [
 ];
 
 export default function BlindDatePage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<BlindDateInfo>({
@@ -143,13 +152,13 @@ export default function BlindDatePage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
+      const baseScore = deterministicRandom.randomInt(60, 60 + 25 - 1); // 60-85 사이
       
       return {
-        success_rate: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-        chemistry_score: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-        conversation_score: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-        impression_score: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        success_rate: Math.max(45, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 15))),
+        chemistry_score: Math.max(50, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 5)),
+        conversation_score: Math.max(45, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
+        impression_score: Math.max(55, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 15))),
         insights: {
           personality_analysis: "당신은 진솔하고 매력적인 성격을 가지고 있어 상대방에게 좋은 인상을 줄 수 있습니다.",
           strengths: "자연스러운 대화 능력과 상대방을 배려하는 마음이 큰 장점입니다.",

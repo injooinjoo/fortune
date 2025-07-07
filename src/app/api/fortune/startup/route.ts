@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
-
-import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { DeterministicRandom, createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface StartupRequest {
   name: string;
   birth_date: string;
@@ -10,6 +12,7 @@ interface StartupRequest {
   experience: string;
   interests: string[];
 }
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface StartupFortune {
   score: number;
@@ -57,7 +60,12 @@ function generateStartupScore(request: StartupRequest): number {
   if (request.mbti.includes('N')) baseScore += 8; // 직관적 - 창업에 유리
   if (request.mbti.includes('P')) baseScore += 5; // 인식형 - 유연성
   
-  return Math.max(40, Math.min(95, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
+  // Create deterministic random generator using user data
+  const userId = request.name + request.birth_date; // Combine for unique seed
+  const date = getTodayDateString();
+  const rng = new DeterministicRandom(userId, date, 'startup-score');
+  
+  return Math.max(40, Math.min(95, baseScore + rng.randomInt(-7, 7)));
 }
 
 function generateBestIndustries(request: StartupRequest): string[] {
@@ -289,18 +297,12 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     // 필수 필드 검증
     if (!body.name || !body.birth_date || !body.mbti) {
-      return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('필수 정보가 누락되었습니다.', undefined, undefined, 400);
     }
 
     // MBTI 형식 검증
     if (!/^[A-Z]{4}$/.test(body.mbti)) {
-      return NextResponse.json(
-        { error: 'MBTI는 4자리 영문 대문자로 입력해주세요.' },
-        { status: 400 }
-      );
+      return createErrorResponse('MBTI는 4자리 영문 대문자로 입력해주세요.', undefined, undefined, 400);
     }
 
     const fortuneResult = await analyzeStartupFortune(body);

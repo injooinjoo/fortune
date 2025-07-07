@@ -15,7 +15,7 @@ import {
   koreanToIsoDate,
   TIME_PERIODS
 } from "@/lib/utils";
-import { auth, userProfileService, guestProfileService, fortuneCompletionService } from "@/lib/supabase";
+import { auth, userProfileService, fortuneCompletionService } from "@/lib/supabase";
 
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export default function DashboardPage() {
@@ -108,7 +108,11 @@ export default function DashboardPage() {
         "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
       ];
       
-      const randomResult = results[Math.floor(/* TODO: Use rng.random() */ Math.random() * results.length)];
+      // Create deterministic random for fortune selection
+      const date = getTodayDateString();
+      const birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+      const rng = createDeterministicRandom(userId, date, `dashboard-${birthDate}`);
+      const randomResult = results[rng.randomInt(0, results.length - 1)];
       setFortuneResult(randomResult);
       setShowResult(true);
       
@@ -129,7 +133,11 @@ export default function DashboardPage() {
         "인간관계에서 좋은 소식이 있을 것입니다. 주변 사람들과 소통하세요."
       ];
       
-      const randomResult = results[Math.floor(/* TODO: Use rng.random() */ Math.random() * results.length)];
+      // Create deterministic random for fortune selection
+      const date = getTodayDateString();
+      const birthDate = `${birthYear}-${birthMonth.padStart(2, '0')}-${birthDay.padStart(2, '0')}`;
+      const rng = createDeterministicRandom(userId, date, `dashboard-${birthDate}`);
+      const randomResult = results[rng.randomInt(0, results.length - 1)];
       setFortuneResult(randomResult);
       setShowResult(true);
     } finally {

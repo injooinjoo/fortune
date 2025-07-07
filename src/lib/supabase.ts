@@ -244,42 +244,81 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-// 로컬 모드 여부 확인 (항상 로컬 모드 사용)
-const isDemoMode = () => {
-  return true; // 항상 로컬 스토리지 사용
+// 로컬 모드 여부 확인 - 인증된 사용자는 Supabase 사용
+const isDemoMode = async () => {
+  try {
+    // 인증된 사용자 확인
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // 인증된 사용자가 있고 demo_mode가 명시적으로 설정되지 않은 경우 Supabase 사용
+    if (user && localStorage.getItem('demo_mode') !== 'true') {
+      return false; // Supabase 사용
+    }
+    
+    // 게스트 사용자거나 demo_mode가 true인 경우 로컬 스토리지 사용
+    return true;
+  } catch (error) {
+    console.error('Auth check error:', error);
+    return true; // 에러 시 안전하게 로컬 모드 사용
+  }
 };
 
 // 사용자 프로필 관리 함수들
 export const userProfileService = {
   // 사용자 프로필 조회
   async getProfile(userId: string): Promise<UserProfile | null> {
-    // 항상 로컬 스토리지에서 조회
-    try {
-      // 먼저 demo_profile 키로 시도
-      let profile = localStorage.getItem(`demo_profile_${userId}`);
-      if (profile) {
-        return JSON.parse(profile);
-      }
-      
-      // 기본 userProfile 키로 시도
-      profile = localStorage.getItem('userProfile');
-      if (profile) {
-        const parsedProfile = JSON.parse(profile);
-        if (parsedProfile.id === userId) {
-          return parsedProfile;
+    const isDemo = await isDemoMode();
+    
+    if (isDemo) {
+      // 데모 모드: 로컬 스토리지에서 조회
+      try {
+        // 먼저 demo_profile 키로 시도
+        let profile = localStorage.getItem(`demo_profile_${userId}`);
+        if (profile) {
+          return JSON.parse(profile);
         }
+        
+        // 기본 userProfile 키로 시도
+        profile = localStorage.getItem('userProfile');
+        if (profile) {
+          const parsedProfile = JSON.parse(profile);
+          if (parsedProfile.id === userId) {
+            return parsedProfile;
+          }
+        }
+        
+        return null;
+      } catch (error) {
+        console.error('로컬 프로필 조회 오류:', error);
+        return null;
+      }
+    }
+    
+    // 실제 모드: Supabase에서 조회
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Supabase 프로필 조회 오류:', error);
+        return null;
       }
       
-      return null;
+      return data;
     } catch (error) {
-      console.error('로컬 프로필 조회 오류:', error);
+      console.error('프로필 조회 중 오류:', error);
       return null;
     }
   },
 
   // 사용자 프로필 생성/업데이트
   async upsertProfile(profile: Partial<UserProfile>): Promise<UserProfile | null> {
-    if (isDemoMode()) {
+    const isDemo = await isDemoMode();
+    
+    if (isDemo) {
       // 데모 모드에서는 로컬 스토리지에 저장
       const updatedProfile = {
         ...profile,
@@ -305,7 +344,9 @@ export const userProfileService = {
 
   // 온보딩 완료 표시
   async markOnboardingComplete(userId: string): Promise<boolean> {
-    if (isDemoMode()) {
+    const isDemo = await isDemoMode();
+    
+    if (isDemo) {
       const profile = await this.getProfile(userId);
       if (profile) {
         profile.onboarding_completed = true;
@@ -373,7 +414,9 @@ export const fortuneCompletionService = {
 
   // 사용자의 운세 기록 조회
   async getUserFortuneHistory(userId: string, limit: number = 10): Promise<FortuneCompletion[]> {
-    if (isDemoMode()) {
+    const isDemo = await isDemoMode();
+    
+    if (isDemo) {
       // 데모 모드에서는 로컬 스토리지에서 조회
       const keys = Object.keys(localStorage).filter(key => key.startsWith('demo_completion_'));
       const completions = keys

@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface PersonInfo {
     name: string;
@@ -16,14 +20,11 @@ interface CoupleMatchInfo {
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    const body: CoupleMatchInfo = await req.json();
+    const body: CoupleMatchInfo = await request.json();
     const { person1, person2, status, duration, concern } = body;
 
     if (!person1?.name || !person1?.birthDate || !person2?.name || !person2?.birthDate) {
-      return NextResponse.json(
-        { error: '두 사람의 이름과 생년월일이 모두 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('두 사람의 이름과 생년월일이 모두 필요합니다.', undefined, undefined, 400);
     }
 
     // Genkit 플로우에 전달할 사용자 정보 객체를 생성합니다.
@@ -50,7 +51,8 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     return NextResponse.json({
       success: true,
       analysis: fortuneResult,
-      timestamp: new Date().toISOString()
+      cached: false,
+      generated_at: new Date().toISOString()
     });
 
   } catch (error: any) {

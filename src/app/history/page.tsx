@@ -17,7 +17,8 @@ import {
 } from '@/components/ui/select'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
-import { ChartContainer } from '@/components/ui/chart'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 interface HistoryItem {
   id: number
@@ -70,6 +71,9 @@ const categoryMock = [
   { name: '사주팔자', value: 30 },
   { name: 'MBTI 운세', value: 30 },
 ]
+
+// 차트 색상 설정
+const COLORS = ['#8B5CF6', '#EC4899', '#06B6D4', '#10B981', '#F59E0B']
 
 export default function HistoryPage() {
   const [typeFilter, setTypeFilter] = useState('all')
@@ -149,13 +153,79 @@ export default function HistoryPage() {
               </div>
             </RadioGroup>
             <h3 className="font-semibold text-lg">지난 한 달간의 운세 점수 변화</h3>
-            <ChartContainer config={{ score: { color: '#8884d8' } }}>
-              {/* TODO: line chart */}
+            <ChartContainer 
+              config={{ 
+                score: { 
+                  label: '운세 점수',
+                  color: 'hsl(var(--chart-1))' 
+                } 
+              }}
+              className="h-[300px] w-full"
+            >
+              <LineChart data={scoreTrendMock}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) => new Date(value).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                />
+                <YAxis 
+                  domain={[0, 100]}
+                  tick={{ fontSize: 12 }}
+                />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value) => new Date(value).toLocaleDateString('ko-KR')}
+                      formatter={(value) => [`${value}점`, '운세 점수']}
+                    />
+                  }
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="score" 
+                  stroke="var(--color-score)"
+                  strokeWidth={2}
+                  dot={{ fill: 'var(--color-score)', strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
             </ChartContainer>
           </div>
           <div className="space-y-2">
             <h3 className="font-semibold text-lg">가장 많이 본 운세</h3>
-            <ChartContainer config={{}}>{/* TODO: pie chart */}</ChartContainer>
+            <ChartContainer 
+              config={{
+                오늘의총운: { label: '오늘의 총운', color: COLORS[0] },
+                사주팔자: { label: '사주팔자', color: COLORS[1] },
+                MBTI운세: { label: 'MBTI 운세', color: COLORS[2] }
+              }}
+              className="h-[300px] w-full"
+            >
+              <PieChart>
+                <Pie
+                  data={categoryMock}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {categoryMock.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      formatter={(value, name) => [`${value}회`, name]}
+                    />
+                  }
+                />
+              </PieChart>
+            </ChartContainer>
           </div>
         </TabsContent>
       </Tabs>

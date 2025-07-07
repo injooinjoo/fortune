@@ -6,12 +6,16 @@ import {
   generateGroupFortune,
 } from '@/ai/flows/generate-specialized-fortune';
 import { generateBatchFortunes, generateSingleFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('🎯 통합 운세 생성 API 요청');
   
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { flowType, request_type, user_profile, requested_categories, additional_input, ...input } = body;
 
     let result: any;
@@ -32,7 +36,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           result = await generateGroupFortune(input);
           break;
         default:
-          return NextResponse.json({ error: 'Invalid flowType provided' }, { status: 400 });
+          return createErrorResponse('Invalid flowType provided', undefined, undefined, 400);
       }
     } 
     // 레거시 요청 타입 처리
@@ -76,7 +80,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           // 사용자 직접 요청 시 개별 운세 생성
           console.log(`🎯 사용자 직접 요청: ${requested_categories?.[0]}`);
           if (!requested_categories || requested_categories.length === 0) {
-            return NextResponse.json({ error: '요청할 운세 카테고리가 필요합니다.' }, { status: 400 });
+            return createErrorResponse('요청할 운세 카테고리가 필요합니다.', undefined, undefined, 400);
           }
           
           const category = requested_categories[0];
@@ -92,10 +96,10 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           break;
           
         default:
-          return NextResponse.json({ error: 'Invalid request_type provided' }, { status: 400 });
+          return createErrorResponse('Invalid request_type provided', undefined, undefined, 400);
       }
     } else {
-      return NextResponse.json({ error: 'flowType 또는 request_type이 필요합니다.' }, { status: 400 });
+      return createErrorResponse('flowType 또는 request_type이 필요합니다.', undefined, undefined, 400);
     }
 
     console.log('✅ 통합 운세 생성 완료');

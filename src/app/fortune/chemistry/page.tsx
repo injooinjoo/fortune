@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppHeader from "@/components/AppHeader";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   Flame, 
   Heart, 
@@ -128,6 +129,14 @@ const zodiacSigns = [
 ];
 
 export default function ChemistryPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ChemistryInfo>({
@@ -171,15 +180,15 @@ export default function ChemistryPage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const baseScore = Math.floor(Math.random() * 25) + 60; // 60-85 사이
+      const baseScore = deterministicRandom.randomInt(60, 60 + 25 - 1); // 60-85 사이
       
       return {
-        overall_chemistry: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 15))),
-        physical_attraction: Math.max(50, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 5)),
-        emotional_connection: Math.max(45, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 10)),
-        passion_intensity: Math.max(55, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
-        compatibility_level: Math.max(50, Math.min(95, baseScore + Math.floor(Math.random() * 20) - 5)),
-        intimacy_potential: Math.max(60, Math.min(100, baseScore + Math.floor(Math.random() * 15))),
+        overall_chemistry: Math.max(45, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 15))),
+        physical_attraction: Math.max(50, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 5)),
+        emotional_connection: Math.max(45, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
+        passion_intensity: Math.max(55, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 15))),
+        compatibility_level: Math.max(50, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 20) - 5)),
+        intimacy_potential: Math.max(60, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 15))),
         insights: {
           strengths: "두 분의 에너지가 매우 조화로우며, 서로에 대한 깊은 이해와 신뢰를 바탕으로 한 친밀감이 돋보입니다.",
           challenges: "때로는 감정 표현 방식의 차이로 인해 오해가 생길 수 있으니, 더욱 솔직하고 개방적인 소통이 필요합니다.",
@@ -220,7 +229,7 @@ export default function ChemistryPage() {
           "감정적 상처를 줄 수 있는 말이나 행동 주의",
           "외부 스트레스가 관계에 영향을 주지 않도록 관리"
         ],
-        compatibility_percentage: Math.max(55, Math.min(95, baseScore + Math.floor(Math.random() * 20)))
+        compatibility_percentage: Math.max(55, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 20)))
       };
     }
   };

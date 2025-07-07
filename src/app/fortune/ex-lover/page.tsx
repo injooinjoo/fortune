@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import AppHeader from "@/components/AppHeader";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   HeartCrack, 
   Heart, 
@@ -92,6 +93,14 @@ const getScoreText = (score: number) => {
 };
 
 export default function ExLoverPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ExLoverInfo>({
@@ -123,13 +132,13 @@ export default function ExLoverPage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const baseScore = Math.floor(Math.random() * 30) + 40;
+      const baseScore = deterministicRandom.randomInt(40, 40 + 30 - 1);
       
       return {
-        closure_score: Math.max(20, Math.min(100, baseScore + Math.floor(Math.random() * 20))),
-        reconciliation_chance: Math.max(10, Math.min(90, baseScore + Math.floor(Math.random() * 30) - 15)),
-        emotional_healing: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 25))),
-        future_relationship_impact: Math.max(25, Math.min(95, baseScore + Math.floor(Math.random() * 20))),
+        closure_score: Math.max(20, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20))),
+        reconciliation_chance: Math.max(10, Math.min(90, baseScore + Math.floor(deterministicRandom.random() * 30) - 15)),
+        emotional_healing: Math.max(30, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 25))),
+        future_relationship_impact: Math.max(25, Math.min(95, baseScore + Math.floor(deterministicRandom.random() * 20))),
         insights: {
           current_status: "현재 과거의 관계에 대한 감정적 정리가 어느 정도 진행되고 있습니다.",
           emotional_state: "여전히 그리움과 아쉬움이 남아있지만, 점차 자신만의 삶을 찾아가고 있는 상태입니다.",

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 
@@ -174,7 +175,9 @@ export function useFortuneStream(options: FortuneStreamOptions = {}) {
                 categories,
                 userInfo: formData.userInfo,
                 packageType: formData.packageType,
-                requestId: `${Date.now()}_${Math.random().toString(36).substring(7)}`
+                // NOTE: Request ID is for tracking only, not fortune generation
+                // Using timestamp + counter for uniqueness without affecting fortune results
+                requestId: `${Date.now()}_${((globalThis as any).__requestCounter = ((globalThis as any).__requestCounter || 0) + 1).toString(36)}`
               })
             })
 

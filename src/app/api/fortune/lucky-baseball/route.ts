@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface BaseballInfo {
   name: string;
@@ -467,10 +471,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     const body = await request.json();
     
     if (!body.name || !body.birth_date || !body.favorite_position) {
-      return NextResponse.json(
-        { error: '필수 정보가 누락되었습니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('필수 정보가 누락되었습니다.', undefined, undefined, 400);
     }
     
     const baseballFortune = await analyzeBaseballFortune(body as BaseballInfo);

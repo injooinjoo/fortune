@@ -1,21 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fortuneService } from '@/lib/services/fortune-service';
-import { UserProfile } from '@/lib/types/fortune-system';
-import { handleFortuneResponse } from '@/lib/api-utils';
+import { handleFortuneResponse, getUserProfileForAPI } from '@/lib/api-utils';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
-// 개발용 기본 사용자 프로필 생성 함수
-const getDefaultUserProfile = (userId: string): UserProfile => ({
-  id: userId,
-  name: '김인주',
-  birth_date: '1988-09-05',
-  birth_time: '인시',
-  gender: '남성' as const,
-  mbti: 'ENTJ',
-  zodiac_sign: '처녀자리',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
-});
+
 
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
@@ -24,21 +13,28 @@ export async function GET(request: NextRequest) {
 
       // 인증된 사용자만 접근 가능
       if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
-        return NextResponse.json(
-          { error: '로그인이 필요합니다.' },
-          { status: 401 }
-        );
+        return createErrorResponse('로그인이 필요합니다.', undefined, undefined, 401);
       }
 
       console.log(`🔮 인연운 요청: 사용자 ID = ${req.userId}`);
       
       // 기본 사용자 프로필 생성
-      const userProfile = getDefaultUserProfile(req.userId);
+      // 실제 사용자 프로필을 가져옴
+    const { profile, needsOnboarding } = await getUserProfileForAPI(req.userId);
+    
+    if (needsOnboarding || !profile) {
+      return createErrorResponse(
+        '프로필 설정이 필요합니다.',
+        undefined,
+        { needsOnboarding: true },
+        403
+      );
+    }
 
       const destinyData = await fortuneService.getOrCreateFortune(
         req.userId,
         'destiny', // FortuneCategory
-        userProfile
+        profile
       );
 
       console.log('✅ 인연운 API 응답 완료');

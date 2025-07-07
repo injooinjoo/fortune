@@ -74,6 +74,39 @@ const itemVariants = {
 };
 
 // 하드코딩된 심리테스트 질문들 제거됨 - GPT API에서 동적 질문 제공 예정
+// 임시 질문들 - GPT API 구현 전까지 사용
+const psychologyQuestions = [
+  {
+    id: 'q1',
+    question: '새로운 환경에 놓였을 때 당신의 반응은?',
+    options: [
+      { value: 'a', label: '적극적으로 탐색하고 새로운 사람들과 어울린다' },
+      { value: 'b', label: '조심스럽게 관찰하며 천천히 적응한다' },
+      { value: 'c', label: '익숙한 것을 찾아 안정감을 찾는다' },
+      { value: 'd', label: '불안하지만 필요한 것만 빠르게 파악한다' }
+    ]
+  },
+  {
+    id: 'q2',
+    question: '스트레스를 받을 때 주로 어떻게 해소하나요?',
+    options: [
+      { value: 'a', label: '운동이나 활동적인 취미로 해소한다' },
+      { value: 'b', label: '혼자만의 시간을 가지며 휴식한다' },
+      { value: 'c', label: '친구나 가족과 대화를 나눈다' },
+      { value: 'd', label: '취미 활동에 몰두한다' }
+    ]
+  },
+  {
+    id: 'q3',
+    question: '중요한 결정을 내릴 때 당신의 방식은?',
+    options: [
+      { value: 'a', label: '직감과 감정을 따른다' },
+      { value: 'b', label: '논리적으로 분석하고 계산한다' },
+      { value: 'c', label: '다른 사람들의 조언을 구한다' },
+      { value: 'd', label: '과거 경험을 바탕으로 판단한다' }
+    ]
+  }
+];
 
 const getLuckColor = (score: number) => {
   if (score >= 85) return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30";

@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import {
   Users,
   Sparkles,
@@ -85,6 +86,14 @@ const getScoreText = (score: number) => {
 };
 
 export default function TraditionalCompatibilityPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<"input" | "result">("input");
   const [loading, setLoading] = useState(false);
   const [person1, setPerson1] = useState<PersonInfo>({
@@ -103,9 +112,9 @@ export default function TraditionalCompatibilityPage() {
   const [tab, setTab] = useState("summary");
 
   const analyze = async (): Promise<TraditionalCompatibilityResult> => {
-    const base = Math.floor(Math.random() * 40) + 60;
+    const base = deterministicRandom.randomInt(60, 60 + 40 - 1);
     const randScore = () =>
-      Math.max(40, Math.min(100, base + Math.floor(Math.random() * 20) - 10));
+      Math.max(40, Math.min(100, base + Math.floor(deterministicRandom.random() * 20) - 10));
     return {
       overallScore: randScore(),
       summary:

@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { Heart, Users, Sparkles, ArrowRight, Shuffle, TrendingUp } from "lucide-react";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 
 interface CoupleForm {
   person1: { name: string; birthDate: string };
@@ -68,6 +69,14 @@ const getScoreText = (score: number) => {
 };
 
 export default function CoupleMatchPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CoupleForm>({
@@ -99,10 +108,10 @@ export default function CoupleMatchPage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const base = Math.floor(Math.random() * 40) + 50;
+      const base = deterministicRandom.randomInt(50, 50 + 40 - 1);
       return {
-        currentFlow: Math.max(40, Math.min(95, base + Math.floor(Math.random() * 20) - 10)),
-        futurePotential: Math.max(50, Math.min(100, base + Math.floor(Math.random() * 20))),
+        currentFlow: Math.max(40, Math.min(95, base + Math.floor(deterministicRandom.random() * 20) - 10)),
+        futurePotential: Math.max(50, Math.min(100, base + Math.floor(deterministicRandom.random() * 20))),
         advice1: "상대방의 입장을 먼저 생각하고 대화를 이어가면 관계가 더욱 안정됩니다.",
         advice2: "솔직한 감정 표현이 서로의 신뢰를 높여 줄 것입니다.",
         tips: [

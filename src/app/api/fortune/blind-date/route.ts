@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface BlindDateInfo {
     name: string;
@@ -16,13 +20,10 @@ interface BlindDateInfo {
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    const body: BlindDateInfo = await req.json();
+    const body: BlindDateInfo = await request.json();
 
     if (!body.name || !body.age || !body.experience_level || !body.preferred_activity) {
-      return NextResponse.json(
-        { error: '필수 정보(이름, 나이, 소개팅 경험, 선호하는 활동)를 모두 입력해주세요.' },
-        { status: 400 }
-      );
+      return createErrorResponse('필수 정보(이름, 나이, 소개팅 경험, 선호하는 활동)를 모두 입력해주세요.', undefined, undefined, 400);
     }
 
     // Genkit 플로우에 전달할 사용자 정보 객체를 생성합니다.
@@ -48,7 +49,8 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     return NextResponse.json({
       success: true,
       analysis: fortuneResult,
-      timestamp: new Date().toISOString()
+      cached: false,
+      generated_at: new Date().toISOString()
     });
 
   } catch (error: any) {

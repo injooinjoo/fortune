@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { createDeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface WealthInfo {
   name: string;
@@ -83,10 +87,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     // 필수 필드 검증
     if (!wealthInfo.name || !wealthInfo.birth_date) {
-      return NextResponse.json(
-        { error: '이름과 생년월일은 필수 항목입니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('이름과 생년월일은 필수 항목입니다.', undefined, undefined, 400);
     }
 
     const wealthFortune = await analyzeWealthFortune(wealthInfo);
@@ -96,7 +97,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     console.error('Wealth API error:', error);
     return createSafeErrorResponse(error, '금전운 분석 중 오류가 발생했습니다.');
   }
-}
+});
 
 async function analyzeWealthFortune(info: WealthInfo): Promise<WealthFortune> {
   try {
@@ -486,4 +487,4 @@ function generateWealthWarningSignsForJob(info: WealthInfo): string[] {
     '신용카드 과다 사용 주의',
     '재정 계획 없는 투자 금지'
   ];
-});
+}

@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { DeterministicRandom, createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
-import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { name, birthDate, celebrity } = body;
 
     if (!name || !birthDate || !celebrity) {
-      return NextResponse.json(
-        { error: '이름, 생년월일, 연예인 정보가 모두 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('이름, 생년월일, 연예인 정보가 모두 필요합니다.', undefined, undefined, 400);
     }
+
+    const userId = request.userId || 'anonymous';
+    const date = getTodayDateString();
+    const rng = new DeterministicRandom(userId, date, `celebrity-match-${celebrity}`);
 
     // GPT 프롬프트 생성
     const prompt = `당신은 전문 연예인 분석가이자 사주명리학자입니다. 다음 사용자와 연예인의 궁합을 재미있게 분석해주세요.
@@ -39,25 +44,26 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
 
     // OpenAI API 호출 (실제 구현시)
     const mockResponse = {
-      score: generateMatchScore(name, birthDate, celebrity),
-      comment: generateComment(name, celebrity),
-      luckyColor: generateLuckyColor(birthDate, celebrity),
-      luckyItem: generateLuckyItem(celebrity)
+      score: generateMatchScore(name, birthDate, celebrity, rng),
+      comment: generateComment(name, celebrity, rng),
+      luckyColor: generateLuckyColor(birthDate, celebrity, rng),
+      luckyItem: generateLuckyItem(celebrity, rng)
     };
 
     return NextResponse.json({
       success: true,
       analysis: mockResponse,
-      timestamp: new Date().toISOString()
+      cached: false,
+      generated_at: new Date().toISOString()
     });
 
   } catch (error) {
     console.error('Celebrity match fortune API error:', error);
     return createSafeErrorResponse(error, '연예인 궁합 분석 중 오류가 발생했습니다.');
   }
-}
+});
 
-function generateMatchScore(name: string, birthDate: string, celebrity: string): number {
+function generateMatchScore(name: string, birthDate: string, celebrity: string, rng: DeterministicRandom): number {
   let baseScore = 50;
   
   // 이름 길이 기반 점수
@@ -82,12 +88,12 @@ function generateMatchScore(name: string, birthDate: string, celebrity: string):
   if (celebrity.includes('BTS') || celebrity.includes('블랙핑크')) baseScore += 15;
   else if (celebrity.includes('아이유') || celebrity.includes('박서준')) baseScore += 12;
   else if (celebrity.includes('손흥민') || celebrity.includes('수지')) baseScore += 10;
-  else baseScore += /* TODO: Use rng.randomInt(0, 7) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 8) + 3;
+  else baseScore += rng.randomInt(3, 10);
   
-  return Math.max(20, Math.min(80, baseScore + /* TODO: Use rng.randomInt(0, 14) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 15) - 7));
+  return Math.max(20, Math.min(80, baseScore + rng.randomInt(-7, 7)));
 }
 
-function generateComment(name: string, celebrity: string): string {
+function generateComment(name: string, celebrity: string, rng: DeterministicRandom): string {
   const comments = {
     high: [
       `${name}님과 ${celebrity}, 이 조합은 팬미팅에서 자주 보게 될 운명이에요!`,
@@ -109,18 +115,18 @@ function generateComment(name: string, celebrity: string): string {
     ]
   };
   
-  const score = generateMatchScore(name, '', celebrity);
+  const score = generateMatchScore(name, '', celebrity, rng);
   
   if (score >= 65) {
-    return comments.high[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.high.length)];
+    return rng.randomElement(comments.high);
   } else if (score >= 45) {
-    return comments.medium[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.medium.length)];
+    return rng.randomElement(comments.medium);
   } else {
-    return comments.low[Math.floor(/* TODO: Use rng.random() */ Math.random() * comments.low.length)];
+    return rng.randomElement(comments.low);
   }
 }
 
-function generateLuckyColor(birthDate: string, celebrity: string): string {
+function generateLuckyColor(birthDate: string, celebrity: string, rng: DeterministicRandom): string {
   const birth = new Date(birthDate);
   const month = birth.getMonth() + 1;
   const day = birth.getDate();
@@ -162,7 +168,7 @@ function generateLuckyColor(birthDate: string, celebrity: string): string {
   return baseColor;
 }
 
-function generateLuckyItem(celebrity: string): string {
+function generateLuckyItem(celebrity: string, rng: DeterministicRandom): string {
   // 연예인별 특별 아이템
   const celebrityItems: { [key: string]: string[] } = {
     '아이유': ['라일락 꽃', '보라색 반지', '어쿠스틱 기타 픽'],
@@ -176,7 +182,7 @@ function generateLuckyItem(celebrity: string): string {
   // 연예인별 특별 아이템이 있으면 사용
   for (const [name, items] of Object.entries(celebrityItems)) {
     if (celebrity.includes(name)) {
-      return items[Math.floor(/* TODO: Use rng.random() */ Math.random() * items.length)];
+      return rng.randomElement(items);
     }
   }
   
@@ -187,5 +193,5 @@ function generateLuckyItem(celebrity: string): string {
     '굿즈 파우치', '엽서', '포스터', '타올', '에코백'
   ];
   
-  return defaultItems[Math.floor(/* TODO: Use rng.random() */ Math.random() * defaultItems.length)];
-});
+  return rng.randomElement(defaultItems);
+}

@@ -4,12 +4,15 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import AppHeader from "@/components/AppHeader";
 import { useUserProfile, hasUserName, hasUserBirthDate } from "@/hooks/use-user-profile";
+import { useAuth } from "@/contexts/auth-context";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   Heart, 
   Users, 
@@ -89,6 +92,14 @@ const getScoreText = (score: number) => {
 };
 
 export default function CompatibilityPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [person1, setPerson1] = useState<PersonInfo>({ name: '', birthDate: '' });
@@ -140,14 +151,14 @@ export default function CompatibilityPage() {
       console.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
-      const baseScore = Math.floor(Math.random() * 40) + 50;
+      const baseScore = deterministicRandom.randomInt(50, 50 + 40 - 1);
       
       return {
-        overallScore: baseScore + Math.floor(Math.random() * 10),
-        loveScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-        marriageScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-        careerScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
-        dailyLifeScore: Math.max(30, Math.min(100, baseScore + Math.floor(Math.random() * 20) - 10)),
+        overallScore: baseScore + Math.floor(deterministicRandom.random() * 10),
+        loveScore: Math.max(30, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
+        marriageScore: Math.max(30, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
+        careerScore: Math.max(30, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
+        dailyLifeScore: Math.max(30, Math.min(100, baseScore + Math.floor(deterministicRandom.random() * 20) - 10)),
         personality: {
           person1: "따뜻하고 배려심 많은 성격으로 상대방을 잘 이해합니다.",
           person2: "적극적이고 리더십이 강해 관계를 주도하는 타입입니다."
@@ -166,8 +177,8 @@ export default function CompatibilityPage() {
         advice: "서로의 다름을 인정하고 존중하는 마음가짐이 중요합니다. 작은 배려와 관심이 더 큰 행복을 만들어 갈 것입니다.",
         luckyElements: {
           color: "#EC4899",
-          number: Math.floor(Math.random() * 9) + 1,
-          direction: ["동쪽", "서쪽", "남쪽", "북쪽"][Math.floor(Math.random() * 4)],
+          number: deterministicRandom.randomInt(1, 1 + 9 - 1),
+          direction: ["동쪽", "서쪽", "남쪽", "북쪽"][deterministicRandom.randomInt(0, 4 - 1)],
           date: "매월 7일, 17일, 27일"
         }
       };

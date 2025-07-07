@@ -3,6 +3,7 @@ import { FortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
 import { withFortuneAuth, extractUserInfo, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
@@ -11,13 +12,8 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     const { userProfile, error } = await extractUserInfo(request);
     
     if (error || !userProfile) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: error || '사용자 정보 처리 중 오류가 발생했습니다.' 
-        },
-        { status: 400 }
-      );
+      return createErrorResponse(error || '사용자 정보 처리 중 오류가 발생했습니다.' 
+        , undefined, undefined, 400);
     }
     
     console.log(`🔍 오늘의 운세 요청: 사용자 = ${userProfile.name}, 인증 사용자 = ${request.userId}`);
@@ -33,13 +29,9 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     console.log('✅ 오늘의 운세 API 응답 완료:', userProfile.name);
     
-    return NextResponse.json({
-      success: true,
-      data: result.data,
-      cached: result.cached,
-      cache_source: result.cache_source,
-      generated_at: result.generated_at
-    });
+    return createSuccessResponse(result.data, undefined, { cached: result.cached,
+      cache_source: result.cache_source, generated_at: result.generated_at
+     });
     
   } catch (error) {
     return createSafeErrorResponse(error, '오늘의 운세를 가져오는 중 오류가 발생했습니다.');
@@ -72,13 +64,9 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
     
     console.log('✅ 오늘의 운세 API 응답 완료');
     
-    return NextResponse.json({
-      success: true,
-      data: result.data,
-      cached: result.cached,
-      cache_source: result.cache_source,
-      generated_at: result.generated_at
-    });
+    return createSuccessResponse(result.data, undefined, { cached: result.cached,
+      cache_source: result.cache_source, generated_at: result.generated_at
+     });
     
   } catch (error) {
     return createSafeErrorResponse(error, '오늘의 운세를 가져오는 중 오류가 발생했습니다.');

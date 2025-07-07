@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { z } from 'zod';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
 import { withRateLimit } from '@/middleware/rate-limit';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 
 // 요청 검증 스키마
@@ -38,14 +39,7 @@ export async function POST(request: NextRequest) {
       try {
         // 인증된 사용자만 접근 가능
         if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
-          return NextResponse.json(
-            {
-              success: false,
-              error: '로그인이 필요합니다',
-              data: null
-            },
-            { status: 401 }
-          );
+          return createErrorResponse('로그인이 필요합니다', undefined, null, 401);
         }
 
         const userId = req.userId;
@@ -55,29 +49,17 @@ export async function POST(request: NextRequest) {
     const validationResult = requestSchema.safeParse(body);
     
     if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: '잘못된 요청 형식',
+      return createErrorResponse('잘못된 요청 형식',
           details: validationResult.error,
           data: null
-        },
-        { status: 400 }
-      );
+        , undefined, undefined, 400);
     }
 
         const batchRequest: BatchFortuneRequest = validationResult.data;
         
         // 3. 사용자 ID 검증
         if (batchRequest.user_profile.id !== userId && !isAdminUser(userId)) {
-          return NextResponse.json(
-            {
-              success: false,
-              error: '권한이 없습니다',
-              data: null
-            },
-            { status: 403 }
-          );
+          return createErrorResponse('권한이 없습니다', undefined, null, 403);
         }
 
     // 5. 중앙 서비스 호출
@@ -110,15 +92,10 @@ export async function POST(request: NextRequest) {
         // 에러 로깅
         await logError(error, req);
         
-        return NextResponse.json(
-          {
-            success: false,
-            error: '운세 생성 중 오류가 발생했습니다',
+        return createErrorResponse('운세 생성 중 오류가 발생했습니다',
             message: error instanceof Error ? error.message : '알 수 없는 오류',
             data: null
-          },
-          { status: 500 }
-        );
+          , undefined, undefined, 500);
       }
     }, { limit: 2, windowMs: 3600000 }); // 시간당 2회 제한
   });

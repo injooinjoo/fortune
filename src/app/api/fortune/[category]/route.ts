@@ -7,6 +7,7 @@ import { FortuneCategory, InteractiveInput } from '@/lib/types/fortune-system';
 import { getUserProfile, getAllProfiles } from '@/lib/mock-storage';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 // 임시로 인증 우회 (개발용)
 async function getCurrentUser(request?: AuthenticatedRequest) {
@@ -37,15 +38,7 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
     // 프로필이 없으면 프로필 입력 요구
     if (!userProfile) {
       console.log('프로필 없음 - 프로필 입력 필요');
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'PROFILE_REQUIRED',
-          message: '프로필 정보가 필요합니다. 프로필을 먼저 설정해주세요.',
-          redirect: '/onboarding/profile'
-        },
-        { status: 400 }
-      );
+      return createErrorResponse('프로필 정보가 필요합니다. 프로필을 먼저 설정해주세요.', 'PROFILE_REQUIRED', { redirect: '/onboarding/profile' }, 400);
     }
     
     console.log('실제 사용자 프로필 로드:', userProfile);
@@ -58,7 +51,8 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
     );
 
     console.log('운세 결과:', { success: result.success, cached: result.cached });
-    return NextResponse.json(result);
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
+    );
 
   } catch (error) {
     console.error('운세 API 오류:', error);
@@ -98,10 +92,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     if (['dream-interpretation', 'tarot', 'compatibility', 'worry-bead'].includes(category)) {
       if (!requestBody.inputData) {
-        return NextResponse.json(
-          { success: false, error: '입력 데이터가 필요합니다.' },
-          { status: 400 }
-        );
+        return createErrorResponse('입력 데이터가 필요합니다.' , undefined, undefined, 400);
       }
 
       interactiveInput = {
@@ -121,7 +112,8 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       interactiveInput
     );
 
-    return NextResponse.json(result);
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
+    );
 
   } catch (error) {
     console.error('운세 API 오류:', error);

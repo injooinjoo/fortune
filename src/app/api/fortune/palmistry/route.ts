@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImageBasedFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   console.log('✋ 손금 운세 API 요청');
@@ -13,10 +17,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     const userId = formData.get('userId') as string || 'guest';
 
     if (!file) {
-      return NextResponse.json(
-        { error: '손바닥 이미지 파일이 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('손바닥 이미지 파일이 필요합니다.', undefined, undefined, 400);
     }
 
     console.log(`🔍 손금 분석 시작: ${name} (${handType}손)`);
@@ -37,11 +38,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
 
     console.log('✅ 손금 분석 완료');
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        type: 'palmistry',
-        hand_type: handType,
+    return createFortuneResponse({ type: 'palmistry', hand_type: handType,
         ...result,
         palmistry_lines: {
           life_line: '생명선 분석 결과',
@@ -50,15 +47,13 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           fate_line: '운명선 분석 결과'
         },
         user_info: profile,
-        generated_at: new Date().toISOString()
-      }
-    });
+        generated_at: new Date().toISOString() }, 'palmistry', req.userId);
     
   } catch (error) {
     console.error('❌ 손금 분석 실패:', error);
     return createSafeErrorResponse(error, '손금 분석 중 오류가 발생했습니다.');
   }
-}
+});
 
 // GET 요청 (기본 정보 제공)
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {

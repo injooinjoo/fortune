@@ -7,6 +7,7 @@ import ConditionalLayout from '@/components/ConditionalLayout';
 import SecureErrorBoundary from '@/components/SecureErrorBoundary';
 import AdSenseProvider from '@/components/ads/AdSenseProvider';
 import { ChunkLoadErrorBoundary } from '@/components/ads/AdErrorBoundary';
+import { GlobalLowTokenWarning } from '@/components/LowTokenWarning';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -63,6 +64,7 @@ export default function RootLayout({
               </ConditionalLayout>
             </SecureErrorBoundary>
             <Toaster />
+            <GlobalLowTokenWarning />
             <AdSenseProvider />
           </Providers>
         </ChunkLoadErrorBoundary>

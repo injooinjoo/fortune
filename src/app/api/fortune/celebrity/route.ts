@@ -3,7 +3,8 @@ import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
 import { FortuneService } from '@/lib/services/fortune-service';
-import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+import { DeterministicRandom, createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
@@ -11,10 +12,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     const { celebrity_name, user_name, birth_date, category } = body;
 
     if (!celebrity_name) {
-      return NextResponse.json(
-        { error: '유명인 이름이 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('유명인 이름이 필요합니다.', undefined, undefined, 400);
     }
 
     // GPT 모델 선택 (유명인 운세용)
@@ -68,10 +66,11 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         console.log('GPT API 호출 성공');
         
         return NextResponse.json({
-          success: true,
-          fortune: gptResult,
-          timestamp: new Date().toISOString()
-        });
+      success: true,
+      fortune: gptResult,
+      cached: false,
+      generated_at: new Date().toISOString()
+    });
       } else {
         throw new Error('GPT 응답 형식 오류');
       }
@@ -80,6 +79,10 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       console.error('GPT API 호출 실패, 백업 로직 사용:', error);
       
       // 백업 로직: Mock 응답
+      const userId = request.userId || 'anonymous';
+      const date = getTodayDateString();
+      const rng = new DeterministicRandom(userId, date, `celebrity-${celebrity_name}`);
+      
       const mockResponse = {
         celebrity: {
           name: celebrity_name,
@@ -87,9 +90,9 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           description: `${celebrity_name}님의 기운이 매우 밝고 창의적인 에너지로 가득 차 있어, 주변에 긍정적인 영향을 미치고 있는 시기입니다.`,
           emoji: getCategoryEmoji(category || getAutoCategoryEng(celebrity_name))
         },
-        todayScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70,
-        weeklyScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70, 
-        monthlyScore: /* TODO: Use rng.randomInt(0, 30) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 31) + 70,
+        todayScore: rng.randomInt(70, 100),
+        weeklyScore: rng.randomInt(70, 100), 
+        monthlyScore: rng.randomInt(70, 100),
         summary: `${celebrity_name}님의 영향으로 창의적 영감과 도전 정신이 높아지는 시기입니다. 꾸준한 노력으로 목표를 달성할 수 있을 것입니다.`,
         luckyTime: "오후 2시-5시",
         luckyColor: "#FFD700",
@@ -104,17 +107,18 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       };
 
       return NextResponse.json({
-        success: true,
-        fortune: mockResponse,
-        timestamp: new Date().toISOString()
-      });
+      success: true,
+      fortune: mockResponse,
+      cached: false,
+      generated_at: new Date().toISOString()
+    });
     }
 
   } catch (error) {
     console.error('Celebrity fortune API error:', error);
     return createSafeErrorResponse(error, '운세 생성 중 오류가 발생했습니다.');
   }
-}
+});
 
 function getAutoCategoryKor(name: string): string {
   if (name.includes("BTS") || name.includes("블랙핑크") || name.includes("뉴진스") || 
@@ -165,4 +169,4 @@ function getCategoryEmoji(category: string): string {
     case "entertainer": return "📺";
     default: return "⭐";
   }
-});
+}

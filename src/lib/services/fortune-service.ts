@@ -18,7 +18,7 @@ import { FortuneServiceError } from '../fortune-utils';
 import { centralizedFortuneService } from './centralized-fortune-service';
 import { FORTUNE_PACKAGES } from '@/config/fortune-packages';
 
-import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
+import { DeterministicRandom, createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export class FortuneService {
   private static instance: FortuneService;
   private supabase: any;
@@ -354,17 +354,24 @@ export class FortuneService {
     console.log(`🔄 Fallback 운세 생성: ${category}`);
     
     const userName = userProfile?.name || '사용자';
+    const userId = userProfile?.id || 'fallback-user';
+    const date = getTodayDateString();
+    const rng = new DeterministicRandom(userId, date, category);
+    
+    const luckyItems = ["파란색 아이템", "행운의 펜", "작은 선물"];
+    const luckyColors = ["파란색", "초록색", "금색"];
+    
     const baseData = {
       category,
       groupType,
       generated_at: new Date().toISOString(),
       ai_source: 'fallback',
-      overall_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60, // 60-100점 (UI 기대 필드명)
+      overall_score: rng.randomInt(60, 100), // 60-100점 (UI 기대 필드명)
       summary: `${userName}님의 ${category} 운세가 준비되었습니다. 더 정확한 분석을 위해 잠시 후 다시 시도해보세요.`,
       advice: "긍정적인 마음가짐으로 하루를 시작하세요.",
-      lucky_items: [["파란색 아이템", "행운의 펜", "작은 선물"][/* TODO: Use rng.randomInt(0, 2) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 3)]],
-      lucky_color: ["파란색", "초록색", "금색"][/* TODO: Use rng.randomInt(0, 2) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 3)],
-      lucky_number: /* TODO: Use rng.randomInt(0, 8) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 9) + 1
+      lucky_items: [rng.randomElement(luckyItems)],
+      lucky_color: rng.randomElement(luckyColors),
+      lucky_number: rng.randomInt(1, 9)
     };
 
     // 그룹별 특화 데이터 추가
@@ -372,10 +379,10 @@ export class FortuneService {
       case 'DAILY_COMPREHENSIVE':
         return {
           ...baseData,
-          love_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,    // UI 기대 필드명
-          money_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,   // UI 기대 필드명
-          health_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60,  // UI 기대 필드명
-          career_score: /* TODO: Use rng.randomInt(0, 40) */ Math.floor(/* TODO: Use rng.random() */ Math.random() * 41) + 60   // UI 기대 필드명 (work_luck -> career_score)
+          love_score: rng.randomInt(60, 100),    // UI 기대 필드명
+          money_score: rng.randomInt(60, 100),   // UI 기대 필드명
+          health_score: rng.randomInt(60, 100),  // UI 기대 필드명
+          career_score: rng.randomInt(60, 100)   // UI 기대 필드명 (work_luck -> career_score)
         };
         
       case 'LIFE_PROFILE':
@@ -405,7 +412,7 @@ export class FortuneService {
       const expiresAt = this.calculateExpiration(fortuneType);
       const inputHash = interactiveInput ? this.generateInputHash(interactiveInput) : null;
       
-      // DB에 저장 (upsert 방식으로 중복 방지)
+      // 1. fortunes 테이블에 저장 (캐시용, upsert 방식으로 중복 방지)
       const fortuneRecord = {
         user_id: userId,
         fortune_type: fortuneType,
@@ -417,16 +424,39 @@ export class FortuneService {
         updated_at: new Date().toISOString()
       };
 
-      const { error } = await this.supabase
+      const { error: fortuneError } = await this.supabase
         .from('fortunes')
         .upsert(fortuneRecord, {
           onConflict: 'user_id,fortune_category,input_hash',
           ignoreDuplicates: false
         });
 
-      if (error) {
-        console.error('DB 저장 실패:', error);
-        throw error;
+      if (fortuneError) {
+        console.error('fortunes 테이블 저장 실패:', fortuneError);
+        throw fortuneError;
+      }
+
+      // 2. fortune_history 테이블에 저장 (영구 기록용)
+      const tokenCost = this.getTokenCostForCategory(fortuneCategory);
+      const historyRecord = {
+        user_id: userId,
+        fortune_type: fortuneCategory,
+        fortune_data: data,
+        request_data: interactiveInput || {},
+        token_cost: tokenCost,
+        response_time: data._response_time || null,
+        model_used: data.ai_source || 'unknown',
+        is_cached: false,
+        created_at: new Date().toISOString()
+      };
+
+      const { error: historyError } = await this.supabase
+        .from('fortune_history')
+        .insert(historyRecord);
+
+      if (historyError) {
+        console.error('fortune_history 테이블 저장 실패:', historyError);
+        // 히스토리 저장 실패는 치명적이지 않으므로 계속 진행
       }
 
       console.log(`💾 DB 저장 완료: ${fortuneCategory} (만료: ${expiresAt?.toLocaleString() || '무제한'})`);
@@ -621,6 +651,46 @@ export class FortuneService {
     
     // 기본 캐시 시간 (24시간)
     return 24 * 60 * 60 * 1000;
+  }
+
+  /**
+   * 운세 카테고리별 토큰 비용 가져오기
+   */
+  private getTokenCostForCategory(fortuneCategory: FortuneCategory): number {
+    // 카테고리별 토큰 비용 정의
+    const tokenCosts: Partial<Record<FortuneCategory, number>> = {
+      // 간단한 운세 (1 토큰)
+      'daily': 1,
+      'today': 1,
+      'tomorrow': 1,
+      'lucky-color': 1,
+      'lucky-number': 1,
+      'lucky-food': 1,
+      
+      // 중간 복잡도 운세 (2 토큰)
+      'love': 2,
+      'career': 2,
+      'wealth': 2,
+      'compatibility': 2,
+      'tarot': 2,
+      'dream-interpretation': 2,
+      
+      // 복잡한 운세 (3 토큰)
+      'saju': 3,
+      'traditional-saju': 3,
+      'saju-psychology': 3,
+      'tojeong': 3,
+      'past-life': 3,
+      'destiny': 3,
+      
+      // 프리미엄 운세 (5 토큰)
+      'startup': 5,
+      'business': 5,
+      'lucky-investment': 5,
+      'lucky-realestate': 5
+    };
+    
+    return tokenCosts[fortuneCategory] || 1; // 기본값 1 토큰
   }
 }
 

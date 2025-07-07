@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateMovingFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 // POST 요청 (상세 이사 정보로 분석)
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
@@ -18,10 +22,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     } = body;
 
     if (!name || !birthDate) {
-      return NextResponse.json(
-        { error: '이름과 생년월일이 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('이름과 생년월일이 필요합니다.', undefined, undefined, 400);
     }
 
     console.log(`🔍 이사운 분석 시작: ${name} (${currentLocation} → ${newLocation})`);
@@ -45,22 +46,16 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
 
     console.log('✅ 이사운 분석 완료');
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        type: 'moving',
-        user_info: profile,
+    return createFortuneResponse({ type: 'moving', user_info: profile,
         moving_details: movingDetails,
         ...result,
-        generated_at: new Date().toISOString()
-      }
-    });
+        generated_at: new Date().toISOString() }, 'moving', req.userId);
     
   } catch (error) {
     console.error('❌ 이사운 분석 실패:', error);
     return createSafeErrorResponse(error, '이사운 분석 중 오류가 발생했습니다.');
   }
-}
+});
 
 // GET 요청 (기본 정보 제공)
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {

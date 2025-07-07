@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   Star, 
   Heart, 
@@ -51,6 +52,14 @@ const categories = [
 ];
 
 export default function WishPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [newWish, setNewWish] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("love");
@@ -80,7 +89,7 @@ export default function WishPage() {
     const wishLength = content.length;
     const lengthBonus = Math.min(wishLength / 10, 5);
     
-    return Math.min(95, Math.max(45, baseProbability + lengthBonus + Math.random() * 10 - 5));
+    return Math.min(95, Math.max(45, baseProbability + lengthBonus + deterministicRandom.random() * 10 - 5));
   };
 
   const handleSubmitWish = async () => {

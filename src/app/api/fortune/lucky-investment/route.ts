@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 interface InvestmentRequest {
@@ -412,20 +413,14 @@ export async function POST(request: NextRequest) {
     try {
       // 인증된 사용자만 접근 가능
       if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
-        return NextResponse.json(
-          { error: '로그인이 필요합니다.' },
-          { status: 401 }
-        );
+        return createErrorResponse('로그인이 필요합니다.', undefined, undefined, 401);
       }
 
       const body: InvestmentRequest = await request.json();
       
       // 필수 필드 검증
       if (!body.name || !body.birth_date || !body.risk_tolerance) {
-        return NextResponse.json(
-          { error: '필수 정보가 누락되었습니다.' },
-          { status: 400 }
-        );
+        return createErrorResponse('필수 정보가 누락되었습니다.', undefined, undefined, 400);
       }
 
       // Mock 응답 (GPT 연동 시 실제 응답으로 대체)
@@ -435,10 +430,7 @@ export async function POST(request: NextRequest) {
       
     } catch (error) {
       console.error('Lucky investment API error:', error);
-      return NextResponse.json(
-        { error: '투자운 분석 중 오류가 발생했습니다.' },
-        { status: 500 }
-      );
+      return createErrorResponse('투자운 분석 중 오류가 발생했습니다.', undefined, undefined, 500);
     }
   });
 } 

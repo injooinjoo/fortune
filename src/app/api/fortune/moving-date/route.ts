@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
@@ -15,7 +16,8 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
         const result = await fortuneService.getOrCreateFortune(userId, 'moving-date');
     
     console.log(`✅ 이사 날짜 API 응답 완료: ${userId}`);
-    return NextResponse.json(result);
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
+    );
     
   } catch (error) {
     console.error('이사 날짜 API 오류:', error);

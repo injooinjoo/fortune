@@ -2,7 +2,7 @@
 "use server";
 
 import { generateFortuneInsights, type GenerateFortuneInsightsInput, type GenerateFortuneInsightsOutput as AIOutputType, type SajuDataType } from "@/ai/flows/generate-fortune-insights";
-import type { FortuneFormValues } from "@/lib/schemas";
+import type { ProfileFormValues as FortuneFormValues } from "@/lib/schemas";
 import { format } from "date-fns";
 
 // This is the structure expected by the Page component

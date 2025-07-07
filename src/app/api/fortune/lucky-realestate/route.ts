@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 // 요청 본문의 타입을 정의합니다.
 interface RealEstateRequest {
@@ -24,10 +28,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     const requiredFields: (keyof RealEstateRequest)[] = ['name', 'birth_date', 'investment_experience', 'risk_tolerance', 'budget_range', 'investment_goals'];
     for (const field of requiredFields) {
       if (!body[field]) {
-        return NextResponse.json(
-          { error: `필수 정보가 누락되었습니다: ${field}` },
-          { status: 400 }
-        );
+        return createErrorResponse('필수 정보가 누락되었습니다: ${field}', undefined, undefined, 400);
       }
     }
 

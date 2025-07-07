@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Type, Share2, Type as TypeIcon } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
+import { TokenBalanceWithHistory } from "./TokenBalanceWithHistory";
 
 interface AppHeaderProps {
   title?: string;
@@ -13,6 +14,7 @@ interface AppHeaderProps {
   currentFontSize?: 'small' | 'medium' | 'large';
   dynamicTitle?: string;
   showDynamicTitle?: boolean;
+  showTokenBalance?: boolean;
 }
 
 export default function AppHeader({ 
@@ -21,7 +23,8 @@ export default function AppHeader({
   onFontSizeChange,
   currentFontSize = 'medium',
   dynamicTitle,
-  showDynamicTitle = false
+  showDynamicTitle = false,
+  showTokenBalance = true
 }: AppHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -93,7 +96,7 @@ export default function AppHeader({
     >
       <div className="flex items-center justify-between px-4 py-3 h-14">
         {/* 왼쪽: 뒤로가기 버튼 */}
-        <div className="flex items-center w-16">
+        <div className="flex items-center min-w-[40px]">
           {shouldShowBack && (
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -130,8 +133,13 @@ export default function AppHeader({
           </motion.h1>
         </motion.div>
 
-        {/* 오른쪽: 글씨크기 조절 & 공유 버튼 */}
-        <div className="flex items-center space-x-1 w-16 justify-end relative">
+        {/* 오른쪽: 토큰 잔액, 글씨크기 조절 & 공유 버튼 */}
+        <div className="flex items-center space-x-2 justify-end relative">
+          {/* 토큰 잔액 표시 */}
+          {showTokenBalance && (
+            <TokenBalanceWithHistory compact={true} showLabel={true} />
+          )}
+          
           {/* 글씨크기 조절 버튼 */}
           <div className="relative">
             <motion.div

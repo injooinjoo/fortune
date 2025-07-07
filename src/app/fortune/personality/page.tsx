@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import { 
   Brain, 
   Star, 
@@ -115,6 +116,14 @@ const communicationStyles = [
 ];
 
 export default function PersonalityPage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<UserInfo>({
@@ -137,7 +146,7 @@ export default function PersonalityPage() {
     const traits = [
       {
         name: "창의성",
-        score: Math.floor(Math.random() * 40) + 60,
+        score: deterministicRandom.randomInt(60, 60 + 40 - 1),
         description: "새로운 아이디어를 생각해내고 독창적인 해결책을 찾는 능력",
         strengths: ["혁신적 사고", "문제해결력", "예술적 감각"],
         areas_for_growth: ["실행력 향상", "세부사항 관리"],
@@ -146,7 +155,7 @@ export default function PersonalityPage() {
       },
       {
         name: "리더십",
-        score: Math.floor(Math.random() * 40) + 60,
+        score: deterministicRandom.randomInt(60, 60 + 40 - 1),
         description: "다른 사람들을 이끌고 영감을 주는 자연스러운 능력",
         strengths: ["결정력", "비전 제시", "동기부여"],
         areas_for_growth: ["경청 능력", "팀원 배려"],
@@ -155,7 +164,7 @@ export default function PersonalityPage() {
       },
       {
         name: "공감능력",
-        score: Math.floor(Math.random() * 40) + 60,
+        score: deterministicRandom.randomInt(60, 60 + 40 - 1),
         description: "타인의 감정을 이해하고 공감하는 뛰어난 능력",
         strengths: ["인간관계", "소통능력", "갈등조정"],
         areas_for_growth: ["객관적 판단", "경계설정"],
@@ -164,7 +173,7 @@ export default function PersonalityPage() {
       },
       {
         name: "분석력",
-        score: Math.floor(Math.random() * 40) + 60,
+        score: deterministicRandom.randomInt(60, 60 + 40 - 1),
         description: "복잡한 정보를 체계적으로 분석하고 패턴을 파악하는 능력",
         strengths: ["논리적 사고", "문제 진단", "데이터 해석"],
         areas_for_growth: ["직감 활용", "빠른 결정"],
@@ -173,7 +182,7 @@ export default function PersonalityPage() {
       },
       {
         name: "적응력",
-        score: Math.floor(Math.random() * 40) + 60,
+        score: deterministicRandom.randomInt(60, 60 + 40 - 1),
         description: "변화하는 환경에 유연하게 적응하는 능력",
         strengths: ["변화 수용", "빠른 학습", "스트레스 관리"],
         areas_for_growth: ["일관성 유지", "장기 계획"],
@@ -232,7 +241,7 @@ export default function PersonalityPage() {
         "리더역할": 88
       },
       life_advice: "당신은 타고난 리더이면서 동시에 창의적인 영혼을 가지고 있습니다. 자신의 비전을 믿고 꾸준히 나아가되, 주변 사람들의 의견도 귀 기울여 듣는 것이 중요합니다. 완벽을 추구하기보다는 진전에 집중하며, 실패를 두려워하지 말고 새로운 도전을 계속해나가세요.",
-      overall_score: Math.floor(Math.random() * 20) + 80
+      overall_score: deterministicRandom.randomInt(80, 80 + 20 - 1)
     };
   };
 

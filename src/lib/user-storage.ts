@@ -1,5 +1,7 @@
 // User storage utilities for local and Supabase data management
 
+import { UserProfile } from '@/lib/types/fortune-system';
+
 // 데이터 유효성 검사 함수들
 export const validateUserProfile = (profile: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
@@ -586,4 +588,66 @@ export const checkAndFixDataConsistency = (): { fixed: boolean; issues: string[]
 export const isPremiumUser = (profile: UserProfile | null): boolean => {
   if (!profile) return false;
   return profile.subscription_status === 'premium' || profile.subscription_status === 'premium_plus';
+};
+
+/**
+ * 게스트 사용자인지 확인합니다.
+ */
+export const isGuestUser = (userId: string | null): boolean => {
+  if (!userId) return true;
+  return userId === 'guest' || userId === 'anonymous' || userId.startsWith('guest_');
+};
+
+/**
+ * 사용자 정보를 저장합니다.
+ */
+export const saveUserInfo = async (userId: string, userInfo: Partial<UserProfile>): Promise<void> => {
+  try {
+    // localStorage에 저장
+    const key = `user_profile_${userId}`;
+    const existingProfile = localStorage.getItem(key);
+    const profile = existingProfile ? JSON.parse(existingProfile) : {};
+    
+    const updatedProfile = {
+      ...profile,
+      ...userInfo,
+      updated_at: new Date().toISOString()
+    };
+    
+    localStorage.setItem(key, JSON.stringify(updatedProfile));
+  } catch (error) {
+    console.error('Failed to save user info:', error);
+    throw error;
+  }
+};
+
+/**
+ * 온보딩에서 사용자 프로필을 업데이트합니다.
+ */
+export const updateUserProfileFromOnboarding = async (
+  userId: string, 
+  updates: Partial<UserProfile>
+): Promise<UserProfile> => {
+  try {
+    // 기존 프로필 가져오기
+    const key = `user_profile_${userId}`;
+    const existingProfile = localStorage.getItem(key);
+    const profile = existingProfile ? JSON.parse(existingProfile) : { id: userId };
+    
+    // 업데이트된 프로필
+    const updatedProfile: UserProfile = {
+      ...profile,
+      ...updates,
+      onboarding_completed: true,
+      updated_at: new Date().toISOString()
+    };
+    
+    // 저장
+    localStorage.setItem(key, JSON.stringify(updatedProfile));
+    
+    return updatedProfile;
+  } catch (error) {
+    console.error('Failed to update user profile from onboarding:', error);
+    throw error;
+  }
 }; 

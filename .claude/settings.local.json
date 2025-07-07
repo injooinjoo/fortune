@@ -41,7 +41,8 @@
       "Bash(claude code --model claude-opus-4-20250514)",
       "Bash(for file in src/app/fortune/compatibility/page.tsx src/app/fortune/saju/page.tsx src/app/dashboard/page.tsx)",
       "Bash(do echo \"=== $file ===\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

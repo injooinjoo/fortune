@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCompatibilityFortune } from '@/ai/openai-client';
+import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
+import { AuthenticatedRequest } from '@/middleware/auth';
+import { FortuneService } from '@/lib/services/fortune-service';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 interface PersonInfo {
     name: string;
@@ -17,14 +21,11 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
   console.log('💕 궁합 운세 API 요청');
   
   try {
-    const body: CompatibilityRequest = await req.json();
+    const body: CompatibilityRequest = await request.json();
     const { person1, person2 } = body;
 
     if (!person1?.name || !person1?.birth_date || !person2?.name || !person2?.birth_date) {
-      return NextResponse.json(
-        { error: '두 사람의 이름과 생년월일이 모두 필요합니다.' },
-        { status: 400 }
-      );
+      return createErrorResponse('두 사람의 이름과 생년월일이 모두 필요합니다.', undefined, undefined, 400);
     }
 
     console.log(`🔍 궁합 분석 시작: ${person1.name} ↔️ ${person2.name}`);
@@ -34,11 +35,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
 
     console.log('✅ 궁합 분석 완료');
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        type: 'compatibility',
-        person1: {
+    return createFortuneResponse({ type: 'compatibility', person1: {
           name: person1.name,
           birth_date: person1.birth_date
         },
@@ -47,15 +44,13 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           birth_date: person2.birth_date
         },
         ...fortuneResult,
-        generated_at: new Date().toISOString()
-      }
-    });
+        generated_at: new Date().toISOString() }, 'compatibility', req.userId);
 
   } catch (error: any) {
     console.error('❌ 궁합 분석 실패:', error);
     return createSafeErrorResponse(error, '궁합 분석 중 오류가 발생했습니다.');
   }
-}
+});
 
 // GET 요청 (기본 정보 제공)
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {

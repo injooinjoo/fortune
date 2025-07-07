@@ -1,20 +1,10 @@
 import { NextRequest } from 'next/server';
-import { fortuneService } from '@/lib/services/fortune-service';
-import { UserProfile } from '@/lib/types/fortune-system';
+import { fortuneService, FortuneService } from '@/lib/services/fortune-service';
 import { handleFortuneResponse } from '@/lib/api-utils';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
+import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
-// 개발용 기본 사용자 프로필 생성 함수
-const getDefaultUserProfile = (userId: string): UserProfile => ({
-  id: userId,
-  name: '테스트 사용자',
-  birth_date: '1995-07-15',
-  birth_time: '14:30',
-  gender: '여성',
-  mbti: 'ENFP',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString()
-});
+
 
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
@@ -31,14 +21,23 @@ export async function GET(request: NextRequest) {
 
       console.log(`🔍 결혼운 요청: 사용자 ID = ${req.userId}`);
 
-      // 실제 사용자 프로필을 가져와야 함 (TODO: DB에서 조회)
-      const userProfile = getDefaultUserProfile(req.userId);
+      // 실제 사용자 프로필을 가져옴
+      const { profile, needsOnboarding } = await getUserProfileForAPI(req.userId);
+      
+      if (needsOnboarding || !profile) {
+        return createErrorResponse(
+          '프로필 설정이 필요합니다.',
+          undefined,
+          { needsOnboarding: true },
+          403
+        );
+      }
 
       // FortuneService를 통해 결혼운 데이터 요청
       const result = await fortuneService.getOrCreateFortune(
         req.userId,
         'marriage',  // FortuneCategory
-        userProfile
+        profile
       );
 
       console.log('✅ 결혼운 API 응답 준비 완료');

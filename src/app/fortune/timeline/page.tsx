@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DeterministicRandom } from '@/lib/deterministic-random';
 import {
   Clock,
   Sun,
@@ -91,15 +92,15 @@ const generateTimelineFortunes = (): TimeSlotFortune[] => {
         (p.range[0] > p.range[1] && (hour >= p.range[0] || hour <= p.range[1]))
       ) || periods[3];
 
-    const base = Math.floor(Math.random() * 40) + 40;
-    const score = Math.max(20, Math.min(100, base + Math.floor(Math.random() * 30) - 15));
+    const base = deterministicRandom.randomInt(40, 40 + 40 - 1);
+    const score = Math.max(20, Math.min(100, base + Math.floor(deterministicRandom.random() * 30) - 15));
 
     slots.push({
       range: `${hour.toString().padStart(2, "0")}:00~${next.toString().padStart(2, "0")}:00`,
       period: period.name,
       icon: period.icon,
       score,
-      text: fortuneTexts[Math.floor(Math.random() * fortuneTexts.length)],
+      text: fortuneTexts[Math.floor(deterministicRandom.random() * fortuneTexts.length)],
       color: period.color
     });
   }
@@ -108,6 +109,14 @@ const generateTimelineFortunes = (): TimeSlotFortune[] => {
 };
 
 export default function TimelineFortunePage() {
+  // Initialize deterministic random for consistent results
+  // Get actual user ID from auth context
+  const { user } = useAuth();
+  const userId = user?.id || 'guest-user';
+  const today = new Date().toISOString().split('T')[0];
+  const fortuneType = 'page';
+  const deterministicRandom = new DeterministicRandom(userId, today, fortuneType);
+
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [fortunes, setFortunes] = useState<TimeSlotFortune[]>([]);
 

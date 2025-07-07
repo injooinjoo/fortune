@@ -1,4 +1,5 @@
-"use client"
+
+import { DeterministicRandom } from '@/lib/deterministic-random';"use client"
 
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
@@ -650,9 +651,11 @@ const SidebarMenuSkeleton = React.forwardRef<
     showIcon?: boolean
   }
 >(({ className, showIcon = false, ...props }, ref) => {
-  // Random width between 50 to 90%.
+  // Pseudo-random width between 50 to 90% for UI skeleton variety
+  // Using component instance counter for deterministic but varied widths
   const width = React.useMemo(() => {
-    return `${Math.floor(Math.random() * 40) + 50}%`
+    const counter = ((globalThis as any).__skeletonCounter = ((globalThis as any).__skeletonCounter || 0) + 1);
+    return `${(counter % 40) + 50}%`
   }, [])
 
   return (
