@@ -3,6 +3,7 @@
  */
 
 import { createDeterministicRandom, getTodayDateString } from './deterministic-random';
+import { trackTokenUsage, deductTokens } from './token-tracker';
 
 /**
  * 가짜 운세 데이터 생성을 방지하는 에러 클래스
@@ -21,9 +22,21 @@ export async function callGPTFortuneAPI(params: {
   type: string;
   userInfo: any;
   prompt?: string;
+  userId?: string;
 }): Promise<any> {
+  const startTime = Date.now();
+  let tokensUsed = 0;
+  
   try {
     console.log(`🤖 GPT 운세 분석 시작: ${params.type}`);
+    
+    // 토큰 잔액 확인 (userId가 있는 경우)
+    if (params.userId) {
+      const tokenCheck = await deductTokens(params.userId, 10); // 예상 토큰 사용량
+      if (!tokenCheck.success) {
+        throw new Error('토큰이 부족합니다. 충전이 필요합니다.');
+      }
+    }
     
     // OpenAI 클라이언트 동적 import (서버 환경에서만)
     const { generateSingleFortune } = await import('../ai/openai-client');
@@ -49,19 +62,57 @@ export async function callGPTFortuneAPI(params: {
 
     // OpenAI를 사용한 운세 생성
     result = await generateSingleFortune(params.type, userProfile, params.userInfo);
+    
+    // 토큰 사용량 추정 (실제 사용량은 OpenAI 응답에서 가져와야 함)
+    tokensUsed = estimateTokenUsage(params.type);
+    
+    // 토큰 사용 기록 (userId가 있는 경우)
+    if (params.userId) {
+      const responseTime = Date.now() - startTime;
+      await trackTokenUsage({
+        userId: params.userId,
+        fortuneType: params.type,
+        tokensUsed,
+        model: 'gpt-4',
+        endpoint: `/api/fortune/${params.type}`,
+        responseTime,
+        metadata: {
+          userProfile,
+          success: true
+        }
+      });
+    }
 
-    console.log(`✅ GPT 운세 분석 완료: ${params.type}`);
+    console.log(`✅ GPT 운세 분석 완료: ${params.type} (${tokensUsed} tokens)`);
     
     return {
       success: true,
       type: params.type,
       result: result,
       generated_at: new Date().toISOString(),
-      source: 'gpt_genkit'
+      source: 'gpt_genkit',
+      tokensUsed
     };
 
   } catch (error) {
     console.error(`❌ GPT 운세 분석 실패 (${params.type}):`, error);
+    
+    // 에러 시에도 토큰 사용 기록 (실패 기록)
+    if (params.userId && tokensUsed > 0) {
+      const responseTime = Date.now() - startTime;
+      await trackTokenUsage({
+        userId: params.userId,
+        fortuneType: params.type,
+        tokensUsed: tokensUsed || 5, // 실패 시 최소 토큰
+        model: 'gpt-4',
+        endpoint: `/api/fortune/${params.type}`,
+        responseTime,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        metadata: {
+          success: false
+        }
+      });
+    }
     
     // AI 실패 시 기본 응답 반환 - deterministic random 사용
     const userId = params.userInfo?.id || 'fallback-user';
@@ -96,6 +147,54 @@ export function validateUserInput(input: any, requiredFields: string[]): boolean
     input[field] !== null && 
     input[field] !== ''
   );
+}
+
+/**
+ * 운세 타입별 예상 토큰 사용량
+ */
+function estimateTokenUsage(fortuneType: string): number {
+  const tokenEstimates: Record<string, number> = {
+    // 일일 운세류 (간단)
+    'daily': 30,
+    'today': 30,
+    'tomorrow': 30,
+    'hourly': 25,
+    'weekly': 40,
+    'monthly': 50,
+    'yearly': 60,
+    
+    // 인터랙티브 운세 (중간)
+    'dream': 50,
+    'tarot': 60,
+    'fortune-cookie': 20,
+    'worry-bead': 30,
+    'taemong': 50,
+    'psychology-test': 70,
+    'physiognomy': 60,
+    'face-reading': 60,
+    
+    // 평생 운세 (복잡)
+    'saju': 100,
+    'traditional-saju': 100,
+    'talent': 80,
+    'destiny': 90,
+    'past-life': 80,
+    'tojeong': 90,
+    
+    // 기타
+    'blood-type': 40,
+    'mbti': 50,
+    'relationship': 60,
+    'career': 60,
+    'health': 50,
+    'money': 50,
+    'love': 60,
+    'family': 50,
+    'travel': 40,
+    'study': 50
+  };
+  
+  return tokenEstimates[fortuneType] || 50; // 기본값 50 토큰
 }
 
 /**

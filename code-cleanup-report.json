@@ -1,0 +1,5789 @@
+{
+  "scanDate": "2025-07-07T15:46:34.426Z",
+  "totalFiles": 345,
+  "totalIssues": 824,
+  "issuesByType": {
+    "console": {
+      "count": 734,
+      "files": 195
+    },
+    "alert": {
+      "count": 87,
+      "files": 45
+    },
+    "TODO": {
+      "count": 3,
+      "files": 3
+    }
+  },
+  "details": [
+    {
+      "type": "console",
+      "file": "src/middleware/token-guard.ts",
+      "line": 30,
+      "content": "console.log(`🎫 무제한 사용자: ${userId} (${tokenBalance.subscriptionPlan})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/token-guard.ts",
+      "line": 58,
+      "content": "console.log(`❌ 토큰 부족: ${userId} (필요: ${tokenCost}, 보유: ${tokenBalance.balance})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/token-guard.ts",
+      "line": 82,
+      "content": "console.error(`❌ 토큰 차감 실패: ${userId}`, deductionResult.error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/token-guard.ts",
+      "line": 94,
+      "content": "console.log(`✅ 토큰 차감 성공: ${userId} (-${tokenCost}, 잔액: ${deductionResult.newBalance})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/token-guard.ts",
+      "line": 119,
+      "content": "console.error('토큰 가드 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/rate-limit.ts",
+      "line": 70,
+      "content": "console.warn(`Rate limit exceeded for ${clientId} (Redis)`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/rate-limit.ts",
+      "line": 102,
+      "content": "console.error('Redis rate limiting error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/rate-limit.ts",
+      "line": 109,
+      "content": "console.info('Using in-memory rate limiting (Redis not available)');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/rate-limit.ts",
+      "line": 136,
+      "content": "console.warn(`Rate limit exceeded for ${clientId} (in-memory): ${clientData.count}/${effectiveLimit}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/auth.ts",
+      "line": 93,
+      "content": "console.error('Auth middleware error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/middleware/auth.ts",
+      "line": 107,
+      "content": "console.error('INTERNAL_API_KEY not configured');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/contexts/auth-context.tsx",
+      "line": 53,
+      "content": "console.error('Auth refresh error:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/contexts/auth-context.tsx",
+      "line": 72,
+      "content": "console.error('Initial auth check error:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/contexts/auth-context.tsx",
+      "line": 97,
+      "content": "console.log(`Auth event: ${event}`, newUser?.email);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 188,
+      "content": "console.log('🔄 자동 업데이트 시작 - 새로운 날:', today);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 200,
+      "content": "console.error('자동 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 283,
+      "content": "console.error('최근 본 운세 로드 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 312,
+      "content": "console.error('최근 본 운세 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 508,
+      "content": "console.log(`🧹 정리 완료: ${cleanup.cleaned}개 항목, ${Math.round(cleanup.freedSpace / 1024)}KB 확보`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 526,
+      "content": "console.error('앱 초기화 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/home/page.tsx",
+      "line": 585,
+      "content": "console.error('운세 새로고침 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/selection/page.tsx",
+      "line": 20,
+      "content": "console.log(\"로그인 성공:\", user);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/selection/page.tsx",
+      "line": 36,
+      "content": "console.error(\"Google 로그인 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 30,
+      "content": "console.error('⏱️ 인증 처리 타임아웃');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 43,
+      "content": "console.log('🔄 Auth callback started at:', new Date().toISOString());",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 50,
+      "content": "console.log('📍 URL params:', urlParams.toString());",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 62,
+      "content": "console.log('✅ 이미 유효한 세션이 존재합니다');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 77,
+      "content": "console.error('🚨 OAuth error:', error, errorDescription);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 85,
+      "content": "console.log('✅ Authorization code found, exchanging for session...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 92,
+      "content": "console.error('🚨 Code exchange error:', exchangeError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 115,
+      "content": "console.log('✅ User authenticated:', user.email);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 128,
+      "content": "console.log('👤 Existing user, merging with local data');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 146,
+      "content": "console.log('🔄 데이터 병합 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 156,
+      "content": "console.log('🆕 New user or onboarding incomplete, redirecting to onboarding');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 183,
+      "content": "console.log('🔄 로캼 데이터와 병합한 신규 프로필 생성');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 194,
+      "content": "console.log('❌ No session after code exchange');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 200,
+      "content": "console.error('🚨 Code exchange exception:', codeError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 207,
+      "content": "console.log('🔍 No code found, checking for session from URL...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 212,
+      "content": "console.error('🚨 Session retrieval error:', sessionError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 221,
+      "content": "console.log('✅ Session found, user:', user.email);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 230,
+      "content": "console.log('👤 Existing user with session, merging with local data');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 245,
+      "content": "console.log('🔄 데이터 병합 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 253,
+      "content": "console.log('🆕 New user with session, redirecting to onboarding');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 288,
+      "content": "console.log('❌ No session found, redirecting to main page');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/auth/callback/page.tsx",
+      "line": 294,
+      "content": "console.error('🚨 Auth callback processing error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/payment/tokens/page.tsx",
+      "line": 163,
+      "content": "alert('결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/admin/token-usage/page.tsx",
+      "line": 100,
+      "content": "console.error('토큰 사용량 조회 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/subscription/page.tsx",
+      "line": 97,
+      "content": "console.error('구독 정보 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/dashboard/page.tsx",
+      "line": 61,
+      "content": "console.error('사용자 데이터 로드 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/dashboard/page.tsx",
+      "line": 89,
+      "content": "alert(\"생년월일을 모두 선택해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/dashboard/page.tsx",
+      "line": 124,
+      "content": "console.log('운세 생성 및 기록 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/dashboard/page.tsx",
+      "line": 126,
+      "content": "console.error('운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 133,
+      "content": "console.error('사용자 프로필 로드 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 172,
+      "content": "console.log('🔄 Supabase에 프로필 동기화 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 175,
+      "content": "console.error('🔄 Supabase 동기화 실패:', supabaseError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 186,
+      "content": "console.error('프로필 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 187,
+      "content": "alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/profile/edit/page.tsx",
+      "line": 195,
+      "content": "alert('아바타 업로드 기능은 준비 중입니다.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 86,
+      "content": "console.log('🔍 프로필 로드 시작');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 92,
+      "content": "console.log('✅ 프로필 로드 성공:', profile.name);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 95,
+      "content": "console.log('⚠️ 온보딩 미완료, 온보딩 페이지로 이동');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 98,
+      "content": "console.log('❌ 프로필 없음, 메인 페이지로 이동');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 102,
+      "content": "console.error('🚨 프로필 로드 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 143,
+      "content": "console.log('🚪 로그아웃 시작');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 153,
+      "content": "console.log('✅ Supabase 로그아웃 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 155,
+      "content": "console.error('Supabase 로그아웃 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 164,
+      "content": "console.log('✅ 로그아웃 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/profile/page.tsx",
+      "line": 167,
+      "content": "console.error('🚨 로그아웃 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/actions.ts",
+      "line": 50,
+      "content": "console.warn(`Insight not found or missing for type: ${type}. Original AI output (array):`, result.insights);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/actions.ts",
+      "line": 63,
+      "content": "console.error(\"Error generating fortune:\", e);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/layout.tsx",
+      "line": 54,
+      "content": "console.log('🔧 Simple error filtering enabled');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/fortune-cookie/page.tsx",
+      "line": 233,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/fortune-cookie/page.tsx",
+      "line": 239,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/fortune-cookie/page.tsx",
+      "line": 246,
+      "content": "alert('이름과 생년월일을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/fortune-cookie/page.tsx",
+      "line": 302,
+      "content": "console.error('포춘 쿠키 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/fortune-cookie/page.tsx",
+      "line": 308,
+      "content": "alert('포춘 쿠키 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/worry-bead/page.tsx",
+      "line": 237,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/worry-bead/page.tsx",
+      "line": 243,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/worry-bead/page.tsx",
+      "line": 250,
+      "content": "alert('이름, 생년월일, 고민 내용을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/worry-bead/page.tsx",
+      "line": 306,
+      "content": "console.error('고민 구슬 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/worry-bead/page.tsx",
+      "line": 312,
+      "content": "alert('고민 구슬 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/face-reading/page.tsx",
+      "line": 239,
+      "content": "alert('이름, 생년월일, 성별, 사진을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/face-reading/page.tsx",
+      "line": 302,
+      "content": "console.error('관상 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/face-reading/page.tsx",
+      "line": 308,
+      "content": "alert('관상 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/face-reading/page.tsx",
+      "line": 766,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/face-reading/page.tsx",
+      "line": 767,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "TODO",
+      "file": "src/app/interactive/tarot/page.tsx",
+      "line": 25,
+      "content": "// TODO: This should come from a global state/user context",
+      "severity": "info"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/tarot/page.tsx",
+      "line": 84,
+      "content": "console.error(\"타로 운세 생성 오류:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/taemong/page.tsx",
+      "line": 238,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/taemong/page.tsx",
+      "line": 244,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/taemong/page.tsx",
+      "line": 251,
+      "content": "alert('이름, 생년월일, 태몽 내용을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/taemong/page.tsx",
+      "line": 307,
+      "content": "console.error('태몽 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/taemong/page.tsx",
+      "line": 313,
+      "content": "alert('태몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/psychology-test/page.tsx",
+      "line": 281,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/psychology-test/page.tsx",
+      "line": 298,
+      "content": "alert('이름과 생년월일을 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/psychology-test/page.tsx",
+      "line": 362,
+      "content": "alert('심리 테스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/dream/page.tsx",
+      "line": 207,
+      "content": "alert('이름, 생년월일, 꿈 내용을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/dream/page.tsx",
+      "line": 263,
+      "content": "console.error('꿈 해몽 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/dream/page.tsx",
+      "line": 269,
+      "content": "alert('꿈 해몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/interactive/dream/page.tsx",
+      "line": 611,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/interactive/dream/page.tsx",
+      "line": 612,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/token-stats/route.ts",
+      "line": 124,
+      "content": "console.error('Token stats error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/redis-stats/route.ts",
+      "line": 89,
+      "content": "console.error('Redis stats error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/token-usage/route.ts",
+      "line": 68,
+      "content": "console.error('Timeline 데이터 조회 오류:', timelineError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/token-usage/route.ts",
+      "line": 81,
+      "content": "console.error('패키지 데이터 조회 오류:', packageError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/token-usage/route.ts",
+      "line": 93,
+      "content": "console.error('사용자 데이터 조회 오류:', userError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/admin/token-usage/route.ts",
+      "line": 116,
+      "content": "console.error('토큰 사용량 통계 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/user/token-history/route.ts",
+      "line": 58,
+      "content": "console.error('토큰 내역 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/user/token-history/route.ts",
+      "line": 109,
+      "content": "console.error('토큰 내역 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 10,
+      "content": "console.log('🔍 프로필 조회 요청:', req.userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 23,
+      "content": "console.log('✅ 프로필 조회 성공:', profile.name);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 31,
+      "content": "console.error('🚨 프로필 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 48,
+      "content": "console.log('💾 프로필 저장 요청:', { userId: req.userId, data: profileData });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 103,
+      "content": "console.log('✅ 프로필 저장 완료:', savedProfile.name);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 108,
+      "content": "console.error('🚨 프로필 저장 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 125,
+      "content": "console.log('📝 프로필 업데이트 요청:', { userId: req.userId, data: updateData });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 165,
+      "content": "console.log('✅ 프로필 업데이트 완료:', savedProfile.name);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/profile/route.ts",
+      "line": 170,
+      "content": "console.error('🚨 프로필 업데이트 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 24,
+      "content": "console.error('CRON_SECRET이 설정되지 않았습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 41,
+      "content": "console.log('일일 배치 운세 생성 시작...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 55,
+      "content": "console.error('활성 사용자 조회 오류:', usersError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 63,
+      "content": "console.log('활성 사용자가 없습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 71,
+      "content": "console.log(`${activeUsers.length}명의 활성 사용자 발견`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 90,
+      "content": "console.log(`사용자 ${user.id}는 오늘 이미 운세가 생성됨`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 130,
+      "content": "console.error(`사용자 ${user.id} 운세 생성 실패:`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 154,
+      "content": "console.error('크론 로그 저장 실패:', logError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 171,
+      "content": "console.error('일일 배치 운세 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 198,
+      "content": "console.log(`사용자 ${userId}에게 일일 운세 알림 전송`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/cron/daily-batch/route.ts",
+      "line": 216,
+      "content": "console.error('알림 전송 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/compatibility/route.ts",
+      "line": 21,
+      "content": "console.log('💕 궁합 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/compatibility/route.ts",
+      "line": 31,
+      "content": "console.log(`🔍 궁합 분석 시작: ${person1.name} ↔️ ${person2.name}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/compatibility/route.ts",
+      "line": 36,
+      "content": "console.log('✅ 궁합 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/compatibility/route.ts",
+      "line": 50,
+      "content": "console.error('❌ 궁합 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-compatibility/route.ts",
+      "line": 12,
+      "content": "console.log('💕 전통 궁합 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-compatibility/route.ts",
+      "line": 16,
+      "content": "console.log(`🔍 전통 궁합 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-compatibility/route.ts",
+      "line": 44,
+      "content": "console.log(`✅ 전통 궁합 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-compatibility/route.ts",
+      "line": 50,
+      "content": "console.error('❌ 전통 궁합 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-saju/route.ts",
+      "line": 12,
+      "content": "console.log('🔮 전통 사주 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-saju/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 전통 사주 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-saju/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 전통 사주 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/traditional-saju/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 전통 사주 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/hourly/route.ts",
+      "line": 12,
+      "content": "console.log('⏰ 시간별 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/hourly/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 시간별 운세 요청: 사용자 ID = ${request.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/hourly/route.ts",
+      "line": 35,
+      "content": "console.log('✅ 시간별 운세 API 응답 완료:', request.userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-golf/route.ts",
+      "line": 117,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-golf/route.ts",
+      "line": 160,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-golf/route.ts",
+      "line": 445,
+      "content": "console.error('골프 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/career/route.ts",
+      "line": 9,
+      "content": "console.log('🎯 진로운 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/career/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 진로운 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/career/route.ts",
+      "line": 18,
+      "content": "console.log(`✅ 진로운 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/career/route.ts",
+      "line": 23,
+      "content": "console.error('진로운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/network-report/route.ts",
+      "line": 11,
+      "content": "console.log('🤝 인맥보고서 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/network-report/route.ts",
+      "line": 16,
+      "content": "console.log(`🔍 인맥보고서 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/network-report/route.ts",
+      "line": 37,
+      "content": "console.log('✅ 인맥보고서 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/network-report/route.ts",
+      "line": 42,
+      "content": "console.error('❌ 인맥보고서 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-hiking/route.ts",
+      "line": 9,
+      "content": "console.log('🏔️ 등산 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-hiking/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 등산 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-hiking/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 등산 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-hiking/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 등산 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate-batch/route.ts",
+      "line": 90,
+      "content": "console.error('배치 운세 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate-batch/route.ts",
+      "line": 126,
+      "content": "console.error('에러 로깅 실패:', logError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talisman/route.ts",
+      "line": 9,
+      "content": "console.log('🧿 부적 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talisman/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 부적 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talisman/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 부적 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talisman/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 부적 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/blood-type/route.ts",
+      "line": 9,
+      "content": "console.log('🩸 혈액형 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/blood-type/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 혈액형 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/blood-type/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 혈액형 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/blood-type/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 혈액형 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tojeong/route.ts",
+      "line": 11,
+      "content": "console.log('📍 토정비결 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tojeong/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 토정비결 요청: 사용자 ID = ${req.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tojeong/route.ts",
+      "line": 35,
+      "content": "console.log(`✅ 토정비결 API 응답 완료`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tojeong/route.ts",
+      "line": 39,
+      "content": "console.error('❌ 토정비결 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wealth/route.ts",
+      "line": 97,
+      "content": "console.error('Wealth API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wealth/route.ts",
+      "line": 151,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wealth/route.ts",
+      "line": 182,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/ex-lover/route.ts",
+      "line": 49,
+      "content": "console.error('Ex-lover fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birth-season/route.ts",
+      "line": 9,
+      "content": "console.log('🌱 태어난 계절 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birth-season/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 태어난 계절 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birth-season/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 태어난 계절 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birth-season/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 태어난 계절 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/mbti/route.ts",
+      "line": 12,
+      "content": "console.log('🧠 MBTI 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/mbti/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 MBTI 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/mbti/route.ts",
+      "line": 38,
+      "content": "console.log('✅ MBTI 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/mbti/route.ts",
+      "line": 45,
+      "content": "console.error('❌ MBTI 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/couple-match/route.ts",
+      "line": 59,
+      "content": "console.error('Couple match fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-investment/route.ts",
+      "line": 366,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-investment/route.ts",
+      "line": 387,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-investment/route.ts",
+      "line": 432,
+      "content": "console.error('Lucky investment API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-realestate/route.ts",
+      "line": 57,
+      "content": "console.error('Lucky realestate API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/love/route.ts",
+      "line": 11,
+      "content": "console.log('📍 연애운 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/love/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 연애운 요청: 사용자 ID = ${req.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/love/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 연애운 API 응답 준비 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/love/route.ts",
+      "line": 45,
+      "content": "console.error('❌ 연애운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/today/route.ts",
+      "line": 10,
+      "content": "console.log('📅 오늘의 운세 API 요청 (POST)');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/today/route.ts",
+      "line": 19,
+      "content": "console.log(`🔍 오늘의 운세 요청: 사용자 = ${userProfile.name}, 인증 사용자 = ${request.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/today/route.ts",
+      "line": 30,
+      "content": "console.log('✅ 오늘의 운세 API 응답 완료:', userProfile.name);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/today/route.ts",
+      "line": 44,
+      "content": "console.log('📅 오늘의 운세 API 요청 (GET)');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/today/route.ts",
+      "line": 65,
+      "content": "console.log('✅ 오늘의 운세 API 응답 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/new-year/route.ts",
+      "line": 9,
+      "content": "console.log('🎊 신년 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/new-year/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 신년 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/new-year/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 신년 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/new-year/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 신년 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/past-life/route.ts",
+      "line": 9,
+      "content": "console.log('🔮 전생 분석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/past-life/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 전생 분석 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/past-life/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 전생 분석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/past-life/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 전생 분석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 32,
+      "content": "console.log(`운세 요청: ${category}, 사용자: ${user.id}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 35,
+      "content": "console.log('전체 저장된 프로필들:', getAllProfiles());",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 40,
+      "content": "console.log('프로필 없음 - 프로필 입력 필요');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 44,
+      "content": "console.log('실제 사용자 프로필 로드:', userProfile);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 53,
+      "content": "console.log('운세 결과:', { success: result.success, cached: result.cached });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 58,
+      "content": "console.error('운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/[category]/route.ts",
+      "line": 119,
+      "content": "console.error('운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-items/route.ts",
+      "line": 9,
+      "content": "console.log('🎁 행운의 아이템 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-items/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 아이템 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-items/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 아이템 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-items/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 아이템 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/five-blessings/route.ts",
+      "line": 9,
+      "content": "console.log('🌸 오복 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/five-blessings/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 오복 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/five-blessings/route.ts",
+      "line": 18,
+      "content": "console.log(`✅ 오복 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/five-blessings/route.ts",
+      "line": 23,
+      "content": "console.error('오복 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/celebrity/route.ts",
+      "line": 66,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/celebrity/route.ts",
+      "line": 79,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/celebrity/route.ts",
+      "line": 118,
+      "content": "console.error('Celebrity fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tomorrow/route.ts",
+      "line": 12,
+      "content": "console.log('📅 내일의 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tomorrow/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 내일의 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tomorrow/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 내일의 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/tomorrow/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 내일의 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving-date/route.ts",
+      "line": 9,
+      "content": "console.log('📅 이사 날짜 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving-date/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 이사 날짜 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving-date/route.ts",
+      "line": 18,
+      "content": "console.log(`✅ 이사 날짜 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving-date/route.ts",
+      "line": 23,
+      "content": "console.error('이사 날짜 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/marriage/route.ts",
+      "line": 12,
+      "content": "console.log('📍 결혼운 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/marriage/route.ts",
+      "line": 22,
+      "content": "console.log(`🔍 결혼운 요청: 사용자 ID = ${req.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/marriage/route.ts",
+      "line": 43,
+      "content": "console.log('✅ 결혼운 API 응답 준비 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/marriage/route.ts",
+      "line": 49,
+      "content": "console.error('❌ 결혼운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/chemistry/route.ts",
+      "line": 33,
+      "content": "console.log(`💕 속궁합 분석 시작: ${body.person1.name} ↔️ ${body.person2.name}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/chemistry/route.ts",
+      "line": 44,
+      "content": "console.log('✅ 속궁합 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/chemistry/route.ts",
+      "line": 57,
+      "content": "console.error('Chemistry fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/celebrity-match/route.ts",
+      "line": 61,
+      "content": "console.error('Celebrity match fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wish/route.ts",
+      "line": 9,
+      "content": "console.log('🌟 소원 성취 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wish/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 소원 성취 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wish/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 소원 성취 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/wish/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 소원 성취 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/personality/route.ts",
+      "line": 12,
+      "content": "console.log('🧠 성격 분석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/personality/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 성격 분석 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/personality/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 성격 분석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/personality/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 성격 분석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-tennis/route.ts",
+      "line": 112,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-tennis/route.ts",
+      "line": 151,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-tennis/route.ts",
+      "line": 500,
+      "content": "console.error('테니스 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthstone/route.ts",
+      "line": 9,
+      "content": "console.log('💎 탄생석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthstone/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 탄생석 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthstone/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 탄생석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthstone/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 탄생석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving/route.ts",
+      "line": 10,
+      "content": "console.log('🏠 이사운 API 요청 (상세 분석)');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving/route.ts",
+      "line": 28,
+      "content": "console.log(`🔍 이사운 분석 시작: ${name} (${currentLocation} → ${newLocation})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving/route.ts",
+      "line": 47,
+      "content": "console.log('✅ 이사운 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/moving/route.ts",
+      "line": 55,
+      "content": "console.error('❌ 이사운 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/business/route.ts",
+      "line": 51,
+      "content": "console.error('Business API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/saju-psychology/route.ts",
+      "line": 11,
+      "content": "console.log('🧠 사주 심리분석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/saju-psychology/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/saju-psychology/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 사주 심리분석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/saju-psychology/route.ts",
+      "line": 44,
+      "content": "console.error('❌ 사주 심리분석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-number/route.ts",
+      "line": 9,
+      "content": "console.log('🔢 행운의 숫자 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-number/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 숫자 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-number/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 숫자 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-number/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 숫자 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-cycling/route.ts",
+      "line": 9,
+      "content": "console.log('🚴 사이클링 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-cycling/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 사이클링 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-cycling/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 사이클링 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-cycling/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 사이클링 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/salpuli/route.ts",
+      "line": 9,
+      "content": "console.log('🛡️ 살풀이 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/salpuli/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 살풀이 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/salpuli/route.ts",
+      "line": 18,
+      "content": "console.log(`✅ 살풀이 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/salpuli/route.ts",
+      "line": 23,
+      "content": "console.error('살풀이 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/avoid-people/route.ts",
+      "line": 9,
+      "content": "console.log('⚠️ 피해야 할 사람 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/avoid-people/route.ts",
+      "line": 14,
+      "content": "console.log(`🔍 피해야 할 사람 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/avoid-people/route.ts",
+      "line": 18,
+      "content": "console.log(`✅ 피해야 할 사람 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/avoid-people/route.ts",
+      "line": 25,
+      "content": "console.error('피해야 할 사람 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/face-reading/route.ts",
+      "line": 9,
+      "content": "console.log('📸 관상 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/face-reading/route.ts",
+      "line": 22,
+      "content": "console.log(`🔍 관상 분석 시작: ${name} (${birthDate})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/face-reading/route.ts",
+      "line": 37,
+      "content": "console.log('✅ 관상 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/face-reading/route.ts",
+      "line": 44,
+      "content": "console.error('❌ 관상 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/daily/route.ts",
+      "line": 11,
+      "content": "console.log('📅 일일 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/daily/route.ts",
+      "line": 19,
+      "content": "console.log('🔍 일일 운세 요청: 사용자 ID =', req.userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/daily/route.ts",
+      "line": 30,
+      "content": "console.log('✅ 일일 운세 API 응답 완료:', req.userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/daily/route.ts",
+      "line": 39,
+      "content": "console.error('❌ 일일 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthdate/route.ts",
+      "line": 9,
+      "content": "console.log('📅 생년월일 분석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthdate/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 생년월일 분석 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthdate/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 생년월일 분석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/birthdate/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 생년월일 분석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/employment/route.ts",
+      "line": 9,
+      "content": "console.log('💼 취업운 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/employment/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 취업운 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/employment/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 취업운 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/employment/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 취업운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/palmistry/route.ts",
+      "line": 9,
+      "content": "console.log('✋ 손금 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/palmistry/route.ts",
+      "line": 23,
+      "content": "console.log(`🔍 손금 분석 시작: ${name} (${handType}손)`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/palmistry/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 손금 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/palmistry/route.ts",
+      "line": 53,
+      "content": "console.error('❌ 손금 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-running/route.ts",
+      "line": 9,
+      "content": "console.log('🏃 러닝 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-running/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 러닝 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-running/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 러닝 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-running/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 러닝 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-fishing/route.ts",
+      "line": 9,
+      "content": "console.log('🎣 낚시 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-fishing/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 낚시 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-fishing/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 낚시 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-fishing/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 낚시 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/destiny/route.ts",
+      "line": 12,
+      "content": "console.log('📍 인연운 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/destiny/route.ts",
+      "line": 19,
+      "content": "console.log(`🔮 인연운 요청: 사용자 ID = ${req.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/destiny/route.ts",
+      "line": 40,
+      "content": "console.log('✅ 인연운 API 응답 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/destiny/route.ts",
+      "line": 45,
+      "content": "console.error('❌ 인연운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/history/route.ts",
+      "line": 81,
+      "content": "console.error('Fortune history query error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/history/route.ts",
+      "line": 115,
+      "content": "console.error('Fortune history API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/history/route.ts",
+      "line": 153,
+      "content": "console.error('Fortune history delete error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/history/route.ts",
+      "line": 166,
+      "content": "console.error('Fortune history DELETE API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-swim/route.ts",
+      "line": 9,
+      "content": "console.log('🏊 수영 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-swim/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 수영 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-swim/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 수영 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-swim/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 수영 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 15,
+      "content": "console.log('🎯 통합 운세 생성 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 47,
+      "content": "console.log('🎊 온보딩 완료 - 생애 운세 배치 생성');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 64,
+      "content": "console.log('🌅 일일 운세 배치 생성');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 81,
+      "content": "console.log(`🎯 사용자 직접 요청: ${requested_categories?.[0]}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 105,
+      "content": "console.log('✅ 통합 운세 생성 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/generate/route.ts",
+      "line": 115,
+      "content": "console.error('❌ 통합 운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-food/route.ts",
+      "line": 9,
+      "content": "console.log('🍀 행운의 음식 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-food/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 음식 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-food/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 음식 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-food/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 음식 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/monthly/route.ts",
+      "line": 12,
+      "content": "console.log('📅 월간 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/monthly/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 월간 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/monthly/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 월간 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/monthly/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 월간 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac-animal/route.ts",
+      "line": 12,
+      "content": "console.log('🐲 띠별 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac-animal/route.ts",
+      "line": 16,
+      "content": "console.log(`🔍 띠별 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac-animal/route.ts",
+      "line": 37,
+      "content": "console.log(`✅ 띠별 운세 API 응답 완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac-animal/route.ts",
+      "line": 43,
+      "content": "console.error('❌ 띠별 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-baseball/route.ts",
+      "line": 113,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-baseball/route.ts",
+      "line": 152,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-baseball/route.ts",
+      "line": 481,
+      "content": "console.error('야구 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-color/route.ts",
+      "line": 9,
+      "content": "console.log('🎨 행운의 색상 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-color/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 색상 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-color/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 색상 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-color/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 색상 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/yearly/route.ts",
+      "line": 12,
+      "content": "console.log('📅 연간 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/yearly/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 연간 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/yearly/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 연간 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/yearly/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 연간 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/blind-date/route.ts",
+      "line": 57,
+      "content": "console.error('Blind date fortune API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-exam/route.ts",
+      "line": 9,
+      "content": "console.log('📚 시험운 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-exam/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 시험운 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-exam/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 시험운 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-exam/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 시험운 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/startup/route.ts",
+      "line": 259,
+      "content": "console.log('GPT API 호출 성공');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/startup/route.ts",
+      "line": 274,
+      "content": "console.error('GPT API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/startup/route.ts",
+      "line": 313,
+      "content": "console.error('Startup API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac/route.ts",
+      "line": 9,
+      "content": "console.log('⭐ 별자리 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 별자리 운세 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 별자리 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/zodiac/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 별자리 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/timeline/route.ts",
+      "line": 9,
+      "content": "console.log('📅 인생 타임라인 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/timeline/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 인생 타임라인 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/timeline/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 인생 타임라인 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/timeline/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 인생 타임라인 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-sidejob/route.ts",
+      "line": 54,
+      "content": "console.error('Lucky sidejob API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/weekly/route.ts",
+      "line": 12,
+      "content": "console.log('📅 주간 운세 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/weekly/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 주간 운세 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/weekly/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 주간 운세 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/weekly/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 주간 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/physiognomy/route.ts",
+      "line": 9,
+      "content": "console.log('👤 관상 분석 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/physiognomy/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 관상 분석 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/physiognomy/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 관상 분석 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/physiognomy/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 관상 분석 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-series/route.ts",
+      "line": 9,
+      "content": "console.log('📺 행운의 시리즈 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-series/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 시리즈 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-series/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 시리즈 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-series/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 시리즈 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/biorhythm/route.ts",
+      "line": 12,
+      "content": "console.log('📊 바이오리듬 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/biorhythm/route.ts",
+      "line": 18,
+      "content": "console.log(`🔍 바이오리듬 요청: 사용자 ID = ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/biorhythm/route.ts",
+      "line": 39,
+      "content": "console.log('✅ 바이오리듬 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/biorhythm/route.ts",
+      "line": 46,
+      "content": "console.error('❌ 바이오리듬 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talent/route.ts",
+      "line": 12,
+      "content": "console.log('📍 재능 운세 API 요청 접수');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talent/route.ts",
+      "line": 19,
+      "content": "console.log(`🔍 재능 운세 요청: 사용자 ID = ${req.userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talent/route.ts",
+      "line": 40,
+      "content": "console.log('✅ 재능 운세 API 응답 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/talent/route.ts",
+      "line": 45,
+      "content": "console.error('❌ 재능 운세 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-outfit/route.ts",
+      "line": 9,
+      "content": "console.log('👔 행운의 옷차림 API 요청');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-outfit/route.ts",
+      "line": 15,
+      "content": "console.log('🔍 행운의 옷차림 요청: 사용자 ID =', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-outfit/route.ts",
+      "line": 19,
+      "content": "console.log('✅ 행운의 옷차림 API 응답 완료:', userId);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-outfit/route.ts",
+      "line": 24,
+      "content": "console.error('❌ 행운의 옷차림 API 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/api/fortune/lucky-job/route.ts",
+      "line": 54,
+      "content": "console.error('Lucky job API error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 41,
+      "content": "console.log('Authenticated user with completed onboarding, redirecting to home');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 52,
+      "content": "console.log('Guest user profile found, redirecting to home');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 59,
+      "content": "console.error('사용자 상태 확인 예외:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 123,
+      "content": "console.log('🔄 OAuth code detected, redirecting to callback');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 132,
+      "content": "console.log('Auth error from URL:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 165,
+      "content": "console.log('Checking initial auth state...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 169,
+      "content": "console.error('인증 초기화 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 186,
+      "content": "console.log('User profile changed in storage');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 202,
+      "content": "console.log(\"시작하기 버튼 클릭\");",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 219,
+      "content": "console.error('Google login error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/page.tsx",
+      "line": 244,
+      "content": "console.error(`${provider} 로그인 처리 중 오류:`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 189,
+      "content": "alert('이름을 입력하고 사진을 선택해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 238,
+      "content": "alert('분석 결과 저장에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 241,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 247,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 289,
+      "content": "console.error('재분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/physiognomy/page.tsx",
+      "line": 295,
+      "content": "alert('재분석에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/premium/page.tsx",
+      "line": 157,
+      "content": "alert(\"이름과 생년월일을 모두 입력해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/premium/page.tsx",
+      "line": 190,
+      "content": "console.error('Error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/premium/page.tsx",
+      "line": 191,
+      "content": "alert('운세 생성 중 오류가 발생했습니다.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/premium/page.tsx",
+      "line": 432,
+      "content": "console.log('로그인된 사용자가 없음');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/premium/page.tsx",
+      "line": 452,
+      "content": "console.error('프로필 불러오기 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/premium/page.tsx",
+      "line": 833,
+      "content": "onClick={() => alert('결제 시스템 연동 예정입니다!')}",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/onboarding/mbti/page.tsx",
+      "line": 78,
+      "content": "console.error(\"DB 동기화 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/onboarding/page.tsx",
+      "line": 80,
+      "content": "console.log('게스트 사용자로 진행');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/onboarding/page.tsx",
+      "line": 151,
+      "content": "console.log('🔄 Supabase에 프로필 동기화 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/onboarding/page.tsx",
+      "line": 153,
+      "content": "console.error('Supabase 동기화 실패:', supabaseError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/onboarding/page.tsx",
+      "line": 160,
+      "content": "console.error('프로필 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/onboarding/page.tsx",
+      "line": 161,
+      "content": "alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/membership/page.tsx",
+      "line": 133,
+      "content": "console.error('구독 정보 로드 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/membership/page.tsx",
+      "line": 156,
+      "content": "alert('무료 플랜으로 변경되었습니다.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/membership/page.tsx",
+      "line": 158,
+      "content": "alert('구독이 성공적으로 처리되었습니다! (데모 모드)');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/membership/page.tsx",
+      "line": 162,
+      "content": "console.error('구독 처리 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/membership/page.tsx",
+      "line": 163,
+      "content": "alert('구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/compatibility/page.tsx",
+      "line": 151,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/compatibility/page.tsx",
+      "line": 190,
+      "content": "alert('모든 정보를 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/compatibility/page.tsx",
+      "line": 202,
+      "content": "console.error('궁합 분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/compatibility/page.tsx",
+      "line": 203,
+      "content": "alert('궁합 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/traditional-compatibility/page.tsx",
+      "line": 162,
+      "content": "alert(\"모든 정보를 입력해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/traditional-saju/page.tsx",
+      "line": 72,
+      "content": "console.error('❌ 전통 사주 데이터 로딩 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/hourly/page.tsx",
+      "line": 176,
+      "content": "console.error('운세 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-golf/page.tsx",
+      "line": 189,
+      "content": "console.error('골프 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-golf/page.tsx",
+      "line": 300,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-golf/page.tsx",
+      "line": 312,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-golf/page.tsx",
+      "line": 313,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "TODO",
+      "file": "src/app/fortune/saju/page.tsx",
+      "line": 203,
+      "content": "// TODO: RadarChart 데이터 구조를 새로운 스키마에 맞게 변경해야 함.",
+      "severity": "info"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/network-report/page.tsx",
+      "line": 75,
+      "content": "console.error('인맥보고서 로딩 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-hiking/page.tsx",
+      "line": 252,
+      "content": "alert('이름과 생년월일을 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-hiking/page.tsx",
+      "line": 323,
+      "content": "console.error('등산 운세 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-hiking/page.tsx",
+      "line": 329,
+      "content": "alert('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-hiking/page.tsx",
+      "line": 783,
+      "content": "console.error('재생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-hiking/page.tsx",
+      "line": 784,
+      "content": "alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/batch-demo/page.tsx",
+      "line": 22,
+      "content": "console.log('운세 생성 완료:', data);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/tojeong/page.tsx",
+      "line": 50,
+      "content": "console.log('토정비결 데이터 요청 시작...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/tojeong/page.tsx",
+      "line": 53,
+      "content": "console.log('세션 상태:', session ? '로그인됨' : '미로그인');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/tojeong/page.tsx",
+      "line": 73,
+      "content": "console.log('토정비결 API 응답:', result);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/tojeong/page.tsx",
+      "line": 82,
+      "content": "console.error('토정비결 API 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/wealth/page.tsx",
+      "line": 335,
+      "content": "console.error('금전운 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/wealth/page.tsx",
+      "line": 351,
+      "content": "console.error('분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/ex-lover/page.tsx",
+      "line": 132,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/ex-lover/page.tsx",
+      "line": 177,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/ex-lover/page.tsx",
+      "line": 189,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/ex-lover/page.tsx",
+      "line": 190,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/couple-match/page.tsx",
+      "line": 108,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/couple-match/page.tsx",
+      "line": 128,
+      "content": "alert('모든 정보를 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/couple-match/page.tsx",
+      "line": 139,
+      "content": "console.error('분석 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/couple-match/page.tsx",
+      "line": 140,
+      "content": "alert('분석 중 오류가 발생했습니다.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-investment/page.tsx",
+      "line": 186,
+      "content": "console.error('API 호출 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-investment/page.tsx",
+      "line": 252,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-investment/page.tsx",
+      "line": 264,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-investment/page.tsx",
+      "line": 265,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-realestate/page.tsx",
+      "line": 189,
+      "content": "console.error('API 호출 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-realestate/page.tsx",
+      "line": 255,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-realestate/page.tsx",
+      "line": 267,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-realestate/page.tsx",
+      "line": 268,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 125,
+      "content": "console.log('연애운 데이터 요청 시작...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 131,
+      "content": "console.log('세션 상태:', session ? '로그인됨' : '미로그인');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 133,
+      "content": "console.log('세션 토큰:', session.access_token?.substring(0, 20) + '...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 160,
+      "content": "console.log('연애운 API 응답:', result);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 231,
+      "content": "console.log('연애운 데이터 설정 완료:', loveData);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/love/page.tsx",
+      "line": 235,
+      "content": "console.error('연애운 데이터 로딩 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "TODO",
+      "file": "src/app/fortune/today/page.tsx",
+      "line": 32,
+      "content": "// TODO: This should come from a global state/user context",
+      "severity": "info"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/past-life/page.tsx",
+      "line": 67,
+      "content": "alert('모든 정보를 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-items/page.tsx",
+      "line": 245,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-items/page.tsx",
+      "line": 257,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-items/page.tsx",
+      "line": 258,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/celebrity/page.tsx",
+      "line": 95,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/celebrity/page.tsx",
+      "line": 163,
+      "content": "alert(\"유명인 이름을 입력해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/celebrity/page.tsx",
+      "line": 174,
+      "content": "console.error(e);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/celebrity/page.tsx",
+      "line": 175,
+      "content": "alert(\"운세 분석 중 오류가 발생했습니다.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/tomorrow/page.tsx",
+      "line": 130,
+      "content": "console.error('운세 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/marriage/page.tsx",
+      "line": 108,
+      "content": "console.log('결혼운 데이터 요청 시작...');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/marriage/page.tsx",
+      "line": 128,
+      "content": "console.log('결혼운 API 응답:', result);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/marriage/page.tsx",
+      "line": 172,
+      "content": "console.log('결혼운 데이터 설정 완료:', marriageData);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/marriage/page.tsx",
+      "line": 176,
+      "content": "console.error('결혼운 데이터 로딩 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/chemistry/page.tsx",
+      "line": 180,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/chemistry/page.tsx",
+      "line": 239,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/chemistry/page.tsx",
+      "line": 251,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/chemistry/page.tsx",
+      "line": 252,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/celebrity-match/page.tsx",
+      "line": 114,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/celebrity-match/page.tsx",
+      "line": 145,
+      "content": "alert(\"모든 정보를 입력해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/celebrity-match/page.tsx",
+      "line": 155,
+      "content": "console.error(e);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/celebrity-match/page.tsx",
+      "line": 156,
+      "content": "alert(\"분석 중 오류가 발생했습니다.\");",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/personality/page.tsx",
+      "line": 250,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/personality/page.tsx",
+      "line": 260,
+      "content": "console.error('Error analyzing personality:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/personality/page.tsx",
+      "line": 261,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-tennis/page.tsx",
+      "line": 182,
+      "content": "console.error('테니스 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-tennis/page.tsx",
+      "line": 277,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-tennis/page.tsx",
+      "line": 289,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-tennis/page.tsx",
+      "line": 290,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/birthstone/page.tsx",
+      "line": 58,
+      "content": "alert('생일을 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/saju-psychology/page.tsx",
+      "line": 49,
+      "content": "console.error('사주 심리분석 로드 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-cycling/page.tsx",
+      "line": 94,
+      "content": "alert('생년월일을 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/avoid-people/page.tsx",
+      "line": 177,
+      "content": "console.error('프로필 파싱 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/birthdate/page.tsx",
+      "line": 103,
+      "content": "alert('생년월일을 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-running/page.tsx",
+      "line": 160,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-running/page.tsx",
+      "line": 170,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-running/page.tsx",
+      "line": 171,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-fishing/page.tsx",
+      "line": 231,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-fishing/page.tsx",
+      "line": 243,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-fishing/page.tsx",
+      "line": 244,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/destiny/page.tsx",
+      "line": 81,
+      "content": "console.log('세션 상태:', session ? '로그인됨' : '미로그인');",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-swim/page.tsx",
+      "line": 124,
+      "content": "alert(\"필수 정보를 모두 입력해주세요.\");",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-food/page.tsx",
+      "line": 242,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-food/page.tsx",
+      "line": 254,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-food/page.tsx",
+      "line": 255,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-baseball/page.tsx",
+      "line": 180,
+      "content": "console.error('API 호출 실패, 백업 로직 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-baseball/page.tsx",
+      "line": 295,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-baseball/page.tsx",
+      "line": 307,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-baseball/page.tsx",
+      "line": 308,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-color/page.tsx",
+      "line": 82,
+      "content": "console.warn(\"사용자 데이터 로드 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/blind-date/page.tsx",
+      "line": 152,
+      "content": "console.error('GPT 연동 실패, 기본 데이터 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/blind-date/page.tsx",
+      "line": 218,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/blind-date/page.tsx",
+      "line": 230,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/blind-date/page.tsx",
+      "line": 231,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-exam/page.tsx",
+      "line": 269,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-exam/page.tsx",
+      "line": 281,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-exam/page.tsx",
+      "line": 282,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/startup/page.tsx",
+      "line": 129,
+      "content": "console.error('API 호출 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/startup/page.tsx",
+      "line": 158,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/page.tsx",
+      "line": 826,
+      "content": "console.log('이미 처리 중입니다. 중복 클릭 방지됨.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-sidejob/page.tsx",
+      "line": 158,
+      "content": "console.error('부업 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-sidejob/page.tsx",
+      "line": 229,
+      "content": "console.error('분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/biorhythm/page.tsx",
+      "line": 281,
+      "content": "alert('생년월일을 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/biorhythm/page.tsx",
+      "line": 293,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/biorhythm/page.tsx",
+      "line": 294,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/talent/page.tsx",
+      "line": 53,
+      "content": "console.log('세션 상태:', session ? '로그인됨' : '미로그인');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/talent/page.tsx",
+      "line": 80,
+      "content": "console.error('재능 운세 로드 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-outfit/page.tsx",
+      "line": 159,
+      "content": "alert('필수 정보를 모두 입력해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-outfit/page.tsx",
+      "line": 171,
+      "content": "console.error('분석 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/app/fortune/lucky-outfit/page.tsx",
+      "line": 172,
+      "content": "alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-job/page.tsx",
+      "line": 146,
+      "content": "console.error('직업 운세 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/app/fortune/lucky-job/page.tsx",
+      "line": 211,
+      "content": "console.error('분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdSenseProvider.tsx",
+      "line": 44,
+      "content": "console.log(\"✅ AdSense 스크립트 로드 완료\");",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdSenseProvider.tsx",
+      "line": 48,
+      "content": "console.error(\"❌ AdSense 스크립트 로드 실패:\", e);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdSenseProvider.tsx",
+      "line": 65,
+      "content": "console.log('⚠️ 광고 차단기가 감지되었을 수 있습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdErrorBoundary.tsx",
+      "line": 41,
+      "content": "console.error('광고 컴포넌트 에러:', error, errorInfo);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdErrorBoundary.tsx",
+      "line": 144,
+      "content": "console.log('청크 로드 에러 감지 - 페이지 새로고침 시도');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/AdErrorBoundary.tsx",
+      "line": 162,
+      "content": "console.error('청크 로드 에러:', error, errorInfo);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 125,
+      "content": "console.log(`✅ 광고 슬롯 ${adSlot}은 이미 로드됨`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 137,
+      "content": "console.warn(\"광고 컨테이너 너비 부족:\", adContainer.clientWidth);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 153,
+      "content": "console.warn(`❌ 광고 로드 최대 시도 횟수 초과: ${adSlot}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 162,
+      "content": "console.log(`✅ 광고 로드 시도: ${adSlot}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 165,
+      "content": "console.error(\"❌ AdSense 광고 로드 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ads/GoogleAdsense.tsx",
+      "line": 181,
+      "content": "console.warn(\"AdSense 설정이 완료되지 않았습니다.\");",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/TokenHistoryModal.tsx",
+      "line": 109,
+      "content": "console.error('토큰 내역 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ProtectedRoute.tsx",
+      "line": 30,
+      "content": "console.log('🔒 미인증 사용자 감지 - 로그인 페이지로 리디렉션');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/AdLoadingScreen.tsx",
+      "line": 83,
+      "content": "console.log('✅ 운세 데이터 페칭 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/AdLoadingScreen.tsx",
+      "line": 88,
+      "content": "console.error('❌ 운세 데이터 페칭 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/common/ShareModal.tsx",
+      "line": 47,
+      "content": "console.error(err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/common/ShareModal.tsx",
+      "line": 87,
+      "content": "console.error(\"이미지 생성 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/common/ShareModal.tsx",
+      "line": 124,
+      "content": "console.error(\"카카오톡 공유 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/components/AppHeader.tsx",
+      "line": 77,
+      "content": "alert('링크가 클립보드에 복사되었습니다!');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/components/AppHeader.tsx",
+      "line": 79,
+      "content": "console.error('공유 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ProfileCompletionModal.tsx",
+      "line": 130,
+      "content": "console.error('프로필 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/components/ProfileCompletionModal.tsx",
+      "line": 131,
+      "content": "alert('정보 저장에 실패했습니다. 다시 시도해주세요.');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/components/LowTokenWarning.tsx",
+      "line": 47,
+      "content": "console.error('토큰 잔액 확인 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/SecureErrorBoundary.tsx",
+      "line": 57,
+      "content": "console.warn('Error caught by boundary:', errorHandler.getUserFriendlyMessage(error));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/background-audio-player.tsx",
+      "line": 15,
+      "content": "console.warn(\"오디오 파일을 찾을 수 없습니다: monument-valley-theme.mp3\");",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/background-audio-player.tsx",
+      "line": 22,
+      "content": "console.warn(\"오디오 자동 재생이 차단되었습니다: \", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/ErrorBoundary.tsx",
+      "line": 31,
+      "content": "console.error('ErrorBoundary caught an error:', error, errorInfo);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/fortune/BatchFortuneContainer.tsx",
+      "line": 93,
+      "content": "console.error('배치 운세 생성 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/components/fortune/BatchFortuneContainer.tsx",
+      "line": 132,
+      "content": "alert('클립보드에 복사되었습니다!');",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/components/fortune/BatchFortuneContainer.tsx",
+      "line": 135,
+      "content": "console.error('공유 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/components/fortune/BatchFortuneContainer.tsx",
+      "line": 152,
+      "content": "console.error('캐시 파싱 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "alert",
+      "file": "src/components/fortune/UserInfoForm.tsx",
+      "line": 119,
+      "content": "alert(`다음 정보를 입력해주세요: ${missingFields.map(f => f.label).join(', ')}`);",
+      "severity": "error"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 67,
+      "content": "console.error('배치 운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 174,
+      "content": "console.error('이미지 기반 운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 204,
+      "content": "console.log(`🤖 단일 운세 생성 시작: ${fortuneType}, 사용자: ${profile.name}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 207,
+      "content": "console.log(`📝 생성된 프롬프트 길이: ${prompt.length}자`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 230,
+      "content": "console.log(`✅ 단일 운세 생성 성공: ${fortuneType}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 234,
+      "content": "console.error(`❌ 단일 운세 생성 실패 (${fortuneType}):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 238,
+      "content": "console.error('🔍 인코딩 오류 감지 - 영어 프롬프트로 재시도');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 263,
+      "content": "console.log(`✅ 폴백 프롬프트로 운세 생성 성공: ${fortuneType}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 267,
+      "content": "console.error('❌ 폴백 프롬프트도 실패:', fallbackError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 284,
+      "content": "console.warn('문자열 인코딩 실패, 기본값 사용:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 298,
+      "content": "console.log(`🔍 프롬프트 생성: ${fortuneType}, 사용자: ${safeName}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 414,
+      "content": "console.error('프롬프트 생성 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 427,
+      "content": "console.log('💕 GPT 궁합 분석 시작');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 482,
+      "content": "console.log('✅ GPT 궁합 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 492,
+      "content": "console.error('❌ 궁합 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 503,
+      "content": "console.log('🏠 GPT 이사 운세 분석 시작');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 570,
+      "content": "console.log('✅ GPT 이사 운세 분석 완료');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/openai-client.ts",
+      "line": 580,
+      "content": "console.error('❌ 이사 운세 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 46,
+      "content": "console.log(`🎯 회원가입 배치 운세 생성 시작`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 59,
+      "content": "console.log(`✨ 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 63,
+      "content": "console.error('배치 운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 80,
+      "content": "console.log(`📅 일일 배치 운세 생성 시작`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 93,
+      "content": "console.log(`✨ 일일 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 97,
+      "content": "console.error('일일 배치 운세 생성 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-specialized-fortune.ts",
+      "line": 382,
+      "content": "console.error('운세 응답 파싱 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-fortune-insights.ts",
+      "line": 163,
+      "content": "console.error(\"AI output is null. Input was:\", input);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/ai/flows/generate-fortune-insights.ts",
+      "line": 173,
+      "content": "console.warn(\"AI output missing insights array. Constructing error insights. Input was:\", input, \"Output was:\", output);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-shared-fortune.ts",
+      "line": 58,
+      "content": "console.error(errorMessage, err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-fortune-stream.ts",
+      "line": 214,
+      "content": "console.warn('JSON 파싱 실패:', line)",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-fortune-stream.ts",
+      "line": 357,
+      "content": "console.error('최근 본 운세 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-batch-fortune.ts",
+      "line": 53,
+      "content": "console.error('캐시 파싱 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-batch-fortune.ts",
+      "line": 68,
+      "content": "console.error('캐시 저장 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-batch-fortune.ts",
+      "line": 76,
+      "content": "console.log('프로필 정보가 없어 배치 운세 생성을 건너뜁니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-batch-fortune.ts",
+      "line": 141,
+      "content": "console.error('배치 운세 생성 오류:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-batch-fortune.ts",
+      "line": 169,
+      "content": "console.log('배치 운세 준비 완료, 명시적 호출을 기다립니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-haptic.ts",
+      "line": 38,
+      "content": "console.warn('Haptic feedback failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune-legacy.ts",
+      "line": 60,
+      "content": "console.error('오늘 운세 로드 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune-legacy.ts",
+      "line": 97,
+      "content": "console.error('운세 저장 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune-legacy.ts",
+      "line": 137,
+      "content": "console.error('운세 재생성 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune-legacy.ts",
+      "line": 257,
+      "content": "console.error('운세 기록 로드 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-user-profile.ts",
+      "line": 32,
+      "content": "console.error('프로필 로드 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-user-profile.ts",
+      "line": 57,
+      "content": "console.error('프로필 동기화 실패:', err)",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-user-profile.ts",
+      "line": 62,
+      "content": "console.error('프로필 업데이트 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune.ts",
+      "line": 37,
+      "content": "console.error(`Failed to cache ${fortuneType}:`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/hooks/use-daily-fortune.ts",
+      "line": 244,
+      "content": "console.error('운세 기록 로드 실패:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/analytics-service.ts",
+      "line": 112,
+      "content": "console.error('운세 사용 통계 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/analytics-service.ts",
+      "line": 186,
+      "content": "console.error('사용자 운세 통계 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/analytics-service.ts",
+      "line": 226,
+      "content": "console.error('운세 완성률 추적 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/analytics-service.ts",
+      "line": 282,
+      "content": "console.error('완성률 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/analytics-service.ts",
+      "line": 360,
+      "content": "console.error('사용자 선호도 분석 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/openai-client-improved.ts",
+      "line": 111,
+      "content": "console.warn('Failed to parse JSON response:', parseError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/openai-client-improved.ts",
+      "line": 125,
+      "content": "console.error(`OpenAI attempt ${attempt}/${this.maxRetries} failed:`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/openai-client-improved.ts",
+      "line": 168,
+      "content": "console.warn('Encoding fix failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/openai-client-improved.ts",
+      "line": 266,
+      "content": "console.error('Batch fortune generation failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/auth-session-manager.ts",
+      "line": 25,
+      "content": "console.error('Failed to initialize auth session:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/auth-session-manager.ts",
+      "line": 40,
+      "content": "console.error('Failed to clear expired sessions:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/auth-session-manager.ts",
+      "line": 78,
+      "content": "console.error('Failed to clear PKCE data:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/auth-session-manager.ts",
+      "line": 104,
+      "content": "console.error('Failed to reset auth storage:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/auth-session-manager.ts",
+      "line": 116,
+      "content": "console.log('✅ Auth storage prepared for new authentication');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/error-handler.ts",
+      "line": 41,
+      "content": "console.error('🔴 Error logged:', errorInfo);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/shared-fortune-service.ts",
+      "line": 38,
+      "content": "console.error('로컬 공유 운세 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/shared-fortune-service.ts",
+      "line": 65,
+      "content": "console.log('✅ 공유 운세를 로컬 스토리지에 저장했습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/shared-fortune-service.ts",
+      "line": 68,
+      "content": "console.error('로컬 공유 운세 저장 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/shared-fortune-service.ts",
+      "line": 85,
+      "content": "console.log('🔄 캐시된 공유 운세를 반환합니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/shared-fortune-service.ts",
+      "line": 106,
+      "content": "console.error(\"공유 운세 저장 실패(진행에 영향 없음):\", e);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 29,
+      "content": "console.log('🔵 프로필 저장됨:', { userId, profile });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 31,
+      "content": "console.log('🔵 글로벌 저장소 상태:', global.__MOCK_STORAGE__);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 36,
+      "content": "console.log('🔍 프로필 조회 시작:', { userId });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 38,
+      "content": "console.log('🔍 글로벌 저장소 상태:', global.__MOCK_STORAGE__);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 41,
+      "content": "console.log('🔍 프로필 조회 결과:', { userId, found: !!profile, profile });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/mock-storage.ts",
+      "line": 47,
+      "content": "console.log('📋 전체 프로필 조회:', userProfiles);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/fortune-utils.ts",
+      "line": 31,
+      "content": "console.log(`🤖 GPT 운세 분석 시작: ${params.type}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/fortune-utils.ts",
+      "line": 86,
+      "content": "console.log(`✅ GPT 운세 분석 완료: ${params.type} (${tokensUsed} tokens)`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/fortune-utils.ts",
+      "line": 98,
+      "content": "console.error(`❌ GPT 운세 분석 실패 (${params.type}):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/fortune-utils.ts",
+      "line": 272,
+      "content": "console.log(`[Fortune Debug] ${message}`, data || '');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 19,
+      "content": "console.error('Failed to initialize Redis client:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 84,
+      "content": "console.error('Failed to initialize cache client:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 99,
+      "content": "console.error('Cache get error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 116,
+      "content": "console.error('Cache set error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 129,
+      "content": "console.error('Cache delete error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/redis.ts",
+      "line": 142,
+      "content": "console.error('Cache exists error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 48,
+      "content": "console.error('사용량 통계 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 91,
+      "content": "console.error('패키지 효율성 분석 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 171,
+      "content": "console.error('상세 사용량 보고서 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 209,
+      "content": "console.error('토큰 사용량 저장 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 212,
+      "content": "console.error('데이터베이스 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 221,
+      "content": "console.warn(`사용자 ${userId}가 일일 토큰 한도에 근접: ${stats.daily.tokens}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/utils/token-monitor.ts",
+      "line": 227,
+      "content": "console.warn(`사용자 ${userId}가 월간 비용 한도 초과: $${stats.monthly.cost}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/logger.ts",
+      "line": 32,
+      "content": "console.error(message, ...args);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/logger.ts",
+      "line": 38,
+      "content": "console.warn(message, ...args);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/logger.ts",
+      "line": 44,
+      "content": "console.info(message, ...args);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/logger.ts",
+      "line": 50,
+      "content": "console.log(message, ...args);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/api-utils.ts",
+      "line": 17,
+      "content": "console.log(`⚠️ 사용자 프로필을 찾을 수 없음: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/api-utils.ts",
+      "line": 23,
+      "content": "console.log(`⚠️ 사용자 온보딩 미완료: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/api-utils.ts",
+      "line": 29,
+      "content": "console.error('프로필 조회 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-utils.ts",
+      "line": 29,
+      "content": "console.error('URL 파라미터 추출 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-utils.ts",
+      "line": 96,
+      "content": "console.error('URL 검증 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-utils.ts",
+      "line": 150,
+      "content": "console.log(message, this.sanitizeLog(data));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-utils.ts",
+      "line": 152,
+      "content": "console.log(message);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 118,
+      "content": "console.log(`💾 Storage: ${Math.round(status.dataSize / 1024)}KB used, ${status.dataCount} items${status.issues.length > 0 ? `, ${status.issues.length} issues` : ''}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 120,
+      "content": "console.error('❌ Local Storage unavailable');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 129,
+      "content": "console.log('✅ Status: Available');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 131,
+      "content": "console.log(`💾 Data size: ${Math.round(status.dataSize / 1024)} KB`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 134,
+      "content": "console.log('✅ User data: Found');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 136,
+      "content": "console.log(`👤 User: ${status.userProfile.name} (${status.userProfile.id})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 140,
+      "content": "console.log('ℹ️  User data: Not found');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 145,
+      "content": "status.issues.forEach(issue => console.warn(`- ${issue}`));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 151,
+      "content": "status.recommendations.forEach(rec => console.info(`- ${rec}`));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 155,
+      "content": "console.error('❌ Status: Unavailable');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/db-health-check.ts",
+      "line": 193,
+      "content": "console.error('로컬 스토리지 정리 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-api-utils.ts",
+      "line": 91,
+      "content": "console.error('API Error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 37,
+      "content": "console.error('Failed to track token usage:', usageError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 43,
+      "content": "console.error('Token tracking error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 62,
+      "content": "console.error('Failed to get token balance:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 77,
+      "content": "console.error('Token balance error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 105,
+      "content": "console.error('Token deduction error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 144,
+      "content": "console.error('Failed to get usage stats:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 178,
+      "content": "console.error('Usage stats error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 212,
+      "content": "console.error('Failed to record purchase:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 218,
+      "content": "console.error('Purchase record error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 236,
+      "content": "console.error('Failed to complete purchase:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/token-tracker.ts",
+      "line": 242,
+      "content": "console.error('Purchase completion error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/api-response-utils.ts",
+      "line": 82,
+      "content": "console.error('API Error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 96,
+      "content": "console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 114,
+      "content": "console.error('SecureStorage setItem 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 127,
+      "content": "console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 145,
+      "content": "console.warn('SecureStorage: 데이터 무결성 검증 실패');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 152,
+      "content": "console.error('SecureStorage getItem 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 170,
+      "content": "console.error('SecureStorage removeItem 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 190,
+      "content": "console.error('SecureStorage cleanup 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 232,
+      "content": "console.log('🔧 Supabase configured successfully');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 261,
+      "content": "console.error('Auth check error:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 292,
+      "content": "console.error('로컬 프로필 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 306,
+      "content": "console.error('Supabase 프로필 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 312,
+      "content": "console.error('프로필 조회 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 338,
+      "content": "console.error('프로필 저장 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 383,
+      "content": "console.log('💾 운세 시작 기록을 로컬 스토리지에 저장했습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 405,
+      "content": "console.log('💾 운세 완성 기록을 로컬 스토리지에 업데이트했습니다.');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 410,
+      "content": "console.error('운세 완성 기록 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 439,
+      "content": "console.error('운세 기록 조회 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 473,
+      "content": "console.log('🚀 Starting Google OAuth with callback:', callbackUrl);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 491,
+      "content": "console.error('🚨 Google 로그인 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 496,
+      "content": "console.log('✅ Google OAuth initiated successfully');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 499,
+      "content": "console.error('🚨 Google 로그인 예외:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/supabase.ts",
+      "line": 513,
+      "content": "console.log(`Auth event: ${event}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 46,
+      "content": "console.warn(`SECURITY: 허용되지 않은 키입니다: ${key}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 70,
+      "content": "console.error('SecureStorage setItem failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 94,
+      "content": "console.error('SecureStorage getItem failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 103,
+      "content": "console.error('SecureStorage removeItem failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 116,
+      "content": "console.error('SecureStorage clear failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/secure-storage.ts",
+      "line": 141,
+      "content": "console.error('SecureStorage cleanup failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 28,
+      "content": "console.error('로컬 운세 데이터 파싱 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 80,
+      "content": "console.error('오늘 운세 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 86,
+      "content": "console.error('오늘 운세 조회 중 예외 발생:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 119,
+      "content": "console.error('운세 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 125,
+      "content": "console.error('운세 저장 중 예외 발생:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 172,
+      "content": "console.error(`운세 upsert 실패 (시도 ${attempt}/3):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 181,
+      "content": "console.log(`✅ 운세 upsert 성공 (시도 ${attempt}/3)`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 184,
+      "content": "console.error(`운세 upsert 중 예외 발생 (시도 ${attempt}/3):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 215,
+      "content": "console.error('로컬 데이터 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 246,
+      "content": "console.error('로컬 데이터 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 266,
+      "content": "console.error('운세 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 272,
+      "content": "console.error('운세 업데이트 중 예외 발생:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 300,
+      "content": "console.error('운세 기록 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 306,
+      "content": "console.error('운세 기록 조회 중 예외 발생:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 328,
+      "content": "console.error('사용자 ID 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 358,
+      "content": "console.error('Genkit API 호출 실패:', errorData);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/daily-fortune-service.ts",
+      "line": 364,
+      "content": "console.error('Genkit API 호출 중 예외 발생:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 196,
+      "content": "console.log('\\n🔐 SECURITY AUDIT REPORT');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 199,
+      "content": "console.log(`\\n📊 Overall Security Status: ${audit.overall.isSecure ? '✅ SECURE' : '❌ VULNERABLE'}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 202,
+      "content": "console.log('\\n🚨 CRITICAL ERRORS:');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 203,
+      "content": "audit.overall.errors.forEach(error => console.log(`  ❌ ${error}`));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 207,
+      "content": "console.log('\\n⚠️  WARNINGS:');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 208,
+      "content": "audit.overall.warnings.forEach(warning => console.log(`  ⚠️  ${warning}`));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 212,
+      "content": "console.log('\\n💡 RECOMMENDATIONS:');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 213,
+      "content": "audit.overall.recommendations.forEach(rec => console.log(`  💡 ${rec}`));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/security-validator.ts",
+      "line": 216,
+      "content": "console.log('\\n' + '='.repeat(50));",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/real-fortune-service.ts",
+      "line": 152,
+      "content": "console.error('AI fortune generation failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/real-fortune-service.ts",
+      "line": 375,
+      "content": "console.error('Database fortune fetch failed:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/real-fortune-service.ts",
+      "line": 398,
+      "content": "console.error('Failed to save fortune:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/token-service.ts",
+      "line": 83,
+      "content": "console.error('토큰 잔액 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/token-service.ts",
+      "line": 199,
+      "content": "console.error('토큰 차감 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/token-service.ts",
+      "line": 230,
+      "content": "console.error('토큰 사용 기록 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/token-service.ts",
+      "line": 325,
+      "content": "console.error('토큰 환불 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/centralized-fortune-service.ts",
+      "line": 121,
+      "content": "console.error('중앙 운세 생성 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/centralized-fortune-service.ts",
+      "line": 329,
+      "content": "console.error('배치 레코드 저장 오류:', batchError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/centralized-fortune-service.ts",
+      "line": 335,
+      "content": "console.error('데이터베이스 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/centralized-fortune-service.ts",
+      "line": 378,
+      "content": "console.error('데이터베이스 캐시 확인 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 28,
+      "content": "console.log('FortuneService 초기화 - DB 전용 모드');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 36,
+      "content": "console.log('✅ Supabase 연결 활성화');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 38,
+      "content": "console.error('❌ Supabase 환경변수 누락 - DB 저장 불가');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 63,
+      "content": "console.log('FortuneService.getOrCreateFortune 시작:', { userId, fortuneCategory });",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 82,
+      "content": "console.log(`💾 캐시 히트 - ${fortuneCategory}:`, {",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 96,
+      "content": "console.log(`🔄 캐시 미스 - 새 데이터 생성: ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 111,
+      "content": "console.log(`⚡ 운세 생성 완료 (${endTime - startTime}ms): ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 124,
+      "content": "console.error(`❌ FortuneService 오류 (${endTime - startTime}ms):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 157,
+      "content": "console.warn(`🚫 Rate limit 초과: ${key} (${validRequests.length}/${maxRequests})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 183,
+      "content": "console.log(`🚀 Redis 캐시 히트: ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 210,
+      "content": "console.log(`❌ DB 캐시 미스: ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 214,
+      "content": "console.log(`🚀 DB 캐시 히트: ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 226,
+      "content": "console.error('캐시 조회 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 242,
+      "content": "console.log(`🤖 AI 운세 생성 시작: ${category} (그룹: ${groupType})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 249,
+      "content": "console.log(`📦 묶음 운세 생성: ${relatedFortunes.join(', ')}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 273,
+      "content": "console.log(`✅ 묶음 운세 생성 완료: ${category}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 275,
+      "content": "console.log(`📊 Result for ${category}:`, result);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 278,
+      "content": "console.warn(`⚠️ No result found for category ${category} in batch response`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 325,
+      "content": "console.log(`✅ AI 운세 생성 완료: ${category}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 339,
+      "content": "console.error(`❌ AI 운세 생성 실패 (${category}):`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 354,
+      "content": "console.log(`🔄 Fallback 운세 생성: ${category}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 435,
+      "content": "console.error('fortunes 테이블 저장 실패:', fortuneError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 458,
+      "content": "console.error('fortune_history 테이블 저장 실패:', historyError);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 462,
+      "content": "console.log(`💾 DB 저장 완료: ${fortuneCategory} (만료: ${expiresAt?.toLocaleString() || '무제한'})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 468,
+      "content": "console.log(`💾 Redis 캐시 저장: ${fortuneCategory}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service.ts",
+      "line": 472,
+      "content": "console.error('DB 저장 중 오류:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 32,
+      "content": "console.log(`🎯 회원가입 배치 운세 생성 시작: ${userId}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 62,
+      "content": "console.log(`✅ 배치 생성 완료: ${Object.keys(fortuneData).length}개 운세 (토큰: ${token_usage})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 71,
+      "content": "console.error('회원가입 배치 처리 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 81,
+      "content": "console.log(`📅 일일 배치 운세 생성 시작`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 86,
+      "content": "console.log(`👥 활성 사용자 ${activeUsers.length}명 발견`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 93,
+      "content": "console.log(`✅ 일일 배치 완료`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 96,
+      "content": "console.error('일일 배치 처리 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 138,
+      "content": "console.log(`✅ ${user.name}님 일일 운세 생성 완료 (토큰: ${token_usage})`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 141,
+      "content": "console.error(`사용자 ${user.id} 일일 운세 생성 실패:`, error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 154,
+      "content": "console.log('💾 개발 모드: 배치 운세 메모리에만 저장');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 173,
+      "content": "console.log(`💾 배치 운세 DB 저장 완료: ${batchType}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 176,
+      "content": "console.error('배치 운세 DB 저장 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 196,
+      "content": "console.log(`💾 개별 운세 캐시 저장: ${fortuneType}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/batch-fortune-service.ts",
+      "line": 230,
+      "content": "console.error('활성 사용자 조회 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service-refactored.ts",
+      "line": 19,
+      "content": "console.log(\"FortuneService is now refactored using Composition!\");",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service-refactored.ts",
+      "line": 75,
+      "content": "console.log(`[Package] Generating LIFE_PROFILE_PACKAGE for ${userProfile.name}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/services/fortune-service-refactored.ts",
+      "line": 81,
+      "content": "console.log(`[Package] Generating DAILY_COMPREHENSIVE_PACKAGE for ${userProfile.name}`);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 87,
+      "content": "console.error('프로필 마이그레이션 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 185,
+      "content": "console.warn('프로필 마이그레이션 실패, 데이터 삭제');",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 193,
+      "content": "console.warn('프로필 검증 실패:', validation.errors);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 213,
+      "content": "console.error(\"로컬 프로필 파싱 실패:\", error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 228,
+      "content": "console.error('프로필 저장 실패 - 검증 오류:', validation.errors);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 308,
+      "content": "console.error('syncUserProfile 함수에서 예외 발생:', err);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 322,
+      "content": "console.error('운세 조회 횟수 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 343,
+      "content": "console.error('일일 제한 확인 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 368,
+      "content": "console.error('일일 사용량 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 407,
+      "content": "console.error('사용자 데이터 초기화 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 441,
+      "content": "console.error('사용자 데이터 삭제 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 515,
+      "content": "console.error('프로필 업데이트 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 579,
+      "content": "console.error('데이터 일관성 검사 실패:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 619,
+      "content": "console.error('Failed to save user info:', error);",
+      "severity": "warning"
+    },
+    {
+      "type": "console",
+      "file": "src/lib/user-storage.ts",
+      "line": 650,
+      "content": "console.error('Failed to update user profile from onboarding:', error);",
+      "severity": "warning"
+    }
+  ]
+}

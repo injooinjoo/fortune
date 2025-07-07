@@ -16,7 +16,8 @@ import {
   Gift,
   Star
 } from "lucide-react";
-import confetti from 'canvas-confetti';
+// import confetti from 'canvas-confetti';
+import { confetti } from '@/lib/payment-mock';
 import { auth } from "@/lib/supabase";
 import { tokenService } from "@/lib/services/token-service";
 import { logger } from "@/lib/logger";

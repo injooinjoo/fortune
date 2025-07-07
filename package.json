@@ -24,7 +24,12 @@
     "security:audit": "npm audit && node scripts/security-check.js",
     "test:database": "node scripts/test-database.js",
     "test:redis": "node scripts/test-redis.js",
-    "setup:database": "node scripts/setup-database.js"
+    "redis:check": "node scripts/redis-production-check.js",
+    "setup:database": "node scripts/setup-database.js",
+    "verify-env": "node scripts/verify-env.js",
+    "verify-env:prod": "NODE_ENV=production node scripts/verify-env.js",
+    "code:cleanup": "node scripts/code-cleanup.js",
+    "code:cleanup:fix": "node scripts/code-cleanup.js --fix"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",

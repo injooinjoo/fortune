@@ -1,14 +1,15 @@
 import OpenAI from 'openai';
 import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
+import { preprocessPrompt, postprocessAIResponse, sanitizeForAI } from '@/lib/unicode-utils';
+import { SYSTEM_PROMPTS, FORTUNE_TEMPLATES, validateFortuneResponse } from './prompts/fortune-templates';
 
 // OpenAI 클라이언트 초기화
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// GPT 4.1 Nano 모델 설정 (실제로는 gpt-3.5-turbo 또는 gpt-4를 사용)
-// GPT 4.1 Nano는 가상의 모델명이므로 실제 사용 가능한 경제적인 모델 사용
-export const GPT_MODEL = 'gpt-3.5-turbo'; // 비용 효율적인 모델
+// GPT 4.1 Nano 모델 설정 - 더 똑똑하고 훨씬 저렴한 최신 모델
+export const GPT_MODEL = 'gpt-4.1-nano'; // 고성능 + 저비용 최적화 모델
 
 // 배치 운세 생성을 위한 인터페이스
 export interface BatchFortuneRequest {
@@ -55,8 +56,8 @@ export async function generateBatchFortunes(
         }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.7,
-      max_tokens: 2000, // 토큰 제한으로 비용 절감
+      temperature: 0.5, // 낮춘 temperature로 일관성 향상
+      max_tokens: 2500, // GPT-4.1-nano는 더 효율적이므로 토큰 증가
     });
 
     const response = JSON.parse(completion.choices[0].message.content || '{}');
@@ -255,7 +256,7 @@ Please respond in Korean language with JSON format: { overall_score, summary, ad
             }
           ],
           response_format: { type: "json_object" },
-          temperature: 0.7,
+          temperature: 0.5, // 낮춘 temperature로 일관성 향상
           max_tokens: 500,
         });
         
@@ -473,7 +474,7 @@ export async function generateCompatibilityFortune(
           content: prompt
         }
       ],
-      temperature: 0.7,
+      temperature: 0.5, // 낮춘 temperature로 일관성 향상
       max_tokens: 1000
     });
 
@@ -561,7 +562,7 @@ export async function generateMovingFortune(
           content: prompt
         }
       ],
-      temperature: 0.7,
+      temperature: 0.5, // 낮춘 temperature로 일관성 향상
       max_tokens: 1000
     });
 

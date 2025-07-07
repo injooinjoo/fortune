@@ -1,8 +1,8 @@
 # 🔮 Fortune Project Master Guide
 
-> **최종 업데이트**: 2025년 1월 9일  
-> **프로젝트 버전**: 1.2.0-enhanced  
-> **상태**: Production Ready with Enhanced Features
+> **최종 업데이트**: 2025년 7월 7일  
+> **프로젝트 버전**: 1.4.0  
+> **상태**: Production Ready with Admin Dashboard & Enhanced AI
 
 ## 📑 목차
 
@@ -116,10 +116,12 @@ fortune_history (user_id, fortune_type, token_cost)
 ### ✅ 구현 완료 (100%)
 
 #### AI 통합
-- ✅ 59개 운세 페이지 GPT 연동
+- ✅ 59개 운세 페이지 GPT-4.1-nano 연동
 - ✅ 중앙집중식 배치 생성 시스템
 - ✅ 3단계 fallback 시스템
 - ✅ 토큰 사용량 65-85% 절감
+- ✅ 향상된 운세 서비스 (enhanced-fortune-service.ts)
+- ✅ Unicode 정규화로 한글 인코딩 문제 해결
 
 #### 보안 (Phase 1 & 2)
 - ✅ API 인증 미들웨어 (95% 보호)
@@ -133,12 +135,21 @@ fortune_history (user_id, fortune_type, token_cost)
 - ✅ API 응답 표준화 (73개 엔드포인트)
 - ✅ 운세 히스토리 차트 (Recharts)
 - ✅ 소셜 공유 기능 (html2canvas)
+- ✅ 18개 Fortune API 실제 프로필 조회
 
-#### 결제 시스템
+#### 결제 & 토큰 시스템
 - ✅ Stripe Webhook 처리
-- ✅ 토큰 차감 시스템
+- ✅ 토큰 차감 시스템 (token-tracker.ts)
 - ✅ 구독 관리
 - ✅ 결제 히스토리
+- ✅ 토큰 잔액 표시 컴포넌트
+- ✅ 토큰 사용량 대시보드 (/dashboard/tokens)
+
+#### 관리자 기능
+- ✅ Admin Dashboard (/admin)
+- ✅ Redis 모니터링 (/admin/redis-monitor)
+- ✅ 토큰 통계 API (/api/admin/token-stats)
+- ✅ Redis 통계 API (/api/admin/redis-stats)
 
 ### 📊 성능 지표
 
@@ -203,39 +214,38 @@ npm audit
 
 ### 🔴 긴급 (이번 주)
 
-#### 1. 환경 변수 설정
+#### 1. 코드 품질 개선
+- 734개 console.log 제거/대체
+- 87개 alert() UI 알림으로 변경
+- 3개 TODO 주석 해결
+- 빌드 에러 수정
+
+#### 2. 프로덕션 환경 설정
 ```env
-# 필수 설정 필요
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
-SUPABASE_SERVICE_ROLE_KEY=
-SENTRY_DSN=
-INTERNAL_API_KEY=
-CRON_SECRET=
+# 실제 키로 교체 필요
+STRIPE_SECRET_KEY=(현재 테스트 키)
+STRIPE_WEBHOOK_SECRET=(현재 테스트 키)
+UPSTASH_REDIS_REST_URL=(프로덕션 URL)
+UPSTASH_REDIS_REST_TOKEN=(프로덕션 토큰)
 ```
 
-#### 2. API 프로필 조회 개선
-- 18개 API에서 실제 DB 프로필 조회 필요
-- `getDefaultUserProfile` → Supabase 프로필 연동
-
-#### 3. 결제 시스템 UI 구현
-- 결제 성공/실패 페이지
-- 구독 관리 페이지
+#### 3. Redis 프로덕션 최적화
+- 프로덕션 연결 테스트
+- 캐시 전략 최적화
+- 모니터링 대시보드 활성화
 
 ### 🟡 높은 우선순위
 
-#### 4. UI 구현
-- [✓] 운세 히스토리 차트 (Line, Pie) - 완료
-- [✓] 소셜 공유 이미지 생성 - 완료
-- [ ] 구독 관리 UI
-- [ ] 토큰 잔액 표시
+#### 4. 시스템 모니터링
+- [ ] Sentry 알림 규칙 설정
+- [ ] Redis 성능 최적화
+- [ ] API 응답 시간 개선 (<1초)
+- [ ] 토큰 사용량 분석
 
-#### 5. 시스템 개선
-- [ ] Redis 프로덕션 설정
-- [ ] 프로필 API 보안 강화
-- [ ] 토큰 사용량 대시보드
+#### 5. 사용자 경험
+- [ ] 온보딩 프로세스 개선
+- [ ] 푸시 알림 시스템
+- [ ] 운세 피드백 수집
 
 ### 🟢 중간 우선순위
 
@@ -379,14 +389,23 @@ psql $DATABASE_URL < scripts/create-payment-tables.sql
 
 **Note**: 이 문서는 Fortune 프로젝트의 단일 진실 공급원(Single Source of Truth)입니다. 모든 팀원은 이 문서를 기준으로 개발하고, 변경사항이 있으면 즉시 업데이트해야 합니다.
 
-*마지막 업데이트: 2025년 1월 9일*  
-*다음 검토: 2025년 1월 16일*
+*마지막 업데이트: 2025년 7월 7일*  
+*다음 검토: 2025년 7월 14일*
 
 ## 🎆 최근 업데이트
+
+### 2025년 7월 7일 (v1.4.0)
+- ✅ Admin Dashboard 구현 (/admin)
+- ✅ Redis 모니터링 시스템
+- ✅ 토큰 사용량 대시보드
+- ✅ GPT-4.1-nano 업그레이드
+- ✅ 향상된 운세 서비스 (캐싱, 에러 처리)
+- ✅ 코드 품질 검사 도구 추가
+- ✅ 환경 변수 검증 시스템
 
 ### 2025년 1월 9일
 - ✅ 사용자 ID 컨텍스트 연결 (11개 fortune 페이지)
 - ✅ API 응답 표준화 (73개 엔드포인트)
 - ✅ 운세 히스토리 차트 구현
 - ✅ 소셜 공유 기능 완성
-- 🔄 Redis 프로덕션 최적화 진행 중
+- ✅ 18개 Fortune API 실제 프로필 조회

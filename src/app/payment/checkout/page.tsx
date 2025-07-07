@@ -19,8 +19,9 @@ import {
   ShoppingBag,
   Sparkles
 } from "lucide-react";
-import { loadStripe } from '@stripe/stripe-js';
-import { loadTossPayments } from '@tosspayments/payment-sdk';
+// import { loadStripe } from '@stripe/stripe-js';
+// import { loadTossPayments } from '@tosspayments/payment-sdk';
+import { loadStripe, loadTossPayments } from '@/lib/payment-mock';
 import { auth } from "@/lib/supabase";
 import { logger } from "@/lib/logger";
 
