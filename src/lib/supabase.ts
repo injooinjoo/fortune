@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { createClient } from '@supabase/supabase-js';
 import AuthSessionManager from './auth-session-manager';
 
@@ -93,7 +94,7 @@ export class SecureStorage {
       }
 
       if (!this.isValidKey(key)) {
-        console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
+        logger.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
         return false;
       }
 
@@ -111,7 +112,7 @@ export class SecureStorage {
       
       return true;
     } catch (error) {
-      console.error('SecureStorage setItem 오류:', error);
+      logger.error('SecureStorage setItem 오류:', error);
       return false;
     }
   }
@@ -124,7 +125,7 @@ export class SecureStorage {
       }
 
       if (!this.isValidKey(key)) {
-        console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
+        logger.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
         return null;
       }
 
@@ -142,14 +143,14 @@ export class SecureStorage {
 
       // 체크섬 검증
       if (!this.verifyChecksum(data.value, data.checksum)) {
-        console.warn('SecureStorage: 데이터 무결성 검증 실패');
+        logger.warn('SecureStorage: 데이터 무결성 검증 실패');
         this.removeItem(key);
         return null;
       }
 
       return data.value;
     } catch (error) {
-      console.error('SecureStorage getItem 오류:', error);
+      logger.error('SecureStorage getItem 오류:', error);
       return null;
     }
   }
@@ -167,7 +168,7 @@ export class SecureStorage {
       localStorage.removeItem(this.KEY_PREFIX + key);
       return true;
     } catch (error) {
-      console.error('SecureStorage removeItem 오류:', error);
+      logger.error('SecureStorage removeItem 오류:', error);
       return false;
     }
   }
@@ -187,7 +188,7 @@ export class SecureStorage {
         }
       });
     } catch (error) {
-      console.error('SecureStorage cleanup 오류:', error);
+      logger.error('SecureStorage cleanup 오류:', error);
     }
   }
 
@@ -229,7 +230,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 if (process.env.NODE_ENV === 'development') {
-  console.log('🔧 Supabase configured successfully');
+  logger.debug('🔧 Supabase configured successfully');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -238,9 +239,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true, // URL에서 세션 자동 감지 활성화
     flowType: 'pkce',
-    debug: false, // 디버그 로그 비활성화 (GoTrueClient 무한 로그 방지)
+    debug: process.env.NODE_ENV === 'development', // 개발 모드에서만 디버그 활성화
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'fortune-auth-token', // 명시적인 storage key 설정
+    // storageKey를 제거하여 Supabase가 기본 키를 사용하도록 함
+    // PKCE 코드 verifier는 기본 키로 저장됨
+    // PKCE 플로우가 제대로 작동하도록 추가 설정
+    redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
   }
 });
 
@@ -258,7 +262,7 @@ const isDemoMode = async () => {
     // 게스트 사용자거나 demo_mode가 true인 경우 로컬 스토리지 사용
     return true;
   } catch (error) {
-    console.error('Auth check error:', error);
+    logger.error('Auth check error:', error);
     return true; // 에러 시 안전하게 로컬 모드 사용
   }
 };
@@ -289,7 +293,7 @@ export const userProfileService = {
         
         return null;
       } catch (error) {
-        console.error('로컬 프로필 조회 오류:', error);
+        logger.error('로컬 프로필 조회 오류:', error);
         return null;
       }
     }
@@ -303,13 +307,13 @@ export const userProfileService = {
         .single();
       
       if (error) {
-        console.error('Supabase 프로필 조회 오류:', error);
+        logger.error('Supabase 프로필 조회 오류:', error);
         return null;
       }
       
       return data;
     } catch (error) {
-      console.error('프로필 조회 중 오류:', error);
+      logger.error('프로필 조회 중 오류:', error);
       return null;
     }
   },
@@ -335,7 +339,7 @@ export const userProfileService = {
       .single();
 
     if (error) {
-      console.error('프로필 저장 오류:', error);
+      logger.error('프로필 저장 오류:', error);
       return null;
     }
 
@@ -380,7 +384,7 @@ export const fortuneCompletionService = {
     // 항상 로컬 스토리지 사용
     const id = `completion_${Date.now()}`;
     localStorage.setItem(`demo_completion_${id}`, JSON.stringify({ ...completion, id }));
-    console.log('💾 운세 시작 기록을 로컬 스토리지에 저장했습니다.');
+    logger.debug('💾 운세 시작 기록을 로컬 스토리지에 저장했습니다.');
     return id;
   },
 
@@ -402,12 +406,12 @@ export const fortuneCompletionService = {
       if (completion) {
         const updated = { ...JSON.parse(completion), ...updateData };
         localStorage.setItem(`demo_completion_${completionId}`, JSON.stringify(updated));
-        console.log('💾 운세 완성 기록을 로컬 스토리지에 업데이트했습니다.');
+        logger.debug('💾 운세 완성 기록을 로컬 스토리지에 업데이트했습니다.');
         return true;
       }
       return false;
     } catch (error) {
-      console.error('운세 완성 기록 오류:', error);
+      logger.error('운세 완성 기록 오류:', error);
       return false;
     }
   },
@@ -436,7 +440,7 @@ export const fortuneCompletionService = {
       .limit(limit);
 
     if (error) {
-      console.error('운세 기록 조회 오류:', error);
+      logger.error('운세 기록 조회 오류:', error);
       return [];
     }
 
@@ -462,15 +466,20 @@ export const auth = {
   currentUser: null,
   signInWithGoogle: async () => {
     try {
-      // 인증 전 스토리지 준비
-      AuthSessionManager.prepareForAuth();
-      clearDemoSession();
-      
       // 현재 URL을 기반으로 올바른 콜백 URL 생성
       const origin = window.location.origin;
       const callbackUrl = `${origin}/auth/callback`;
       
-      console.log('🚀 Starting Google OAuth with callback:', callbackUrl);
+      logger.debug('🚀 Starting Google OAuth with callback:', callbackUrl);
+      
+      // OAuth 시작 전 현재 localStorage 상태 로깅 (디버깅용)
+      if (process.env.NODE_ENV === 'development') {
+        const allKeys = Object.keys(localStorage);
+        const authKeys = allKeys.filter(key => 
+          key.includes('supabase') || key.includes('auth') || key.startsWith('sb-')
+        );
+        logger.debug('Pre-OAuth localStorage auth keys:', authKeys);
+      }
       
       // 실제 Supabase 구글 로그인
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -482,22 +491,26 @@ export const auth = {
             prompt: 'select_account',
           },
           skipBrowserRedirect: false,
-          // PKCE 관련 추가 옵션
           scopes: 'email profile'
         }
       });
       
       if (error) {
-        console.error('🚨 Google 로그인 실패:', error);
-        AuthSessionManager.resetAuthStorage(); // 실패 시 정리
+        logger.error('🚨 Google 로그인 실패:', error);
+        // 실패 시에만 인증 스토리지 리셋
+        AuthSessionManager.resetAuthStorage();
+        clearDemoSession(); // 실패 시에만 데모 세션 정리
         return { error };
       }
       
-      console.log('✅ Google OAuth initiated successfully');
+      logger.debug('✅ Google OAuth initiated successfully');
+      // 성공 시에는 PKCE 데이터를 유지하고 데모 세션 정리를 하지 않음
+      // 데모 세션은 인증 완료 후에 정리됨
       return { data, error: null };
     } catch (error) {
-      console.error('🚨 Google 로그인 예외:', error);
-      AuthSessionManager.resetAuthStorage(); // 예외 시 정리
+      logger.error('🚨 Google 로그인 예외:', error);
+      AuthSessionManager.resetAuthStorage();
+      clearDemoSession(); // 예외 시에만 데모 세션 정리
       return { error };
     }
   },
@@ -510,7 +523,7 @@ export const auth = {
       // 로그인/로그아웃 이벤트만 로그 (디버그 모드 비활성화 상태에서도 최소한의 로그)
       if (process.env.NODE_ENV === 'development' && 
           (event === 'SIGNED_IN' || event === 'SIGNED_OUT')) {
-        console.log(`Auth event: ${event}`);
+        logger.debug(`Auth event: ${event}`);
       }
       
       try {

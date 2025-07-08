@@ -1,10 +1,12 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase, userProfileService } from '@/lib/supabase';
 import { getUserProfile, saveUserProfile, updateUserProfile } from '@/lib/user-storage';
 import AuthSessionManager from '@/lib/auth-session-manager';
+import { AuthDebugPanel } from '@/components/debug/AuthDebugPanel';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function AuthCallbackPage() {
     // 10초 타임아웃 설정
     timeoutId = setTimeout(() => {
       if (!isProcessed) {
-        console.error('⏱️ 인증 처리 타임아웃');
+        logger.error('⏱️ 인증 처리 타임아웃');
         setTimeoutReached(true);
         setIsProcessing(false);
         setErrorMessage('인증 처리가 너무 오래 걸리고 있습니다.');
@@ -40,15 +42,51 @@ export default function AuthCallbackPage() {
       isProcessed = true;
 
       try {
-        console.log('🔄 Auth callback started at:', new Date().toISOString());
-        console.log('📍 Full URL:', window.location.href);
+        logger.debug('🔄 Auth callback started at:', new Date().toISOString());
+        logger.debug('📍 Full URL:', window.location.href);
         
         // URL에서 직접 파라미터 추출
         const urlParams = new URLSearchParams(window.location.search);
         const urlHash = window.location.hash;
         
-        console.log('📍 URL params:', urlParams.toString());
-        console.log('📍 URL hash:', urlHash);
+        logger.debug('📍 URL params:', urlParams.toString());
+        logger.debug('📍 URL hash:', urlHash);
+
+        // localStorage 상태 확인 (PKCE 디버깅)
+        if (process.env.NODE_ENV === 'development') {
+          const allKeys = Object.keys(localStorage);
+          const authKeys = allKeys.filter(key => 
+            key.includes('supabase') || key.includes('auth') || 
+            key.includes('pkce') || key.includes('code_verifier') ||
+            key.startsWith('sb-')
+          );
+          logger.debug('🔍 Current localStorage auth keys:', authKeys);
+          
+          // Supabase URL에서 프로젝트 참조 추출
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+          const projectRef = supabaseUrl.match(/https:\/\/([^.]+)\.supabase\.co/)?.[1];
+          logger.debug('📌 Supabase project reference:', projectRef);
+          
+          // 각 키의 값 확인 (code_verifier 포함 여부)
+          authKeys.forEach(key => {
+            const value = localStorage.getItem(key);
+            if (value) {
+              try {
+                const parsed = JSON.parse(value);
+                if (parsed.code_verifier || parsed.codeVerifier) {
+                  logger.debug(`✅ Found code_verifier in key: ${key}`);
+                } else if (parsed.currentSession?.code_verifier) {
+                  logger.debug(`✅ Found code_verifier in currentSession of key: ${key}`);
+                }
+              } catch {
+                // JSON이 아닌 경우 단순 문자열 확인
+                if (key.includes('code_verifier')) {
+                  logger.debug(`📝 Raw code_verifier key found: ${key} = ${value.substring(0, 20)}...`);
+                }
+              }
+            }
+          });
+        }
 
         // code 파라미터 확인 (OAuth authorization code)
         const code = urlParams.get('code');
@@ -59,7 +97,7 @@ export default function AuthCallbackPage() {
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionData?.session && !code) {
-          console.log('✅ 이미 유효한 세션이 존재합니다');
+          logger.debug('✅ 이미 유효한 세션이 존재합니다');
           const user = sessionData.session.user;
           
           // 기존 세션이 있으면 프로필 확인 후 리다이렉트
@@ -74,7 +112,7 @@ export default function AuthCallbackPage() {
         }
 
         if (error) {
-          console.error('🚨 OAuth error:', error, errorDescription);
+          logger.error('🚨 OAuth error:', error, errorDescription);
           setErrorMessage(`OAuth 인증 오류: ${errorDescription || error}`);
           setIsProcessing(false);
           setTimeout(() => router.replace('/'), 3000);
@@ -82,22 +120,30 @@ export default function AuthCallbackPage() {
         }
 
         if (code) {
-          console.log('✅ Authorization code found, exchanging for session...');
+          logger.debug('✅ Authorization code found, exchanging for session...');
+          logger.debug('Code:', code.substring(0, 10) + '...');
           
           try {
             // code를 session으로 교환
             const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
             
             if (exchangeError) {
-              console.error('🚨 Code exchange error:', exchangeError);
+              logger.error('🚨 Code exchange error:', exchangeError);
               
               // PKCE 관련 오류인 경우 특별 처리
-              if (exchangeError.message?.includes('code verifier')) {
-                setErrorMessage('인증 세션이 만료되었습니다. 다시 로그인해주세요.');
+              if (exchangeError.message?.includes('code verifier') || 
+                  exchangeError.message?.includes('PKCE') ||
+                  exchangeError.message?.includes('invalid request')) {
+                logger.error('🚨 PKCE verification failed:', exchangeError);
                 
-                // 전체 인증 스토리지 리셋
+                // Supabase의 기본 PKCE 플로우를 사용하도록 다시 시도
+                setErrorMessage('PKCE 인증에 실패했습니다. 다시 로그인해주세요.');
+                
+                // 실패한 인증 데이터만 정리
                 AuthSessionManager.resetAuthStorage();
-                setTimeout(() => router.replace('/'), 2000);
+                
+                // 사용자를 직접 OAuth URL로 리다이렉트하지 않고 메인 페이지로 보냄
+                setTimeout(() => router.replace('/?error=pkce_failure'), 2000);
                 return;
               }
               
@@ -112,7 +158,7 @@ export default function AuthCallbackPage() {
             
             if (data?.session?.user) {
               const user = data.session.user;
-              console.log('✅ User authenticated:', user.email);
+              logger.debug('✅ User authenticated:', user.email);
               
               // 타임아웃 클리어
               clearTimeout(timeoutId);
@@ -125,7 +171,7 @@ export default function AuthCallbackPage() {
             
             if (existingProfile && existingProfile.onboarding_completed) {
               // 기존 사용자 - 로컬 데이터와 병합
-              console.log('👤 Existing user, merging with local data');
+              logger.debug('👤 Existing user, merging with local data');
               
               // 로캼 데이터가 있으면 병합
               if (localProfile && localProfile.onboarding_completed) {
@@ -143,7 +189,7 @@ export default function AuthCallbackPage() {
                 await userProfileService.upsertProfile(mergedProfile);
                 // 로컬에도 업데이트
                 saveUserProfile(mergedProfile);
-                console.log('🔄 데이터 병합 완료');
+                logger.debug('🔄 데이터 병합 완료');
               } else {
                 // 로컬 데이터가 없으면 Supabase 데이터를 로컬에 저장
                 saveUserProfile(existingProfile);
@@ -153,7 +199,7 @@ export default function AuthCallbackPage() {
               router.replace('/home');
             } else {
               // 신규 사용자 또는 온보딩 미완료
-              console.log('🆕 New user or onboarding incomplete, redirecting to onboarding');
+              logger.debug('🆕 New user or onboarding incomplete, redirecting to onboarding');
               
               // 기본 프로필 생성
               if (!existingProfile) {
@@ -180,7 +226,7 @@ export default function AuthCallbackPage() {
                   
                   await userProfileService.upsertProfile(mergedProfile);
                   saveUserProfile(mergedProfile);
-                  console.log('🔄 로캼 데이터와 병합한 신규 프로필 생성');
+                  logger.debug('🔄 로캼 데이터와 병합한 신규 프로필 생성');
                 } else {
                   await userProfileService.upsertProfile(newProfile);
                   saveUserProfile(newProfile);
@@ -191,25 +237,25 @@ export default function AuthCallbackPage() {
               router.replace('/onboarding');
             }
             } else {
-              console.log('❌ No session after code exchange');
+              logger.debug('❌ No session after code exchange');
               setErrorMessage('세션 생성에 실패했습니다.');
               setIsProcessing(false);
               setTimeout(() => router.replace('/'), 3000);
             }
           } catch (codeError) {
-            console.error('🚨 Code exchange exception:', codeError);
+            logger.error('🚨 Code exchange exception:', codeError);
             setErrorMessage('인증 처리 중 오류가 발생했습니다.');
             setIsProcessing(false);
             setTimeout(() => router.replace('/'), 3000);
           }
         } else {
           // code도 없고 URL hash에서 session 확인 시도
-          console.log('🔍 No code found, checking for session from URL...');
+          logger.debug('🔍 No code found, checking for session from URL...');
           
           const { data, error: sessionError } = await supabase.auth.getSession();
           
           if (sessionError) {
-            console.error('🚨 Session retrieval error:', sessionError);
+            logger.error('🚨 Session retrieval error:', sessionError);
             setErrorMessage('세션 확인 중 오류가 발생했습니다.');
             setIsProcessing(false);
             setTimeout(() => router.replace('/'), 3000);
@@ -218,7 +264,7 @@ export default function AuthCallbackPage() {
 
           if (data.session?.user) {
             const user = data.session.user;
-            console.log('✅ Session found, user:', user.email);
+            logger.debug('✅ Session found, user:', user.email);
             
             // 사용자 프로필 확인
             const existingProfile = await userProfileService.getProfile(user.id);
@@ -227,7 +273,7 @@ export default function AuthCallbackPage() {
             const localProfile = getUserProfile();
             
             if (existingProfile && existingProfile.onboarding_completed) {
-              console.log('👤 Existing user with session, merging with local data');
+              logger.debug('👤 Existing user with session, merging with local data');
               
               // 로캼 데이터가 있으면 병합
               if (localProfile && localProfile.onboarding_completed) {
@@ -242,7 +288,7 @@ export default function AuthCallbackPage() {
                 
                 await userProfileService.upsertProfile(mergedProfile);
                 saveUserProfile(mergedProfile);
-                console.log('🔄 데이터 병합 완료');
+                logger.debug('🔄 데이터 병합 완료');
               } else {
                 saveUserProfile(existingProfile);
               }
@@ -250,7 +296,7 @@ export default function AuthCallbackPage() {
               setIsProcessing(false);
               router.replace('/home');
             } else {
-              console.log('🆕 New user with session, redirecting to onboarding');
+              logger.debug('🆕 New user with session, redirecting to onboarding');
               
               if (!existingProfile) {
                 const newProfile = {
@@ -285,14 +331,14 @@ export default function AuthCallbackPage() {
               router.replace('/onboarding');
             }
           } else {
-            console.log('❌ No session found, redirecting to main page');
+            logger.debug('❌ No session found, redirecting to main page');
             setIsProcessing(false);
             router.replace('/');
           }
         }
       } catch (error) {
-        console.error('🚨 Auth callback processing error:', error);
-        console.error('Error stack:', (error as Error).stack);
+        logger.error('🚨 Auth callback processing error:', error);
+        logger.error('Error stack:', (error as Error).stack);
         setErrorMessage('인증 처리 중 예기치 않은 오류가 발생했습니다.');
         setIsProcessing(false);
         clearTimeout(timeoutId);
@@ -313,6 +359,7 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-pink-50">
+      {process.env.NODE_ENV === 'development' && <AuthDebugPanel />}
       <div className="text-center max-w-md mx-auto p-6">
         {isProcessing ? (
           <>

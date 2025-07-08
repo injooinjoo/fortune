@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 // Auth Session Manager - PKCE 및 세션 관리 유틸리티
 
 interface AuthSession {
@@ -22,7 +24,7 @@ export class AuthSessionManager {
     try {
       sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session));
     } catch (error) {
-      console.error('Failed to initialize auth session:', error);
+      logger.error('Failed to initialize auth session:', error);
     }
   }
 
@@ -37,83 +39,93 @@ export class AuthSessionManager {
         }
       }
     } catch (error) {
-      console.error('Failed to clear expired sessions:', error);
+      logger.error('Failed to clear expired sessions:', error);
       sessionStorage.removeItem(AUTH_SESSION_KEY);
     }
   }
 
-  // PKCE 관련 데이터 정리
+  // PKCE 관련 데이터 정리 (토큰과 세션은 유지)
   static clearPKCEData(): void {
     try {
-      // Supabase가 사용하는 모든 PKCE 관련 키 정리
-      const keysToRemove = [
-        'supabase.auth.token',
-        'supabase.auth.refresh_token',
-        'supabase.auth.code_verifier',
+      // 인증 완료 후에만 정리해야 할 임시 데이터
+      const tempKeysToRemove = [
         'supabase.auth.state',
-        'fortune-auth-token',
+        // code_verifier는 OAuth 콜백 처리 중에 필요하므로 제거하지 않음
+        // Supabase가 자동으로 처리 후 제거함
       ];
 
-      // localStorage에서 PKCE 관련 데이터 삭제
-      keysToRemove.forEach(key => {
+      // 임시 데이터만 정리
+      tempKeysToRemove.forEach(key => {
         localStorage.removeItem(key);
       });
 
-      // sessionStorage에서도 정리
+      // sessionStorage의 임시 데이터만 정리
       const sessionKeys = Object.keys(sessionStorage);
       sessionKeys.forEach(key => {
-        if (key.includes('auth') || key.includes('pkce') || key.includes('supabase')) {
+        if (key.includes('state') && !key.includes('token')) {
           sessionStorage.removeItem(key);
         }
       });
 
-      // fortune-auth-token으로 시작하는 모든 키 정리
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('fortune-auth-token')) {
-          localStorage.removeItem(key);
-        }
-      });
-
     } catch (error) {
-      console.error('Failed to clear PKCE data:', error);
+      logger.error('Failed to clear PKCE data:', error);
     }
   }
 
-  // 전체 인증 스토리지 리셋
+  // 전체 인증 스토리지 리셋 (실패한 인증 시도 후에만 사용)
   static resetAuthStorage(): void {
-    this.clearPKCEData();
     sessionStorage.removeItem(AUTH_SESSION_KEY);
     
     // 추가 정리
     try {
-      // Supabase 관련 모든 스토리지 키 정리
-      const allKeys = [...Object.keys(localStorage), ...Object.keys(sessionStorage)];
+      // 실패한 인증 관련 데이터만 정리
+      const keysToClean = [
+        'supabase.auth.state',
+        // code_verifier는 Supabase의 기본 키 패턴으로도 저장될 수 있음
+        // 실패 시에만 정리하되, 모든 가능한 패턴을 확인
+      ];
+      
+      // localStorage의 모든 키를 확인하여 PKCE 관련 키 찾기
+      const allKeys = Object.keys(localStorage);
       allKeys.forEach(key => {
-        if (
-          key.includes('supabase') || 
-          key.includes('auth') || 
-          key.includes('pkce') ||
-          key.includes('code_verifier') ||
-          key.includes('state')
-        ) {
-          localStorage.removeItem(key);
-          sessionStorage.removeItem(key);
+        // Supabase의 기본 auth 키 패턴 확인
+        if (key.startsWith('sb-') && key.includes('auth-token')) {
+          try {
+            const value = localStorage.getItem(key);
+            if (value) {
+              const parsed = JSON.parse(value);
+              // 만료된 세션이나 code_verifier만 있는 경우 정리
+              if (!parsed.access_token && !parsed.refresh_token) {
+                keysToClean.push(key);
+              }
+            }
+          } catch {
+            // JSON 파싱 실패 시 무시
+          }
         }
       });
+      
+      keysToClean.forEach(key => {
+        localStorage.removeItem(key);
+        sessionStorage.removeItem(key);
+      });
+      
+      logger.debug('✅ Auth storage reset completed (failed auth cleanup)');
     } catch (error) {
-      console.error('Failed to reset auth storage:', error);
+      logger.error('Failed to reset auth storage:', error);
     }
   }
 
   // 인증 전 준비
   static prepareForAuth(): void {
-    // 기존 세션 데이터 정리
-    this.resetAuthStorage();
+    // 만료된 세션만 정리 (code_verifier는 유지)
+    this.clearExpiredSessions();
     
     // 새 세션 초기화
     this.initializeAuthSession();
     
-    console.log('✅ Auth storage prepared for new authentication');
+    // PKCE code_verifier는 절대 삭제하지 않음 - Supabase가 자동 관리
+    logger.debug('✅ Auth storage prepared for new authentication');
   }
 
   // 인증 후 정리
@@ -121,9 +133,9 @@ export class AuthSessionManager {
     // 임시 세션 데이터만 정리 (토큰은 유지)
     sessionStorage.removeItem(AUTH_SESSION_KEY);
     
-    // PKCE 관련 임시 데이터 정리
+    // state만 정리 (code_verifier는 Supabase가 자동으로 관리)
+    // 인증 성공 후에도 code_verifier를 삭제하지 않음
     const tempKeys = [
-      'supabase.auth.code_verifier',
       'supabase.auth.state',
     ];
     
@@ -131,6 +143,8 @@ export class AuthSessionManager {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
     });
+    
+    logger.debug('✅ Post-auth cleanup completed (keeping PKCE data)');
   }
 }
 
