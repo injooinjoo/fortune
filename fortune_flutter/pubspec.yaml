@@ -130,7 +130,7 @@ dependencies:
   
   # Payment Integration
   flutter_stripe: ^10.2.0
-  iamport_flutter: ^0.10.0
+  portone_flutter: ^0.12.1
   tosspayments_widget_sdk_flutter: ^2.0.3
   
   # Authentication
@@ -146,7 +146,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
   
   # Code Generation
   build_runner: ^2.4.13
