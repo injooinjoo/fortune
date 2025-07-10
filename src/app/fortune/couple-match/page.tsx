@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +15,7 @@ import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { Heart, Users, Sparkles, ArrowRight, Shuffle, TrendingUp } from "lucide-react";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 
 interface CoupleForm {
   person1: { name: string; birthDate: string };
@@ -69,6 +72,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function CoupleMatchPage() {
+  const { toast } = useToast();
   // Initialize deterministic random for consistent results
   // Get actual user ID from auth context
   const { user } = useAuth();
@@ -105,7 +109,7 @@ export default function CoupleMatchPage() {
       const data = await response.json();
       return data.analysis || data;
     } catch (error) {
-      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      logger.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
       const base = deterministicRandom.randomInt(50, 50 + 40 - 1);
@@ -125,7 +129,10 @@ export default function CoupleMatchPage() {
 
   const handleSubmit = async () => {
     if (!formData.person1.name || !formData.person1.birthDate || !formData.person2.name || !formData.person2.birthDate) {
-      alert('모든 정보를 입력해주세요.');
+      toast({
+      title: '모든 정보를 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -136,8 +143,11 @@ export default function CoupleMatchPage() {
       setResult(res);
       setStep('result');
     } catch (err) {
-      console.error('분석 오류:', err);
-      alert('분석 중 오류가 발생했습니다.');
+      logger.error('분석 오류:', err);
+      toast({
+      title: '분석 중 오류가 발생했습니다.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

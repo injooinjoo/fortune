@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import type { Metadata } from 'next';
 import { Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -8,6 +9,7 @@ import SecureErrorBoundary from '@/components/SecureErrorBoundary';
 import AdSenseProvider from '@/components/ads/AdSenseProvider';
 import { ChunkLoadErrorBoundary } from '@/components/ads/AdErrorBoundary';
 import { GlobalLowTokenWarning } from '@/components/LowTokenWarning';
+import { BrowserExtensionWarning } from '@/components/BrowserExtensionWarning';
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
@@ -51,7 +53,7 @@ export default function RootLayout({
               
               // 개발 환경에서만 로깅
               if (window.location.hostname.includes('localhost')) {
-                console.log('🔧 Simple error filtering enabled');
+                logger.debug('🔧 Simple error filtering enabled');
               }
             `,
           }}
@@ -65,6 +67,7 @@ export default function RootLayout({
             </SecureErrorBoundary>
             <Toaster />
             <GlobalLowTokenWarning />
+            <BrowserExtensionWarning />
             <AdSenseProvider />
           </Providers>
         </ChunkLoadErrorBoundary>

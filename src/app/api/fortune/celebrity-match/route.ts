@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
 import { AuthenticatedRequest } from '@/middleware/auth';
@@ -58,7 +59,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     });
 
   } catch (error) {
-    console.error('Celebrity match fortune API error:', error);
+    logger.error('Celebrity match fortune API error:', error);
     return createSafeErrorResponse(error, '연예인 궁합 분석 중 오류가 발생했습니다.');
   }
 });

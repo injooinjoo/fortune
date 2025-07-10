@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   generateComprehensiveDailyFortune, 
@@ -12,7 +13,7 @@ import { FortuneService } from '@/lib/services/fortune-service';
 import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
-  console.log('🎯 통합 운세 생성 API 요청');
+  logger.debug('🎯 통합 운세 생성 API 요청');
   
   try {
     const body = await request.json();
@@ -44,7 +45,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       switch (request_type) {
         case 'onboarding_complete':
           // 온보딩 완료 시 생애 운세 패키지 생성 (배치)
-          console.log('🎊 온보딩 완료 - 생애 운세 배치 생성');
+          logger.debug('🎊 온보딩 완료 - 생애 운세 배치 생성');
           const lifeFortuneCategories = ['saju', 'talent', 'destiny', 'past-life', 'tojeong'];
           result = await generateBatchFortunes({
             user_id: user_profile.userId || 'guest',
@@ -61,7 +62,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           
         case 'daily_refresh':
           // 매일 자정 일일 운세 배치 생성
-          console.log('🌅 일일 운세 배치 생성');
+          logger.debug('🌅 일일 운세 배치 생성');
           const dailyCategories = ['daily', 'today', 'love', 'career', 'money', 'health'];
           result = await generateBatchFortunes({
             user_id: user_profile.userId || 'guest', 
@@ -78,7 +79,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
           
         case 'user_direct_request':
           // 사용자 직접 요청 시 개별 운세 생성
-          console.log(`🎯 사용자 직접 요청: ${requested_categories?.[0]}`);
+          logger.debug(`🎯 사용자 직접 요청: ${requested_categories?.[0]}`);
           if (!requested_categories || requested_categories.length === 0) {
             return createErrorResponse('요청할 운세 카테고리가 필요합니다.', undefined, undefined, 400);
           }
@@ -102,7 +103,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('flowType 또는 request_type이 필요합니다.', undefined, undefined, 400);
     }
 
-    console.log('✅ 통합 운세 생성 완료');
+    logger.debug('✅ 통합 운세 생성 완료');
     
     return NextResponse.json({
       success: true,
@@ -112,7 +113,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     });
     
   } catch (error: any) {
-    console.error('❌ 통합 운세 생성 실패:', error);
+    logger.error('❌ 통합 운세 생성 실패:', error);
     return createSafeErrorResponse(error, '운세 생성 중 오류가 발생했습니다.');
   }
 });

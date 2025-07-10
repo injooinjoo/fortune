@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -144,6 +146,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyInvestmentPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<InvestmentInfo>({
@@ -183,7 +186,7 @@ export default function LuckyInvestmentPage() {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error('API 호출 중 오류:', error);
+      logger.error('API 호출 중 오류:', error);
       
       // Fallback: 기본 응답 반환
       const baseScore = 70;
@@ -249,7 +252,10 @@ export default function LuckyInvestmentPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || !formData.risk_tolerance) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -261,8 +267,11 @@ export default function LuckyInvestmentPage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

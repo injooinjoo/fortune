@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useEffect, useState } from 'react';
 
 const BackgroundAudioPlayer = () => {
@@ -12,14 +13,14 @@ const BackgroundAudioPlayer = () => {
 
     // 오디오 파일 로드 에러 처리
     const handleError = () => {
-      console.warn("오디오 파일을 찾을 수 없습니다: monument-valley-theme.mp3");
+      logger.warn("오디오 파일을 찾을 수 없습니다: monument-valley-theme.mp3");
       setAudioError(true);
     };
 
     // 오디오 파일 로드 성공 처리
     const handleCanPlay = () => {
       audio.play().catch(error => {
-        console.warn("오디오 자동 재생이 차단되었습니다: ", error);
+        logger.warn("오디오 자동 재생이 차단되었습니다: ", error);
       });
     };
 

@@ -29,7 +29,8 @@ export function AuthDebugPanel() {
           key.includes('auth') || 
           key.includes('pkce') ||
           key.includes('code_verifier') ||
-          key.startsWith('sb-') // Supabase default key pattern
+          key.startsWith('sb-') || // Supabase default key pattern
+          key.startsWith('sb-hayjukwfcsdmppairazc-') // Project-specific pattern
         );
         
         // Also check sessionStorage
@@ -38,7 +39,8 @@ export function AuthDebugPanel() {
           key.includes('auth') || 
           key.includes('pkce') ||
           key.includes('code_verifier') ||
-          key.startsWith('sb-')
+          key.startsWith('sb-') ||
+          key.startsWith('sb-hayjukwfcsdmppairazc-') // Project-specific pattern
         );
 
         // Check for specific PKCE-related items in both storages

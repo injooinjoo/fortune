@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
@@ -94,7 +95,7 @@ export default function SubscriptionPage() {
       const data = await response.json();
       setSubscription(data);
     } catch (error) {
-      console.error('구독 정보 조회 실패:', error);
+      logger.error('구독 정보 조회 실패:', error);
       // 기본 무료 플랜으로 설정
       setSubscription({
         status: 'free',

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
 import { userProfileService, type UserProfile } from '@/lib/supabase';
@@ -7,7 +8,7 @@ import { createSuccessResponse, createErrorResponse } from '@/lib/api-response-u
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
     try {
-      console.log('🔍 프로필 조회 요청:', req.userId);
+      logger.debug('🔍 프로필 조회 요청:', req.userId);
       
       const profile = await userProfileService.getProfile(req.userId!);
 
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      console.log('✅ 프로필 조회 성공:', profile.name);
+      logger.debug('✅ 프로필 조회 성공:', profile.name);
 
       return createSuccessResponse(profile, undefined, {
         userId: req.userId,
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       });
 
     } catch (error) {
-      console.error('🚨 프로필 조회 오류:', error);
+      logger.error('🚨 프로필 조회 오류:', error);
       return createErrorResponse(
         error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
         undefined,
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
     try {
       const profileData = await request.json();
 
-      console.log('💾 프로필 저장 요청:', { userId: req.userId, data: profileData });
+      logger.debug('💾 프로필 저장 요청:', { userId: req.userId, data: profileData });
 
       // 필수 필드 검증
       if (!profileData.name || !profileData.birth_date) {
@@ -100,12 +101,12 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      console.log('✅ 프로필 저장 완료:', savedProfile.name);
+      logger.debug('✅ 프로필 저장 완료:', savedProfile.name);
 
       return createSuccessResponse(savedProfile, '프로필이 성공적으로 저장되었습니다.');
 
     } catch (error) {
-      console.error('🚨 프로필 저장 오류:', error);
+      logger.error('🚨 프로필 저장 오류:', error);
       return createErrorResponse(
         error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
         undefined,
@@ -122,7 +123,7 @@ export async function PUT(request: NextRequest) {
     try {
       const updateData = await request.json();
 
-      console.log('📝 프로필 업데이트 요청:', { userId: req.userId, data: updateData });
+      logger.debug('📝 프로필 업데이트 요청:', { userId: req.userId, data: updateData });
 
       // 기존 프로필 확인
       const existingProfile = await userProfileService.getProfile(req.userId!);
@@ -162,12 +163,12 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      console.log('✅ 프로필 업데이트 완료:', savedProfile.name);
+      logger.debug('✅ 프로필 업데이트 완료:', savedProfile.name);
 
       return createSuccessResponse(savedProfile, '프로필이 성공적으로 업데이트되었습니다.');
 
     } catch (error) {
-      console.error('🚨 프로필 업데이트 오류:', error);
+      logger.error('🚨 프로필 업데이트 오류:', error);
       return createErrorResponse(
         error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
         undefined,

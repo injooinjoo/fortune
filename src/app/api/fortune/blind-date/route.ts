@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -54,7 +55,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     });
 
   } catch (error: any) {
-    console.error('Blind date fortune API error:', error);
+    logger.error('Blind date fortune API error:', error);
     return createSafeErrorResponse(error, '소개팅 분석 중 오류가 발생했습니다.');
   }
 });

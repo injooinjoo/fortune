@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { logger } from '@/lib/logger';
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,9 @@ import AppHeader from "@/components/AppHeader";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { Loader2, Sparkles, RotateCcw, MessageCircle, BookOpen, Wand2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { useRouter } from "next/navigation";
 
 interface TarotResult {
   situation: string;
@@ -22,13 +26,6 @@ interface TarotResult {
   advice: string;
 }
 
-// TODO: This should come from a global state/user context
-const MOCK_USER_PROFILE = {
-  name: "홍길동",
-  gender: 'male',
-  birthDate: "1990-01-01",
-  mbti: "INFP",
-};
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,10 +42,20 @@ export default function TarotPage() {
   const [step, setStep] = useState<'input' | 'generating' | 'result'>('input');
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<TarotResult | null>(null);
+  
+  const { user } = useAuth();
+  const { profile, isLoading: profileLoading, hasCompleteProfile } = useUserProfile();
+  const router = useRouter();
 
   const handleTarotRequest = async () => {
     if (!question.trim()) {
       toast.error("질문을 입력해주세요.");
+      return;
+    }
+    
+    if (!profile || !hasCompleteProfile) {
+      toast.error("프로필을 먼저 완성해주세요.");
+      router.push('/onboarding');
       return;
     }
     
@@ -57,7 +64,12 @@ export default function TarotPage() {
 
     try {
       const requestData = {
-        userProfile: MOCK_USER_PROFILE,
+        userProfile: {
+          name: profile.name,
+          gender: profile.gender || 'other',
+          birthDate: profile.birth_date!,
+          mbti: profile.mbti || undefined,
+        },
         category: "tarot",
         question: question,
       };
@@ -81,7 +93,7 @@ export default function TarotPage() {
       toast.success("타로 카드 해석이 완료되었습니다.", { id: loadingToast });
 
     } catch (error) {
-      console.error("타로 운세 생성 오류:", error);
+      logger.error("타로 운세 생성 오류:", error);
       toast.error("오류가 발생했습니다. 다시 시도해주세요.", { id: loadingToast });
       setStep('input');
     }
@@ -92,6 +104,21 @@ export default function TarotPage() {
     setResult(null);
     setQuestion("");
   };
+
+  // 프로필 로딩 중일 때 표시
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen pb-32 px-4">
+        <AppHeader title="AI 타로" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+            <p>프로필 정보를 불러오는 중...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const renderInputStep = () => (
     <motion.div

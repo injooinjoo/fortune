@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { logger } from '@/lib/logger';
 
 // Rate limiting configuration by endpoint type
 const RATE_LIMITS = {
@@ -17,7 +18,7 @@ export async function middleware(request: NextRequest) {
   
   // Skip middleware for auth routes to prevent interference
   if (pathname.startsWith('/auth/')) {
-    console.log('🔓 Skipping middleware for auth route:', pathname);
+    logger.info('🔓 Skipping middleware for auth route:', pathname);
     return NextResponse.next();
   }
   
@@ -56,15 +57,15 @@ export async function middleware(request: NextRequest) {
       const { data: { session }, error } = await supabase.auth.getSession();
       
       if (error || !session?.user) {
-        // Redirect to login if not authenticated
-        const loginUrl = new URL('/auth/selection', request.url);
+        // Redirect to main page if not authenticated
+        const loginUrl = new URL('/', request.url);
         loginUrl.searchParams.set('returnUrl', pathname);
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
-      console.error('Middleware auth check failed:', error);
-      // Redirect to login on auth error
-      const loginUrl = new URL('/auth/selection', request.url);
+      logger.error('Middleware auth check failed:', error);
+      // Redirect to main page on auth error
+      const loginUrl = new URL('/', request.url);
       loginUrl.searchParams.set('returnUrl', pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -162,7 +163,7 @@ function applyRateLimit(request: NextRequest, pathname: string): NextResponse | 
     const retryAfter = Math.ceil((clientData.resetTime - now) / 1000);
     
     // Log rate limit violations for monitoring
-    console.warn(`Rate limit exceeded for ${clientKey}: ${clientData.count}/${config.max}`);
+    logger.warn(`Rate limit exceeded for ${clientKey}: ${clientData.count}/${config.max}`);
     
     return NextResponse.json(
       { 

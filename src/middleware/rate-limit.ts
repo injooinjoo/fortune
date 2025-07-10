@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { getRateLimiters, isRedisAvailable } from '@/lib/redis';
 
@@ -67,7 +68,7 @@ export async function withRateLimit(
           const retryAfter = Math.ceil((reset - Date.now()) / 1000);
           
           // Log rate limit violations for monitoring
-          console.warn(`Rate limit exceeded for ${clientId} (Redis)`);
+          logger.warn(`Rate limit exceeded for ${clientId} (Redis)`);
           
           return NextResponse.json(
             { 
@@ -99,14 +100,14 @@ export async function withRateLimit(
         return response;
         
       } catch (error) {
-        console.error('Redis rate limiting error:', error);
+        logger.error('Redis rate limiting error:', error);
         // Fall through to in-memory rate limiting
       }
     }
   }
   
   // Fallback to in-memory rate limiting if Redis is not available
-  console.info('Using in-memory rate limiting (Redis not available)');
+  logger.info('Using in-memory rate limiting (Redis not available)');
   
   // Determine rate limit based on user type
   let effectiveLimit = limit;
@@ -133,7 +134,7 @@ export async function withRateLimit(
     const retryAfter = Math.ceil((clientData.resetTime - now) / 1000);
     
     // Log rate limit violations for monitoring
-    console.warn(`Rate limit exceeded for ${clientId} (in-memory): ${clientData.count}/${effectiveLimit}`);
+    logger.warn(`Rate limit exceeded for ${clientId} (in-memory): ${clientData.count}/${effectiveLimit}`);
     
     return NextResponse.json(
       { 

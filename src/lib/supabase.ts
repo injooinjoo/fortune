@@ -233,6 +233,34 @@ if (process.env.NODE_ENV === 'development') {
   logger.debug('🔧 Supabase configured successfully');
 }
 
+// 브라우저 확장 프로그램 간섭 감지
+const detectBrowserExtensionInterference = () => {
+  if (typeof window === 'undefined') return false;
+  
+  // fortune-auth-token-code-verifier 같은 외부 키 감지
+  const suspiciousKeys = Object.keys(localStorage).filter(key => 
+    key.includes('fortune-auth-token-code-verifier') || 
+    (key.includes('code-verifier') && !key.startsWith('sb-'))
+  );
+  
+  if (suspiciousKeys.length > 0) {
+    logger.warn('🚨 Browser extension interference detected:', suspiciousKeys);
+    // 간섭하는 키들 제거
+    suspiciousKeys.forEach(key => {
+      logger.debug(`Removing interfering key: ${key}`);
+      localStorage.removeItem(key);
+    });
+    return true;
+  }
+  
+  return false;
+};
+
+// Supabase 초기화 전 브라우저 확장 프로그램 간섭 제거
+if (typeof window !== 'undefined') {
+  detectBrowserExtensionInterference();
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
@@ -241,10 +269,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     flowType: 'pkce',
     debug: process.env.NODE_ENV === 'development', // 개발 모드에서만 디버그 활성화
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    // storageKey를 제거하여 Supabase가 기본 키를 사용하도록 함
-    // PKCE 코드 verifier는 기본 키로 저장됨
-    // PKCE 플로우가 제대로 작동하도록 추가 설정
-    redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : undefined,
+    // storageKey를 명시적으로 설정하지 않아 Supabase가 기본 패턴 사용
+    // 이렇게 하면 sb-[project-ref]-auth-token 형식으로 저장됨
   }
 });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -121,7 +122,10 @@ export default function LuckySwimPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || !formData.swim_style) {
-      alert("필수 정보를 모두 입력해주세요.");
+      toast({
+      title: "필수 정보를 모두 입력해주세요.",
+      variant: "default",
+    });
       return;
     }
     setLoading(true);

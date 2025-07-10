@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import AppHeader from "@/components/AppHeader";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 import {
   Users,
   Sparkles,
@@ -86,6 +88,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function TraditionalCompatibilityPage() {
+  const { toast } = useToast();
   // Initialize deterministic random for consistent results
   // Get actual user ID from auth context
   const { user } = useAuth();
@@ -159,7 +162,10 @@ export default function TraditionalCompatibilityPage() {
       !person2.name ||
       !person2.birthDate
     ) {
-      alert("모든 정보를 입력해주세요.");
+      toast({
+      title: "모든 정보를 입력해주세요.",
+      variant: "default",
+    });
       return;
     }
 

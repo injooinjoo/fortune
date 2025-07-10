@@ -1,0 +1,10 @@
+This app provides AI-based fortune telling services.
+
+Test Account:
+- Email: test@fortune.com
+- Password: TestPassword123!
+
+The app requires user authentication to access personalized fortune readings.
+All fortune categories are available with the test account.
+
+Note: Some features require in-app purchases, but the test account has access to all premium features for review purposes.

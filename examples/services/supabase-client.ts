@@ -104,7 +104,7 @@ export class SecureStorage {
   static setItem(key: string, value: any): boolean {
     try {
       if (!this.isValidKey(key)) {
-        console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
+        // console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`); // REMOVED BY CLEANUP SCRIPT
         return false;
       }
 
@@ -122,7 +122,7 @@ export class SecureStorage {
       
       return true;
     } catch (error) {
-      console.error('SecureStorage setItem 오류:', error);
+      // console.error('SecureStorage setItem 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return false;
     }
   }
@@ -131,7 +131,7 @@ export class SecureStorage {
   static getItem(key: string): any {
     try {
       if (!this.isValidKey(key)) {
-        console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`);
+        // console.warn(`SecureStorage: 허용되지 않은 키입니다: ${key}`); // REMOVED BY CLEANUP SCRIPT
         return null;
       }
 
@@ -149,14 +149,14 @@ export class SecureStorage {
 
       // 체크섬 검증
       if (!this.verifyChecksum(data.value, data.checksum)) {
-        console.warn('SecureStorage: 데이터 무결성 검증 실패');
+        // console.warn('SecureStorage: 데이터 무결성 검증 실패'); // REMOVED BY CLEANUP SCRIPT
         this.removeItem(key);
         return null;
       }
 
       return data.value;
     } catch (error) {
-      console.error('SecureStorage getItem 오류:', error);
+      // console.error('SecureStorage getItem 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
   }
@@ -170,7 +170,7 @@ export class SecureStorage {
       localStorage.removeItem(this.KEY_PREFIX + key);
       return true;
     } catch (error) {
-      console.error('SecureStorage removeItem 오류:', error);
+      // console.error('SecureStorage removeItem 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return false;
     }
   }
@@ -186,7 +186,7 @@ export class SecureStorage {
         }
       });
     } catch (error) {
-      console.error('SecureStorage cleanup 오류:', error);
+      // console.error('SecureStorage cleanup 오류:', error); // REMOVED BY CLEANUP SCRIPT
     }
   }
 
@@ -224,11 +224,11 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOi
 
   // 환경변수 검증 (fallback 키 사용시 경고)
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.warn('⚠️ 환경변수가 설정되지 않아 fallback 키를 사용합니다. 프로덕션에서는 환경변수를 설정해주세요.');
+    // console.warn('⚠️ 환경변수가 설정되지 않아 fallback 키를 사용합니다. 프로덕션에서는 환경변수를 설정해주세요.'); // REMOVED BY CLEANUP SCRIPT
   }
 
 if (process.env.NODE_ENV === 'development') {
-  console.log('🔧 Supabase configured successfully');
+  // console.log('🔧 Supabase configured successfully'); // REMOVED BY CLEANUP SCRIPT
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -262,7 +262,7 @@ export const userProfileService = {
       .single();
 
     if (error) {
-      console.error('프로필 조회 오류:', error);
+      // console.error('프로필 조회 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
 
@@ -288,7 +288,7 @@ export const userProfileService = {
       .single();
 
     if (error) {
-      console.error('프로필 저장 오류:', error);
+      // console.error('프로필 저장 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
 
@@ -342,7 +342,7 @@ export const guestProfileService = {
       .single();
 
     if (error) {
-      console.error('게스트 프로필 생성 오류:', error);
+      // console.error('게스트 프로필 생성 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
 
@@ -363,7 +363,7 @@ export const guestProfileService = {
       .single();
 
     if (error) {
-      console.error('게스트 프로필 조회 오류:', error);
+      // console.error('게스트 프로필 조회 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
 
@@ -395,7 +395,7 @@ export const fortuneCompletionService = {
       .single();
 
     if (error) {
-      console.error('운세 시작 기록 오류:', error);
+      // console.error('운세 시작 기록 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return null;
     }
 
@@ -454,7 +454,7 @@ export const fortuneCompletionService = {
       .limit(limit);
 
     if (error) {
-      console.error('운세 기록 조회 오류:', error);
+      // console.error('운세 기록 조회 오류:', error); // REMOVED BY CLEANUP SCRIPT
       return [];
     }
 
@@ -498,7 +498,7 @@ export const auth = {
       
       if (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Google 로그인 실패:', error);
+          // console.error('Google 로그인 실패:', error); // REMOVED BY CLEANUP SCRIPT
         }
         return { error };
       }
@@ -506,7 +506,7 @@ export const auth = {
       return { data, error: null };
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('Google 로그인 예외:', error);
+        // console.error('Google 로그인 예외:', error); // REMOVED BY CLEANUP SCRIPT
       }
       return { error };
     }
@@ -518,7 +518,7 @@ export const auth = {
   onAuthStateChanged: (callback: (user: any) => void) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (process.env.NODE_ENV === 'development') {
-        console.log('Auth state changed:', event, session?.user?.email);
+        // console.log('Auth state changed:', event, session?.user?.email); // REMOVED BY CLEANUP SCRIPT
       }
       
       try {
@@ -526,7 +526,7 @@ export const auth = {
         callback(user);
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Auth callback error:', error);
+          // console.error('Auth callback error:', error); // REMOVED BY CLEANUP SCRIPT
         }
       }
     });
@@ -539,14 +539,14 @@ export const auth = {
       
       if (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('세션 조회 실패:', error);
+          // console.error('세션 조회 실패:', error); // REMOVED BY CLEANUP SCRIPT
         }
         return { data: { session: null }, error };
       }
       return { data, error: null };
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('세션 조회 예외:', error);
+        // console.error('세션 조회 예외:', error); // REMOVED BY CLEANUP SCRIPT
       }
       return { data: { session: null }, error };
     }

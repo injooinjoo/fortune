@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -50,7 +51,7 @@ export default function TalentPage() {
         setLoading(true);
         
         // AuthContext에서 세션 가져오기
-        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        logger.debug('세션 상태:', session ? '로그인됨' : '미로그인');
         
         const response = await fetch('/api/fortune/talent', {
           method: 'GET',
@@ -77,7 +78,7 @@ export default function TalentPage() {
           throw new Error('재능 운세 데이터가 올바르지 않습니다.');
         }
       } catch (err) {
-        console.error('재능 운세 로드 오류:', err);
+        logger.error('재능 운세 로드 오류:', err);
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
         setLoading(false);

@@ -3,6 +3,7 @@ import { constructWebhookEvent } from '@/lib/payment/stripe-client';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { logger } from '@/lib/logger';
+import { captureException } from '@/lib/error-monitor';
 
 // Supabase Admin 클라이언트
 const supabaseAdmin = createClient(
@@ -87,19 +88,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     logger.error('[Stripe Webhook] Error processing webhook:', error);
     
-    // Sentry에 에러 보고 (선택적)
-    if (process.env.SENTRY_DSN) {
-      const Sentry = await import('@sentry/nextjs');
-      Sentry.captureException(error, {
-        tags: {
-          webhook: 'stripe',
-          eventType: event.type
-        },
-        extra: {
-          eventId: event.id
-        }
-      });
-    }
+    // 에러 모니터링에 보고
+    captureException(error, {
+      webhook: 'stripe',
+      eventType: event.type,
+      eventId: event.id
+    });
     
     return NextResponse.json(
       { error: 'Webhook processing failed' },

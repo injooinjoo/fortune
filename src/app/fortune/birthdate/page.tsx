@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -84,6 +85,7 @@ function analyzeBirthdate(date: string): BirthdateFortune {
 }
 
 export default function BirthdateFortunePage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'loading' | 'result'>('input');
   const [birthDate, setBirthDate] = useState('');
   const [result, setResult] = useState<BirthdateFortune | null>(null);
@@ -100,7 +102,10 @@ export default function BirthdateFortunePage() {
 
   const handleSubmit = () => {
     if (!birthDate) {
-      alert('생년월일을 입력해주세요.');
+      toast({
+      title: '생년월일을 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 

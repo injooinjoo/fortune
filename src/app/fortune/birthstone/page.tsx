@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -49,13 +50,17 @@ const itemVariants = {
 };
 
 export default function BirthstonePage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [birthDate, setBirthDate] = useState('');
   const [info, setInfo] = useState<BirthstoneInfo | null>(null);
 
   const handleSubmit = () => {
     if (!birthDate) {
-      alert('생일을 입력해주세요.');
+      toast({
+      title: '생일을 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
     const month = new Date(birthDate).getMonth() + 1;

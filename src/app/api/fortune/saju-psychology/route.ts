@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -8,14 +9,14 @@ import { getUserProfileForAPI } from '@/lib/api-utils';
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('🧠 사주 심리분석 API 요청');
+    logger.debug('🧠 사주 심리분석 API 요청');
     
     
     // 개발용 고정 사용자 ID (실제로는 JWT에서 추출)
     const { searchParams } = new URL(request.url);
     const userId = request.userId!;
     
-    console.log(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);
+    logger.debug(`🔍 사주 심리분석 요청: 사용자 ID = ${userId}`);
 
     // 실제 사용자 프로필을 가져옴
     const { profile, needsOnboarding } = await getUserProfileForAPI(userId);
@@ -36,12 +37,11 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       profile
     );
 
-    console.log('✅ 사주 심리분석 API 응답 완료:', userId);
-    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
-    );
+    logger.debug('✅ 사주 심리분석 API 응답 완료:', userId);
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date().toISOString() });
 
   } catch (error: any) {
-    console.error('❌ 사주 심리분석 API 오류:', error);
+    logger.error('❌ 사주 심리분석 API 오류:', error);
     return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
   }
 });

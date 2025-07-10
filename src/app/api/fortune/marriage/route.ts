@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest } from 'next/server';
 import { fortuneService, FortuneService } from '@/lib/services/fortune-service';
 import { handleFortuneResponse } from '@/lib/api-utils';
@@ -9,7 +10,7 @@ import { createSuccessResponse, createErrorResponse, createFortuneResponse, hand
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
     try {
-      console.log('📍 결혼운 API 요청 접수');
+      logger.debug('📍 결혼운 API 요청 접수');
 
       // 인증된 사용자만 접근 가능
       if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      console.log(`🔍 결혼운 요청: 사용자 ID = ${req.userId}`);
+      logger.debug(`🔍 결혼운 요청: 사용자 ID = ${req.userId}`);
 
       // 실제 사용자 프로필을 가져옴
       const { profile, needsOnboarding } = await getUserProfileForAPI(req.userId);
@@ -40,13 +41,13 @@ export async function GET(request: NextRequest) {
         profile
       );
 
-      console.log('✅ 결혼운 API 응답 준비 완료');
+      logger.debug('✅ 결혼운 API 응답 준비 완료');
 
       // Use utility function to handle response properly
       return handleFortuneResponse(result);
 
     } catch (error) {
-      console.error('❌ 결혼운 API 오류:', error);
+      logger.error('❌ 결혼운 API 오류:', error);
       
       // 에러 시에도 일관된 응답 형식 사용
       return handleFortuneResponse({

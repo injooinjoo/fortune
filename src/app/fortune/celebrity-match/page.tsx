@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
@@ -85,6 +87,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function CelebrityMatchPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<"input" | "result">("input");
   const [loading, setLoading] = useState(false);
   const [info, setInfo] = useState<UserInfo>({
@@ -111,7 +114,7 @@ export default function CelebrityMatchPage() {
       const data = await response.json();
       return data.analysis || data;
     } catch (error) {
-      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      logger.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
       // Initialize deterministic random for consistent daily results
@@ -142,7 +145,10 @@ export default function CelebrityMatchPage() {
 
   const handleSubmit = async () => {
     if (!info.name || !info.birthDate || !info.celebrity) {
-      alert("모든 정보를 입력해주세요.");
+      toast({
+      title: "모든 정보를 입력해주세요.",
+      variant: "default",
+    });
       return;
     }
     setLoading(true);
@@ -152,8 +158,11 @@ export default function CelebrityMatchPage() {
       setResult(res);
       setStep("result");
     } catch (e) {
-      console.error(e);
-      alert("분석 중 오류가 발생했습니다.");
+      logger.error(e);
+      toast({
+      title: "분석 중 오류가 발생했습니다.",
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

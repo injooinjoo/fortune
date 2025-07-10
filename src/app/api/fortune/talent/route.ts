@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService, fortuneService } from '@/lib/services/fortune-service';
 import { handleFortuneResponse, getUserProfileForAPI } from '@/lib/api-utils';
@@ -9,14 +10,14 @@ import { createSuccessResponse, createErrorResponse, createFortuneResponse, hand
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
     try {
-      console.log('📍 재능 운세 API 요청 접수');
+      logger.debug('📍 재능 운세 API 요청 접수');
 
       // 인증된 사용자만 접근 가능
       if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
         return createErrorResponse('로그인이 필요합니다.', undefined, undefined, 401);
       }
 
-      console.log(`🔍 재능 운세 요청: 사용자 ID = ${req.userId}`);
+      logger.debug(`🔍 재능 운세 요청: 사용자 ID = ${req.userId}`);
       
       // 기본 사용자 프로필 생성
       // 실제 사용자 프로필을 가져옴
@@ -37,12 +38,12 @@ export async function GET(request: NextRequest) {
         profile
       );
       
-      console.log('✅ 재능 운세 API 응답 완료');
+      logger.debug('✅ 재능 운세 API 응답 완료');
       
       return handleFortuneResponse(result);
       
     } catch (error) {
-      console.error('❌ 재능 운세 API 오류:', error);
+      logger.error('❌ 재능 운세 API 오류:', error);
       
       return handleFortuneResponse({
         success: false,

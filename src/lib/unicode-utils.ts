@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 /**
  * 유니코드 처리 유틸리티
  * 한글 인코딩 문제 해결을 위한 헬퍼 함수들
@@ -12,7 +14,7 @@ export function normalizeUnicode(str: string): string {
     // 한글의 경우 조합형으로 정규화
     return str.normalize('NFC');
   } catch (error) {
-    console.error('Unicode normalization failed:', error);
+    logger.error('Unicode normalization failed:', error);
     return str;
   }
 }
@@ -47,7 +49,7 @@ export function safeJsonStringify(obj: any): string {
       return value;
     });
   } catch (error) {
-    console.error('JSON stringify failed:', error);
+    logger.error('JSON stringify failed:', error);
     return '{}';
   }
 }
@@ -92,7 +94,7 @@ export function postprocessAIResponse(response: string): string {
     
     return processed;
   } catch (error) {
-    console.error('Response postprocessing failed:', error);
+    logger.error('Response postprocessing failed:', error);
     return response;
   }
 }

@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 export interface LocalStorageHealthStatus {
   isAvailable: boolean;
   hasUserData: boolean;
@@ -115,9 +117,9 @@ export const logLocalStorageStatus = (verbose: boolean = false): void => {
   // 간단한 요약만 출력 (기본)
   if (!verbose) {
     if (status.isAvailable && status.hasUserData) {
-      console.log(`💾 Storage: ${Math.round(status.dataSize / 1024)}KB used, ${status.dataCount} items${status.issues.length > 0 ? `, ${status.issues.length} issues` : ''}`);
+      logger.debug(`💾 Storage: ${Math.round(status.dataSize / 1024)}KB used, ${status.dataCount} items${status.issues.length > 0 ? `, ${status.issues.length} issues` : ''}`);
     } else if (!status.isAvailable) {
-      console.error('❌ Local Storage unavailable');
+      logger.error('❌ Local Storage unavailable');
     }
     return;
   }
@@ -126,34 +128,34 @@ export const logLocalStorageStatus = (verbose: boolean = false): void => {
   console.group('🏥 Local Storage Health Check');
   
   if (status.isAvailable) {
-    console.log('✅ Status: Available');
-    console.log(`📁 Total items: ${status.dataCount}`);
-    console.log(`💾 Data size: ${Math.round(status.dataSize / 1024)} KB`);
+    logger.debug('✅ Status: Available');
+    logger.debug(`📁 Total items: ${status.dataCount}`);
+    logger.debug(`💾 Data size: ${Math.round(status.dataSize / 1024)} KB`);
     
     if (status.hasUserData) {
-      console.log('✅ User data: Found');
+      logger.debug('✅ User data: Found');
       if (status.userProfile) {
-        console.log(`👤 User: ${status.userProfile.name} (${status.userProfile.id})`);
-        console.log(`📧 Email: ${status.userProfile.email || 'Guest user'}`);
+        logger.debug(`👤 User: ${status.userProfile.name} (${status.userProfile.id})`);
+        logger.debug(`📧 Email: ${status.userProfile.email || 'Guest user'}`);
       }
     } else {
-      console.log('ℹ️  User data: Not found');
+      logger.debug('ℹ️  User data: Not found');
     }
     
     if (status.issues.length > 0) {
       console.group('⚠️  Issues found:');
-      status.issues.forEach(issue => console.warn(`- ${issue}`));
+      status.issues.forEach(issue => logger.warn(`- ${issue}`));
       console.groupEnd();
     }
     
     if (status.recommendations.length > 0) {
       console.group('💡 Recommendations:');
-      status.recommendations.forEach(rec => console.info(`- ${rec}`));
+      status.recommendations.forEach(rec => logger.info(`- ${rec}`));
       console.groupEnd();
     }
   } else {
-    console.error('❌ Status: Unavailable');
-    console.error('🚨 Error:', status.error);
+    logger.error('❌ Status: Unavailable');
+    logger.error('🚨 Error:', status.error);
   }
   
   console.groupEnd();
@@ -190,7 +192,7 @@ export const cleanupLocalStorage = (): { cleaned: number; freedSpace: number } =
     
     return { cleaned, freedSpace };
   } catch (error) {
-    console.error('로컬 스토리지 정리 중 오류:', error);
+    logger.error('로컬 스토리지 정리 중 오류:', error);
     return { cleaned: 0, freedSpace: 0 };
   }
 };

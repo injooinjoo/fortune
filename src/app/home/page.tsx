@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -185,7 +186,7 @@ function HomePage() {
     const stored = localStorage.getItem('fortune_last_update_date');
     
     if (stored !== today) {
-      console.log('🔄 자동 업데이트 시작 - 새로운 날:', today);
+      logger.debug('🔄 자동 업데이트 시작 - 새로운 날:', today);
       setLastUpdateDate(today);
       localStorage.setItem('fortune_last_update_date', today);
       
@@ -197,7 +198,7 @@ function HomePage() {
           await generateBatchFortune();
         }
       } catch (error) {
-        console.error('자동 업데이트 실패:', error);
+        logger.error('자동 업데이트 실패:', error);
       }
     } else {
       setLastUpdateDate(stored);
@@ -280,7 +281,7 @@ function HomePage() {
           setRecentFortunes(sorted);
         }
       } catch (error) {
-        console.error('최근 본 운세 로드 실패:', error);
+        logger.error('최근 본 운세 로드 실패:', error);
       }
     };
 
@@ -309,7 +310,7 @@ function HomePage() {
       localStorage.setItem('recentFortunes', JSON.stringify(fortunes));
       setRecentFortunes(fortunes.slice(0, 5)); // UI에는 5개까지만 표시
     } catch (error) {
-      console.error('최근 본 운세 저장 실패:', error);
+      logger.error('최근 본 운세 저장 실패:', error);
     }
   };
 
@@ -505,7 +506,7 @@ function HomePage() {
           // 오래된 데이터 정리
           const cleanup = cleanupLocalStorage();
           if (cleanup.cleaned > 0) {
-            console.log(`🧹 정리 완료: ${cleanup.cleaned}개 항목, ${Math.round(cleanup.freedSpace / 1024)}KB 확보`);
+            logger.debug(`🧹 정리 완료: ${cleanup.cleaned}개 항목, ${Math.round(cleanup.freedSpace / 1024)}KB 확보`);
           }
         }
         
@@ -523,7 +524,7 @@ function HomePage() {
           router.push("/");
         }
       } catch (error) {
-        console.error('앱 초기화 실패:', error);
+        logger.error('앱 초기화 실패:', error);
         // 오류 발생시 로컬 스토리지로 fallback
         const existingProfile = getUserProfile();
         if (!existingProfile || !existingProfile.onboarding_completed) {
@@ -582,7 +583,7 @@ function HomePage() {
       localStorage.setItem('fortune_last_update_date', today);
       setLastUpdateDate(today);
     } catch (error) {
-      console.error('운세 새로고침 실패:', error);
+      logger.error('운세 새로고침 실패:', error);
     } finally {
       setIsRefreshing(false);
     }

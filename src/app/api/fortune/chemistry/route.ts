@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -30,7 +31,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('필수 정보(이름, 관계 기간, 친밀도 단계)를 모두 입력해주세요.', undefined, undefined, 400);
     }
 
-    console.log(`💕 속궁합 분석 시작: ${body.person1.name} ↔️ ${body.person2.name}`);
+    logger.debug(`💕 속궁합 분석 시작: ${body.person1.name} ↔️ ${body.person2.name}`);
 
     // 기본 프로필 구성
     const profile = {
@@ -41,7 +42,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     // OpenAI를 사용한 속궁합 분석
     const fortuneResult = await generateSingleFortune('chemistry', profile, body);
 
-    console.log('✅ 속궁합 분석 완료');
+    logger.debug('✅ 속궁합 분석 완료');
 
     return createFortuneResponse({ type: 'chemistry', person1: body.person1,
         person2: body.person2,
@@ -54,7 +55,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         generated_at: new Date().toISOString() }, 'chemistry', req.userId);
 
   } catch (error: any) {
-    console.error('Chemistry fortune API error:', error);
+    logger.error('Chemistry fortune API error:', error);
     return createSafeErrorResponse(error, '속궁합 분석 중 오류가 발생했습니다.');
   }
 });

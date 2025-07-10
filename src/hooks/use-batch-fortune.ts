@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useState, useCallback, useEffect } from 'react';
 import { BatchFortuneRequest, BatchFortuneResponse } from '@/types/batch-fortune';
 import { useUser } from './use-user';
@@ -50,7 +51,7 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
           return data;
         }
       } catch (err) {
-        console.error('캐시 파싱 오류:', err);
+        logger.error('캐시 파싱 오류:', err);
       }
     }
     
@@ -65,7 +66,7 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
     try {
       localStorage.setItem(cacheKey, JSON.stringify(data));
     } catch (err) {
-      console.error('캐시 저장 오류:', err);
+      logger.error('캐시 저장 오류:', err);
     }
   }, [cacheEnabled, getCacheKey]);
 
@@ -73,7 +74,7 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
   const generateBatchFortune = useCallback(async (overrideOptions?: UseBatchFortuneOptions) => {
     // 로그인 체크를 일시적으로 완화 (개발 중)
     if (!profile) {
-      console.log('프로필 정보가 없어 배치 운세 생성을 건너뜁니다.');
+      logger.debug('프로필 정보가 없어 배치 운세 생성을 건너뜁니다.');
       return;
     }
 
@@ -138,7 +139,7 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
         throw new Error(result.error || '운세 생성에 실패했습니다.');
       }
     } catch (err) {
-      console.error('배치 운세 생성 오류:', err);
+      logger.error('배치 운세 생성 오류:', err);
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -166,7 +167,7 @@ export function useBatchFortune(options: UseBatchFortuneOptions = {}): UseBatchF
   useEffect(() => {
     if (profile && !fortuneData && !loading) {
       // 초기 로드는 건너뛰고 명시적 호출을 기다림
-      console.log('배치 운세 준비 완료, 명시적 호출을 기다립니다.');
+      logger.debug('배치 운세 준비 완료, 명시적 호출을 기다립니다.');
     }
   }, [profile, fortuneData, loading]);
 

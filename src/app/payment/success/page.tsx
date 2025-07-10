@@ -19,7 +19,6 @@ import {
 // import confetti from 'canvas-confetti';
 import { confetti } from '@/lib/payment-mock';
 import { auth } from "@/lib/supabase";
-import { tokenService } from "@/lib/services/token-service";
 import { logger } from "@/lib/logger";
 
 function SuccessContent() {
@@ -57,8 +56,11 @@ function SuccessContent() {
 
       // 결제 검증 API 호출 (실제로는 백엔드에서 처리)
       // 여기서는 단순화를 위해 토큰 잔액만 다시 조회
-      const balance = await tokenService.getTokenBalance(sessionData.session.user.id);
-      setNewBalance(balance.balance);
+      const response = await fetch('/api/user/token-balance');
+      if (response.ok) {
+        const data = await response.json();
+        setNewBalance(data.data.balance);
+      }
 
       // 구매 상세 정보 설정 (실제로는 서버에서 받아옴)
       setPurchaseDetails({

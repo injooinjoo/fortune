@@ -2,223 +2,291 @@
 
 /**
  * 환경 변수 검증 스크립트
- * 프로덕션 배포 전 모든 필수 환경 변수가 설정되었는지 확인
+ * 
+ * 사용법:
+ * - 개발 환경: npm run verify:env
+ * - 프로덕션: NODE_ENV=production npm run verify:env
  */
 
 const fs = require('fs');
 const path = require('path');
-const dotenv = require('dotenv');
 
-// .env.local 파일 로드
-const envPath = path.join(__dirname, '..', '.env.local');
-if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
-}
+// 색상 코드
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+};
 
-// 환경 변수 설정 체크
+// 환경별 필수 변수 정의
 const requiredEnvVars = {
-  // Supabase (필수)
-  'NEXT_PUBLIC_SUPABASE_URL': { 
-    required: true, 
-    pattern: /^https:\/\/.+\.supabase\.co$/,
-    description: 'Supabase 프로젝트 URL'
-  },
-  'NEXT_PUBLIC_SUPABASE_ANON_KEY': { 
-    required: true, 
-    pattern: /^eyJ/,
-    description: 'Supabase Anonymous Key'
-  },
-  'SUPABASE_SERVICE_ROLE_KEY': { 
-    required: true, 
-    pattern: /^eyJ/,
-    description: 'Supabase Service Role Key'
-  },
+  // 공통 필수
+  common: [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'OPENAI_API_KEY',
+  ],
   
-  // AI API Keys (필수)
-  'OPENAI_API_KEY': { 
-    required: true, 
-    pattern: /^sk-/,
-    description: 'OpenAI API Key'
-  },
+  // 개발 환경
+  development: [
+    // 개발 환경에서는 추가 필수 없음
+  ],
   
-  // 보안 키 (필수)
-  'INTERNAL_API_KEY': { 
-    required: true, 
-    minLength: 32,
-    description: '내부 API 보안 키'
-  },
-  'CRON_SECRET': { 
-    required: true, 
-    minLength: 32,
-    description: 'Cron 작업 보안 키'
-  },
-  
-  // Stripe (프로덕션 필수)
-  'STRIPE_SECRET_KEY': { 
-    required: true, 
-    pattern: /^sk_(test_|live_)/,
-    description: 'Stripe Secret Key',
-    productionPattern: /^sk_live_/
-  },
-  'STRIPE_WEBHOOK_SECRET': { 
-    required: true, 
-    pattern: /^whsec_/,
-    description: 'Stripe Webhook Secret'
-  },
-  
-  // Toss Payments (프로덕션 필수)
-  'TOSS_CLIENT_KEY': { 
-    required: true, 
-    pattern: /^(test_|live_)ck_/,
-    description: 'Toss Payments Client Key',
-    productionPattern: /^live_ck_/
-  },
-  'TOSS_SECRET_KEY': { 
-    required: true, 
-    pattern: /^(test_|live_)sk_/,
-    description: 'Toss Payments Secret Key',
-    productionPattern: /^live_sk_/
-  },
-  
-  // Redis (필수)
-  'UPSTASH_REDIS_REST_URL': { 
-    required: true, 
-    pattern: /^https:\/\/.+\.upstash\.io$/,
-    description: 'Upstash Redis REST URL'
-  },
-  'UPSTASH_REDIS_REST_TOKEN': { 
-    required: true, 
-    minLength: 20,
-    description: 'Upstash Redis Token'
-  },
-  
-  // Sentry (권장)
-  'SENTRY_DSN': { 
-    required: false, 
-    pattern: /^https:\/\/.+@.+\.ingest\.sentry\.io\/.+$/,
-    description: 'Sentry DSN'
-  },
+  // 프로덕션 환경
+  production: [
+    'STRIPE_SECRET_KEY',
+    'STRIPE_WEBHOOK_SECRET',
+    'STRIPE_PREMIUM_MONTHLY_PRICE_ID',
+    'STRIPE_PREMIUM_YEARLY_PRICE_ID',
+    'STRIPE_TOKENS_SMALL_PRICE_ID',
+    'STRIPE_TOKENS_MEDIUM_PRICE_ID',
+    'STRIPE_TOKENS_LARGE_PRICE_ID',
+    'TOSS_CLIENT_KEY', 
+    'TOSS_SECRET_KEY',
+    'UPSTASH_REDIS_REST_URL',
+    'UPSTASH_REDIS_REST_TOKEN',
+    'INTERNAL_API_KEY',
+    'CRON_SECRET',
+    'SUPABASE_JWT_SECRET',
+  ]
 };
 
-// 결과 저장
-const results = {
-  valid: [],
-  invalid: [],
-  missing: [],
-  warnings: []
-};
-
-// 환경 변수 검증
-console.log('\n🔍 Fortune 앱 환경 변수 검증 시작...\n');
-
-const isProduction = process.env.NODE_ENV === 'production' || process.argv.includes('--production');
-
-for (const [key, config] of Object.entries(requiredEnvVars)) {
-  const value = process.env[key];
-  
-  if (!value) {
-    if (config.required) {
-      results.missing.push(`❌ ${key}: ${config.description} (필수)`);
-    } else {
-      results.warnings.push(`⚠️  ${key}: ${config.description} (권장)`);
-    }
-    continue;
-  }
-  
-  // 패턴 검증
-  if (config.pattern && !config.pattern.test(value)) {
-    results.invalid.push(`❌ ${key}: 올바르지 않은 형식`);
-    continue;
-  }
-  
-  // 프로덕션 패턴 검증
-  if (isProduction && config.productionPattern && !config.productionPattern.test(value)) {
-    results.warnings.push(`⚠️  ${key}: 테스트 키 사용 중 (프로덕션에는 실제 키 필요)`);
-    continue;
-  }
-  
-  // 최소 길이 검증
-  if (config.minLength && value.length < config.minLength) {
-    results.invalid.push(`❌ ${key}: 너무 짧음 (최소 ${config.minLength}자)`);
-    continue;
-  }
-  
-  // 테스트 키 감지
-  if (value.includes('test_') || value.includes('_test')) {
-    if (!isProduction) {
-      results.valid.push(`✅ ${key}: 설정됨 (테스트 키)`);
-    } else {
-      results.warnings.push(`⚠️  ${key}: 테스트 키 사용 중`);
-    }
-  } else {
-    results.valid.push(`✅ ${key}: 설정됨`);
-  }
-}
-
-// 추가 검증: Price ID들
-const priceIds = [
-  'STRIPE_PREMIUM_MONTHLY_PRICE_ID',
-  'STRIPE_PREMIUM_YEARLY_PRICE_ID',
-  'STRIPE_TOKENS_SMALL_PRICE_ID',
-  'STRIPE_TOKENS_MEDIUM_PRICE_ID',
-  'STRIPE_TOKENS_LARGE_PRICE_ID'
+// 선택적 환경 변수
+const optionalEnvVars = [
+  'GOOGLE_GENAI_API_KEY',
+  'NEXT_PUBLIC_ADSENSE_CLIENT_ID',
+  'NEXT_PUBLIC_ADSENSE_SLOT_ID',
+  'NEXT_PUBLIC_ADSENSE_DISPLAY_SLOT',
+  'ERROR_TRACKING_ENDPOINT',
+  'ERROR_TRACKING_API_KEY',
 ];
 
-priceIds.forEach(key => {
-  const value = process.env[key];
-  if (!value) {
-    results.missing.push(`❌ ${key}: Stripe 가격 ID (필수)`);
-  } else if (!value.startsWith('price_')) {
-    results.invalid.push(`❌ ${key}: 올바르지 않은 가격 ID 형식`);
-  } else {
-    results.valid.push(`✅ ${key}: 설정됨`);
+// 환경 변수 값 검증 규칙
+const validationRules = {
+  NEXT_PUBLIC_SUPABASE_URL: (value) => {
+    return value.startsWith('https://') && value.includes('.supabase.co');
+  },
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: (value) => {
+    return value.startsWith('eyJ') && value.length > 100;
+  },
+  SUPABASE_SERVICE_ROLE_KEY: (value) => {
+    return value.startsWith('eyJ') && value.length > 100;
+  },
+  SUPABASE_JWT_SECRET: (value) => {
+    return value.length >= 32;
+  },
+  OPENAI_API_KEY: (value) => {
+    return value.startsWith('sk-') && value.length > 40;
+  },
+  STRIPE_SECRET_KEY: (value) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      return value.startsWith('sk_live_') && !value.includes('test');
+    }
+    return value.startsWith('sk_test_') || value.startsWith('sk_live_');
+  },
+  STRIPE_WEBHOOK_SECRET: (value) => {
+    return value.startsWith('whsec_');
+  },
+  STRIPE_PREMIUM_MONTHLY_PRICE_ID: (value) => {
+    return value.startsWith('price_');
+  },
+  STRIPE_PREMIUM_YEARLY_PRICE_ID: (value) => {
+    return value.startsWith('price_');
+  },
+  STRIPE_TOKENS_SMALL_PRICE_ID: (value) => {
+    return value.startsWith('price_');
+  },
+  STRIPE_TOKENS_MEDIUM_PRICE_ID: (value) => {
+    return value.startsWith('price_');
+  },
+  STRIPE_TOKENS_LARGE_PRICE_ID: (value) => {
+    return value.startsWith('price_');
+  },
+  TOSS_CLIENT_KEY: (value) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      return value.startsWith('live_ck_');
+    }
+    return value.startsWith('test_ck_') || value.startsWith('live_ck_');
+  },
+  TOSS_SECRET_KEY: (value) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      return value.startsWith('live_sk_');
+    }
+    return value.startsWith('test_sk_') || value.startsWith('live_sk_');
+  },
+  UPSTASH_REDIS_REST_URL: (value) => {
+    return value.startsWith('https://') && value.includes('.upstash.io');
+  },
+  UPSTASH_REDIS_REST_TOKEN: (value) => {
+    return value.length > 20;
+  },
+  INTERNAL_API_KEY: (value) => {
+    return value.length >= 32; // 최소 32자
+  },
+  CRON_SECRET: (value) => {
+    return value.length >= 32; // 최소 32자
   }
-});
+};
 
-// 결과 출력
-console.log('\n📊 검증 결과:\n');
-
-if (results.valid.length > 0) {
-  console.log('✅ 올바르게 설정된 환경 변수:');
-  results.valid.forEach(msg => console.log(`   ${msg}`));
+function checkEnvVar(varName, required = true) {
+  const value = process.env[varName];
+  const exists = value !== undefined && value !== '';
+  
+  if (!exists && required) {
+    console.log(`${colors.red}❌ ${varName}: 설정되지 않음${colors.reset}`);
+    return false;
+  } else if (!exists && !required) {
+    console.log(`${colors.yellow}⚠️  ${varName}: 설정되지 않음 (선택사항)${colors.reset}`);
+    return true;
+  }
+  
+  // 값 검증
+  const validator = validationRules[varName];
+  if (validator && !validator(value)) {
+    console.log(`${colors.red}❌ ${varName}: 잘못된 형식${colors.reset}`);
+    
+    // 프로덕션에서 테스트 키 사용 시 경고
+    if (process.env.NODE_ENV === 'production') {
+      if (varName.includes('STRIPE') && value.includes('test')) {
+        console.log(`   ${colors.red}⚠️  프로덕션에서 Stripe 테스트 키를 사용하고 있습니다!${colors.reset}`);
+      }
+      if (varName.includes('TOSS') && value.includes('test')) {
+        console.log(`   ${colors.red}⚠️  프로덕션에서 Toss 테스트 키를 사용하고 있습니다!${colors.reset}`);
+      }
+    }
+    
+    return false;
+  }
+  
+  // 민감한 정보는 일부만 표시
+  const displayValue = value.length > 20 ? 
+    `${value.substring(0, 10)}...${value.substring(value.length - 10)}` : 
+    '***';
+  
+  console.log(`${colors.green}✅ ${varName}: ${displayValue}${colors.reset}`);
+  return true;
 }
 
-if (results.warnings.length > 0) {
-  console.log('\n⚠️  경고:');
-  results.warnings.forEach(msg => console.log(`   ${msg}`));
+function checkDuplicateKeys() {
+  const criticalKeys = ['INTERNAL_API_KEY', 'CRON_SECRET', 'SUPABASE_JWT_SECRET'];
+  const values = new Set();
+  
+  for (const key of criticalKeys) {
+    const value = process.env[key];
+    if (value && values.has(value)) {
+      console.log(`${colors.red}❌ 보안 경고: ${key}가 다른 키와 동일한 값을 사용하고 있습니다!${colors.reset}`);
+      return false;
+    }
+    if (value) values.add(value);
+  }
+  
+  return true;
 }
 
-if (results.invalid.length > 0) {
-  console.log('\n❌ 잘못된 환경 변수:');
-  results.invalid.forEach(msg => console.log(`   ${msg}`));
+function main() {
+  console.log(`${colors.cyan}========================================${colors.reset}`);
+  console.log(`${colors.cyan}🔍 환경 변수 검증 시작${colors.reset}`);
+  console.log(`${colors.cyan}========================================${colors.reset}\n`);
+  
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  console.log(`${colors.blue}환경: ${nodeEnv}${colors.reset}\n`);
+  
+  // .env 파일 확인
+  const envFile = nodeEnv === 'production' ? '.env.production' : '.env.local';
+  const envPath = path.join(process.cwd(), envFile);
+  
+  if (!fs.existsSync(envPath)) {
+    console.log(`${colors.red}❌ ${envFile} 파일을 찾을 수 없습니다.${colors.reset}`);
+    
+    if (nodeEnv === 'production' && fs.existsSync(path.join(process.cwd(), '.env.production.template'))) {
+      console.log(`\n${colors.yellow}💡 .env.production.template 파일을 복사하여 .env.production을 생성하세요:${colors.reset}`);
+      console.log(`   cp .env.production.template .env.production`);
+    }
+    
+    process.exit(1);
+  }
+  
+  // 환경 변수 로드
+  require('dotenv').config({ path: envPath });
+  
+  let allValid = true;
+  
+  // 공통 필수 변수 확인
+  console.log(`${colors.magenta}📋 필수 환경 변수${colors.reset}`);
+  console.log('─'.repeat(40));
+  
+  const requiredVars = [
+    ...requiredEnvVars.common,
+    ...(requiredEnvVars[nodeEnv] || [])
+  ];
+  
+  for (const varName of requiredVars) {
+    if (!checkEnvVar(varName, true)) {
+      allValid = false;
+    }
+  }
+  
+  // 선택적 변수 확인
+  console.log(`\n${colors.magenta}📋 선택적 환경 변수${colors.reset}`);
+  console.log('─'.repeat(40));
+  
+  for (const varName of optionalEnvVars) {
+    checkEnvVar(varName, false);
+  }
+  
+  // 보안 키 중복 확인
+  console.log(`\n${colors.magenta}🔒 보안 검증${colors.reset}`);
+  console.log('─'.repeat(40));
+  
+  if (!checkDuplicateKeys()) {
+    allValid = false;
+  }
+  
+  // 결과 출력
+  console.log(`\n${colors.cyan}========================================${colors.reset}`);
+  
+  if (allValid) {
+    console.log(`${colors.green}✅ 모든 필수 환경 변수가 올바르게 설정되었습니다!${colors.reset}`);
+    
+    // 프로덕션 환경 추가 체크
+    if (nodeEnv === 'production') {
+      console.log(`\n${colors.yellow}⚠️  프로덕션 배포 전 최종 확인사항:${colors.reset}`);
+      console.log('• ✅ Stripe 라이브 키 사용 확인');
+      console.log('• ✅ Toss 라이브 키 사용 확인');
+      console.log('• ⏳ Redis 프로덕션 연결 테스트 필요');
+      console.log('• ✅ 보안 키 강도 확인 (32자 이상)');
+      console.log('• ⏳ 모니터링 시스템 설정 필요');
+      console.log('• ⏳ 백업 계획 수립 필요');
+      
+      console.log(`\n${colors.blue}다음 단계:${colors.reset}`);
+      console.log('1. Redis 연결 테스트: npm run test:redis');
+      console.log('2. 결제 시스템 테스트: npm run test:payments');
+      console.log('3. 빌드 테스트: npm run build');
+    }
+  } else {
+    console.log(`${colors.red}❌ 일부 필수 환경 변수가 누락되었습니다!${colors.reset}`);
+    console.log(`\n${colors.yellow}💡 해결 방법:${colors.reset}`);
+    console.log(`1. ${envFile} 파일을 확인하세요`);
+    console.log(`2. 누락된 환경 변수를 추가하세요`);
+    console.log(`3. 값의 형식이 올바른지 확인하세요`);
+    
+    if (nodeEnv === 'production') {
+      console.log(`4. 프로덕션 키를 사용하고 있는지 확인하세요 (테스트 키 X)`);
+    }
+    
+    process.exit(1);
+  }
+  
+  console.log(`${colors.cyan}========================================${colors.reset}`);
 }
 
-if (results.missing.length > 0) {
-  console.log('\n❌ 누락된 환경 변수:');
-  results.missing.forEach(msg => console.log(`   ${msg}`));
-}
-
-// 요약
-const totalRequired = Object.values(requiredEnvVars).filter(c => c.required).length + priceIds.length;
-const totalValid = results.valid.length;
-const totalIssues = results.invalid.length + results.missing.length;
-
-console.log('\n📈 요약:');
-console.log(`   총 필수 환경 변수: ${totalRequired}개`);
-console.log(`   올바르게 설정됨: ${totalValid}개`);
-console.log(`   문제 있음: ${totalIssues}개`);
-console.log(`   경고: ${results.warnings.length}개`);
-
-// 종료 코드 설정
-if (totalIssues > 0) {
-  console.log('\n❌ 환경 변수 설정을 완료한 후 다시 실행하세요.');
-  console.log('📚 자세한 설정 방법은 docs/PRODUCTION_ENV_SETUP.md를 참고하세요.\n');
-  process.exit(1);
-} else if (results.warnings.length > 0) {
-  console.log('\n⚠️  경고가 있지만 실행 가능합니다.');
-  console.log('📚 프로덕션 배포 전에는 모든 경고를 해결하세요.\n');
-  process.exit(0);
-} else {
-  console.log('\n✅ 모든 환경 변수가 올바르게 설정되었습니다!\n');
-  process.exit(0);
-}
+// 실행
+main();

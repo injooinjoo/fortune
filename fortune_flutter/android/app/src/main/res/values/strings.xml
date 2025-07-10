@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Google Sign-In Configuration -->
+    <!-- Replace with your actual Web Client ID from Google Cloud Console -->
+    <string name="default_web_client_id" translatable="false">676247567847-aim7omjjgnk8615sdsifppv41pm3o0m2.apps.googleusercontent.com</string>
+</resources>

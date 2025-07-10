@@ -1,11 +1,12 @@
+import { logger } from '@/lib/logger';
 import { NextRequest } from 'next/server';
 import { withAuth } from '@/middleware/auth';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api-response';
-import { createClient } from '@/lib/supabase/server';
+import { supabase } from '@/lib/supabase';
 import { startOfDay, subDays, format } from 'date-fns';
 
 async function getTokenStats(timeRange: string) {
-  const supabase = createClient();
+  // Using the supabase client directly
   
   // 시간 범위 계산
   const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
@@ -121,7 +122,7 @@ export async function GET(request: NextRequest) {
       const stats = await getTokenStats(range);
       return createSuccessResponse(stats);
     } catch (error) {
-      console.error('Token stats error:', error);
+      logger.error('Token stats error:', error);
       return createErrorResponse('Failed to fetch token statistics', 500);
     }
   })(request);

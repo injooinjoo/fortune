@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,6 +88,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function DreamInterpretationPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'form' | 'result'>('form');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -204,7 +207,10 @@ export default function DreamInterpretationPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.dreamContent) {
-      alert('이름, 생년월일, 꿈 내용을 모두 입력해주세요.');
+      toast({
+      title: '이름, 생년월일, 꿈 내용을 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -260,13 +266,16 @@ export default function DreamInterpretationPage() {
       
       setStep('result');
     } catch (error) {
-      console.error('꿈 해몽 분석 실패:', error);
+      logger.error('꿈 해몽 분석 실패:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('꿈 해몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        toast({
+      title: '꿈 해몽 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     } finally {
       setIsGenerating(false);
@@ -608,8 +617,11 @@ export default function DreamInterpretationPage() {
                           setResult(analysisResult);
                         }
                       } catch (error) {
-                        console.error('재생성 중 오류:', error);
-                        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+                        logger.error('재생성 중 오류:', error);
+                        toast({
+      title: '운세 재생성에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
                       }
                     })()}
                     disabled={isGenerating}

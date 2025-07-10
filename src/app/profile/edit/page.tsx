@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -70,6 +72,7 @@ const itemVariants = {
 };
 
 export default function ProfileEditPage() {
+  const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -130,7 +133,7 @@ export default function ProfileEditPage() {
       });
 
     } catch (error: any) {
-      console.error('사용자 프로필 로드 실패:', error);
+      logger.error('사용자 프로필 로드 실패:', error);
       router.push('/onboarding');
     } finally {
       setIsLoading(false);
@@ -169,10 +172,10 @@ export default function ProfileEditPage() {
               email: data.session.user.email || '',
               ...updates
             });
-            console.log('🔄 Supabase에 프로필 동기화 완료');
+            logger.debug('🔄 Supabase에 프로필 동기화 완료');
           }
         } catch (supabaseError) {
-          console.error('🔄 Supabase 동기화 실패:', supabaseError);
+          logger.error('🔄 Supabase 동기화 실패:', supabaseError);
           // Supabase 저장 실패에도 로컬 데이터는 유지
         }
       }
@@ -183,8 +186,11 @@ export default function ProfileEditPage() {
         throw new Error('프로필 업데이트에 실패했습니다.');
       }
     } catch (error) {
-      console.error('프로필 저장 실패:', error);
-      alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('프로필 저장 실패:', error);
+      toast({
+      title: '프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setIsSaving(false);
     }
@@ -192,7 +198,10 @@ export default function ProfileEditPage() {
 
   const handleAvatarUpload = () => {
     // 실제로는 이미지 업로드 처리
-    alert('아바타 업로드 기능은 준비 중입니다.');
+    toast({
+      title: '아바타 업로드 기능은 준비 중입니다.',
+      variant: "default",
+    });
   };
 
   if (isLoading) {

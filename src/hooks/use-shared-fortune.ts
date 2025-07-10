@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useState, useCallback } from 'react';
 import { z } from 'zod';
 import { GroupFortuneInputSchema, GroupFortuneOutputSchema } from '@/lib/types/fortune-schemas';
@@ -55,7 +56,7 @@ export function useSharedFortune(fortuneType: FortuneType) {
       }
     } catch (err: any) {
       const errorMessage = `운세 정보를 가져오는 데 실패했습니다: ${err.message}`;
-      console.error(errorMessage, err);
+      logger.error(errorMessage, err);
       setError(errorMessage);
     } finally {
       setIsLoading(false);

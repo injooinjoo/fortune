@@ -1,5 +1,6 @@
 // User storage utilities for local and Supabase data management
 
+import { logger } from '@/lib/logger';
 import { UserProfile } from '@/lib/types/fortune-system';
 
 // 데이터 유효성 검사 함수들
@@ -84,7 +85,7 @@ export const migrateUserProfile = (profile: any): UserProfile | null => {
     
     return migrated;
   } catch (error) {
-    console.error('프로필 마이그레이션 실패:', error);
+    logger.error('프로필 마이그레이션 실패:', error);
     return null;
   }
 };
@@ -182,7 +183,7 @@ export function getUserProfile(): UserProfile | null {
     // 데이터 마이그레이션 시도
     const migrated = migrateUserProfile(parsed);
     if (!migrated) {
-      console.warn('프로필 마이그레이션 실패, 데이터 삭제');
+      logger.warn('프로필 마이그레이션 실패, 데이터 삭제');
       localStorage.removeItem('userProfile');
       return null;
     }
@@ -190,7 +191,7 @@ export function getUserProfile(): UserProfile | null {
     // 데이터 검증
     const validation = validateUserProfile(migrated);
     if (!validation.isValid) {
-      console.warn('프로필 검증 실패:', validation.errors);
+      logger.warn('프로필 검증 실패:', validation.errors);
       // 심각한 오류가 아니면 수정된 데이터 사용
       const criticalErrors = validation.errors.filter(err => 
         err.includes('ID가 누락') || err.includes('온보딩 완료 상태')
@@ -210,7 +211,7 @@ export function getUserProfile(): UserProfile | null {
     
     return migrated;
   } catch (error) {
-    console.error("로컬 프로필 파싱 실패:", error);
+    logger.error("로컬 프로필 파싱 실패:", error);
     localStorage.removeItem('userProfile');
     return null;
   }
@@ -225,7 +226,7 @@ export function saveUserProfile(profile: UserProfile | null) {
     // 데이터 검증
     const validation = validateUserProfile(profile);
     if (!validation.isValid) {
-      console.error('프로필 저장 실패 - 검증 오류:', validation.errors);
+      logger.error('프로필 저장 실패 - 검증 오류:', validation.errors);
       throw new Error(`프로필 검증 실패: ${validation.errors.join(', ')}`);
     }
     
@@ -305,7 +306,7 @@ export async function syncUserProfile(): Promise<UserProfile | null> {
     return null;
     
   } catch (err) {
-    console.error('syncUserProfile 함수에서 예외 발생:', err);
+    logger.error('syncUserProfile 함수에서 예외 발생:', err);
     return getUserProfile();
   }
 }
@@ -319,7 +320,7 @@ export const incrementFortuneCount = (): void => {
       saveUserProfile(profile);
     }
   } catch (error) {
-    console.error('운세 조회 횟수 업데이트 실패:', error);
+    logger.error('운세 조회 횟수 업데이트 실패:', error);
   }
 };
 
@@ -340,7 +341,7 @@ export const checkDailyLimit = (): { canUse: boolean; remaining: number } => {
     // 새로운 날이거나 첫 사용
     return { canUse: true, remaining: 3 };
   } catch (error) {
-    console.error('일일 제한 확인 실패:', error);
+    logger.error('일일 제한 확인 실패:', error);
     return { canUse: true, remaining: 3 };
   }
 };
@@ -365,7 +366,7 @@ export const incrementDailyUsage = (): void => {
     // 전체 사용량도 업데이트
     incrementFortuneCount();
   } catch (error) {
-    console.error('일일 사용량 업데이트 실패:', error);
+    logger.error('일일 사용량 업데이트 실패:', error);
   }
 };
 
@@ -404,7 +405,7 @@ export const initializeUserData = (): void => {
     
     // 사용자 데이터 초기화 완료
   } catch (error) {
-    console.error('사용자 데이터 초기화 실패:', error);
+    logger.error('사용자 데이터 초기화 실패:', error);
   }
 };
 
@@ -438,7 +439,7 @@ export const clearAllUserData = (): void => {
     
     // 모든 사용자 데이터가 삭제되었습니다.
   } catch (error) {
-    console.error('사용자 데이터 삭제 실패:', error);
+    logger.error('사용자 데이터 삭제 실패:', error);
   }
 };
 
@@ -512,7 +513,7 @@ export const updateUserProfile = (updates: Partial<UserProfile>): UserProfile | 
     saveUserProfile(updatedProfile);
     return updatedProfile;
   } catch (error) {
-    console.error('프로필 업데이트 실패:', error);
+    logger.error('프로필 업데이트 실패:', error);
     return null;
   }
 };
@@ -576,7 +577,7 @@ export const checkAndFixDataConsistency = (): { fixed: boolean; issues: string[]
     
     return { fixed, issues };
   } catch (error) {
-    console.error('데이터 일관성 검사 실패:', error);
+    logger.error('데이터 일관성 검사 실패:', error);
     return { fixed: false, issues: ['일관성 검사 중 오류 발생'] };
   }
 };
@@ -616,7 +617,7 @@ export const saveUserInfo = async (userId: string, userInfo: Partial<UserProfile
     
     localStorage.setItem(key, JSON.stringify(updatedProfile));
   } catch (error) {
-    console.error('Failed to save user info:', error);
+    logger.error('Failed to save user info:', error);
     throw error;
   }
 };
@@ -647,7 +648,7 @@ export const updateUserProfileFromOnboarding = async (
     
     return updatedProfile;
   } catch (error) {
-    console.error('Failed to update user profile from onboarding:', error);
+    logger.error('Failed to update user profile from onboarding:', error);
     throw error;
   }
 }; 

@@ -1,6 +1,7 @@
 
 "use server";
 
+import { logger } from '@/lib/logger';
 import { generateFortuneInsights, type GenerateFortuneInsightsInput, type GenerateFortuneInsightsOutput as AIOutputType, type SajuDataType } from "@/ai/flows/generate-fortune-insights";
 import type { ProfileFormValues as FortuneFormValues } from "@/lib/schemas";
 import { format } from "date-fns";
@@ -47,7 +48,7 @@ export async function getFortuneAction(
       if (remappedInsights[type]) {
         validatedInsights[type] = remappedInsights[type];
       } else {
-        console.warn(`Insight not found or missing for type: ${type}. Original AI output (array):`, result.insights);
+        logger.warn(`Insight not found or missing for type: ${type}. Original AI output (array):`, result.insights);
         validatedInsights[type] = "현재 이 운세 종류에 대한 정보를 가져올 수 없습니다.";
       }
     }
@@ -60,7 +61,7 @@ export async function getFortuneAction(
     return { data: responseData, input: aiInput };
 
   } catch (e) {
-    console.error("Error generating fortune:", e);
+    logger.error("Error generating fortune:", e);
     const errorMessage = e instanceof Error ? e.message : "알 수 없는 오류가 발생했습니다.";
     return { error: `운세 생성 중 오류가 발생했습니다: ${errorMessage}` };
   }

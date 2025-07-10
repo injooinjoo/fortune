@@ -1,6 +1,7 @@
 // 운세 서비스 - 핵심 데이터 관리 로직
 // 작성일: 2024-12-19
 
+import { logger } from '@/lib/logger';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { 
@@ -25,7 +26,7 @@ export class FortuneService {
   private redis: any = null; // Redis 클라이언트 (선택적)
 
   private constructor() {
-    console.log('FortuneService 초기화 - DB 전용 모드');
+    logger.debug('FortuneService 초기화 - DB 전용 모드');
     
     // Supabase 클라이언트 초기화
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -33,9 +34,9 @@ export class FortuneService {
         process.env.NEXT_PUBLIC_SUPABASE_URL,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       );
-      console.log('✅ Supabase 연결 활성화');
+      logger.debug('✅ Supabase 연결 활성화');
     } else {
-      console.error('❌ Supabase 환경변수 누락 - DB 저장 불가');
+      logger.error('❌ Supabase 환경변수 누락 - DB 저장 불가');
       throw new Error('Supabase 환경변수가 설정되지 않았습니다.');
     }
   }
@@ -60,7 +61,7 @@ export class FortuneService {
     const startTime = Date.now();
     
     try {
-      console.log('FortuneService.getOrCreateFortune 시작:', { userId, fortuneCategory });
+      logger.debug('FortuneService.getOrCreateFortune 시작:', { userId, fortuneCategory });
 
       // 운세 타입 결정
       const fortuneType = this.getFortuneCategoryGroup(fortuneCategory);
@@ -79,7 +80,7 @@ export class FortuneService {
       const cachedData = await this.getCachedFortune(userId, fortuneType, fortuneCategory, interactiveInput);
       
       if (cachedData) {
-        console.log(`💾 캐시 히트 - ${fortuneCategory}:`, { 
+        logger.debug(`💾 캐시 히트 - ${fortuneCategory}:`, { 
           cached: true, 
           cacheSource: cachedData._cache_source || 'memory' 
         });
@@ -93,7 +94,7 @@ export class FortuneService {
         };
       }
 
-      console.log(`🔄 캐시 미스 - 새 데이터 생성: ${fortuneCategory}`);
+      logger.debug(`🔄 캐시 미스 - 새 데이터 생성: ${fortuneCategory}`);
 
       // 2. 새 데이터 생성
       const newData = await this.generateFortuneByGroup(
@@ -108,8 +109,8 @@ export class FortuneService {
       await this.saveToDatabase(userId, fortuneType, fortuneCategory, newData, interactiveInput);
 
       const endTime = Date.now();
-      console.log(`⚡ 운세 생성 완료 (${endTime - startTime}ms): ${fortuneCategory}`);
-      console.log('🔍 Generated newData:', JSON.stringify(newData, null, 2));
+      logger.debug(`⚡ 운세 생성 완료 (${endTime - startTime}ms): ${fortuneCategory}`);
+      logger.debug('🔍 Generated newData:', JSON.stringify(newData, null, 2));
       
       return {
         success: true,
@@ -121,7 +122,7 @@ export class FortuneService {
 
     } catch (error) {
       const endTime = Date.now();
-      console.error(`❌ FortuneService 오류 (${endTime - startTime}ms):`, error);
+      logger.error(`❌ FortuneService 오류 (${endTime - startTime}ms):`, error);
       
       return {
         success: false,
@@ -154,7 +155,7 @@ export class FortuneService {
     const validRequests = requests.filter(time => now - time < windowMs);
     
     if (validRequests.length >= maxRequests) {
-      console.warn(`🚫 Rate limit 초과: ${key} (${validRequests.length}/${maxRequests})`);
+      logger.warn(`🚫 Rate limit 초과: ${key} (${validRequests.length}/${maxRequests})`);
       return true;
     }
     
@@ -180,7 +181,7 @@ export class FortuneService {
         const redisKey = this.generateCacheKey(userId, fortuneType, fortuneCategory, interactiveInput);
         const cached = await this.redis.get(redisKey);
         if (cached) {
-          console.log(`🚀 Redis 캐시 히트: ${fortuneCategory}`);
+          logger.debug(`🚀 Redis 캐시 히트: ${fortuneCategory}`);
           const data = JSON.parse(cached);
           data._cache_source = 'redis';
           return data;
@@ -207,11 +208,11 @@ export class FortuneService {
       const { data, error } = await query.single();
 
       if (error || !data) {
-        console.log(`❌ DB 캐시 미스: ${fortuneCategory}`);
+        logger.debug(`❌ DB 캐시 미스: ${fortuneCategory}`);
         return null;
       }
 
-      console.log(`🚀 DB 캐시 히트: ${fortuneCategory}`);
+      logger.debug(`🚀 DB 캐시 히트: ${fortuneCategory}`);
 
       // Redis에 백업 저장 (있는 경우)
       if (this.redis) {
@@ -223,7 +224,7 @@ export class FortuneService {
       return data.data;
 
     } catch (error) {
-      console.error('캐시 조회 중 오류:', error);
+      logger.error('캐시 조회 중 오류:', error);
       return null;
     }
   }
@@ -239,14 +240,14 @@ export class FortuneService {
     interactiveInput?: InteractiveInput
   ): Promise<any> {
     try {
-      console.log(`🤖 AI 운세 생성 시작: ${category} (그룹: ${groupType})`);
+      logger.debug(`🤖 AI 운세 생성 시작: ${category} (그룹: ${groupType})`);
 
       // 관련 운세들을 함께 요청할지 결정
       const relatedFortunes = this.getRelatedFortunes(category);
       
       if (relatedFortunes.length > 1 && !interactiveInput) {
         // 묶음 요청을 통한 최적화
-        console.log(`📦 묶음 운세 생성: ${relatedFortunes.join(', ')}`);
+        logger.debug(`📦 묶음 운세 생성: ${relatedFortunes.join(', ')}`);
         
         const batchResponse = await centralizedFortuneService.callGenkitFortuneAPI({
           request_type: 'user_direct_request',
@@ -270,12 +271,12 @@ export class FortuneService {
         // 요청된 운세 데이터 추출
         const result = batchResponse.analysis_results[category];
         
-        console.log(`✅ 묶음 운세 생성 완료: ${category}`);
-        console.log('📊 Batch response analysis_results keys:', Object.keys(batchResponse.analysis_results));
-        console.log(`📊 Result for ${category}:`, result);
+        logger.debug(`✅ 묶음 운세 생성 완료: ${category}`);
+        logger.debug('📊 Batch response analysis_results keys:', Object.keys(batchResponse.analysis_results));
+        logger.debug(`📊 Result for ${category}:`, result);
         
         if (!result) {
-          console.warn(`⚠️ No result found for category ${category} in batch response`);
+          logger.warn(`⚠️ No result found for category ${category} in batch response`);
           // Fallback to single fortune generation
           const { generateSingleFortune } = await import('../../ai/openai-client');
           
@@ -322,7 +323,7 @@ export class FortuneService {
 
         const result = await generateSingleFortune(category, defaultProfile, interactiveInput);
 
-        console.log(`✅ AI 운세 생성 완료: ${category}`);
+        logger.debug(`✅ AI 운세 생성 완료: ${category}`);
         
         // 메타데이터 추가
         return {
@@ -336,7 +337,7 @@ export class FortuneService {
       }
 
     } catch (error) {
-      console.error(`❌ AI 운세 생성 실패 (${category}):`, error);
+      logger.error(`❌ AI 운세 생성 실패 (${category}):`, error);
       
       // AI 실패 시 fallback 데이터 생성
       return this.generateFallbackFortune(category, groupType, userProfile);
@@ -351,7 +352,7 @@ export class FortuneService {
     groupType: FortuneGroupType,
     userProfile?: UserProfile
   ): any {
-    console.log(`🔄 Fallback 운세 생성: ${category}`);
+    logger.debug(`🔄 Fallback 운세 생성: ${category}`);
     
     const userName = userProfile?.name || '사용자';
     const userId = userProfile?.id || 'fallback-user';
@@ -432,7 +433,7 @@ export class FortuneService {
         });
 
       if (fortuneError) {
-        console.error('fortunes 테이블 저장 실패:', fortuneError);
+        logger.error('fortunes 테이블 저장 실패:', fortuneError);
         throw fortuneError;
       }
 
@@ -455,21 +456,21 @@ export class FortuneService {
         .insert(historyRecord);
 
       if (historyError) {
-        console.error('fortune_history 테이블 저장 실패:', historyError);
+        logger.error('fortune_history 테이블 저장 실패:', historyError);
         // 히스토리 저장 실패는 치명적이지 않으므로 계속 진행
       }
 
-      console.log(`💾 DB 저장 완료: ${fortuneCategory} (만료: ${expiresAt?.toLocaleString() || '무제한'})`);
+      logger.debug(`💾 DB 저장 완료: ${fortuneCategory} (만료: ${expiresAt?.toLocaleString() || '무제한'})`);
 
       // Redis 캐시에도 저장 (선택적)
       if (this.redis) {
         const cacheKey = this.generateCacheKey(userId, fortuneType, fortuneCategory, interactiveInput);
         await this.redis.setex(cacheKey, 3600, JSON.stringify(data)); // 1시간 캐시
-        console.log(`💾 Redis 캐시 저장: ${fortuneCategory}`);
+        logger.debug(`💾 Redis 캐시 저장: ${fortuneCategory}`);
       }
       
     } catch (error) {
-      console.error('DB 저장 중 오류:', error);
+      logger.error('DB 저장 중 오류:', error);
       throw error;
     }
   }

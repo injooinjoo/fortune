@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -63,7 +64,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       // GPT 응답이 올바른 형식인지 검증 및 변환
       if (gptResult && typeof gptResult === 'object' && 
           gptResult.celebrity && typeof gptResult.todayScore === 'number') {
-        console.log('GPT API 호출 성공');
+        logger.debug('GPT API 호출 성공');
         
         return NextResponse.json({
       success: true,
@@ -76,7 +77,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       }
       
     } catch (error) {
-      console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+      logger.error('GPT API 호출 실패, 백업 로직 사용:', error);
       
       // 백업 로직: Mock 응답
       const userId = request.userId || 'anonymous';
@@ -115,7 +116,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     }
 
   } catch (error) {
-    console.error('Celebrity fortune API error:', error);
+    logger.error('Celebrity fortune API error:', error);
     return createSafeErrorResponse(error, '운세 생성 중 오류가 발생했습니다.');
   }
 });

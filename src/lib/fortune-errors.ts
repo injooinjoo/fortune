@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 /**
  * 운세 관련 에러 클래스 및 에러 처리 유틸리티
  */
@@ -146,7 +148,7 @@ export function logFortuneError(
 
   // 개발 환경에서는 콘솔에 출력
   if (process.env.NODE_ENV === 'development') {
-    console.error('🚨 Fortune Error:', errorLog);
+    logger.error('🚨 Fortune Error:', errorLog);
   }
 
   // 프로덕션에서는 Sentry로 전송

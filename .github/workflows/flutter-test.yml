@@ -1,0 +1,192 @@
+name: Flutter Test CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'fortune_flutter/**'
+      - '.github/workflows/flutter-test.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'fortune_flutter/**'
+      - '.github/workflows/flutter-test.yml'
+
+jobs:
+  test:
+    name: Test Flutter App
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: fortune_flutter
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Analyze code
+      run: flutter analyze
+      continue-on-error: true
+    
+    - name: Run tests
+      run: flutter test --coverage
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./fortune_flutter/coverage/lcov.info
+        flags: flutter
+        name: flutter-coverage
+    
+    - name: Check test coverage
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lcov
+        
+        # Generate coverage summary
+        lcov --summary coverage/lcov.info
+        
+        # Extract coverage percentage
+        COVERAGE=$(lcov --summary coverage/lcov.info 2>&1 | grep -E "lines\.+:" | sed -E 's/.*lines\.+:\ +([0-9.]+)%.*/\1/')
+        echo "Test coverage: $COVERAGE%"
+        
+        # Check if coverage meets threshold
+        if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+          echo "Coverage $COVERAGE% is below 80% threshold"
+          exit 1
+        fi
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: fortune_flutter/test-results.json
+
+  integration-test:
+    name: Integration Tests
+    runs-on: macos-latest
+    
+    defaults:
+      run:
+        working-directory: fortune_flutter
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Run integration tests
+      run: |
+        # Start iOS simulator
+        xcrun simctl list devices
+        xcrun simctl boot "iPhone 15" || true
+        
+        # Run integration tests
+        flutter test integration_test/app_test.dart
+    
+    - name: Upload integration test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: integration-test-results
+        path: fortune_flutter/integration-test-results.json
+
+  build:
+    name: Build Flutter App
+    runs-on: ubuntu-latest
+    needs: test
+    
+    strategy:
+      matrix:
+        platform: [web, android]
+    
+    defaults:
+      run:
+        working-directory: fortune_flutter
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+    
+    - name: Setup Java (for Android build)
+      if: matrix.platform == 'android'
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Build Web
+      if: matrix.platform == 'web'
+      run: flutter build web --release
+    
+    - name: Build Android APK
+      if: matrix.platform == 'android'
+      run: flutter build apk --release
+    
+    - name: Build Android App Bundle
+      if: matrix.platform == 'android'
+      run: flutter build appbundle --release
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.platform }}-build
+        path: |
+          fortune_flutter/build/web/
+          fortune_flutter/build/app/outputs/flutter-apk/
+          fortune_flutter/build/app/outputs/bundle/
+
+  deploy-preview:
+    name: Deploy Preview (Web)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Download web build
+      uses: actions/download-artifact@v3
+      with:
+        name: web-build
+        path: build-output
+    
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './build-output/web'
+        production-deploy: false
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+        enable-pull-request-comment: true
+        enable-commit-comment: false
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      timeout-minutes: 5

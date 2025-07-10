@@ -1,7 +1,8 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { validateApiKey } from '@/lib/api-auth';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { withRateLimit } from '@/middleware/rate-limit';
 import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 // Supabase 클라이언트 초기화
@@ -11,34 +12,16 @@ const supabase = createClient(
 );
 
 export async function GET(request: NextRequest) {
-  try {
-    // API 키 검증
-    const authResult = await validateApiKey(request);
-    if (!authResult.isValid) {
-      return NextResponse.json(
-        { error: 'Unauthorized', details: authResult.error },
-        { status: 401 }
-      );
-    }
-
-    // Rate limiting 체크
-    const clientIp = request.headers.get('x-forwarded-for') || 'anonymous';
-    const rateLimitResult = await checkRateLimit(clientIp, 'fortune-history');
-    
-    if (!rateLimitResult.allowed) {
-      return NextResponse.json(
-        { 
-          error: 'Too many requests', 
-          retryAfter: rateLimitResult.retryAfter 
-        },
-        { 
-          status: 429,
-          headers: {
-            'Retry-After': String(rateLimitResult.retryAfter || 60)
-          }
-        }
-      );
-    }
+  return withRateLimit(request, async () => {
+    try {
+      // API 키 검증
+      const authResult = await validateApiKey(request);
+      if (!authResult.isValid) {
+        return NextResponse.json(
+          { error: 'Unauthorized', details: authResult.error },
+          { status: 401 }
+        );
+      }
 
     // URL 파라미터 파싱
     const { searchParams } = new URL(request.url);
@@ -78,7 +61,7 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Fortune history query error:', error);
+      logger.error('Fortune history query error:', error);
       return NextResponse.json(
         { error: 'Failed to fetch fortune history', details: error.message },
         { status: 500 }
@@ -111,29 +94,31 @@ export async function GET(request: NextRequest) {
       }
     });
 
-  } catch (error) {
-    console.error('Fortune history API error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
-  }
+    } catch (error) {
+      logger.error('Fortune history API error:', error);
+      return NextResponse.json(
+        { 
+          error: 'Internal server error',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        },
+        { status: 500 }
+      );
+    }
+  });
 }
 
 // 운세 히스토리 삭제 (선택적)
 export async function DELETE(request: NextRequest) {
-  try {
-    // API 키 검증
-    const authResult = await validateApiKey(request);
-    if (!authResult.isValid) {
-      return NextResponse.json(
-        { error: 'Unauthorized', details: authResult.error },
-        { status: 401 }
-      );
-    }
+  return withRateLimit(request, async () => {
+    try {
+      // API 키 검증
+      const authResult = await validateApiKey(request);
+      if (!authResult.isValid) {
+        return NextResponse.json(
+          { error: 'Unauthorized', details: authResult.error },
+          { status: 401 }
+        );
+      }
 
     const body = await request.json();
     const { historyId, userId } = body;
@@ -150,7 +135,7 @@ export async function DELETE(request: NextRequest) {
       .eq('user_id', userId);
 
     if (error) {
-      console.error('Fortune history delete error:', error);
+      logger.error('Fortune history delete error:', error);
       return NextResponse.json(
         { error: 'Failed to delete fortune history', details: error.message },
         { status: 500 }
@@ -162,14 +147,15 @@ export async function DELETE(request: NextRequest) {
       message: 'Fortune history deleted successfully'
     });
 
-  } catch (error) {
-    console.error('Fortune history DELETE API error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
-  }
+    } catch (error) {
+      logger.error('Fortune history DELETE API error:', error);
+      return NextResponse.json(
+        { 
+          error: 'Internal server error',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        },
+        { status: 500 }
+      );
+    }
+  });
 }

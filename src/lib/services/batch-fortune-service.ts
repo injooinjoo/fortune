@@ -1,6 +1,7 @@
 // 배치 운세 서비스 - 효율적인 대량 운세 생성
 // 작성일: 2025-01-05
 
+import { logger } from '@/lib/logger';
 import { FortuneCategory, FortuneGroupType, UserProfile } from '../types/fortune-system';
 import { generateBatchFortunes, BatchFortuneRequest } from '../../ai/openai-client';
 import { createClient } from '@supabase/supabase-js';
@@ -29,7 +30,7 @@ export class BatchFortuneService {
    */
   async processSignupBatch(userId: string, userProfile: UserProfile): Promise<void> {
     try {
-      console.log(`🎯 회원가입 배치 운세 생성 시작: ${userId}`);
+      logger.debug(`🎯 회원가입 배치 운세 생성 시작: ${userId}`);
       
       // 평생 운세 카테고리들
       const signupFortunes: FortuneCategory[] = [
@@ -59,7 +60,7 @@ export class BatchFortuneService {
 
       const { data: fortuneData, token_usage } = await generateBatchFortunes(batchRequest);
       
-      console.log(`✅ 배치 생성 완료: ${Object.keys(fortuneData).length}개 운세 (토큰: ${token_usage})`);
+      logger.debug(`✅ 배치 생성 완료: ${Object.keys(fortuneData).length}개 운세 (토큰: ${token_usage})`);
 
       // DB에 저장
       await this.saveBatchFortunes(userId, 'signup', fortuneData);
@@ -68,7 +69,7 @@ export class BatchFortuneService {
       await this.saveIndividualFortunes(userId, fortuneData, 'LIFE_PROFILE');
       
     } catch (error) {
-      console.error('회원가입 배치 처리 실패:', error);
+      logger.error('회원가입 배치 처리 실패:', error);
       throw error;
     }
   }
@@ -78,22 +79,22 @@ export class BatchFortuneService {
    */
   async processDailyBatch(): Promise<void> {
     try {
-      console.log(`📅 일일 배치 운세 생성 시작`);
+      logger.debug(`📅 일일 배치 운세 생성 시작`);
       
       // 활성 사용자 조회 (24시간 내 접속)
       const activeUsers = await this.getActiveUsers(24);
       
-      console.log(`👥 활성 사용자 ${activeUsers.length}명 발견`);
+      logger.debug(`👥 활성 사용자 ${activeUsers.length}명 발견`);
       
       // 사용자별 일일 운세 생성
       for (const user of activeUsers) {
         await this.generateUserDailyFortunes(user);
       }
       
-      console.log(`✅ 일일 배치 완료`);
+      logger.debug(`✅ 일일 배치 완료`);
       
     } catch (error) {
-      console.error('일일 배치 처리 실패:', error);
+      logger.error('일일 배치 처리 실패:', error);
       throw error;
     }
   }
@@ -135,10 +136,10 @@ export class BatchFortuneService {
       // 개별 운세도 캐시에 저장 (24시간 만료)
       await this.saveIndividualFortunes(user.id, fortuneData, 'DAILY_COMPREHENSIVE');
       
-      console.log(`✅ ${user.name}님 일일 운세 생성 완료 (토큰: ${token_usage})`);
+      logger.debug(`✅ ${user.name}님 일일 운세 생성 완료 (토큰: ${token_usage})`);
       
     } catch (error) {
-      console.error(`사용자 ${user.id} 일일 운세 생성 실패:`, error);
+      logger.error(`사용자 ${user.id} 일일 운세 생성 실패:`, error);
     }
   }
 
@@ -151,7 +152,7 @@ export class BatchFortuneService {
     fortuneData: any
   ): Promise<void> {
     if (!this.supabase) {
-      console.log('💾 개발 모드: 배치 운세 메모리에만 저장');
+      logger.debug('💾 개발 모드: 배치 운세 메모리에만 저장');
       return;
     }
 
@@ -170,10 +171,10 @@ export class BatchFortuneService {
 
       if (error) throw error;
       
-      console.log(`💾 배치 운세 DB 저장 완료: ${batchType}`);
+      logger.debug(`💾 배치 운세 DB 저장 완료: ${batchType}`);
       
     } catch (error) {
-      console.error('배치 운세 DB 저장 실패:', error);
+      logger.error('배치 운세 DB 저장 실패:', error);
       throw error;
     }
   }
@@ -193,7 +194,7 @@ export class BatchFortuneService {
       const cacheKey = `fortune:${userId}:${groupType}:${fortuneType}`;
       
       // 실제 구현에서는 Redis나 메모리 캐시에 저장
-      console.log(`💾 개별 운세 캐시 저장: ${fortuneType}`);
+      logger.debug(`💾 개별 운세 캐시 저장: ${fortuneType}`);
     }
   }
 
@@ -227,7 +228,7 @@ export class BatchFortuneService {
       return data || [];
       
     } catch (error) {
-      console.error('활성 사용자 조회 실패:', error);
+      logger.error('활성 사용자 조회 실패:', error);
       return [];
     }
   }

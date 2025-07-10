@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useForm, Controller } from "react-hook-form";
@@ -79,7 +80,7 @@ export default function LuckyColorPage() {
       if (userInfo.name) setValue('name', userInfo.name);
       if (userInfo.birth_date) setValue('birthDate', userInfo.birth_date);
     } catch (error) {
-      console.warn("사용자 데이터 로드 실패:", error);
+      logger.warn("사용자 데이터 로드 실패:", error);
     }
   }, [setValue]);
 

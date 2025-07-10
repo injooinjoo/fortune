@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +21,7 @@ import { auth, userProfileService, fortuneCompletionService } from "@/lib/supaba
 
 import { createDeterministicRandom, getTodayDateString } from "@/lib/deterministic-random";
 export default function DashboardPage() {
+  const { toast } = useToast();
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [birthDay, setBirthDay] = useState("");
@@ -58,7 +61,7 @@ export default function DashboardPage() {
           }
         }
       } catch (error) {
-        console.error('사용자 데이터 로드 실패:', error);
+        logger.error('사용자 데이터 로드 실패:', error);
       }
     };
     
@@ -86,7 +89,10 @@ export default function DashboardPage() {
 
   const handleFortuneSubmit = async () => {
     if (!birthYear || !birthMonth || !birthDay) {
-      alert("생년월일을 모두 선택해주세요.");
+      toast({
+      title: "생년월일을 모두 선택해주세요.",
+      variant: "default",
+    });
       return;
     }
 
@@ -121,9 +127,9 @@ export default function DashboardPage() {
         await fortuneCompletionService.completeFortune(completionId, 5, "대시보드에서 생성된 운세");
       }
       
-      console.log('운세 생성 및 기록 완료');
+      logger.debug('운세 생성 및 기록 완료');
     } catch (error) {
-      console.error('운세 생성 실패:', error);
+      logger.error('운세 생성 실패:', error);
       // 오류가 발생해도 운세는 보여줌
       const results = [
         "오늘은 새로운 시작에 좋은 날입니다. 도전하는 마음가짐으로 하루를 보내세요.",

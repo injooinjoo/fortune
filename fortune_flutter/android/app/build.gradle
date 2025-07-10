@@ -1,0 +1,82 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+android {
+    namespace = "com.fortune.fortune_flutter"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId = "com.fortune.fortune_flutter"
+        minSdk = 21
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+        
+        // Multidex support for methods count over 64K
+        multiDexEnabled true
+        
+        // ProGuard rules for release builds
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    signingConfigs {
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Enables code shrinking, obfuscation, and optimization for release build
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
+            // Production signing config
+            signingConfig signingConfigs.release
+            
+            // Production build configuration
+            buildConfigField "String", "ENVIRONMENT", "\"production\""
+            
+            // Enable R8 for better code optimization
+            shrinkResources true
+        }
+        
+        debug {
+            // Debug build configuration
+            buildConfigField "String", "ENVIRONMENT", "\"development\""
+            applicationIdSuffix ".debug"
+            debuggable true
+        }
+        
+        staging {
+            // Staging build configuration
+            initWith buildTypes.release
+            buildConfigField "String", "ENVIRONMENT", "\"staging\""
+            applicationIdSuffix ".staging"
+            matchingFallbacks = ['release']
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}

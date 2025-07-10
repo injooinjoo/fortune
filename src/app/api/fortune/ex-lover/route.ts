@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -46,7 +47,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     });
 
   } catch (error: any) {
-    console.error('Ex-lover fortune API error:', error);
+    logger.error('Ex-lover fortune API error:', error);
     return createSafeErrorResponse(error, '헤어진 애인 분석 중 오류가 발생했습니다.');
   }
 });

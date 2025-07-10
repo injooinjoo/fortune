@@ -1,5 +1,6 @@
+import { logger } from '@/lib/logger';
 import OpenAI from 'openai';
-import * as Sentry from '@sentry/nextjs';
+import { errorMonitor, captureException, captureMessage, setUser } from '@/lib/error-monitor';
 
 // OpenAI client with improved error handling
 export class ImprovedOpenAIClient {
@@ -108,7 +109,7 @@ export class ImprovedOpenAIClient {
           try {
             parsed = JSON.parse(content);
           } catch (parseError) {
-            console.warn('Failed to parse JSON response:', parseError);
+            logger.warn('Failed to parse JSON response:', parseError);
             // Don't throw error, return raw content
           }
         }
@@ -122,7 +123,7 @@ export class ImprovedOpenAIClient {
 
       } catch (error) {
         lastError = error as Error;
-        console.error(`OpenAI attempt ${attempt}/${this.maxRetries} failed:`, error);
+        logger.error(`OpenAI attempt ${attempt}/${this.maxRetries} failed:`, error);
 
         // Don't retry on certain errors
         if (this.isNonRetryableError(error)) {
@@ -145,7 +146,7 @@ export class ImprovedOpenAIClient {
           attempts: this.maxRetries,
           error: lastError?.message
         });
-        Sentry.captureException(lastError);
+        captureException(lastError);
       });
 
       throw new Error(`OpenAI API failed after ${this.maxRetries} attempts: ${lastError.message}`);
@@ -165,7 +166,7 @@ export class ImprovedOpenAIClient {
         .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '') // Remove control characters
         .trim();
     } catch (error) {
-      console.warn('Encoding fix failed:', error);
+      logger.warn('Encoding fix failed:', error);
       return text;
     }
   }
@@ -263,7 +264,7 @@ export class ImprovedOpenAIClient {
         tokenUsage: result.tokenUsage
       };
     } catch (error) {
-      console.error('Batch fortune generation failed:', error);
+      logger.error('Batch fortune generation failed:', error);
       
       // Return fallback results
       const fallbackResults: Record<string, any> = {};

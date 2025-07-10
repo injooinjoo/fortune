@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -174,7 +175,7 @@ export default function AvoidPeoplePage() {
           }
         }
       } catch (error) {
-        console.error('프로필 파싱 오류:', error);
+        logger.error('프로필 파싱 오류:', error);
       }
     }
   }, []);

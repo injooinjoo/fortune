@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { createDeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
@@ -94,7 +95,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     return NextResponse.json(wealthFortune);
     
   } catch (error) {
-    console.error('Wealth API error:', error);
+    logger.error('Wealth API error:', error);
     return createSafeErrorResponse(error, '금전운 분석 중 오류가 발생했습니다.');
   }
 });
@@ -148,7 +149,7 @@ async function analyzeWealthFortune(info: WealthInfo): Promise<WealthFortune> {
     // GPT 응답이 올바른 형식인지 검증 및 변환
     if (gptResult && typeof gptResult === 'object' && 
         typeof gptResult.overall_luck === 'number') {
-      console.log('GPT API 호출 성공');
+      logger.debug('GPT API 호출 성공');
       
       // GPT 응답을 기반으로 종합 결과 생성
       const birthYear = parseInt(info.birth_date.substring(0, 4));
@@ -179,7 +180,7 @@ async function analyzeWealthFortune(info: WealthInfo): Promise<WealthFortune> {
     }
     
   } catch (error) {
-    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    logger.error('GPT API 호출 실패, 백업 로직 사용:', error);
     
     // 백업 로직: 기존 알고리즘 실행
     return generatePersonalizedWealthFortune(info);

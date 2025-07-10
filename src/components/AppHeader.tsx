@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Type, Share2, Type as TypeIcon } from "lucide-react";
@@ -26,6 +28,7 @@ export default function AppHeader({
   showDynamicTitle = false,
   showTokenBalance = true
 }: AppHeaderProps) {
+  const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const [showFontMenu, setShowFontMenu] = useState(false);
@@ -74,9 +77,12 @@ export default function AppHeader({
       try {
         await navigator.clipboard.writeText(window.location.href);
         // 간단한 피드백 (실제 앱에서는 toast 메시지 사용)
-        alert('링크가 클립보드에 복사되었습니다!');
+        toast({
+      title: '링크가 클립보드에 복사되었습니다!',
+      variant: "default",
+    });
       } catch (error) {
-        console.error('공유 실패:', error);
+        logger.error('공유 실패:', error);
       }
     }
   };

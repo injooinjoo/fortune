@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateSingleFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -51,7 +52,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     return NextResponse.json(fortuneResult);
     
   } catch (error: any) {
-    console.error('Lucky job API error:', error);
+    logger.error('Lucky job API error:', error);
     return createSafeErrorResponse(error, '직업운 분석 중 오류가 발생했습니다.');
   }
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -122,15 +123,15 @@ function LoveFortunePage() {
 
   const fetchLoveFortune = async () => {
     try {
-      console.log('연애운 데이터 요청 시작...');
+      logger.debug('연애운 데이터 요청 시작...');
       
       // Supabase 클라이언트에서 세션 가져오기
       const supabase = getSupabaseBrowserClient();
       const { data: { session } } = await supabase.auth.getSession();
       
-      console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+      logger.debug('세션 상태:', session ? '로그인됨' : '미로그인');
       if (session) {
-        console.log('세션 토큰:', session.access_token?.substring(0, 20) + '...');
+        logger.debug('세션 토큰:', session.access_token?.substring(0, 20) + '...');
       }
       
       const response = await fetch('/api/fortune/love', {
@@ -157,7 +158,7 @@ function LoveFortunePage() {
       }
 
       const result = await response.json();
-      console.log('연애운 API 응답:', result);
+      logger.debug('연애운 API 응답:', result);
       
       if (!result.success) {
         throw new Error(result.error || '운세 생성에 실패했습니다. 다시 시도해주세요.');
@@ -228,11 +229,11 @@ function LoveFortunePage() {
         deeperAdvice: result.deeper_advice || '오늘은 자신을 사랑하는 마음에서 시작하여 진정성 있는 인연을 만들어가는 날입니다. 스스로를 아끼는 마음이 좋은 사람들을 끌어당기는 가장 큰 힘이 됩니다.'
       };
 
-      console.log('연애운 데이터 설정 완료:', loveData);
+      logger.debug('연애운 데이터 설정 완료:', loveData);
       return loveData;
       
     } catch (err) {
-      console.error('연애운 데이터 로딩 실패:', err);
+      logger.error('연애운 데이터 로딩 실패:', err);
       throw err;
     }
   };

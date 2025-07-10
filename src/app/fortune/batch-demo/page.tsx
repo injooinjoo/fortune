@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { BatchFortuneContainer } from '@/components/fortune/BatchFortuneContainer';
 import AppHeader from '@/components/AppHeader';
 import { useState } from 'react';
@@ -19,7 +20,7 @@ export default function BatchFortuneDemoPage() {
       <main className="container mx-auto px-4 py-8 pt-20">
         <BatchFortuneContainer
           onFortuneGenerated={(data) => {
-            console.log('운세 생성 완료:', data);
+            logger.debug('운세 생성 완료:', data);
           }}
         />
       </main>

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -9,11 +10,11 @@ import { getUserProfileForAPI } from '@/lib/api-utils';
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('🐲 띠별 운세 API 요청');
+    logger.debug('🐲 띠별 운세 API 요청');
     
     // URL에서 사용자 ID 추출 (쿼리 파라미터 또는 헤더에서)
     const userId = request.nextUrl.request.userId!;
-    console.log(`🔍 띠별 운세 요청: 사용자 ID = ${userId}`);
+    logger.debug(`🔍 띠별 운세 요청: 사용자 ID = ${userId}`);
 
     // 기본 사용자 프로필 생성
     // 실제 사용자 프로필을 가져옴
@@ -34,13 +35,13 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
     }
 
-    console.log(`✅ 띠별 운세 API 응답 완료: ${userId}`);
+    logger.debug(`✅ 띠별 운세 API 응답 완료: ${userId}`);
     return createSuccessResponse(result.data
-    , undefined, { cached: false, generated_at: new Date( }).toISOString()
+    , undefined, { cached: false, generated_at: new Date().toISOString() }
     );
 
   } catch (error) {
-    console.error('❌ 띠별 운세 API 오류:', error);
+    logger.error('❌ 띠별 운세 API 오류:', error);
     return createSafeErrorResponse(error, '띠별 운세 생성 중 오류가 발생했습니다.');
   }
 });

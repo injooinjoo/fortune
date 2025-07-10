@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { Component, ReactNode } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, RefreshCw } from 'lucide-react';
@@ -38,7 +39,7 @@ export default class AdErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('광고 컴포넌트 에러:', error, errorInfo);
+    logger.error('광고 컴포넌트 에러:', error, errorInfo);
     
     // 부모 컴포넌트에 에러 전달
     if (this.props.onError) {
@@ -141,7 +142,7 @@ export class ChunkLoadErrorBoundary extends Component<Props, State> {
     if (error.name === 'ChunkLoadError' || error.message.includes('Loading chunk')) {
       // 페이지 새로고침을 통해 해결 시도
       if (typeof window !== 'undefined' && window.location) {
-        console.log('청크 로드 에러 감지 - 페이지 새로고침 시도');
+        logger.debug('청크 로드 에러 감지 - 페이지 새로고침 시도');
         setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -159,7 +160,7 @@ export class ChunkLoadErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     if (error.name === 'ChunkLoadError' || error.message.includes('Loading chunk')) {
-      console.error('청크 로드 에러:', error, errorInfo);
+      logger.error('청크 로드 에러:', error, errorInfo);
     }
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -75,7 +76,7 @@ export default function MbtiPage() {
         description: "프로필을 DB에 저장하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
         variant: "destructive",
       });
-      console.error("DB 동기화 실패:", error);
+      logger.error("DB 동기화 실패:", error);
     }
   };
 

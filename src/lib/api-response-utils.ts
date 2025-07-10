@@ -3,6 +3,7 @@
  * 모든 Fortune API는 이 형식을 따라야 합니다.
  */
 
+import { logger } from '@/lib/logger';
 import { NextResponse } from 'next/server';
 
 interface ApiSuccessResponse<T = any> {
@@ -79,7 +80,7 @@ export function createErrorResponse(
  * 표준 에러 핸들러
  */
 export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
-  console.error('API Error:', error);
+  logger.error('API Error:', error);
 
   if (error instanceof Error) {
     // 특정 에러 타입 처리

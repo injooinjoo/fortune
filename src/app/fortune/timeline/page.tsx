@@ -6,6 +6,7 @@ import AppHeader from "@/components/AppHeader";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 import {
   Clock,
   Sun,

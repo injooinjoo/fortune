@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { supabase } from './supabase';
 import { FORTUNE_TYPES } from './fortune-data';
 
@@ -109,7 +110,7 @@ export class AnalyticsService {
       };
 
     } catch (error) {
-      console.error('운세 사용 통계 조회 실패:', error);
+      logger.error('운세 사용 통계 조회 실패:', error);
       return {
         total_fortunes: 0,
         popular_types: [],
@@ -183,7 +184,7 @@ export class AnalyticsService {
       };
 
     } catch (error) {
-      console.error('사용자 운세 통계 조회 실패:', error);
+      logger.error('사용자 운세 통계 조회 실패:', error);
       return {
         total_fortunes: 0,
         favorite_types: [],
@@ -223,7 +224,7 @@ export class AnalyticsService {
           created_date: new Date().toISOString().split('T')[0]
         });
     } catch (error) {
-      console.error('운세 완성률 추적 실패:', error);
+      logger.error('운세 완성률 추적 실패:', error);
     }
   }
 
@@ -279,7 +280,7 @@ export class AnalyticsService {
       }));
 
     } catch (error) {
-      console.error('완성률 조회 실패:', error);
+      logger.error('완성률 조회 실패:', error);
       return [];
     }
   }
@@ -357,7 +358,7 @@ export class AnalyticsService {
       };
 
     } catch (error) {
-      console.error('사용자 선호도 분석 실패:', error);
+      logger.error('사용자 선호도 분석 실패:', error);
       return {
         recommended_types: [],
         avoid_types: [],

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextResponse } from 'next/server';
 import { FortuneResponse, UserProfile } from '@/lib/types/fortune-system';
 import { userProfileService } from '@/lib/supabase';
@@ -14,19 +15,19 @@ export async function getUserProfileForAPI(userId: string): Promise<{
     const profile = await userProfileService.getProfile(userId);
     
     if (!profile) {
-      console.log(`⚠️ 사용자 프로필을 찾을 수 없음: ${userId}`);
+      logger.debug(`⚠️ 사용자 프로필을 찾을 수 없음: ${userId}`);
       return { profile: null, needsOnboarding: true };
     }
     
     // 프로필은 있지만 온보딩이 완료되지 않은 경우
     if (!profile.onboarding_completed) {
-      console.log(`⚠️ 사용자 온보딩 미완료: ${userId}`);
+      logger.debug(`⚠️ 사용자 온보딩 미완료: ${userId}`);
       return { profile, needsOnboarding: true };
     }
     
     return { profile, needsOnboarding: false };
   } catch (error) {
-    console.error('프로필 조회 중 오류:', error);
+    logger.error('프로필 조회 중 오류:', error);
     return { profile: null, needsOnboarding: true };
   }
 }

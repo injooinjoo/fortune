@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api-response-utils';
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
       const { data: transactions, error, count } = await query;
       
       if (error) {
-        console.error('토큰 내역 조회 오류:', error);
+        logger.error('토큰 내역 조회 오류:', error);
         return createErrorResponse('토큰 내역을 불러올 수 없습니다', undefined, undefined, 500);
       }
       
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
       });
       
     } catch (error) {
-      console.error('토큰 내역 API 오류:', error);
+      logger.error('토큰 내역 API 오류:', error);
       return createErrorResponse('토큰 내역 조회 중 오류가 발생했습니다', undefined, undefined, 500);
     }
   });

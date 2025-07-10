@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 /**
  * Security validation utilities for environment variables and API security
  */
@@ -193,28 +195,28 @@ export function performSecurityAudit(): {
 export function logSecurityAudit(): void {
   const audit = performSecurityAudit();
   
-  console.log('\n🔐 SECURITY AUDIT REPORT');
-  console.log('='.repeat(50));
+  logger.debug('\n🔐 SECURITY AUDIT REPORT');
+  logger.debug('='.repeat(50));
   
-  console.log(`\n📊 Overall Security Status: ${audit.overall.isSecure ? '✅ SECURE' : '❌ VULNERABLE'}`);
+  logger.debug(`\n📊 Overall Security Status: ${audit.overall.isSecure ? '✅ SECURE' : '❌ VULNERABLE'}`);
   
   if (audit.overall.errors.length > 0) {
-    console.log('\n🚨 CRITICAL ERRORS:');
-    audit.overall.errors.forEach(error => console.log(`  ❌ ${error}`));
+    logger.debug('\n🚨 CRITICAL ERRORS:');
+    audit.overall.errors.forEach(error => logger.debug(`  ❌ ${error}`));
   }
   
   if (audit.overall.warnings.length > 0) {
-    console.log('\n⚠️  WARNINGS:');
-    audit.overall.warnings.forEach(warning => console.log(`  ⚠️  ${warning}`));
+    logger.debug('\n⚠️  WARNINGS:');
+    audit.overall.warnings.forEach(warning => logger.debug(`  ⚠️  ${warning}`));
   }
   
   if (audit.overall.recommendations.length > 0) {
-    console.log('\n💡 RECOMMENDATIONS:');
-    audit.overall.recommendations.forEach(rec => console.log(`  💡 ${rec}`));
+    logger.debug('\n💡 RECOMMENDATIONS:');
+    audit.overall.recommendations.forEach(rec => logger.debug(`  💡 ${rec}`));
   }
   
-  console.log('\n' + '='.repeat(50));
-  console.log('Security audit completed.\n');
+  logger.debug('\n' + '='.repeat(50));
+  logger.debug('Security audit completed.\n');
 }
 
 /**

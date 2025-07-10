@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { supabase } from '@/lib/supabase';
 import { FORTUNE_PACKAGES } from '@/config/fortune-packages';
 import { TokenUsageRecord } from '@/types/batch-fortune';
@@ -45,7 +46,7 @@ export class TokenMonitor {
         monthly: this.aggregateUsage(monthlyData || [])
       };
     } catch (error) {
-      console.error('사용량 통계 조회 오류:', error);
+      logger.error('사용량 통계 조회 오류:', error);
       return {
         daily: { tokens: 0, cost: 0 },
         monthly: { tokens: 0, cost: 0 }
@@ -88,7 +89,7 @@ export class TokenMonitor {
       
       return analysis;
     } catch (error) {
-      console.error('패키지 효율성 분석 오류:', error);
+      logger.error('패키지 효율성 분석 오류:', error);
       return {};
     }
   }
@@ -168,7 +169,7 @@ export class TokenMonitor {
         }))
       };
     } catch (error) {
-      console.error('상세 사용량 보고서 생성 오류:', error);
+      logger.error('상세 사용량 보고서 생성 오류:', error);
       return {
         totalTokens: 0,
         totalCost: 0,
@@ -206,10 +207,10 @@ export class TokenMonitor {
       });
 
       if (error) {
-        console.error('토큰 사용량 저장 오류:', error);
+        logger.error('토큰 사용량 저장 오류:', error);
       }
     } catch (error) {
-      console.error('데이터베이스 저장 실패:', error);
+      logger.error('데이터베이스 저장 실패:', error);
     }
   }
 
@@ -218,13 +219,13 @@ export class TokenMonitor {
     
     // 일일 한도 확인 (예: 10,000 토큰)
     if (stats.daily.tokens > 10000) {
-      console.warn(`사용자 ${userId}가 일일 토큰 한도에 근접: ${stats.daily.tokens}`);
+      logger.warn(`사용자 ${userId}가 일일 토큰 한도에 근접: ${stats.daily.tokens}`);
       // 알림 발송 로직 추가 가능
     }
     
     // 월간 비용 한도 확인 (예: $10)
     if (stats.monthly.cost > 10) {
-      console.warn(`사용자 ${userId}가 월간 비용 한도 초과: $${stats.monthly.cost}`);
+      logger.warn(`사용자 ${userId}가 월간 비용 한도 초과: $${stats.monthly.cost}`);
       // 서비스 제한 로직 추가 가능
     }
   }

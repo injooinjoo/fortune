@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 /**
  * 통합된 에러 처리 시스템
  * 보안을 고려한 에러 로깅 및 사용자 친화적 메시지 제공
@@ -38,7 +40,7 @@ export class SecureErrorHandler {
 
     // 개발 환경에서만 상세 로깅
     if (process.env.NODE_ENV === 'development') {
-      console.error('🔴 Error logged:', errorInfo);
+      logger.error('🔴 Error logged:', errorInfo);
     }
 
     // 큐에 추가 (최대 크기 유지)

@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -78,7 +79,7 @@ export default function DestinyFortunePage() {
         setLoading(true);
         
         // AuthContext에서 세션 가져오기
-        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        logger.debug('세션 상태:', session ? '로그인됨' : '미로그인');
         
         const response = await fetch('/api/fortune/destiny', {
           method: 'GET',

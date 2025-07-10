@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -823,7 +824,7 @@ export default function FortunePage() {
   const handleCategoryClick = (route: string, title: string) => {
     // 이미 처리 중이면 클릭 무시
     if (isProcessing) {
-      console.log('이미 처리 중입니다. 중복 클릭 방지됨.');
+      logger.debug('이미 처리 중입니다. 중복 클릭 방지됨.');
       return;
     }
     

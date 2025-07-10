@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
@@ -14,7 +15,7 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ 
   children, 
   fallback,
-  redirectTo = '/auth/selection'
+  redirectTo = '/'
 }: ProtectedRouteProps) {
   const { user, session, isLoading } = useAuth();
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function ProtectedRoute({
 
     // 세션과 사용자 정보 모두 확인
     if (!session || !user) {
-      console.log('🔒 미인증 사용자 감지 - 로그인 페이지로 리디렉션');
+      logger.debug('🔒 미인증 사용자 감지 - 로그인 페이지로 리디렉션');
       // 현재 경로를 저장하여 로그인 후 돌아올 수 있도록 함
       const currentPath = window.location.pathname;
       const returnUrl = encodeURIComponent(currentPath);

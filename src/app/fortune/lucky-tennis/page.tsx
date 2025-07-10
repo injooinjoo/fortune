@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -146,6 +148,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyTennisPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<TennisInfo>({
@@ -179,7 +182,7 @@ export default function LuckyTennisPage() {
 
       return await response.json();
     } catch (error) {
-      console.error('테니스 운세 분석 오류:', error);
+      logger.error('테니스 운세 분석 오류:', error);
       
       // 개선된 백업 로직 (개인화된)
       const birthYear = formData.birth_date ? parseInt(formData.birth_date.substring(0, 4)) : new Date().getFullYear() - 25;
@@ -274,7 +277,10 @@ export default function LuckyTennisPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || !formData.dominant_hand) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -286,8 +292,11 @@ export default function LuckyTennisPage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

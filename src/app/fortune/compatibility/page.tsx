@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -92,6 +94,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function CompatibilityPage() {
+  const { toast } = useToast();
   // Initialize deterministic random for consistent results
   // Get actual user ID from auth context
   const { user } = useAuth();
@@ -148,7 +151,7 @@ export default function CompatibilityPage() {
       const data = await response.json();
       return data.compatibility || data;
     } catch (error) {
-      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      logger.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
       const baseScore = deterministicRandom.randomInt(50, 50 + 40 - 1);
@@ -187,7 +190,10 @@ export default function CompatibilityPage() {
 
   const handleSubmit = async () => {
     if (!person1.name || !person1.birthDate || !person2.name || !person2.birthDate) {
-      alert('모든 정보를 입력해주세요.');
+      toast({
+      title: '모든 정보를 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -199,8 +205,11 @@ export default function CompatibilityPage() {
       setResult(compatibilityResult);
       setStep('result');
     } catch (error) {
-      console.error('궁합 분석 중 오류:', error);
-      alert('궁합 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('궁합 분석 중 오류:', error);
+      toast({
+      title: '궁합 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

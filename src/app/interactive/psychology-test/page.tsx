@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/AppHeader";
 import { useFortuneStream } from "@/hooks/use-fortune-stream";
 import { useDailyFortune } from "@/hooks/use-daily-fortune";
@@ -123,6 +126,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function PsychologyTestPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'form' | 'result'>('form');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -272,13 +276,16 @@ export default function PsychologyTestPage() {
         setResult(analysisResult);
       }
     } catch (error) {
-      console.error('재생성 중 오류:', error);
+      logger.error('재생성 중 오류:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+        toast({
+      title: '운세 재생성에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     }
   }, [formData, regenerateFortune]);
@@ -295,7 +302,10 @@ export default function PsychologyTestPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
-      alert('이름과 생년월일을 입력해주세요.');
+      toast({
+      title: '이름과 생년월일을 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -353,13 +363,16 @@ export default function PsychologyTestPage() {
       
       setStep('result');
     } catch (error) {
-      console.error('심리 테스트 분석 실패:', error);
+      logger.error('심리 테스트 분석 실패:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('심리 테스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        toast({
+      title: '심리 테스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     } finally {
       setIsGenerating(false);

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { supabase } from './supabase';
 
 export class DatabaseConnectionTest {
@@ -163,7 +164,7 @@ export class DatabaseConnectionTest {
       userOperations: Awaited<ReturnType<typeof DatabaseConnectionTest.testUserOperations>>;
     }
   }> {
-    console.log('🧪 Running database tests...');
+    logger.debug('🧪 Running database tests...');
     
     const results = {
       connection: await this.testConnection(),
@@ -175,22 +176,22 @@ export class DatabaseConnectionTest {
     const allSuccess = Object.values(results).every(result => result.success);
     
     // Log results
-    console.log('\n📋 Test Results:');
-    console.log('================');
+    logger.debug('\n📋 Test Results:');
+    logger.debug('================');
     
     Object.entries(results).forEach(([testName, result]) => {
       const status = result.success ? '✅' : '❌';
-      console.log(`${status} ${testName}: ${result.message}`);
+      logger.debug(`${status} ${testName}: ${result.message}`);
       
       if ('details' in result && result.details) {
         Object.entries(result.details).forEach(([key, value]) => {
           const detailStatus = value ? '✓' : '✗';
-          console.log(`  ${detailStatus} ${key}`);
+          logger.debug(`  ${detailStatus} ${key}`);
         });
       }
     });
     
-    console.log('\n' + (allSuccess ? '🎉 All tests passed!' : '⚠️  Some tests failed'));
+    logger.debug('\n' + (allSuccess ? '🎉 All tests passed!' : '⚠️  Some tests failed'));
     
     return {
       success: allSuccess,

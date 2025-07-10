@@ -1,133 +1,310 @@
-# 🔒 Security Review Phase 2: API Protection & Payment Integration
+# 🔒 Flutter Security Phase 2: 고급 보안 및 결제 통합
 
 ## 개요
-이 문서는 Fortune 프로젝트의 2단계 보안 강화 및 결제 시스템 통합 작업의 보안 검토 결과를 정리합니다.
+Fortune Flutter 프로젝트의 2단계 보안 강화 가이드입니다. 모바일 환경에서의 결제 시스템 통합과 고급 보안 기능 구현을 다룹니다.
 
 ## ✅ 구현된 보안 개선 사항
 
-### 1. **API 인증 시스템**
-- **구현**: `withAuth` 및 `withFortuneAuth` 미들웨어
-- **보호율**: 73/77 엔드포인트 (95%)
-- **기능**:
-  - JWT 토큰 기반 인증
-  - Supabase Auth 통합
-  - Bearer 토큰 및 쿠키 세션 지원
-  - 프리미엄 사용자 구분
+### 1. **인앱 결제 보안**
+- **Google Play Billing**:
+  - 서버 측 영수증 검증
+  - 구매 토큰 검증
+  - 리플레이 공격 방지
+  ```dart
+  // 구매 검증
+  final isValid = await verifyPurchase(
+    purchaseToken: purchase.purchaseToken,
+    productId: purchase.productId,
+    packageName: packageName,
+  );
+  ```
 
-### 2. **Rate Limiting 구현**
-- **1차 방어**: Redis 기반 Rate Limiting (사용 가능 시)
-- **2차 방어**: 메모리 기반 폴백 시스템
-- **정책**:
-  - 일반 사용자: 분당 10회
-  - 프리미엄 사용자: 분당 100회
-  - 게스트: 분당 5회
-- **헤더**: X-RateLimit-* 표준 준수
+- **Apple StoreKit**:
+  - 영수증 검증 API
+  - 샌드박스/프로덕션 환경 분리
+  - 구독 상태 실시간 업데이트
 
-### 3. **결제 시스템 보안**
-- **Stripe Integration**:
-  - Webhook 서명 검증
-  - 환경 변수 기반 시크릿 관리
-  - 안전한 고객 ID 생성
-- **Toss Payments**:
-  - IP 기반 webhook 검증
-  - Basic Auth 헤더 사용
-  - 주문 ID 고유성 보장
+### 2. **고급 인증 시스템**
+- **생체 인증 통합**:
+  ```dart
+  final LocalAuthentication auth = LocalAuthentication();
+  
+  // 생체 인증 가능 여부 확인
+  final bool canCheckBiometrics = await auth.canCheckBiometrics;
+  final bool isDeviceSupported = await auth.isDeviceSupported();
+  
+  // 인증 수행
+  final bool didAuthenticate = await auth.authenticate(
+    localizedReason: '운세를 확인하려면 인증이 필요합니다',
+    options: const AuthenticationOptions(
+      biometricOnly: true,
+      stickyAuth: true,
+    ),
+  );
+  ```
 
-### 4. **Math.random() 완전 제거**
-- **Before**: 40개 이상 파일에서 사용
-- **After**: 0개 (주석 제외)
-- **대체**: DeterministicRandom 클래스
-- **이점**: 운세 결과 일관성 보장
+- **OAuth 2.0 구현**:
+  - PKCE (Proof Key for Code Exchange) 적용
+  - State 파라미터로 CSRF 방지
+  - 안전한 리다이렉트 URI 검증
 
-## 🛡️ 보안 모범 사례 구현
+### 3. **데이터 암호화 강화**
+- **End-to-End 암호화**:
+  ```dart
+  // AES-256 암호화
+  final encrypter = Encrypter(AES(key));
+  final encrypted = encrypter.encrypt(plainText, iv: iv);
+  
+  // RSA 키 교환
+  final parser = RSAKeyParser();
+  final publicKey = parser.parse(publicKeyString);
+  final encryptedKey = publicKey.encrypt(aesKey);
+  ```
 
-### 1. **최소 권한 원칙**
-- API 키는 환경 변수로만 관리
-- 역할 기반 접근 제어 (system, admin, user)
-- 세분화된 권한 체크
+- **SQLCipher 통합**:
+  ```dart
+  // 암호화된 데이터베이스
+  final db = await openDatabase(
+    path,
+    password: dbPassword,
+    singleInstance: true,
+  );
+  ```
 
-### 2. **심층 방어**
-- 다층 보안 레이어:
-  1. 인증 (Authentication)
-  2. 속도 제한 (Rate Limiting)
-  3. 입력 검증 (Zod)
-  4. 에러 핸들링
+### 4. **런타임 보안**
+- **안티 탬퍼링**:
+  ```dart
+  // 앱 서명 검증
+  Future<bool> verifyAppSignature() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final signature = await getPackageSignature(packageInfo.packageName);
+    return signature == expectedSignature;
+  }
+  ```
 
-### 3. **보안 기본 설정**
-- 프로덕션에서 민감한 정보 숨김
-- 개발 환경에서만 상세 로깅
-- 안전한 에러 응답
+- **루팅/탈옥 감지**:
+  ```dart
+  // flutter_jailbreak_detection 사용
+  final bool isJailbroken = await FlutterJailbreakDetection.jailbroken;
+  final bool isDeveloperMode = await FlutterJailbreakDetection.developerMode;
+  
+  if (isJailbroken || isDeveloperMode) {
+    // 보안 경고 및 기능 제한
+  }
+  ```
 
-### 4. **로깅 및 모니터링**
-- 구조화된 로깅 시스템
-- Sentry 통합 (선택적)
-- 보안 이벤트 추적
+## 🛡️ 고급 보안 기능
 
-## 🔍 보안 감사 결과
+### 1. **네트워크 보안 강화**
+- **Certificate Transparency**:
+  ```dart
+  // CT 로그 검증
+  dio.interceptors.add(
+    CertificateTransparencyInterceptor(
+      expectedSCTs: ['log1', 'log2'],
+    ),
+  );
+  ```
 
-### **고위험 이슈 해결:**
-1. ✅ **무인증 API 접근** → **모든 엔드포인트 보호**
-2. ✅ **DDoS 취약점** → **Rate Limiting 구현**
-3. ✅ **예측 가능한 난수** → **결정론적 랜덤 구현**
-4. ✅ **결제 보안** → **서명 검증 및 암호화**
+- **Request Signing**:
+  ```dart
+  // HMAC-SHA256 서명
+  final signature = Hmac(sha256, secretKey).convert(
+    utf8.encode('$method$path$timestamp$body'),
+  );
+  headers['X-Signature'] = signature.toString();
+  ```
 
-### **추가된 보안 제어:**
-- ✅ API 인증 미들웨어
-- ✅ Rate Limiting (Redis + 메모리)
-- ✅ 입력 검증 (Zod 스키마)
-- ✅ 안전한 에러 처리
-- ✅ 환경 변수 관리
-- ✅ Webhook 검증
+### 2. **메모리 보호**
+- **민감 데이터 제거**:
+  ```dart
+  // 사용 후 즉시 메모리에서 제거
+  class SecureString {
+    final Uint8List _data;
+    
+    void dispose() {
+      // 메모리 덮어쓰기
+      for (int i = 0; i < _data.length; i++) {
+        _data[i] = 0;
+      }
+    }
+  }
+  ```
 
-## 📊 보안 지표
+- **스크린 녹화 방지**:
+  ```dart
+  // iOS
+  if (Platform.isIOS) {
+    await platform.invokeMethod('setSecureScreen', true);
+  }
+  
+  // Android
+  if (Platform.isAndroid) {
+    await FlutterWindowManager.addFlags(
+      FlutterWindowManager.FLAG_SECURE,
+    );
+  }
+  ```
 
-| 항목 | 수치 | 상태 |
-|-----|-----|------|
-| API 보호율 | 95% | ✅ 우수 |
-| Rate Limiting 적용률 | 100% | ✅ 완벽 |
-| Math.random 사용 | 0개 | ✅ 제거 완료 |
-| 하드코딩된 시크릿 | 0개 | ✅ 없음 |
-| 에러 핸들링 | 100% | ✅ 완벽 |
+### 3. **API Rate Limiting (클라이언트)**
+- **로컬 Rate Limiting**:
+  ```dart
+  class ApiRateLimiter {
+    final _requestTimes = <String, List<DateTime>>{};
+    final int maxRequests;
+    final Duration window;
+    
+    bool shouldAllowRequest(String endpoint) {
+      final now = DateTime.now();
+      final requests = _requestTimes[endpoint] ?? [];
+      
+      // 시간 윈도우 내 요청 필터링
+      final recentRequests = requests.where(
+        (time) => now.difference(time) < window,
+      ).toList();
+      
+      if (recentRequests.length >= maxRequests) {
+        return false;
+      }
+      
+      _requestTimes[endpoint] = [...recentRequests, now];
+      return true;
+    }
+  }
+  ```
 
-## 🎯 권장 사항
+### 4. **보안 로깅 및 모니터링**
+- **보안 이벤트 추적**:
+  ```dart
+  class SecurityLogger {
+    static void logSecurityEvent(SecurityEvent event) {
+      // 민감 정보 제거
+      final sanitizedEvent = event.sanitize();
+      
+      // 로컬 저장 (암호화)
+      _saveToSecureStorage(sanitizedEvent);
+      
+      // 서버 전송 (배치)
+      _queueForUpload(sanitizedEvent);
+    }
+  }
+  ```
 
-### 즉시 적용:
-1. ✅ 환경 변수 설정 (.env.local)
-2. ✅ Redis 설정 (선택적이지만 권장)
-3. ✅ 보안 감사 스크립트 정기 실행
+## 🚨 보안 체크리스트 (Phase 2)
 
-### 향후 개선:
-1. ⏳ API 응답 형식 표준화 (15% → 100%)
-2. ⏳ 실시간 모니터링 대시보드
-3. ⏳ 자동화된 보안 테스트
-4. ⏳ WAF 통합 고려
+### 결제 보안
+- [ ] 영수증 서버 검증
+- [ ] 중복 구매 방지
+- [ ] 환불 처리 보안
+- [ ] 구독 상태 동기화
+- [ ] 테스트 구매 필터링
 
-## 📋 최종 보안 평가
+### 런타임 보안
+- [ ] 디버거 탐지
+- [ ] 후킹 방지
+- [ ] 메모리 덤프 방지
+- [ ] 동적 분석 방지
+- [ ] 코드 무결성 검증
 
-### ✅ **안전한 관행:**
-- 프론트엔드에 민감한 정보 없음
-- 최소한의 공격 표면
-- 적절한 에러 처리 계층
-- 강력한 인증 및 인가
+### 통신 보안
+- [ ] Certificate Transparency
+- [ ] Public Key Pinning Backup
+- [ ] Request/Response 서명
+- [ ] Perfect Forward Secrecy
+- [ ] TLS 1.3 강제
 
-### ✅ **발견된 취약점 없음:**
-- XSS 벡터 없음
-- 인젝션 가능성 없음
-- 데이터 유출 없음
-- 인증 우회 없음
-- 인가 문제 없음
+### 데이터 보안
+- [ ] 키체인/키스토어 사용
+- [ ] 하드웨어 기반 암호화
+- [ ] 안전한 백업/복원
+- [ ] 데이터 유출 방지
+- [ ] 클립보드 보안
 
-## 🏆 보안 점수
+## 📊 보안 메트릭스
 
-**종합 보안 점수: 91/100**
+### 목표 지표
+| 메트릭 | 목표 | 현재 |
+|--------|------|------|
+| 코드 난독화율 | 100% | - |
+| API 인증 적용률 | 100% | - |
+| 취약점 스캔 통과 | 100% | - |
+| 보안 테스트 커버리지 | 80% | - |
+| OWASP Top 10 준수 | 100% | - |
 
-**주요 강점:**
-1. 타겟화된 보안 정책 (광범위하지 않음)
-2. 환경 변수 기반 구성
-3. 적절한 에러 경계 구현
-4. 환경 인식 로깅
-5. 민감한 데이터 노출 없음
+### 보안 KPI
+- MTTD (Mean Time To Detect): < 1시간
+- MTTR (Mean Time To Respond): < 4시간
+- 월간 보안 사고: 0건
+- 취약점 패치 시간: < 24시간
+
+## 🔧 보안 도구 및 라이브러리
+
+### 필수 패키지
+```yaml
+dependencies:
+  # 인증
+  local_auth: ^2.1.6
+  flutter_secure_storage: ^9.0.0
+  
+  # 암호화
+  encrypt: ^5.0.1
+  pointycastle: ^3.7.3
+  
+  # 보안 검사
+  flutter_jailbreak_detection: ^1.10.0
+  safe_device: ^1.1.2
+  
+  # 네트워크
+  certificate_pinning_httpclient: ^2.0.0
+  dio_certificate_pinning: ^5.0.2
+  
+  # 결제
+  in_app_purchase: ^3.1.11
+  purchases_flutter: ^6.9.0
+
+dev_dependencies:
+  # 보안 분석
+  flutter_lints: ^3.0.1
+  very_good_analysis: ^5.1.0
+```
+
+## 🚀 배포 보안 프로세스
+
+### 1. 사전 검증
+```bash
+# 정적 분석
+flutter analyze --no-fatal-infos
+
+# 의존성 검사
+flutter pub audit
+
+# 보안 테스트
+flutter test test/security/
+```
+
+### 2. 빌드 보안
+```bash
+# Android 빌드 (R8 최적화)
+flutter build appbundle \
+  --release \
+  --obfuscate \
+  --split-debug-info=./symbols \
+  --dart-define=ENVIRONMENT=production
+
+# iOS 빌드
+flutter build ios \
+  --release \
+  --obfuscate \
+  --split-debug-info=./symbols
+```
+
+### 3. 배포 후 검증
+- [ ] 보안 스캔 (MobSF)
+- [ ] 침투 테스트
+- [ ] 난독화 검증
+- [ ] API 보안 테스트
+- [ ] 결제 플로우 테스트
 
 ---
-*보안 검토 완료: Fortune 프로젝트는 프로덕션 준비가 완료되었으며 안전합니다.*
-*검토일: 2025년 7월 7일*
+
+**Note**: Phase 2 보안 구현은 Fortune Flutter 앱의 상용화를 위한 필수 요구사항입니다. 모든 항목을 완료한 후 보안 감사를 수행해야 합니다.

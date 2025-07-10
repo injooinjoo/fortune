@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -73,6 +74,7 @@ function shuffle<T>(array: T[]): T[] {
 }
 
 export default function LuckyCyclingPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<CyclingInfo>({ name: '', birth_date: '' });
@@ -91,7 +93,10 @@ export default function LuckyCyclingPage() {
 
   const handleSubmit = async () => {
     if (!formData.birth_date) {
-      alert('생년월일을 입력해주세요.');
+      toast({
+      title: '생년월일을 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
     setLoading(true);

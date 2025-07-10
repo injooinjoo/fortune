@@ -3,6 +3,7 @@
  * Redis 기반 분산 캐싱 + 로컬 메모리 캐시 폴백
  */
 
+import { logger } from '@/lib/logger';
 import { getCacheClient, cache } from './redis';
 import { createDeterministicRandom, getTodayDateString } from './deterministic-random';
 
@@ -134,7 +135,7 @@ export const fortuneCache: FortuneCache = {
 
       return null;
     } catch (error) {
-      console.error('Cache get error:', error);
+      logger.error('Cache get error:', error);
       // Redis 오류 시 메모리 캐시만 확인
       return memoryCache.get(key) as T | null;
     }
@@ -152,7 +153,7 @@ export const fortuneCache: FortuneCache = {
       
       return redisResult;
     } catch (error) {
-      console.error('Cache set error:', error);
+      logger.error('Cache set error:', error);
       // Redis 오류 시 메모리 캐시에만 저장
       memoryCache.set(key, value, ttlSeconds);
       return true;
@@ -166,7 +167,7 @@ export const fortuneCache: FortuneCache = {
       memoryCache.delete(key);
       return redisResult;
     } catch (error) {
-      console.error('Cache delete error:', error);
+      logger.error('Cache delete error:', error);
       memoryCache.delete(key);
       return true;
     }
@@ -181,7 +182,7 @@ export const fortuneCache: FortuneCache = {
       // 메모리 캐시 확인
       return memoryCache.has(key);
     } catch (error) {
-      console.error('Cache exists error:', error);
+      logger.error('Cache exists error:', error);
       return memoryCache.has(key);
     }
   },
@@ -212,7 +213,7 @@ export const fortuneCache: FortuneCache = {
       
       return deletedCount;
     } catch (error) {
-      console.error('Cache clear error:', error);
+      logger.error('Cache clear error:', error);
       memoryCache.clear();
       return 0;
     }
@@ -303,7 +304,7 @@ export async function withCache<T>(
       }
     } catch (error) {
       cacheStats.recordError();
-      console.error('Cache read error:', error);
+      logger.error('Cache read error:', error);
     }
   }
 

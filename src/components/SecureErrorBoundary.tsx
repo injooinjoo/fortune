@@ -1,8 +1,9 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { errorHandler } from '@/lib/error-handler';
-import * as Sentry from '@sentry/nextjs';
+import { errorMonitor, captureException, captureMessage, setUser } from '@/lib/error-monitor';
 
 interface Props {
   children: ReactNode;
@@ -50,11 +51,11 @@ export class SecureErrorBoundary extends Component<Props, State> {
           componentStack: errorInfo.componentStack,
         });
         scope.setLevel('error');
-        Sentry.captureException(error);
+        captureException(error);
       });
       
       if (process.env.NODE_ENV === 'development') {
-        console.warn('Error caught by boundary:', errorHandler.getUserFriendlyMessage(error));
+        logger.warn('Error caught by boundary:', errorHandler.getUserFriendlyMessage(error));
       }
     }
   }

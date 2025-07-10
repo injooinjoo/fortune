@@ -9,6 +9,7 @@
  * - GenerateFortuneInsightsOutput - The return type for the generateFortuneInsights function.
  */
 
+import { logger } from '@/lib/logger';
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
@@ -160,7 +161,7 @@ const generateFortuneInsightsFlow = ai.defineFlow(
   async input => {
     const {output} = await prompt(input);
     if (!output) {
-      console.error("AI output is null. Input was:", input);
+      logger.error("AI output is null. Input was:", input);
       const errorInsights = input.fortuneTypes.map(type => ({
         fortuneType: type,
         insightText: "죄송합니다, 현재 이 운세에 대한 정보를 생성할 수 없습니다."
@@ -170,7 +171,7 @@ const generateFortuneInsightsFlow = ai.defineFlow(
     
     // Ensure insights array is always present, even if AI fails to generate sajuData
      if (!output.insights) {
-        console.warn("AI output missing insights array. Constructing error insights. Input was:", input, "Output was:", output);
+        logger.warn("AI output missing insights array. Constructing error insights. Input was:", input, "Output was:", output);
         const errorInsights = input.fortuneTypes.map(type => ({
           fortuneType: type,
           insightText: "죄송합니다, 현재 이 운세에 대한 정보를 생성할 수 없습니다."

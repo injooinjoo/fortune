@@ -1,5 +1,6 @@
 "use client"
 
+import { logger } from '@/lib/logger';
 import * as React from "react"
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DeterministicRandom } from '@/lib/deterministic-random';
@@ -211,7 +212,7 @@ export function useFortuneStream(options: FortuneStreamOptions = {}) {
                       break
                     }
                   } catch (e) {
-                    console.warn('JSON 파싱 실패:', line)
+                    logger.warn('JSON 파싱 실패:', line)
                   }
                 }
               }
@@ -354,7 +355,7 @@ export function useFortuneStream(options: FortuneStreamOptions = {}) {
       
       localStorage.setItem('recentFortunes', JSON.stringify(fortunes));
     } catch (error) {
-      console.error('최근 본 운세 저장 실패:', error);
+      logger.error('최근 본 운세 저장 실패:', error);
     }
   };
 

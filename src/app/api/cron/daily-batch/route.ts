@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { centralizedFortuneService } from '@/lib/services/centralized-fortune-service';
@@ -21,7 +22,7 @@ function verifyCronSecret(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
   
   if (!cronSecret) {
-    console.error('CRON_SECRET이 설정되지 않았습니다.');
+    logger.error('CRON_SECRET이 설정되지 않았습니다.');
     return false;
   }
   
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('일일 배치 운세 생성 시작...');
+    logger.debug('일일 배치 운세 생성 시작...');
     
     // 활성 사용자 목록 조회 (최근 7일 이내 로그인)
     const sevenDaysAgo = new Date();
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       .limit(100); // 배치 크기 제한
 
     if (usersError) {
-      console.error('활성 사용자 조회 오류:', usersError);
+      logger.error('활성 사용자 조회 오류:', usersError);
       return NextResponse.json(
         { error: '사용자 조회 실패', details: usersError },
         { status: 500 }
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!activeUsers || activeUsers.length === 0) {
-      console.log('활성 사용자가 없습니다.');
+      logger.debug('활성 사용자가 없습니다.');
       return NextResponse.json({
         success: true,
         message: '활성 사용자가 없습니다.',
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.log(`${activeUsers.length}명의 활성 사용자 발견`);
+    logger.debug(`${activeUsers.length}명의 활성 사용자 발견`);
 
     // 각 사용자별로 일일 운세 생성
     const results = [];
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
           .single();
 
         if (existingBatch) {
-          console.log(`사용자 ${user.id}는 오늘 이미 운세가 생성됨`);
+          logger.debug(`사용자 ${user.id}는 오늘 이미 운세가 생성됨`);
           continue;
         }
 
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
         await new Promise(resolve => setTimeout(resolve, 100));
         
       } catch (error) {
-        console.error(`사용자 ${user.id} 운세 생성 실패:`, error);
+        logger.error(`사용자 ${user.id} 운세 생성 실패:`, error);
         errors.push({
           user_id: user.id,
           error: error instanceof Error ? error.message : '알 수 없는 오류'
@@ -151,7 +152,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (logError) {
-      console.error('크론 로그 저장 실패:', logError);
+      logger.error('크론 로그 저장 실패:', logError);
     }
 
     // 토큰 사용량 집계
@@ -168,7 +169,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('일일 배치 운세 생성 오류:', error);
+    logger.error('일일 배치 운세 생성 오류:', error);
     
     // 오류 로깅
     await supabaseAdmin
@@ -195,7 +196,7 @@ async function sendDailyFortuneNotification(userId: string): Promise<void> {
   try {
     // 푸시 알림 또는 이메일 전송 로직
     // 예: FCM, OneSignal, SendGrid 등 사용
-    console.log(`사용자 ${userId}에게 일일 운세 알림 전송`);
+    logger.debug(`사용자 ${userId}에게 일일 운세 알림 전송`);
     
     // 알림 설정 확인
     const { data: settings } = await supabaseAdmin
@@ -213,7 +214,7 @@ async function sendDailyFortuneNotification(userId: string): Promise<void> {
       // });
     }
   } catch (error) {
-    console.error('알림 전송 실패:', error);
+    logger.error('알림 전송 실패:', error);
     // 알림 실패는 전체 프로세스를 중단시키지 않음
   }
 }

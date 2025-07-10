@@ -2,6 +2,7 @@
  * 운세 관련 공통 유틸리티 함수들
  */
 
+import { logger } from '@/lib/logger';
 import { createDeterministicRandom, getTodayDateString } from './deterministic-random';
 import { trackTokenUsage, deductTokens } from './token-tracker';
 
@@ -28,7 +29,7 @@ export async function callGPTFortuneAPI(params: {
   let tokensUsed = 0;
   
   try {
-    console.log(`🤖 GPT 운세 분석 시작: ${params.type}`);
+    logger.debug(`🤖 GPT 운세 분석 시작: ${params.type}`);
     
     // 토큰 잔액 확인 (userId가 있는 경우)
     if (params.userId) {
@@ -83,7 +84,7 @@ export async function callGPTFortuneAPI(params: {
       });
     }
 
-    console.log(`✅ GPT 운세 분석 완료: ${params.type} (${tokensUsed} tokens)`);
+    logger.debug(`✅ GPT 운세 분석 완료: ${params.type} (${tokensUsed} tokens)`);
     
     return {
       success: true,
@@ -95,7 +96,7 @@ export async function callGPTFortuneAPI(params: {
     };
 
   } catch (error) {
-    console.error(`❌ GPT 운세 분석 실패 (${params.type}):`, error);
+    logger.error(`❌ GPT 운세 분석 실패 (${params.type}):`, error);
     
     // 에러 시에도 토큰 사용 기록 (실패 기록)
     if (params.userId && tokensUsed > 0) {
@@ -269,6 +270,6 @@ export function sanitizeInput(input: string): string {
  */
 export function debugLog(message: string, data?: any): void {
   if (process.env.NODE_ENV === 'development') {
-    console.log(`[Fortune Debug] ${message}`, data || '');
+    logger.debug(`[Fortune Debug] ${message}`, data || '');
   }
 }

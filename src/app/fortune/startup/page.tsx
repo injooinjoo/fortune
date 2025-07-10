@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -12,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Badge } from "@/components/ui/badge";
 import { KoreanDatePicker } from "@/components/ui/korean-date-picker";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 import {
   Rocket,
   Briefcase,
@@ -80,6 +83,7 @@ const itemVariants = {
 };
 
 export default function StartupFortunePage() {
+  const { toast } = useToast();
   // Initialize deterministic random for consistent results
   // Get actual user ID from auth context
   const { user } = useAuth();
@@ -126,7 +130,7 @@ export default function StartupFortunePage() {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error('API 호출 중 오류:', error);
+      logger.error('API 호출 중 오류:', error);
       
       // Fallback: 기본 응답 반환
       const score = deterministicRandom.randomInt(60, 60 + 30 - 1);
@@ -155,7 +159,10 @@ export default function StartupFortunePage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || !formData.mbti) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 

@@ -123,6 +123,52 @@ export default function AuthCallbackPage() {
           logger.debug('✅ Authorization code found, exchanging for session...');
           logger.debug('Code:', code.substring(0, 10) + '...');
           
+          // 브라우저 확장 프로그램 간섭 확인 및 제거
+          const suspiciousKeys = Object.keys(localStorage).filter(key => 
+            key.includes('fortune-auth-token-code-verifier') || 
+            (key.includes('code-verifier') && !key.startsWith('sb-'))
+          );
+          
+          if (suspiciousKeys.length > 0) {
+            logger.warn('🚨 Browser extension interference detected during callback:', suspiciousKeys);
+            // 간섭하는 키들 제거
+            suspiciousKeys.forEach(key => {
+              logger.debug(`Removing interfering key: ${key}`);
+              localStorage.removeItem(key);
+            });
+          }
+          
+          // Debug: Check localStorage for PKCE code verifier
+          if (process.env.NODE_ENV === 'development') {
+            const allKeys = Object.keys(localStorage);
+            const supabaseKeys = allKeys.filter(key => 
+              key.includes('supabase') || key.includes('auth') || key.startsWith('sb-')
+            );
+            logger.debug('Current localStorage keys:', supabaseKeys);
+            
+            // Check for code verifier in different possible locations
+            const possibleKeys = [
+              'supabase.auth.code_verifier',
+              'supabase.auth.pkce.code_verifier',
+              `sb-hayjukwfcsdmppairazc-auth-token`
+            ];
+            
+            possibleKeys.forEach(key => {
+              const value = localStorage.getItem(key);
+              if (value) {
+                logger.debug(`Found value for ${key}:`, value.substring(0, 20) + '...');
+              }
+            });
+            
+            // Check if any key contains code verifier data
+            supabaseKeys.forEach(key => {
+              const value = localStorage.getItem(key);
+              if (value && value.includes('code_verifier')) {
+                logger.debug(`Key ${key} contains code_verifier`);
+              }
+            });
+          }
+          
           try {
             // code를 session으로 교환
             const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);

@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 // import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -129,6 +131,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function LuckyFoodPage() {
+  const { toast } = useToast();
   // const searchParams = useSearchParams();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
@@ -239,7 +242,10 @@ export default function LuckyFoodPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || formData.favorite_cuisines.length === 0) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -251,8 +257,11 @@ export default function LuckyFoodPage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

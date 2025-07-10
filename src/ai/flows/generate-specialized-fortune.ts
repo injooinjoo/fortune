@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import {
@@ -43,7 +44,7 @@ export const generateSignupBatchFortunes = ai.defineFlow(
   },
   async (input) => {
     try {
-      console.log(`🎯 회원가입 배치 운세 생성 시작`);
+      logger.debug(`🎯 회원가입 배치 운세 생성 시작`);
       
       // 평생 운세 목록
       const signupFortunes = ['saju', 'tojeong', 'past-life', 'personality', 'destiny'];
@@ -56,11 +57,11 @@ export const generateSignupBatchFortunes = ai.defineFlow(
       
       const { data, token_usage } = await generateBatchFortunes(batchRequest);
       
-      console.log(`✨ 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);
+      logger.debug(`✨ 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);
       return data;
       
     } catch (error) {
-      console.error('배치 운세 생성 실패:', error);
+      logger.error('배치 운세 생성 실패:', error);
       return {};
     }
   }
@@ -77,7 +78,7 @@ export const generateDailyBatchFortunes = ai.defineFlow(
   },
   async (input) => {
     try {
-      console.log(`📅 일일 배치 운세 생성 시작`);
+      logger.debug(`📅 일일 배치 운세 생성 시작`);
       
       // 일일 운세 목록
       const dailyFortunes = ['daily', 'love', 'career', 'wealth', 'health'];
@@ -90,11 +91,11 @@ export const generateDailyBatchFortunes = ai.defineFlow(
       
       const { data, token_usage } = await generateBatchFortunes(batchRequest);
       
-      console.log(`✨ 일일 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);
+      logger.debug(`✨ 일일 배치 운세 생성 완료 (토큰 사용: ${token_usage})`);
       return data;
       
     } catch (error) {
-      console.error('일일 배치 운세 생성 실패:', error);
+      logger.error('일일 배치 운세 생성 실패:', error);
       return {};
     }
   }
@@ -379,7 +380,7 @@ function parseFortuneResponse(response: string, category: string): any {
     const parsed = JSON.parse(response);
     return parsed;
   } catch (error) {
-    console.error('운세 응답 파싱 실패:', error);
+    logger.error('운세 응답 파싱 실패:', error);
     return createFallbackResponse(category);
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import OpenAI from 'openai';
 import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
 import { preprocessPrompt, postprocessAIResponse, sanitizeForAI } from '@/lib/unicode-utils';
@@ -65,7 +66,7 @@ export async function generateBatchFortunes(
 
     return { data: response, token_usage: tokenUsage };
   } catch (error) {
-    console.error('배치 운세 생성 실패:', error);
+    logger.error('배치 운세 생성 실패:', error);
     throw error;
   }
 }
@@ -172,7 +173,7 @@ export async function generateImageBasedFortune(
     const response = completion.choices[0].message.content;
     return parseImageFortuneResponse(response, fortuneType);
   } catch (error) {
-    console.error('이미지 기반 운세 생성 실패:', error);
+    logger.error('이미지 기반 운세 생성 실패:', error);
     throw error;
   }
 }
@@ -202,10 +203,10 @@ export async function generateSingleFortune(
   additionalInput?: any
 ): Promise<any> {
   try {
-    console.log(`🤖 단일 운세 생성 시작: ${fortuneType}, 사용자: ${profile.name}`);
+    logger.debug(`🤖 단일 운세 생성 시작: ${fortuneType}, 사용자: ${profile.name}`);
     
     const prompt = createSingleFortunePrompt(fortuneType, profile, additionalInput);
-    console.log(`📝 생성된 프롬프트 길이: ${prompt.length}자`);
+    logger.debug(`📝 생성된 프롬프트 길이: ${prompt.length}자`);
     
     const completion = await openai.chat.completions.create({
       model: GPT_MODEL,
@@ -228,15 +229,15 @@ export async function generateSingleFortune(
     });
 
     const result = JSON.parse(completion.choices[0].message.content || '{}');
-    console.log(`✅ 단일 운세 생성 성공: ${fortuneType}`);
+    logger.debug(`✅ 단일 운세 생성 성공: ${fortuneType}`);
     return result;
     
   } catch (error) {
-    console.error(`❌ 단일 운세 생성 실패 (${fortuneType}):`, error);
+    logger.error(`❌ 단일 운세 생성 실패 (${fortuneType}):`, error);
     
     // 인코딩 오류인 경우 특별한 처리
     if (error instanceof Error && error.message.includes('ByteString')) {
-      console.error('🔍 인코딩 오류 감지 - 영어 프롬프트로 재시도');
+      logger.error('🔍 인코딩 오류 감지 - 영어 프롬프트로 재시도');
       
       try {
         // 영어 전용 폴백 프롬프트
@@ -261,11 +262,11 @@ Please respond in Korean language with JSON format: { overall_score, summary, ad
         });
         
         const result = JSON.parse(completion.choices[0].message.content || '{}');
-        console.log(`✅ 폴백 프롬프트로 운세 생성 성공: ${fortuneType}`);
+        logger.debug(`✅ 폴백 프롬프트로 운세 생성 성공: ${fortuneType}`);
         return result;
         
       } catch (fallbackError) {
-        console.error('❌ 폴백 프롬프트도 실패:', fallbackError);
+        logger.error('❌ 폴백 프롬프트도 실패:', fallbackError);
         throw error; // 원래 오류를 던짐
       }
     }
@@ -282,7 +283,7 @@ function safeEncode(text: string): string {
     // JSON에서 안전한 형태로 변환 (이스케이프 처리)
     return JSON.stringify(normalized).slice(1, -1); // 앞뒤 따옴표 제거
   } catch (error) {
-    console.warn('문자열 인코딩 실패, 기본값 사용:', error);
+    logger.warn('문자열 인코딩 실패, 기본값 사용:', error);
     // 폴백: 한글은 유지하되 제어 문자만 제거
     return text.replace(/[\x00-\x1F\x7F]/g, '');
   }
@@ -296,7 +297,7 @@ function createSingleFortunePrompt(fortuneType: string, profile: any, additional
     const safeBirthDate = safeEncode(profile.birthDate || '1990-01-01');
     const baseInfo = `Name: ${safeName}, Birth Date: ${safeBirthDate}`;
     
-    console.log(`🔍 프롬프트 생성: ${fortuneType}, 사용자: ${safeName}`);
+    logger.debug(`🔍 프롬프트 생성: ${fortuneType}, 사용자: ${safeName}`);
     
     switch (fortuneType) {
       case 'dream':
@@ -412,7 +413,7 @@ Please respond in Korean language with JSON format: {
 Please respond in Korean language with JSON format: { overall_score, summary, advice }`;
     }
   } catch (error) {
-    console.error('프롬프트 생성 중 오류:', error);
+    logger.error('프롬프트 생성 중 오류:', error);
     // 폴백 프롬프트 (영어만 사용)
     return `Please provide ${fortuneType} fortune reading for a person born on ${profile.birthDate || '1990-01-01'}.
 Please respond in Korean language with JSON format: { overall_score, summary, advice }`;
@@ -425,7 +426,7 @@ export async function generateCompatibilityFortune(
   person2: any
 ): Promise<any> {
   try {
-    console.log('💕 GPT 궁합 분석 시작');
+    logger.debug('💕 GPT 궁합 분석 시작');
     
     const prompt = `두 사람의 궁합을 전문적으로 분석해주세요:
 
@@ -480,7 +481,7 @@ export async function generateCompatibilityFortune(
 
     const result = JSON.parse(completion.choices[0].message.content || '{}');
     
-    console.log('✅ GPT 궁합 분석 완료');
+    logger.debug('✅ GPT 궁합 분석 완료');
     
     return {
       ...result,
@@ -490,7 +491,7 @@ export async function generateCompatibilityFortune(
     };
     
   } catch (error) {
-    console.error('❌ 궁합 분석 실패:', error);
+    logger.error('❌ 궁합 분석 실패:', error);
     throw error;
   }
 }
@@ -501,7 +502,7 @@ export async function generateMovingFortune(
   movingDetails?: any
 ): Promise<any> {
   try {
-    console.log('🏠 GPT 이사 운세 분석 시작');
+    logger.debug('🏠 GPT 이사 운세 분석 시작');
     
     const currentLocation = movingDetails?.currentLocation || '현재 거주지';
     const newLocation = movingDetails?.newLocation || '새로운 거주지';
@@ -568,7 +569,7 @@ export async function generateMovingFortune(
 
     const result = JSON.parse(completion.choices[0].message.content || '{}');
     
-    console.log('✅ GPT 이사 운세 분석 완료');
+    logger.debug('✅ GPT 이사 운세 분석 완료');
     
     return {
       ...result,
@@ -578,7 +579,7 @@ export async function generateMovingFortune(
     };
     
   } catch (error) {
-    console.error('❌ 이사 운세 분석 실패:', error);
+    logger.error('❌ 이사 운세 분석 실패:', error);
     throw error;
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { BatchFortuneRequest, BatchFortuneResponse, FortunePackageConfig } from '@/types/batch-fortune';
 import { FORTUNE_PACKAGES, selectModelForPackage, findPackageByFortuneTypes } from '@/config/fortune-packages';
 import { supabase } from '@/lib/supabase';
@@ -118,7 +119,7 @@ export class CentralizedFortuneService {
       
       return response;
     } catch (error) {
-      console.error('중앙 운세 생성 오류:', error);
+      logger.error('중앙 운세 생성 오류:', error);
       return this.generateFallbackResponse(request);
     }
   }
@@ -326,13 +327,13 @@ export class CentralizedFortuneService {
       });
 
       if (batchError) {
-        console.error('배치 레코드 저장 오류:', batchError);
+        logger.error('배치 레코드 저장 오류:', batchError);
       }
       
       // 개별 운세는 메모리 캐시에만 저장 (user_fortunes 테이블 대신)
       // 배치에서 개별 운세를 가져올 수 있도록 fortune_batches 테이블에 전체 데이터 저장
     } catch (error) {
-      console.error('데이터베이스 저장 실패:', error);
+      logger.error('데이터베이스 저장 실패:', error);
     }
   }
 
@@ -375,7 +376,7 @@ export class CentralizedFortuneService {
         token_usage: data[0].token_usage
       };
     } catch (error) {
-      console.error('데이터베이스 캐시 확인 오류:', error);
+      logger.error('데이터베이스 캐시 확인 오류:', error);
       return null;
     }
   }

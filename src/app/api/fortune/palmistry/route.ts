@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImageBasedFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -6,7 +7,7 @@ import { FortuneService } from '@/lib/services/fortune-service';
 import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
-  console.log('✋ 손금 운세 API 요청');
+  logger.debug('✋ 손금 운세 API 요청');
   
   try {
     const formData = await request.formData();
@@ -20,7 +21,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('손바닥 이미지 파일이 필요합니다.', undefined, undefined, 400);
     }
 
-    console.log(`🔍 손금 분석 시작: ${name} (${handType}손)`);
+    logger.debug(`🔍 손금 분석 시작: ${name} (${handType}손)`);
 
     // 이미지를 Base64로 변환
     const arrayBuffer = await file.arrayBuffer();
@@ -36,7 +37,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     // 손금 분석 수행
     const result = await generateImageBasedFortune('palmistry', base64, profile);
 
-    console.log('✅ 손금 분석 완료');
+    logger.debug('✅ 손금 분석 완료');
 
     return createFortuneResponse({ type: 'palmistry', hand_type: handType,
         ...result,
@@ -50,7 +51,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         generated_at: new Date().toISOString() }, 'palmistry', req.userId);
     
   } catch (error) {
-    console.error('❌ 손금 분석 실패:', error);
+    logger.error('❌ 손금 분석 실패:', error);
     return createSafeErrorResponse(error, '손금 분석 중 오류가 발생했습니다.');
   }
 });

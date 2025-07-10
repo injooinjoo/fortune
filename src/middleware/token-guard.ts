@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { tokenService } from '@/lib/services/token-service';
 import { FortuneCategory } from '@/lib/types/fortune-system';
@@ -27,7 +28,7 @@ export async function withTokenGuard(
     
     // 무제한 사용자는 통과
     if (tokenBalance.isUnlimited) {
-      console.log(`🎫 무제한 사용자: ${userId} (${tokenBalance.subscriptionPlan})`);
+      logger.debug(`🎫 무제한 사용자: ${userId} (${tokenBalance.subscriptionPlan})`);
       
       // 차감 없이 사용 기록만
       if (!options.skipDeduction) {
@@ -55,7 +56,7 @@ export async function withTokenGuard(
     
     // 잔액 부족 체크
     if (tokenBalance.balance < tokenCost) {
-      console.log(`❌ 토큰 부족: ${userId} (필요: ${tokenCost}, 보유: ${tokenBalance.balance})`);
+      logger.debug(`❌ 토큰 부족: ${userId} (필요: ${tokenCost}, 보유: ${tokenBalance.balance})`);
       
       return NextResponse.json(
         {
@@ -79,7 +80,7 @@ export async function withTokenGuard(
       );
       
       if (!deductionResult.success) {
-        console.error(`❌ 토큰 차감 실패: ${userId}`, deductionResult.error);
+        logger.error(`❌ 토큰 차감 실패: ${userId}`, deductionResult.error);
         
         return NextResponse.json(
           {
@@ -91,7 +92,7 @@ export async function withTokenGuard(
         );
       }
       
-      console.log(`✅ 토큰 차감 성공: ${userId} (-${tokenCost}, 잔액: ${deductionResult.newBalance})`);
+      logger.debug(`✅ 토큰 차감 성공: ${userId} (-${tokenCost}, 잔액: ${deductionResult.newBalance})`);
     }
     
     // 핸들러 실행
@@ -116,7 +117,7 @@ export async function withTokenGuard(
     return response;
     
   } catch (error) {
-    console.error('토큰 가드 오류:', error);
+    logger.error('토큰 가드 오류:', error);
     
     return NextResponse.json(
       {

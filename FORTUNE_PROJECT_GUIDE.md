@@ -1,8 +1,8 @@
-# 🔮 Fortune Project Master Guide
+# 🔮 Fortune Flutter Project Master Guide
 
-> **최종 업데이트**: 2025년 7월 7일  
-> **프로젝트 버전**: 1.4.0  
-> **상태**: Production Ready with Admin Dashboard & Enhanced AI
+> **최종 업데이트**: 2025년 7월 8일  
+> **프로젝트 버전**: 2.0.0 (Flutter Migration)  
+> **상태**: Flutter Development Phase
 
 ## 📑 목차
 
@@ -18,15 +18,16 @@
 
 ## 1. 프로젝트 개요
 
-### 📱 Fortune (행운) 소개
+### 📱 Fortune (행운) - Flutter 모바일 앱
 
 **"모든 운명은 당신의 선택에 달려있습니다."**
 
-Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에게 깊이 있는 개인 맞춤형 운세 경험을 제공하는 풀스택 애플리케이션입니다.
+Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에게 깊이 있는 개인 맞춤형 운세 경험을 제공하는 Flutter 기반 크로스플랫폼 모바일 애플리케이션입니다.
 
-- **[🔗 실시간 웹 데모](https://fortune-explorer.vercel.app)**
+- **[🔗 Google Play Store](https://play.google.com/store/apps/details?id=com.fortune.app)** (예정)
+- **[🔗 Apple App Store](https://apps.apple.com/app/fortune)** (예정)
 - **총 59개 운세 서비스**: 사주, 타로, 꿈해몽, MBTI 운세 등
-- **AI 기반 분석**: OpenAI GPT-4.1-nano
+- **AI 기반 분석**: OpenAI GPT-4, Google Gemini Pro
 - **개인화 경험**: 생년월일, MBTI, 성별 기반 맞춤 운세
 
 ### 🎯 핵심 기능
@@ -40,10 +41,10 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
 - **주제별 운세**: 연애/결혼, 취업/시험, 재물/투자
 - **흥미 운세**: 연예인 궁합, 이름풀이, SNS 닉네임 운세
 
-#### 💰 결제 시스템 (NEW)
+#### 💰 결제 시스템
 - **토큰 시스템**: 운세별 차등 토큰 소비
 - **구독 플랜**: Free, Basic, Premium, Enterprise
-- **결제 연동**: Stripe, Toss Payments, Naver Pay
+- **인앱 결제**: Google Play, App Store
 
 ---
 
@@ -51,23 +52,27 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
 
 ### 🏛️ 시스템 아키텍처
 
-#### 프론트엔드
-```
-- Framework: Next.js 15 (App Router)
-- UI: React 18, Tailwind CSS, shadcn/ui
-- State: React Hook Form, Zod
-- Animation: Framer Motion, Tailwind Animate
-- Design: Liquid Glass UI (2025 iOS 26 Design)
+#### Flutter 클라이언트
+```yaml
+- Framework: Flutter 3.x (Dart 3.x)
+- 상태 관리: Riverpod 2.0
+- 네비게이션: Go Router
+- 로컬 DB: SQLite (sqflite)
+- 네트워킹: Dio + Retrofit
+- DI: get_it
+- UI: Material You Design System
+- 애니메이션: Rive, Lottie
 ```
 
 #### 백엔드 & AI
-```
+```yaml
 - Auth & DB: Supabase (PostgreSQL)
-- AI: OpenAI GPT-4.1-nano
-- API: Next.js API Routes
+- AI: OpenAI GPT-4, Google Gemini Pro
+- API: Node.js Express (기존 API 재사용)
 - Security: API Auth, Rate Limiting
-- Cache: Redis (Upstash), LocalStorage
-- Payment: Stripe, Toss Payments
+- Cache: SQLite (로컬), Redis (서버)
+- Payment: 인앱 결제 (Google/Apple)
+- Push: Firebase Cloud Messaging
 ```
 
 ### 🧠 4그룹 운세 시스템
@@ -75,138 +80,164 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
 #### 그룹 1: 평생 고정 정보
 - **특징**: 최초 1회만 생성, 영구 저장
 - **대상**: 사주, 전통사주, 토정비결, 전생, 성격분석
+- **저장**: SQLite 로컬 DB
 - **비용 절감**: 90% API 비용 감소
 
 #### 그룹 2: 일일 정보
-- **특징**: 매일 자정 배치 생성
+- **특징**: 매일 자정 백그라운드 작업으로 생성
 - **대상**: 일일운세, 시간별운세, 행운의 숫자/색상
-- **성능**: DB 조회로 즉시 응답
+- **저장**: SQLite (24시간 캐시)
+- **성능**: 로컬 DB 조회로 즉시 응답
 
 #### 그룹 3: 실시간 상호작용
 - **특징**: 사용자 입력 기반 실시간 생성
 - **대상**: 타로, 꿈해몽, 궁합, 고민구슬
 - **캐싱**: 입력값 해시로 중복 방지
 
-#### 그룹 4: 클라이언트 기반
+#### 그룹 4: 온디바이스 처리
 - **특징**: 서버 비용 0원, 오프라인 작동
 - **대상**: 관상분석, 손금, 부적생성
-- **기술**: Teachable Machine, 클라이언트 모델
+- **기술**: TensorFlow Lite, Google ML Kit
 
-### 💾 데이터베이스 스키마
+### 💾 로컬 데이터베이스 스키마 (SQLite)
 
-#### 핵심 테이블
 ```sql
 -- 운세 데이터
-fortunes (id, user_id, fortune_type, data, expires_at)
+CREATE TABLE fortunes (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  fortune_type TEXT NOT NULL,
+  data TEXT NOT NULL, -- JSON
+  expires_at INTEGER,
+  created_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
 
 -- 사용자 프로필
-user_profiles (id, name, birth_date, mbti, gender)
+CREATE TABLE user_profiles (
+  id TEXT PRIMARY KEY,
+  name TEXT,
+  birth_date TEXT NOT NULL,
+  mbti TEXT,
+  gender TEXT,
+  created_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
 
--- 결제 관련 (NEW)
-payment_transactions (id, user_id, amount, status)
-user_tokens (user_id, balance, total_purchased)
-subscription_status (user_id, plan_type, status)
-fortune_history (user_id, fortune_type, token_cost)
+-- 토큰 관리
+CREATE TABLE user_tokens (
+  user_id TEXT PRIMARY KEY,
+  balance INTEGER DEFAULT 0,
+  last_daily_bonus TEXT,
+  updated_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
+
+-- 운세 히스토리
+CREATE TABLE fortune_history (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  fortune_type TEXT NOT NULL,
+  token_cost INTEGER,
+  viewed_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
 ```
 
 ---
 
 ## 3. 현재 프로젝트 상태
 
-### ✅ 구현 완료 (100%)
+### ✅ 구현 완료
 
-#### AI 통합
-- ✅ 59개 운세 페이지 GPT-4.1-nano 연동
-- ✅ 중앙집중식 배치 생성 시스템
-- ✅ 3단계 fallback 시스템
-- ✅ 토큰 사용량 65-85% 절감
-- ✅ 향상된 운세 서비스 (enhanced-fortune-service.ts)
-- ✅ Unicode 정규화로 한글 인코딩 문제 해결
+#### Flutter 프로젝트 설정
+- ✅ Flutter 프로젝트 구조 설계
+- ✅ Clean Architecture 패턴 적용
+- ✅ 의존성 주입 설정 (get_it)
+- ✅ 라우팅 설정 (Go Router)
 
-#### 보안 (Phase 1 & 2)
-- ✅ API 인증 미들웨어 (95% 보호)
-- ✅ Rate Limiting (Redis + 메모리)
-- ✅ Math.random() 완전 제거
-- ✅ Sentry 에러 추적
-- ✅ 보안 점수: 91/100
+#### UI/UX 설계
+- ✅ Material You 디자인 시스템
+- ✅ Glass Morphism UI 컴포넌트
+- ✅ 다크 모드 지원
+- ✅ 반응형 레이아웃
 
-#### 기능 개선
-- ✅ 사용자 ID 컨텍스트 연결 (11개 페이지)
-- ✅ API 응답 표준화 (73개 엔드포인트)
-- ✅ 운세 히스토리 차트 (Recharts)
-- ✅ 소셜 공유 기능 (html2canvas)
-- ✅ 18개 Fortune API 실제 프로필 조회
+#### 데이터 레이어
+- ✅ SQLite 로컬 DB 설정
+- ✅ Repository 패턴 구현
+- ✅ API 클라이언트 (Dio + Retrofit)
+- ✅ 데이터 모델 정의
 
-#### 결제 & 토큰 시스템
-- ✅ Stripe Webhook 처리
-- ✅ 토큰 차감 시스템 (token-tracker.ts)
-- ✅ 구독 관리
-- ✅ 결제 히스토리
-- ✅ 토큰 잔액 표시 컴포넌트
-- ✅ 토큰 사용량 대시보드 (/dashboard/tokens)
+### 🚧 진행 중
 
-#### 관리자 기능
-- ✅ Admin Dashboard (/admin)
-- ✅ Redis 모니터링 (/admin/redis-monitor)
-- ✅ 토큰 통계 API (/api/admin/token-stats)
-- ✅ Redis 통계 API (/api/admin/redis-stats)
+#### 핵심 기능 개발
+- [ ] 온보딩 화면 구현
+- [ ] 소셜 로그인 (Google, Apple, 카카오)
+- [ ] 메인 대시보드 UI
+- [ ] 59개 운세 화면 구현
 
-### 📊 성능 지표
+#### 상태 관리
+- [ ] Riverpod 프로바이더 설정
+- [ ] 오프라인 상태 처리
+- [ ] 백그라운드 동기화
 
-| 지표 | 현재값 | 목표 |
+### 📊 성능 목표
+
+| 지표 | 목표값 | 현재 |
 |-----|-------|-----|
-| API 응답시간 | 1-3초 | <1초 |
-| 캐시 히트율 | 80-90% | >90% |
-| 일일 API 호출 | ~10,000회 | - |
-| 월간 비용 | $25-50 | <$100 |
-| 보호된 API | 95% | 100% |
-| API 표준화 | 100% | 100% |
+| 앱 시작 시간 | <2초 | - |
+| 화면 전환 | <300ms | - |
+| 메모리 사용량 | <150MB | - |
+| 배터리 효율 | 최적화 | - |
+| 오프라인 지원 | 100% | - |
 
 ---
 
 ## 4. 개발 가이드라인
 
-### 🏴‍☠️ 필수 개발 규칙
+### 🏴‍☠️ Flutter 개발 규칙
 
 #### 코드 작성시
-1. **TypeScript 엄격 모드**: 모든 타입 명시
-2. **파일 크기**: 최대 500줄 (초과시 리팩토링)
-3. **임포트**: 절대 경로 사용 (`@/lib/...`)
-4. **환경 변수**: 서버 컴포넌트에서만 직접 접근
-5. **보안**: API 키는 절대 하드코딩 금지
+1. **Dart 분석기**: `flutter analyze` 통과 필수
+2. **코드 포맷**: `dart format` 적용
+3. **파일 구조**: Feature 기반 폴더 구조
+4. **위젯 크기**: 최대 200줄 (초과시 분리)
+5. **상태 관리**: Riverpod 일관성 있게 사용
 
 #### 개발 완료 후 필수 체크리스트
 ```bash
 # 1. 코드 품질 검증
-npm run lint
-npm run type-check
-npm run format:check
+flutter analyze
+dart format --set-exit-if-changed .
 
 # 2. 테스트 실행
-npm test
-npm run test:coverage
+flutter test
+flutter test --coverage
 
 # 3. 빌드 검증
-npm run build
+flutter build apk --debug
+flutter build ios --debug
 
-# 4. 보안 검사
-npm audit
+# 4. 성능 프로파일링
+flutter run --profile
 ```
 
 ### 🔒 보안 체크리스트
-- [ ] 프론트엔드에 민감 정보 노출 없음
-- [ ] API 엔드포인트 인증 적용
-- [ ] 입력값 검증 (Zod)
-- [ ] XSS/CSRF 방어
-- [ ] SQL Injection 방지
+- [ ] API 키 하드코딩 없음
+- [ ] 민감 정보 flutter_secure_storage 사용
+- [ ] 인증서 피닝 적용
+- [ ] ProGuard/R8 난독화 설정
+- [ ] 생체 인증 구현
 
-### 📚 코드 설명 요구사항
-개발 완료 후 반드시:
-1. 전체 아키텍처 설명
-2. 주요 함수/컴포넌트 작동 방식
-3. 보안 고려사항
-4. 성능 최적화 내용
-5. 테스트 전략
+### 📚 아키텍처 설명
+1. **Clean Architecture 레이어**
+   - Presentation (UI/Widgets/Providers)
+   - Domain (Entities/Use Cases)
+   - Data (Models/Repositories/Data Sources)
+
+2. **의존성 흐름**
+   - UI → Provider → Use Case → Repository → Data Source
+
+3. **에러 처리**
+   - Result 타입 사용
+   - 사용자 친화적 메시지
+   - 오프라인 폴백
 
 ---
 
@@ -214,115 +245,155 @@ npm audit
 
 ### 🔴 긴급 (이번 주)
 
-#### 1. 코드 품질 개선
-- 734개 console.log 제거/대체
-- 87개 alert() UI 알림으로 변경
-- 3개 TODO 주석 해결
-- 빌드 에러 수정
+#### 1. 기본 화면 구현
+- [ ] 스플래시 화면
+- [ ] 온보딩 화면 (4단계)
+- [ ] 로그인/회원가입 화면
+- [ ] 메인 대시보드
 
-#### 2. 프로덕션 환경 설정
-```env
-# 실제 키로 교체 필요
-STRIPE_SECRET_KEY=(현재 테스트 키)
-STRIPE_WEBHOOK_SECRET=(현재 테스트 키)
-UPSTASH_REDIS_REST_URL=(프로덕션 URL)
-UPSTASH_REDIS_REST_TOKEN=(프로덕션 토큰)
-```
+#### 2. 인증 시스템
+- [ ] Supabase Auth 연동
+- [ ] 소셜 로그인 구현
+- [ ] 토큰 관리
+- [ ] 자동 로그인
 
-#### 3. Redis 프로덕션 최적화
-- 프로덕션 연결 테스트
-- 캐시 전략 최적화
-- 모니터링 대시보드 활성화
+#### 3. 로컬 데이터베이스
+- [ ] SQLite 초기 설정
+- [ ] 마이그레이션 시스템
+- [ ] 캐시 관리자
+- [ ] 데이터 동기화
 
 ### 🟡 높은 우선순위
 
-#### 4. 시스템 모니터링
-- [ ] Sentry 알림 규칙 설정
-- [ ] Redis 성능 최적화
-- [ ] API 응답 시간 개선 (<1초)
-- [ ] 토큰 사용량 분석
+#### 4. 운세 화면 구현
+- [ ] 일일 운세 화면
+- [ ] 사주팔자 화면
+- [ ] 타로카드 화면
+- [ ] MBTI 운세 화면
 
-#### 5. 사용자 경험
-- [ ] 온보딩 프로세스 개선
-- [ ] 푸시 알림 시스템
-- [ ] 운세 피드백 수집
+#### 5. 온디바이스 ML
+- [ ] TensorFlow Lite 통합
+- [ ] 관상 분석 모델
+- [ ] 손금 분석 모델
+- [ ] 오프라인 처리
 
 ### 🟢 중간 우선순위
 
-#### 6. 코드 정리
-- [ ] 불필요한 TODO 주석 제거
-- [ ] API 라우트 프로필 조회 개선
-- [ ] 테스트 커버리지 80% 달성
+#### 6. 고급 기능
+- [ ] 푸시 알림 (FCM)
+- [ ] 홈스크린 위젯
+- [ ] 백그라운드 작업
+- [ ] 딥링킹
 
 #### 7. 최적화
-- [ ] 번들 사이즈 감소
 - [ ] 이미지 최적화
-- [ ] PWA 기능 강화
+- [ ] 앱 크기 감소
+- [ ] 메모리 최적화
+- [ ] 배터리 효율
 
 ### 📅 장기 로드맵
 
-#### Q1 2025
-- ✅ 보안 Phase 1&2 (완료)
-- ✅ 결제 시스템 (완료)
-- [ ] 푸시 알림
-- [ ] 모니터링 대시보드
+#### Q1 2025 (현재)
+- ✅ Flutter 프로젝트 설정
+- [ ] 핵심 화면 구현
+- [ ] 기본 기능 완성
+- [ ] 알파 테스트
 
 #### Q2 2025
-- [ ] React Native 앱
-- [ ] OAuth 2.0 확장
-- [ ] 국제화 (i18n)
+- [ ] 전체 운세 화면 구현
+- [ ] 인앱 결제 시스템
+- [ ] 베타 테스트
+- [ ] 성능 최적화
 
 #### Q3 2025
-- [ ] AI 모델 고도화
-- [ ] 음성 기반 운세
-- [ ] 블록체인 NFT 운세
+- [ ] 앱 스토어 출시
+- [ ] 마케팅 캠페인
+- [ ] 사용자 피드백 반영
+- [ ] 다국어 지원
 
 ---
 
 ## 6. API 및 보안
 
-### 🔐 보안 구현 현황
+### 🔐 Flutter 앱 보안
 
-#### API 보호
-```typescript
-// 모든 운세 API는 인증 필요
-import { withAuth } from '@/middleware/auth';
-
-export async function GET(request) {
-  return withAuth(request, async (req) => {
-    // 인증된 사용자만 접근 가능
-  });
+#### API 통신
+```dart
+// Dio 인터셉터로 인증 처리
+class AuthInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    final token = ref.read(authTokenProvider);
+    if (token != null) {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
+    super.onRequest(options, handler);
+  }
 }
 ```
 
-#### Rate Limiting
-```typescript
-// 분당 10회 제한
-const rateLimitResult = await checkRateLimit(clientIp, 'fortune');
-if (!rateLimitResult.allowed) {
-  return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
+#### 안전한 저장소
+```dart
+// 민감 정보는 flutter_secure_storage 사용
+final storage = FlutterSecureStorage();
+await storage.write(key: 'auth_token', value: token);
+await storage.write(key: 'user_credentials', value: credentials);
+```
+
+#### 인증서 피닝
+```dart
+// SSL 인증서 검증
+(dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
+  client.badCertificateCallback = (cert, host, port) {
+    return cert.fingerprint == 'AA:BB:CC:DD:EE:FF...';
+  };
+  return client;
+};
+```
+
+### 💳 토큰 시스템
+
+#### 토큰 관리
+```dart
+class TokenService {
+  // 토큰 차감
+  Future<bool> deductTokens(String fortuneType) async {
+    final cost = TOKEN_COSTS[fortuneType] ?? 1;
+    final balance = await getBalance();
+    
+    if (balance < cost) {
+      throw InsufficientTokensException();
+    }
+    
+    // 로컬 DB 업데이트
+    await localDb.updateTokenBalance(balance - cost);
+    
+    // 서버 동기화 (백그라운드)
+    syncTokensInBackground();
+    
+    return true;
+  }
+  
+  // 일일 보너스
+  Future<void> claimDailyBonus() async {
+    final lastClaim = await getLastDailyBonus();
+    if (canClaimToday(lastClaim)) {
+      await addTokens(DAILY_BONUS_AMOUNT);
+      await updateLastClaimDate();
+    }
+  }
 }
 ```
 
-### 💳 결제 API
-
-#### 토큰 차감
-```typescript
-// 운세 생성시 자동 차감
-const deductionResult = await tokenService.deductTokens(userId, 'daily');
-if (!deductionResult.success) {
-  return NextResponse.json({ error: '토큰 부족' }, { status: 402 });
-}
-```
-
-#### Webhook 처리
-```typescript
-// Stripe 결제 성공시
-async function handleCheckoutSessionCompleted(session) {
-  // 1. 결제 기록
-  // 2. 토큰/구독 업데이트
-  // 3. 사용자 알림
-}
+#### 토큰 비용
+```dart
+const TOKEN_COSTS = {
+  'daily': 1,        // 일일 운세
+  'tarot': 3,        // 타로카드
+  'saju': 5,         // 사주팔자
+  'dream': 2,        // 꿈해몽
+  'compatibility': 4  // 궁합
+};
 ```
 
 ---
@@ -331,81 +402,102 @@ async function handleCheckoutSessionCompleted(session) {
 
 ### 🚀 배포 체크리스트
 
-#### 데이터베이스
+#### Android
 ```bash
-# 결제 테이블 생성
-psql $DATABASE_URL < scripts/create-payment-tables.sql
+# 키스토어 생성
+keytool -genkey -v -keystore fortune.keystore -alias fortune -keyalg RSA -keysize 2048 -validity 10000
+
+# ProGuard 설정
+# android/app/proguard-rules.pro
+
+# App Bundle 빌드
+flutter build appbundle --release
+```
+
+#### iOS
+```bash
+# 인증서 설정
+# Xcode에서 Signing & Capabilities 설정
+
+# 빌드
+flutter build ios --release
+
+# 아카이브 및 업로드
+# Xcode → Product → Archive
 ```
 
 #### 환경 변수
-1. Vercel 대시보드에서 모든 환경 변수 설정
-2. 특히 `SUPABASE_SERVICE_ROLE_KEY` 보안 주의
+```dart
+// 빌드 타입별 설정
+flutter build apk --release \
+  --dart-define=API_BASE_URL=https://api.fortune.app \
+  --dart-define=ENVIRONMENT=production
+```
 
-#### 모니터링
-- Sentry: 에러 추적
-- Vercel Analytics: 성능 모니터링
-- Supabase: DB 쿼리 분석
+### 📊 모니터링
 
-### 📊 운영 지표 모니터링
+#### Firebase 설정
+- Crashlytics: 크래시 리포트
+- Analytics: 사용자 행동 분석
+- Performance: 성능 모니터링
+- Remote Config: 동적 설정
 
-#### 필수 추적 항목
-1. **API 성능**: 응답시간, 에러율
-2. **토큰 사용량**: 일일/월간 소비
-3. **결제 지표**: 전환율, 수익
-4. **사용자 지표**: DAU, 리텐션
+#### 앱 스토어 최적화 (ASO)
+- 키워드 최적화
+- 스크린샷 A/B 테스트
+- 리뷰 관리
+- 업데이트 노트
 
 ### 🔧 유지보수
 
-#### 일일 점검
-- [ ] 에러 로그 확인
-- [ ] API 응답시간 체크
-- [ ] 토큰 사용량 모니터링
+#### 버전 관리
+```yaml
+# pubspec.yaml
+version: 1.0.0+1  # major.minor.patch+buildNumber
+```
 
-#### 주간 작업
-- [ ] 보안 업데이트 확인
-- [ ] 성능 리포트 검토
-- [ ] 사용자 피드백 수집
-
-#### 월간 작업
-- [ ] 비용 분석
-- [ ] 기능 사용 통계
-- [ ] 시스템 최적화
+#### 업데이트 전략
+- 강제 업데이트: 중요 보안 패치
+- 선택 업데이트: 새 기능
+- 단계적 배포: 10% → 50% → 100%
 
 ---
 
 ## 📚 참고 문서
 
-### 내부 문서
-- [보안 가이드](./docs/SECURITY.md)
-- [GPT 통합 상태](./docs/GPT_INTEGRATION_STATUS.md)
-- [AdSense 구현](./docs/ADSENSE_IMPLEMENTATION.md)
+### Flutter 관련 문서
+- [Flutter 개발 환경 가이드](./docs/FLUTTER_DEVELOPMENT_ENVIRONMENT.md)
+- [Flutter 프로젝트 구조](./docs/FLUTTER_PROJECT_STRUCTURE.md)
+- [Flutter 패키지 의존성](./docs/FLUTTER_PACKAGE_DEPENDENCIES.md)
+- [Flutter 마이그레이션 블루프린트](./docs/FLUTTER_MIGRATION_BLUEPRINT.md)
+
+### 기존 문서
+- [UI/UX 스크린샷 가이드](./docs/UI_UX_SCREENSHOTS_GUIDE.md)
+- [데이터베이스 마이그레이션 가이드](./docs/DATABASE_MIGRATION_GUIDE.md)
+- [외부 서비스 설정 가이드](./docs/EXTERNAL_SERVICES_SETUP_GUIDE.md)
 
 ### 외부 링크
-- [프로덕션 사이트](https://fortune-explorer.vercel.app)
-- [GitHub 저장소](https://github.com/injooinjoo/fortune)
-- [Vercel 대시보드](https://vercel.com/dashboard)
+- [Flutter 공식 문서](https://docs.flutter.dev)
+- [Riverpod 문서](https://riverpod.dev)
+- [Material You 가이드](https://m3.material.io)
 
 ---
 
-**Note**: 이 문서는 Fortune 프로젝트의 단일 진실 공급원(Single Source of Truth)입니다. 모든 팀원은 이 문서를 기준으로 개발하고, 변경사항이 있으면 즉시 업데이트해야 합니다.
+**Note**: 이 문서는 Fortune Flutter 프로젝트의 단일 진실 공급원(Single Source of Truth)입니다. 모든 개발자는 이 문서를 기준으로 개발하고, 변경사항이 있으면 즉시 업데이트해야 합니다.
 
-*마지막 업데이트: 2025년 7월 7일*  
-*다음 검토: 2025년 7월 14일*
+*마지막 업데이트: 2025년 7월 8일*  
+*다음 검토: 2025년 7월 15일*
 
 ## 🎆 최근 업데이트
 
-### 2025년 7월 7일 (v1.4.0)
-- ✅ Admin Dashboard 구현 (/admin)
-- ✅ Redis 모니터링 시스템
-- ✅ 토큰 사용량 대시보드
-- ✅ GPT-4.1-nano 업그레이드
-- ✅ 향상된 운세 서비스 (캐싱, 에러 처리)
-- ✅ 코드 품질 검사 도구 추가
-- ✅ 환경 변수 검증 시스템
+### 2025년 7월 8일 (v2.0.0)
+- ✅ Flutter 프로젝트로 전면 전환
+- ✅ 모바일 우선 아키텍처 설계
+- ✅ 온디바이스 ML 계획 수립
+- ✅ 크로스플랫폼 개발 환경 구축
 
-### 2025년 1월 9일
-- ✅ 사용자 ID 컨텍스트 연결 (11개 fortune 페이지)
-- ✅ API 응답 표준화 (73개 엔드포인트)
-- ✅ 운세 히스토리 차트 구현
-- ✅ 소셜 공유 기능 완성
-- ✅ 18개 Fortune API 실제 프로필 조회
+### 이전 업데이트 (웹 버전)
+- 웹 버전 개발 완료 (v1.4.1)
+- 59개 운세 서비스 구현
+- 결제 시스템 통합
+- AI 최적화 완료

@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -105,7 +106,7 @@ function MarriageFortunePage() {
 
   const fetchMarriageFortune = async () => {
     try {
-      console.log('결혼운 데이터 요청 시작...');
+      logger.debug('결혼운 데이터 요청 시작...');
       
       // AuthContext에서 세션 가져오기
       // session은 이미 useAuth()에서 가져왔음
@@ -125,7 +126,7 @@ function MarriageFortunePage() {
       }
 
       const result = await response.json();
-      console.log('결혼운 API 응답:', result);
+      logger.debug('결혼운 API 응답:', result);
       
       if (!result.success) {
         throw new Error(result.error || '결혼운 생성에 실패했습니다');
@@ -169,11 +170,11 @@ function MarriageFortunePage() {
           warnings: result.data.warnings || ['성급한 결정은 금물입니다']
         };
 
-        console.log('결혼운 데이터 설정 완료:', marriageData);
+        logger.debug('결혼운 데이터 설정 완료:', marriageData);
         return marriageData;
         
       } catch (err) {
-        console.error('결혼운 데이터 로딩 실패:', err);
+        logger.error('결혼운 데이터 로딩 실패:', err);
         throw err;
       }
     };

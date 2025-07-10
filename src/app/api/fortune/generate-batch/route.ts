@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { centralizedFortuneService } from '@/lib/services/centralized-fortune-service';
 import { BatchFortuneRequest } from '@/types/batch-fortune';
@@ -49,10 +50,10 @@ export async function POST(request: NextRequest) {
     const validationResult = requestSchema.safeParse(body);
     
     if (!validationResult.success) {
-      return createErrorResponse('잘못된 요청 형식',
+      return createErrorResponse('잘못된 요청 형식', {
           details: validationResult.error,
           data: null
-        , undefined, undefined, 400);
+        }, undefined, undefined, 400);
     }
 
         const batchRequest: BatchFortuneRequest = validationResult.data;
@@ -87,15 +88,15 @@ export async function POST(request: NextRequest) {
     }, { headers, status: 200 });
     
       } catch (error) {
-        console.error('배치 운세 생성 오류:', error);
+        logger.error('배치 운세 생성 오류:', error);
         
         // 에러 로깅
         await logError(error, req);
         
-        return createErrorResponse('운세 생성 중 오류가 발생했습니다',
+        return createErrorResponse('운세 생성 중 오류가 발생했습니다', {
             message: error instanceof Error ? error.message : '알 수 없는 오류',
             data: null
-          , undefined, undefined, 500);
+          }, undefined, undefined, 500);
       }
     }, { limit: 2, windowMs: 3600000 }); // 시간당 2회 제한
   });
@@ -123,7 +124,7 @@ async function logError(error: any, request: NextRequest): Promise<void> {
     
     await supabase.from('error_logs').insert(errorLog);
   } catch (logError) {
-    console.error('에러 로깅 실패:', logError);
+    logger.error('에러 로깅 실패:', logError);
   }
 }
 

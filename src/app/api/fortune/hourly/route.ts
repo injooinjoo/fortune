@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -9,9 +10,9 @@ import { getUserProfileForAPI } from '@/lib/api-utils';
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('⏰ 시간별 운세 API 요청');
+    logger.debug('⏰ 시간별 운세 API 요청');
     
-    console.log(`🔍 시간별 운세 요청: 사용자 ID = ${request.userId}`);
+    logger.debug(`🔍 시간별 운세 요청: 사용자 ID = ${request.userId}`);
     
     // 기본 사용자 프로필 생성
     // 실제 사용자 프로필을 가져옴
@@ -32,7 +33,7 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       profile
     );
     
-    console.log('✅ 시간별 운세 API 응답 완료:', request.userId);
+    logger.debug('✅ 시간별 운세 API 응답 완료:', request.userId);
     
     return createSuccessResponse(result.data, undefined, { cached: result.cached,
       cache_source: result.cache_source, generated_at: result.generated_at

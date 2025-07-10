@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateCompatibilityFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -18,7 +19,7 @@ interface CompatibilityRequest {
 }
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
-  console.log('💕 궁합 운세 API 요청');
+  logger.debug('💕 궁합 운세 API 요청');
   
   try {
     const body: CompatibilityRequest = await request.json();
@@ -28,12 +29,12 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('두 사람의 이름과 생년월일이 모두 필요합니다.', undefined, undefined, 400);
     }
 
-    console.log(`🔍 궁합 분석 시작: ${person1.name} ↔️ ${person2.name}`);
+    logger.debug(`🔍 궁합 분석 시작: ${person1.name} ↔️ ${person2.name}`);
 
     // OpenAI를 사용한 궁합 분석
     const fortuneResult = await generateCompatibilityFortune(person1, person2);
 
-    console.log('✅ 궁합 분석 완료');
+    logger.debug('✅ 궁합 분석 완료');
 
     return createFortuneResponse({ type: 'compatibility', person1: {
           name: person1.name,
@@ -47,7 +48,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         generated_at: new Date().toISOString() }, 'compatibility', req.userId);
 
   } catch (error: any) {
-    console.error('❌ 궁합 분석 실패:', error);
+    logger.error('❌ 궁합 분석 실패:', error);
     return createSafeErrorResponse(error, '궁합 분석 중 오류가 발생했습니다.');
   }
 });

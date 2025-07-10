@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import Script from "next/script";
 import { useEffect } from "react";
 import AdErrorBoundary from "./AdErrorBoundary";
@@ -41,11 +42,11 @@ export default function AdSenseProvider() {
         onLoad={() => {
           window.__adSenseScriptLoaded = true;
           window.__adSenseScriptLoading = false;
-          console.log("✅ AdSense 스크립트 로드 완료");
+          logger.debug("✅ AdSense 스크립트 로드 완료");
         }}
         onError={(e) => {
           window.__adSenseScriptLoading = false;
-          console.error("❌ AdSense 스크립트 로드 실패:", e);
+          logger.error("❌ AdSense 스크립트 로드 실패:", e);
         }}
         onReady={() => {
           window.__adSenseScriptLoading = true;
@@ -62,7 +63,7 @@ export default function AdSenseProvider() {
           if (typeof window !== 'undefined') {
             setTimeout(() => {
               if (typeof window.adsbygoogle === 'undefined' || window.adsbygoogle.length === 0) {
-                console.log('⚠️ 광고 차단기가 감지되었을 수 있습니다.');
+                logger.debug('⚠️ 광고 차단기가 감지되었을 수 있습니다.');
               }
             }, 5000);
           }

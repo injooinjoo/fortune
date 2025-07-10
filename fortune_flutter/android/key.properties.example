@@ -1,0 +1,18 @@
+# Android Signing Configuration
+# 
+# 이 파일을 key.properties로 복사하고 실제 값으로 교체하세요.
+# 절대 key.properties 파일을 Git에 커밋하지 마세요!
+#
+# Keystore 생성 방법:
+# keytool -genkey -v -keystore fortune-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias fortune
+
+storePassword=your_keystore_password
+keyPassword=your_key_password
+keyAlias=fortune
+storeFile=/Users/your_username/path/to/fortune-release-key.jks
+
+# Gradle에서 사용할 변수명
+MYAPP_UPLOAD_STORE_FILE=fortune-release-key.jks
+MYAPP_UPLOAD_STORE_PASSWORD=your_keystore_password
+MYAPP_UPLOAD_KEY_ALIAS=fortune
+MYAPP_UPLOAD_KEY_PASSWORD=your_key_password

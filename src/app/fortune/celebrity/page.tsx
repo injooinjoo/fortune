@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DeterministicRandom, getTodayDateString } from '@/lib/deterministic-random';
@@ -62,6 +64,7 @@ const popularCelebrities = [
 ];
 
 export default function CelebrityFortunePage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<"input" | "result">("input");
   const [loading, setLoading] = useState(false);
   const [celebrityInfo, setCelebrityInfo] = useState<CelebrityInfo>({
@@ -92,7 +95,7 @@ export default function CelebrityFortunePage() {
       const data = await response.json();
       return data.fortune || data;
     } catch (error) {
-      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      logger.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
       const getCategory = (name: string): string => {
@@ -160,7 +163,10 @@ export default function CelebrityFortunePage() {
 
   const handleSubmit = async () => {
     if (!celebrityInfo.name.trim()) {
-      alert("유명인 이름을 입력해주세요.");
+      toast({
+      title: "유명인 이름을 입력해주세요.",
+      variant: "default",
+    });
       return;
     }
 
@@ -171,8 +177,11 @@ export default function CelebrityFortunePage() {
       setResult(res);
       setStep("result");
     } catch (e) {
-      console.error(e);
-      alert("운세 분석 중 오류가 발생했습니다.");
+      logger.error(e);
+      toast({
+      title: "운세 분석 중 오류가 발생했습니다.",
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

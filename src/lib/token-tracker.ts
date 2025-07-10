@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
+import { supabase } from '@/lib/supabase';
 
 interface TokenUsageParams {
   userId: string;
@@ -15,8 +16,7 @@ interface TokenUsageParams {
  * 토큰 사용 기록
  */
 export async function trackTokenUsage(params: TokenUsageParams) {
-  const supabase = createClient();
-  
+    
   try {
     // 토큰 사용 기록 저장
     const { error: usageError } = await supabase
@@ -34,13 +34,13 @@ export async function trackTokenUsage(params: TokenUsageParams) {
       });
 
     if (usageError) {
-      console.error('Failed to track token usage:', usageError);
+      logger.error('Failed to track token usage:', usageError);
       return { success: false, error: usageError };
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Token tracking error:', error);
+    logger.error('Token tracking error:', error);
     return { success: false, error };
   }
 }
@@ -49,8 +49,7 @@ export async function trackTokenUsage(params: TokenUsageParams) {
  * 사용자 토큰 잔액 조회
  */
 export async function getUserTokenBalance(userId: string) {
-  const supabase = createClient();
-  
+    
   try {
     const { data, error } = await supabase
       .from('token_balances')
@@ -59,7 +58,7 @@ export async function getUserTokenBalance(userId: string) {
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116: Row not found
-      console.error('Failed to get token balance:', error);
+      logger.error('Failed to get token balance:', error);
       return null;
     }
 
@@ -74,7 +73,7 @@ export async function getUserTokenBalance(userId: string) {
 
     return data;
   } catch (error) {
-    console.error('Token balance error:', error);
+    logger.error('Token balance error:', error);
     return null;
   }
 }
@@ -83,8 +82,7 @@ export async function getUserTokenBalance(userId: string) {
  * 토큰 잔액 확인 및 차감
  */
 export async function deductTokens(userId: string, amount: number) {
-  const supabase = createClient();
-  
+    
   try {
     // 현재 잔액 확인
     const balance = await getUserTokenBalance(userId);
@@ -102,7 +100,7 @@ export async function deductTokens(userId: string, amount: number) {
       balance: balance.balance - amount 
     };
   } catch (error) {
-    console.error('Token deduction error:', error);
+    logger.error('Token deduction error:', error);
     return { success: false, error: 'Failed to deduct tokens' };
   }
 }
@@ -127,8 +125,7 @@ function calculateCost(tokens: number, model?: string): number {
  * 토큰 사용 통계 조회
  */
 export async function getTokenUsageStats(userId: string, days: number = 30) {
-  const supabase = createClient();
-  
+    
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
@@ -141,7 +138,7 @@ export async function getTokenUsageStats(userId: string, days: number = 30) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Failed to get usage stats:', error);
+      logger.error('Failed to get usage stats:', error);
       return null;
     }
 
@@ -175,7 +172,7 @@ export async function getTokenUsageStats(userId: string, days: number = 30) {
 
     return stats;
   } catch (error) {
-    console.error('Usage stats error:', error);
+    logger.error('Usage stats error:', error);
     return null;
   }
 }
@@ -191,8 +188,7 @@ export async function recordTokenPurchase(
   paymentId?: string,
   metadata?: Record<string, any>
 ) {
-  const supabase = createClient();
-  
+    
   try {
     const { data, error } = await supabase
       .from('token_purchases')
@@ -209,13 +205,13 @@ export async function recordTokenPurchase(
       .single();
 
     if (error) {
-      console.error('Failed to record purchase:', error);
+      logger.error('Failed to record purchase:', error);
       return { success: false, error };
     }
 
     return { success: true, purchaseId: data.id };
   } catch (error) {
-    console.error('Purchase record error:', error);
+    logger.error('Purchase record error:', error);
     return { success: false, error };
   }
 }
@@ -224,8 +220,7 @@ export async function recordTokenPurchase(
  * 토큰 구매 완료 처리
  */
 export async function completePurchase(purchaseId: string) {
-  const supabase = createClient();
-  
+    
   try {
     const { error } = await supabase
       .from('token_purchases')
@@ -233,13 +228,13 @@ export async function completePurchase(purchaseId: string) {
       .eq('id', purchaseId);
 
     if (error) {
-      console.error('Failed to complete purchase:', error);
+      logger.error('Failed to complete purchase:', error);
       return { success: false, error };
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Purchase completion error:', error);
+    logger.error('Purchase completion error:', error);
     return { success: false, error };
   }
 }

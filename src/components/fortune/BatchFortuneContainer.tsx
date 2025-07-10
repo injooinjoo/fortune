@@ -1,5 +1,7 @@
 'use client';
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FortunePackageSelector } from './FortunePackageSelector';
@@ -22,6 +24,7 @@ export function BatchFortuneContainer({
   defaultPackage,
   onFortuneGenerated
 }: BatchFortuneContainerProps) {
+  const { toast } = useToast();
   const router = useRouter();
   const { user, profile } = useUser();
   const [selectedPackage, setSelectedPackage] = useState<string | undefined>(defaultPackage);
@@ -90,7 +93,7 @@ export function BatchFortuneContainer({
         JSON.stringify(data)
       );
     } catch (err) {
-      console.error('배치 운세 생성 오류:', err);
+      logger.error('배치 운세 생성 오류:', err);
       setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
     } finally {
       setLoading(false);
@@ -129,10 +132,13 @@ export function BatchFortuneContainer({
         await navigator.clipboard.writeText(
           `${shareData.title}\n${shareData.text}\n${shareData.url}`
         );
-        alert('클립보드에 복사되었습니다!');
+        toast({
+      title: '클립보드에 복사되었습니다!',
+      variant: "default",
+    });
       }
     } catch (err) {
-      console.error('공유 실패:', err);
+      logger.error('공유 실패:', err);
     }
   };
 
@@ -149,7 +155,7 @@ export function BatchFortuneContainer({
           setFortuneData(cachedData);
           setShowPackageSelector(false);
         } catch (err) {
-          console.error('캐시 파싱 오류:', err);
+          logger.error('캐시 파싱 오류:', err);
         }
       }
     }

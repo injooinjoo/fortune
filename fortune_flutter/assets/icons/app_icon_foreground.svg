@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Foreground icon for adaptive icons (Android) -->
+  <g transform="translate(512, 512)">
+    <!-- Fortune symbol (stylized 福) with shadow -->
+    <g opacity="0.3" transform="translate(10, 10)">
+      <path d="M -150 -200 L -150 200 M -150 -100 L 0 -100 M 50 -200 L 50 200 M 50 0 L 150 0 M 50 100 L 150 100" 
+            stroke="#000000" stroke-width="40" fill="none" stroke-linecap="round"/>
+    </g>
+    
+    <!-- Main character strokes -->
+    <path d="M -150 -200 L -150 200 M -150 -100 L 0 -100 M 50 -200 L 50 200 M 50 0 L 150 0 M 50 100 L 150 100" 
+          stroke="#8B4513" stroke-width="40" fill="none" stroke-linecap="round"/>
+    
+    <!-- Decorative stars -->
+    <g fill="#FFA500">
+      <path d="M -180,-180 l 10,30 h 30 l -25,20 l 10,30 l -25,-20 l -25,20 l 10,-30 l -25,-20 h 30 z"/>
+      <path d="M 180,-180 l 10,30 h 30 l -25,20 l 10,30 l -25,-20 l -25,20 l 10,-30 l -25,-20 h 30 z"/>
+      <path d="M -180,180 l 10,30 h 30 l -25,20 l 10,30 l -25,-20 l -25,20 l 10,-30 l -25,-20 h 30 z"/>
+      <path d="M 180,180 l 10,30 h 30 l -25,20 l 10,30 l -25,-20 l -25,20 l 10,-30 l -25,-20 h 30 z"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,37 @@
+# Matchfile for iOS code signing
+
+# Git URL for storing certificates
+git_url("https://github.com/YOUR_GITHUB_USERNAME/fortune-certificates")
+
+# Storage mode (git, google_cloud, s3)
+storage_mode("git")
+
+# Type of certificates to generate/download
+type("development") # or "appstore", "adhoc", "enterprise"
+
+# App identifier
+app_identifier(["com.fortune.app"])
+
+# Your Apple Developer Portal username
+username("your-apple-id@example.com")
+
+# Team ID
+team_id("YOUR_TEAM_ID")
+
+# Git branch
+git_branch("main")
+
+# Generate certificates if not found
+readonly(false)
+
+# Verbose output
+verbose(true)
+
+# Force generation of new certificates
+force(false)
+
+# Skip syncing of provisioning profiles
+skip_provisioning_profiles(false)
+
+# Platform
+platform("ios")

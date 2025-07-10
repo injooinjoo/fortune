@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,6 +86,7 @@ const itemVariants = {
 };
 
 export default function PremiumSajuPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'story' | 'premium'>('input');
   const [loading, setLoading] = useState(false);
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
@@ -154,7 +157,10 @@ export default function PremiumSajuPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay) {
-      alert("이름과 생년월일을 모두 입력해주세요.");
+      toast({
+      title: "이름과 생년월일을 모두 입력해주세요.",
+      variant: "default",
+    });
       return;
     }
 
@@ -187,8 +193,11 @@ export default function PremiumSajuPage() {
       setSajuData(data);
       setStep('story');
     } catch (error) {
-      console.error('Error:', error);
-      alert('운세 생성 중 오류가 발생했습니다.');
+      logger.error('Error:', error);
+      toast({
+      title: '운세 생성 중 오류가 발생했습니다.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }
@@ -429,7 +438,7 @@ export default function PremiumSajuPage() {
         const { data: sessionData } = await auth.getSession();
         
         if (!sessionData?.session?.user) {
-          console.log('로그인된 사용자가 없음');
+          logger.debug('로그인된 사용자가 없음');
           return;
         }
 
@@ -449,7 +458,7 @@ export default function PremiumSajuPage() {
           });
         }
       } catch (error) {
-        console.error('프로필 불러오기 오류:', error);
+        logger.error('프로필 불러오기 오류:', error);
       }
     }
     loadProfile();
@@ -830,7 +839,10 @@ export default function PremiumSajuPage() {
             {/* 구매 버튼 */}
             <Button
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-bold py-6 text-lg"
-              onClick={() => alert('결제 시스템 연동 예정입니다!')}
+              onClick={() => toast({
+      title: '결제 시스템 연동 예정입니다!',
+      variant: "default",
+    })}
             >
               <Crown className="w-5 h-5 mr-2" />
               정통사주 지금 받아보기

@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -23,7 +24,6 @@ import {
   Info
 } from "lucide-react";
 import { auth } from "@/lib/supabase";
-import { tokenService } from "@/lib/services/token-service";
 import { logger } from "@/lib/logger";
 
 interface TokenPackage {
@@ -92,6 +92,7 @@ const itemVariants = {
 };
 
 export default function TokenPurchasePage() {
+  const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -112,9 +113,13 @@ export default function TokenPurchasePage() {
       }
 
       setUserId(sessionData.session.user.id);
-      const balance = await tokenService.getTokenBalance(sessionData.session.user.id);
-      setCurrentBalance(balance.balance);
-      setIsUnlimited(balance.isUnlimited);
+      
+      const response = await fetch('/api/user/token-balance');
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentBalance(data.data.balance);
+        setIsUnlimited(data.data.isUnlimited);
+      }
     } catch (error) {
       logger.error('토큰 잔액 로드 실패:', error);
     }
@@ -160,7 +165,10 @@ export default function TokenPurchasePage() {
       }
     } catch (error) {
       logger.error('결제 처리 실패:', error);
-      alert('결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      toast({
+      title: '결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
       setSelectedPackage(null);

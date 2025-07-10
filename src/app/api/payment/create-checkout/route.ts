@@ -149,17 +149,13 @@ export async function POST(request: NextRequest) {
         );
       }
       
-      // Sentry에 에러 보고 (선택적)
-      if (process.env.SENTRY_DSN && !(error instanceof z.ZodError)) {
-        const Sentry = await import('@sentry/nextjs');
-        Sentry.captureException(error, {
-          tags: {
-            service: 'payment',
-            action: 'create-checkout'
-          },
-          user: {
-            id: req.userId || 'unknown'
-          }
+      // 에러 모니터링에 보고
+      if (!(error instanceof z.ZodError)) {
+        const { captureException } = await import('@/lib/error-monitor');
+        captureException(error, {
+          service: 'payment',
+          action: 'create-checkout',
+          userId: req.userId || 'unknown'
         });
       }
       

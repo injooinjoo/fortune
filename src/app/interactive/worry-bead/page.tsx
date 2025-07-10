@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -87,6 +89,7 @@ const getLuckText = (score: number) => {
 };
 
 export default function WorryBeadPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'form' | 'result'>('form');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -234,20 +237,26 @@ export default function WorryBeadPage() {
         setResult(analysisResult);
       }
     } catch (error) {
-      console.error('재생성 중 오류:', error);
+      logger.error('재생성 중 오류:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('운세 재생성에 실패했습니다. 다시 시도해주세요.');
+        toast({
+      title: '운세 재생성에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     }
   }, [formData, regenerateFortune]);
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birthYear || !formData.birthMonth || !formData.birthDay || !formData.worry) {
-      alert('이름, 생년월일, 고민 내용을 모두 입력해주세요.');
+      toast({
+      title: '이름, 생년월일, 고민 내용을 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -303,13 +312,16 @@ export default function WorryBeadPage() {
       
       setStep('result');
     } catch (error) {
-      console.error('고민 구슬 분석 실패:', error);
+      logger.error('고민 구슬 분석 실패:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('고민 구슬 분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        toast({
+      title: '고민 구슬 분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     } finally {
       setIsGenerating(false);

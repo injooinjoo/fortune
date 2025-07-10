@@ -1,7 +1,8 @@
+import { logger } from '@/lib/logger';
 import { supabase } from '../supabase';
 import { getOpenAIClient } from '../openai-client-improved';
 import { createDeterministicRandom, getTodayDateString } from '../deterministic-random';
-import * as Sentry from '@sentry/nextjs';
+import { errorMonitor, captureException, captureMessage, setUser } from '@/lib/error-monitor';
 
 export interface UserProfile {
   id: string;
@@ -106,7 +107,7 @@ export class RealFortuneService {
           date,
           userProfile: { name: userProfile.name, birth_date: userProfile.birth_date }
         });
-        Sentry.captureException(error);
+        captureException(error);
       });
 
       return {
@@ -149,7 +150,7 @@ export class RealFortuneService {
 
       throw new Error('Failed to parse AI response');
     } catch (error) {
-      console.error('AI fortune generation failed:', error);
+      logger.error('AI fortune generation failed:', error);
       return { success: false };
     }
   }
@@ -372,7 +373,7 @@ ${fortuneType} 운세를 다음 JSON 형식으로 분석해주세요:
       if (error || !data) return null;
       return data.data;
     } catch (error) {
-      console.error('Database fortune fetch failed:', error);
+      logger.error('Database fortune fetch failed:', error);
       return null;
     }
   }
@@ -395,7 +396,7 @@ ${fortuneType} 운세를 다음 JSON 형식으로 분석해주세요:
           cache_expires_at: expiresAt.toISOString()
         });
     } catch (error) {
-      console.error('Failed to save fortune:', error);
+      logger.error('Failed to save fortune:', error);
     }
   }
 }

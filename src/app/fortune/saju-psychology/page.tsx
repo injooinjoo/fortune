@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import {
@@ -46,7 +47,7 @@ export default function SajuPsychologyPage() {
           throw new Error('데이터 형식이 올바르지 않습니다.');
         }
       } catch (err) {
-        console.error('사주 심리분석 로드 오류:', err);
+        logger.error('사주 심리분석 로드 오류:', err);
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
         setLoading(false);

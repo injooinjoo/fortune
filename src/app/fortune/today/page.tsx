@@ -28,16 +28,9 @@ import {
 } from "@/lib/types/fortune-schemas";
 import { z } from "zod";
 import toast from "react-hot-toast";
-
-// TODO: This should come from a global state/user context
-const MOCK_USER_PROFILE: z.infer<typeof UserProfileSchema> = {
-  id: 'user_mock_id_12345',
-  name: "홍길동",
-  gender: 'male',
-  birthDate: "1990-01-01",
-  mbti: "INFP",
-};
-
+import { useAuth } from "@/contexts/auth-context";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { useRouter } from "next/navigation";
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -45,17 +38,36 @@ const itemVariants = {
 
 export default function TodayFortunePage() {
   const [fontSize, setFontSize] = useState<'small'|'medium'|'large'>('medium');
+  
+  const { user } = useAuth();
+  const { profile, isLoading: profileLoading, hasCompleteProfile } = useUserProfile();
+  const router = useRouter();
+
+  // 사용자 프로필을 UserProfileSchema 형식으로 변환
+  const userProfile: z.infer<typeof UserProfileSchema> | null = profile && hasCompleteProfile ? {
+    id: user?.id || 'guest-user',
+    name: profile.name,
+    gender: profile.gender || 'other',
+    birthDate: profile.birth_date!,
+    mbti: profile.mbti || undefined,
+  } : null;
 
   const {
     dailyFortune,
     isGenerating,
     error,
     generateDailyPackage,
-  } = useDailyFortune(MOCK_USER_PROFILE);
+  } = useDailyFortune(userProfile);
 
   const dailyResult = dailyFortune as z.infer<typeof ComprehensiveDailyFortuneResultSchema> | undefined;
 
   const handleGenerate = async () => {
+    if (!profile || !hasCompleteProfile) {
+      toast.error("프로필을 먼저 완성해주세요.");
+      router.push('/onboarding');
+      return;
+    }
+    
     const today = new Date().toISOString().split('T')[0];
     toast.loading("AI가 오늘의 운세를 새로 분석합니다...");
     try {
@@ -70,10 +82,42 @@ export default function TodayFortunePage() {
   
   useEffect(() => {
     // 초기 로딩 시 데이터가 없으면 운세 생성
-    if (!dailyFortune && !isGenerating && !error) {
+    if (!dailyFortune && !isGenerating && !error && profile && hasCompleteProfile && !profileLoading) {
       handleGenerate();
     }
-  }, []); // 이펙트는 마운트 시 한 번만 실행
+  }, [profileLoading, profile, hasCompleteProfile]); // 프로필이 로드된 후 실행
+
+  // 프로필 로딩 중일 때 표시
+  if (profileLoading) {
+    return (
+      <div className="min-h-screen pb-32 px-4">
+        <AppHeader title="오늘의 운세" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto text-emerald-500" />
+            <p className="text-xl font-semibold">프로필 정보 확인 중...</p>
+            <p className="text-muted-foreground">사용자 정보를 불러오고 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 프로필이 없거나 불완전한 경우
+  if (!profile || !hasCompleteProfile) {
+    return (
+      <div className="min-h-screen pb-32 px-4">
+        <AppHeader title="오늘의 운세" onFontSizeChange={setFontSize} currentFontSize={fontSize} />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <p className="text-xl font-semibold">프로필 정보가 필요합니다</p>
+            <p className="text-muted-foreground">운세를 보려면 먼저 프로필을 완성해주세요.</p>
+            <Button onClick={() => router.push('/onboarding')}>프로필 설정하기</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isGenerating && !dailyFortune) { // 최초 생성 로딩
     return (

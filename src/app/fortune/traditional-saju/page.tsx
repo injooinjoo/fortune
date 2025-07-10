@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import AppHeader from "@/components/AppHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -69,7 +70,7 @@ export default function TraditionalSajuPage() {
           throw new Error('데이터를 찾을 수 없습니다.');
         }
       } catch (err) {
-        console.error('❌ 전통 사주 데이터 로딩 실패:', err);
+        logger.error('❌ 전통 사주 데이터 로딩 실패:', err);
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
         setLoading(false);

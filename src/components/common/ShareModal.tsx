@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useRef, useState } from "react";
 import {
   Dialog,
@@ -44,7 +45,7 @@ export default function ShareModal({
         description: "클립보드에 링크가 복사되었습니다.",
       });
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       toast({
         title: "복사 실패",
         description: "링크 복사에 실패했습니다.",
@@ -84,7 +85,7 @@ export default function ShareModal({
         }
       }, "image/png");
     } catch (error) {
-      console.error("이미지 생성 실패:", error);
+      logger.error("이미지 생성 실패:", error);
       toast({
         title: "저장 실패",
         description: "이미지 저장에 실패했습니다.",
@@ -121,7 +122,7 @@ export default function ShareModal({
           ],
         });
       } catch (error) {
-        console.error("카카오톡 공유 실패:", error);
+        logger.error("카카오톡 공유 실패:", error);
         toast({
           title: "공유 실패",
           description: "카카오톡 공유에 실패했습니다.",

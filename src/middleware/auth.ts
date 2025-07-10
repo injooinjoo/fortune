@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
@@ -90,7 +91,7 @@ export async function withAuth(
     return handler(request as AuthenticatedRequest);
 
   } catch (error) {
-    console.error('Auth middleware error:', error);
+    logger.error('Auth middleware error:', error);
     return NextResponse.json(
       { error: 'Authentication service temporarily unavailable' },
       { status: 503 }
@@ -104,7 +105,7 @@ export function validateApiKey(request: NextRequest): boolean {
   const expectedApiKey = process.env.INTERNAL_API_KEY;
   
   if (!expectedApiKey) {
-    console.error('INTERNAL_API_KEY not configured');
+    logger.error('INTERNAL_API_KEY not configured');
     return false;
   }
   

@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,6 +130,7 @@ const formatKoreanDate = (dateString: string): string => {
 };
 
 export default function BiorhythmPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [birthDate, setBirthDate] = useState('');
@@ -278,7 +281,10 @@ export default function BiorhythmPage() {
 
   const handleSubmit = async () => {
     if (!birthDate) {
-      alert('생년월일을 입력해주세요.');
+      toast({
+      title: '생년월일을 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -290,8 +296,11 @@ export default function BiorhythmPage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

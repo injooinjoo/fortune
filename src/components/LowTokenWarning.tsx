@@ -1,12 +1,12 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Coins, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { tokenService } from '@/lib/services/token-service';
 
 interface LowTokenWarningProps {
   threshold?: number; // 토큰이 이 숫자 이하일 때 경고 표시
@@ -28,11 +28,17 @@ export function LowTokenWarning({
 
     const checkBalance = async () => {
       try {
-        const currentBalance = await tokenService.getBalance(user.id);
+        const response = await fetch('/api/user/token-balance');
+        if (!response.ok) {
+          throw new Error('Failed to fetch token balance');
+        }
+        
+        const data = await response.json();
+        const currentBalance = data.data.balance;
         setBalance(currentBalance);
         
         // 무제한 사용자는 경고 표시 안함
-        if (currentBalance === -1) {
+        if (data.data.isUnlimited) {
           setShow(false);
           return;
         }
@@ -44,7 +50,7 @@ export function LowTokenWarning({
           setShow(false);
         }
       } catch (error) {
-        console.error('토큰 잔액 확인 실패:', error);
+        logger.error('토큰 잔액 확인 실패:', error);
       }
     };
 

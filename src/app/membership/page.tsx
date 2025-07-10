@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -107,6 +109,7 @@ const itemVariants = {
 };
 
 export default function MembershipPage() {
+  const { toast } = useToast();
   const router = useRouter();
   const [currentPlan, setCurrentPlan] = useState<string>('free');
   const [isYearly, setIsYearly] = useState(false);
@@ -130,7 +133,7 @@ export default function MembershipPage() {
         router.push('/');
       }
     } catch (error) {
-      console.error('구독 정보 로드 실패:', error);
+      logger.error('구독 정보 로드 실패:', error);
     } finally {
       setIsLoading(false);
     }
@@ -153,14 +156,23 @@ export default function MembershipPage() {
         
         // 성공 메시지 표시
         if (planId === 'free') {
-          alert('무료 플랜으로 변경되었습니다.');
+          toast({
+      title: '무료 플랜으로 변경되었습니다.',
+      variant: "default",
+    });
         } else {
-          alert('구독이 성공적으로 처리되었습니다! (데모 모드)');
+          toast({
+      title: '구독이 성공적으로 처리되었습니다! (데모 모드)',
+      variant: "default",
+    });
         }
       }
     } catch (error) {
-      console.error('구독 처리 실패:', error);
-      alert('구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('구독 처리 실패:', error);
+      toast({
+      title: '구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     }
   };
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -44,6 +46,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function OnboardingPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +80,7 @@ export default function OnboardingPage() {
           form.setValue('name', userName);
         }
       } catch (error) {
-        console.log('게스트 사용자로 진행');
+        logger.debug('게스트 사용자로 진행');
       }
     };
     
@@ -148,17 +151,20 @@ export default function OnboardingPage() {
             gender: (values.gender as 'male' | 'female' | 'other') || undefined,
             onboarding_completed: true
           });
-          console.log('🔄 Supabase에 프로필 동기화 완료');
+          logger.debug('🔄 Supabase에 프로필 동기화 완료');
         } catch (supabaseError) {
-          console.error('Supabase 동기화 실패:', supabaseError);
+          logger.error('Supabase 동기화 실패:', supabaseError);
           // Supabase 실패해도 로컬 저장은 성공했으므로 계속 진행
         }
       }
       
       router.push("/home");
     } catch (error) {
-      console.error('프로필 저장 실패:', error);
-      alert('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('프로필 저장 실패:', error);
+      toast({
+      title: '프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setIsLoading(false);
     }

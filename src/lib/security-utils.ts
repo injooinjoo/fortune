@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 // 보안 유틸리티 함수들
 
 export class SecurityUtils {
@@ -26,7 +28,7 @@ export class SecurityUtils {
       
       return this.escapeHtml(value);
     } catch (error) {
-      console.error('URL 파라미터 추출 실패:', error);
+      logger.error('URL 파라미터 추출 실패:', error);
       return null;
     }
   }
@@ -93,7 +95,7 @@ export class SecurityUtils {
       
       return '/';
     } catch (error) {
-      console.error('URL 검증 실패:', error);
+      logger.error('URL 검증 실패:', error);
       return '/';
     }
   }
@@ -147,9 +149,9 @@ export class SecurityUtils {
   static secureLog(message: string, data?: any): void {
     if (process.env.NODE_ENV === 'development') {
       if (data) {
-        console.log(message, this.sanitizeLog(data));
+        logger.debug(message, this.sanitizeLog(data));
       } else {
-        console.log(message);
+        logger.debug(message);
       }
     }
   }

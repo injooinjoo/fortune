@@ -2,14 +2,13 @@
  * 인증 관련 유틸리티 함수
  */
 
-import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/logger';
+import { supabase } from '@/lib/supabase';
 
 /**
  * 현재 로그인된 사용자 정보 가져오기
  */
 export async function getCurrentUser() {
-  const supabase = createClient();
-  
   try {
     const { data: { user }, error } = await supabase.auth.getUser();
     
@@ -19,7 +18,7 @@ export async function getCurrentUser() {
     
     return user;
   } catch (error) {
-    console.error('Failed to get current user:', error);
+    logger.error('Failed to get current user:', error);
     return null;
   }
 }
@@ -36,20 +35,36 @@ export async function isAuthenticated() {
  * 사용자 로그아웃
  */
 export async function signOut() {
-  const supabase = createClient();
-  
   try {
     const { error } = await supabase.auth.signOut();
     
     if (error) {
-      console.error('Failed to sign out:', error);
+      logger.error('Failed to sign out:', error);
       return false;
     }
     
     return true;
   } catch (error) {
-    console.error('Sign out error:', error);
+    logger.error('Sign out error:', error);
     return false;
+  }
+}
+
+/**
+ * 현재 세션의 액세스 토큰 가져오기
+ */
+export async function getAuthToken() {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session) {
+      return null;
+    }
+    
+    return session.access_token;
+  } catch (error) {
+    logger.error('Failed to get auth token:', error);
+    return null;
   }
 }
 
@@ -68,7 +83,7 @@ export async function refreshSession() {
     
     return session;
   } catch (error) {
-    console.error('Failed to refresh session:', error);
+    logger.error('Failed to refresh session:', error);
     return null;
   }
 }
@@ -92,7 +107,7 @@ export async function getUserProfile(userId: string) {
     
     return data;
   } catch (error) {
-    console.error('Failed to get user profile:', error);
+    logger.error('Failed to get user profile:', error);
     return null;
   }
 }

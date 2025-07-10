@@ -31,8 +31,7 @@ const nextConfig: NextConfig = {
   },
   // 개발 서버 설정
   devIndicators: {
-    buildActivity: true,
-    buildActivityPosition: 'bottom-right',
+    position: 'bottom-right',
   },
   // 청크 타임아웃 증가
   staticPageGenerationTimeout: 120,

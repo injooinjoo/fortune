@@ -1,0 +1,26 @@
+#include "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+#include "Flutter/Release.xcconfig"
+
+// Staging Configuration
+PRODUCT_BUNDLE_IDENTIFIER = com.fortune.fortune_flutter.staging
+PRODUCT_NAME = Fortune Staging
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// Code Signing
+CODE_SIGN_STYLE = Manual
+CODE_SIGN_IDENTITY = iPhone Distribution
+PROVISIONING_PROFILE_SPECIFIER = fortune-staging
+
+// Build Settings
+ENABLE_BITCODE = NO
+GCC_OPTIMIZATION_LEVEL = s
+SWIFT_OPTIMIZATION_LEVEL = -O
+
+// Swift Flags
+OTHER_SWIFT_FLAGS = $(inherited) -D STAGING
+
+// Deployment Target
+IPHONEOS_DEPLOYMENT_TARGET = 12.0
+
+// Staging specific settings
+ENABLE_NS_ASSERTIONS = YES

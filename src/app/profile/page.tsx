@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -83,23 +84,23 @@ export default function ProfilePage() {
 
   const loadUserProfile = async () => {
     try {
-      console.log('🔍 프로필 로드 시작');
+      logger.debug('🔍 프로필 로드 시작');
       
       // user-storage.ts의 syncUserProfile 사용하여 자동 동기화
       const profile = await syncUserProfile();
       
       if (profile && profile.onboarding_completed) {
-        console.log('✅ 프로필 로드 성공:', profile.name);
+        logger.debug('✅ 프로필 로드 성공:', profile.name);
         setUser(profile);
       } else if (profile && !profile.onboarding_completed) {
-        console.log('⚠️ 온보딩 미완료, 온보딩 페이지로 이동');
+        logger.debug('⚠️ 온보딩 미완료, 온보딩 페이지로 이동');
         router.push('/onboarding');
       } else {
-        console.log('❌ 프로필 없음, 메인 페이지로 이동');
+        logger.debug('❌ 프로필 없음, 메인 페이지로 이동');
         router.push('/');
       }
     } catch (error) {
-      console.error('🚨 프로필 로드 실패:', error);
+      logger.error('🚨 프로필 로드 실패:', error);
       router.push('/');
     } finally {
       setIsLoading(false);
@@ -140,7 +141,7 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     try {
-      console.log('🚪 로그아웃 시작');
+      logger.debug('🚪 로그아웃 시작');
       
       // user-storage.ts의 함수들을 통해 안전하게 로그아웃 처리
       const currentUser = getUserProfile();
@@ -150,9 +151,9 @@ export default function ProfilePage() {
         try {
           const supabase = (await import('@/lib/supabase')).supabase;
           await supabase.auth.signOut();
-          console.log('✅ Supabase 로그아웃 성공');
+          logger.debug('✅ Supabase 로그아웃 성공');
         } catch (error) {
-          console.error('Supabase 로그아웃 오류:', error);
+          logger.error('Supabase 로그아웃 오류:', error);
         }
       }
       
@@ -161,10 +162,10 @@ export default function ProfilePage() {
       localStorage.removeItem('daily_fortunes');
       localStorage.removeItem('fortune_history');
       
-      console.log('✅ 로그아웃 완료');
+      logger.debug('✅ 로그아웃 완료');
       router.push("/");
     } catch (error) {
-      console.error('🚨 로그아웃 실패:', error);
+      logger.error('🚨 로그아웃 실패:', error);
       // 실패해도 로컬 데이터는 정리하고 메인 페이지로 이동
       saveUserProfile(null);
       router.push("/");

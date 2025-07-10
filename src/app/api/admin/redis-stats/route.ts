@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { getRedis, getCacheClient } from '@/lib/redis';
 import { withAuth } from '@/middleware/auth';
@@ -86,7 +87,7 @@ export async function GET(request: NextRequest) {
       const stats = await getRedisStats();
       return createSuccessResponse(stats);
     } catch (error) {
-      console.error('Redis stats error:', error);
+      logger.error('Redis stats error:', error);
       return createErrorResponse('Failed to fetch Redis stats', 500);
     }
   })(request);

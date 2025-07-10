@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -72,7 +73,7 @@ export default function NetworkReportPage() {
           });
         }
       } catch (error) {
-        console.error('인맥보고서 로딩 실패:', error);
+        logger.error('인맥보고서 로딩 실패:', error);
         setData({
           score: 75,
           summary: '인맥보고서를 불러오는 중 오류가 발생했습니다.',

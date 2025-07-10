@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImageBasedFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -6,7 +7,7 @@ import { FortuneService } from '@/lib/services/fortune-service';
 import { createSuccessResponse, createErrorResponse, createFortuneResponse, handleApiError } from '@/lib/api-response-utils';
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
-  console.log('📸 관상 운세 API 요청');
+  logger.debug('📸 관상 운세 API 요청');
   
   try {
     const formData = await request.formData();
@@ -19,7 +20,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('이미지 파일이 필요합니다.', undefined, undefined, 400);
     }
 
-    console.log(`🔍 관상 분석 시작: ${name} (${birthDate})`);
+    logger.debug(`🔍 관상 분석 시작: ${name} (${birthDate})`);
 
     // 이미지를 Base64로 변환
     const arrayBuffer = await file.arrayBuffer();
@@ -34,14 +35,14 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     // 관상 분석 수행
     const result = await generateImageBasedFortune('face-reading', base64, profile);
 
-    console.log('✅ 관상 분석 완료');
+    logger.debug('✅ 관상 분석 완료');
 
     return createFortuneResponse({ type: 'face-reading', ...result,
         user_info: profile,
         generated_at: new Date().toISOString() }, 'face-reading', req.userId);
     
   } catch (error) {
-    console.error('❌ 관상 분석 실패:', error);
+    logger.error('❌ 관상 분석 실패:', error);
     return createSafeErrorResponse(error, '관상 분석 중 오류가 발생했습니다.');
   }
 });

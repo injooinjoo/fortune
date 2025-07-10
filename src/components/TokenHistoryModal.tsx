@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from 'react';
 import { 
   Dialog, 
@@ -106,7 +107,7 @@ export function TokenHistoryModal({ open, onOpenChange }: TokenHistoryModalProps
       setCurrentBalance(data.currentBalance);
       setStatistics(data.statistics);
     } catch (error) {
-      console.error('토큰 내역 조회 실패:', error);
+      logger.error('토큰 내역 조회 실패:', error);
     } finally {
       setLoading(false);
     }

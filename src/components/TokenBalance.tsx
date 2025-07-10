@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { Coins, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
-import { tokenService } from "@/lib/services/token-service";
 import { logger } from "@/lib/logger";
 
 interface TokenBalanceProps {
@@ -39,9 +38,14 @@ export default function TokenBalance({
     if (!user) return;
     
     try {
-      const tokenBalance = await tokenService.getTokenBalance(user.id);
-      setBalance(tokenBalance.balance);
-      setIsUnlimited(tokenBalance.isUnlimited);
+      const response = await fetch('/api/user/token-balance');
+      if (!response.ok) {
+        throw new Error('Failed to fetch token balance');
+      }
+      
+      const data = await response.json();
+      setBalance(data.data.balance);
+      setIsUnlimited(data.data.isUnlimited);
     } catch (error) {
       logger.error('토큰 잔액 로드 실패:', error);
       setBalance(0);

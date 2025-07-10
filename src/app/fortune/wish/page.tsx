@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 import { 
   Star, 
   Heart, 

@@ -1,6 +1,7 @@
 // 운세 카테고리별 API 엔드포인트
 // 작성일: 2024-12-19
 
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { FortuneCategory, InteractiveInput } from '@/lib/types/fortune-system';
@@ -29,19 +30,19 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/');
     const category = pathParts[pathParts.length - 1];
-    console.log(`운세 요청: ${category}, 사용자: ${user.id}`);
+    logger.debug(`운세 요청: ${category}, 사용자: ${user.id}`);
     
     // 공유 메모리에서 직접 프로필 조회
-    console.log('전체 저장된 프로필들:', getAllProfiles());
+    logger.debug('전체 저장된 프로필들:', getAllProfiles());
     let userProfile = getUserProfile(user.id);
     
     // 프로필이 없으면 프로필 입력 요구
     if (!userProfile) {
-      console.log('프로필 없음 - 프로필 입력 필요');
+      logger.debug('프로필 없음 - 프로필 입력 필요');
       return createErrorResponse('프로필 정보가 필요합니다. 프로필을 먼저 설정해주세요.', 'PROFILE_REQUIRED', { redirect: '/onboarding/profile' }, 400);
     }
     
-    console.log('실제 사용자 프로필 로드:', userProfile);
+    logger.debug('실제 사용자 프로필 로드:', userProfile);
 
     // 운세 데이터 조회 또는 생성
     const result = await fortuneService.getOrCreateFortune(
@@ -50,12 +51,11 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       userProfile
     );
 
-    console.log('운세 결과:', { success: result.success, cached: result.cached });
-    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
-    );
+    logger.debug('운세 결과:', { success: result.success, cached: result.cached });
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date().toISOString() });
 
   } catch (error) {
-    console.error('운세 API 오류:', error);
+    logger.error('운세 API 오류:', error);
     return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
   }
 });
@@ -112,11 +112,10 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       interactiveInput
     );
 
-    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
-    );
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date().toISOString() });
 
   } catch (error) {
-    console.error('운세 API 오류:', error);
+    logger.error('운세 API 오류:', error);
     return createSafeErrorResponse(error, '운세를 가져오는 중 오류가 발생했습니다.');
   }
 });

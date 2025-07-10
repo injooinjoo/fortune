@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { FortuneCompassIcon } from "@/components/icons/fortune-compass-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,9 +39,16 @@ export default function LandingPage() {
         
         if (profile && profile.onboarding_completed) {
           if (process.env.NODE_ENV === 'development') {
-            console.log('Authenticated user with completed onboarding, redirecting to home');
+            logger.debug('Authenticated user with completed onboarding, redirecting to home');
           }
-          router.push('/home');
+          // Check for returnUrl parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const returnUrl = urlParams.get('returnUrl');
+          if (returnUrl) {
+            router.push(decodeURIComponent(returnUrl));
+          } else {
+            router.push('/home');
+          }
         }
         // 온보딩 미완료 사용자는 현재 페이지에 머물러 있음
       } else {
@@ -49,14 +57,21 @@ export default function LandingPage() {
         
         if (userProfile && userProfile.onboarding_completed) {
           if (process.env.NODE_ENV === 'development') {
-            console.log('Guest user profile found, redirecting to home');
+            logger.debug('Guest user profile found, redirecting to home');
           }
-          router.push('/home');
+          // Check for returnUrl parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const returnUrl = urlParams.get('returnUrl');
+          if (returnUrl) {
+            router.push(decodeURIComponent(returnUrl));
+          } else {
+            router.push('/home');
+          }
         }
       }
     } catch (error) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('사용자 상태 확인 예외:', error);
+        logger.error('사용자 상태 확인 예외:', error);
       }
     } finally {
       setIsCheckingAuth(false);
@@ -101,6 +116,14 @@ export default function LandingPage() {
       });
       // URL 파라미터 정리
       window.history.replaceState(null, '', window.location.pathname);
+    } else if (error === 'pkce_failure') {
+      toast({
+        title: "인증 실패",
+        description: "PKCE 인증에 실패했습니다. 다시 로그인해 주세요.",
+        variant: "destructive",
+      });
+      // URL 파라미터 정리
+      window.history.replaceState(null, '', window.location.pathname);
     }
   }, [toast]);
 
@@ -120,7 +143,7 @@ export default function LandingPage() {
         const code = urlParams.get('code');
         
         if (code) {
-          console.log('🔄 OAuth code detected, redirecting to callback');
+          logger.debug('🔄 OAuth code detected, redirecting to callback');
           router.replace(`/auth/callback${window.location.search}`);
           return;
         }
@@ -129,7 +152,7 @@ export default function LandingPage() {
         const error = urlParams.get('error');
         
         if (error) {
-          console.log('Auth error from URL:', error);
+          logger.debug('Auth error from URL:', error);
           
           // 에러 타입에 따른 사용자 친화적 메시지
           let errorMessage = '';
@@ -162,11 +185,11 @@ export default function LandingPage() {
         }
         
         // 인증 상태 확인
-        console.log('Checking initial auth state...');
+        logger.debug('Checking initial auth state...');
         checkAuthStateCallback();
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('인증 초기화 실패:', error);
+          logger.error('인증 초기화 실패:', error);
         }
         if (isMounted) {
           setIsCheckingAuth(false);
@@ -183,7 +206,7 @@ export default function LandingPage() {
       
       if (e.key === 'userProfile' || e.key === 'fortune_secure_userProfile') {
         if (process.env.NODE_ENV === 'development') {
-          console.log('User profile changed in storage');
+          logger.debug('User profile changed in storage');
         }
         checkAuthStateCallback();
       }
@@ -199,7 +222,7 @@ export default function LandingPage() {
 
   const handleGetStarted = useCallback(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log("시작하기 버튼 클릭");
+      logger.debug("시작하기 버튼 클릭");
     }
     router.push("/onboarding/profile");
   }, [router]);
@@ -211,12 +234,30 @@ export default function LandingPage() {
     
     try {
       if (provider === 'Google') {
+        // OAuth 시작 전 브라우저 확장 프로그램 간섭 제거
+        const suspiciousKeys = Object.keys(localStorage).filter(key => 
+          key.includes('fortune-auth-token-code-verifier') || 
+          (key.includes('code-verifier') && !key.startsWith('sb-'))
+        );
+        
+        if (suspiciousKeys.length > 0) {
+          logger.warn('🚨 Removing browser extension interference before OAuth:', suspiciousKeys);
+          suspiciousKeys.forEach(key => {
+            localStorage.removeItem(key);
+          });
+          
+          toast({
+            title: "브라우저 확장 프로그램 감지",
+            description: "로그인을 방해하는 요소를 제거했습니다. 계속 진행합니다...",
+          });
+        }
+        
         // 실제 Google OAuth 로그인 시작
         const { auth } = await import('@/lib/supabase');
         const { error } = await auth.signInWithGoogle();
         
         if (error) {
-          console.error('Google login error:', error);
+          logger.error('Google login error:', error);
           toast({
             title: "로그인 실패",
             description: "Google 로그인 중 문제가 발생했습니다. 다시 시도해주세요.",
@@ -241,7 +282,7 @@ export default function LandingPage() {
       }
     } catch (error: any) {
       if (process.env.NODE_ENV === 'development') {
-        console.error(`${provider} 로그인 처리 중 오류:`, error);
+        logger.error(`${provider} 로그인 처리 중 오류:`, error);
       }
       
       toast({

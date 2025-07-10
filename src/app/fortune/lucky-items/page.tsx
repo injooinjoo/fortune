@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -131,6 +133,7 @@ const wishCategories = [
 ];
 
 export default function LuckyItemsPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<UserInfo>({
@@ -242,7 +245,10 @@ export default function LuckyItemsPage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.birth_date || !formData.zodiac_sign) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -254,8 +260,11 @@ export default function LuckyItemsPage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

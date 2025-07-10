@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
 import { withRateLimit } from '@/middleware/rate-limit';
@@ -88,7 +89,7 @@ export function setSecurityHeaders(response: NextResponse): NextResponse {
  * 안전한 에러 응답 생성 (민감한 정보 제거)
  */
 export function createSafeErrorResponse(error: any, defaultMessage: string = '요청 처리 중 오류가 발생했습니다.'): NextResponse {
-  console.error('API Error:', error);
+  logger.error('API Error:', error);
   
   // 프로덕션에서는 상세 에러 메시지를 노출하지 않음
   const isDevelopment = process.env.NODE_ENV === 'development';

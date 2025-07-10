@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { TokenMonitor } from '@/lib/utils/token-monitor';
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: true });
 
     if (timelineError) {
-      console.error('Timeline 데이터 조회 오류:', timelineError);
+      logger.error('Timeline 데이터 조회 오류:', timelineError);
     }
 
     // 일별 집계
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
       .gte('created_at', startDate.toISOString());
 
     if (packageError) {
-      console.error('패키지 데이터 조회 오류:', packageError);
+      logger.error('패키지 데이터 조회 오류:', packageError);
     }
 
     const byPackage = packageData ? aggregateByPackage(packageData) : {};
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
       .gte('created_at', startDate.toISOString());
 
     if (userError) {
-      console.error('사용자 데이터 조회 오류:', userError);
+      logger.error('사용자 데이터 조회 오류:', userError);
     }
 
     const topUsers = await getTopUsers(userStats || []);
@@ -113,7 +114,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response);
 
   } catch (error) {
-    console.error('토큰 사용량 통계 조회 오류:', error);
+    logger.error('토큰 사용량 통계 조회 오류:', error);
     return NextResponse.json(
       { 
         error: '통계 조회 실패',

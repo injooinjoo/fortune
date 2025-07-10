@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateMovingFortune } from '@/ai/openai-client';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -7,7 +8,7 @@ import { createSuccessResponse, createErrorResponse, createFortuneResponse, hand
 
 // POST 요청 (상세 이사 정보로 분석)
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
-  console.log('🏠 이사운 API 요청 (상세 분석)');
+  logger.debug('🏠 이사운 API 요청 (상세 분석)');
   
   try {
     const body = await request.json();
@@ -25,7 +26,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       return createErrorResponse('이름과 생년월일이 필요합니다.', undefined, undefined, 400);
     }
 
-    console.log(`🔍 이사운 분석 시작: ${name} (${currentLocation} → ${newLocation})`);
+    logger.debug(`🔍 이사운 분석 시작: ${name} (${currentLocation} → ${newLocation})`);
 
     // 사용자 프로필 구성
     const profile = {
@@ -44,7 +45,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     // OpenAI를 사용한 이사 운세 분석
     const result = await generateMovingFortune(profile, movingDetails);
 
-    console.log('✅ 이사운 분석 완료');
+    logger.debug('✅ 이사운 분석 완료');
 
     return createFortuneResponse({ type: 'moving', user_info: profile,
         moving_details: movingDetails,
@@ -52,7 +53,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         generated_at: new Date().toISOString() }, 'moving', req.userId);
     
   } catch (error) {
-    console.error('❌ 이사운 분석 실패:', error);
+    logger.error('❌ 이사운 분석 실패:', error);
     return createSafeErrorResponse(error, '이사운 분석 중 오류가 발생했습니다.');
   }
 });

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -256,7 +257,7 @@ async function analyzeStartupFortune(request: StartupRequest): Promise<StartupFo
     // GPT 응답이 올바른 형식인지 검증 및 변환
     if (gptResult && typeof gptResult === 'object' && 
         typeof gptResult.score === 'number') {
-      console.log('GPT API 호출 성공');
+      logger.debug('GPT API 호출 성공');
       
       return {
         score: gptResult.score,
@@ -271,7 +272,7 @@ async function analyzeStartupFortune(request: StartupRequest): Promise<StartupFo
     }
     
   } catch (error) {
-    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    logger.error('GPT API 호출 실패, 백업 로직 사용:', error);
     
     // 백업 로직: 기존 알고리즘 실행
     return generatePersonalizedStartupFortune(request);
@@ -310,7 +311,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     return NextResponse.json(fortuneResult);
     
   } catch (error) {
-    console.error('Startup API error:', error);
+    logger.error('Startup API error:', error);
     return createSafeErrorResponse(error, '창업운 분석 중 오류가 발생했습니다.');
   }
 });

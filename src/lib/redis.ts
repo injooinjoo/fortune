@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { Redis } from '@upstash/redis';
 import { Ratelimit } from '@upstash/ratelimit';
 
@@ -16,7 +17,7 @@ export function getRedis(): Redis | null {
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
       });
     } catch (error) {
-      console.error('Failed to initialize Redis client:', error);
+      logger.error('Failed to initialize Redis client:', error);
     }
   }
   return redis;
@@ -81,7 +82,7 @@ export function getCacheClient(): Redis | null {
         token: process.env.UPSTASH_REDIS_REST_TOKEN,
       });
     } catch (error) {
-      console.error('Failed to initialize cache client:', error);
+      logger.error('Failed to initialize cache client:', error);
     }
   }
   return cacheClient;
@@ -96,7 +97,7 @@ export const cache = {
     try {
       return await client.get<T>(key);
     } catch (error) {
-      console.error('Cache get error:', error);
+      logger.error('Cache get error:', error);
       return null;
     }
   },
@@ -113,7 +114,7 @@ export const cache = {
       }
       return true;
     } catch (error) {
-      console.error('Cache set error:', error);
+      logger.error('Cache set error:', error);
       return false;
     }
   },
@@ -126,7 +127,7 @@ export const cache = {
       await client.del(key);
       return true;
     } catch (error) {
-      console.error('Cache delete error:', error);
+      logger.error('Cache delete error:', error);
       return false;
     }
   },
@@ -139,7 +140,7 @@ export const cache = {
       const result = await client.exists(key);
       return result === 1;
     } catch (error) {
-      console.error('Cache exists error:', error);
+      logger.error('Cache exists error:', error);
       return false;
     }
   },

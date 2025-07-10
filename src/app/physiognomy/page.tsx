@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,6 +104,7 @@ const getScoreText = (score: number) => {
 };
 
 export default function PhysiognomyPage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'upload' | 'result' | 'analyzing'>('upload');
   const [fontSize, setFontSize] = useState<'small' | 'medium' | 'large'>('medium');
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -186,7 +189,10 @@ export default function PhysiognomyPage() {
 
 const handleAnalyze = async () => {
     if (!selectedImage || !userName.trim()) {
-      alert('이름을 입력하고 사진을 선택해주세요.');
+      toast({
+      title: '이름을 입력하고 사진을 선택해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -235,16 +241,22 @@ const handleAnalyze = async () => {
         setResult(analysisResult);
         setStep('result');
       } else {
-        alert('분석 결과 저장에 실패했습니다. 다시 시도해주세요.');
+        toast({
+      title: '분석 결과 저장에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     } catch (error) {
-      console.error('분석 중 오류:', error);
+      logger.error('분석 중 오류:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+        toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     }
   };
@@ -286,13 +298,16 @@ const handleReset = () => {
         setResult(analysisResult);
       }
     } catch (error) {
-      console.error('재분석 중 오류:', error);
+      logger.error('재분석 중 오류:', error);
       
       // FortuneServiceError인 경우 에러 상태로 설정
       if (error instanceof FortuneServiceError) {
         setError(error);
       } else {
-        alert('재분석에 실패했습니다. 다시 시도해주세요.');
+        toast({
+      title: '재분석에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
       }
     }
   }, [userName, imageFile, regenerateFortune]);

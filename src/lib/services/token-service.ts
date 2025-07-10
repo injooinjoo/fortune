@@ -1,11 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { logger } from '@/lib/logger';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { FortuneCategory } from '../types/fortune-system';
-
-// Supabase 클라이언트
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export interface TokenBalance {
   balance: number;
@@ -21,6 +16,7 @@ export interface TokenDeductionResult {
 
 export class TokenService {
   private static instance: TokenService;
+  private supabase: SupabaseClient | null = null;
 
   private constructor() {}
 
@@ -31,13 +27,27 @@ export class TokenService {
     return TokenService.instance;
   }
 
+  private getSupabase(): SupabaseClient {
+    if (!this.supabase) {
+      // Only initialize when needed (server-side only)
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error('Supabase configuration missing');
+      }
+      this.supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
+    }
+    return this.supabase;
+  }
+
   /**
    * 사용자의 토큰 잔액 확인
    */
   async getTokenBalance(userId: string): Promise<TokenBalance> {
     try {
       // 1. 구독 상태 확인
-      const { data: subscription } = await supabase
+      const { data: subscription } = await this.getSupabase()
         .from('subscription_status')
         .select('plan_type, status, monthly_token_quota, tokens_used_this_period')
         .eq('user_id', userId)
@@ -54,7 +64,7 @@ export class TokenService {
       }
 
       // 2. 토큰 잔액 확인
-      const { data: userTokens } = await supabase
+      const { data: userTokens } = await this.getSupabase()
         .from('user_tokens')
         .select('balance')
         .eq('user_id', userId)
@@ -80,7 +90,7 @@ export class TokenService {
       };
 
     } catch (error) {
-      console.error('토큰 잔액 조회 실패:', error);
+      logger.error('토큰 잔액 조회 실패:', error);
       return {
         balance: 0,
         isUnlimited: false,
@@ -125,7 +135,7 @@ export class TokenService {
 
       // 구독자의 경우 월간 할당량에서 먼저 차감
       if (balance.subscriptionPlan === 'basic') {
-        const { data: subscription } = await supabase
+        const { data: subscription } = await this.getSupabase()
           .from('subscription_status')
           .select('monthly_token_quota, tokens_used_this_period')
           .eq('user_id', userId)
@@ -137,7 +147,7 @@ export class TokenService {
           
           if (remainingMonthly >= tokenCost) {
             // 월간 할당량에서 차감
-            await supabase
+            await this.getSupabase()
               .from('subscription_status')
               .update({
                 tokens_used_this_period: subscription.tokens_used_this_period + tokenCost,
@@ -156,7 +166,7 @@ export class TokenService {
       }
 
       // 일반 토큰에서 차감
-      const { data: userTokens } = await supabase
+      const { data: userTokens } = await this.getSupabase()
         .from('user_tokens')
         .select('balance, total_used')
         .eq('user_id', userId)
@@ -166,7 +176,7 @@ export class TokenService {
       const newBalance = currentBalance - tokenCost;
 
       // 토큰 차감
-      const { error } = await supabase
+      const { error } = await this.getSupabase()
         .from('user_tokens')
         .update({
           balance: newBalance,
@@ -178,7 +188,7 @@ export class TokenService {
       if (error) throw error;
 
       // 토큰 거래 기록
-      await supabase.from('token_transactions').insert({
+      await this.getSupabase().from('token_transactions').insert({
         user_id: userId,
         transaction_type: 'usage',
         amount: -tokenCost,
@@ -196,7 +206,7 @@ export class TokenService {
       };
 
     } catch (error) {
-      console.error('토큰 차감 실패:', error);
+      logger.error('토큰 차감 실패:', error);
       return {
         success: false,
         newBalance: 0,
@@ -215,7 +225,7 @@ export class TokenService {
   ): Promise<void> {
     try {
       // token_usage 테이블에 기록 (분석용)
-      await supabase.from('token_usage').insert({
+      await this.getSupabase().from('token_usage').insert({
         user_id: userId,
         package_name: fortuneCategory,
         prompt_tokens: 0, // AI 서비스에서 채워짐
@@ -227,7 +237,7 @@ export class TokenService {
         created_at: new Date().toISOString()
       });
     } catch (error) {
-      console.error('토큰 사용 기록 실패:', error);
+      logger.error('토큰 사용 기록 실패:', error);
       // 기록 실패는 치명적이지 않으므로 계속 진행
     }
   }
@@ -294,7 +304,7 @@ export class TokenService {
     reason: string
   ): Promise<boolean> {
     try {
-      const { data: userTokens } = await supabase
+      const { data: userTokens } = await this.getSupabase()
         .from('user_tokens')
         .select('balance')
         .eq('user_id', userId)
@@ -303,7 +313,7 @@ export class TokenService {
       const currentBalance = userTokens?.balance || 0;
       const newBalance = currentBalance + amount;
 
-      await supabase
+      await this.getSupabase()
         .from('user_tokens')
         .update({
           balance: newBalance,
@@ -311,7 +321,7 @@ export class TokenService {
         })
         .eq('user_id', userId);
 
-      await supabase.from('token_transactions').insert({
+      await this.getSupabase().from('token_transactions').insert({
         user_id: userId,
         transaction_type: 'refund',
         amount: amount,
@@ -322,7 +332,7 @@ export class TokenService {
 
       return true;
     } catch (error) {
-      console.error('토큰 환불 실패:', error);
+      logger.error('토큰 환불 실패:', error);
       return false;
     }
   }

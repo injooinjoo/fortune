@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -143,7 +144,7 @@ export default function LuckyJobPage() {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error('직업 운세 분석 오류:', error);
+      logger.error('직업 운세 분석 오류:', error);
       
       // 백업 로직
       const baseScore = rng.randomInt(0, 24) + 65;
@@ -208,7 +209,7 @@ export default function LuckyJobPage() {
       setResult(fortune);
       setStep('result');
     } catch (error) {
-      console.error('분석 실패:', error);
+      logger.error('분석 실패:', error);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -57,6 +58,7 @@ function generateMockResult(form: PastLifeForm): PastLifeResult {
 }
 
 export default function PastLifePage() {
+  const { toast } = useToast();
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<PastLifeForm>({ year: '', month: '', day: '', hour: '' });
@@ -64,7 +66,10 @@ export default function PastLifePage() {
 
   const handleSubmit = async () => {
     if (!form.year || !form.month || !form.day || !form.hour) {
-      alert('모든 정보를 입력해주세요.');
+      toast({
+      title: '모든 정보를 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
     setLoading(true);

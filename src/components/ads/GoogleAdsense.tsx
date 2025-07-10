@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 
@@ -122,7 +123,7 @@ export default function GoogleAdsense({
 
     // 이미 이 슬롯에 광고가 로드되었는지 확인
     if (isAdSlotLoaded(clientId, adSlot)) {
-      console.log(`✅ 광고 슬롯 ${adSlot}은 이미 로드됨`);
+      logger.debug(`✅ 광고 슬롯 ${adSlot}은 이미 로드됨`);
       return;
     }
 
@@ -134,7 +135,7 @@ export default function GoogleAdsense({
         // 컨테이너 너비 체크
         const adContainer = adRef.current;
         if (adContainer && adContainer.clientWidth < 250 && format === "auto") {
-          console.warn("광고 컨테이너 너비 부족:", adContainer.clientWidth);
+          logger.warn("광고 컨테이너 너비 부족:", adContainer.clientWidth);
           return;
         }
 
@@ -150,7 +151,7 @@ export default function GoogleAdsense({
 
         // 최대 시도 횟수 제한
         if (loadAttemptRef.current >= 3) {
-          console.warn(`❌ 광고 로드 최대 시도 횟수 초과: ${adSlot}`);
+          logger.warn(`❌ 광고 로드 최대 시도 횟수 초과: ${adSlot}`);
           return;
         }
 
@@ -159,10 +160,10 @@ export default function GoogleAdsense({
           window.adsbygoogle.push({});
           markAdSlotLoaded(clientId, adSlot);
           loadAttemptRef.current++;
-          console.log(`✅ 광고 로드 시도: ${adSlot}`);
+          logger.debug(`✅ 광고 로드 시도: ${adSlot}`);
         }
       } catch (error) {
-        console.error("❌ AdSense 광고 로드 실패:", error);
+        logger.error("❌ AdSense 광고 로드 실패:", error);
       }
     }, 1000); // 1초 디바운스
 
@@ -178,7 +179,7 @@ export default function GoogleAdsense({
   const adSlot = getAdSlot();
   
   if (!clientId || !adSlot) {
-    console.warn("AdSense 설정이 완료되지 않았습니다.");
+    logger.warn("AdSense 설정이 완료되지 않았습니다.");
     return <>{fallback}</>;
   }
 

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
@@ -363,7 +364,7 @@ async function analyzeInvestmentFortune(request: InvestmentRequest): Promise<Inv
     // GPT 응답이 올바른 형식인지 검증 및 변환
     if (gptResult && typeof gptResult === 'object' && 
         typeof gptResult.overall_luck === 'number') {
-      console.log('GPT API 호출 성공');
+      logger.debug('GPT API 호출 성공');
       
       return {
         overall_luck: gptResult.overall_luck,
@@ -384,7 +385,7 @@ async function analyzeInvestmentFortune(request: InvestmentRequest): Promise<Inv
     }
     
   } catch (error) {
-    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    logger.error('GPT API 호출 실패, 백업 로직 사용:', error);
     
     // 백업 로직: 기존 알고리즘 실행
     return generatePersonalizedInvestmentFortune(request);
@@ -429,7 +430,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(fortuneResult);
       
     } catch (error) {
-      console.error('Lucky investment API error:', error);
+      logger.error('Lucky investment API error:', error);
       return createErrorResponse('투자운 분석 중 오류가 발생했습니다.', undefined, undefined, 500);
     }
   });

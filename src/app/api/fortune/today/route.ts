@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
@@ -7,7 +8,7 @@ import { createSuccessResponse, createErrorResponse, createFortuneResponse, hand
 
 export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('📅 오늘의 운세 API 요청 (POST)');
+    logger.debug('📅 오늘의 운세 API 요청 (POST)');
     
     const { userProfile, error } = await extractUserInfo(request);
     
@@ -16,7 +17,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
         , undefined, undefined, 400);
     }
     
-    console.log(`🔍 오늘의 운세 요청: 사용자 = ${userProfile.name}, 인증 사용자 = ${request.userId}`);
+    logger.debug(`🔍 오늘의 운세 요청: 사용자 = ${userProfile.name}, 인증 사용자 = ${request.userId}`);
     
     // 인증된 사용자의 userId 사용
     const userId = request.userId!;
@@ -27,7 +28,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
       userProfile
     );
     
-    console.log('✅ 오늘의 운세 API 응답 완료:', userProfile.name);
+    logger.debug('✅ 오늘의 운세 API 응답 완료:', userProfile.name);
     
     return createSuccessResponse(result.data, undefined, { cached: result.cached,
       cache_source: result.cache_source, generated_at: result.generated_at
@@ -41,7 +42,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
 // GET 메서드도 인증 적용
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('📅 오늘의 운세 API 요청 (GET)');
+    logger.debug('📅 오늘의 운세 API 요청 (GET)');
     
     // 기본 사용자 프로필 생성
     const userProfile: UserProfile = {
@@ -62,7 +63,7 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       userProfile
     );
     
-    console.log('✅ 오늘의 운세 API 응답 완료');
+    logger.debug('✅ 오늘의 운세 API 응답 완료');
     
     return createSuccessResponse(result.data, undefined, { cached: result.cached,
       cache_source: result.cache_source, generated_at: result.generated_at

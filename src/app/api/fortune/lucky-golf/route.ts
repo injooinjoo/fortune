@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { selectGPTModel, callGPTAPI } from '@/config/ai-models';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -114,7 +115,7 @@ async function analyzeGolfFortune(info: GolfInfo): Promise<GolfFortune> {
     // GPT 응답이 올바른 형식인지 검증 및 변환
     if (gptResult && typeof gptResult === 'object' && 
         typeof gptResult.overall_luck === 'number') {
-      console.log('GPT API 호출 성공');
+      logger.debug('GPT API 호출 성공');
       
       // GPT 응답을 기존 인터페이스 형식으로 변환
       const transformedResult: GolfFortune = {
@@ -157,7 +158,7 @@ async function analyzeGolfFortune(info: GolfInfo): Promise<GolfFortune> {
     }
     
   } catch (error) {
-    console.error('GPT API 호출 실패, 백업 로직 사용:', error);
+    logger.error('GPT API 호출 실패, 백업 로직 사용:', error);
     
     // 백업 로직: 개선된 개인화 알고리즘
     return generatePersonalizedGolfFortune(info);
@@ -442,7 +443,7 @@ export const POST = withFortuneAuth(async (request: AuthenticatedRequest, fortun
     
     return NextResponse.json(golfFortune);
   } catch (error) {
-    console.error('골프 운세 분석 오류:', error);
+    logger.error('골프 운세 분석 오류:', error);
     return createSafeErrorResponse(error, '운세 분석 중 오류가 발생했습니다.');
   }
 });

@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import { useState, useCallback, useEffect } from 'react';
 import { z } from 'zod';
 import { 
@@ -34,7 +35,7 @@ const saveBatchToLocalCache = (batchData: any) => {
     try {
       localStorage.setItem(cacheKey, JSON.stringify(cacheData));
     } catch (error) {
-      console.error(`Failed to cache ${fortuneType}:`, error);
+      logger.error(`Failed to cache ${fortuneType}:`, error);
     }
   });
 };
@@ -241,7 +242,7 @@ export function useFortuneHistory(fortuneType?: string, limit: number = 10) {
       setHistory(historyData);
     } catch (err) {
       setError('운세 기록을 불러오는데 실패했습니다.');
-      console.error('운세 기록 로드 실패:', err);
+      logger.error('운세 기록 로드 실패:', err);
     } finally {
       setIsLoading(false);
     }

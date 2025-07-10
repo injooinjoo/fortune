@@ -1,5 +1,6 @@
 'use client';
 
+import { logger } from '@/lib/logger';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (err) {
       if (process.env.NODE_ENV === 'development') {
-        console.error('Auth refresh error:', err);
+        logger.error('Auth refresh error:', err);
       }
       setError(err instanceof Error ? err : new Error('Failed to refresh user'));
     }
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(session);
       } catch (err) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('Initial auth check error:', err);
+          logger.error('Initial auth check error:', err);
         }
         setError(err instanceof Error ? err : new Error('Failed to initialize auth'));
       } finally {
@@ -94,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // 로그인/로그아웃 이벤트만 로그
           if (process.env.NODE_ENV === 'development' && 
               (event === 'SIGNED_IN' || event === 'SIGNED_OUT')) {
-            console.log(`Auth event: ${event}`, newUser?.email);
+            logger.debug(`Auth event: ${event}`, newUser?.email);
           }
         }
       }

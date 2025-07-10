@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion } from "framer-motion";
 import AppHeader from "@/components/AppHeader";
@@ -332,7 +333,7 @@ export default function WealthPage() {
       const result = await response.json();
       return result;
     } catch (error) {
-      console.error('금전운 분석 오류:', error);
+      logger.error('금전운 분석 오류:', error);
       
       // 개선된 백업 로직 - 사용자 데이터 기반 개인화
       return generateBackupWealthFortune(formData);
@@ -348,7 +349,7 @@ export default function WealthPage() {
       setResult(fortune);
       setStep('result');
     } catch (error) {
-      console.error('분석 실패:', error);
+      logger.error('분석 실패:', error);
     } finally {
       setLoading(false);
     }

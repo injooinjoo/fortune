@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -173,7 +174,7 @@ export default function HourlyFortunePage() {
         throw new Error('운세 데이터를 받지 못했습니다.');
       }
     } catch (error) {
-      console.error('운세 생성 오류:', error);
+      logger.error('운세 생성 오류:', error);
       toast.error('운세 분석 중 오류가 발생했습니다. 다시 시도해주세요.', { id: loadingToast });
     }
   }, [generateFortune]);

@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -60,6 +62,7 @@ export default function ProfileCompletionModal({
   fortuneCategory,
   fortuneTitle
 }: ProfileCompletionModalProps) {
+  const { toast } = useToast();
   const [userInfo, setUserInfo] = useState<UserInfo>({
     name: '',
     birthDate: '',
@@ -127,8 +130,11 @@ export default function ProfileCompletionModal({
         onClose();
       }, 1500);
     } catch (error) {
-      console.error('프로필 저장 실패:', error);
-      alert('정보 저장에 실패했습니다. 다시 시도해주세요.');
+      logger.error('프로필 저장 실패:', error);
+      toast({
+      title: '정보 저장에 실패했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setIsSaving(false);
     }

@@ -94,33 +94,46 @@ export async function createOrUpdateCustomer(
   email: string,
   userId: string,
   name?: string
-): Promise<Stripe.Customer> {
+): Promise<Stripe.Customer & { ephemeralKey?: string }> {
   // 기존 고객 확인
   const existingCustomers = await stripe.customers.list({
     email,
     limit: 1
   });
 
+  let customer: Stripe.Customer;
+  
   if (existingCustomers.data.length > 0) {
     // 기존 고객 업데이트
-    return await stripe.customers.update(existingCustomers.data[0].id, {
+    customer = await stripe.customers.update(existingCustomers.data[0].id, {
       metadata: {
         userId,
         app: 'fortune'
       },
       name
     });
+  } else {
+    // 새 고객 생성
+    customer = await stripe.customers.create({
+      email,
+      name,
+      metadata: {
+        userId,
+        app: 'fortune'
+      }
+    });
   }
-
-  // 새 고객 생성
-  return await stripe.customers.create({
-    email,
-    name,
-    metadata: {
-      userId,
-      app: 'fortune'
-    }
-  });
+  
+  // Ephemeral Key 생성 (모바일 SDK용)
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    { customer: customer.id },
+    { apiVersion: '2024-11-20.acacia' }
+  );
+  
+  return {
+    ...customer,
+    ephemeralKey: ephemeralKey.secret
+  };
 }
 
 // 구독 취소

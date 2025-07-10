@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { supabase } from './supabase';
 import { DailyFortuneData, FortuneResult } from './schemas';
 import { format } from 'date-fns';
@@ -25,7 +26,7 @@ export class DailyFortuneService {
       try {
         return JSON.parse(stored);
       } catch (error) {
-        console.error('로컬 운세 데이터 파싱 실패:', error);
+        logger.error('로컬 운세 데이터 파싱 실패:', error);
         return null;
       }
     }
@@ -77,13 +78,13 @@ export class DailyFortuneService {
         .single();
 
       if (error && error.code !== 'PGRST116') { // PGRST116은 "no rows returned" 에러
-        console.error('오늘 운세 조회 실패:', error);
+        logger.error('오늘 운세 조회 실패:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('오늘 운세 조회 중 예외 발생:', error);
+      logger.error('오늘 운세 조회 중 예외 발생:', error);
       return null;
     }
   }
@@ -116,13 +117,13 @@ export class DailyFortuneService {
         .single();
 
       if (error) {
-        console.error('운세 저장 실패:', error);
+        logger.error('운세 저장 실패:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('운세 저장 중 예외 발생:', error);
+      logger.error('운세 저장 중 예외 발생:', error);
       return null;
     }
   }
@@ -169,7 +170,7 @@ export class DailyFortuneService {
           .single();
 
         if (error) {
-          console.error(`운세 upsert 실패 (시도 ${attempt}/3):`, error);
+          logger.error(`운세 upsert 실패 (시도 ${attempt}/3):`, error);
           if (attempt === 3) {
             return null;
           }
@@ -178,10 +179,10 @@ export class DailyFortuneService {
           continue;
         }
 
-        console.log(`✅ 운세 upsert 성공 (시도 ${attempt}/3)`);
+        logger.debug(`✅ 운세 upsert 성공 (시도 ${attempt}/3)`);
         return data;
       } catch (error) {
-        console.error(`운세 upsert 중 예외 발생 (시도 ${attempt}/3):`, error);
+        logger.error(`운세 upsert 중 예외 발생 (시도 ${attempt}/3):`, error);
         if (attempt === 3) {
           return null;
         }
@@ -212,7 +213,7 @@ export class DailyFortuneService {
             return data;
           }
         } catch (error) {
-          console.error('로컬 데이터 업데이트 실패:', error);
+          logger.error('로컬 데이터 업데이트 실패:', error);
         }
       }
     }
@@ -243,7 +244,7 @@ export class DailyFortuneService {
                 return data;
               }
             } catch (error) {
-              console.error('로컬 데이터 업데이트 실패:', error);
+              logger.error('로컬 데이터 업데이트 실패:', error);
             }
           }
         }
@@ -263,13 +264,13 @@ export class DailyFortuneService {
         .single();
 
       if (error) {
-        console.error('운세 업데이트 실패:', error);
+        logger.error('운세 업데이트 실패:', error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('운세 업데이트 중 예외 발생:', error);
+      logger.error('운세 업데이트 중 예외 발생:', error);
       return null;
     }
   }
@@ -297,13 +298,13 @@ export class DailyFortuneService {
       const { data, error } = await query;
 
       if (error) {
-        console.error('운세 기록 조회 실패:', error);
+        logger.error('운세 기록 조회 실패:', error);
         return [];
       }
 
       return data || [];
     } catch (error) {
-      console.error('운세 기록 조회 중 예외 발생:', error);
+      logger.error('운세 기록 조회 중 예외 발생:', error);
       return [];
     }
   }
@@ -325,7 +326,7 @@ export class DailyFortuneService {
       const { data: { user } } = await supabase.auth.getUser();
       return user?.id || null;
     } catch (error) {
-      console.error('사용자 ID 조회 실패:', error);
+      logger.error('사용자 ID 조회 실패:', error);
       return null;
     }
   }
@@ -355,13 +356,13 @@ export class DailyFortuneService {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Genkit API 호출 실패:', errorData);
+        logger.error('Genkit API 호출 실패:', errorData);
         throw new Error(`Genkit API error: ${errorData.message || response.statusText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Genkit API 호출 중 예외 발생:', error);
+      logger.error('Genkit API 호출 중 예외 발생:', error);
       throw error;
     }
   }

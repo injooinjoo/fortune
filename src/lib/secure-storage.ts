@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+
 // 보안 강화된 로컬 스토리지 유틸리티
 export class SecureStorage {
   private static readonly KEY_PREFIX = 'fortune_secure_';
@@ -43,7 +45,7 @@ export class SecureStorage {
     try {
       // 허용된 키인지 확인
       if (!this.ALLOWED_KEYS.includes(key)) {
-        console.warn(`SECURITY: 허용되지 않은 키입니다: ${key}`);
+        logger.warn(`SECURITY: 허용되지 않은 키입니다: ${key}`);
         return false;
       }
 
@@ -67,7 +69,7 @@ export class SecureStorage {
       
       return true;
     } catch (error) {
-      console.error('SecureStorage setItem failed:', error);
+      logger.error('SecureStorage setItem failed:', error);
       return false;
     }
   }
@@ -91,7 +93,7 @@ export class SecureStorage {
 
       return parsed.value;
     } catch (error) {
-      console.error('SecureStorage getItem failed:', error);
+      logger.error('SecureStorage getItem failed:', error);
       return null;
     }
   }
@@ -100,7 +102,7 @@ export class SecureStorage {
     try {
       localStorage.removeItem(this.KEY_PREFIX + key);
     } catch (error) {
-      console.error('SecureStorage removeItem failed:', error);
+      logger.error('SecureStorage removeItem failed:', error);
     }
   }
 
@@ -113,7 +115,7 @@ export class SecureStorage {
         }
       });
     } catch (error) {
-      console.error('SecureStorage clear failed:', error);
+      logger.error('SecureStorage clear failed:', error);
     }
   }
 
@@ -138,7 +140,7 @@ export class SecureStorage {
         }
       });
     } catch (error) {
-      console.error('SecureStorage cleanup failed:', error);
+      logger.error('SecureStorage cleanup failed:', error);
     }
   }
 }

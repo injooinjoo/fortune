@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -80,12 +81,12 @@ export default function AdLoadingScreen({
         .then(data => {
           if (isMountedRef.current) {
             setFetchedData(data);
-            console.log('✅ 운세 데이터 페칭 완료');
+            logger.debug('✅ 운세 데이터 페칭 완료');
           }
         })
         .catch(error => {
           if (isMountedRef.current) {
-            console.error('❌ 운세 데이터 페칭 실패:', error);
+            logger.error('❌ 운세 데이터 페칭 실패:', error);
             setFetchError(error);
           }
         });

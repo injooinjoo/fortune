@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { useState, useEffect } from 'react';
 import { 
   getUserProfile, 
@@ -29,7 +30,7 @@ export function useUserProfile(): UseUserProfileResult {
       const syncedProfile = await syncUserProfile();
       setProfile(syncedProfile);
     } catch (err) {
-      console.error('프로필 로드 실패:', err);
+      logger.error('프로필 로드 실패:', err);
       setError(err instanceof Error ? err : new Error('프로필 로드 실패'));
       
       // 에러 발생 시 로컬 프로필 시도
@@ -54,12 +55,12 @@ export function useUserProfile(): UseUserProfileResult {
         
         // Supabase 동기화 시도 (백그라운드)
         syncUserProfile().catch(err => 
-          console.error('프로필 동기화 실패:', err)
+          logger.error('프로필 동기화 실패:', err)
         );
       }
       return updatedProfile;
     } catch (err) {
-      console.error('프로필 업데이트 실패:', err);
+      logger.error('프로필 업데이트 실패:', err);
       setError(err instanceof Error ? err : new Error('프로필 업데이트 실패'));
       return null;
     }

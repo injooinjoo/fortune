@@ -1,0 +1,61 @@
+# Deliverfile for iOS App Store deployment
+
+# App Store Connect information
+app_identifier "com.fortune.app"
+username "your-apple-id@example.com"
+
+# Metadata and screenshots
+force true # Skip HTML report verification
+
+# Automatically submit for review after upload
+submit_for_review false
+
+# Phased release
+phased_release true
+
+# Price tier (0 = free)
+price_tier 0
+
+# Age rating configuration
+app_rating_config_path "./fastlane/metadata/app_rating_config.json"
+
+# App review information
+app_review_information(
+  first_name: "John",
+  last_name: "Doe",
+  phone_number: "+1 123 456 7890",
+  email_address: "review@fortune.com",
+  demo_user: "test@fortune.com",
+  demo_password: "TestPassword123!",
+  notes: "This app provides AI-based fortune telling services. Test account provided for review."
+)
+
+# Automatic release
+automatic_release false
+
+# Run precheck before submitting
+run_precheck_before_submit true
+
+# Skip screenshots upload (set to false when screenshots are ready)
+skip_screenshots false
+
+# Skip metadata upload
+skip_metadata false
+
+# Categories
+primary_category "LIFESTYLE"
+secondary_category "ENTERTAINMENT"
+
+# Trade representative contact info (required for apps distributed in Korea)
+trade_representative_contact_information(
+  first_name: "John",
+  last_name: "Doe",
+  address_line1: "123 Main Street",
+  city_name: "Seoul",
+  state: "Seoul",
+  country: "South Korea",
+  postal_code: "12345",
+  phone_number: "+82 10 1234 5678",
+  email_address: "legal@fortune.com",
+  is_displayed_on_app_store: false
+)

@@ -9,6 +9,7 @@ import {
   DailyComprehensiveData,
   InteractiveInput,
 } from '../types/fortune-system';
+import { logger } from '@/lib/logger';
 import { FortuneService } from './fortune-service';
 
 export class FortuneServiceRefactored {
@@ -16,7 +17,7 @@ export class FortuneServiceRefactored {
 
   constructor() {
     this.originalService = new FortuneService();
-    console.log("FortuneService is now refactored using Composition!");
+    logger.debug("FortuneService is now refactored using Composition!");
   }
 
   // getOrCreateFortune는 Refactored 버전의 핵심이므로 새로 작성
@@ -72,13 +73,13 @@ export class FortuneServiceRefactored {
 
   // --- 패키지 단위 생성 함수들 (내부 구현은 동일) ---
   private async generateLifeProfilePackage(userProfile: UserProfile): Promise<any> {
-    console.log(`[Package] Generating LIFE_PROFILE_PACKAGE for ${userProfile.name}`);
+    logger.debug(`[Package] Generating LIFE_PROFILE_PACKAGE for ${userProfile.name}`);
     const sajuData = this.originalService['generateSajuFromGPT'](userProfile);
     return { saju: sajuData };
   }
 
   private async generateDailyComprehensivePackage(userProfile: UserProfile): Promise<any> {
-     console.log(`[Package] Generating DAILY_COMPREHENSIVE_PACKAGE for ${userProfile.name}`);
+     logger.debug(`[Package] Generating DAILY_COMPREHENSIVE_PACKAGE for ${userProfile.name}`);
      const dailyData = await this.originalService['generateMbtiDailyFromGPT'](userProfile);
      return { daily: dailyData };
   }

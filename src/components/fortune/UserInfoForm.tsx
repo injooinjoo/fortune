@@ -1,5 +1,6 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,6 +80,7 @@ export default function UserInfoForm({
   submitText = "운세 보기",
   showSavedDataBadge = true,
 }: UserInfoFormProps) {
+  const { toast } = useToast();
   const [formData, setFormData] = useState<UserFormData>({
     name: '',
     birthDate: '',
@@ -116,7 +118,10 @@ export default function UserInfoForm({
     const missingFields = requiredFields.filter(field => !formData[field.key]);
     
     if (missingFields.length > 0) {
-      alert(`다음 정보를 입력해주세요: ${missingFields.map(f => f.label).join(', ')}`);
+      toast({
+      title: `다음 정보를 입력해주세요: ${missingFields.map(f => f.label).join(', ')}`,
+      variant: "default",
+    });
       return;
     }
 

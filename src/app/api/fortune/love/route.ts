@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { fortuneService, FortuneService } from '@/lib/services/fortune-service';
 import { UserProfile } from '@/lib/types/fortune-system';
@@ -8,14 +9,14 @@ import { createSuccessResponse, createErrorResponse, createFortuneResponse, hand
 export async function GET(request: NextRequest) {
   return withAuth(request, async (req: AuthenticatedRequest) => {
     try {
-      console.log('📍 연애운 API 요청 접수');
+      logger.debug('📍 연애운 API 요청 접수');
 
       // 인증된 사용자만 접근 가능
       if (!req.userId || req.userId === 'guest' || req.userId === 'system') {
         return createErrorResponse('로그인이 필요합니다.', undefined, undefined, 401);
       }
 
-      console.log(`🔍 연애운 요청: 사용자 ID = ${req.userId}`);
+      logger.debug(`🔍 연애운 요청: 사용자 ID = ${req.userId}`);
 
       // 실제 사용자 프로필을 가져옴
       const { profile, needsOnboarding } = await getUserProfileForAPI(req.userId);
@@ -36,13 +37,13 @@ export async function GET(request: NextRequest) {
         profile
       );
 
-      console.log('✅ 연애운 API 응답 준비 완료');
+      logger.debug('✅ 연애운 API 응답 준비 완료');
 
       // Use utility function to handle response with data spreading
       return handleFortuneResponseWithSpread(result, '연애운');
 
     } catch (error) {
-      console.error('❌ 연애운 API 오류:', error);
+      logger.error('❌ 연애운 API 오류:', error);
       
       return createErrorResponse(error instanceof Error ? error.message : '연애운 생성 중 오류가 발생했습니다', undefined, null, 500);
     }

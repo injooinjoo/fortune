@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
 import { FortuneService } from '@/lib/services/fortune-service';
 import { withFortuneAuth, createSafeErrorResponse } from '@/lib/security-api-utils';
@@ -8,12 +9,12 @@ import { getUserProfileForAPI } from '@/lib/api-utils';
 
 export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortuneService: FortuneService) => {
   try {
-    console.log('🤝 인맥보고서 API 요청 접수');
+    logger.debug('🤝 인맥보고서 API 요청 접수');
     
     const { searchParams } = new URL(request.url);
     const userId = request.userId!;
     
-    console.log(`🔍 인맥보고서 요청: 사용자 ID = ${userId}`);
+    logger.debug(`🔍 인맥보고서 요청: 사용자 ID = ${userId}`);
 
     // 기본 사용자 프로필 생성
     // 실제 사용자 프로필을 가져옴
@@ -34,12 +35,12 @@ export const GET = withFortuneAuth(async (request: AuthenticatedRequest, fortune
       profile
     );
 
-    console.log('✅ 인맥보고서 API 응답 완료:', userId);
+    logger.debug('✅ 인맥보고서 API 응답 완료:', userId);
 
-    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date( }).toISOString()
+    return createSuccessResponse(result, undefined, { cached: false, generated_at: new Date().toISOString() }
     );
   } catch (error) {
-    console.error('❌ 인맥보고서 API 오류:', error);
+    logger.error('❌ 인맥보고서 API 오류:', error);
     return NextResponse.json(
       { 
         success: false, 

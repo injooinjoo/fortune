@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { useState, useEffect, useCallback } from 'react';
 import { DailyFortuneService } from '@/lib/daily-fortune-service';
 import { DailyFortuneData, FortuneResult } from '@/lib/schemas';
@@ -57,7 +58,7 @@ export function useDailyFortune({
     } catch (err) {
       const errorMessage = '오늘 운세를 불러오는데 실패했습니다.';
       setError(errorMessage);
-      console.error('오늘 운세 로드 실패:', err);
+      logger.error('오늘 운세 로드 실패:', err);
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +95,7 @@ export function useDailyFortune({
         description: errorMessage,
         variant: "destructive",
       });
-      console.error('운세 저장 실패:', err);
+      logger.error('운세 저장 실패:', err);
       return false;
     } finally {
       setIsGenerating(false);
@@ -134,7 +135,7 @@ export function useDailyFortune({
         description: errorMessage,
         variant: "destructive",
       });
-      console.error('운세 재생성 실패:', err);
+      logger.error('운세 재생성 실패:', err);
       return false;
     } finally {
       setIsGenerating(false);
@@ -254,7 +255,7 @@ export function useFortuneHistory(fortuneType?: string, limit: number = 10) {
       setHistory(historyData);
     } catch (err) {
       setError('운세 기록을 불러오는데 실패했습니다.');
-      console.error('운세 기록 로드 실패:', err);
+      logger.error('운세 기록 로드 실패:', err);
     } finally {
       setIsLoading(false);
     }

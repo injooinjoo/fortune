@@ -5,6 +5,7 @@ import {
   GroupFortuneInputSchema,
   GroupFortuneOutputSchema 
 } from '@/lib/types/fortune-schemas';
+import { logger } from '@/lib/logger';
 import { z } from 'zod';
 
 export type SharedFortuneData = {
@@ -35,7 +36,7 @@ export class SharedFortuneService {
       
       return null;
     } catch (error) {
-      console.error('로컬 공유 운세 조회 오류:', error);
+      logger.error('로컬 공유 운세 조회 오류:', error);
       return null;
     }
   }
@@ -62,10 +63,10 @@ export class SharedFortuneService {
       const key = `shared_fortune_${groupKey}_${fortuneType}_${date}`;
       localStorage.setItem(key, JSON.stringify(sharedFortuneData));
       
-      console.log('✅ 공유 운세를 로컬 스토리지에 저장했습니다.');
+      logger.debug('✅ 공유 운세를 로컬 스토리지에 저장했습니다.');
       return sharedFortuneData;
     } catch (error) {
-      console.error('로컬 공유 운세 저장 오류:', error);
+      logger.error('로컬 공유 운세 저장 오류:', error);
       return null;
     }
   }
@@ -82,7 +83,7 @@ export class SharedFortuneService {
     // 1. 로컬 스토리지에서 캐시 확인
     const existingFortune = this.getSharedFortune(groupKey, fortuneType, date);
     if (existingFortune) {
-      console.log('🔄 캐시된 공유 운세를 반환합니다.');
+      logger.debug('🔄 캐시된 공유 운세를 반환합니다.');
       return existingFortune.fortune_data;
     }
 
@@ -103,7 +104,7 @@ export class SharedFortuneService {
     try {
         this.saveSharedFortune(groupKey, fortuneType, date, newFortuneData);
     } catch (e) {
-        console.error("공유 운세 저장 실패(진행에 영향 없음):", e);
+        logger.error("공유 운세 저장 실패(진행에 영향 없음):", e);
     }
 
     return newFortuneData;

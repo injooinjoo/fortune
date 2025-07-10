@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,10 +48,10 @@ export default function TojeongPage() {
     const fetchTojeongFortune = async () => {
       try {
         setLoading(true);
-        console.log('토정비결 데이터 요청 시작...');
+        logger.debug('토정비결 데이터 요청 시작...');
         
         // AuthContext에서 세션 가져오기
-        console.log('세션 상태:', session ? '로그인됨' : '미로그인');
+        logger.debug('세션 상태:', session ? '로그인됨' : '미로그인');
         
         const response = await fetch('/api/fortune/tojeong', {
           method: 'GET',
@@ -70,7 +71,7 @@ export default function TojeongPage() {
         }
 
         const result = await response.json();
-        console.log('토정비결 API 응답:', result);
+        logger.debug('토정비결 API 응답:', result);
         
         if (!result.success) {
           throw new Error(result.error || '토정비결 생성에 실패했습니다');
@@ -79,7 +80,7 @@ export default function TojeongPage() {
         setData(result.data);
         setError(null);
       } catch (err) {
-        console.error('토정비결 API 오류:', err);
+        logger.error('토정비결 API 오류:', err);
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
         setLoading(false);

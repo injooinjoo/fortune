@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import AppHeader from "@/components/AppHeader";
 import { DeterministicRandom } from '@/lib/deterministic-random';
+import { useAuth } from '@/contexts/auth-context';
 import { 
   Coffee, 
   Heart, 
@@ -109,6 +112,7 @@ const personalityOptions = [
 ];
 
 export default function BlindDatePage() {
+  const { toast } = useToast();
   // Initialize deterministic random for consistent results
   // Get actual user ID from auth context
   const { user } = useAuth();
@@ -149,7 +153,7 @@ export default function BlindDatePage() {
       const data = await response.json();
       return data.analysis || data;
     } catch (error) {
-      console.error('GPT 연동 실패, 기본 데이터 사용:', error);
+      logger.error('GPT 연동 실패, 기본 데이터 사용:', error);
       
       // GPT 실패시 기본 로직
       const baseScore = deterministicRandom.randomInt(60, 60 + 25 - 1); // 60-85 사이
@@ -215,7 +219,10 @@ export default function BlindDatePage() {
 
   const handleSubmit = async () => {
     if (!formData.name || !formData.age || !formData.experience_level || !formData.preferred_activity) {
-      alert('필수 정보를 모두 입력해주세요.');
+      toast({
+      title: '필수 정보를 모두 입력해주세요.',
+      variant: "default",
+    });
       return;
     }
 
@@ -227,8 +234,11 @@ export default function BlindDatePage() {
       setResult(analysisResult);
       setStep('result');
     } catch (error) {
-      console.error('분석 중 오류:', error);
-      alert('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
+      logger.error('분석 중 오류:', error);
+      toast({
+      title: '분석 중 오류가 발생했습니다. 다시 시도해주세요.',
+      variant: "destructive",
+    });
     } finally {
       setLoading(false);
     }

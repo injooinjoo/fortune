@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from '@/lib/logger';
 import { useCallback, useEffect, useState } from "react";
 
 interface HapticOptions {
@@ -35,7 +36,7 @@ export function useHaptic() {
     try {
       navigator.vibrate(patterns[intensity]);
     } catch (error) {
-      console.warn('Haptic feedback failed:', error);
+      logger.warn('Haptic feedback failed:', error);
     }
   }, [isSupported]);
 
