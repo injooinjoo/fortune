@@ -94,7 +94,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                   const Spacer(),
                   Icon(
                     Icons.arrow_drop_down_rounded,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ],
               ),
@@ -104,7 +104,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
           Text(
             '최대 30일 전후의 운세를 확인할 수 있습니다',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -193,7 +193,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
                     Text(
                       data['description'] as String,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                   ],

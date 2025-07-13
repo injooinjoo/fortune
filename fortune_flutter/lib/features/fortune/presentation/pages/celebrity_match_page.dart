@@ -59,7 +59,7 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
         Text(
           '당신과 닮은 연예인을 찾아보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -295,7 +295,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 3),
                   ),
@@ -327,7 +327,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Text(
@@ -454,7 +454,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
                     children: celebrityTraits.map((trait) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.amber.withOpacity(0.2),
+                        color: Colors.amber.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

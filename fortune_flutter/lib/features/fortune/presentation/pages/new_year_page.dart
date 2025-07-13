@@ -62,7 +62,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
         Text(
           '올 한 해 당신의 운세를 확인하세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -298,7 +298,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                   child: CircularProgressIndicator(
                     value: score / 100,
                     strokeWidth: 15,
-                    backgroundColor: Colors.white.withOpacity(0.3),
+                    backgroundColor: Colors.white.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       score >= 80 ? Colors.green : 
                       score >= 60 ? Colors.blue : 
@@ -377,7 +377,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -468,7 +468,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: Colors.purple.withOpacity(0.1),
+                      color: Colors.purple.withValues(alpha: 0.1),
                     ),
                   ),
                 ],
@@ -691,7 +691,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                 children: luckyItems.map((item) => Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

@@ -5,21 +5,29 @@ import '../../core/theme/app_theme.dart';
 
 class KoreanDatePicker extends StatefulWidget {
   final DateTime? initialDate;
-  final Function(DateTime) onDateSelected;
+  final DateTime? selectedDate; // Alias for initialDate
+  final Function(DateTime)? onDateSelected;
+  final Function(DateTime)? onDateChanged; // Alias for onDateSelected
   final String? label;
   final bool showAge;
   final DateTime? minDate;
   final DateTime? maxDate;
 
-  const KoreanDatePicker({
+  KoreanDatePicker({
     Key? key,
     this.initialDate,
-    required this.onDateSelected,
+    this.selectedDate,
+    this.onDateSelected,
+    this.onDateChanged,
     this.label,
     this.showAge = true,
     this.minDate,
     this.maxDate,
-  }) : super(key: key);
+  }) : assert(
+          onDateSelected != null || onDateChanged != null,
+          'Either onDateSelected or onDateChanged must be provided',
+        ),
+        super(key: key);
 
   @override
   State<KoreanDatePicker> createState() => _KoreanDatePickerState();
@@ -33,7 +41,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
 
   final List<int> years = List.generate(
     100,
-    (index) => DateTime.now().year - index,
+    (index) => DateTime.now().year - 99 + index,
   );
 
   List<int> get months => List.generate(12, (index) => index + 1);
@@ -46,7 +54,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
   @override
   void initState() {
     super.initState();
-    final date = widget.initialDate ?? DateTime.now();
+    final date = widget.initialDate ?? widget.selectedDate ?? DateTime.now();
     selectedYear = date.year;
     selectedMonth = date.month;
     selectedDay = date.day;
@@ -60,7 +68,9 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
     }
 
     final newDate = DateTime(selectedYear, selectedMonth, selectedDay);
-    widget.onDateSelected(newDate);
+    // Call whichever callback is provided
+    widget.onDateSelected?.call(newDate);
+    widget.onDateChanged?.call(newDate);
   }
 
   int _calculateAge() {
@@ -126,7 +136,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                         Text(
                           '만 $age세',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                     ],
@@ -137,7 +147,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                   duration: const Duration(milliseconds: 200),
                   child: Icon(
                     Icons.expand_more_rounded,
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -212,7 +222,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
@@ -263,7 +273,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
@@ -273,7 +283,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.2),
+              color: theme.colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: DropdownButton<int>(
@@ -335,8 +345,8 @@ class BirthDatePreview extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            theme.colorScheme.primary.withOpacity(0.1),
-            theme.colorScheme.secondary.withOpacity(0.05),
+            theme.colorScheme.primary.withValues(alpha: 0.1),
+            theme.colorScheme.secondary.withValues(alpha: 0.05),
           ],
         ),
         child: Column(
@@ -357,7 +367,7 @@ class BirthDatePreview extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -373,7 +383,7 @@ class BirthDatePreview extends StatelessWidget {
               Text(
                 '탭하여 변경',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ],

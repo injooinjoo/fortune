@@ -86,7 +86,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.go('/'),
         ),
       ),
       body: SafeArea(
@@ -227,8 +227,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: () => context.go('/login'),
-                      child: const Text('이미 계정이 있으신가요? 로그인'),
+                      onPressed: () => context.go('/'),
+                      child: const Text('이미 계정이 있으신가요? 처음으로'),
                     ),
                   ],
                 ),

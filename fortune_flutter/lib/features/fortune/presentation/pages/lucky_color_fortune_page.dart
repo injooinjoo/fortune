@@ -287,8 +287,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    (primaryColorInfo['color'] as Color).withOpacity(0.3),
-                    (secondaryColorInfo?['color'] as Color? ?? primaryColorInfo['color'] as Color).withOpacity(0.3),
+                    (primaryColorInfo['color'] as Color).withValues(alpha: 0.3),
+                    (secondaryColorInfo?['color'] as Color? ?? primaryColorInfo['color'] as Color).withValues(alpha: 0.3),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -319,7 +319,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.5),
+                color: color.withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -363,8 +363,8 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            (primaryColorInfo['color'] as Color).withOpacity(0.1),
-            (primaryColorInfo['color'] as Color).withOpacity(0.05),
+            (primaryColorInfo['color'] as Color).withValues(alpha: 0.1),
+            (primaryColorInfo['color'] as Color).withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -398,9 +398,9 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
               children: (primaryColorInfo['situations'] as List<String>).map((situation) {
                 return Chip(
                   label: Text(situation),
-                  backgroundColor: (primaryColorInfo['color'] as Color).withOpacity(0.2),
+                  backgroundColor: (primaryColorInfo['color'] as Color).withValues(alpha: 0.2),
                   side: BorderSide(
-                    color: (primaryColorInfo['color'] as Color).withOpacity(0.5),
+                    color: (primaryColorInfo['color'] as Color).withValues(alpha: 0.5),
                   ),
                 );
               }).toList(),
@@ -454,7 +454,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                   padding: const EdgeInsets.all(16),
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
-                  borderColor: color.withOpacity(0.3),
+                  borderColor: color.withValues(alpha: 0.3),
                   borderWidth: 1,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -551,10 +551,10 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: (colorInfo['color'] as Color).withOpacity(0.2),
+                              color: (colorInfo['color'] as Color).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: (colorInfo['color'] as Color).withOpacity(0.5),
+                                color: (colorInfo['color'] as Color).withValues(alpha: 0.5),
                               ),
                             ),
                             child: Text(
@@ -571,10 +571,10 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: (_colorMeanings[harmonyColors]?['color'] as Color?)?.withOpacity(0.2),
+                          color: (_colorMeanings[harmonyColors]?['color'] as Color?)?.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: (_colorMeanings[harmonyColors]?['color'] as Color?)?.withOpacity(0.5) ?? Colors.grey,
+                            color: (_colorMeanings[harmonyColors]?['color'] as Color?)?.withValues(alpha: 0.5) ?? Colors.grey,
                           ),
                         ),
                         child: Text(

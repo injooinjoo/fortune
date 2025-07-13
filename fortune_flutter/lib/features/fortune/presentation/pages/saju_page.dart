@@ -9,6 +9,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
 
 class SajuPage extends BaseFortunePage {
   const SajuPage({Key? key})
@@ -34,57 +35,39 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    await Future.delayed(const Duration(seconds: 2));
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final birthDate = user.userMetadata?['birthDate'] != null 
+        ? DateTime.parse(user.userMetadata!['birthDate'])
+        : DateTime.now();
+    
+    final fortune = await fortuneService.getSajuFortune(
+      userId: user.id,
+      birthDate: birthDate,
+    );
 
-    // Mock saju data
+    // Extract saju data from the fortune response
     _sajuData = {
-      'elements': {
+      'elements': fortune.additionalInfo?['elements'] ?? {
         '목(木)': 85,
         '화(火)': 70,
         '토(土)': 60,
         '금(金)': 75,
         '수(水)': 90,
       },
-      'talents': [
+      'talents': fortune.additionalInfo?['talents'] ?? [
         {'title': '리더십', 'description': '타고난 지도자의 기질을 가지고 있습니다', 'score': 90},
         {'title': '창의성', 'description': '독창적인 아이디어가 풍부합니다', 'score': 85},
         {'title': '인간관계', 'description': '사람들과 쉽게 친해집니다', 'score': 80},
       ],
-      'pastLife': {
+      'pastLife': fortune.additionalInfo?['pastLife'] ?? {
         'role': '조선시대 선비',
         'description': '학문을 사랑하고 정의를 추구했던 선비였습니다',
         'karma': '현생에서도 지식을 추구하고 올바른 길을 걷게 됩니다',
       },
     };
 
-    return Fortune(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: user.id,
-      type: 'saju',
-      content: '당신은 수(水) 기운이 강한 사주를 가지고 있습니다.',
-      createdAt: DateTime.now(),
-      // Extended properties
-      category: 'saju',
-      overallScore: 82,
-      description: '당신은 수(水) 기운이 강한 사주를 가지고 있습니다. 지혜롭고 유연한 성격으로 어떤 상황에서도 잘 적응합니다. 특히 창의적인 분야에서 큰 성과를 낼 수 있습니다.',
-      scoreBreakdown: {
-        '재물운': 75,
-        '직업운': 85,
-        '건강운': 70,
-        '애정운': 80,
-      },
-      luckyItems: {
-        '행운색': '검은색, 파란색',
-        '행운숫자': '1, 6',
-        '행운방향': '북쪽',
-      },
-      recommendations: [
-        '물과 관련된 활동이 행운을 가져다줍니다',
-        '창의적인 일을 시작하기 좋은 시기입니다',
-        '건강 관리에 더 신경 쓰세요',
-      ],
-    );
+    return fortune;
   }
 
   @override
@@ -151,10 +134,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                   color: Colors.transparent,
                 ),
                 radarBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 gridBorderData: BorderSide(
-                  color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
                 titleTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -162,7 +145,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                 ),
                 dataSets: [
                   RadarDataSet(
-                    fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    fillColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderColor: Theme.of(context).colorScheme.primary,
                     borderWidth: 2,
                     dataEntries: elements.values
@@ -306,13 +289,13 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
                     Text(
                       talent['description'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 8),
                     LinearProgressIndicator(
                       value: talent['score'] / 100,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         Theme.of(context).colorScheme.primary,
                       ),
@@ -369,10 +352,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.indigo.withOpacity(0.1),
+              color: Colors.indigo.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: Colors.indigo.withOpacity(0.3),
+                color: Colors.indigo.withValues(alpha: 0.3),
               ),
             ),
             child: Text(
@@ -393,7 +376,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(

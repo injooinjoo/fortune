@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/components/loading_states.dart';
@@ -9,8 +10,8 @@ import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../domain/models/fortune_result.dart';
+import '../../../../presentation/screens/ad_loading_screen.dart';
 
 typedef InputBuilder = Widget Function(BuildContext context, Function(Map<String, dynamic>) onSubmit);
 typedef ResultBuilder = Widget Function(BuildContext context, FortuneResult result, VoidCallback onShare);
@@ -84,41 +85,42 @@ class _BaseFortunePageV2State extends ConsumerState<BaseFortunePageV2>
     return sections;
   }
 
-  void _handleShare() {
+  void _handleShare() async {
     if (_fortuneResult == null) return;
     
-    // TODO: Implement share functionality
-    // For now, just show a toast
-    Toast.info(context, '공유 기능은 준비 중입니다');
+    try {
+      // Create share text
+      final shareText = '''
+🔮 ${widget.title} 결과
+
+${_fortuneResult!.content}
+
+${_fortuneResult!.luckyItems?.isNotEmpty == true ? '\n💫 행운의 아이템:\n${_fortuneResult!.luckyItems!.entries.map((e) => '• ${e.key}: ${e.value}').join('\n')}' : ''}
+
+${_fortuneResult!.recommendations?.isNotEmpty == true ? '\n📌 추천 사항:\n${_fortuneResult!.recommendations!.map((r) => '• $r').join('\n')}' : ''}
+
+---
+Fortune 앱에서 더 많은 운세를 확인하세요!
+''';
+
+      await Share.share(
+        shareText,
+        subject: '${widget.title} - Fortune 앱',
+      );
+      
+      // Log share event
+      debugPrint('Shared fortune: ${widget.fortuneType}');
+      
+    } catch (e) {
+      debugPrint('Share error: $e');
+      Toast.error(context, '공유 중 오류가 발생했습니다');
+    }
   }
 
   Future<void> _generateFortune(Map<String, dynamic> params) async {
-    // Check token availability first
+    // Check if user has unlimited access (premium)
     final tokenState = ref.read(tokenProvider);
-    final requiredTokens = tokenState.getTokensForFortuneType(widget.fortuneType);
-    
-    // Check if user has unlimited access
-    if (!tokenState.hasUnlimitedAccess) {
-      // Check if user has enough tokens
-      if (!tokenState.canConsumeTokens(requiredTokens)) {
-        // Show insufficient token modal
-        final shouldContinue = await TokenInsufficientModal.show(
-          context: context,
-          requiredTokens: requiredTokens,
-          fortuneType: widget.fortuneType,
-        );
-        
-        if (!shouldContinue) {
-          return;
-        }
-        
-        // Re-check after modal (user might have purchased tokens)
-        final newTokenState = ref.read(tokenProvider);
-        if (!newTokenState.canConsumeTokens(requiredTokens)) {
-          return;
-        }
-      }
-    }
+    final isPremium = tokenState.hasUnlimitedAccess;
 
     setState(() {
       _isLoading = true;
@@ -126,60 +128,85 @@ class _BaseFortunePageV2State extends ConsumerState<BaseFortunePageV2>
     });
 
     try {
-      // Generate fortune first (before consuming tokens)
-      final fortune = await ref.read(
-        fortuneGenerationProvider(
-          FortuneGenerationParams(
+      Fortune? generatedFortune;
+      
+      // Show ad loading screen (or premium loading for premium users)
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdLoadingScreen(
             fortuneType: widget.fortuneType,
-            userInfo: params,
+            fortuneTitle: widget.title,
+            isPremium: isPremium,
+            onComplete: () {
+              Navigator.pop(context);
+            },
+            onSkip: () {
+              Navigator.pop(context);
+              // Navigate to premium page
+              Navigator.pushNamed(context, '/premium');
+            },
+            fetchData: () async {
+              // Generate fortune during ad loading
+              final fortune = await ref.read(
+                fortuneGenerationProvider(
+                  FortuneGenerationParams(
+                    fortuneType: widget.fortuneType,
+                    userInfo: params,
+                  ),
+                ).future,
+              );
+              generatedFortune = fortune;
+              return fortune;
+            },
+            onAdComplete: isPremium ? null : () async {
+              // Reward tokens for watching ad (free users only)
+              await ref.read(tokenProvider.notifier).rewardTokensForAd(
+                fortuneType: widget.fortuneType,
+                rewardAmount: 1,
+              );
+            },
           ),
-        ).future,
+          fullscreenDialog: true,
+        ),
       );
-      
-      // Only consume tokens after successful fortune generation
-      if (!tokenState.hasUnlimitedAccess) {
-        final consumed = await ref.read(tokenProvider.notifier).consumeTokens(
-          fortuneType: widget.fortuneType,
-          amount: requiredTokens,
-          referenceId: fortune.id, // Link token consumption to this fortune
+
+      // Check if fortune was successfully generated
+      if (generatedFortune != null) {
+        // Convert Fortune to FortuneResult
+        final fortuneResult = FortuneResult(
+          id: generatedFortune!.id,
+          type: generatedFortune!.type,
+          date: DateTime.now().toString().split(' ')[0],
+          mainFortune: generatedFortune!.description,
+          summary: generatedFortune!.summary,
+          details: generatedFortune!.additionalInfo ?? {},
+          sections: _extractSections(generatedFortune!),
+          overallScore: generatedFortune!.overallScore,
+          scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
+            MapEntry(key, value is int ? value : (value as num).toInt())),
+          luckyItems: generatedFortune!.luckyItems,
+          recommendations: generatedFortune!.recommendations,
         );
+
+        setState(() {
+          _fortuneResult = fortuneResult;
+          _isLoading = false;
+        });
+
+        _animationController.forward();
         
-        if (!consumed) {
-          // Fortune was generated but token consumption failed
-          // Log this for admin review but show fortune to user
-          debugPrint('Warning: Fortune generated but token consumption failed for ${fortune.id}');
+        // Show success toast with token reward info
+        if (!isPremium && mounted) {
+          Toast.success(
+            context, 
+            '운세가 생성되었습니다! (1토큰 획득)',
+          );
         }
-      }
-      
-      // Convert Fortune to FortuneResult
-      final fortuneResult = FortuneResult(
-        id: fortune.id,
-        type: fortune.type,
-        date: DateTime.now().toString().split(' ')[0],
-        mainFortune: fortune.description,
-        summary: fortune.summary,
-        details: fortune.additionalInfo ?? {},
-        sections: _extractSections(fortune),
-        overallScore: fortune.overallScore,
-        scoreBreakdown: fortune.scoreBreakdown?.map((key, value) => 
-          MapEntry(key, value is int ? value : (value as num).toInt())),
-        luckyItems: fortune.luckyItems,
-        recommendations: fortune.recommendations,
-      );
-
-      setState(() {
-        _fortuneResult = fortuneResult;
-        _isLoading = false;
-      });
-
-      _animationController.forward();
-      
-      // Show success toast with token info
-      if (!tokenState.hasUnlimitedAccess && mounted) {
-        Toast.success(
-          context, 
-          '운세가 생성되었습니다. (${requiredTokens}토큰 사용)',
-        );
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
       setState(() {

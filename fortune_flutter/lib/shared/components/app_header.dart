@@ -8,12 +8,38 @@ import 'token_balance_widget.dart';
 
 enum FontSize { small, medium, large }
 
+extension FontSizeExtension on FontSize {
+  double get value {
+    switch (this) {
+      case FontSize.small:
+        return 14.0;
+      case FontSize.medium:
+        return 16.0;
+      case FontSize.large:
+        return 18.0;
+    }
+  }
+  
+  FontSize operator +(int value) {
+    if (this == FontSize.small && value > 0) return FontSize.medium;
+    if (this == FontSize.medium && value > 0) return FontSize.large;
+    if (this == FontSize.large && value < 0) return FontSize.medium;
+    if (this == FontSize.medium && value < 0) return FontSize.small;
+    return this;
+  }
+  
+  FontSize operator -(int value) {
+    return this + (-value);
+  }
+}
+
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final bool showBackButton;
   final bool showShareButton;
   final bool showFontSizeSelector;
   final bool showTokenBalance;
+  final bool showActions;
   final VoidCallback? onBackPressed;
   final VoidCallback? onSharePressed;
   final Function(FontSize)? onFontSizeChanged;
@@ -31,6 +57,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.showShareButton = false,
     this.showFontSizeSelector = false,
     this.showTokenBalance = true,
+    this.showActions = true,
     this.onBackPressed,
     this.onSharePressed,
     this.onFontSizeChanged,
@@ -99,8 +126,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                 border: Border(
                   bottom: BorderSide(
                     color: isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.1),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.black.withValues(alpha: 0.1),
                     width: 0.5,
                   ),
                 ),
@@ -159,7 +186,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         const TokenBalanceWidget(),
                         const SizedBox(width: 8),
                       ],
-                      if (actions != null) ...actions!,
+                      if (showActions && actions != null) ...actions!,
                     ],
                   ),
                 ),
@@ -253,7 +280,7 @@ class _SizeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.primaryColor.withOpacity(0.2)
+              ? theme.primaryColor.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),

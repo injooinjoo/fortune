@@ -172,7 +172,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -324,7 +324,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _durations.entries.map((entry) {
                   return DropdownMenuItem(
@@ -364,12 +364,12 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -393,7 +393,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _timePeriods.entries.map((entry) {
                   return DropdownMenuItem(
@@ -457,12 +457,12 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? _getFeelingColor(entry.key).withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? _getFeelingColor(entry.key).withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? _getFeelingColor(entry.key)
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -512,7 +512,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               Text(
                 '이 관계에서 배운 점을 선택하세요 (복수 선택)',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -536,12 +536,12 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     child: Chip(
                       label: Text(lesson),
                       backgroundColor: isSelected
-                          ? Colors.green.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? Colors.green.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? Colors.green
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
@@ -587,7 +587,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -715,7 +715,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                   child: CircularProgressIndicator(
                     value: closureLevel / 100,
                     strokeWidth: 20,
-                    backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getClosureColor(closureLevel),
                     ),
@@ -742,7 +742,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withOpacity(0.5),
+                color: theme.colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -832,7 +832,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
             LinearProgressIndicator(
               value: reunionChance / 100,
               minHeight: 20,
-              backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getProbabilityColor(reunionChance),
               ),
@@ -858,7 +858,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -961,7 +961,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                           shape: BoxShape.circle,
                           color: isCompleted
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                         child: Center(
                           child: isCompleted
@@ -989,13 +989,13 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                                 fontWeight: FontWeight.bold,
                                 color: isCompleted
                                     ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface.withOpacity(0.5),
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                             ),
                             Text(
                               _getStageDescription(stage['stage'] as String),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -1009,8 +1009,8 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       height: 30,
                       width: 2,
                       color: isCompleted
-                          ? theme.colorScheme.primary.withOpacity(0.3)
-                          : theme.colorScheme.onSurface.withOpacity(0.1),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     ),
                 ],
               );
@@ -1094,7 +1094,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                           Text(
                             _getLessonApplication(lesson),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.7),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -1107,7 +1107,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withOpacity(0.5),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -1122,8 +1122,8 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -1243,7 +1243,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -1253,7 +1253,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
                           topRight: Radius.circular(11),
@@ -1314,8 +1314,8 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withOpacity(0.1),
-                    Colors.orange.withOpacity(0.1),
+                    Colors.amber.withValues(alpha: 0.1),
+                    Colors.orange.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),

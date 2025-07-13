@@ -221,13 +221,13 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                   border: Border.all(
                     color: isSelected
                         ? colors.first
-                        : theme.colorScheme.outline.withOpacity(0.3),
+                        : theme.colorScheme.outline.withValues(alpha: 0.3),
                     width: isSelected ? 2 : 1,
                   ),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: colors.first.withOpacity(0.3),
+                            color: colors.first.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -286,7 +286,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
         Text(
           '여러 개 선택 가능',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 16),
@@ -309,12 +309,12 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 });
                 HapticUtils.selectionClick();
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               checkmarkColor: theme.colorScheme.primary,
               side: BorderSide(
                 color: isSelected
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             );
           }).toList(),
@@ -336,7 +336,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
               ? LinearGradient(
                   colors: [
                     theme.colorScheme.primary,
-                    theme.colorScheme.primary.withOpacity(0.8),
+                    theme.colorScheme.primary.withValues(alpha: 0.8),
                   ],
                 )
               : null,
@@ -348,7 +348,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             style: theme.textTheme.bodyLarge?.copyWith(
               color: canGenerate
                   ? Colors.white
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -366,7 +366,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       child: LiquidGlassContainer(
         padding: const EdgeInsets.all(32),
         borderRadius: BorderRadius.circular(32),
-        liquidColors: [...colors, colors.first.withOpacity(0.5)],
+        liquidColors: [...colors, colors.first.withValues(alpha: 0.5)],
         child: Column(
           children: [
             Container(
@@ -377,7 +377,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                 gradient: LinearGradient(colors: colors),
                 boxShadow: [
                   BoxShadow(
-                    color: colors.first.withOpacity(0.5),
+                    color: colors.first.withValues(alpha: 0.5),
                     blurRadius: 30,
                     spreadRadius: 10,
                   ),
@@ -402,7 +402,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
             Text(
               _getMbtiDescription(_selectedMbti!),
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.center,
             ),
@@ -460,7 +460,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -504,7 +504,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.2),
+                          color: Colors.green.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(
@@ -561,7 +561,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.2),
+                          color: Colors.orange.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Icon(

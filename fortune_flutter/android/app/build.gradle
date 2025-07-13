@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
 }
 
 android {
@@ -42,6 +43,10 @@ android {
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
             }
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {

@@ -200,7 +200,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
         label: Text(label),
         style: OutlinedButton.styleFrom(
           foregroundColor: color,
-          side: BorderSide(color: color.withOpacity(0.5)),
+          side: BorderSide(color: color.withValues(alpha: 0.5)),
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
       ),

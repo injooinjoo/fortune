@@ -65,14 +65,14 @@ class TokenBalance extends ConsumerWidget {
       gradient: isUnlimited
           ? GlassEffects.multiColorGradient(
               colors: [
-                const Color(0xFF7C3AED).withOpacity(0.2),
-                const Color(0xFF3B82F6).withOpacity(0.2),
+                const Color(0xFF7C3AED).withValues(alpha: 0.2),
+                const Color(0xFF3B82F6).withValues(alpha: 0.2),
               ],
             )
           : GlassEffects.multiColorGradient(
               colors: [
-                const Color(0xFFF59E0B).withOpacity(0.2),
-                const Color(0xFFEF4444).withOpacity(0.2),
+                const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                const Color(0xFFEF4444).withValues(alpha: 0.2),
               ],
             ),
       child: Row(
@@ -250,7 +250,7 @@ class TokenHistoryModal extends ConsumerWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withOpacity(0.2),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -296,8 +296,8 @@ class TokenHistoryModal extends ConsumerWidget {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: isAdd
-                                        ? Colors.green.withOpacity(0.2)
-                                        : Colors.red.withOpacity(0.2),
+                                        ? Colors.green.withValues(alpha: 0.2)
+                                        : Colors.red.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(

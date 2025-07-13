@@ -74,7 +74,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
         Text(
           '두 사람의 궁합을 확인해보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -237,7 +237,7 @@ class _ChemistryInputFormState extends State<_ChemistryInputForm> {
               label: Text(trait),
               selected: isSelected,
               onSelected: (selected) => onTraitToggled(trait, selected),
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               checkmarkColor: theme.colorScheme.primary,
             );
           }).toList(),
@@ -298,8 +298,8 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getScoreColor(overallScore).withOpacity(0.8),
-                  _getScoreColor(overallScore).withOpacity(0.6),
+                  _getScoreColor(overallScore).withValues(alpha: 0.8),
+                  _getScoreColor(overallScore).withValues(alpha: 0.6),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -335,7 +335,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                 Text(
                   '종합 궁합 점수',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -499,10 +499,10 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: Colors.orange.withOpacity(0.3),
+                          color: Colors.orange.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -549,8 +549,8 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.8),
-                            theme.colorScheme.secondary.withOpacity(0.8),
+                            theme.colorScheme.primary.withValues(alpha: 0.8),
+                            theme.colorScheme.secondary.withValues(alpha: 0.8),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(20),
@@ -610,7 +610,7 @@ class _ChemistryResultState extends ConsumerState<_ChemistryResult> {
               const SizedBox(height: 4),
               LinearProgressIndicator(
                 value: score / 100,
-                backgroundColor: Colors.grey.withOpacity(0.2),
+                backgroundColor: Colors.grey.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 minHeight: 8,
               ),

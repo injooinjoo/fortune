@@ -147,7 +147,7 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
               _selectedCategory = selected ? category : null;
             });
           },
-          selectedColor: (info['color'] as Color).withOpacity(0.8),
+          selectedColor: (info['color'] as Color).withValues(alpha: 0.8),
         );
       }).toList(),
     );
@@ -171,18 +171,18 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
           borderRadius: BorderRadius.circular(16),
           blur: 20,
           borderColor: isSelected 
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
               : Colors.transparent,
           borderWidth: isSelected ? 2 : 0,
           gradient: LinearGradient(
             colors: isSelected
                 ? [
-                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                    Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   ]
                 : [
-                    Colors.white.withOpacity(0.1),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.1),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
           ),
           child: InkWell(
@@ -383,13 +383,13 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.3),
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.1),
+                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.3),
+                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.1),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (primaryCategoryInfo['color'] as Color).withOpacity(0.5),
+                  color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.5),
                   blurRadius: 30,
                   spreadRadius: 10,
                 ),
@@ -414,7 +414,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: (primaryCategoryInfo['color'] as Color).withOpacity(0.2),
+              color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -476,20 +476,20 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
                   borderColor: isPrimary 
-                      ? (info['color'] as Color).withOpacity(0.5)
+                      ? (info['color'] as Color).withValues(alpha: 0.5)
                       : isSecondary
-                          ? (info['color'] as Color).withOpacity(0.3)
+                          ? (info['color'] as Color).withValues(alpha: 0.3)
                           : Colors.transparent,
                   borderWidth: isPrimary ? 2 : isSecondary ? 1 : 0,
                   gradient: LinearGradient(
                     colors: isPrimary || isSecondary
                         ? [
-                            (info['color'] as Color).withOpacity(0.2),
-                            (info['color'] as Color).withOpacity(0.1),
+                            (info['color'] as Color).withValues(alpha: 0.2),
+                            (info['color'] as Color).withValues(alpha: 0.1),
                           ]
                         : [
-                            Colors.white.withOpacity(0.05),
-                            Colors.white.withOpacity(0.02),
+                            Colors.white.withValues(alpha: 0.05),
+                            Colors.white.withValues(alpha: 0.02),
                           ],
                   ),
                   child: Column(
@@ -513,7 +513,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: (info['color'] as Color).withOpacity(0.3),
+                            color: (info['color'] as Color).withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -550,8 +550,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.amber.withOpacity(0.1),
-            Colors.amber.withOpacity(0.05),
+            Colors.amber.withValues(alpha: 0.1),
+            Colors.amber.withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -575,10 +575,10 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.1),
+                color: Colors.amber.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.amber.withOpacity(0.3),
+                  color: Colors.amber.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -641,10 +641,10 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -703,7 +703,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
             Text(
               purposeInfo['description'] as String,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 16),
@@ -713,9 +713,9 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               children: (purposeInfo['boostItems'] as List<String>).map((item) {
                 return Chip(
                   label: Text(item),
-                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                   ),
                 );
               }).toList(),

@@ -215,7 +215,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -451,12 +451,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         child: Chip(
                           label: Text(skill),
                           backgroundColor: isSelected
-                              ? Colors.green.withOpacity(0.2)
-                              : theme.colorScheme.surface.withOpacity(0.5),
+                              ? Colors.green.withValues(alpha: 0.2)
+                              : theme.colorScheme.surface.withValues(alpha: 0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? Colors.green
-                                : theme.colorScheme.onSurface.withOpacity(0.3),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -493,12 +493,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         child: Chip(
                           label: Text(skill),
                           backgroundColor: isSelected
-                              ? Colors.orange.withOpacity(0.2)
-                              : theme.colorScheme.surface.withOpacity(0.5),
+                              ? Colors.orange.withValues(alpha: 0.2)
+                              : theme.colorScheme.surface.withValues(alpha: 0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? Colors.orange
-                                : theme.colorScheme.onSurface.withOpacity(0.3),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -629,7 +629,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   child: CircularProgressIndicator(
                     value: battingAverage / 1000,
                     strokeWidth: 12,
-                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getBattingColor(battingAverage),
                     ),
@@ -687,7 +687,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -723,7 +723,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   width: 60,
                   height: 60,
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.blue, width: 2),
                   ),
@@ -777,9 +777,9 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             Container(
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
               ),
               child: Stack(
                 children: [
@@ -792,7 +792,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                         height: 120,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.white, width: 2),
-                          color: Colors.brown.withOpacity(0.3),
+                          color: Colors.brown.withValues(alpha: 0.3),
                         ),
                       ),
                     ),
@@ -852,7 +852,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -940,7 +940,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             LinearProgressIndicator(
               value: chemistryScore / 100,
               minHeight: 12,
-              backgroundColor: Colors.grey.withOpacity(0.2),
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getChemistryColor(chemistryScore),
               ),
@@ -1002,8 +1002,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.amber.withOpacity(0.2),
-                    Colors.orange.withOpacity(0.2),
+                    Colors.amber.withValues(alpha: 0.2),
+                    Colors.orange.withValues(alpha: 0.2),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),

@@ -22,8 +22,8 @@ class DailyTokenBanner extends ConsumerWidget {
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
               colors: [
-                Colors.green.shade400.withOpacity(0.3),
-                Colors.green.shade600.withOpacity(0.2),
+                Colors.green.shade400.withValues(alpha: 0.3),
+                Colors.green.shade600.withValues(alpha: 0.2),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -40,7 +40,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   height: 120,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -52,7 +52,7 @@ class DailyTokenBanner extends ConsumerWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                   ),
                 ),
               ),
@@ -78,7 +78,7 @@ class DailyTokenBanner extends ConsumerWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
+                            color: Colors.green.withValues(alpha: 0.3),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -109,7 +109,7 @@ class DailyTokenBanner extends ConsumerWidget {
                             '매일 3개의 무료 토큰을 받으세요!',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: (isDark ? Colors.white : Colors.black87)
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 0.7),
                             ),
                           ),
                         ],

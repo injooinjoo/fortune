@@ -204,7 +204,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -405,12 +405,12 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                         child: Chip(
                           label: Text(weakness),
                           backgroundColor: isSelected
-                              ? theme.colorScheme.primary.withOpacity(0.2)
-                              : theme.colorScheme.surface.withOpacity(0.5),
+                              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                              : theme.colorScheme.surface.withValues(alpha: 0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.3),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -523,8 +523,8 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    _getScoreColor(scorePrediction).withOpacity(0.3),
-                    _getScoreColor(scorePrediction).withOpacity(0.1),
+                    _getScoreColor(scorePrediction).withValues(alpha: 0.3),
+                    _getScoreColor(scorePrediction).withValues(alpha: 0.1),
                   ],
                 ),
                 border: Border.all(
@@ -597,7 +597,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.green.withOpacity(0.2),
+                    color: Colors.green.withValues(alpha: 0.2),
                     border: Border.all(color: Colors.green, width: 2),
                   ),
                   child: Center(
@@ -666,7 +666,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 24, color: theme.colorScheme.primary),
@@ -685,7 +685,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 Text(
                   description,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -803,7 +803,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 30),
@@ -850,8 +850,8 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.purple.withOpacity(0.1),
-                    Colors.blue.withOpacity(0.1),
+                    Colors.purple.withValues(alpha: 0.1),
+                    Colors.blue.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),

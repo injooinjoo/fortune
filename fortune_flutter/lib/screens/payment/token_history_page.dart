@@ -139,7 +139,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                 });
               },
               backgroundColor: Colors.transparent,
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               checkmarkColor: theme.colorScheme.primary,
               labelStyle: TextStyle(
                 color: isSelected 
@@ -150,7 +150,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               side: BorderSide(
                 color: isSelected 
                     ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface.withOpacity(0.3),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
               ),
             ),
           );
@@ -180,7 +180,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               child: Text(
                 dateLabel,
                 style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -216,7 +216,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -240,7 +240,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   Text(
                     DateFormat('HH:mm').format(transaction.createdAt),
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -263,7 +263,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   Text(
                     '잔액: ${transaction.balanceAfter}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -285,7 +285,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
             Icon(
               Icons.receipt_long_outlined,
               size: 80,
-              color: theme.colorScheme.onSurface.withOpacity(0.3),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -293,14 +293,14 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
                   ? '아직 토큰 사용 내역이 없습니다'
                   : '해당하는 내역이 없습니다',
               style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               '운세를 보거나 토큰을 구매하면\n여기에 내역이 표시됩니다',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               textAlign: TextAlign.center,
             ),

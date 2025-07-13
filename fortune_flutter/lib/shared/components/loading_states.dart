@@ -35,6 +35,36 @@ class LoadingIndicator extends StatelessWidget {
   }
 }
 
+// Alias for LoadingStateWidget for backward compatibility
+class LoadingStateWidget extends StatelessWidget {
+  final String? message;
+  final double size;
+  
+  const LoadingStateWidget({
+    super.key,
+    this.message,
+    this.size = 40.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        LoadingIndicator(size: size),
+        if (message != null) ...[
+          const SizedBox(height: 16),
+          Text(
+            message!,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
 class GlassLoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final Widget child;
@@ -57,7 +87,7 @@ class GlassLoadingOverlay extends StatelessWidget {
             child: GestureDetector(
               onTap: () {}, // Prevent taps from passing through
               child: Container(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 child: Center(
                   child: GlassContainer(
                     padding: const EdgeInsets.all(24),

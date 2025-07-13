@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 // MBTI 타입
 const List<String> mbtiTypes = [
   "ISTJ", "ISFJ", "INFJ", "INTJ",
@@ -8,14 +10,15 @@ const List<String> mbtiTypes = [
 
 // 성별 옵션
 enum Gender {
-  male('male', '남성'),
-  female('female', '여성'),
-  other('other', '선택 안함');
+  male('male', '남성', Icons.male),
+  female('female', '여성', Icons.female),
+  other('other', '선택 안함', Icons.transgender);
 
   final String value;
   final String label;
+  final IconData icon;
   
-  const Gender(this.value, this.label);
+  const Gender(this.value, this.label, this.icon);
 }
 
 // 운세 타입

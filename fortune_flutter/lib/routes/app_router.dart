@@ -4,13 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../screens/splash_screen.dart';
 import '../screens/landing_page.dart';
-import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/auth/callback_page.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
-import '../screens/onboarding/onboarding_screen.dart';
+import '../screens/profile/profile_edit_page.dart';
 import '../screens/onboarding/onboarding_page.dart';
+import '../screens/onboarding/onboarding_page_v2.dart';
+import '../screens/onboarding/onboarding_flow_page.dart';
+import '../screens/onboarding/enhanced_onboarding_flow.dart';
 import '../shared/layouts/main_shell.dart';
 import '../screens/physiognomy/physiognomy_screen.dart';
 import '../screens/premium/premium_screen.dart';
@@ -48,6 +50,10 @@ import '../features/fortune/presentation/pages/ex_lover_fortune_page.dart' as fo
 import '../features/fortune/presentation/pages/blind_date_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_golf_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_baseball_fortune_page.dart' as fortune_pages;
+import '../features/about/presentation/pages/about_page.dart';
+import '../features/policy/presentation/pages/policy_page.dart';
+import '../features/policy/presentation/pages/privacy_policy_page.dart';
+import '../features/policy/presentation/pages/terms_of_service_page.dart';
 import '../features/fortune/presentation/pages/lucky_tennis_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_running_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_cycling_fortune_page.dart' as fortune_pages;
@@ -77,10 +83,48 @@ import '../features/fortune/presentation/pages/network_report_fortune_page.dart'
 import '../features/fortune/presentation/pages/new_year_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/personality_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/saju_psychology_fortune_page.dart' as fortune_pages;
-import '../screens/payment/token_purchase_page.dart';
+import '../features/fortune/presentation/pages/lucky_lottery_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_stock_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_crypto_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/employment_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/talent_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/destiny_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/past_life_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/wish_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/timeline_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/talisman_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/yearly_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/startup_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_sidejob_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart' as fortune_pages;
+import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
 import '../screens/payment/token_history_page.dart';
 import '../screens/subscription/subscription_page.dart';
 import '../presentation/pages/todo/todo_list_page.dart';
+import '../features/interactive/presentation/pages/fortune_cookie_page.dart';
+import '../features/interactive/presentation/pages/interactive_list_page.dart';
+import '../features/interactive/presentation/pages/dream_interpretation_page.dart';
+import '../features/interactive/presentation/pages/psychology_test_page.dart';
+import '../features/interactive/presentation/pages/tarot_card_page.dart';
+import '../features/interactive/presentation/pages/face_reading_page.dart';
+import '../features/interactive/presentation/pages/taemong_page.dart';
+import '../features/interactive/presentation/pages/worry_bead_page.dart';
+import '../features/interactive/presentation/pages/dream_page.dart';
+import '../features/admin/presentation/pages/admin_dashboard_page.dart';
+import '../features/admin/presentation/pages/redis_monitor_page.dart';
+import '../features/admin/presentation/pages/token_usage_stats_page.dart';
+import '../features/support/presentation/pages/customer_support_page.dart';
+import '../features/history/presentation/pages/fortune_history_page.dart';
+import '../features/feedback/presentation/pages/feedback_page.dart';
+import '../features/misc/presentation/pages/consult_page.dart';
+import '../features/misc/presentation/pages/explore_page.dart';
+import '../features/misc/presentation/pages/special_page.dart';
+import '../features/misc/presentation/pages/test_ads_page.dart';
+import '../features/misc/presentation/pages/wish_wall_page.dart';
+import '../features/feed/presentation/pages/feed_page.dart';
+import '../core/utils/profile_validation.dart';
+import '../services/storage_service.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   // Check if current URL is callback to preserve it
@@ -108,17 +152,48 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       print('Session exists: $isAuth');
       print('User ID: ${session?.user?.id}');
       
-      final isAuthRoute = state.matchedLocation == '/login' || 
-                         state.matchedLocation == '/signup' ||
-                         state.matchedLocation == '/' ||
-                         state.matchedLocation == '/auth/callback';
+      // Define routes that don't require auth or profile
+      final publicRoutes = [
+        '/',
+        '/signup',
+        '/auth/callback',
+        '/onboarding',
+        '/onboarding/profile',
+        '/onboarding/flow',
+      ];
       
-      print('Is auth route: $isAuthRoute');
+      final isPublicRoute = publicRoutes.contains(state.matchedLocation);
+      final isOnboardingRoute = state.matchedLocation.startsWith('/onboarding');
       
-      // 인증이 필요한 경로에서 인증되지 않은 경우
-      if (!isAuth && !isAuthRoute) {
-        print('Redirecting to landing page - no auth');
+      print('Is public route: $isPublicRoute');
+      print('Is onboarding route: $isOnboardingRoute');
+      
+      // Check if user is in guest mode
+      final storageService = StorageService();
+      final isGuest = await storageService.isGuestMode();
+      
+      // If not authenticated and not guest, and trying to access protected route
+      if (!isAuth && !isGuest && !isPublicRoute) {
+        print('Redirecting to landing page - no auth and not guest');
         return '/';
+      }
+      
+      // Check profile completion for authenticated users
+      // Skip check if already on onboarding, auth routes, or if user is a guest
+      if (!isOnboardingRoute && state.matchedLocation != '/auth/callback' && state.matchedLocation != '/') {
+        final storageService = StorageService();
+        final isGuest = await storageService.isGuestMode();
+        
+        // Guests can access all routes without onboarding
+        if (!isGuest) {
+          final needsOnboarding = await ProfileValidation.needsOnboarding();
+          print('Needs onboarding: $needsOnboarding');
+          
+          if (needsOnboarding) {
+            print('Redirecting to onboarding - profile incomplete');
+            return '/onboarding';
+          }
+        }
       }
       
       print('No redirect needed');
@@ -138,11 +213,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
-        path: '/login',
-        name: 'login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
         path: '/signup',
         name: 'signup',
         builder: (context, state) => const SignupScreen(),
@@ -155,12 +225,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (context, state) => const OnboardingFlowPage(),
       ),
       GoRoute(
         path: '/onboarding/profile',
         name: 'onboarding-profile',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) => const OnboardingPageV2(),
+      ),
+      GoRoute(
+        path: '/onboarding/flow',
+        name: 'onboarding-flow',
+        builder: (context, state) => const EnhancedOnboardingFlow(),
       ),
       
       // Main app shell with persistent navigation
@@ -182,6 +257,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/profile',
             name: 'profile',
             builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'edit',
+                name: 'profile-edit',
+                builder: (context, state) => const ProfileEditPage(),
+              ),
+            ],
           ),
           
           // Physiognomy route
@@ -198,11 +280,160 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const PremiumScreen(),
           ),
           
+          // Feed route
+          GoRoute(
+            path: '/feed',
+            name: 'feed',
+            builder: (context, state) => const FeedPage(),
+          ),
+          
+          // Admin routes
+          GoRoute(
+            path: '/admin',
+            name: 'admin',
+            builder: (context, state) => const AdminDashboardPage(),
+            routes: [
+              GoRoute(
+                path: 'redis',
+                name: 'admin-redis',
+                builder: (context, state) => const RedisMonitorPage(),
+              ),
+              GoRoute(
+                path: 'token-usage',
+                name: 'admin-token-usage',
+                builder: (context, state) => const TokenUsageStatsPage(),
+              ),
+            ],
+          ),
+          
+          // Support route
+          GoRoute(
+            path: '/support',
+            name: 'support',
+            builder: (context, state) => const CustomerSupportPage(),
+          ),
+          
+          // About route
+          GoRoute(
+            path: '/about',
+            name: 'about',
+            builder: (context, state) => const AboutPage(),
+          ),
+          
+          // Policy routes
+          GoRoute(
+            path: '/policy',
+            name: 'policy',
+            builder: (context, state) => const PolicyPage(),
+            routes: [
+              GoRoute(
+                path: 'privacy',
+                name: 'privacy-policy',
+                builder: (context, state) => const PrivacyPolicyPage(),
+              ),
+              GoRoute(
+                path: 'terms',
+                name: 'terms-of-service',
+                builder: (context, state) => const TermsOfServicePage(),
+              ),
+            ],
+          ),
+          
           // TODO route
           GoRoute(
             path: '/todo',
             name: 'todo',
             builder: (context, state) => const TodoListPage(),
+          ),
+          
+          // History route
+          GoRoute(
+            path: '/history',
+            name: 'history',
+            builder: (context, state) => const FortuneHistoryPage(),
+          ),
+          
+          // Feedback route
+          GoRoute(
+            path: '/feedback',
+            name: 'feedback',
+            builder: (context, state) => const FeedbackPage(),
+          ),
+          
+          // Misc routes
+          GoRoute(
+            path: '/consult',
+            name: 'consult',
+            builder: (context, state) => const ConsultPage(),
+          ),
+          GoRoute(
+            path: '/explore',
+            name: 'explore',
+            builder: (context, state) => const ExplorePage(),
+          ),
+          GoRoute(
+            path: '/special',
+            name: 'special',
+            builder: (context, state) => const SpecialPage(),
+          ),
+          GoRoute(
+            path: '/test-ads',
+            name: 'test-ads',
+            builder: (context, state) => const TestAdsPage(),
+          ),
+          GoRoute(
+            path: '/wish-wall',
+            name: 'wish-wall',
+            builder: (context, state) => const WishWallPage(),
+          ),
+          
+          // Interactive routes
+          GoRoute(
+            path: '/interactive',
+            name: 'interactive',
+            builder: (context, state) => const InteractiveListPage(),
+            routes: [
+              GoRoute(
+                path: 'fortune-cookie',
+                name: 'interactive-fortune-cookie',
+                builder: (context, state) => const FortuneCookiePage(),
+              ),
+              GoRoute(
+                path: 'dream',
+                name: 'interactive-dream',
+                builder: (context, state) => const DreamInterpretationPage(),
+              ),
+              GoRoute(
+                path: 'psychology-test',
+                name: 'interactive-psychology-test',
+                builder: (context, state) => const PsychologyTestPage(),
+              ),
+              GoRoute(
+                path: 'tarot',
+                name: 'interactive-tarot',
+                builder: (context, state) => const TarotCardPage(),
+              ),
+              GoRoute(
+                path: 'face-reading',
+                name: 'interactive-face-reading',
+                builder: (context, state) => const FaceReadingPage(),
+              ),
+              GoRoute(
+                path: 'taemong',
+                name: 'interactive-taemong',
+                builder: (context, state) => const TaemongPage(),
+              ),
+              GoRoute(
+                path: 'worry-bead',
+                name: 'interactive-worry-bead',
+                builder: (context, state) => const WorryBeadPage(),
+              ),
+              GoRoute(
+                path: 'dream-journal',
+                name: 'interactive-dream-journal',
+                builder: (context, state) => const DreamPage(),
+              ),
+            ],
           ),
           
           // Fortune routes
@@ -521,6 +752,81 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'fortune-saju-psychology',
             builder: (context, state) => const fortune_pages.SajuPsychologyFortunePage(),
           ),
+          GoRoute(
+            path: 'lucky-lottery',
+            name: 'fortune-lucky-lottery',
+            builder: (context, state) => const fortune_pages.LuckyLotteryFortunePage(),
+          ),
+          GoRoute(
+            path: 'lucky-stock',
+            name: 'fortune-lucky-stock',
+            builder: (context, state) => const fortune_pages.LuckyStockFortunePage(),
+          ),
+          GoRoute(
+            path: 'lucky-crypto',
+            name: 'fortune-lucky-crypto',
+            builder: (context, state) => const fortune_pages.LuckyCryptoFortunePage(),
+          ),
+          GoRoute(
+            path: 'employment',
+            name: 'fortune-employment',
+            builder: (context, state) => const fortune_pages.EmploymentFortunePage(),
+          ),
+          GoRoute(
+            path: 'talent',
+            name: 'fortune-talent',
+            builder: (context, state) => const fortune_pages.TalentFortunePage(),
+          ),
+          GoRoute(
+            path: 'destiny',
+            name: 'fortune-destiny',
+            builder: (context, state) => const fortune_pages.DestinyFortunePage(),
+          ),
+          GoRoute(
+            path: 'past-life',
+            name: 'fortune-past-life',
+            builder: (context, state) => const fortune_pages.PastLifeFortunePage(),
+          ),
+          GoRoute(
+            path: 'wish',
+            name: 'fortune-wish',
+            builder: (context, state) => const fortune_pages.WishFortunePage(),
+          ),
+          GoRoute(
+            path: 'timeline',
+            name: 'fortune-timeline',
+            builder: (context, state) => const fortune_pages.TimelineFortunePage(),
+          ),
+          GoRoute(
+            path: 'talisman',
+            name: 'fortune-talisman',
+            builder: (context, state) => const fortune_pages.TalismanFortunePage(),
+          ),
+          GoRoute(
+            path: 'yearly',
+            name: 'fortune-yearly',
+            builder: (context, state) => const fortune_pages.YearlyFortunePage(),
+          ),
+          GoRoute(
+            path: 'startup',
+            name: 'fortune-startup',
+            builder: (context, state) => const fortune_pages.StartupFortunePage(),
+          ),
+          GoRoute(
+            path: 'lucky-sidejob',
+            name: 'fortune-lucky-sidejob',
+            builder: (context, state) => const fortune_pages.LuckySideJobFortunePage(),
+          ),
+          GoRoute(
+            path: 'lucky-exam',
+            name: 'fortune-lucky-exam',
+            builder: (context, state) => const fortune_pages.LuckyExamFortunePage(),
+          ),
+          GoRoute(
+            path: 'lucky-realestate',
+            name: 'fortune-lucky-realestate',
+            builder: (context, state) => const fortune_pages.LuckyRealEstateFortunePage(),
+          ),
           ],
         ),
       ],
@@ -530,7 +836,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     GoRoute(
       path: '/payment/tokens',
       name: 'token-purchase',
-      builder: (context, state) => const TokenPurchasePage(),
+      builder: (context, state) => const TokenPurchasePageV2(),
     ),
     GoRoute(
       path: '/payment/history',

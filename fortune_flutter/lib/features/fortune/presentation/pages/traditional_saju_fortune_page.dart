@@ -539,7 +539,7 @@ ${_formatMajorFortunes(majorFortunes)}
       borderRadius: BorderRadius.circular(12),
       blur: 10,
       borderColor: isDay 
-          ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
           : Colors.transparent,
       borderWidth: isDay ? 2 : 0,
       child: Column(
@@ -554,7 +554,7 @@ ${_formatMajorFortunes(majorFortunes)}
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (stem['color'] as Color).withOpacity(0.2),
+              color: (stem['color'] as Color).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -569,7 +569,7 @@ ${_formatMajorFortunes(majorFortunes)}
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -711,7 +711,7 @@ ${_formatMajorFortunes(majorFortunes)}
                             width: 60,
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
-                              color: (info['color'] as Color).withOpacity(0.2),
+                              color: (info['color'] as Color).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(
@@ -737,7 +737,7 @@ ${_formatMajorFortunes(majorFortunes)}
                                 const SizedBox(height: 4),
                                 LinearProgressIndicator(
                                   value: count / 3 * _tenGodsController.value,
-                                  backgroundColor: (info['color'] as Color).withOpacity(0.2),
+                                  backgroundColor: (info['color'] as Color).withValues(alpha: 0.2),
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     info['color'] as Color,
                                   ),
@@ -802,13 +802,13 @@ ${_formatMajorFortunes(majorFortunes)}
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isCurrent 
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                      ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isCurrent 
-                        ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
-                        : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+                        : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                     width: isCurrent ? 2 : 1,
                   ),
                 ),
@@ -853,7 +853,7 @@ ${_formatMajorFortunes(majorFortunes)}
                     Text(
                       fortune['interpretation'] as String,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

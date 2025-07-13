@@ -111,7 +111,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     center: Alignment.center,
                     radius: 1.5,
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.1),
+                      theme.colorScheme.primary.withValues(alpha: 0.1),
                       Colors.transparent,
                     ],
                   ),
@@ -128,7 +128,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.05),
+                            theme.colorScheme.primary.withValues(alpha: 0.05),
                             Colors.transparent,
                           ],
                         ),
@@ -165,7 +165,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withOpacity(0.3),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
                             blurRadius: 30,
                             spreadRadius: 10,
                           ),
@@ -227,7 +227,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                           // Background Progress Track
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
+                              color: Colors.white.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(25),
                             ),
                           ),
@@ -250,7 +250,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                                     boxShadow: [
                                       BoxShadow(
                                         color: theme.colorScheme.primary
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 10,
                                         spreadRadius: 2,
                                       ),
@@ -278,10 +278,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Column(

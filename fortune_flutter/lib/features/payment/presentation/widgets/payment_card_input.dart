@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_stripe/flutter_stripe.dart';
-import '../../../../theme/app_colors.dart';
-import '../../../../theme/app_text_styles.dart';
-import '../../../../widgets/common/custom_card.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../presentation/widgets/common/custom_card.dart';
 
 class PaymentCardInput extends StatefulWidget {
   final Function(CardDetails) onCardDetailsComplete;
@@ -23,24 +24,31 @@ class PaymentCardInput extends StatefulWidget {
 }
 
 class _PaymentCardInputState extends State<PaymentCardInput> {
-  final CardFormEditController _controller = CardFormEditController();
+  CardFormEditController? _controller;
   bool _isComplete = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(_onCardDetailsChanged);
+    if (!kIsWeb) {
+      _controller = CardFormEditController();
+      _controller!.addListener(_onCardDetailsChanged);
+    }
   }
 
   @override
   void dispose() {
-    _controller.removeListener(_onCardDetailsChanged);
-    _controller.dispose();
+    if (!kIsWeb && _controller != null) {
+      _controller!.removeListener(_onCardDetailsChanged);
+      _controller!.dispose();
+    }
     super.dispose();
   }
 
   void _onCardDetailsChanged() {
-    final details = _controller.details;
+    if (_controller == null) return;
+    
+    final details = _controller!.details;
     final isComplete = details.complete == true;
     
     if (_isComplete != isComplete) {
@@ -72,23 +80,59 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
             child: Column(
               children: [
                 // Stripe 카드 입력 폼
-                CardFormField(
-                  controller: _controller,
-                  style: CardFormStyle(
-                    backgroundColor: AppColors.surface,
-                    borderColor: AppColors.divider,
-                    borderWidth: 1,
-                    borderRadius: 12,
-                    cursorColor: AppColors.primary,
-                    textColor: AppColors.textPrimary,
-                    placeholderColor: AppColors.textSecondary,
-                    fontSize: 16,
-                    fontFamily: 'Pretendard',
+                if (kIsWeb) ...[
+                  // Web platform placeholder
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.divider),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.credit_card,
+                          size: 48,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          '웹 브라우저에서는 결제가 지원되지 않습니다.',
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '모바일 앱을 이용해주세요.',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                   ),
-                  enablePostalCode: false,
-                  autofocus: true,
-                  dangerouslyGetFullCardDetails: true,
-                ),
+                ] else ...[
+                  CardFormField(
+                    controller: _controller!,
+                    style: CardFormStyle(
+                      backgroundColor: AppColors.surface,
+                      borderColor: AppColors.divider,
+                      borderWidth: 1,
+                      borderRadius: 12,
+                      cursorColor: AppColors.primary,
+                      textColor: AppColors.textPrimary,
+                      placeholderColor: AppColors.textSecondary,
+                      fontSize: 16,
+                      fontFamily: 'Pretendard',
+                    ),
+                    enablePostalCode: false,
+                    autofocus: true,
+                    dangerouslyGetFullCardDetails: true,
+                  ),
+                ],
                 
                 if (widget.showSaveCard) ...[
                   const SizedBox(height: 16),
@@ -132,7 +176,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+        color: AppColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(

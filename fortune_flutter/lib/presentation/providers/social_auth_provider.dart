@@ -82,6 +82,62 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     }
   }
   
+  // Kakao Sign In
+  Future<void> signInWithKakao() async {
+    state = const AsyncValue.loading();
+    
+    try {
+      final response = await _socialAuthService.signInWithKakao();
+      
+      if (response != null && response.user != null) {
+        state = AsyncValue.data(response);
+        
+        // 인증 상태 새로고침
+        _ref.invalidate(userProvider);
+        _ref.invalidate(userProfileProvider);
+        
+        // 프로필 자동 생성 확인
+        final authService = _ref.read(authServiceProvider);
+        await authService.ensureUserProfile();
+        
+        Logger.info('Kakao Sign-In successful');
+      } else {
+        state = const AsyncValue.data(null);
+      }
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      Logger.error('Kakao Sign-In error', error, stackTrace);
+    }
+  }
+  
+  // Naver Sign In
+  Future<void> signInWithNaver() async {
+    state = const AsyncValue.loading();
+    
+    try {
+      final response = await _socialAuthService.signInWithNaver();
+      
+      if (response != null && response.user != null) {
+        state = AsyncValue.data(response);
+        
+        // 인증 상태 새로고침
+        _ref.invalidate(userProvider);
+        _ref.invalidate(userProfileProvider);
+        
+        // 프로필 자동 생성 확인
+        final authService = _ref.read(authServiceProvider);
+        await authService.ensureUserProfile();
+        
+        Logger.info('Naver Sign-In successful');
+      } else {
+        state = const AsyncValue.data(null);
+      }
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      Logger.error('Naver Sign-In error', error, stackTrace);
+    }
+  }
+  
   // 로그아웃
   Future<void> signOut() async {
     state = const AsyncValue.loading();

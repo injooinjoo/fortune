@@ -3,4 +3,11 @@
     <!-- Google Sign-In Configuration -->
     <!-- Replace with your actual Web Client ID from Google Cloud Console -->
     <string name="default_web_client_id" translatable="false">676247567847-aim7omjjgnk8615sdsifppv41pm3o0m2.apps.googleusercontent.com</string>
+    
+    <!-- Kakao Configuration -->
+    <string name="kakao_app_key" translatable="false">79a067e199f5984dd47438d057ecb0c5</string>
+    <string name="kakao_scheme" translatable="false">kakao79a067e199f5984dd47438d057ecb0c5</string>
+    
+    <!-- App Name -->
+    <string name="app_name" translatable="false">Fortune</string>
 </resources>

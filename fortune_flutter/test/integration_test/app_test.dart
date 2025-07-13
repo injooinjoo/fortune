@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune_flutter/main.dart' as app;
-import 'package:fortune_flutter/screens/auth/login_screen.dart';
-import 'package:fortune_flutter/screens/home/home_screen.dart';
-import 'package:fortune_flutter/screens/fortune/daily_fortune_screen.dart';
-import 'package:fortune_flutter/presentation/widgets/fortune_card.dart';
+import 'package:fortune/main.dart' as app;
+import 'package:fortune/screens/auth/login_screen.dart';
+import 'package:fortune/screens/home/home_screen.dart';
+import 'package:fortune/screens/fortune/daily_fortune_screen.dart';
+import 'package:fortune/presentation/widgets/fortune_card.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';

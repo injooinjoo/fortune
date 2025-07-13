@@ -55,7 +55,7 @@ class Logger {
     if (_currentLevel <= _levelError) {
       _log('$_red[ERROR]$_reset', message, error);
       if (stackTrace != null && kDebugMode) {
-        print(stackTrace);
+        debugPrint(stackTrace.toString());
       }
       
       // 프로덕션에서는 에러 리포팅 서비스로 전송
@@ -112,9 +112,9 @@ class Logger {
     final logMessage = '$_prefix $level $message';
     
     if (kDebugMode) {
-      print('$timestamp $logMessage');
+      debugPrint('$timestamp $logMessage');
       if (data != null) {
-        print('  └─ Data: $data');
+        debugPrint('  └─ Data: $data');
       }
     } else {
       // 프로덕션에서는 debugPrint 사용 (Flutter의 로그 제한 우회)
@@ -155,15 +155,15 @@ class Logger {
   // 개발 진행 상황 보고용
   static void developmentProgress(String feature, String status, {String? details}) {
     if (kDebugMode) {
-      print('\n${"=" * 50}');
-      print('📊 DEVELOPMENT PROGRESS REPORT');
-      print('Feature: $feature');
-      print('Status: $status');
+      debugPrint('\n${"=" * 50}');
+      debugPrint('📊 DEVELOPMENT PROGRESS REPORT');
+      debugPrint('Feature: $feature');
+      debugPrint('Status: $status');
       if (details != null) {
-        print('Details: $details');
+        debugPrint('Details: $details');
       }
-      print('Timestamp: ${DateTime.now().toIso8601String()}');
-      print('${"=" * 50}\n');
+      debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+      debugPrint('${"=" * 50}\n');
     }
   }
   
@@ -173,7 +173,7 @@ class Logger {
     final color = passed ? _green : _red;
     
     if (kDebugMode) {
-      print('\n$color$icon SECURITY CHECKPOINT: $checkpoint$_reset');
+      debugPrint('\n$color$icon SECURITY CHECKPOINT: $checkpoint$_reset');
     }
     
     // 프로덕션에서도 보안 실패는 기록

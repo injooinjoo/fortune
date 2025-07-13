@@ -30,55 +30,32 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateTomorrowFortune(
-    //   userId: user.id,
-    //   date: _tomorrow,
-    // );
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getTomorrowFortune(userId: user.id);
 
-    // Mock data for now
-    final description = '''내일은 새로운 기회가 찾아오는 행운의 날입니다. 
-      
-아침부터 긍정적인 에너지가 충만하여 무엇을 하든 좋은 결과를 얻을 수 있을 것입니다. 특히 대인관계에서 좋은 인연을 만날 가능성이 높으니 사람들과의 만남을 두려워하지 마세요.
-
-업무나 학업 면에서도 집중력이 높아져 평소보다 더 나은 성과를 낼 수 있습니다. 다만 건강 관리에는 조금 더 신경을 써야 할 시기이니 충분한 휴식을 취하세요.
-
-재물운도 상승세이니 새로운 투자나 사업 기회를 검토해보는 것도 좋겠습니다.''';
-    
-    return Fortune(
-      id: 'tomorrow_${DateTime.now().millisecondsSinceEpoch}',
-      userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'tomorrow',
-      overallScore: 82,
-      scoreBreakdown: {
-        '전체운': 82,
-        '애정운': 88,
-        '재물운': 75,
-        '건강운': 80,
-        '대인운': 85,
-      },
-      description: description,
-      luckyItems: {
-        '행운의 색': '노란색',
-        '행운의 숫자': '3',
-        '행운의 방향': '남서쪽',
-        '행운의 시간': '오전 10시',
-      },
-      recommendations: [
-        '아침 일찍 일어나서 하루를 시작하세요',
-        '중요한 약속은 오전에 잡는 것이 좋습니다',
-        '새로운 사람들과의 네트워킹에 적극적으로 참여하세요',
-        '저녁에는 가벼운 운동으로 스트레스를 해소하세요',
-      ],
+    // Update metadata with additional information
+    final enrichedFortune = Fortune(
+      id: fortune.id,
+      userId: fortune.userId,
+      type: fortune.type,
+      content: fortune.content,
+      createdAt: fortune.createdAt,
+      category: fortune.category,
+      overallScore: fortune.overallScore,
+      scoreBreakdown: fortune.scoreBreakdown,
+      description: fortune.description,
+      luckyItems: fortune.luckyItems,
+      recommendations: fortune.recommendations,
       metadata: {
+        ...?fortune.metadata,
         'preparation': _getPreparationTips(),
         'warnings': _getWarnings(),
         'opportunities': _getOpportunities(),
       },
     );
+    
+    return enrichedFortune;
   }
 
   List<Map<String, dynamic>> _getPreparationTips() {
@@ -204,7 +181,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -269,7 +246,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: color.withOpacity(0.2),
+                            color: color.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: color,
@@ -288,7 +265,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                           Container(
                             width: 2,
                             height: 40,
-                            color: color.withOpacity(0.3),
+                            color: color.withValues(alpha: 0.3),
                           ),
                       ],
                     ),
@@ -310,7 +287,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.2),
+                                  color: color.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -328,7 +305,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                           Text(
                             opp['description'] as String,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -356,8 +333,8 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.error.withOpacity(0.1),
-            Theme.of(context).colorScheme.error.withOpacity(0.05),
+            Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.error.withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -390,7 +367,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
                     Icon(
                       Icons.error_outline,
                       size: 16,
-                      color: Theme.of(context).colorScheme.error.withOpacity(0.7),
+                      color: Theme.of(context).colorScheme.error.withValues(alpha: 0.7),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -475,7 +452,7 @@ class _TomorrowFortunePageState extends BaseFortunePageState<TomorrowFortunePage
             Text(
               '${_tomorrow.month}월 ${_tomorrow.day}일을 위한 준비사항',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

@@ -307,13 +307,13 @@ ${numberInfo['description']}
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          (numberInfo['color'] as Color).withOpacity(0.3),
-                          (numberInfo['color'] as Color).withOpacity(0.1),
+                          (numberInfo['color'] as Color).withValues(alpha: 0.3),
+                          (numberInfo['color'] as Color).withValues(alpha: 0.1),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: (numberInfo['color'] as Color).withOpacity(0.5),
+                          color: (numberInfo['color'] as Color).withValues(alpha: 0.5),
                           blurRadius: 30,
                           spreadRadius: 10,
                         ),
@@ -385,7 +385,7 @@ ${numberInfo['description']}
             Text(
               '※ 이 번호들은 오늘의 운세를 기반으로 생성된 것이며, 실제 당첨을 보장하지 않습니다.',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -416,7 +416,7 @@ ${numberInfo['description']}
         color: ballColor,
         boxShadow: [
           BoxShadow(
-            color: ballColor.withOpacity(0.5),
+            color: ballColor.withValues(alpha: 0.5),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -487,13 +487,13 @@ ${numberInfo['description']}
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+              Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -553,7 +553,7 @@ ${numberInfo['description']}
             Text(
               analysis['analysis'] as String,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -572,7 +572,7 @@ ${numberInfo['description']}
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
             ),
             child: Center(
               child: Text(
@@ -598,7 +598,7 @@ ${numberInfo['description']}
                 Text(
                   meaning,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -621,8 +621,8 @@ ${numberInfo['description']}
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            (numberInfo['color'] as Color).withOpacity(0.1),
-            (numberInfo['color'] as Color).withOpacity(0.05),
+            (numberInfo['color'] as Color).withValues(alpha: 0.1),
+            (numberInfo['color'] as Color).withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -656,9 +656,9 @@ ${numberInfo['description']}
               children: (numberInfo['situations'] as List<String>).map((situation) {
                 return Chip(
                   label: Text(situation),
-                  backgroundColor: (numberInfo['color'] as Color).withOpacity(0.2),
+                  backgroundColor: (numberInfo['color'] as Color).withValues(alpha: 0.2),
                   side: BorderSide(
-                    color: (numberInfo['color'] as Color).withOpacity(0.5),
+                    color: (numberInfo['color'] as Color).withValues(alpha: 0.5),
                   ),
                 );
               }).toList(),

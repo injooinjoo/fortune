@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 
 import 'core/config/environment.dart';
+import 'core/config/feature_flags.dart';
 import 'core/utils/logger.dart';
 import 'core/utils/secure_storage.dart';
 import 'routes/app_router.dart';
@@ -12,6 +18,9 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/app_theme_extensions.dart';
 import 'services/cache_service.dart';
 import 'presentation/providers/app_providers.dart';
+import 'presentation/providers/theme_provider.dart';
+import 'core/utils/url_cleaner_stub.dart'
+    if (dart.library.html) 'core/utils/url_cleaner_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +37,18 @@ void main() async {
     await Environment.initialize();
     Environment.printDebugInfo();
     Logger.securityCheckpoint('Environment variables loaded');
+    
+    // Firebase 초기화
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    Logger.securityCheckpoint('Firebase initialized');
+    
+    // Kakao SDK 초기화
+    kakao.KakaoSdk.init(
+      nativeAppKey: Environment.kakaoAppKey,
+    );
+    Logger.securityCheckpoint('Kakao SDK initialized');
     
     // Supabase 초기화
     await Supabase.initialize(
@@ -52,9 +73,19 @@ void main() async {
         if (response.session != null) {
           debugPrint('Session recovered successfully in main.dart!');
           debugPrint('User: ${response.session!.user.email}');
+          
+          // Clean URL after processing auth code
+          if (kIsWeb) {
+            cleanUrlInBrowser('/');
+          }
         }
       } catch (e) {
         debugPrint('Session recovery failed in main.dart: $e');
+        
+        // Clean URL even on failure
+        if (kIsWeb) {
+          cleanUrlInBrowser('/');
+        }
       }
     }
     
@@ -62,8 +93,14 @@ void main() async {
     await CacheService().initialize();
     Logger.securityCheckpoint('Cache service initialized');
     
+    // Feature Flags 초기화
+    await FeatureFlags.instance.initialize();
+    Logger.securityCheckpoint('Feature flags initialized with Edge Functions: ${FeatureFlags.instance.isEdgeFunctionsEnabled()}');
+    
     // Stripe 초기화 (결제 기능이 활성화된 경우)
-    if (Environment.enablePayment) {
+    if (Environment.enablePayment && !kIsWeb) {
+      // Stripe is only initialized on mobile platforms
+      // Web payment should be handled differently (e.g., using Stripe.js)
       final stripePublishableKey = Environment.stripePublishableKey;
       if (stripePublishableKey.isNotEmpty) {
         Stripe.publishableKey = stripePublishableKey;
@@ -72,6 +109,8 @@ void main() async {
       } else {
         Logger.warning('Stripe publishable key not found');
       }
+    } else if (Environment.enablePayment && kIsWeb) {
+      Logger.info('Web platform detected - Stripe will be initialized on-demand');
     }
     
     // 시스템 UI 설정
@@ -153,12 +192,13 @@ class FortuneApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
+    final themeMode = ref.watch(themeModeProvider);
     
     return MaterialApp.router(
       title: 'Fortune - 운세 서비스',
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

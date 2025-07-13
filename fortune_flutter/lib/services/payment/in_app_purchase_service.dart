@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
@@ -9,6 +10,7 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
 import '../token_service.dart';
+import '../../shared/components/toast.dart';
 
 // 상품 ID 정의
 class ProductIds {
@@ -55,6 +57,28 @@ class InAppPurchaseService {
   bool _isAvailable = false;
   bool _purchasePending = false;
   
+  // UI callbacks
+  BuildContext? _context;
+  void Function()? onPurchaseStarted;
+  void Function(String message)? onPurchaseSuccess;
+  void Function(String error)? onPurchaseError;
+  
+  // Set context for UI notifications
+  void setContext(BuildContext context) {
+    _context = context;
+  }
+  
+  // Set UI callbacks
+  void setCallbacks({
+    void Function()? onPurchaseStarted,
+    void Function(String message)? onPurchaseSuccess,
+    void Function(String error)? onPurchaseError,
+  }) {
+    this.onPurchaseStarted = onPurchaseStarted;
+    this.onPurchaseSuccess = onPurchaseSuccess;
+    this.onPurchaseError = onPurchaseError;
+  }
+  
   // 초기화
   Future<void> initialize() async {
     try {
@@ -78,7 +102,7 @@ class InAppPurchaseService {
       await loadProducts();
       
       // iOS에서 미완료 거래 처리
-      if (Platform.isIOS) {
+      if (!kIsWeb && Platform.isIOS) {
         final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
             _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
         await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate());
@@ -236,7 +260,7 @@ class InAppPurchaseService {
     try {
       final Map<String, dynamic> verificationData = {};
       
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
         // Android 영수증 데이터
         final InAppPurchaseAndroidPlatformAddition androidAddition =
             _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
@@ -244,7 +268,7 @@ class InAppPurchaseService {
         verificationData['purchaseToken'] = purchaseDetails.verificationData.serverVerificationData;
         verificationData['productId'] = purchaseDetails.productID;
         verificationData['orderId'] = purchaseDetails.purchaseID;
-      } else if (Platform.isIOS) {
+      } else if (!kIsWeb && Platform.isIOS) {
         // iOS 영수증 데이터
         verificationData['platform'] = 'ios';
         verificationData['receipt'] = purchaseDetails.verificationData.serverVerificationData;
@@ -274,7 +298,7 @@ class InAppPurchaseService {
         data: {
           'productId': purchaseDetails.productID,
           'purchaseId': purchaseDetails.purchaseID,
-          'platform': Platform.isIOS ? 'ios' : 'android',
+          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
         },
       );
       
@@ -336,19 +360,94 @@ class InAppPurchaseService {
   
   // UI 알림 메서드들
   void _showPendingUI() {
-    // TODO: 구매 진행 중 UI 표시
     Logger.info('구매가 진행 중입니다...');
+    
+    // Show loading UI using callback or toast
+    if (onPurchaseStarted != null) {
+      onPurchaseStarted!();
+    } else if (_context != null) {
+      Toast.show(
+        context: _context!,
+        message: '구매가 진행 중입니다...',
+        type: ToastType.info,
+      );
+    }
   }
   
   void _handleError(IAPError error) {
     Logger.error('구매 오류: ${error.code} - ${error.message}');
     _purchasePending = false;
-    // TODO: 에러 UI 표시
+    
+    // Show error UI using callback or toast
+    final errorMessage = _getErrorMessage(error.code);
+    if (onPurchaseError != null) {
+      onPurchaseError!(errorMessage);
+    } else if (_context != null) {
+      Toast.show(
+        context: _context!,
+        message: errorMessage,
+        type: ToastType.error,
+      );
+    }
   }
   
   void _showSuccessNotification(String productId) {
-    // TODO: 구매 성공 알림 표시
     Logger.info('구매 완료: $productId');
+    
+    // Get product name
+    final product = _products.firstWhere(
+      (p) => p.id == productId,
+      orElse: () => _products.first,
+    );
+    final productName = _getProductName(productId);
+    final message = '$productName 구매가 완료되었습니다!';
+    
+    // Show success UI using callback or toast
+    if (onPurchaseSuccess != null) {
+      onPurchaseSuccess!(message);
+    } else if (_context != null) {
+      Toast.show(
+        context: _context!,
+        message: message,
+        type: ToastType.success,
+      );
+    }
+  }
+  
+  // Helper method to get user-friendly error messages
+  String _getErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'E_USER_CANCELLED':
+        return '구매가 취소되었습니다';
+      case 'E_NETWORK_ERROR':
+        return '네트워크 오류가 발생했습니다. 다시 시도해주세요';
+      case 'E_PAYMENT_INVALID':
+        return '결제 정보가 올바르지 않습니다';
+      case 'E_PRODUCT_NOT_AVAILABLE':
+        return '해당 상품을 구매할 수 없습니다';
+      default:
+        return '구매 중 오류가 발생했습니다. 다시 시도해주세요';
+    }
+  }
+  
+  // Helper method to get product display name
+  String _getProductName(String productId) {
+    switch (productId) {
+      case ProductIds.tokens10:
+        return '토큰 10개';
+      case ProductIds.tokens50:
+        return '토큰 50개';
+      case ProductIds.tokens100:
+        return '토큰 100개';
+      case ProductIds.tokens200:
+        return '토큰 200개';
+      case ProductIds.monthlySubscription:
+        return '월간 구독';
+      case ProductIds.yearlySubscription:
+        return '연간 구독';
+      default:
+        return '상품';
+    }
   }
   
   void _onPurchaseDone() {

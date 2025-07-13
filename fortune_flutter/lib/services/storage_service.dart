@@ -5,6 +5,7 @@ class StorageService {
   static const String _userProfileKey = 'userProfile';
   static const String _recentFortunesKey = 'recentFortunes';
   static const String _lastUpdateDateKey = 'fortune_last_update_date';
+  static const String _guestModeKey = 'isGuestMode';
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -80,5 +81,21 @@ class StorageService {
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+  }
+  
+  // Guest mode management
+  Future<bool> isGuestMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_guestModeKey) ?? false;
+  }
+  
+  Future<void> setGuestMode(bool isGuest) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_guestModeKey, isGuest);
+  }
+  
+  Future<void> clearGuestMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_guestModeKey);
   }
 }

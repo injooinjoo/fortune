@@ -151,7 +151,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               Text(
                 'AI가 더 정확한 관상 분석을 제공합니다',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -182,10 +182,10 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                 Container(
                   height: 150,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withOpacity(0.3),
+                    color: theme.colorScheme.surface.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                       width: 2,
                       style: BorderStyle.solid,
                     ),
@@ -197,13 +197,13 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                         Icon(
                           Icons.face_rounded,
                           size: 48,
-                          color: theme.colorScheme.onSurface.withOpacity(0.4),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           '정면 사진을 업로드하세요',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -275,7 +275,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Center(
@@ -447,7 +447,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               borderRadius: BorderRadius.circular(12),
             ),
             filled: true,
-            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           items: options.entries.map((entry) {
@@ -483,7 +483,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
             Text(
               '(선택)',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -497,7 +497,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               borderRadius: BorderRadius.circular(12),
             ),
             filled: true,
-            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           items: [
@@ -562,8 +562,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -581,7 +581,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   Text(
                     '당신의 얼굴은 강한 의지와 따뜻한 성품을 동시에 나타냅니다. 특히 눈매와 입술의 조화가 신뢰감을 주며, 이마의 형태는 지적 능력과 창의성을 암시합니다.',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -620,7 +620,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -637,13 +637,13 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         Text(
           description,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: score / 100,
-          backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+          backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
           valueColor: AlwaysStoppedAnimation<Color>(color),
         ),
       ],
@@ -782,10 +782,10 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withOpacity(0.5),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                 ),
                 child: Column(
@@ -903,7 +903,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                         Text(
                           item['advice'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
                         ),
                       ],

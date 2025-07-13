@@ -49,7 +49,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
         Text(
           '오늘 피해야 할 사람의 특징을 알아보고\n불필요한 스트레스를 예방하세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -172,7 +172,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -233,7 +233,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -293,7 +293,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -345,7 +345,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -418,7 +418,7 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],

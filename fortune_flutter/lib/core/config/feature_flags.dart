@@ -1,0 +1,85 @@
+/// Feature flags for gradual rollout of new features
+class FeatureFlags {
+  // Singleton instance
+  static final FeatureFlags _instance = FeatureFlags._internal();
+  factory FeatureFlags() => _instance;
+  FeatureFlags._internal();
+  
+  // Static getter for instance
+  static FeatureFlags get instance => _instance;
+
+  // Feature flag for Edge Functions migration
+  bool _useEdgeFunctions = false;
+  
+  // Percentage of users to enable Edge Functions for (0-100)
+  int _edgeFunctionsRolloutPercentage = 10; // Start with 10%
+  
+  // Specific user IDs to always enable Edge Functions for (testing)
+  final Set<String> _edgeFunctionsTestUsers = {
+    // Add test user IDs here
+  };
+
+  /// Initialize feature flags (call this on app startup)
+  Future<void> initialize({String? userId}) async {
+    if (userId != null) {
+      // Check if user is in test group
+      if (_edgeFunctionsTestUsers.contains(userId)) {
+        _useEdgeFunctions = true;
+        return;
+      }
+      
+      // Use consistent hashing to determine if user should get Edge Functions
+      final hash = userId.hashCode.abs();
+      final bucket = hash % 100;
+      _useEdgeFunctions = bucket < _edgeFunctionsRolloutPercentage;
+    }
+    
+    // Check for override from environment
+    const overrideEdgeFunctions = String.fromEnvironment('USE_EDGE_FUNCTIONS');
+    if (overrideEdgeFunctions == 'true') {
+      _useEdgeFunctions = true;
+    } else if (overrideEdgeFunctions == 'false') {
+      _useEdgeFunctions = false;
+    }
+  }
+
+  /// Whether to use Edge Functions instead of traditional API
+  bool get useEdgeFunctions => _useEdgeFunctions;
+  
+  /// Check if Edge Functions are enabled (method version)
+  bool isEdgeFunctionsEnabled() => _useEdgeFunctions;
+  
+  /// Force enable Edge Functions (for testing)
+  void enableEdgeFunctions() {
+    _useEdgeFunctions = true;
+  }
+  
+  /// Force disable Edge Functions (for testing)
+  void disableEdgeFunctions() {
+    _useEdgeFunctions = false;
+  }
+  
+  /// Update rollout percentage
+  void setEdgeFunctionsRolloutPercentage(int percentage) {
+    _edgeFunctionsRolloutPercentage = percentage.clamp(0, 100);
+  }
+  
+  /// Add a user to the test group
+  void addEdgeFunctionsTestUser(String userId) {
+    _edgeFunctionsTestUsers.add(userId);
+  }
+  
+  /// Remove a user from the test group
+  void removeEdgeFunctionsTestUser(String userId) {
+    _edgeFunctionsTestUsers.remove(userId);
+  }
+  
+  /// Get current feature flag status
+  Map<String, dynamic> getStatus() {
+    return {
+      'useEdgeFunctions': _useEdgeFunctions,
+      'edgeFunctionsRolloutPercentage': _edgeFunctionsRolloutPercentage,
+      'edgeFunctionsTestUsers': _edgeFunctionsTestUsers.toList(),
+    };
+  }
+}

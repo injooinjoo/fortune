@@ -86,58 +86,44 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       throw Exception('별자리를 선택해주세요');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateZodiacFortune(
-    //   userId: user.id,
-    //   zodiac: _selectedZodiac!,
-    //   period: _selectedPeriod,
-    // );
-
-    // Mock data for now
-    final zodiacInfo = _zodiacSigns.firstWhere((z) => z['name'] == _selectedZodiac);
-    final description = '''${zodiacInfo['name']}의 오늘 운세입니다.
-
-${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특히 오전 시간대에는 창의적인 에너지가 충만하여 새로운 아이디어나 영감을 얻기 좋습니다.
-
-대인관계에서는 평소보다 더 적극적인 태도를 보이는 것이 좋겠습니다. 당신의 매력이 빛을 발하는 시기이므로 자신감을 가지고 행동하세요.
-
-재물운은 안정적이며, 건강운은 약간의 주의가 필요합니다. 충분한 휴식과 규칙적인 운동을 병행하면 좋은 컨디션을 유지할 수 있을 것입니다.''';
-
-    return Fortune(
-      id: 'zodiac_${DateTime.now().millisecondsSinceEpoch}',
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getZodiacFortune(
       userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'zodiac',
-      overallScore: 76,
-      scoreBreakdown: {
-        '전체운': 76,
-        '애정운': 83,
-        '재물운': 72,
-        '건강운': 68,
-        '대인운': 79,
-      },
-      description: description,
-      luckyItems: {
+      zodiacSign: _selectedZodiac!,
+    );
+
+    // Get zodiac info for metadata enrichment
+    final zodiacInfo = _zodiacSigns.firstWhere((z) => z['name'] == _selectedZodiac);
+
+    // Enrich the fortune with additional metadata
+    final enrichedFortune = Fortune(
+      id: fortune.id,
+      userId: fortune.userId,
+      type: fortune.type,
+      content: fortune.content,
+      createdAt: fortune.createdAt,
+      category: fortune.category,
+      overallScore: fortune.overallScore,
+      scoreBreakdown: fortune.scoreBreakdown,
+      description: fortune.description,
+      luckyItems: fortune.luckyItems ?? {
         '행운의 색': zodiacInfo['color'].toString().split('(0x')[1].split(')')[0],
         '행운의 숫자': '${DateTime.now().day % 9 + 1}',
         '행운의 방향': _getLuckyDirection(zodiacInfo['element']),
         '행운의 시간': '${(DateTime.now().day % 12) + 10}시',
       },
-      recommendations: [
-        '오늘은 ${zodiacInfo['element']}의 기운을 활용하세요',
-        '${zodiacInfo['color'] == Colors.red ? '열정적으로' : '차분하게'} 하루를 시작하세요',
-        '대인관계에서 좋은 기회가 있을 수 있습니다',
-        '건강 관리에 신경 쓰는 것이 좋겠습니다',
-      ],
+      recommendations: fortune.recommendations,
       metadata: {
+        ...?fortune.metadata,
         'zodiacInfo': zodiacInfo,
         'compatibility': _getCompatibility(_selectedZodiac!),
         'monthlyTrend': _getMonthlyTrend(),
         'elementalBalance': _getElementalBalance(zodiacInfo['element']),
       },
     );
+
+    return enrichedFortune;
   }
 
   String _getLuckyDirection(String element) {
@@ -249,7 +235,7 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
             Text(
               '생년월일: ${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -281,18 +267,18 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                         ? LinearGradient(
                             colors: [
                               zodiac['color'] as Color,
-                              (zodiac['color'] as Color).withOpacity(0.7),
+                              (zodiac['color'] as Color).withValues(alpha: 0.7),
                             ],
                           )
                         : null,
                     color: !isSelected
-                        ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
+                        ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
                         : null,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: isSelected
                           ? (zodiac['color'] as Color)
-                          : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                          : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                       width: isSelected ? 2 : 1,
                     ),
                   ),
@@ -320,8 +306,8 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                         style: TextStyle(
                           fontSize: 10,
                           color: isSelected 
-                              ? Colors.white.withOpacity(0.8)
-                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                              ? Colors.white.withValues(alpha: 0.8)
+                              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -372,12 +358,12 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                             ? LinearGradient(
                                 colors: [
                                   Theme.of(context).colorScheme.primary,
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                                 ],
                               )
                             : null,
                         color: !isSelected
-                            ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
+                            ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
                             : null,
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -413,8 +399,8 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            (zodiacInfo['color'] as Color).withOpacity(0.1),
-            (zodiacInfo['color'] as Color).withOpacity(0.05),
+            (zodiacInfo['color'] as Color).withValues(alpha: 0.1),
+            (zodiacInfo['color'] as Color).withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -440,7 +426,7 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                     Text(
                       zodiacInfo['period'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -468,14 +454,14 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -587,7 +573,7 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -645,13 +631,13 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                     verticalInterval: 5,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -695,7 +681,7 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,
@@ -723,8 +709,8 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                            Theme.of(context).colorScheme.primary.withOpacity(0.0),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -793,7 +779,7 @@ ${zodiacInfo['element']}의 기운이 강하게 작용하는 날입니다. 특�
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: entry.value,
-                      backgroundColor: color.withOpacity(0.2),
+                      backgroundColor: color.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(color),
                     ),
                   ],

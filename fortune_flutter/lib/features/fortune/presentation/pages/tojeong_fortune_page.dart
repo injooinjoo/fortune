@@ -354,13 +354,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          (hexagram['color'] as Color).withOpacity(0.3),
-                          (hexagram['color'] as Color).withOpacity(0.1),
+                          (hexagram['color'] as Color).withValues(alpha: 0.3),
+                          (hexagram['color'] as Color).withValues(alpha: 0.1),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: (hexagram['color'] as Color).withOpacity(0.5),
+                          color: (hexagram['color'] as Color).withValues(alpha: 0.5),
                           blurRadius: 30,
                           spreadRadius: 10,
                         ),
@@ -388,7 +388,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: (hexagram['color'] as Color).withOpacity(0.2),
+                      color: (hexagram['color'] as Color).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -491,7 +491,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                                   end: Alignment.topCenter,
                                   colors: [
                                     _getScoreColor(score),
-                                    _getScoreColor(score).withOpacity(0.5),
+                                    _getScoreColor(score).withValues(alpha: 0.5),
                                   ],
                                 ),
                                 borderRadius: const BorderRadius.vertical(
@@ -588,7 +588,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: percentage,
-                      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         _getElementColor(element),
                       ),
@@ -627,8 +627,8 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.purple.withOpacity(0.1),
-            Colors.purple.withOpacity(0.05),
+            Colors.purple.withValues(alpha: 0.1),
+            Colors.purple.withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -652,10 +652,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: Colors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.purple.withOpacity(0.3),
+                  color: Colors.purple.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -676,7 +676,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Text(
                     _getChangingLineDetail(changingLine),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),

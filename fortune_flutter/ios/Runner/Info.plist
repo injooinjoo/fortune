@@ -88,6 +88,50 @@
 				<string>io.supabase.flutter</string>
 			</array>
 		</dict>
+		<!-- Kakao Login URL Scheme -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao79a067e199f5984dd47438d057ecb0c5</string>
+			</array>
+		</dict>
+		<!-- Naver Login URL Scheme -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>naverlogin</string>
+			</array>
+		</dict>
+		<!-- App Deep Link Scheme -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.fortune.fortune</string>
+			</array>
+		</dict>
 	</array>
+	<!-- Kakao SDK Settings -->
+	<key>KAKAO_APP_KEY</key>
+	<string>79a067e199f5984dd47438d057ecb0c5</string>
+	<!-- LSApplicationQueriesSchemes for Social Login -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<!-- Kakao Talk -->
+		<string>kakaokompassauth</string>
+		<string>storykompassauth</string>
+		<string>kakaolink</string>
+		<!-- Naver App -->
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+	</array>
+	<!-- Naver Login Settings -->
+	<key>naverServiceAppUrlScheme</key>
+	<string>naverlogin</string>
+	<key>naverConsumerKey</key>
+	<string>QMEfy6U82j8nKG3HSE8y</string>
+	<key>naverConsumerSecret</key>
+	<string>Hu5KdO9DxK</string>
+	<key>naverServiceAppName</key>
+	<string>Fortune</string>
 </dict>
 </plist>

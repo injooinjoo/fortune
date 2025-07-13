@@ -426,8 +426,8 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -438,7 +438,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -509,7 +509,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                 children: (weekdayInfo['characteristics'] as List<String>)
                     .map((trait) => Chip(
                           label: Text(trait),
-                          backgroundColor: (weekdayInfo['color'] as Color).withOpacity(0.2),
+                          backgroundColor: (weekdayInfo['color'] as Color).withValues(alpha: 0.2),
                         ))
                     .toList(),
               ),
@@ -554,7 +554,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -603,7 +603,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -625,7 +625,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
           width: 60,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(

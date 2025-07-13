@@ -55,7 +55,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
         Text(
           '신체, 감성, 지성의 리듬을 분석하여\n최적의 컨디션을 확인해보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -87,7 +87,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -105,13 +105,13 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
                 Icon(
                   Icons.calendar_today_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -145,7 +145,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -163,7 +163,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                 ),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.5),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -210,7 +210,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
                 Text(
                   '생체 리듬의 주기적 변화를 분석하여 신체(23일), 감정(28일), 지적(33일) 상태를 예측하는 이론입니다.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                 ),
@@ -282,7 +282,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
         Text(
           '($cycle 주기)',
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -388,7 +388,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                           Text(
                             '${targetDate.year}년 ${targetDate.month}월 ${targetDate.day}일',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],
@@ -482,13 +482,13 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                           );
                         }
                         return FlLine(
-                          color: theme.colorScheme.outline.withOpacity(0.2),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
                           strokeWidth: 1,
                         );
                       },
                       getDrawingVerticalLine: (value) {
                         return FlLine(
-                          color: theme.colorScheme.outline.withOpacity(0.2),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
                           strokeWidth: 1,
                         );
                       },
@@ -529,7 +529,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                     borderData: FlBorderData(
                       show: true,
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.3),
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                     ),
                     minX: 0,
@@ -557,7 +557,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.red.withOpacity(0.1),
+                          color: Colors.red.withValues(alpha: 0.1),
                         ),
                       ),
                       // Emotional rhythm
@@ -580,7 +580,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.blue.withOpacity(0.1),
+                          color: Colors.blue.withValues(alpha: 0.1),
                         ),
                       ),
                       // Intellectual rhythm
@@ -603,7 +603,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                         ),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                         ),
                       ),
                     ],
@@ -753,7 +753,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: percentage / 100,
-            backgroundColor: color.withOpacity(0.2),
+            backgroundColor: color.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 8,
           ),
@@ -804,7 +804,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -824,7 +824,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(status).withOpacity(0.2),
+                  color: _getStatusColor(status).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -849,7 +849,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -891,7 +891,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -918,7 +918,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -936,7 +936,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
           Text(
             description,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: color.withOpacity(0.8),
+              color: color.withValues(alpha: 0.8),
             ),
           ),
         ],

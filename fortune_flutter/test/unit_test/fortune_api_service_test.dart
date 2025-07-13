@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dio/dio.dart';
-import 'package:fortune_flutter/data/services/fortune_api_service.dart';
-import 'package:fortune_flutter/core/network/api_client.dart';
-import 'package:fortune_flutter/services/cache_service.dart';
-import 'package:fortune_flutter/models/fortune_model.dart';
-import 'package:fortune_flutter/core/errors/exceptions.dart';
-import 'package:fortune_flutter/core/constants/api_endpoints.dart';
+import 'package:fortune/data/services/fortune_api_service.dart';
+import 'package:fortune/core/network/api_client.dart';
+import 'package:fortune/services/cache_service.dart';
+import 'package:fortune/models/fortune_model.dart';
+import 'package:fortune/core/errors/exceptions.dart';
+import 'package:fortune/core/constants/api_endpoints.dart';
 
 // Mock classes
 class MockApiClient extends Mock implements ApiClient {}

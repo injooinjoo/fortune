@@ -34,6 +34,15 @@ class FortuneResult {
     this.additionalInfo,
   });
 
+  // Getter for fortune object - returns self for compatibility
+  FortuneResult get fortune => this;
+  
+  // Getter for fortune content text
+  String get content => mainFortune ?? summary ?? '';
+  
+  // Getter for metadata - returns additionalInfo or details
+  Map<String, dynamic>? get metadata => additionalInfo ?? details;
+
   factory FortuneResult.fromMap(Map<String, dynamic> map) {
     return FortuneResult(
       id: map['id'],

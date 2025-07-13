@@ -221,7 +221,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (occasion['color'] as Color).withOpacity(0.1)
+                        ? (occasion['color'] as Color).withValues(alpha: 0.1)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -402,8 +402,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getColorFromName(data['lucky_color']).withOpacity(0.1),
-                  _getColorFromName(data['lucky_color']).withOpacity(0.2),
+                  _getColorFromName(data['lucky_color']).withValues(alpha: 0.1),
+                  _getColorFromName(data['lucky_color']).withValues(alpha: 0.2),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
@@ -418,7 +418,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: _getColorFromName(data['lucky_color']).withOpacity(0.3),
+                        color: _getColorFromName(data['lucky_color']).withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),

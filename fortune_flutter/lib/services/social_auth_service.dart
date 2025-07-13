@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
 import '../core/config/environment.dart';
 
@@ -15,10 +18,10 @@ class SocialAuthService {
     String? clientId;
     if (kIsWeb) {
       clientId = Environment.googleWebClientId;
-    } else if (Platform.isIOS) {
+    } else if (!kIsWeb && Platform.isIOS) {
       // iOS는 Info.plist에서 설정하므로 여기서는 필요 없음
       clientId = null;
-    } else if (Platform.isAndroid) {
+    } else if (!kIsWeb && Platform.isAndroid) {
       // Android는 strings.xml에서 설정하므로 여기서는 필요 없음
       clientId = null;
     }
@@ -81,7 +84,7 @@ class SocialAuthService {
   
   // Apple Sign In (iOS only)
   Future<AuthResponse?> signInWithApple() async {
-    if (!Platform.isIOS && !Platform.isMacOS) {
+    if (!kIsWeb && !Platform.isIOS && !Platform.isMacOS) {
       throw UnsupportedError('Apple Sign-In is only available on iOS and macOS');
     }
     
@@ -145,17 +148,18 @@ class SocialAuthService {
       final existingProfile = await _supabase
           .from('user_profiles')
           .select()
-          .eq('user_id', userId)
+          .eq('id', userId)
           .maybeSingle();
       
       if (existingProfile == null) {
         // 새 프로필 생성
         await _supabase.from('user_profiles').insert({
-          'user_id': userId,
+          'id': userId,
           'email': email,
           'name': name,
           'profile_image_url': photoUrl,
-          'auth_provider': provider,
+          'primary_provider': provider,
+          'linked_providers': [provider],
           'created_at': DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
@@ -165,19 +169,36 @@ class SocialAuthService {
           'updated_at': DateTime.now().toIso8601String(),
         };
         
+        // Update name if not set
         if (name != null && existingProfile['name'] == null) {
           updates['name'] = name;
         }
         
+        // Update profile image if not set
         if (photoUrl != null && existingProfile['profile_image_url'] == null) {
           updates['profile_image_url'] = photoUrl;
+        }
+        
+        // Update linked providers
+        final linkedProviders = existingProfile['linked_providers'] != null
+            ? List<String>.from(existingProfile['linked_providers'])
+            : <String>[];
+        
+        if (!linkedProviders.contains(provider)) {
+          linkedProviders.add(provider);
+          updates['linked_providers'] = linkedProviders;
+        }
+        
+        // Set primary provider if not set
+        if (existingProfile['primary_provider'] == null) {
+          updates['primary_provider'] = provider;
         }
         
         if (updates.length > 1) {
           await _supabase
               .from('user_profiles')
               .update(updates)
-              .eq('user_id', userId);
+              .eq('id', userId);
         }
       }
     } catch (error) {
@@ -186,12 +207,113 @@ class SocialAuthService {
     }
   }
   
+  // Kakao Sign In
+  Future<AuthResponse?> signInWithKakao() async {
+    try {
+      Logger.info('Starting Kakao Sign-In process with Supabase OAuth');
+      
+      // Supabase OAuth를 사용한 카카오 로그인
+      final response = await _supabase.auth.signInWithOAuth(
+        OAuthProvider.kakao,
+        redirectTo: kIsWeb 
+          ? null 
+          : 'com.fortune.fortune://auth-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+      
+      if (!response) {
+        throw Exception('Kakao OAuth sign in failed');
+      }
+      
+      Logger.securityCheckpoint('Kakao OAuth sign in initiated');
+      
+      // OAuth 로그인은 웹브라우저나 카카오톡 앱을 통해 진행되며,
+      // 완료 후 앱으로 돌아올 때 Supabase가 자동으로 세션을 처리합니다.
+      // 따라서 여기서는 null을 반환하고, 
+      // 실제 인증 완료는 deep link 콜백에서 처리됩니다.
+      return null;
+    } catch (error) {
+      Logger.error('Kakao Sign-In failed', error);
+      rethrow;
+    }
+  }
+  
+  // Naver Sign In
+  Future<AuthResponse?> signInWithNaver() async {
+    try {
+      Logger.info('Starting Naver Sign-In process');
+      
+      // 네이버 로그인
+      final NaverLoginResult result = await FlutterNaverLogin.logIn();
+      
+      if (result.status != NaverLoginStatus.loggedIn) {
+        Logger.info('User cancelled Naver Sign-In');
+        return null;
+      }
+      
+      // Supabase 커스텀 인증 (백엔드 API 필요)
+      // 임시로 이메일/패스워드로 계정 생성 또는 로그인
+      final email = result.account.email ?? '${result.account.id}@naver.local';
+      final password = 'naver_${result.account.id}_${Environment.naverClientId}';
+      
+      AuthResponse response;
+      try {
+        // 먼저 로그인 시도
+        response = await _supabase.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
+      } catch (e) {
+        // 로그인 실패시 회원가입
+        response = await _supabase.auth.signUp(
+          email: email,
+          password: password,
+        );
+      }
+      
+      Logger.securityCheckpoint('User signed in with Naver: ${response.user?.id}');
+      
+      // 사용자 프로필 업데이트
+      if (response.user != null) {
+        await _updateUserProfile(
+          userId: response.user!.id,
+          email: result.account.email,
+          name: result.account.name,
+          photoUrl: result.account.profileImage,
+          provider: 'naver',
+        );
+      }
+      
+      return response;
+    } catch (error) {
+      Logger.error('Naver Sign-In failed', error);
+      rethrow;
+    }
+  }
+  
   // 로그아웃
   Future<void> signOut() async {
     try {
+      // 현재 provider 확인
+      final provider = await getCurrentProvider();
+      
       // Google Sign-In 로그아웃
       if (await _googleSignIn.isSignedIn()) {
         await _googleSignIn.signOut();
+      }
+      
+      // Kakao 로그아웃
+      try {
+        await UserApi.instance.logout();
+      } catch (e) {
+        // 카카오 로그아웃 실패 무시
+      }
+      
+      // Naver 로그아웃
+      try {
+        await FlutterNaverLogin.logOut();
+      } catch (e) {
+        // 네이버 로그아웃 실패 무시
       }
       
       // Supabase 로그아웃
@@ -218,6 +340,76 @@ class SocialAuthService {
   Future<void> disconnectGoogle() async {
     if (await _googleSignIn.isSignedIn()) {
       await _googleSignIn.disconnect();
+    }
+  }
+  
+  // Kakao 계정 연결 해제
+  Future<void> disconnectKakao() async {
+    try {
+      await UserApi.instance.unlink();
+    } catch (e) {
+      Logger.error('Failed to disconnect Kakao', e);
+    }
+  }
+  
+  // Naver 계정 연결 해제
+  Future<void> disconnectNaver() async {
+    try {
+      await FlutterNaverLogin.logOutAndDeleteToken();
+    } catch (e) {
+      Logger.error('Failed to disconnect Naver', e);
+    }
+  }
+  
+  // Link additional social account
+  Future<bool> linkSocialAccount(String provider) async {
+    try {
+      final currentUser = _supabase.auth.currentUser;
+      if (currentUser == null) return false;
+      
+      switch (provider) {
+        case 'google':
+          final result = await signInWithGoogle();
+          return result != null;
+        case 'apple':
+          final result = await signInWithApple();
+          return result != null;
+        case 'kakao':
+          // Kakao uses OAuth flow
+          await signInWithKakao();
+          return true;
+        case 'naver':
+          final result = await signInWithNaver();
+          return result != null;
+        default:
+          return false;
+      }
+    } catch (e) {
+      Logger.error('Failed to link social account: $provider', e);
+      return false;
+    }
+  }
+  
+  // Get all linked providers for current user
+  Future<List<String>> getLinkedProviders() async {
+    try {
+      final currentUser = _supabase.auth.currentUser;
+      if (currentUser == null) return [];
+      
+      final profile = await _supabase
+          .from('user_profiles')
+          .select('linked_providers')
+          .eq('id', currentUser.id)
+          .maybeSingle();
+      
+      if (profile != null && profile['linked_providers'] != null) {
+        return List<String>.from(profile['linked_providers']);
+      }
+      
+      return [];
+    } catch (e) {
+      Logger.error('Failed to get linked providers', e);
+      return [];
     }
   }
 }

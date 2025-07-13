@@ -169,7 +169,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: _selectedGoal == blessing['id']
-                      ? (blessing['color'] as Color).withOpacity(0.1)
+                      ? (blessing['color'] as Color).withValues(alpha: 0.1)
                       : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
@@ -185,7 +185,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (blessing['color'] as Color).withOpacity(0.2),
+                        color: (blessing['color'] as Color).withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -333,8 +333,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                (selectedBlessing['color'] as Color).withOpacity(0.1),
-                (selectedBlessing['color'] as Color).withOpacity(0.2),
+                (selectedBlessing['color'] as Color).withValues(alpha: 0.1),
+                (selectedBlessing['color'] as Color).withValues(alpha: 0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
@@ -607,7 +607,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.purple.withOpacity(0.2),
+                          color: Colors.purple.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(

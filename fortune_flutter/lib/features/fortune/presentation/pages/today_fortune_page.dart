@@ -32,51 +32,30 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateTodayFortune(
-    //   userId: user.id,
-    //   selectedHour: _selectedHour,
-    // );
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getTodayFortune(userId: user.id);
 
-    // Mock data for now
-    final description = '''오늘은 전반적으로 안정적이고 긍정적인 에너지가 흐르는 날입니다. 
-      
-특히 오전 시간대에는 집중력이 높아져 중요한 업무나 결정을 내리기에 좋습니다. 점심 이후부터는 대인관계에서 좋은 기회가 찾아올 수 있으니 적극적으로 소통하세요.
-
-저녁 시간대에는 가족이나 가까운 사람들과 함께 시간을 보내면 마음의 안정을 찾을 수 있습니다. 오늘은 작은 행운들이 여러 번 찾아오는 날이니 긍정적인 마음가짐을 유지하세요.''';
-    
-    return Fortune(
-      id: 'today_${DateTime.now().millisecondsSinceEpoch}',
-      userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'today',
-      overallScore: 78,
-      scoreBreakdown: {
-        '전체운': 78,
-        '애정운': 85,
-        '재물운': 70,
-        '건강운': 75,
-        '대인운': 80,
-      },
-      description: description,
-      luckyItems: {
-        '행운의 색': '하늘색',
-        '행운의 숫자': '7',
-        '행운의 방향': '동쪽',
-        '행운의 시간': '오후 3시',
-      },
-      recommendations: [
-        '오전에 중요한 일정을 잡으세요',
-        '점심 식사는 평소와 다른 메뉴를 선택해보세요',
-        '오후 3시경 좋은 소식이 있을 수 있습니다',
-        '저녁에는 충분한 휴식을 취하세요',
-      ],
+    // Enrich the fortune with hourly data
+    final enrichedFortune = Fortune(
+      id: fortune.id,
+      userId: fortune.userId,
+      type: fortune.type,
+      content: fortune.content,
+      createdAt: fortune.createdAt,
+      category: fortune.category,
+      overallScore: fortune.overallScore,
+      scoreBreakdown: fortune.scoreBreakdown,
+      description: fortune.description,
+      luckyItems: fortune.luckyItems,
+      recommendations: fortune.recommendations,
       metadata: {
+        ...?fortune.metadata,
         'hourlyData': _generateHourlyData(),
       },
     );
+    
+    return enrichedFortune;
   }
 
   Map<String, dynamic> _generateHourlyData() {
@@ -167,13 +146,13 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     verticalInterval: 3,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -217,7 +196,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,
@@ -252,7 +231,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                           }
                           return FlDotCirclePainter(
                             radius: 3,
-                            color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                           );
                         },
                       ),
@@ -260,8 +239,8 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                            Theme.of(context).colorScheme.primary.withOpacity(0.0),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -328,7 +307,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -363,7 +342,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -399,8 +378,8 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
         padding: const EdgeInsets.all(20),
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
           ],
         ),
         child: Column(
@@ -475,10 +454,10 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Column(

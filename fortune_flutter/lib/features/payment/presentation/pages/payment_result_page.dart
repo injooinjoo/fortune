@@ -8,7 +8,9 @@ import '../../../../core/utils/haptic_utils.dart';
 
 class PaymentResultPage extends StatefulWidget {
   final bool isSuccess;
-  final String message;
+  final String? message;
+  final String? productName;
+  final String? amount;
   final String? transactionId;
   final int? tokenAmount;
   final String? errorCode;
@@ -16,7 +18,9 @@ class PaymentResultPage extends StatefulWidget {
   const PaymentResultPage({
     super.key,
     required this.isSuccess,
-    required this.message,
+    this.message,
+    this.productName,
+    this.amount,
     this.transactionId,
     this.tokenAmount,
     this.errorCode,
@@ -81,7 +85,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.success.withOpacity(0.1),
+          color: AppColors.success.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -98,7 +102,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         width: 120,
         height: 120,
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.1),
+          color: AppColors.error.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -123,8 +127,19 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
   }
 
   Widget _buildMessage() {
+    String displayMessage;
+    if (widget.message != null) {
+      displayMessage = widget.message!;
+    } else if (widget.isSuccess) {
+      displayMessage = widget.productName != null 
+        ? '${widget.productName} 구매가 완료되었습니다.'
+        : '결제가 성공적으로 완료되었습니다.';
+    } else {
+      displayMessage = '결제 처리 중 오류가 발생했습니다.';
+    }
+    
     return Text(
-      widget.message,
+      displayMessage,
       style: AppTextStyles.bodyLarge.copyWith(
         color: AppColors.textSecondary,
       ),
@@ -136,10 +151,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -277,7 +292,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+        color: AppColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

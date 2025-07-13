@@ -178,4 +178,24 @@ class AuthService {
       return null;
     }
   }
+
+  Future<bool> hasUserProfile() async {
+    try {
+      final user = currentUser;
+      if (user == null) return false;
+
+      final response = await _client
+          .from('user_profiles')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      if (response == null) return false;
+      
+      return response['onboarding_completed'] == true;
+    } catch (e) {
+      Logger.error('Error checking user profile', e);
+      return false;
+    }
+  }
 }

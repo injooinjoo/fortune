@@ -78,7 +78,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _getScoreGradientColors(fortune.overallScore!).first.withOpacity(0.5),
+                      color: _getScoreGradientColors(fortune.overallScore!).first.withValues(alpha: 0.5),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -103,10 +103,10 @@ class FortuneResultDisplay extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withOpacity(0.3),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 ),
               ),
               child: Text(
@@ -141,7 +141,7 @@ class FortuneResultDisplay extends StatelessWidget {
                 child: Text(
                   fortune.description!,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     height: 1.5,
                   ),
                 ),
@@ -154,7 +154,7 @@ class FortuneResultDisplay extends StatelessWidget {
             Text(
               '생성일: ${_formatDate(fortune.createdAt)}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -324,13 +324,13 @@ class FortuneResultDisplay extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withOpacity(0.1),
-                          theme.colorScheme.primary.withOpacity(0.05),
+                          theme.colorScheme.primary.withValues(alpha: 0.1),
+                          theme.colorScheme.primary.withValues(alpha: 0.05),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.colorScheme.primary.withOpacity(0.3),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -426,7 +426,7 @@ class FortuneResultDisplay extends StatelessWidget {
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

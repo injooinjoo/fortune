@@ -143,7 +143,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             Icon(
               Icons.account_balance_wallet,
               size: 48,
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withValues(alpha: 0.5),
             ),
           ],
         ),
@@ -190,7 +190,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             width: isSelected ? 2 : 1,
           ),
           color: isSelected 
-              ? package.color.withOpacity(0.1) 
+              ? package.color.withValues(alpha: 0.1) 
               : AppColors.surface,
         ),
         child: Padding(
@@ -366,7 +366,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withOpacity(0.1),
+        color: AppColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

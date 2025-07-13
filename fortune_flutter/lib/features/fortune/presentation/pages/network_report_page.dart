@@ -70,7 +70,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         Text(
           '당신의 인간관계를 분석하고 개선 방안을 제시합니다',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -297,7 +297,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                 Text(
                   '인맥 지수',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -344,8 +344,8 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                       RadarChartData(
                         radarShape: RadarShape.polygon,
                         radarBorderData: const BorderSide(color: Colors.transparent),
-                        gridBorderData: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3), width: 1),
-                        tickBorderData: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3), width: 1),
+                        gridBorderData: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3), width: 1),
+                        tickBorderData: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3), width: 1),
                         titleTextStyle: TextStyle(
                           color: theme.colorScheme.onSurface,
                           fontSize: 14,
@@ -354,7 +354,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                         tickCount: 5,
                         dataSets: [
                           RadarDataSet(
-                            fillColor: theme.colorScheme.primary.withOpacity(0.3),
+                            fillColor: theme.colorScheme.primary.withValues(alpha: 0.3),
                             borderColor: theme.colorScheme.primary,
                             borderWidth: 2,
                             dataEntries: _getRadarDataEntries(chartData),
@@ -535,10 +535,10 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -586,7 +586,7 @@ class _NetworkReportResultState extends ConsumerState<_NetworkReportResult> {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: Colors.purple.withOpacity(0.2),
+                            color: Colors.purple.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Center(

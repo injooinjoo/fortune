@@ -41,16 +41,54 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Future<void> _initializeUser() async {
     final session = Supabase.instance.client.auth.currentSession;
-    if (session?.user != null) {
-      setState(() {
-        _currentUser = session!.user;
-        // 사용자 이름을 폼에 미리 채우기
-        final userName = _currentUser?.userMetadata?['full_name'] ??
-            _currentUser?.userMetadata?['name'] ??
-            _currentUser?.email?.split('@')[0] ??
-            '';
-        _nameController.text = userName;
-      });
+    _currentUser = session?.user;
+    
+    // Load existing profile if available
+    try {
+      final existingProfile = await _storageService.getUserProfile();
+      if (existingProfile != null) {
+        setState(() {
+          // Pre-fill name
+          _nameController.text = existingProfile['name'] ?? 
+              _currentUser?.userMetadata?['full_name'] ??
+              _currentUser?.userMetadata?['name'] ??
+              _currentUser?.email?.split('@')[0] ??
+              '';
+          
+          // Pre-fill birth date if available
+          if (existingProfile['birth_date'] != null) {
+            try {
+              final birthDate = DateTime.parse(existingProfile['birth_date']);
+              _birthYear = birthDate.year.toString();
+              _birthMonth = birthDate.month.toString();
+              _birthDay = birthDate.day.toString();
+            } catch (e) {
+              debugPrint('Error parsing existing birth date: $e');
+            }
+          }
+          
+          // Pre-fill other fields
+          _birthTimePeriod = existingProfile['birth_time'];
+          _mbti = existingProfile['mbti'];
+          if (existingProfile['gender'] != null) {
+            _gender = Gender.values.firstWhere(
+              (g) => g.value == existingProfile['gender'],
+              orElse: () => Gender.other,
+            );
+          }
+        });
+      } else if (_currentUser != null) {
+        // No existing profile, just use auth metadata
+        setState(() {
+          final userName = _currentUser?.userMetadata?['full_name'] ??
+              _currentUser?.userMetadata?['name'] ??
+              _currentUser?.email?.split('@')[0] ??
+              '';
+          _nameController.text = userName;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading existing profile: $e');
     }
   }
 
@@ -153,6 +191,45 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
     }
   }
+  
+  Future<void> _skipOnboarding() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('프로필 설정 건너뛰기'),
+        content: const Text('나중에 프로필을 완성하면 더 정확한 운세를 받을 수 있습니다. 지금 건너뛰시겠습니까?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('취소'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              
+              // Save minimal profile data with onboarding marked as skipped
+              final minimalProfile = {
+                'id': _currentUser?.id ?? '',
+                'email': _currentUser?.email ?? '',
+                'name': _nameController.text.isNotEmpty ? _nameController.text : '사용자',
+                'onboarding_completed': false,
+                'onboarding_skipped': true,
+                'created_at': DateTime.now().toIso8601String(),
+                'updated_at': DateTime.now().toIso8601String(),
+              };
+              
+              await _storageService.saveUserProfile(minimalProfile);
+              
+              if (mounted) {
+                context.go('/home');
+              }
+            },
+            child: const Text('건너뛰기'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -163,25 +240,43 @@ class _OnboardingPageState extends State<OnboardingPage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.purple.shade50,
-              Colors.pink.shade50,
+              Colors.grey.shade50,
+              Colors.grey.shade100,
             ],
           ),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // 상단 진행률 표시
+              // 상단 진행률 표시 및 Skip 버튼
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    LinearProgressIndicator(
-                      value: _currentStep / 3,
-                      backgroundColor: Colors.grey[300],
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: _currentStep / 3,
+                            backgroundColor: Colors.grey[300],
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        TextButton(
+                          onPressed: _skipOnboarding,
+                          child: Text(
+                            '건너뛰기',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -205,7 +300,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),

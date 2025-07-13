@@ -290,7 +290,7 @@ class _BiorhythmFortunePageState extends BaseFortunePageState<BiorhythmFortunePa
                 verticalInterval: 7,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: Colors.grey.withValues(alpha: 0.3),
                     strokeWidth: 1,
                   );
                 },
@@ -302,7 +302,7 @@ class _BiorhythmFortunePageState extends BaseFortunePageState<BiorhythmFortunePa
                     );
                   }
                   return FlLine(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     strokeWidth: 1,
                   );
                 },
@@ -469,7 +469,7 @@ class _BiorhythmFortunePageState extends BaseFortunePageState<BiorhythmFortunePa
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: (value + 1) / 2,
-          backgroundColor: Colors.grey.withOpacity(0.2),
+          backgroundColor: Colors.grey.withValues(alpha: 0.2),
           valueColor: AlwaysStoppedAnimation<Color>(color),
         ),
       ],

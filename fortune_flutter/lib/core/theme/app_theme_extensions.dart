@@ -37,8 +37,8 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     scoreGood: Color(0xFF3B82F6), // Blue
     scoreFair: Color(0xFFF59E0B), // Orange
     scorePoor: Color(0xFFEF4444), // Red
-    fortuneGradientStart: Color(0xFF7C3AED),
-    fortuneGradientEnd: Color(0xFF3B82F6),
+    fortuneGradientStart: Color(0xFF000000), // Black
+    fortuneGradientEnd: Color(0xFF4A4A4A), // Medium gray
     glassBackground: Color(0x0AFFFFFF),
     glassBorder: Color(0x14FFFFFF),
     subtitleText: Color(0xFF6B7280),
@@ -53,8 +53,8 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     scoreGood: Color(0xFF60A5FA), // Lighter blue for dark mode
     scoreFair: Color(0xFFFBBF24), // Lighter orange for dark mode
     scorePoor: Color(0xFFF87171), // Lighter red for dark mode
-    fortuneGradientStart: Color(0xFF9333EA),
-    fortuneGradientEnd: Color(0xFF60A5FA),
+    fortuneGradientStart: Color(0xFFE0E0E0), // Light gray
+    fortuneGradientEnd: Color(0xFF999999), // Medium light gray
     glassBackground: Color(0x14FFFFFF),
     glassBorder: Color(0x1AFFFFFF),
     subtitleText: Color(0xFF9CA3AF),

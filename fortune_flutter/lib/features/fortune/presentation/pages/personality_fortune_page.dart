@@ -110,7 +110,7 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
           Text(
             '당신의 성격을 분석하여\n숨겨진 잠재력과 운명을 알려드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -131,11 +131,11 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
             ),
           ),
@@ -154,12 +154,12 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -168,7 +168,7 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -208,12 +208,12 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected 
-                          ? theme.colorScheme.primary.withOpacity(0.2)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
                           : theme.colorScheme.surface,
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.outline.withOpacity(0.3),
+                            : theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -257,7 +257,7 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                       _selectedBloodType = selected ? type : null;
                     });
                   },
-                  selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                  selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
                     color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                   ),
@@ -296,7 +296,7 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
                     }
                   });
                 },
-                selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface,
                 ),
@@ -471,7 +471,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withOpacity(0.1),
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -697,10 +697,10 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -753,7 +753,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                         color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.2),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -779,7 +779,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
                                   Text(
                                     career['description'],
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                       fontSize: 11 + fontSize,
                                     ),
                                   ),
@@ -894,7 +894,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
     
     dataEntries.add(
       RadarDataSet(
-        fillColor: theme.colorScheme.primary.withOpacity(0.3),
+        fillColor: theme.colorScheme.primary.withValues(alpha: 0.3),
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
         dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
@@ -907,11 +907,11 @@ class _PersonalityFortuneResult extends ConsumerWidget {
         radarBackgroundColor: Colors.transparent,
         borderData: FlBorderData(show: false),
         gridBorderData: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
           width: 1,
         ),
         tickBorderData: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
           width: 1,
         ),
         tickCount: 5,
@@ -928,7 +928,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
           fontSize: 12,
         ),
         ticksTextStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           fontSize: 10,
         ),
       ),

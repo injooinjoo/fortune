@@ -8,6 +8,7 @@ import '../../../../shared/components/toast.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
 
 class LoveFortunePage extends BaseFortunePage {
   const LoveFortunePage({Key? key})
@@ -47,75 +48,55 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    await Future.delayed(const Duration(seconds: 2));
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getLoveFortune(userId: user.id);
 
-    // Mock love fortune data
+    // Extract love-specific data from the fortune response
     _loveData = {
-      'loveIndex': 88,
-      'monthlyTrend': {
+      'loveIndex': fortune.overallScore ?? 88,
+      'monthlyTrend': fortune.additionalInfo?['monthlyTrend'] ?? {
         '이번 주': 75,
         '다음 주': 82,
         '3주 후': 90,
         '4주 후': 85,
       },
-      'singleAdvice': {
+      'singleAdvice': fortune.additionalInfo?['singleAdvice'] ?? {
         'summary': '새로운 만남의 기회가 찾아올 시기입니다',
-        'details': '이번 달은 당신에게 특별한 인연이 나타날 가능성이 높습니다. 평소와 다른 장소에서 새로운 사람들을 만나보세요.',
+        'details': fortune.content,
         'luckySpots': ['카페', '서점', '운동 시설'],
         'luckyDays': ['금요일', '일요일'],
       },
-      'coupleAdvice': {
+      'coupleAdvice': fortune.additionalInfo?['coupleAdvice'] ?? {
         'summary': '서로를 더 깊이 이해하게 되는 시기',
         'details': '연인과의 관계가 한 단계 더 발전할 수 있는 시기입니다. 진솔한 대화를 통해 서로를 더 잘 알아가세요.',
         'activities': ['함께 요리하기', '여행 계획 세우기', '운동 함께하기'],
         'caution': '사소한 일로 다투지 않도록 주의하세요',
       },
-      'reunionAdvice': {
+      'reunionAdvice': fortune.additionalInfo?['reunionAdvice'] ?? {
         'summary': '과거를 정리하고 새 출발을 준비할 때',
         'details': '지난 관계에서 배운 교훈을 바탕으로 더 나은 사랑을 만날 준비를 하세요.',
         'healing': '자신을 먼저 사랑하는 시간을 가지세요',
         'newStart': '3주 후부터 새로운 인연이 시작될 수 있습니다',
       },
-      'actionMissions': [
+      'actionMissions': fortune.additionalInfo?['actionMissions'] ?? [
         '하루에 한 번 자신에게 칭찬하기',
         '좋아하는 사람에게 먼저 연락하기',
         '새로운 취미 활동 시작하기',
         '감사 일기 쓰기',
         '운동으로 자신감 키우기',
       ],
-      'luckyBooster': {
+      'luckyBooster': fortune.luckyItems ?? {
         '향수': '플로럴 계열',
         '색상': '핑크, 레드',
         '액세서리': '하트 모양 펜던트',
         '꽃': '장미, 튤립',
       },
-      'psychologicalAdvice': '사랑은 자신을 먼저 사랑하는 것에서 시작됩니다. 자존감을 높이고 긍정적인 에너지를 발산하세요.',
+      'psychologicalAdvice': fortune.additionalInfo?['psychologicalAdvice'] ?? 
+        '사랑은 자신을 먼저 사랑하는 것에서 시작됩니다. 자존감을 높이고 긍정적인 에너지를 발산하세요.',
     };
 
-    return Fortune(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: user.id,
-      type: 'love',
-      content: '이번 달은 사랑이 넘치는 한 달이 될 것입니다.',
-      createdAt: DateTime.now(),
-      // Extended properties
-      category: 'love',
-      overallScore: 88,
-      description: '이번 달은 사랑이 넘치는 한 달이 될 것입니다. 새로운 만남이든 기존 관계의 발전이든, 긍정적인 변화가 예상됩니다.',
-      scoreBreakdown: {
-        '매력 지수': 90,
-        '인연 운': 85,
-        '관계 발전운': 88,
-        '소통 운': 82,
-      },
-      luckyItems: _loveData!['luckyBooster'] as Map<String, dynamic>,
-      recommendations: [
-        '자신감을 가지고 적극적으로 행동하세요',
-        '상대방의 이야기에 귀 기울이세요',
-        '로맨틱한 분위기를 만들어보세요',
-      ],
-    );
+    return fortune;
   }
 
   @override
@@ -167,7 +148,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.withOpacity(0.3),
+                    color: Colors.pink.withValues(alpha: 0.3),
                     blurRadius: 30,
                     spreadRadius: 10,
                   ),
@@ -304,7 +285,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -313,10 +294,10 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             child: TabBar(
               controller: _tabController,
               labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              unselectedLabelColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               ),
               indicatorPadding: const EdgeInsets.all(4),
               tabs: const [
@@ -355,7 +336,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.pink.withOpacity(0.1),
+                color: Colors.pink.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -401,7 +382,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -427,10 +408,10 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.orange.withOpacity(0.3),
+                  color: Colors.orange.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -470,7 +451,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.1),
+                color: Colors.purple.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -533,7 +514,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
           children: items.map((item) {
             return Chip(
               label: Text(item.toString()),
-              backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               labelStyle: TextStyle(
                 color: Theme.of(context).colorScheme.primary,
               ),
@@ -553,7 +534,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -638,13 +619,13 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _missionChecks[index]
-                          ? Colors.green.withOpacity(0.1)
+                          ? Colors.green.withValues(alpha: 0.1)
                           : Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _missionChecks[index]
-                            ? Colors.green.withOpacity(0.3)
-                            : Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                            ? Colors.green.withValues(alpha: 0.3)
+                            : Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Row(
@@ -682,7 +663,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                                   ? TextDecoration.lineThrough
                                   : null,
                               color: _missionChecks[index]
-                                  ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
                                   : null,
                             ),
                           ),

@@ -52,7 +52,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
         Text(
           '오늘의 투자 운세를 확인하고\n현명한 투자 결정을 내리세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -175,7 +175,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -236,7 +236,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -295,7 +295,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -356,7 +356,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -431,7 +431,7 @@ class _InvestmentFortuneResult extends StatelessWidget {
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],

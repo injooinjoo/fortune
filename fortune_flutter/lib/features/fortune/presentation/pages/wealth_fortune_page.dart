@@ -215,7 +215,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.5),
+                      color: Colors.amber.withValues(alpha: 0.5),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
@@ -389,8 +389,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Colors.amber.shade200.withOpacity(0.3),
-                            Colors.amber.shade100.withOpacity(0.1),
+                            Colors.amber.shade200.withValues(alpha: 0.3),
+                            Colors.amber.shade100.withValues(alpha: 0.1),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -476,7 +476,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                     gradient: LinearGradient(
                                       colors: [
                                         _getIncomeColor(score),
-                                        _getIncomeColor(score).withOpacity(0.7),
+                                        _getIncomeColor(score).withValues(alpha: 0.7),
                                       ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
@@ -543,7 +543,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -676,7 +676,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                           Text(
                             description,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -781,7 +781,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(status).withOpacity(0.1),
+                        color: _getStatusColor(status).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -963,7 +963,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Row(
@@ -972,7 +972,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: Colors.teal.withOpacity(0.1),
+                          color: Colors.teal.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Center(

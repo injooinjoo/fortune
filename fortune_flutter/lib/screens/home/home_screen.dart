@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/fortune.dart';
+import '../../domain/entities/user_profile.dart';
 import '../../presentation/widgets/daily_fortune_card.dart';
 import '../../presentation/widgets/fortune_card.dart';
+import '../../presentation/widgets/profile_completion_banner.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../shared/components/daily_token_banner.dart';
 
@@ -20,6 +22,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final supabase = Supabase.instance.client;
   Map<String, dynamic>? userProfile;
+  UserProfile? userProfileEntity;
   List<Map<String, dynamic>> recentFortunes = [];
   DailyFortune? todaysFortune;
   bool isLoadingFortune = false;
@@ -44,6 +47,37 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         
         setState(() {
           userProfile = response;
+          if (response != null) {
+            // Convert to UserProfile entity
+            userProfileEntity = UserProfile(
+              id: response['id'] ?? userId,
+              email: response['email'] ?? supabase.auth.currentUser?.email ?? '',
+              name: response['name'] ?? '',
+              birthdate: response['birthdate'] != null 
+                  ? DateTime.tryParse(response['birthdate']) 
+                  : null,
+              birthTime: response['birth_time'],
+              isLunar: response['is_lunar'] ?? false,
+              gender: response['gender'],
+              mbti: response['mbti'],
+              bloodType: response['blood_type'],
+              zodiacSign: response['zodiac_sign'],
+              zodiacAnimal: response['zodiac_animal'],
+              onboardingCompleted: response['onboarding_completed'] ?? false,
+              isPremium: response['is_premium'] ?? false,
+              premiumExpiry: response['premium_expiry'] != null
+                  ? DateTime.tryParse(response['premium_expiry'])
+                  : null,
+              tokenBalance: response['token_balance'] ?? 0,
+              preferences: response['preferences'],
+              createdAt: response['created_at'] != null 
+                  ? DateTime.parse(response['created_at'])
+                  : DateTime.now(),
+              updatedAt: response['updated_at'] != null
+                  ? DateTime.parse(response['updated_at']) 
+                  : DateTime.now(),
+            );
+          }
         });
       }
     } catch (e) {
@@ -69,7 +103,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           score: 75,
           keywords: ['행운', '기회', '성장'],
           summary: '좋은 하루가 될 것 같습니다. 긍정적인 마음으로 하루를 시작하세요.',
-          luckyColor: '#8B5CF6',
+          luckyColor: '#000000',
           luckyNumber: 7,
           energy: 80,
           mood: '평온함',
@@ -95,52 +129,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB), // 웹과 동일한 배경색
+      backgroundColor: Colors.white, // Instagram style clean white
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 헤더 - 웹과 동일한 스타일
-              Container(
-                color: Theme.of(context).colorScheme.background,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.auto_awesome,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Fortune',
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      onPressed: () => context.go('/profile'),
-                      icon: CircleAvatar(
-                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                        child: Icon(
-                          Icons.person_outline,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              // Daily Token Banner
-              const DailyTokenBanner(),
+              // Profile completion banner
+              const ProfileCompletionBanner(),
               
               Padding(
                 padding: const EdgeInsets.all(24),
@@ -156,14 +152,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     const SizedBox(height: 32),
                     
-                    // 주요 메뉴
-                    Text(
-                      '운세 서비스',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    // Instagram-style section title
+                    Row(
+                      children: [
+                        Text(
+                          '✨ ',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          '인기 운세',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
                     ).animate().fadeIn(delay: 200.ms),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     _buildMainServices(context),
                     
                     // 최근에 본 운세
@@ -185,15 +190,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       _buildRecentFortunes(context),
                     ],
                     
-                    // 나만의 맞춤 운세
+                    // Instagram-style section title
                     const SizedBox(height: 32),
-                    Text(
-                      '나만의 맞춤 운세',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          '💕 ',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          '나를 위한 추천',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
                     ).animate().fadeIn(delay: 600.ms),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     _buildPersonalizedFortunes(context),
                   ],
                 ),
@@ -212,31 +226,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final services = [
       {
         'icon': Icons.wb_sunny,
+        'emoji': '☀️',
         'title': '사주팔자',
         'desc': '정통 사주 풀이',
         'route': '/fortune/saju',
-        'color': fortuneTheme.scoreFair,
+        'gradient': [Color(0xFF000000), Color(0xFF333333)],
       },
       {
         'icon': Icons.camera_alt,
+        'emoji': '📸',
         'title': 'AI 관상',
-        'desc': '얼굴로 보는 운세',
+        'desc': '셀카로 보는 운세',
         'route': '/physiognomy',
-        'color': colorScheme.primary,
+        'gradient': [Color(0xFF1A1A1A), Color(0xFF4A4A4A)],
       },
       {
         'icon': Icons.auto_awesome,
-        'title': '프리미엄사주',
-        'desc': '만화로 보는 사주',
+        'emoji': '✨',
+        'title': '프리미엄',
+        'desc': '특별한 운세',
         'route': '/premium',
-        'color': colorScheme.tertiary,
+        'gradient': [Color(0xFF2C2C2C), Color(0xFF666666)],
       },
       {
         'icon': Icons.star,
+        'emoji': '⭐',
         'title': '전체 운세',
         'desc': '모든 운세 보기',
         'route': '/fortune',
-        'color': colorScheme.secondary,
+        'gradient': [Color(0xFF4A4A4A), Color(0xFF808080)],
       },
     ];
 
@@ -245,25 +263,27 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 1.2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
       ),
       itemCount: services.length,
       itemBuilder: (context, index) {
         final service = services[index];
         return FortuneCard(
           icon: service['icon'] as IconData,
+          emoji: service['emoji'] as String?,
           title: service['title'] as String,
           description: service['desc'] as String,
-          iconColor: service['color'] as Color,
+          gradient: service['gradient'] as List<Color>?,
           onTap: () => _navigateToFortune(
             service['route'] as String,
             service['title'] as String,
           ),
         ).animate()
           .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
-          .slideY(begin: 0.1, end: 0);
+          .slideY(begin: 0.1, end: 0)
+          .scale(begin: Offset(0.9, 0.9), end: Offset(1.0, 1.0));
       },
     );
   }
@@ -287,7 +307,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 border: Border.all(color: context.fortuneTheme.dividerColor),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).shadowColor.withOpacity(0.05),
+                    color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

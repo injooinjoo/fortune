@@ -140,8 +140,8 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.05),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.05),
                   ],
                 ),
               ),
@@ -156,7 +156,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   Text(
                     '오늘의 운세를 확인해보세요',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1, end: 0),
                 ],
@@ -199,7 +199,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    Icon(Icons.history, size: 20, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                    Icon(Icons.history, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                     const SizedBox(width: 8),
                     Text(
                       '최근에 본 운세',
@@ -280,7 +280,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   Text(
                     DateTime.now().toString().substring(0, 10),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -292,8 +292,8 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                      Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
                     ],
                   ),
                 ),
@@ -320,7 +320,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
             children: fortune.keywords.map((keyword) {
               return Chip(
                 label: Text(keyword),
-                backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 labelStyle: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -452,7 +452,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: colors.map((c) => c.withOpacity(0.1)).toList(),
+            colors: colors.map((c) => c.withValues(alpha: 0.1)).toList(),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -481,7 +481,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               Text(
                 service['desc'] as String,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -541,7 +541,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   Text(
                     fortune['timeAgo'] as String,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -597,7 +597,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: (fortune['color'] as Color).withOpacity(0.1),
+                      color: (fortune['color'] as Color).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -624,8 +624,8 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    (fortune['color'] as Color).withOpacity(0.3),
-                                    (fortune['color'] as Color).withOpacity(0.1),
+                                    (fortune['color'] as Color).withValues(alpha: 0.3),
+                                    (fortune['color'] as Color).withValues(alpha: 0.1),
                                   ],
                                 ),
                                 borderRadius: BorderRadius.circular(12),
@@ -644,7 +644,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                         Text(
                           fortune['desc'] as String,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -653,7 +653,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 16,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                 ],
               ),

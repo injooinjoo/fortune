@@ -13,6 +13,7 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
   final VoidCallback onSkip;
   final bool isPremium;
   final Future<dynamic> Function()? fetchData;
+  final Future<void> Function()? onAdComplete;
 
   const AdLoadingScreen({
     super.key,
@@ -22,6 +23,7 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
     required this.onSkip,
     required this.isPremium,
     this.fetchData,
+    this.onAdComplete,
   });
 
   @override
@@ -162,7 +164,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
     }
   }
 
-  void _completeLoading() {
+  void _completeLoading() async {
     if (_errorMessage != null) {
       // 에러가 있으면 다시 시도하거나 뒤로 가기
       ScaffoldMessenger.of(context).showSnackBar(
@@ -192,6 +194,19 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
         }
       });
       return;
+    }
+
+    // 무료 사용자의 경우 광고 시청 완료 후 토큰 보상
+    if (!widget.isPremium && widget.onAdComplete != null) {
+      try {
+        await widget.onAdComplete!();
+        Logger.analytics('token_reward_for_ad', {
+          'fortune_type': widget.fortuneType,
+        });
+      } catch (e) {
+        Logger.error('Failed to reward tokens for ad', e);
+        // 토큰 보상 실패해도 운세는 보여줌
+      }
     }
 
     Logger.analytics('ad_loading_complete', {
@@ -229,8 +244,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            Colors.purple.shade900.withOpacity(0.3),
-                            Colors.indigo.shade900.withOpacity(0.3),
+                            Colors.purple.shade900.withValues(alpha: 0.3),
+                            Colors.indigo.shade900.withValues(alpha: 0.3),
                           ],
                           transform: GradientRotation(
                             _animationController.value * 2 * 3.14159,
@@ -255,12 +270,12 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         height: 120,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
                         child: Icon(
                           Icons.auto_awesome,
                           size: 60,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ).animate(
                         onPlay: (controller) => controller.repeat(),
@@ -308,7 +323,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                         height: 8,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: AnimatedBuilder(
@@ -328,7 +343,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                                   borderRadius: BorderRadius.circular(4),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),

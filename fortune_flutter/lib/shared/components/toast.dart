@@ -194,7 +194,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: _color.withOpacity(0.2),
+                          color: _color.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
@@ -218,7 +218,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                         icon: Icon(
                           Icons.close_rounded,
                           size: 20,
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),

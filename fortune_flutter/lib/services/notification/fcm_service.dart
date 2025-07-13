@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -151,7 +152,7 @@ class FCMService {
   
   // 알림 채널 생성 (Android)
   Future<void> _createNotificationChannels() async {
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       // 일일 운세 채널
       const dailyChannel = AndroidNotificationChannel(
         NotificationChannels.dailyFortune,
@@ -244,10 +245,10 @@ class FCMService {
     try {
       await _apiClient.post('/user/fcm-token', data: {
         'token': token,
-        'platform': Platform.isIOS ? 'ios' : 'android',
+        'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
         'deviceInfo': {
-          'os': Platform.operatingSystem,
-          'version': Platform.operatingSystemVersion,
+          'os': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown'),
+          'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown'),
         },
       });
       
@@ -378,9 +379,11 @@ class FCMService {
       await _fcm.subscribeToTopic('all_users');
       
       // 플랫폼별 토픽
-      if (Platform.isIOS) {
+      if (kIsWeb) {
+        await _fcm.subscribeToTopic('web_users');
+      } else if (!kIsWeb && Platform.isIOS) {
         await _fcm.subscribeToTopic('ios_users');
-      } else {
+      } else if (!kIsWeb && Platform.isAndroid) {
         await _fcm.subscribeToTopic('android_users');
       }
       

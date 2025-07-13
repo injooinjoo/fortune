@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/network/api_client.dart';
 import '../../core/errors/exceptions.dart';
 import '../../domain/entities/token.dart';
-import '../../core/providers/providers.dart';
+import '../../presentation/providers/providers.dart';
 
 class TokenApiService {
   final ApiClient _apiClient;
@@ -209,6 +209,34 @@ class TokenApiService {
           e.response?.data['message'] ?? '이미 오늘의 무료 토큰을 받으셨습니다',
         );
       }
+      throw _handleDioError(e);
+    }
+  }
+
+  // 광고 시청 후 토큰 보상
+  Future<TokenBalance> rewardTokensForAdView({
+    required String userId,
+    required String fortuneType,
+    int rewardAmount = 1,
+  }) async {
+    try {
+      final response = await _apiClient.post(
+        '/api/token/reward-ad-view',
+        data: {
+          'fortuneType': fortuneType,
+          'rewardAmount': rewardAmount,
+        },
+      );
+
+      return TokenBalance(
+        userId: userId,
+        totalTokens: response.data['balance']['totalTokens'] ?? 0,
+        usedTokens: response.data['balance']['usedTokens'] ?? 0,
+        remainingTokens: response.data['balance']['remainingTokens'] ?? 0,
+        lastUpdated: DateTime.parse(response.data['balance']['lastUpdated'] ?? DateTime.now().toIso8601String()),
+        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess'] ?? false,
+      );
+    } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }

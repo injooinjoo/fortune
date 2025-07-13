@@ -197,7 +197,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -266,7 +266,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               Text(
                 '어떤 일로 고민하고 계신가요?',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -286,12 +286,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     child: Chip(
                       label: Text(type),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.error.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.error.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.error
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -333,7 +333,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -376,7 +376,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               Text(
                 '해당되는 증상을 모두 선택하세요',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -400,12 +400,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     child: Chip(
                       label: Text(symptom),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.secondary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.secondary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
@@ -439,7 +439,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _birthTimes.entries.map((entry) {
                   return DropdownMenuItem(
@@ -549,13 +549,13 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.red.withOpacity(0.1),
-                    Colors.orange.withOpacity(0.1),
+                    Colors.red.withValues(alpha: 0.1),
+                    Colors.orange.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.red.withOpacity(0.3),
+                  color: Colors.red.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -581,7 +581,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   Text(
                     '중간 정도의 액운이 감지됩니다. 조상의 도움이 필요한 시기이며, 정화 의식을 통해 나쁜 기운을 제거할 수 있습니다.',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.8),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -626,7 +626,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
           child: LinearProgressIndicator(
             value: severity / 100,
             minHeight: 12,
-            backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+            backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
               _getSeverityColor(severity),
             ),
@@ -711,10 +711,10 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (spirit['color'] as Color).withOpacity(0.1),
+                    color: (spirit['color'] as Color).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: (spirit['color'] as Color).withOpacity(0.3),
+                      color: (spirit['color'] as Color).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -749,7 +749,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       Text(
                         spirit['description'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -823,13 +823,13 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.05),
-                      theme.colorScheme.secondary.withOpacity(0.05),
+                      theme.colorScheme.primary.withValues(alpha: 0.05),
+                      theme.colorScheme.secondary.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -840,7 +840,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
@@ -864,7 +864,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.2),
+                            color: Colors.green.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -880,7 +880,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     Text(
                       ritual['description'] as String,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -964,7 +964,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: (charm['color'] as Color).withOpacity(0.2),
+                          color: (charm['color'] as Color).withValues(alpha: 0.2),
                           border: Border.all(
                             color: charm['color'] as Color,
                             width: 2,
@@ -992,7 +992,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       Text(
                         charm['purpose'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -1054,10 +1054,10 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withOpacity(0.5),
+                  color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                 ),
                 child: Column(
@@ -1092,7 +1092,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(

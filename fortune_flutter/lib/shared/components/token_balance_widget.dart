@@ -30,7 +30,7 @@ class TokenBalanceWidget extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.2),
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -139,7 +139,7 @@ class TokenBalanceCard extends ConsumerWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.secondary.withOpacity(0.2),
+                    color: theme.colorScheme.secondary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -206,13 +206,13 @@ class TokenBalanceCard extends ConsumerWidget {
                     Text(
                       '사용률',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                     Text(
                       '${((balance.usedTokens / balance.totalTokens) * 100).toStringAsFixed(1)}%',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -220,7 +220,7 @@ class TokenBalanceCard extends ConsumerWidget {
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: balance.usedTokens / balance.totalTokens,
-                  backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     theme.colorScheme.primary,
                   ),
@@ -256,10 +256,10 @@ class TokenBalanceCard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.3),
+                  color: Colors.green.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -303,7 +303,7 @@ class TokenBalanceCard extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

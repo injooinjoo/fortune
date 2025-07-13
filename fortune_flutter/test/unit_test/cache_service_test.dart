@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:fortune_flutter/services/cache_service.dart';
-import 'package:fortune_flutter/models/fortune_model.dart';
-import 'package:fortune_flutter/models/cache_entry.dart';
+import 'package:fortune/services/cache_service.dart';
+import 'package:fortune/models/fortune_model.dart';
+import 'package:fortune/models/cache_entry.dart';
 
 // Mock classes
 class MockBox<T> extends Mock implements Box<T> {}

@@ -169,7 +169,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Center(
@@ -294,7 +294,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         borderRadius: BorderRadius.circular(12),
         blur: 10,
         borderColor: isSelected
-            ? theme.colorScheme.primary.withOpacity(0.5)
+            ? theme.colorScheme.primary.withValues(alpha: 0.5)
             : Colors.transparent,
         borderWidth: isSelected ? 2 : 0,
         child: Column(
@@ -379,7 +379,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
               Text(
                 '(선택사항)',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -394,7 +394,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
               borderRadius: BorderRadius.circular(12),
             ),
             filled: true,
-            fillColor: theme.colorScheme.surface.withOpacity(0.5),
+            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           items: [
@@ -506,7 +506,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -530,7 +530,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
               Text(
                 description,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.8),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -600,13 +600,13 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      (item['color'] as Color).withOpacity(0.1),
-                      (item['color'] as Color).withOpacity(0.05),
+                      (item['color'] as Color).withValues(alpha: 0.1),
+                      (item['color'] as Color).withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (item['color'] as Color).withOpacity(0.3),
+                    color: (item['color'] as Color).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -638,7 +638,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                     Text(
                       item['interpretation'] as String,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -710,7 +710,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: score / 100,
-                      backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                      backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         _getScoreColor(score),
                       ),
@@ -786,7 +786,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -810,7 +810,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
                         Text(
                           item['guidance'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -839,7 +839,7 @@ class PalmGuidePainter extends CustomPainter {
       ..strokeWidth = 2.0;
 
     // Draw palm outline
-    paint.color = theme.colorScheme.onSurface.withOpacity(0.3);
+    paint.color = theme.colorScheme.onSurface.withValues(alpha: 0.3);
     final palmPath = Path();
     palmPath.moveTo(size.width * 0.3, size.height * 0.9);
     palmPath.quadraticBezierTo(

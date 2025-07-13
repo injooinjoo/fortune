@@ -9,6 +9,7 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../presentation/providers/fortune_provider.dart';
 
 class CompatibilityPage extends BaseFortunePage {
   const CompatibilityPage({Key? key})
@@ -63,38 +64,42 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    // TODO: Replace with actual API call
-    await Future.delayed(const Duration(seconds: 2));
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getCompatibilityFortune(
+      person1: params['person1'] as Map<String, dynamic>,
+      person2: params['person2'] as Map<String, dynamic>,
+    );
 
-    // Mock compatibility data
+    // Extract compatibility data from the fortune response
     _compatibilityData = {
-      'scores': {
-        '전체 궁합': 85,
+      'scores': fortune.scoreBreakdown ?? {
+        '전체 궁합': fortune.overallScore ?? 85,
         '사랑 궁합': 90,
         '결혼 궁합': 82,
         '일상 궁합': 78,
         '직장 궁합': 88,
       },
-      'person1Analysis': {
+      'person1Analysis': fortune.additionalInfo?['person1Analysis'] ?? {
         'personality': '따뜻하고 배려심이 깊은 성격',
         'loveStyle': '헌신적이고 로맨틱한 사랑',
         'strength': '상대방을 포용하는 넓은 마음',
       },
-      'person2Analysis': {
+      'person2Analysis': fortune.additionalInfo?['person2Analysis'] ?? {
         'personality': '활발하고 긍정적인 성격',
         'loveStyle': '열정적이고 적극적인 사랑',
         'strength': '밝은 에너지로 분위기를 이끄는 힘',
       },
-      'strengths': [
+      'strengths': fortune.additionalInfo?['strengths'] ?? [
         '서로를 보완하는 완벽한 조합',
         '갈등 상황에서도 대화로 해결 가능',
         '함께 성장할 수 있는 관계',
       ],
-      'challenges': [
+      'challenges': fortune.additionalInfo?['challenges'] ?? [
         '가끔 의견 차이로 인한 마찰 가능',
         '서로의 공간을 존중하는 것이 필요',
       ],
-      'luckyElements': {
+      'luckyElements': fortune.luckyItems ?? {
         '행운의 날': '금요일',
         '행운의 장소': '자연이 있는 곳',
         '행운의 활동': '함께하는 운동',
@@ -102,24 +107,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
       },
     };
 
-    return Fortune(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: 'user_id',
-      type: 'compatibility',
-      content: '두 분은 서로를 완벽하게 보완하는 환상의 커플입니다.',
-      createdAt: DateTime.now(),
-      // Extended properties
-      category: 'compatibility',
-      overallScore: 85,
-      description: '두 분은 서로를 완벽하게 보완하는 환상의 커플입니다. 서로의 장점이 상대방의 약점을 채워주며, 함께 있을 때 시너지가 발생합니다.',
-      scoreBreakdown: _compatibilityData!['scores'] as Map<String, dynamic>,
-      luckyItems: _compatibilityData!['luckyElements'] as Map<String, dynamic>,
-      recommendations: [
-        '서로의 개성을 존중하며 함께 성장하세요',
-        '정기적인 데이트로 로맨스를 유지하세요',
-        '갈등이 생기면 대화로 해결하세요',
-      ],
-    );
+    return fortune;
   }
 
   @override
@@ -255,7 +243,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.red.withOpacity(0.3),
+                  color: Colors.red.withValues(alpha: 0.3),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -339,7 +327,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 Text(
                   '전체 궁합',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -388,9 +376,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         name,
@@ -427,7 +415,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
+                      color: color.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(icon, color: color, size: 24),
@@ -456,7 +444,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                         const SizedBox(height: 8),
                         LinearProgressIndicator(
                           value: (entry.value as int) / 100,
-                          backgroundColor: color.withOpacity(0.2),
+                          backgroundColor: color.withValues(alpha: 0.2),
                           valueColor: AlwaysStoppedAnimation<Color>(color),
                           minHeight: 8,
                         ),
@@ -509,9 +497,9 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: color.withOpacity(0.3)),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
                 ),
                 child: Center(
                   child: Text(
@@ -575,7 +563,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               Text(
@@ -628,7 +616,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),

@@ -114,7 +114,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                       borderRadius: BorderRadius.circular(16),
                       blur: 10,
                       borderColor: isSelected
-                          ? (info['color'] as Color).withOpacity(0.5)
+                          ? (info['color'] as Color).withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Column(
@@ -125,7 +125,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                             size: 32,
                             color: isSelected
                                 ? info['color'] as Color
-                                : theme.colorScheme.onSurface.withOpacity(0.6),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           const SizedBox(height: 8),
                           Text(
@@ -141,7 +141,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
                           Text(
                             info['personality'] as String,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                             textAlign: TextAlign.center,
                             maxLines: 2,
@@ -201,7 +201,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
         borderRadius: BorderRadius.circular(12),
         blur: 10,
         borderColor: isSelected
-            ? theme.colorScheme.primary.withOpacity(0.5)
+            ? theme.colorScheme.primary.withValues(alpha: 0.5)
             : Colors.transparent,
         borderWidth: isSelected ? 2 : 0,
         child: Row(
@@ -258,9 +258,9 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (info['color'] as Color).withOpacity(0.2),
+                color: (info['color'] as Color).withValues(alpha: 0.2),
                 border: Border.all(
-                  color: (info['color'] as Color).withOpacity(0.5),
+                  color: (info['color'] as Color).withValues(alpha: 0.5),
                   width: 3,
                 ),
               ),
@@ -445,8 +445,8 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
               '${type}형',
               style: theme.textTheme.bodySmall,
             ),
-            backgroundColor: color.withOpacity(0.2),
-            side: BorderSide(color: color.withOpacity(0.5)),
+            backgroundColor: color.withValues(alpha: 0.2),
+            side: BorderSide(color: color.withValues(alpha: 0.5)),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),

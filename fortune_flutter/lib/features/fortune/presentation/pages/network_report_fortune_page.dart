@@ -117,7 +117,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
           Text(
             '당신의 인맥 운세를 분석하고\n네트워킹 전략을 제시해드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -138,11 +138,11 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
             ),
           ),
@@ -161,12 +161,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -175,7 +175,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -199,11 +199,11 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.work_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
             ),
           ),
@@ -240,12 +240,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected 
-                          ? theme.colorScheme.primary.withOpacity(0.2)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
                           : theme.colorScheme.surface,
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.outline.withOpacity(0.3),
+                            : theme.colorScheme.outline.withValues(alpha: 0.3),
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -288,7 +288,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                     _selectedNetworkingStyle = selected ? style : null;
                   });
                 },
-                selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                 ),
@@ -322,7 +322,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                     }
                   });
                 },
-                selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface,
                 ),
@@ -433,7 +433,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -468,7 +468,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                               Text(
                                 _getScoreMessage(networkScore),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                 ),
                               ),
                             ],
@@ -584,13 +584,13 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withOpacity(0.2),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                             child: Text(
                               person['initial'] ?? '?',
                               style: TextStyle(
@@ -615,7 +615,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                   Text(
                                     person['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                       fontSize: 12 + fontSize,
                                     ),
                                   ),
@@ -760,7 +760,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           ),
           PieChartSectionData(
             value: (100 - score).toDouble(),
-            color: theme.colorScheme.outline.withOpacity(0.1),
+            color: theme.colorScheme.outline.withValues(alpha: 0.1),
             radius: 20,
             showTitle: false,
           ),
@@ -831,7 +831,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           horizontalInterval: 20,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },

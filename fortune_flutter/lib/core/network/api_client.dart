@@ -12,6 +12,9 @@ class ApiClient {
   late final Dio _dio;
   final Supabase _supabase = Supabase.instance;
 
+  // Getter for dio instance
+  Dio get dio => _dio;
+
   ApiClient() {
     final baseUrl = Environment.apiBaseUrl;
     

@@ -5,10 +5,12 @@ import '../../core/constants/api_endpoints.dart';
 import '../../core/errors/exceptions.dart';
 import '../../domain/entities/fortune.dart';
 import '../models/fortune_response_model.dart';
-import '../../core/providers/providers.dart';
+import '../../presentation/providers/providers.dart';
 import 'package:fortune/services/cache_service.dart';
 import 'package:fortune/models/fortune_model.dart';
 import 'package:flutter/foundation.dart';
+import '../../core/config/feature_flags.dart';
+import 'fortune_api_service_edge_functions.dart';
 
 class FortuneApiService {
   final ApiClient _apiClient;
@@ -190,12 +192,12 @@ class FortuneApiService {
   // Wealth Fortune
   Future<Fortune> getWealthFortune({
     required String userId,
-    required Map<String, dynamic> financialData,
+    Map<String, dynamic>? financialData,
   }) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.wealthFortune,
-        data: financialData,
+        data: financialData ?? {},
       );
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
@@ -209,14 +211,14 @@ class FortuneApiService {
   Future<Fortune> getMbtiFortune({
     required String userId,
     required String mbtiType,
-    required List<String> categories,
+    List<String>? categories,
   }) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.mbtiFortune,
         data: {
           'mbtiType': mbtiType,
-          'categories': categories,
+          if (categories != null) 'categories': categories,
         },
       );
 
@@ -225,6 +227,226 @@ class FortuneApiService {
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
+  }
+
+  // Today Fortune
+  Future<Fortune> getTodayFortune({required String userId}) async {
+    return getDailyFortune(userId: userId, date: DateTime.now());
+  }
+
+  // Tomorrow Fortune
+  Future<Fortune> getTomorrowFortune({required String userId}) async {
+    return getDailyFortune(userId: userId, date: DateTime.now().add(Duration(days: 1)));
+  }
+
+  // Weekly Fortune
+  Future<Fortune> getWeeklyFortune({required String userId}) async {
+    return getFortune(fortuneType: 'weekly', userId: userId);
+  }
+
+  // Monthly Fortune
+  Future<Fortune> getMonthlyFortune({required String userId}) async {
+    return getFortune(fortuneType: 'monthly', userId: userId);
+  }
+
+  // Yearly Fortune
+  Future<Fortune> getYearlyFortune({required String userId}) async {
+    return getFortune(fortuneType: 'yearly', userId: userId);
+  }
+
+  // Hourly Fortune
+  Future<Fortune> getHourlyFortune({
+    required String userId,
+    required DateTime targetTime,
+  }) async {
+    return getFortune(
+      fortuneType: 'hourly',
+      userId: userId,
+      params: {'targetTime': targetTime.toIso8601String()},
+    );
+  }
+
+  // Zodiac Fortune
+  Future<Fortune> getZodiacFortune({
+    required String userId,
+    required String zodiacSign,
+  }) async {
+    return getFortune(
+      fortuneType: 'zodiac',
+      userId: userId,
+      params: {'zodiacSign': zodiacSign},
+    );
+  }
+
+  // Zodiac Animal Fortune
+  Future<Fortune> getZodiacAnimalFortune({
+    required String userId,
+    required String zodiacAnimal,
+  }) async {
+    return getFortune(
+      fortuneType: 'zodiac-animal',
+      userId: userId,
+      params: {'zodiacAnimal': zodiacAnimal},
+    );
+  }
+
+  // Blood Type Fortune
+  Future<Fortune> getBloodTypeFortune({
+    required String userId,
+    required String bloodType,
+  }) async {
+    return getFortune(
+      fortuneType: 'blood-type',
+      userId: userId,
+      params: {'bloodType': bloodType},
+    );
+  }
+
+  // Tojeong Fortune
+  Future<Fortune> getTojeongFortune({required String userId}) async {
+    return getFortune(fortuneType: 'tojeong', userId: userId);
+  }
+
+  // Palmistry Fortune
+  Future<Fortune> getPalmistryFortune({required String userId}) async {
+    return getFortune(fortuneType: 'palmistry', userId: userId);
+  }
+
+  // Physiognomy Fortune
+  Future<Fortune> getPhysiognomyFortune({required String userId}) async {
+    return getFortune(fortuneType: 'physiognomy', userId: userId);
+  }
+
+  // Marriage Fortune
+  Future<Fortune> getMarriageFortune({required String userId}) async {
+    return getFortune(fortuneType: 'marriage', userId: userId);
+  }
+
+  // Career Fortune
+  Future<Fortune> getCareerFortune({required String userId}) async {
+    return getFortune(fortuneType: 'career', userId: userId);
+  }
+
+  // Business Fortune
+  Future<Fortune> getBusinessFortune({required String userId}) async {
+    return getFortune(fortuneType: 'business', userId: userId);
+  }
+
+  // Employment Fortune
+  Future<Fortune> getEmploymentFortune({required String userId}) async {
+    return getFortune(fortuneType: 'employment', userId: userId);
+  }
+
+  // Startup Fortune
+  Future<Fortune> getStartupFortune({required String userId}) async {
+    return getFortune(fortuneType: 'startup', userId: userId);
+  }
+
+  // Lucky Color Fortune
+  Future<Fortune> getLuckyColorFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-color', userId: userId);
+  }
+
+  // Lucky Number Fortune
+  Future<Fortune> getLuckyNumberFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-number', userId: userId);
+  }
+
+  // Lucky Items Fortune
+  Future<Fortune> getLuckyItemsFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-items', userId: userId);
+  }
+
+  // Lucky Food Fortune
+  Future<Fortune> getLuckyFoodFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-food', userId: userId);
+  }
+
+  // Biorhythm Fortune
+  Future<Fortune> getBiorhythmFortune({required String userId}) async {
+    return getFortune(fortuneType: 'biorhythm', userId: userId);
+  }
+
+  // Past Life Fortune
+  Future<Fortune> getPastLifeFortune({required String userId}) async {
+    return getFortune(fortuneType: 'past-life', userId: userId);
+  }
+
+  // New Year Fortune
+  Future<Fortune> getNewYearFortune({required String userId}) async {
+    return getFortune(fortuneType: 'new-year', userId: userId);
+  }
+
+  // Personality Fortune
+  Future<Fortune> getPersonalityFortune({required String userId}) async {
+    return getFortune(fortuneType: 'personality', userId: userId);
+  }
+
+  // Health Fortune
+  Future<Fortune> getHealthFortune({required String userId}) async {
+    return getFortune(fortuneType: 'health', userId: userId);
+  }
+
+  // Moving Fortune
+  Future<Fortune> getMovingFortune({required String userId}) async {
+    return getFortune(fortuneType: 'moving', userId: userId);
+  }
+
+  // Wish Fortune
+  Future<Fortune> getWishFortune({
+    required String userId,
+    required String wish,
+  }) async {
+    return getFortune(
+      fortuneType: 'wish',
+      userId: userId,
+      params: {'wish': wish},
+    );
+  }
+
+  // Talent Fortune
+  Future<Fortune> getTalentFortune({required String userId}) async {
+    return getFortune(fortuneType: 'talent', userId: userId);
+  }
+
+  // Lucky Baseball Fortune
+  Future<Fortune> getLuckyBaseballFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-baseball', userId: userId);
+  }
+
+  // Lucky Golf Fortune
+  Future<Fortune> getLuckyGolfFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-golf', userId: userId);
+  }
+
+  // Lucky Tennis Fortune
+  Future<Fortune> getLuckyTennisFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-tennis', userId: userId);
+  }
+
+  // Lucky Running Fortune
+  Future<Fortune> getLuckyRunningFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-running', userId: userId);
+  }
+
+  // Lucky Cycling Fortune
+  Future<Fortune> getLuckyCyclingFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-cycling', userId: userId);
+  }
+
+  // Lucky Swim Fortune
+  Future<Fortune> getLuckySwimFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-swim', userId: userId);
+  }
+
+  // Lucky Hiking Fortune
+  Future<Fortune> getLuckyHikingFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-hiking', userId: userId);
+  }
+
+  // Lucky Fishing Fortune
+  Future<Fortune> getLuckyFishingFortune({required String userId}) async {
+    return getFortune(fortuneType: 'lucky-fishing', userId: userId);
   }
 
   // Generic Fortune
@@ -409,6 +631,16 @@ class FortuneApiService {
     return model.toEntity();
   }
 
+  // Generic post method for API calls
+  Future<dynamic> post(String endpoint, {Map<String, dynamic>? data}) async {
+    try {
+      final response = await _apiClient.post(endpoint, data: data);
+      return response;
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
   // Error Handler
   AppException _handleDioError(DioException error) {
     switch (error.type) {
@@ -450,6 +682,14 @@ class FortuneApiService {
 
 // Provider
 final fortuneApiServiceProvider = Provider<FortuneApiService>((ref) {
+  // Check if Edge Functions are enabled
+  if (FeatureFlags().isEdgeFunctionsEnabled()) {
+    debugPrint('Using Edge Functions for fortune API');
+    return FortuneApiServiceWithEdgeFunctions(ref);
+  }
+  
+  // Use traditional API service
+  debugPrint('Using traditional API service');
   final apiClient = ref.watch(apiClientProvider);
   return FortuneApiService(apiClient);
 });

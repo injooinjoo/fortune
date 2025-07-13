@@ -12,8 +12,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Colors.white.withOpacity(opacity),
-        Colors.white.withOpacity(opacity * 0.5),
+        Colors.white.withValues(alpha: opacity),
+        Colors.white.withValues(alpha: opacity * 0.5),
       ],
     );
   }
@@ -23,8 +23,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        Colors.white.withOpacity(opacity),
-        Colors.white.withOpacity(opacity * 0.5),
+        Colors.white.withValues(alpha: opacity),
+        Colors.white.withValues(alpha: opacity * 0.5),
       ],
     );
   }
@@ -37,8 +37,8 @@ class GlassEffects {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
-        color.withOpacity(opacity),
-        color.withOpacity(opacity * 0.5),
+        color.withValues(alpha: opacity),
+        color.withValues(alpha: opacity * 0.5),
       ],
     );
   }
@@ -64,13 +64,13 @@ class GlassEffects {
   }) {
     return [
       BoxShadow(
-        color: (color ?? Colors.black).withOpacity(0.1),
+        color: (color ?? Colors.black).withValues(alpha: 0.1),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation),
         spreadRadius: spread,
       ),
       BoxShadow(
-        color: (color ?? Colors.black).withOpacity(0.05),
+        color: (color ?? Colors.black).withValues(alpha: 0.05),
         blurRadius: elevation,
         offset: Offset(0, elevation * 0.5),
         spreadRadius: spread * 0.5,
@@ -84,7 +84,7 @@ class GlassEffects {
     double opacity = 0.2,
   }) {
     return Border.all(
-      color: (color ?? Colors.white).withOpacity(opacity),
+      color: (color ?? Colors.white).withValues(alpha: opacity),
       width: width,
     );
   }
@@ -170,7 +170,7 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
                     begin: Alignment(_animation.value - 1, -1),
                     end: Alignment(1 - _animation.value, 1),
                     colors: widget.liquidColors.map((color) => 
-                      color.withOpacity(0.1 + (_animation.value * 0.1))
+                      color.withValues(alpha: 0.1 + (_animation.value * 0.1))
                     ).toList(),
                   ),
                   borderRadius: widget.borderRadius ?? BorderRadius.circular(20),
@@ -257,9 +257,9 @@ class _ShimmerGlassState extends State<ShimmerGlass>
                       end: Alignment(_animation.value, 0),
                       colors: [
                         Colors.transparent,
-                        widget.shimmerColor.withOpacity(0.1),
-                        widget.shimmerColor.withOpacity(0.2),
-                        widget.shimmerColor.withOpacity(0.1),
+                        widget.shimmerColor.withValues(alpha: 0.1),
+                        widget.shimmerColor.withValues(alpha: 0.2),
+                        widget.shimmerColor.withValues(alpha: 0.1),
                         Colors.transparent,
                       ],
                       stops: const [0.0, 0.35, 0.5, 0.65, 1.0],

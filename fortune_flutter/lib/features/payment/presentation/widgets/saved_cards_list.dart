@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../../../theme/app_colors.dart';
-import '../../../../theme/app_text_styles.dart';
-import '../../../../widgets/common/custom_card.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+import '../../../../presentation/widgets/common/custom_card.dart';
 import '../../../../utils/haptic_utils.dart';
 
 class SavedCardsList extends StatelessWidget {
@@ -107,7 +107,7 @@ class SavedCardsList extends StatelessWidget {
             width: isSelected ? 2 : 1,
           ),
           color: isSelected 
-              ? AppColors.primary.withOpacity(0.05) 
+              ? AppColors.primary.withValues(alpha: 0.05) 
               : AppColors.surface,
         ),
         child: Padding(

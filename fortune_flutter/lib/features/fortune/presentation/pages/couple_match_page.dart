@@ -183,8 +183,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.pink.withOpacity(0.3),
-                  Colors.red.withOpacity(0.3),
+                  Colors.pink.withValues(alpha: 0.3),
+                  Colors.red.withValues(alpha: 0.3),
                 ],
               ),
             ),
@@ -251,7 +251,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _durations.entries.map((entry) {
                   return DropdownMenuItem(
@@ -291,12 +291,12 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -332,12 +332,12 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     child: Chip(
                       label: Text(area),
                       backgroundColor: isSelected
-                          ? Colors.orange.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? Colors.orange.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? Colors.orange
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -373,7 +373,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -447,7 +447,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: theme.colorScheme.surface.withOpacity(0.5),
+              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             ),
             onChanged: onNameChanged,
           ),
@@ -465,7 +465,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'male'
-                        ? color.withOpacity(0.5)
+                        ? color.withValues(alpha: 0.5)
                         : Colors.transparent,
                     borderWidth: gender == 'male' ? 2 : 0,
                     child: Row(
@@ -492,7 +492,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'female'
-                        ? color.withOpacity(0.5)
+                        ? color.withValues(alpha: 0.5)
                         : Colors.transparent,
                     borderWidth: gender == 'female' ? 2 : 0,
                     child: Row(
@@ -533,7 +533,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 suffixIcon: const Icon(Icons.calendar_today),
               ),
               child: Text(
@@ -561,7 +561,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: theme.colorScheme.surface.withOpacity(0.5),
+              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             ),
             items: _personalities.entries.map((entry) {
               return DropdownMenuItem(
@@ -593,12 +593,12 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 child: Chip(
                   label: Text(language),
                   backgroundColor: isSelected
-                      ? color.withOpacity(0.2)
-                      : theme.colorScheme.surface.withOpacity(0.5),
+                      ? color.withValues(alpha: 0.2)
+                      : theme.colorScheme.surface.withValues(alpha: 0.5),
                   side: BorderSide(
                     color: isSelected
                         ? color
-                        : theme.colorScheme.onSurface.withOpacity(0.3),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                   deleteIcon: isSelected
                       ? const Icon(Icons.check_circle, size: 18)
@@ -653,7 +653,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     painter: HeartProgressPainter(
                       progress: score / 100,
                       progressColor: Colors.red,
-                      backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                      backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     ),
                   ),
                 ),
@@ -682,8 +682,8 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.pink.withOpacity(0.1),
-                    Colors.red.withOpacity(0.1),
+                    Colors.pink.withValues(alpha: 0.1),
+                    Colors.red.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -729,7 +729,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withOpacity(0.5),
+                color: theme.colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -783,7 +783,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         Container(
                           height: 20,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface.withOpacity(0.1),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -795,7 +795,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                               gradient: LinearGradient(
                                 colors: [
                                   theme.colorScheme.primary,
-                                  theme.colorScheme.primary.withOpacity(0.7),
+                                  theme.colorScheme.primary.withValues(alpha: 0.7),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(10),
@@ -821,7 +821,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         Container(
                           height: 20,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.onSurface.withOpacity(0.1),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -833,7 +833,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                               gradient: LinearGradient(
                                 colors: [
                                   theme.colorScheme.secondary,
-                                  theme.colorScheme.secondary.withOpacity(0.7),
+                                  theme.colorScheme.secondary.withValues(alpha: 0.7),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(10),
@@ -907,7 +907,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -931,7 +931,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                         Text(
                           tip['tip'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -983,10 +983,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
+                    color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.orange.withOpacity(0.3),
+                      color: Colors.orange.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -1012,7 +1012,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                       Text(
                         _getConflictAdvice(area),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -1023,7 +1023,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -1118,13 +1118,13 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.05),
-                      theme.colorScheme.secondary.withOpacity(0.05),
+                      theme.colorScheme.primary.withValues(alpha: 0.05),
+                      theme.colorScheme.secondary.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -1133,7 +1133,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
                           topRight: Radius.circular(11),
@@ -1175,10 +1175,10 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.surface.withOpacity(0.8),
+                            color: theme.colorScheme.surface.withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: theme.colorScheme.onSurface.withOpacity(0.1),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Text(
@@ -1243,13 +1243,13 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.pink.withOpacity(0.1),
-                      Colors.red.withOpacity(0.1),
+                      Colors.pink.withValues(alpha: 0.1),
+                      Colors.red.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.pink.withOpacity(0.3),
+                    color: Colors.pink.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -1273,7 +1273,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
                           Text(
                             idea['type'] as String,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],

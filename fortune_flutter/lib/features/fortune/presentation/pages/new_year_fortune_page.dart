@@ -157,7 +157,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
           Text(
             '새해의 운세와 한 해 운세 흐름을\n자세히 알려드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -179,11 +179,11 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               ),
             ),
           ),
@@ -202,12 +202,12 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -217,7 +217,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: _birthDate != null 
                             ? theme.colorScheme.onSurface 
-                            : theme.colorScheme.onSurface.withOpacity(0.5),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                       ),
                     ),
                   ),
@@ -225,7 +225,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -276,7 +276,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                     _selectedGoal = selected ? goal : null;
                   });
                 },
-                selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
                 ),
@@ -314,7 +314,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
                     }
                   });
                 },
-                selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
+                selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
                   color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface,
                 ),
@@ -534,7 +534,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                         const SizedBox(height: 4),
                         LinearProgressIndicator(
                           value: entry.value / 100,
-                          backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                           valueColor: AlwaysStoppedAnimation<Color>(
                             _getScoreColor(entry.value),
                           ),
@@ -619,10 +619,10 @@ class _NewYearFortuneResult extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: seasonColor.withOpacity(0.1),
+                          color: seasonColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: seasonColor.withOpacity(0.3),
+                            color: seasonColor.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -661,7 +661,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: seasonColor.withOpacity(0.2),
+                                  color: seasonColor.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -717,7 +717,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Center(
@@ -748,7 +748,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
                                 Text(
                                   date['description'],
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                     fontSize: 12 + fontSize,
                                   ),
                                 ),
@@ -801,7 +801,7 @@ class _NewYearFortuneResult extends ConsumerWidget {
           horizontalInterval: 20,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1,
             );
           },
@@ -873,8 +873,8 @@ class _NewYearFortuneResult extends ConsumerWidget {
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.3),
-                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.3),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,

@@ -33,56 +33,33 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateMonthlyFortune(
-    //   userId: user.id,
-    //   month: _selectedMonth,
-    // );
+    // Use actual API call
+    final fortuneService = ref.read(fortuneServiceProvider);
+    final fortune = await fortuneService.getMonthlyFortune(userId: user.id);
 
-    // Mock data for now
-    final description = '''${_selectedMonth.month}월은 전반적으로 상승세를 보이는 한 달이 될 것입니다.
-      
-월초에는 새로운 기회가 찾아오며, 중순에는 안정적인 흐름을 유지할 것으로 보입니다. 월말에는 그동안의 노력이 결실을 맺는 시기가 될 것입니다.
-
-특히 15일을 전후로 중요한 전환점이 있을 예정이니, 이 시기에는 더욱 신중하게 행동하세요. 전체적으로 긍정적인 에너지가 흐르는 달이지만, 건강 관리에는 주의가 필요합니다.
-
-재물운은 중순 이후 상승하며, 대인관계에서는 새로운 인연을 만날 가능성이 높습니다.''';
-    
-    return Fortune(
-      id: 'monthly_${DateTime.now().millisecondsSinceEpoch}',
-      userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'monthly',
-      overallScore: 77,
-      scoreBreakdown: {
-        '전체운': 77,
-        '애정운': 82,
-        '재물운': 74,
-        '건강운': 72,
-        '대인운': 80,
-      },
-      description: description,
-      luckyItems: {
-        '이번 달 행운의 날': '15일',
-        '행운의 색': '초록색',
-        '행운의 숫자': '8',
-        '행운의 방향': '북동쪽',
-      },
-      recommendations: [
-        '월초: 새로운 프로젝트나 계획을 시작하기 좋은 시기',
-        '중순: 인간관계 확장과 네트워킹에 집중',
-        '월말: 재정 정리와 다음 달 계획 수립',
-        '건강: 규칙적인 운동과 충분한 수면 필요',
-      ],
+    // Enrich the fortune with additional metadata
+    final enrichedFortune = Fortune(
+      id: fortune.id,
+      userId: fortune.userId,
+      type: fortune.type,
+      content: fortune.content,
+      createdAt: fortune.createdAt,
+      category: fortune.category,
+      overallScore: fortune.overallScore,
+      scoreBreakdown: fortune.scoreBreakdown,
+      description: fortune.description,
+      luckyItems: fortune.luckyItems,
+      recommendations: fortune.recommendations,
       metadata: {
+        ...?fortune.metadata,
         'dailyScores': _generateDailyScores(),
         'monthlyHighlights': _getMonthlyHighlights(),
         'luckyDays': _getLuckyDays(),
         'categoryDistribution': _getCategoryDistribution(),
       },
     );
+    
+    return enrichedFortune;
   }
 
   Map<int, int> _generateDailyScores() {
@@ -282,7 +259,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
-                      color: _getHeatmapColor(score).withOpacity(isSelected ? 0.8 : 0.6),
+                      color: _getHeatmapColor(score).withValues(alpha: isSelected ? 0.8 : 0.6),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
@@ -388,7 +365,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -414,10 +391,10 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: (dayHighlight['color'] as Color).withOpacity(0.1),
+                  color: (dayHighlight['color'] as Color).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (dayHighlight['color'] as Color).withOpacity(0.3),
+                    color: (dayHighlight['color'] as Color).withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -454,7 +431,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
             Text(
               _getDayAdvice(score),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -493,7 +470,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.2),
+                        color: color.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
@@ -523,7 +500,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.2),
+                                  color: color.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -541,7 +518,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                           Text(
                             highlight['description'] as String,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
                         ],

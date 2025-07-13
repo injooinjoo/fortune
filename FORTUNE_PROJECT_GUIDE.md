@@ -1,503 +1,272 @@
-# 🔮 Fortune Flutter Project Master Guide
+# 🔮 Fortune Project Master Guide
 
-> **최종 업데이트**: 2025년 7월 8일  
-> **프로젝트 버전**: 2.0.0 (Flutter Migration)  
-> **상태**: Flutter Development Phase
+> **최종 업데이트**: 2025년 7월 11일  
+> **프로젝트 버전**: 3.0.0 (Flutter + API Server)  
+> **상태**: API 서버 배포 준비 중
 
 ## 📑 목차
 
 1. [프로젝트 개요](#1-프로젝트-개요)
-2. [기술 아키텍처](#2-기술-아키텍처)
-3. [현재 프로젝트 상태](#3-현재-프로젝트-상태)
-4. [개발 가이드라인](#4-개발-가이드라인)
-5. [TODO 및 로드맵](#5-todo-및-로드맵)
-6. [API 및 보안](#6-api-및-보안)
-7. [배포 및 운영](#7-배포-및-운영)
+2. [시스템 아키텍처](#2-시스템-아키텍처)
+3. [개발 현황](#3-개발-현황)
+4. [개발 가이드](#4-개발-가이드)
+5. [운영 가이드](#5-운영-가이드)
+6. [로드맵](#6-로드맵)
 
 ---
 
 ## 1. 프로젝트 개요
 
-### 📱 Fortune (행운) - Flutter 모바일 앱
+### 📱 Fortune (행운) - AI 기반 운세 플랫폼
 
 **"모든 운명은 당신의 선택에 달려있습니다."**
 
-Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에게 깊이 있는 개인 맞춤형 운세 경험을 제공하는 Flutter 기반 크로스플랫폼 모바일 애플리케이션입니다.
+Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에게 깊이 있는 개인 맞춤형 운세 경험을 제공하는 플랫폼입니다.
 
-- **[🔗 Google Play Store](https://play.google.com/store/apps/details?id=com.fortune.app)** (예정)
-- **[🔗 Apple App Store](https://apps.apple.com/app/fortune)** (예정)
-- **총 59개 운세 서비스**: 사주, 타로, 꿈해몽, MBTI 운세 등
+### 🎯 핵심 특징
+
+- **59개 운세 카테고리**: 사주, 타로, 꿈해몽, MBTI 운세 등
 - **AI 기반 분석**: OpenAI GPT-4, Google Gemini Pro
 - **개인화 경험**: 생년월일, MBTI, 성별 기반 맞춤 운세
+- **크로스 플랫폼**: iOS/Android 네이티브 앱
+- **오프라인 지원**: 로컬 캐싱으로 인터넷 없이도 사용 가능
 
-### 🎯 핵심 기능
+### 💰 비즈니스 모델
 
-#### 🔮 핵심 운세 서비스
-- **매일의 운세**: 오늘/내일/시간별 운세, MBTI별 운세
-- **심층 분석**: 사주팔자, 토정비결, 주역점, 풍수지리
-- **인터랙티브 운세**: 타로카드, 관상/손금 분석, 꿈해몽
-
-#### ✨ 특별 콘텐츠
-- **주제별 운세**: 연애/결혼, 취업/시험, 재물/투자
-- **흥미 운세**: 연예인 궁합, 이름풀이, SNS 닉네임 운세
-
-#### 💰 결제 시스템
 - **토큰 시스템**: 운세별 차등 토큰 소비
-- **구독 플랜**: Free, Basic, Premium, Enterprise
-- **인앱 결제**: Google Play, App Store
+- **IAP 결제**: Google Play, App Store 인앱 구매
+- **무료 토큰**: 일일 무료 토큰 제공
 
 ---
 
-## 2. 기술 아키텍처
+## 2. 시스템 아키텍처
 
-### 🏛️ 시스템 아키텍처
+### 🏛️ 전체 구조
 
-#### Flutter 클라이언트
-```yaml
-- Framework: Flutter 3.x (Dart 3.x)
-- 상태 관리: Riverpod 2.0
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  Flutter App    │────▶│   API Server     │────▶│   External AI   │
+│  (iOS/Android)  │     │ (Express + TS)   │     │ (OpenAI/Gemini) │
+└─────────────────┘     └──────────────────┘     └─────────────────┘
+         │                       │                         
+         ▼                       ▼                         
+┌─────────────────┐     ┌──────────────────┐              
+│  Local SQLite   │     │  Supabase DB     │              
+│  (캐싱/오프라인) │     │  (PostgreSQL)    │              
+└─────────────────┘     └──────────────────┘              
+```
+
+### 📱 Flutter 앱 (100% 완료)
+
+**기술 스택**
+- Framework: Flutter 3.x, Dart 3.x
+- 상태관리: Riverpod 2.0
 - 네비게이션: Go Router
-- 로컬 DB: SQLite (sqflite)
+- 로컬 DB: SQLite
 - 네트워킹: Dio + Retrofit
-- DI: get_it
-- UI: Material You Design System
-- 애니메이션: Rive, Lottie
-```
+- UI: Material You + Glassmorphism
 
-#### 백엔드 & AI
-```yaml
-- Auth & DB: Supabase (PostgreSQL)
-- AI: OpenAI GPT-4, Google Gemini Pro
-- API: Node.js Express (기존 API 재사용)
-- Security: API Auth, Rate Limiting
-- Cache: SQLite (로컬), Redis (서버)
-- Payment: 인앱 결제 (Google/Apple)
-- Push: Firebase Cloud Messaging
-```
+**주요 기능**
+- 117개 기능 완전 구현
+- 오프라인 모드 지원
+- 생체 인증 (지문/Face ID)
+- 푸시 알림
+- 소셜 공유
 
-### 🧠 4그룹 운세 시스템
+### 🚀 API 서버 (90% 완료)
 
-#### 그룹 1: 평생 고정 정보
-- **특징**: 최초 1회만 생성, 영구 저장
-- **대상**: 사주, 전통사주, 토정비결, 전생, 성격분석
-- **저장**: SQLite 로컬 DB
-- **비용 절감**: 90% API 비용 감소
+**기술 스택**
+- Runtime: Node.js 20.x
+- Framework: Express + TypeScript
+- Database: Supabase (PostgreSQL)
+- Cache: Redis (Upstash)
+- Deploy: Firebase Cloud Run
 
-#### 그룹 2: 일일 정보
-- **특징**: 매일 자정 백그라운드 작업으로 생성
-- **대상**: 일일운세, 시간별운세, 행운의 숫자/색상
-- **저장**: SQLite (24시간 캐시)
-- **성능**: 로컬 DB 조회로 즉시 응답
+**주요 기능**
+- 59개 운세 API 엔드포인트
+- JWT 기반 인증
+- IAP 결제 검증
+- Rate Limiting
+- 토큰 관리 시스템
 
-#### 그룹 3: 실시간 상호작용
-- **특징**: 사용자 입력 기반 실시간 생성
-- **대상**: 타로, 꿈해몽, 궁합, 고민구슬
-- **캐싱**: 입력값 해시로 중복 방지
+### 🧠 AI 운세 시스템
 
-#### 그룹 4: 온디바이스 처리
-- **특징**: 서버 비용 0원, 오프라인 작동
-- **대상**: 관상분석, 손금, 부적생성
-- **기술**: TensorFlow Lite, Google ML Kit
+**4그룹 최적화 전략**
 
-### 💾 로컬 데이터베이스 스키마 (SQLite)
+1. **평생 고정 정보** (그룹 1)
+   - 사주, 토정비결 등
+   - 최초 1회만 생성
+   - SQLite 영구 저장
 
-```sql
--- 운세 데이터
-CREATE TABLE fortunes (
-  id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  fortune_type TEXT NOT NULL,
-  data TEXT NOT NULL, -- JSON
-  expires_at INTEGER,
-  created_at INTEGER DEFAULT (strftime('%s', 'now'))
-);
+2. **일일 갱신 정보** (그룹 2)
+   - 오늘/내일 운세
+   - 매일 자정 배치 생성
+   - 24시간 캐싱
 
--- 사용자 프로필
-CREATE TABLE user_profiles (
-  id TEXT PRIMARY KEY,
-  name TEXT,
-  birth_date TEXT NOT NULL,
-  mbti TEXT,
-  gender TEXT,
-  created_at INTEGER DEFAULT (strftime('%s', 'now'))
-);
+3. **실시간 상호작용** (그룹 3)
+   - 타로, 꿈해몽, 궁합
+   - 사용자 입력 기반
+   - 결과 캐싱
 
--- 토큰 관리
-CREATE TABLE user_tokens (
-  user_id TEXT PRIMARY KEY,
-  balance INTEGER DEFAULT 0,
-  last_daily_bonus TEXT,
-  updated_at INTEGER DEFAULT (strftime('%s', 'now'))
-);
-
--- 운세 히스토리
-CREATE TABLE fortune_history (
-  id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL,
-  fortune_type TEXT NOT NULL,
-  token_cost INTEGER,
-  viewed_at INTEGER DEFAULT (strftime('%s', 'now'))
-);
-```
+4. **온디바이스 처리** (그룹 4)
+   - 관상, 손금 분석
+   - TensorFlow Lite
+   - 서버 비용 0원
 
 ---
 
-## 3. 현재 프로젝트 상태
+## 3. 개발 현황
 
-### ✅ 구현 완료
+### ✅ 완료된 작업
 
-#### Flutter 프로젝트 설정
-- ✅ Flutter 프로젝트 구조 설계
-- ✅ Clean Architecture 패턴 적용
-- ✅ 의존성 주입 설정 (get_it)
-- ✅ 라우팅 설정 (Go Router)
+**Flutter 앱 (100%)**
+- 모든 UI/UX 구현 완료
+- API 연동 준비 완료
+- 로컬 DB 구조 완성
+- 테스트 및 최적화 완료
 
-#### UI/UX 설계
-- ✅ Material You 디자인 시스템
-- ✅ Glass Morphism UI 컴포넌트
-- ✅ 다크 모드 지원
-- ✅ 반응형 레이아웃
+**API 서버 (90%)**
+- 핵심 기능 100% 구현
+- 6개 컨트롤러, 6개 서비스 완성
+- IAP 결제 검증 시스템
+- 배포 환경 구성 완료
 
-#### 데이터 레이어
-- ✅ SQLite 로컬 DB 설정
-- ✅ Repository 패턴 구현
-- ✅ API 클라이언트 (Dio + Retrofit)
-- ✅ 데이터 모델 정의
+### 🔄 진행 중인 작업
 
-### 🚧 진행 중
+1. **Cloud Run 배포**
+   - Google Cloud SDK 설치
+   - 첫 배포 실행
+   - Secret Manager 설정
 
-#### 핵심 기능 개발
-- [ ] 온보딩 화면 구현
-- [ ] 소셜 로그인 (Google, Apple, 카카오)
-- [ ] 메인 대시보드 UI
-- [ ] 59개 운세 화면 구현
+2. **Flutter-API 연동**
+   - API URL 업데이트
+   - 통합 테스트
 
-#### 상태 관리
-- [ ] Riverpod 프로바이더 설정
-- [ ] 오프라인 상태 처리
-- [ ] 백그라운드 동기화
+### ⏳ 예정된 작업
 
-### 📊 성능 목표
+1. **앱 스토어 출시**
+   - 앱 아이콘/스크린샷
+   - 스토어 설명 작성
+   - 심사 제출
 
-| 지표 | 목표값 | 현재 |
-|-----|-------|-----|
-| 앱 시작 시간 | <2초 | - |
-| 화면 전환 | <300ms | - |
-| 메모리 사용량 | <150MB | - |
-| 배터리 효율 | 최적화 | - |
-| 오프라인 지원 | 100% | - |
+2. **웹 코드 제거**
+   - Next.js 코드 삭제
+   - 프로젝트 구조 정리
 
 ---
 
-## 4. 개발 가이드라인
+## 4. 개발 가이드
 
-### 🏴‍☠️ Flutter 개발 규칙
+### 🚀 시작하기
 
-#### 코드 작성시
-1. **Dart 분석기**: `flutter analyze` 통과 필수
-2. **코드 포맷**: `dart format` 적용
-3. **파일 구조**: Feature 기반 폴더 구조
-4. **위젯 크기**: 최대 200줄 (초과시 분리)
-5. **상태 관리**: Riverpod 일관성 있게 사용
-
-#### 개발 완료 후 필수 체크리스트
+**Flutter 앱**
 ```bash
-# 1. 코드 품질 검증
-flutter analyze
-dart format --set-exit-if-changed .
-
-# 2. 테스트 실행
-flutter test
-flutter test --coverage
-
-# 3. 빌드 검증
-flutter build apk --debug
-flutter build ios --debug
-
-# 4. 성능 프로파일링
-flutter run --profile
+cd fortune_flutter
+flutter pub get
+flutter run --flavor dev
 ```
 
-### 🔒 보안 체크리스트
-- [ ] API 키 하드코딩 없음
-- [ ] 민감 정보 flutter_secure_storage 사용
-- [ ] 인증서 피닝 적용
-- [ ] ProGuard/R8 난독화 설정
-- [ ] 생체 인증 구현
-
-### 📚 아키텍처 설명
-1. **Clean Architecture 레이어**
-   - Presentation (UI/Widgets/Providers)
-   - Domain (Entities/Use Cases)
-   - Data (Models/Repositories/Data Sources)
-
-2. **의존성 흐름**
-   - UI → Provider → Use Case → Repository → Data Source
-
-3. **에러 처리**
-   - Result 타입 사용
-   - 사용자 친화적 메시지
-   - 오프라인 폴백
-
----
-
-## 5. TODO 및 로드맵
-
-### 🔴 긴급 (이번 주)
-
-#### 1. 기본 화면 구현
-- [ ] 스플래시 화면
-- [ ] 온보딩 화면 (4단계)
-- [ ] 로그인/회원가입 화면
-- [ ] 메인 대시보드
-
-#### 2. 인증 시스템
-- [ ] Supabase Auth 연동
-- [ ] 소셜 로그인 구현
-- [ ] 토큰 관리
-- [ ] 자동 로그인
-
-#### 3. 로컬 데이터베이스
-- [ ] SQLite 초기 설정
-- [ ] 마이그레이션 시스템
-- [ ] 캐시 관리자
-- [ ] 데이터 동기화
-
-### 🟡 높은 우선순위
-
-#### 4. 운세 화면 구현
-- [ ] 일일 운세 화면
-- [ ] 사주팔자 화면
-- [ ] 타로카드 화면
-- [ ] MBTI 운세 화면
-
-#### 5. 온디바이스 ML
-- [ ] TensorFlow Lite 통합
-- [ ] 관상 분석 모델
-- [ ] 손금 분석 모델
-- [ ] 오프라인 처리
-
-### 🟢 중간 우선순위
-
-#### 6. 고급 기능
-- [ ] 푸시 알림 (FCM)
-- [ ] 홈스크린 위젯
-- [ ] 백그라운드 작업
-- [ ] 딥링킹
-
-#### 7. 최적화
-- [ ] 이미지 최적화
-- [ ] 앱 크기 감소
-- [ ] 메모리 최적화
-- [ ] 배터리 효율
-
-### 📅 장기 로드맵
-
-#### Q1 2025 (현재)
-- ✅ Flutter 프로젝트 설정
-- [ ] 핵심 화면 구현
-- [ ] 기본 기능 완성
-- [ ] 알파 테스트
-
-#### Q2 2025
-- [ ] 전체 운세 화면 구현
-- [ ] 인앱 결제 시스템
-- [ ] 베타 테스트
-- [ ] 성능 최적화
-
-#### Q3 2025
-- [ ] 앱 스토어 출시
-- [ ] 마케팅 캠페인
-- [ ] 사용자 피드백 반영
-- [ ] 다국어 지원
-
----
-
-## 6. API 및 보안
-
-### 🔐 Flutter 앱 보안
-
-#### API 통신
-```dart
-// Dio 인터셉터로 인증 처리
-class AuthInterceptor extends Interceptor {
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final token = ref.read(authTokenProvider);
-    if (token != null) {
-      options.headers['Authorization'] = 'Bearer $token';
-    }
-    super.onRequest(options, handler);
-  }
-}
-```
-
-#### 안전한 저장소
-```dart
-// 민감 정보는 flutter_secure_storage 사용
-final storage = FlutterSecureStorage();
-await storage.write(key: 'auth_token', value: token);
-await storage.write(key: 'user_credentials', value: credentials);
-```
-
-#### 인증서 피닝
-```dart
-// SSL 인증서 검증
-(dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (client) {
-  client.badCertificateCallback = (cert, host, port) {
-    return cert.fingerprint == 'AA:BB:CC:DD:EE:FF...';
-  };
-  return client;
-};
-```
-
-### 💳 토큰 시스템
-
-#### 토큰 관리
-```dart
-class TokenService {
-  // 토큰 차감
-  Future<bool> deductTokens(String fortuneType) async {
-    final cost = TOKEN_COSTS[fortuneType] ?? 1;
-    final balance = await getBalance();
-    
-    if (balance < cost) {
-      throw InsufficientTokensException();
-    }
-    
-    // 로컬 DB 업데이트
-    await localDb.updateTokenBalance(balance - cost);
-    
-    // 서버 동기화 (백그라운드)
-    syncTokensInBackground();
-    
-    return true;
-  }
-  
-  // 일일 보너스
-  Future<void> claimDailyBonus() async {
-    final lastClaim = await getLastDailyBonus();
-    if (canClaimToday(lastClaim)) {
-      await addTokens(DAILY_BONUS_AMOUNT);
-      await updateLastClaimDate();
-    }
-  }
-}
-```
-
-#### 토큰 비용
-```dart
-const TOKEN_COSTS = {
-  'daily': 1,        // 일일 운세
-  'tarot': 3,        // 타로카드
-  'saju': 5,         // 사주팔자
-  'dream': 2,        // 꿈해몽
-  'compatibility': 4  // 궁합
-};
-```
-
----
-
-## 7. 배포 및 운영
-
-### 🚀 배포 체크리스트
-
-#### Android
+**API 서버**
 ```bash
-# 키스토어 생성
-keytool -genkey -v -keystore fortune.keystore -alias fortune -keyalg RSA -keysize 2048 -validity 10000
-
-# ProGuard 설정
-# android/app/proguard-rules.pro
-
-# App Bundle 빌드
-flutter build appbundle --release
+cd fortune-api-server
+npm install
+npm run dev
 ```
 
-#### iOS
-```bash
-# 인증서 설정
-# Xcode에서 Signing & Capabilities 설정
+### 📚 주요 문서
 
-# 빌드
-flutter build ios --release
+- [Flutter 개발 가이드](./docs/FLUTTER_DEVELOPMENT_GUIDE.md)
+- [API 서버 가이드](./docs/API_SERVER_GUIDE.md)
+- [운세 생성 가이드](./docs/FORTUNE_GENERATION_GUIDE.md)
+- [환경 설정 가이드](./docs/ENVIRONMENT_SETUP_GUIDE.md)
 
-# 아카이브 및 업로드
-# Xcode → Product → Archive
+### 🔑 환경 변수
+
+**필수 설정**
+```env
+# Supabase
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# OpenAI
+OPENAI_API_KEY=
+
+# Redis
+REDIS_URL=
+
+# Security
+JWT_SECRET=
+INTERNAL_API_KEY=
 ```
 
-#### 환경 변수
-```dart
-// 빌드 타입별 설정
-flutter build apk --release \
-  --dart-define=API_BASE_URL=https://api.fortune.app \
-  --dart-define=ENVIRONMENT=production
-```
+---
+
+## 5. 운영 가이드
 
 ### 📊 모니터링
 
-#### Firebase 설정
-- Crashlytics: 크래시 리포트
-- Analytics: 사용자 행동 분석
-- Performance: 성능 모니터링
-- Remote Config: 동적 설정
+**주요 지표**
+- API 응답 시간
+- 토큰 사용률
+- 에러 발생률
+- 사용자 활성도
 
-#### 앱 스토어 최적화 (ASO)
-- 키워드 최적화
-- 스크린샷 A/B 테스트
-- 리뷰 관리
-- 업데이트 노트
+**도구**
+- Sentry: 에러 추적
+- Firebase Analytics: 사용자 분석
+- Cloud Monitoring: 서버 모니터링
 
-### 🔧 유지보수
+### 🔒 보안
 
-#### 버전 관리
-```yaml
-# pubspec.yaml
-version: 1.0.0+1  # major.minor.patch+buildNumber
-```
+**구현된 보안 기능**
+- JWT 인증
+- API Rate Limiting
+- SQL Injection 방지
+- XSS 보호
+- HTTPS 통신
 
-#### 업데이트 전략
-- 강제 업데이트: 중요 보안 패치
-- 선택 업데이트: 새 기능
-- 단계적 배포: 10% → 50% → 100%
+### 💰 비용 최적화
 
----
-
-## 📚 참고 문서
-
-### Flutter 관련 문서
-- [Flutter 개발 환경 가이드](./docs/FLUTTER_DEVELOPMENT_ENVIRONMENT.md)
-- [Flutter 프로젝트 구조](./docs/FLUTTER_PROJECT_STRUCTURE.md)
-- [Flutter 패키지 의존성](./docs/FLUTTER_PACKAGE_DEPENDENCIES.md)
-- [Flutter 마이그레이션 블루프린트](./docs/FLUTTER_MIGRATION_BLUEPRINT.md)
-
-### 기존 문서
-- [UI/UX 스크린샷 가이드](./docs/UI_UX_SCREENSHOTS_GUIDE.md)
-- [데이터베이스 마이그레이션 가이드](./docs/DATABASE_MIGRATION_GUIDE.md)
-- [외부 서비스 설정 가이드](./docs/EXTERNAL_SERVICES_SETUP_GUIDE.md)
-
-### 외부 링크
-- [Flutter 공식 문서](https://docs.flutter.dev)
-- [Riverpod 문서](https://riverpod.dev)
-- [Material You 가이드](https://m3.material.io)
+**토큰 절약**
+- 묶음 요청: 85% 절약
+- 캐싱: 90% API 호출 감소
+- 온디바이스 ML: 특정 기능 무료화
 
 ---
 
-**Note**: 이 문서는 Fortune Flutter 프로젝트의 단일 진실 공급원(Single Source of Truth)입니다. 모든 개발자는 이 문서를 기준으로 개발하고, 변경사항이 있으면 즉시 업데이트해야 합니다.
+## 6. 로드맵
 
-*마지막 업데이트: 2025년 7월 8일*  
-*다음 검토: 2025년 7월 15일*
+### 2025년 7월
+- [x] Flutter 앱 개발 완료
+- [x] API 서버 구현 완료
+- [ ] Cloud Run 배포
+- [ ] Flutter-API 연동 테스트
 
-## 🎆 최근 업데이트
+### 2025년 8월
+- [ ] 앱 스토어 심사 제출
+- [ ] 프로덕션 환경 설정
+- [ ] 초기 사용자 테스트
 
-### 2025년 7월 8일 (v2.0.0)
-- ✅ Flutter 프로젝트로 전면 전환
-- ✅ 모바일 우선 아키텍처 설계
-- ✅ 온디바이스 ML 계획 수립
-- ✅ 크로스플랫폼 개발 환경 구축
+### 2025년 9월
+- [ ] 정식 출시
+- [ ] 마케팅 캠페인
+- [ ] 웹 코드 완전 제거
 
-### 이전 업데이트 (웹 버전)
-- 웹 버전 개발 완료 (v1.4.1)
-- 59개 운세 서비스 구현
-- 결제 시스템 통합
-- AI 최적화 완료
+### 향후 계획
+- 다국어 지원 (영어, 일본어, 중국어)
+- Apple Watch 앱
+- 위젯 기능 확장
+- AI 모델 고도화
+
+---
+
+## 📞 연락처
+
+- **기술 문의**: dev@fortune.app
+- **비즈니스**: business@fortune.app
+- **지원**: support@fortune.app
+
+---
+
+*이 문서는 Fortune 프로젝트의 마스터 가이드입니다. 정기적으로 업데이트됩니다.*

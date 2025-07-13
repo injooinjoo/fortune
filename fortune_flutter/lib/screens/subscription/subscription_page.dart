@@ -250,8 +250,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       blur: 20,
       gradient: LinearGradient(
         colors: [
-          planColor.withOpacity(0.1),
-          planColor.withOpacity(0.05),
+          planColor.withValues(alpha: 0.1),
+          planColor.withValues(alpha: 0.05),
         ],
       ),
       child: Column(
@@ -262,7 +262,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: planColor.withOpacity(0.2),
+                  color: planColor.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -292,7 +292,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.2),
+                              color: Colors.green.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -322,7 +322,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withOpacity(0.2),
+                              color: Colors.orange.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -364,7 +364,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                     Text(
                       '월',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -396,7 +396,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
               if (state.monthlyTokens != 999999)
                 LinearProgressIndicator(
                   value: state.usagePercentage / 100,
-                  backgroundColor: planColor.withOpacity(0.2),
+                  backgroundColor: planColor.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(planColor),
                   minHeight: 8,
                 ),
@@ -420,13 +420,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                 Icon(
                   Icons.calendar_today_rounded,
                   size: 16,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   '다음 결제일: ${_formatDate(state.nextBillingDate!)}',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -580,7 +580,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
         borderRadius: BorderRadius.circular(20),
         blur: 20,
         borderColor: isCurrentPlan
-            ? theme.colorScheme.primary.withOpacity(0.5)
+            ? theme.colorScheme.primary.withValues(alpha: 0.5)
             : Colors.transparent,
         borderWidth: isCurrentPlan ? 2 : 0,
         child: Column(
@@ -630,7 +630,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -659,7 +659,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   ? '무제한 토큰'
                   : '매월 ${plan['tokens']}개 토큰',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 16),
@@ -717,8 +717,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       blur: 20,
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.2),
-          Colors.blue.withOpacity(0.2),
+          Colors.purple.withValues(alpha: 0.2),
+          Colors.blue.withValues(alpha: 0.2),
         ],
       ),
       child: Row(
@@ -752,7 +752,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                 Text(
                   '연간 구독 시 2개월 무료! 최대 17% 할인',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],

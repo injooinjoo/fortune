@@ -86,9 +86,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.pink.withOpacity(0.05),
+              color: Colors.pink.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.pink.withOpacity(0.2)),
+              border: Border.all(color: Colors.pink.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +186,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
+                color: Colors.orange.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -203,9 +203,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.blue.withOpacity(0.05),
+              color: Colors.blue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.blue.withOpacity(0.2)),
+              border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,8 +382,8 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                _getScoreColor(score).withOpacity(0.1),
-                _getScoreColor(score).withOpacity(0.2),
+                _getScoreColor(score).withValues(alpha: 0.1),
+                _getScoreColor(score).withValues(alpha: 0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(16),

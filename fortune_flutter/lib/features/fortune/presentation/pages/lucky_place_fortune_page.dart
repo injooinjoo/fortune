@@ -170,7 +170,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
               _selectedEnvironment = selected ? environment : null;
             });
           },
-          selectedColor: (info['color'] as Color).withOpacity(0.8),
+          selectedColor: (info['color'] as Color).withValues(alpha: 0.8),
         );
       }).toList(),
     );
@@ -204,7 +204,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
               _selectedActivity = selected ? activity : null;
             });
           },
-          selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+          selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
         );
       }).toList(),
     );
@@ -381,13 +381,13 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.3),
-                  (primaryCategoryInfo['color'] as Color).withOpacity(0.1),
+                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.3),
+                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.1),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (primaryCategoryInfo['color'] as Color).withOpacity(0.5),
+                  color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.5),
                   blurRadius: 30,
                   spreadRadius: 10,
                 ),
@@ -412,7 +412,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: (primaryCategoryInfo['color'] as Color).withOpacity(0.2),
+              color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -466,7 +466,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                       width: 2,
                     ),
                   ),
@@ -508,7 +508,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -580,18 +580,18 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
                   borderColor: isPrimary 
-                      ? (info['color'] as Color).withOpacity(0.5)
+                      ? (info['color'] as Color).withValues(alpha: 0.5)
                       : Colors.transparent,
                   borderWidth: isPrimary ? 2 : 0,
                   gradient: LinearGradient(
                     colors: isPrimary
                         ? [
-                            (info['color'] as Color).withOpacity(0.2),
-                            (info['color'] as Color).withOpacity(0.1),
+                            (info['color'] as Color).withValues(alpha: 0.2),
+                            (info['color'] as Color).withValues(alpha: 0.1),
                           ]
                         : [
-                            Colors.white.withOpacity(0.05),
-                            Colors.white.withOpacity(0.02),
+                            Colors.white.withValues(alpha: 0.05),
+                            Colors.white.withValues(alpha: 0.02),
                           ],
                   ),
                   child: Column(
@@ -615,7 +615,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: (info['color'] as Color).withOpacity(0.3),
+                            color: (info['color'] as Color).withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -650,8 +650,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.blue.withOpacity(0.1),
-            Colors.purple.withOpacity(0.05),
+            Colors.blue.withValues(alpha: 0.1),
+            Colors.purple.withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -705,10 +705,10 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -717,7 +717,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(icon, color: color),
@@ -749,7 +749,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                 Text(
                   activity,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -795,7 +795,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             Text(
               activityInfo['description'] as String,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 16),
@@ -805,9 +805,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               children: (activityInfo['bestPlaces'] as List<String>).map((place) {
                 return Chip(
                   label: Text(place),
-                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                   ),
                 );
               }).toList(),

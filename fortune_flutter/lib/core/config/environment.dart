@@ -36,23 +36,7 @@ class Environment {
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
   
   // 결제 설정
-  static String get stripePublishableKey {
-    switch (current) {
-      case production:
-        return dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
-      default:
-        return dotenv.env['STRIPE_TEST_PUBLISHABLE_KEY'] ?? '';
-    }
-  }
-  
-  static String get tossPayClientKey {
-    switch (current) {
-      case production:
-        return dotenv.env['TOSSPAY_CLIENT_KEY'] ?? '';
-      default:
-        return dotenv.env['TOSSPAY_TEST_CLIENT_KEY'] ?? '';
-    }
-  }
+  static String get stripePublishableKey => dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
   
   // 분석 도구 설정
   static String get sentryDsn => dotenv.env['SENTRY_DSN'] ?? '';
@@ -100,6 +84,11 @@ class Environment {
   static String get googleIosClientId => dotenv.env['GOOGLE_IOS_CLIENT_ID'] ?? '';
   static String get googleAndroidClientId => dotenv.env['GOOGLE_ANDROID_CLIENT_ID'] ?? '';
   
+  // Social Login 설정
+  static String get kakaoAppKey => dotenv.env['KAKAO_APP_KEY'] ?? '';
+  static String get naverClientId => dotenv.env['NAVER_CLIENT_ID'] ?? '';
+  static String get naverClientSecret => dotenv.env['NAVER_CLIENT_SECRET'] ?? '';
+  
   // 기능 플래그
   static bool get enableAnalytics => 
       dotenv.env['ENABLE_ANALYTICS']?.toLowerCase() == 'true';
@@ -138,8 +127,6 @@ class Environment {
     if (current == production) {
       final productionVars = [
         'PROD_API_BASE_URL',
-        'STRIPE_PUBLISHABLE_KEY',
-        'TOSSPAY_CLIENT_KEY',
         'SENTRY_DSN',
         'OPENAI_API_KEY',
         'ENCRYPTION_KEY',

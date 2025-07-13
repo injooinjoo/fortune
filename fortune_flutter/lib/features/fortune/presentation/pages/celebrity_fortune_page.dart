@@ -80,7 +80,7 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
         Text(
           '좋아하는 연예인의 운세를 통해\n오늘 하루의 행운을 받아보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -101,11 +101,11 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
           ),
         ),
@@ -146,11 +146,11 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
                 prefixIcon: const Icon(Icons.star_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                  borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+                  borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                 ),
               ),
               onChanged: (value) {
@@ -182,7 +182,7 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
                   _selectedCategory = selected ? category : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               ),
@@ -217,7 +217,7 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -235,7 +235,7 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.5),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -323,8 +323,8 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.1),
-                  theme.colorScheme.secondary.withOpacity(0.05),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
+                  theme.colorScheme.secondary.withValues(alpha: 0.05),
                 ],
               ),
               child: Column(
@@ -442,7 +442,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                   '행운의 시간',
                   result.details?['luckyTime'] ?? '',
                   Icons.access_time,
-                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
                 ),
               ),
               const SizedBox(width: 12),
@@ -452,7 +452,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                   '행운의 색상',
                   result.details?['luckyColor'] ?? '',
                   Icons.palette,
-                  theme.colorScheme.secondary.withOpacity(0.1),
+                  theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ),
               ),
             ],
@@ -463,7 +463,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
             '행운의 아이템',
             result.details?['luckyItem'] ?? '',
             Icons.diamond,
-            theme.colorScheme.tertiary.withOpacity(0.1),
+            theme.colorScheme.tertiary.withValues(alpha: 0.1),
           ),
           const SizedBox(height: 20),
           
@@ -474,8 +474,8 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.05),
-                  theme.colorScheme.primary.withOpacity(0.02),
+                  theme.colorScheme.primary.withValues(alpha: 0.05),
+                  theme.colorScheme.primary.withValues(alpha: 0.02),
                 ],
               ),
               child: Column(
@@ -575,8 +575,8 @@ class _CelebrityFortuneResult extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          color.withOpacity(0.1),
-          color.withOpacity(0.05),
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05),
         ],
       ),
       child: Column(
@@ -594,7 +594,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
           Text(
             label,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -616,7 +616,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [
           backgroundColor,
-          backgroundColor.withOpacity(0.5),
+          backgroundColor.withValues(alpha: 0.5),
         ],
       ),
       child: Row(
@@ -630,7 +630,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 Text(
                   label,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
                 Text(
@@ -661,8 +661,8 @@ class _CelebrityFortuneResult extends ConsumerWidget {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          color.withOpacity(0.1),
-          color.withOpacity(0.05),
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05),
         ],
       ),
       child: Column(

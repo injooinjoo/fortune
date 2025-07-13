@@ -161,7 +161,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -283,7 +283,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -340,7 +340,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _idealTypes.entries.map((entry) {
                   return DropdownMenuItem(
@@ -372,7 +372,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 ),
                 items: _priorityOptions.entries.map((entry) {
                   return DropdownMenuItem(
@@ -405,7 +405,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               Text(
                 '3개 이상 선택해주세요',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 16),
@@ -429,12 +429,12 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     child: Chip(
                       label: Text(value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
@@ -478,7 +478,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.5)
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
                       borderWidth: isSelected ? 2 : 0,
                       child: Row(
@@ -489,7 +489,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: _getReadinessColor(index).withOpacity(0.2),
+                              color: _getReadinessColor(index).withValues(alpha: 0.2),
                               border: Border.all(
                                 color: _getReadinessColor(index),
                                 width: 2,
@@ -642,13 +642,13 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: theme.colorScheme.onSurface.withOpacity(0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -692,7 +692,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,
@@ -731,8 +731,8 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withOpacity(0.2),
-                            theme.colorScheme.secondary.withOpacity(0.1),
+                            theme.colorScheme.primary.withValues(alpha: 0.2),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -776,7 +776,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getProbabilityColor(event['probability'] as int).withOpacity(0.2),
+                      color: _getProbabilityColor(event['probability'] as int).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -871,7 +871,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       child: LinearProgressIndicator(
                         value: score / 100,
                         minHeight: 8,
-                        backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                        backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           _getProbabilityColor(score),
                         ),
@@ -927,8 +927,8 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -958,7 +958,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         child: Text(
                           trait['description'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.8),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
                         ),
                       ),
@@ -1035,10 +1035,10 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withOpacity(0.5),
+                    color: theme.colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.1),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Column(
@@ -1060,7 +1060,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: _getProbabilityColor(score).withOpacity(0.2),
+                              color: _getProbabilityColor(score).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Text(
@@ -1087,7 +1087,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             Text(
                               item as String,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -1166,13 +1166,13 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.05),
-                      theme.colorScheme.secondary.withOpacity(0.05),
+                      theme.colorScheme.primary.withValues(alpha: 0.05),
+                      theme.colorScheme.secondary.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.2),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -1181,7 +1181,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
                           topRight: Radius.circular(11),

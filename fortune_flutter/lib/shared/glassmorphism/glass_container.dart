@@ -11,6 +11,7 @@ class GlassContainer extends StatelessWidget {
   final double blur;
   final Color? borderColor;
   final double borderWidth;
+  final Border? border;
   final Gradient? gradient;
   final List<BoxShadow>? boxShadow;
   final AlignmentGeometry? alignment;
@@ -26,6 +27,7 @@ class GlassContainer extends StatelessWidget {
     this.blur = 10,
     this.borderColor,
     this.borderWidth = 1.5,
+    this.border,
     this.gradient,
     this.boxShadow,
     this.alignment,
@@ -41,22 +43,22 @@ class GlassContainer extends StatelessWidget {
       end: Alignment.bottomRight,
       colors: isDark
           ? [
-              Colors.white.withOpacity(0.1),
-              Colors.white.withOpacity(0.05),
+              Colors.white.withValues(alpha: 0.1),
+              Colors.white.withValues(alpha: 0.05),
             ]
           : [
-              Colors.white.withOpacity(0.6),
-              Colors.white.withOpacity(0.3),
+              Colors.white.withValues(alpha: 0.6),
+              Colors.white.withValues(alpha: 0.3),
             ],
     );
 
     final defaultBorderColor = isDark
-        ? Colors.white.withOpacity(0.2)
-        : Colors.white.withOpacity(0.4);
+        ? Colors.white.withValues(alpha: 0.2)
+        : Colors.white.withValues(alpha: 0.4);
 
     final defaultShadow = [
       BoxShadow(
-        color: Colors.black.withOpacity(0.1),
+        color: Colors.black.withValues(alpha: 0.1),
         blurRadius: 20,
         offset: const Offset(0, 10),
       ),
@@ -75,7 +77,7 @@ class GlassContainer extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: gradient ?? defaultGradient,
               borderRadius: borderRadius ?? BorderRadius.circular(20),
-              border: Border.all(
+              border: border ?? Border.all(
                 color: borderColor ?? defaultBorderColor,
                 width: borderWidth,
               ),
@@ -99,6 +101,8 @@ class GlassButton extends StatelessWidget {
   final BorderRadiusGeometry? borderRadius;
   final double blur;
   final Color? splashColor;
+  final Gradient? gradient;
+  final Border? border;
 
   const GlassButton({
     Key? key,
@@ -110,6 +114,8 @@ class GlassButton extends StatelessWidget {
     this.borderRadius,
     this.blur = 10,
     this.splashColor,
+    this.gradient,
+    this.border,
   }) : super(key: key);
 
   @override
@@ -119,13 +125,15 @@ class GlassButton extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         borderRadius: borderRadius as BorderRadius? ?? BorderRadius.circular(16),
-        splashColor: splashColor ?? Theme.of(context).primaryColor.withOpacity(0.2),
+        splashColor: splashColor ?? Theme.of(context).primaryColor.withValues(alpha: 0.2),
         child: GlassContainer(
           width: width,
           height: height,
           padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           borderRadius: borderRadius ?? BorderRadius.circular(16),
           blur: blur,
+          gradient: gradient,
+          border: border,
           child: child,
         ),
       ),
@@ -167,7 +175,7 @@ class GlassCard extends StatelessWidget {
       gradient: gradient,
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.1),
+          color: Colors.black.withValues(alpha: 0.1),
           blurRadius: elevation * 2,
           offset: Offset(0, elevation),
         ),

@@ -7,7 +7,7 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
-import 'package:fortune/core/providers/providers.dart';
+import 'package:fortune/presentation/providers/providers.dart';
 
 class FaceReadingFortunePage extends ConsumerStatefulWidget {
   const FaceReadingFortunePage({super.key});
@@ -90,7 +90,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                               icon: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withValues(alpha: 0.5),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -401,9 +401,9 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [

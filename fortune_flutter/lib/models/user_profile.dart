@@ -18,6 +18,9 @@ class UserProfile {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final bool? isLunarBirthdate;
+  final String? profileImageUrl;
+  final List<String>? linkedProviders;
+  final String? primaryProvider;
 
   UserProfile({
     required this.id,
@@ -37,6 +40,9 @@ class UserProfile {
     this.createdAt,
     this.updatedAt,
     this.isLunarBirthdate,
+    this.profileImageUrl,
+    this.linkedProviders,
+    this.primaryProvider,
   });
 
   Map<String, dynamic> toJson() {
@@ -58,6 +64,9 @@ class UserProfile {
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
       'is_lunar_birthdate': isLunarBirthdate,
+      'profile_image_url': profileImageUrl,
+      'linked_providers': linkedProviders,
+      'primary_provider': primaryProvider,
     };
   }
 
@@ -89,6 +98,11 @@ class UserProfile {
           ? DateTime.parse(json['updated_at']) 
           : null,
       isLunarBirthdate: json['is_lunar_birthdate'],
+      profileImageUrl: json['profile_image_url'],
+      linkedProviders: json['linked_providers'] != null 
+          ? List<String>.from(json['linked_providers']) 
+          : null,
+      primaryProvider: json['primary_provider'],
     );
   }
 
@@ -110,6 +124,9 @@ class UserProfile {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isLunarBirthdate,
+    String? profileImageUrl,
+    List<String>? linkedProviders,
+    String? primaryProvider,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -129,6 +146,9 @@ class UserProfile {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isLunarBirthdate: isLunarBirthdate ?? this.isLunarBirthdate,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      linkedProviders: linkedProviders ?? this.linkedProviders,
+      primaryProvider: primaryProvider ?? this.primaryProvider,
     );
   }
 

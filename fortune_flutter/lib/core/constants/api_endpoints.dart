@@ -105,13 +105,18 @@ class ApiEndpoints {
   // Batch fortune
   static const String batchFortune = '/api/fortune/generate-batch';
   static const String generate = '/api/fortune/generate';
+  static const String generateFortune = '/api/fortune/generate'; // Alias for compatibility
   static const String fortuneHistory = '/api/fortune/history';
 
   // Payment endpoints
   static const String createCheckout = '/api/payment/create-checkout';
   static const String stripeWebhook = '/api/payment/webhook/stripe';
+  static const String verifyPurchase = '/api/payment/verify-purchase';
+  static const String subscriptionStatus = '/api/payment/subscription-status';
+  static const String addTokens = '/api/payment/add-tokens';
 
   // Admin endpoints
+  static const String adminTokenStats = '/api/admin/token-stats';
   static const String tokenUsage = '/api/admin/token-usage';
   static const String tokenStats = '/api/admin/token-stats';
   static const String redisStats = '/api/admin/redis-stats';

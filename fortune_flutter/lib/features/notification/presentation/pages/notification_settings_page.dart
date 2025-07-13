@@ -84,7 +84,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -219,7 +219,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.secondary.withOpacity(0.1),
+                color: AppColors.secondary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -278,7 +278,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.1),
+                    color: AppColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(

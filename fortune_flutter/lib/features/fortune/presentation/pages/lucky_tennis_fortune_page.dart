@@ -216,7 +216,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withOpacity(0.6),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -457,12 +457,12 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                         child: Chip(
                           label: Text(weakness),
                           backgroundColor: isSelected
-                              ? theme.colorScheme.primary.withOpacity(0.2)
-                              : theme.colorScheme.surface.withOpacity(0.5),
+                              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                              : theme.colorScheme.surface.withValues(alpha: 0.5),
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.3),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -555,8 +555,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    _getWinColor(winProbability).withOpacity(0.3),
-                    _getWinColor(winProbability).withOpacity(0.1),
+                    _getWinColor(winProbability).withValues(alpha: 0.3),
+                    _getWinColor(winProbability).withValues(alpha: 0.1),
                   ],
                 ),
                 border: Border.all(
@@ -637,10 +637,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.1),
+          color: theme.colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: theme.colorScheme.primary.withOpacity(0.3),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -672,7 +672,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   Text(
                     shot['description']!,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -726,7 +726,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.secondary.withOpacity(0.1),
+              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 24, color: theme.colorScheme.secondary),
@@ -745,7 +745,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Text(
                   recommendation,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -868,7 +868,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               height: 80,
               child: CircularProgressIndicator(
                 value: value / 100,
-                backgroundColor: color.withOpacity(0.2),
+                backgroundColor: color.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 strokeWidth: 8,
               ),
@@ -919,8 +919,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.deepPurple.withOpacity(0.1),
-                    Colors.blue.withOpacity(0.1),
+                    Colors.deepPurple.withValues(alpha: 0.1),
+                    Colors.blue.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),

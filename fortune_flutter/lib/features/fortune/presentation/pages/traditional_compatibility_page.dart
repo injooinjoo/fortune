@@ -160,8 +160,8 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.2),
-                  theme.colorScheme.secondary.withOpacity(0.2),
+                  theme.colorScheme.primary.withValues(alpha: 0.2),
+                  theme.colorScheme.secondary.withValues(alpha: 0.2),
                 ],
               ),
             ),
@@ -228,12 +228,12 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     child: Chip(
                       label: Text(entry.value),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.primary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -258,7 +258,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                   ),
                   items: _durations.entries.map((entry) {
                     return DropdownMenuItem(
@@ -303,12 +303,12 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     child: Chip(
                       label: Text(area),
                       backgroundColor: isSelected
-                          ? theme.colorScheme.secondary.withOpacity(0.2)
-                          : theme.colorScheme.surface.withOpacity(0.5),
+                          ? theme.colorScheme.secondary.withValues(alpha: 0.2)
+                          : theme.colorScheme.surface.withValues(alpha: 0.5),
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withOpacity(0.3),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                     ),
                   );
@@ -364,7 +364,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: theme.colorScheme.surface.withOpacity(0.5),
+              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             ),
             onChanged: onNameChanged,
           ),
@@ -382,7 +382,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'male'
-                        ? color.withOpacity(0.5)
+                        ? color.withValues(alpha: 0.5)
                         : Colors.transparent,
                     borderWidth: gender == 'male' ? 2 : 0,
                     child: Row(
@@ -409,7 +409,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     borderRadius: BorderRadius.circular(12),
                     blur: 10,
                     borderColor: gender == 'female'
-                        ? color.withOpacity(0.5)
+                        ? color.withValues(alpha: 0.5)
                         : Colors.transparent,
                     borderWidth: gender == 'female' ? 2 : 0,
                     child: Row(
@@ -450,7 +450,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   borderRadius: BorderRadius.circular(12),
                 ),
                 filled: true,
-                fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 suffixIcon: const Icon(Icons.calendar_today),
               ),
               child: Text(
@@ -484,7 +484,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                 borderRadius: BorderRadius.circular(12),
               ),
               filled: true,
-              fillColor: theme.colorScheme.surface.withOpacity(0.5),
+              fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
             ),
             items: _birthTimes.entries.map((entry) {
               return DropdownMenuItem(
@@ -538,7 +538,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   child: CircularProgressIndicator(
                     value: overallScore / 100,
                     strokeWidth: 20,
-                    backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getScoreColor(overallScore),
                     ),
@@ -569,8 +569,8 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.1),
-                    theme.colorScheme.secondary.withOpacity(0.1),
+                    theme.colorScheme.primary.withValues(alpha: 0.1),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -636,10 +636,10 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withOpacity(0.5),
+        color: theme.colorScheme.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.onSurface.withOpacity(0.1),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -681,7 +681,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -733,27 +733,27 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   radarBackgroundColor: Colors.transparent,
                   borderData: FlBorderData(show: false),
                   radarBorderData: BorderSide(
-                    color: theme.colorScheme.onSurface.withOpacity(0.2),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                   titlePositionPercentageOffset: 0.2,
                   titleTextStyle: theme.textTheme.bodySmall,
                   tickCount: 5,
                   ticksTextStyle: const TextStyle(fontSize: 0),
                   tickBorderData: BorderSide(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                   gridBorderData: BorderSide(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   ),
                   dataSets: [
                     RadarDataSet(
-                      fillColor: theme.colorScheme.primary.withOpacity(0.2),
+                      fillColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                       borderColor: theme.colorScheme.primary,
                       dataEntries: person1Values.map((v) => RadarEntry(value: v.toDouble())).toList(),
                       borderWidth: 2,
                     ),
                     RadarDataSet(
-                      fillColor: theme.colorScheme.secondary.withOpacity(0.2),
+                      fillColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                       borderColor: theme.colorScheme.secondary,
                       dataEntries: person2Values.map((v) => RadarEntry(value: v.toDouble())).toList(),
                       borderWidth: 2,
@@ -781,7 +781,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withOpacity(0.5),
+                color: theme.colorScheme.surface.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -887,7 +887,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: _getScoreColor(item['score'] as int).withOpacity(0.2),
+                          color: _getScoreColor(item['score'] as int).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -904,13 +904,13 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                   Text(
                     item['description'] as String,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: (item['score'] as int) / 100,
-                    backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                    backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getScoreColor(item['score'] as int),
                     ),
@@ -967,7 +967,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -994,7 +994,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                         Text(
                           milestone['advice'] as String,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -1063,7 +1063,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: (category['color'] as Color).withOpacity(0.3),
+                    color: (category['color'] as Color).withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -1073,7 +1073,7 @@ class _TraditionalCompatibilityPageState extends BaseFortunePageState<Traditiona
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: (category['color'] as Color).withOpacity(0.1),
+                        color: (category['color'] as Color).withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
                           topRight: Radius.circular(11),

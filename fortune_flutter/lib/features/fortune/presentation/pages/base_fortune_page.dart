@@ -8,9 +8,9 @@ import '../../../../shared/glassmorphism/glass_effects.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../domain/entities/fortune.dart';
-import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../core/theme/app_theme_extensions.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../presentation/screens/ad_loading_screen.dart';
 
 abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final String title;
@@ -80,33 +80,10 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   // Common method to handle fortune generation - made protected for subclasses
   @protected
   Future<void> generateFortuneAction() async {
-    // Check token availability first
+    // Check if user has unlimited access (premium)
     final tokenState = ref.read(tokenProvider);
-    final requiredTokens = tokenState.getTokensForFortuneType(widget.fortuneType);
+    final isPremium = tokenState.hasUnlimitedAccess;
     
-    // Check if user has unlimited access
-    if (!tokenState.hasUnlimitedAccess) {
-      // Check if user has enough tokens
-      if (!tokenState.canConsumeTokens(requiredTokens)) {
-        // Show insufficient token modal
-        final shouldContinue = await TokenInsufficientModal.show(
-          context: context,
-          requiredTokens: requiredTokens,
-          fortuneType: widget.fortuneType,
-        );
-        
-        if (!shouldContinue) {
-          return;
-        }
-        
-        // Re-check after modal (user might have purchased tokens)
-        final newTokenState = ref.read(tokenProvider);
-        if (!newTokenState.canConsumeTokens(requiredTokens)) {
-          return;
-        }
-      }
-    }
-
     setState(() {
       _isLoading = true;
       _error = null;
@@ -120,25 +97,43 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         return;
       }
 
-      // Consume tokens if not unlimited
-      if (!tokenState.hasUnlimitedAccess) {
-        final consumed = await ref.read(tokenProvider.notifier).consumeTokens(
-          fortuneType: widget.fortuneType,
-          amount: requiredTokens,
-        );
-        
-        if (!consumed) {
-          setState(() => _isLoading = false);
-          HapticUtils.error();
-          Toast.error(context, '토큰 처리 중 오류가 발생했습니다');
-          return;
-        }
-      }
+      // Show ad loading screen (or premium loading for premium users)
+      final fortuneData = await Navigator.push<Fortune?>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdLoadingScreen(
+            fortuneType: widget.fortuneType,
+            fortuneTitle: widget.title,
+            isPremium: isPremium,
+            onComplete: () {
+              // This will be called after ad completion and fortune generation
+              Navigator.pop(context, _fortune);
+            },
+            onSkip: () {
+              Navigator.pop(context);
+              // Navigate to premium page
+              Navigator.pushNamed(context, '/premium');
+            },
+            fetchData: () async {
+              final fortune = await generateFortune(params ?? {});
+              setState(() {
+                _fortune = fortune;
+              });
+              return fortune;
+            },
+            onAdComplete: isPremium ? null : () async {
+              // Reward tokens for watching ad (free users only)
+              await ref.read(tokenProvider.notifier).rewardTokensForAd(
+                fortuneType: widget.fortuneType,
+                rewardAmount: 1,
+              );
+            },
+          ),
+          fullscreenDialog: true,
+        ),
+      );
 
-      final fortune = await generateFortune(params ?? {});
-      
       setState(() {
-        _fortune = fortune;
         _isLoading = false;
       });
 
@@ -210,12 +205,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  scoreColor.withOpacity(0.2),
-                  scoreColor.withOpacity(0.05),
+                  scoreColor.withValues(alpha: 0.2),
+                  scoreColor.withValues(alpha: 0.05),
                 ],
               ),
               border: Border.all(
-                color: scoreColor.withOpacity(0.3),
+                color: scoreColor.withValues(alpha: 0.3),
                 width: 3,
               ),
             ),
@@ -239,7 +234,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           Text(
             _fortune?.category ?? widget.fortuneType,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
           ),
         ],
@@ -289,7 +284,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: score / 100,
-                    backgroundColor: color.withOpacity(0.2),
+                    backgroundColor: color.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                     minHeight: 6,
                   ),
@@ -548,7 +543,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                   textAlign: TextAlign.center,
                 ),

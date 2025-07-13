@@ -12,10 +12,10 @@ import '../../domain/entities/user_profile.dart';
 export 'auth_provider.dart';
 export 'token_provider.dart';
 export 'fortune_provider.dart';
-export 'payment_provider.dart';
 export 'social_auth_provider.dart';
 export 'today_fortune_provider.dart';
 export 'font_size_provider.dart';
+export 'theme_provider.dart';
 
 // Core providers
 final supabaseProvider = Provider<SupabaseClient>((ref) {

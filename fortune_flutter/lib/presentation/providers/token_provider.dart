@@ -39,6 +39,7 @@ class TokenState {
     'blood-type': 1,
     'zodiac': 1,
     'zodiac-animal': 1,
+    'fortune-cookie': 1,
     
     // Medium complexity (2 tokens)
     'love': 2,
@@ -148,6 +149,14 @@ class TokenNotifier extends StateNotifier<TokenState> {
         error: e.toString(),
       );
     }
+  }
+
+  // 토큰 확인 및 소비 (simplified method for compatibility)
+  Future<bool> checkAndConsumeTokens(int amount, String fortuneType) async {
+    return consumeTokens(
+      fortuneType: fortuneType,
+      amount: amount,
+    );
   }
 
   // 토큰 소비
@@ -309,6 +318,54 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
+  // 광고 시청 후 토큰 보상
+  Future<bool> rewardTokensForAd({
+    required String fortuneType,
+    int rewardAmount = 1,
+  }) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final user = ref.read(userProvider).value;
+      if (user == null) {
+        throw UnauthorizedException('로그인이 필요합니다');
+      }
+
+      // 낙관적 업데이트
+      if (state.balance != null) {
+        state = state.copyWith(
+          balance: state.balance!.copyWith(
+            remainingTokens: state.balance!.remainingTokens + rewardAmount,
+            totalTokens: state.balance!.totalTokens + rewardAmount,
+          ),
+        );
+      }
+
+      // API 호출
+      final newBalance = await _apiService.rewardTokensForAdView(
+        userId: user.id,
+        fortuneType: fortuneType,
+        rewardAmount: rewardAmount,
+      );
+
+      state = state.copyWith(
+        balance: newBalance,
+        isLoading: false,
+      );
+
+      return true;
+    } catch (e) {
+      // 실패 시 롤백
+      await loadTokenData();
+      
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+      return false;
+    }
+  }
+
   // 에러 클리어
   void clearError() {
     state = state.copyWith(error: null);
@@ -333,6 +390,9 @@ final tokenProvider = StateNotifierProvider<TokenNotifier, TokenState>((ref) {
   final apiService = ref.watch(tokenApiServiceProvider);
   return TokenNotifier(apiService, ref);
 });
+
+// Alias for compatibility
+final tokenServiceProvider = tokenProvider;
 
 // Convenient providers
 final tokenBalanceProvider = Provider<TokenBalance?>((ref) {

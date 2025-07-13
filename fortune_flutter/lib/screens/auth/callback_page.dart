@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../widgets/icons/fortune_compass_icon.dart';
+import '../../services/storage_service.dart';
+import '../../core/utils/url_cleaner_stub.dart'
+    if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
+import '../../core/utils/profile_validation.dart';
 
 class CallbackPage extends StatefulWidget {
   const CallbackPage({super.key});
@@ -11,10 +16,41 @@ class CallbackPage extends StatefulWidget {
 }
 
 class _CallbackPageState extends State<CallbackPage> {
+  final _storageService = StorageService();
+  
   @override
   void initState() {
     super.initState();
     _handleCallback();
+  }
+  
+  Future<void> _checkAndNavigate(User user) async {
+    try {
+      // Clean URL first
+      final uri = Uri.base;
+      if (kIsWeb && uri.queryParameters.containsKey('code')) {
+        cleanUrlInBrowser('/');
+      }
+      
+      // Clear guest mode when user logs in
+      await _storageService.clearGuestMode();
+      
+      // Check if user needs onboarding using the validation helper
+      final needsOnboarding = await ProfileValidation.needsOnboarding();
+      debugPrint('User needs onboarding: $needsOnboarding');
+      
+      if (needsOnboarding && mounted) {
+        // User needs to complete onboarding
+        context.go('/onboarding');
+      } else if (mounted) {
+        // User has completed onboarding
+        context.go('/home');
+      }
+    } catch (e) {
+      debugPrint('Error checking user profile: $e');
+      // On error, go to onboarding to be safe
+      if (mounted) context.go('/onboarding');
+    }
   }
 
   Future<void> _handleCallback() async {
@@ -29,6 +65,13 @@ class _CallbackPageState extends State<CallbackPage> {
       final code = uri.queryParameters['code'];
       debugPrint('Auth code: $code');
       
+      // Clean up the URL by removing the code parameter (web only)
+      if (code != null && kIsWeb) {
+        final cleanUrl = uri.toString().split('?')[0];
+        cleanUrlInBrowser(cleanUrl);
+        debugPrint('URL cleaned: $cleanUrl');
+      }
+      
       // Check current session before listening
       final initialSession = Supabase.instance.client.auth.currentSession;
       debugPrint('Initial session: ${initialSession?.user?.id}');
@@ -41,7 +84,8 @@ class _CallbackPageState extends State<CallbackPage> {
       if (response.session != null) {
         debugPrint('Session recovered successfully!');
         if (mounted) {
-          context.go('/home');
+          // Check if user has completed onboarding
+          await _checkAndNavigate(response.session!.user);
           return;
         }
       }
@@ -56,7 +100,7 @@ class _CallbackPageState extends State<CallbackPage> {
           sessionFound = true;
           debugPrint('Login successful via auth state change!');
           if (mounted) {
-            context.go('/home');
+            _checkAndNavigate(data.session!.user);
           }
         }
       });
@@ -96,7 +140,7 @@ class _CallbackPageState extends State<CallbackPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.purple[50]!, Colors.white, Colors.pink[50]!],
+            colors: [Colors.grey[100]!, Colors.white, Colors.grey[50]!],
           ),
         ),
         child: Center(
@@ -105,7 +149,7 @@ class _CallbackPageState extends State<CallbackPage> {
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: Colors.purple[600],
+                color: Colors.black87,
               ),
               const SizedBox(height: 24),
               const CircularProgressIndicator(),

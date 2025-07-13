@@ -117,7 +117,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
         Text(
           '이사를 계획 중이신가요?\n최적의 이사 시기와 방향을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -138,11 +138,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
           ),
         ),
@@ -161,12 +161,12 @@ class _MovingInputFormState extends State<_MovingInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withOpacity(0.7)),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
@@ -175,7 +175,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _birthDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -199,11 +199,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.home_outlined),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withOpacity(0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
             ),
           ),
         ),
@@ -222,12 +222,12 @@ class _MovingInputFormState extends State<_MovingInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.event, color: theme.colorScheme.primary.withOpacity(0.7)),
+                Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
                 const SizedBox(width: 12),
                 Text(
                   _plannedDate != null
@@ -236,7 +236,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: _plannedDate != null 
                         ? theme.colorScheme.onSurface 
-                        : theme.colorScheme.onSurface.withOpacity(0.5),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -266,7 +266,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   _selectedReason = selected ? reason : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               ),
@@ -296,7 +296,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
                   _selectedType = selected ? type : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
               ),
@@ -406,7 +406,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -502,7 +502,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                   Text(
                     bestTiming['reason'],
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       fontSize: 14 + fontSize,
                     ),
                   ),
@@ -555,7 +555,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                               width: 100,
                               child: LinearProgressIndicator(
                                 value: entry.value / 100,
-                                backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                                backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _getScoreColor(entry.value),
                                 ),
@@ -677,7 +677,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Text(
                       avoidDirection['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 12 + fontSize,
                       ),
                     ),

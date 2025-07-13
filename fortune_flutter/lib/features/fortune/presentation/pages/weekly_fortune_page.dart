@@ -39,57 +39,12 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
       throw Exception('로그인이 필요합니다');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateWeeklyFortune(
-    //   userId: user.id,
-    //   startDate: _startOfWeek,
-    // );
-
-    // Mock data for now
-    final description = '''이번 주는 전반적으로 안정적인 흐름이 예상됩니다.
-      
-주 초반에는 약간의 어려움이 있을 수 있지만, 중반부터는 상황이 호전되어 좋은 결과를 얻을 수 있을 것입니다. 특히 주말에는 행운이 찾아올 가능성이 높으니 중요한 일정은 주말에 잡는 것이 좋겠습니다.
-
-대인관계에서는 새로운 인연을 만날 수 있는 기회가 있으며, 기존 관계도 더욱 돈독해질 수 있습니다. 재물운은 평균적이지만 투자보다는 저축에 집중하는 것이 좋겠습니다.
-
-건강 면에서는 충분한 휴식이 필요한 시기이니 무리하지 마세요.''';
-    
-    return Fortune(
-      id: 'weekly_${DateTime.now().millisecondsSinceEpoch}',
+    // Use the fortune service to generate weekly fortune
+    final fortune = await ref.read(fortuneServiceProvider).getWeeklyFortune(
       userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'weekly',
-      overallScore: 75,
-      scoreBreakdown: {
-        '전체운': 75,
-        '애정운': 80,
-        '재물운': 72,
-        '건강운': 70,
-        '대인운': 78,
-      },
-      description: description,
-      luckyItems: {
-        '이번 주 행운의 요일': '금요일',
-        '행운의 색': '파란색',
-        '행운의 숫자': '5',
-        '행운의 방향': '동쪽',
-      },
-      recommendations: [
-        '월요일: 새로운 시작을 위한 계획 수립',
-        '화요일: 중요한 미팅이나 협상 진행',
-        '수요일: 개인 시간을 갖고 재충전',
-        '목요일: 네트워킹과 인맥 확장',
-        '금요일: 중요한 결정이나 계약 체결',
-        '주말: 가족이나 친구들과 시간 보내기',
-      ],
-      metadata: {
-        'dailyScores': _generateDailyScores(),
-        'weekHighlights': _getWeekHighlights(),
-        'categoryTrends': _getCategoryTrends(),
-      },
     );
+
+    return fortune;
   }
 
   Map<String, dynamic> _generateDailyScores() {
@@ -260,7 +215,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               color: isSelected 
                                 ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           );
                         },
@@ -282,7 +237,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   barGroups: List.generate(7, (index) {
@@ -296,11 +251,11 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                             colors: isSelected
                               ? [
                                   Theme.of(context).colorScheme.primary,
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                                 ]
                               : [
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.6),
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                                 ],
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
@@ -354,12 +309,12 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                           ],
                         )
                       : null,
                     color: !isSelected 
-                      ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
+                      ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
                       : null,
                     borderRadius: BorderRadius.circular(16),
                     border: isToday && !isSelected
@@ -428,7 +383,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -453,7 +408,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -488,7 +443,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -555,7 +510,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: color.withOpacity(0.2),
+                        color: color.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -580,7 +535,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: color.withOpacity(0.2),
+                                  color: color.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
@@ -598,7 +553,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                           Text(
                             highlight['description'] as String,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -674,13 +629,13 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -724,7 +679,7 @@ class _WeeklyFortunePageState extends BaseFortunePageState<WeeklyFortunePage> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,

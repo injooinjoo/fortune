@@ -52,7 +52,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
         Text(
           '오늘의 런닝 운세를 확인하고\n최고의 컨디션으로 달려보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -175,7 +175,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -236,7 +236,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -295,7 +295,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -363,7 +363,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : theme.colorScheme.outline.withOpacity(0.3),
+                    : theme.colorScheme.outline.withValues(alpha: 0.3),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(12),
@@ -445,7 +445,7 @@ class _RunningFortuneResult extends StatelessWidget {
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.6),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                           ),
                         ],

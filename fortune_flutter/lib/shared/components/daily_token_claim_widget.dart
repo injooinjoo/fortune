@@ -5,6 +5,7 @@ import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
 import 'toast.dart';
 import '../../core/utils/haptic_utils.dart';
+import '../../core/utils/secure_storage.dart';
 
 class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   final bool showCompact;
@@ -220,7 +221,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
+                  color: Colors.green.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: AnimatedBuilder(
@@ -257,7 +258,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                           ? '다음 무료 토큰까지: ${_formatCountdown()}'
                           : '매일 3개의 무료 토큰을 받을 수 있어요!',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -362,7 +363,7 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withOpacity(0.3),
+                      color: Colors.green.withValues(alpha: 0.3),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -431,12 +432,23 @@ class LastDailyClaimDateNotifier extends StateNotifier<DateTime?> {
   }
 
   Future<void> _loadDate() async {
-    // TODO: Load from secure storage
-    // For now, just use in-memory storage
+    try {
+      final storedDate = await SecureStorage.getString('last_token_claim_date');
+      if (storedDate != null) {
+        state = DateTime.parse(storedDate);
+      }
+    } catch (e) {
+      // If error loading date, just use default state
+      debugPrint('Error loading last claim date: $e');
+    }
   }
 
   void setDate(DateTime date) {
     state = date;
-    // TODO: Save to secure storage
+    // Save to secure storage asynchronously
+    SecureStorage.setString('last_token_claim_date', date.toIso8601String())
+        .catchError((e) {
+      debugPrint('Error saving last claim date: $e');
+    });
   }
 }

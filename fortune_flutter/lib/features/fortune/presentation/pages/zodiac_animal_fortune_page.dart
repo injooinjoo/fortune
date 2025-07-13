@@ -76,58 +76,13 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
       throw Exception('띠를 선택해주세요');
     }
 
-    // TODO: Replace with actual API call
-    // final fortune = await ref.read(fortuneServiceProvider).generateZodiacAnimalFortune(
-    //   userId: user.id,
-    //   zodiacAnimal: _selectedAnimal!,
-    // );
-
-    // Mock data for now
-    final animalInfo = _zodiacAnimals.firstWhere((a) => a['key'] == _selectedAnimal);
-    final description = '''${animalInfo['name']}의 오늘 운세입니다.
-
-${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])} 성격을 가지고 있습니다. 오늘은 이러한 장점이 특히 빛을 발하는 날이 될 것입니다.
-
-전반적으로 안정적인 운세가 예상되며, 특히 대인관계에서 좋은 기회가 찾아올 것으로 보입니다. ${animalInfo['name']}의 특성을 살려 적극적으로 행동한다면 좋은 결과를 얻을 수 있을 것입니다.
-
-재물운은 평균 이상이며, 건강운은 약간의 주의가 필요합니다. 오늘은 무리하지 말고 여유를 가지고 하루를 보내는 것이 좋겠습니다.''';
-
-    return Fortune(
-      id: 'zodiac_animal_${DateTime.now().millisecondsSinceEpoch}',
+    // Use the fortune service to generate zodiac animal fortune
+    final fortune = await ref.read(fortuneServiceProvider).getZodiacAnimalFortune(
       userId: user.id,
-      type: widget.fortuneType,
-      content: description,
-      createdAt: DateTime.now(),
-      category: 'zodiac-animal',
-      overallScore: 74,
-      scoreBreakdown: {
-        '전체운': 74,
-        '애정운': 78,
-        '재물운': 71,
-        '건강운': 69,
-        '대인운': 80,
-      },
-      description: description,
-      luckyItems: {
-        '행운의 시간': '${(DateTime.now().day % 12) + 10}시',
-        '행운의 방향': _getLuckyDirection(animalInfo['key']),
-        '행운의 색': _getLuckyColor(animalInfo['key']),
-        '행운의 숫자': '${DateTime.now().day % 9 + 1}',
-      },
-      recommendations: [
-        '오늘은 ${animalInfo['name']}의 장점을 활용하세요',
-        '대인관계에서 적극적인 태도를 보이세요',
-        '건강 관리에 신경 쓰는 것이 좋겠습니다',
-        '재물 관련 결정은 신중하게 하세요',
-      ],
-      metadata: {
-        'animalInfo': animalInfo,
-        'compatibility': _getCompatibility(_selectedAnimal!),
-        'monthlyTrend': _getMonthlyTrend(),
-        'characteristics': _getDetailedCharacteristics(animalInfo['key']),
-        'luckyYears': _getLuckyYears(animalInfo['key']),
-      },
+      zodiacAnimal: _selectedAnimal!,
     );
+
+    return fortune;
   }
 
   String _getCharacteristic(String animal) {
@@ -391,12 +346,12 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                         ? LinearGradient(
                             colors: [
                               Theme.of(context).colorScheme.primary,
-                              Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                             ],
                           )
                         : null,
                     color: !isSelected
-                        ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
+                        ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
                         : null,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
@@ -404,7 +359,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                           ? Theme.of(context).colorScheme.primary
                           : isMyZodiac
                               ? Theme.of(context).colorScheme.secondary
-                              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                              : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                       width: isSelected || isMyZodiac ? 2 : 1,
                     ),
                   ),
@@ -458,7 +413,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
             child: Text(
               '* 별표는 당신의 띠입니다',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -479,8 +434,8 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -507,7 +462,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                     Text(
                       '${_getCharacteristic(animalInfo['key'])} 성격',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -565,7 +520,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+                        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -654,10 +609,10 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -714,13 +669,13 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                     verticalInterval: 5,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -764,7 +719,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   minX: 0,
@@ -792,8 +747,8 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                            Theme.of(context).colorScheme.primary.withOpacity(0.0),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.0),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -854,20 +809,20 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                         ? LinearGradient(
                             colors: [
                               Theme.of(context).colorScheme.secondary,
-                              Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.7),
                             ],
                           )
                         : null,
                     color: !isCurrentYear
                         ? isPastYear
-                            ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
-                            : Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                            ? Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)
+                            : Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                         : null,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isCurrentYear
                           ? Theme.of(context).colorScheme.secondary
-                          : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                          : Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
                       width: isCurrentYear ? 2 : 1,
                     ),
                   ),
@@ -877,7 +832,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
                       color: isCurrentYear
                           ? Colors.white
                           : isPastYear
-                              ? Theme.of(context).colorScheme.onSurface.withOpacity(0.5)
+                              ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
                               : null,
                       fontWeight: isCurrentYear ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -889,7 +844,7 @@ ${animalInfo['name']}는 천성적으로 ${_getCharacteristic(animalInfo['key'])
             Text(
               '* 12년마다 돌아오는 당신의 띠 년도입니다',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],

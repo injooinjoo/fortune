@@ -253,7 +253,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                   duration: const Duration(milliseconds: 300),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (birthstone['color'] as Color).withOpacity(0.2)
+                        ? (birthstone['color'] as Color).withValues(alpha: 0.2)
                         : Colors.white,
                     border: Border.all(
                       color: isSelected
@@ -265,7 +265,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: (birthstone['color'] as Color).withOpacity(0.3),
+                              color: (birthstone['color'] as Color).withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -312,10 +312,10 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: (birthstones[_selectedMonth]!['color'] as Color).withOpacity(0.1),
+                color: (birthstones[_selectedMonth]!['color'] as Color).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: (birthstones[_selectedMonth]!['color'] as Color).withOpacity(0.3),
+                  color: (birthstones[_selectedMonth]!['color'] as Color).withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -420,8 +420,8 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                (birthstone['color'] as Color).withOpacity(0.1),
-                (birthstone['color'] as Color).withOpacity(0.2),
+                (birthstone['color'] as Color).withValues(alpha: 0.1),
+                (birthstone['color'] as Color).withValues(alpha: 0.2),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -452,7 +452,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: (birthstone['color'] as Color).withOpacity(0.2),
+                  color: (birthstone['color'] as Color).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

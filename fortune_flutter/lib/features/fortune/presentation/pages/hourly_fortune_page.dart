@@ -97,7 +97,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                       const Spacer(),
                       Icon(
                         Icons.arrow_drop_down_rounded,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ],
                   ),
@@ -107,7 +107,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
               Text(
                 '최대 7일 후까지의 시간대별 운세를 확인할 수 있습니다',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -137,7 +137,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                         Text(
                           '중요한 시간대에 알림을 받으세요',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -282,7 +282,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withOpacity(0.2),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     ),
                   ),
                   barGroups: hourlyData.map((data) {
@@ -302,16 +302,16 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                             colors: isSelected
                                 ? [
                                     theme.colorScheme.secondary,
-                                    theme.colorScheme.secondary.withOpacity(0.7),
+                                    theme.colorScheme.secondary.withValues(alpha: 0.7),
                                   ]
                                 : isCurrent
                                     ? [
                                         theme.colorScheme.primary,
-                                        theme.colorScheme.primary.withOpacity(0.7),
+                                        theme.colorScheme.primary.withValues(alpha: 0.7),
                                       ]
                                     : [
-                                        theme.colorScheme.primary.withOpacity(0.5),
-                                        theme.colorScheme.primary.withOpacity(0.3),
+                                        theme.colorScheme.primary.withValues(alpha: 0.5),
+                                        theme.colorScheme.primary.withValues(alpha: 0.3),
                                       ],
                           ),
                           width: 12,
@@ -329,7 +329,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
             Text(
               '탭하여 각 시간대의 상세 운세를 확인하세요',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -457,7 +457,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
         const SizedBox(height: 4),
         LinearProgressIndicator(
           value: value / 100,
-          backgroundColor: color.withOpacity(0.2),
+          backgroundColor: color.withValues(alpha: 0.2),
           valueColor: AlwaysStoppedAnimation<Color>(color),
           minHeight: 6,
         ),
@@ -538,13 +538,13 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      theme.colorScheme.primary.withOpacity(0.1),
-                      theme.colorScheme.secondary.withOpacity(0.1),
+                      theme.colorScheme.primary.withValues(alpha: 0.1),
+                      theme.colorScheme.secondary.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withOpacity(0.3),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -576,7 +576,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: _getScoreColor(hour['score'] as int).withOpacity(0.2),
+                        color: _getScoreColor(hour['score'] as int).withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Text(
@@ -663,7 +663,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (slot['color'] as Color).withOpacity(0.2),
+                      color: (slot['color'] as Color).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -692,7 +692,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                                 activity,
                                 style: theme.textTheme.bodySmall,
                               ),
-                              backgroundColor: theme.colorScheme.surface.withOpacity(0.5),
+                              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               padding: const EdgeInsets.symmetric(horizontal: 8),
                             );

@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
+import '../widgets/fortune_list_card.dart';
 
 class FortuneCategory {
   final String title;
@@ -36,6 +37,7 @@ enum FortuneCategoryType {
   health,
   traditional,
   lifestyle,
+  interactive,
 }
 
 class FilterCategory {
@@ -97,6 +99,12 @@ class FortuneListPage extends ConsumerWidget {
       name: '생활·운세',
       icon: Icons.calendar_today_rounded,
       color: Color(0xFF06B6D4),
+    ),
+    FilterCategory(
+      type: FortuneCategoryType.interactive,
+      name: '인터랙티브',
+      icon: Icons.touch_app_rounded,
+      color: Color(0xFF9333EA),
     ),
   ];
 
@@ -424,6 +432,148 @@ class FortuneListPage extends ConsumerWidget {
       category: 'traditional',
       isNew: true,
     ),
+
+    // Interactive
+    FortuneCategory(
+      title: '포춘 쿠키',
+      route: '/interactive/fortune-cookie',
+      icon: Icons.cookie_rounded,
+      gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
+      description: '오늘의 행운 메시지',
+      category: 'interactive',
+      isNew: true,
+    ),
+
+    // New Fortune Categories
+    FortuneCategory(
+      title: '로또 운세',
+      route: '/fortune/lucky-lottery',
+      icon: Icons.confirmation_number_rounded,
+      gradientColors: [Color(0xFFFFB300), Color(0xFFF57C00)],
+      description: '행운의 로또 번호',
+      category: 'money',
+      isNew: true,
+    ),
+    FortuneCategory(
+      title: '주식 운세',
+      route: '/fortune/lucky-stock',
+      icon: Icons.trending_up_rounded,
+      gradientColors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
+      description: '오늘의 주식 투자 운세',
+      category: 'money',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '암호화폐 운세',
+      route: '/fortune/lucky-crypto',
+      icon: Icons.currency_bitcoin_rounded,
+      gradientColors: [Color(0xFFFF6F00), Color(0xFFE65100)],
+      description: '암호화폐 투자 운세',
+      category: 'money',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '요가 운세',
+      route: '/fortune/lucky-yoga',
+      icon: Icons.self_improvement_rounded,
+      gradientColors: [Color(0xFF9C27B0), Color(0xFF7B1FA2)],
+      description: '요가 수행 운세',
+      category: 'health',
+    ),
+    FortuneCategory(
+      title: '피트니스 운세',
+      route: '/fortune/lucky-fitness',
+      icon: Icons.fitness_center_rounded,
+      gradientColors: [Color(0xFFE91E63), Color(0xFFC2185B)],
+      description: '운동 효과 운세',
+      category: 'health',
+    ),
+    FortuneCategory(
+      title: '취업운',
+      route: '/fortune/employment',
+      icon: Icons.work_rounded,
+      gradientColors: [Color(0xFF00ACC1), Color(0xFF0097A7)],
+      description: '면접운과 합격 가능성',
+      category: 'career',
+      isNew: true,
+    ),
+    FortuneCategory(
+      title: '재능 발견',
+      route: '/fortune/talent',
+      icon: Icons.stars_rounded,
+      gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
+      description: '숨겨진 재능 발견',
+      category: 'lifestyle',
+    ),
+    FortuneCategory(
+      title: '운명',
+      route: '/fortune/destiny',
+      icon: Icons.explore_rounded,
+      gradientColors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
+      description: '인생의 전환점',
+      category: 'traditional',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '전생',
+      route: '/fortune/past-life',
+      icon: Icons.history_rounded,
+      gradientColors: [Color(0xFF6A1B9A), Color(0xFF4A148C)],
+      description: '전생과 현생의 과업',
+      category: 'traditional',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '소원 성취',
+      route: '/fortune/wish',
+      icon: Icons.star_rounded,
+      gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
+      description: '소원 성취 가능성',
+      category: 'lifestyle',
+    ),
+    FortuneCategory(
+      title: '인생 타임라인',
+      route: '/fortune/timeline',
+      icon: Icons.timeline_rounded,
+      gradientColors: [Color(0xFF00897B), Color(0xFF00695C)],
+      description: '인생의 중요한 시점들',
+      category: 'lifestyle',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '부적',
+      route: '/fortune/talisman',
+      icon: Icons.shield_rounded,
+      gradientColors: [Color(0xFF8D6E63), Color(0xFF6D4C41)],
+      description: '액운을 막는 부적',
+      category: 'traditional',
+    ),
+    FortuneCategory(
+      title: '시작업 운세',
+      route: '/fortune/startup',
+      icon: Icons.rocket_launch_rounded,
+      gradientColors: [Color(0xFF00BCD4), Color(0xFF0097A7)],
+      description: '창업과 스타트업 운세',
+      category: 'career',
+      isPremium: true,
+    ),
+    FortuneCategory(
+      title: '부업 운세',
+      route: '/fortune/lucky-sidejob',
+      icon: Icons.work_outline_rounded,
+      gradientColors: [Color(0xFF4CAF50), Color(0xFF388E3C)],
+      description: '부업과 사이드잡 운세',
+      category: 'career',
+    ),
+    FortuneCategory(
+      title: '시험 운세',
+      route: '/fortune/lucky-exam',
+      icon: Icons.school_rounded,
+      gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
+      description: '시험과 자격증 합격 운세',
+      category: 'career',
+      isNew: true,
+    ),
   ];
 
   List<FortuneCategory> _filterCategories(String searchQuery, FortuneCategoryType selectedType) {
@@ -483,7 +633,7 @@ class FortuneListPage extends ConsumerWidget {
                   Text(
                     '전체 ${filteredCategories.length}개 운세',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   if (selectedCategory != FortuneCategoryType.all)
@@ -498,24 +648,21 @@ class FortuneListPage extends ConsumerWidget {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.1,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final category = filteredCategories[index];
-                  return AnimationConfiguration.staggeredGrid(
+                  return AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 375),
-                    columnCount: 2,
-                    child: ScaleAnimation(
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
                       child: FadeInAnimation(
-                        child: _buildCategoryCard(context, category),
+                        child: FortuneListCard(
+                          category: category,
+                          onTap: () => context.push(category.route),
+                        ),
                       ),
                     ),
                   );
@@ -545,7 +692,7 @@ class FortuneListPage extends ConsumerWidget {
           hintText: '운세 검색...',
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 12),
@@ -578,7 +725,7 @@ class FortuneListPage extends ConsumerWidget {
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? LinearGradient(
-                        colors: [filter.color, filter.color.withOpacity(0.8)],
+                        colors: [filter.color, filter.color.withValues(alpha: 0.8)],
                       )
                     : null,
                 color: isSelected ? null : theme.colorScheme.surface,
@@ -586,7 +733,7 @@ class FortuneListPage extends ConsumerWidget {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withOpacity(0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -617,117 +764,6 @@ class FortuneListPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, FortuneCategory category) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: () => context.push(category.route),
-      child: Stack(
-        children: [
-          ShimmerGlass(
-            shimmerColor: category.gradientColors.first,
-            borderRadius: BorderRadius.circular(20),
-            child: GlassContainer(
-              borderRadius: BorderRadius.circular(20),
-              blur: 15,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: category.gradientColors.map((color) => 
-                  color.withOpacity(0.1)
-                ).toList(),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: category.gradientColors,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Icon(
-                        category.icon,
-                        size: 32,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      category.title,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      category.description,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          if (category.isNew)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFEF4444), Color(0xFFEC4899)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'NEW',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          if (category.isPremium)
-            Positioned(
-              top: 8,
-              left: 8,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.star_rounded,
-                  size: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 final _searchQueryProvider = StateProvider<String>((ref) => '');
