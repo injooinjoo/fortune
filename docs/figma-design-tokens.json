@@ -1,0 +1,415 @@
+{
+  "colors": {
+    "core": {
+      "primary": {
+        "default": "#000000",
+        "light": "#333333",
+        "dark": "#1A1A1A"
+      },
+      "secondary": {
+        "default": "#F56040",
+        "light": "#FD1D1D",
+        "dark": "#E1306C"
+      },
+      "neutral": {
+        "background": "#FAFAFA",
+        "surface": "#FFFFFF",
+        "textPrimary": "#262626",
+        "textSecondary": "#8E8E8E",
+        "divider": "#E9ECEF"
+      },
+      "semantic": {
+        "success": "#28A745",
+        "error": "#DC3545",
+        "warning": "#FFC107"
+      }
+    },
+    "categories": {
+      "love": {
+        "love": {
+          "gradient": {
+            "start": "#EC4899",
+            "end": "#DB2777",
+            "angle": 45
+          }
+        },
+        "marriage": {
+          "gradient": {
+            "start": "#DB2777",
+            "end": "#BE185D",
+            "angle": 45
+          }
+        },
+        "compatibility": {
+          "gradient": {
+            "start": "#BE185D",
+            "end": "#9333EA",
+            "angle": 45
+          }
+        },
+        "relationship": {
+          "gradient": {
+            "start": "#9333EA",
+            "end": "#7C3AED",
+            "angle": 45
+          }
+        }
+      },
+      "career": {
+        "career": {
+          "gradient": {
+            "start": "#2563EB",
+            "end": "#1D4ED8",
+            "angle": 45
+          }
+        },
+        "study": {
+          "gradient": {
+            "start": "#03A9F4",
+            "end": "#0288D1",
+            "angle": 45
+          }
+        }
+      },
+      "money": {
+        "money": {
+          "gradient": {
+            "start": "#16A34A",
+            "end": "#15803D",
+            "angle": 45
+          }
+        },
+        "realEstate": {
+          "gradient": {
+            "start": "#059669",
+            "end": "#047857",
+            "angle": 45
+          }
+        },
+        "stock": {
+          "gradient": {
+            "start": "#1E88E5",
+            "end": "#1565C0",
+            "angle": 45
+          }
+        },
+        "crypto": {
+          "gradient": {
+            "start": "#FF6F00",
+            "end": "#E65100",
+            "angle": 45
+          }
+        },
+        "lottery": {
+          "gradient": {
+            "start": "#FFB300",
+            "end": "#F57C00",
+            "angle": 45
+          }
+        }
+      },
+      "health": {
+        "health": {
+          "gradient": {
+            "start": "#10B981",
+            "end": "#059669",
+            "angle": 45
+          }
+        },
+        "sports": {
+          "gradient": {
+            "start": "#10B981",
+            "end": "#059669",
+            "angle": 45
+          }
+        },
+        "yoga": {
+          "gradient": {
+            "start": "#9C27B0",
+            "end": "#7B1FA2",
+            "angle": 45
+          }
+        },
+        "fitness": {
+          "gradient": {
+            "start": "#E91E63",
+            "end": "#C2185B",
+            "angle": 45
+          }
+        }
+      },
+      "traditional": {
+        "saju": {
+          "gradient": {
+            "start": "#EF4444",
+            "end": "#EC4899",
+            "angle": 45
+          }
+        },
+        "sajuChart": {
+          "gradient": {
+            "start": "#5E35B1",
+            "end": "#4527A0",
+            "angle": 45
+          }
+        },
+        "tojeong": {
+          "gradient": {
+            "start": "#8B5CF6",
+            "end": "#7C3AED",
+            "angle": 45
+          }
+        },
+        "tarot": {
+          "gradient": {
+            "start": "#9333EA",
+            "end": "#7C3AED",
+            "angle": 45
+          }
+        },
+        "dream": {
+          "gradient": {
+            "start": "#6366F1",
+            "end": "#4F46E5",
+            "angle": 45
+          }
+        }
+      },
+      "lifestyle": {
+        "timeBased": {
+          "gradient": {
+            "start": "#7C3AED",
+            "end": "#3B82F6",
+            "angle": 45
+          }
+        },
+        "birthday": {
+          "gradient": {
+            "start": "#EC4899",
+            "end": "#8B5CF6",
+            "angle": 45
+          }
+        },
+        "zodiacWestern": {
+          "gradient": {
+            "start": "#8B5CF6",
+            "end": "#7C3AED",
+            "angle": 45
+          }
+        },
+        "zodiacAnimal": {
+          "gradient": {
+            "start": "#7C3AED",
+            "end": "#6366F1",
+            "angle": 45
+          }
+        },
+        "mbti": {
+          "gradient": {
+            "start": "#6366F1",
+            "end": "#3B82F6",
+            "angle": 45
+          }
+        },
+        "bloodType": {
+          "gradient": {
+            "start": "#DC2626",
+            "end": "#EF4444",
+            "angle": 45
+          }
+        },
+        "biorhythm": {
+          "gradient": {
+            "start": "#6366F1",
+            "end": "#8B5CF6",
+            "angle": 45
+          }
+        }
+      },
+      "petFamily": {
+        "petGeneral": {
+          "gradient": {
+            "start": "#E11D48",
+            "end": "#BE123C",
+            "angle": 45
+          }
+        },
+        "dog": {
+          "gradient": {
+            "start": "#DC2626",
+            "end": "#B91C1C",
+            "angle": 45
+          }
+        },
+        "cat": {
+          "gradient": {
+            "start": "#9333EA",
+            "end": "#7C3AED",
+            "angle": 45
+          }
+        },
+        "petCompatibility": {
+          "gradient": {
+            "start": "#EC4899",
+            "end": "#DB2777",
+            "angle": 45
+          }
+        },
+        "children": {
+          "gradient": {
+            "start": "#3B82F6",
+            "end": "#2563EB",
+            "angle": 45
+          }
+        },
+        "parenting": {
+          "gradient": {
+            "start": "#10B981",
+            "end": "#059669",
+            "angle": 45
+          }
+        },
+        "pregnancy": {
+          "gradient": {
+            "start": "#F59E0B",
+            "end": "#D97706",
+            "angle": 45
+          }
+        },
+        "family": {
+          "gradient": {
+            "start": "#6366F1",
+            "end": "#4F46E5",
+            "angle": 45
+          }
+        }
+      }
+    },
+    "social": {
+      "google": {
+        "background": "#FFFFFF",
+        "border": "#DADCE0",
+        "text": "#3C4043"
+      },
+      "apple": {
+        "background": "#000000",
+        "text": "#FFFFFF"
+      },
+      "kakao": {
+        "background": "#FEE500",
+        "text": "#000000"
+      },
+      "naver": {
+        "background": "#03C75A",
+        "text": "#FFFFFF"
+      }
+    }
+  },
+  "typography": {
+    "display": {
+      "large": {
+        "fontSize": 32,
+        "lineHeight": 40,
+        "fontWeight": 400
+      },
+      "medium": {
+        "fontSize": 28,
+        "lineHeight": 36,
+        "fontWeight": 400
+      },
+      "small": {
+        "fontSize": 24,
+        "lineHeight": 32,
+        "fontWeight": 400
+      }
+    },
+    "headline": {
+      "large": {
+        "fontSize": 24,
+        "lineHeight": 32,
+        "fontWeight": 400
+      },
+      "medium": {
+        "fontSize": 20,
+        "lineHeight": 28,
+        "fontWeight": 400
+      },
+      "small": {
+        "fontSize": 18,
+        "lineHeight": 24,
+        "fontWeight": 400
+      }
+    },
+    "title": {
+      "large": {
+        "fontSize": 22,
+        "lineHeight": 28,
+        "fontWeight": 400
+      },
+      "medium": {
+        "fontSize": 16,
+        "lineHeight": 24,
+        "fontWeight": 500
+      },
+      "small": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 500
+      }
+    },
+    "body": {
+      "large": {
+        "fontSize": 16,
+        "lineHeight": 24,
+        "fontWeight": 400
+      },
+      "medium": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 400
+      },
+      "small": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": 400
+      }
+    },
+    "label": {
+      "large": {
+        "fontSize": 14,
+        "lineHeight": 20,
+        "fontWeight": 500
+      },
+      "medium": {
+        "fontSize": 12,
+        "lineHeight": 16,
+        "fontWeight": 500
+      },
+      "small": {
+        "fontSize": 11,
+        "lineHeight": 16,
+        "fontWeight": 500
+      }
+    }
+  },
+  "spacing": {
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 20,
+    "2xl": 24,
+    "3xl": 32,
+    "4xl": 40,
+    "5xl": 48,
+    "6xl": 56,
+    "7xl": 64
+  },
+  "borderRadius": {
+    "small": 8,
+    "medium": 12,
+    "large": 16,
+    "xlarge": 24,
+    "circle": 999
+  }
+}

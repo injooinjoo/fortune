@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
+import '../widgets/hourly_fortune_chart.dart';
+import '../widgets/five_elements_balance_chart.dart';
+import '../widgets/fortune_display.dart';
+import '../../../../services/saju_calculation_service.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -12,21 +16,58 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
 class SajuPage extends BaseFortunePage {
-  const SajuPage({Key? key})
-      : super(
+  const SajuPage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '사주팔자',
           description: '당신의 사주팔자를 통해 타고난 운명을 확인해보세요',
           fortuneType: 'saju',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
   ConsumerState<SajuPage> createState() => _SajuPageState();
 }
 
-class _SajuPageState extends BaseFortunePageState<SajuPage> {
+class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderStateMixin {
   Map<String, dynamic>? _sajuData;
+  Map<String, dynamic>? _calculatedSaju;
+  Fortune? _fortune;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    ));
+    _scaleAnimation = Tween<double>(
+      begin: 0.95,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
@@ -46,6 +87,12 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       birthDate: birthDate,
     );
 
+    // Calculate detailed saju data
+    _calculatedSaju = SajuCalculationService.calculateSaju(
+      birthDate: birthDate,
+      birthTime: user.userMetadata?['birthTime'],
+    );
+    
     // Extract saju data from the fortune response
     _sajuData = {
       'elements': fortune.additionalInfo?['elements'] ?? {
@@ -67,7 +114,243 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> {
       },
     };
 
+    _fortune = fortune;
+    _animationController.forward();
     return fortune;
+  }
+  
+  Widget _buildSajuTable() {
+    return GlassContainer(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '사주팔자',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildPillarCard('년주', _calculatedSaju!['year']),
+              _buildPillarCard('월주', _calculatedSaju!['month']),
+              _buildPillarCard('일주', _calculatedSaju!['day']),
+              _buildPillarCard('시주', _calculatedSaju!['hour']),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
+    if (pillar == null) {
+      return _buildEmptyPillar(title);
+    }
+    
+    final color = _getElementColor(pillar['element']);
+    
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white70,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Text(
+                '${pillar['stemHanja']}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${pillar['branchHanja']}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${pillar['stem']}${pillar['branch']}',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildEmptyPillar(String title) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white70,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.grey.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.help_outline,
+                color: Colors.grey,
+                size: 40,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '시간 미입력',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildTenGodsAnalysis() {
+    final tenGods = _calculatedSaju!['tenGods'] as Map<String, dynamic>;
+    
+    return GlassContainer(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '십신 분석',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...tenGods.entries.map((entry) {
+            final position = entry.key;
+            final gods = entry.value as List<String>;
+            
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 60,
+                    child: Text(
+                      '$position간',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: gods.map((god) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getTenGodColor(god).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: _getTenGodColor(god).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        god,
+                        style: TextStyle(
+                          color: _getTenGodColor(god),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )).toList(),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildFortuneContent() {
+    return FortuneDisplay(
+      title: _fortune!.summary ?? '사주팔자 운세',
+      description: _fortune!.description ?? _fortune!.content,
+      overallScore: _fortune!.score,
+      luckyItems: _fortune!.luckyItems,
+      advice: _fortune!.recommendations?.join('\n') ?? '',
+      detailedFortune: {'content': _fortune!.content},
+      warningMessage: _fortune!.warnings?.join('\n'),
+    );
+  }
+  
+  Color _getTenGodColor(String god) {
+    switch (god) {
+      case '비견':
+      case '겁재':
+        return Colors.blue;
+      case '식신':
+      case '상관':
+        return Colors.green;
+      case '정재':
+      case '편재':
+        return Colors.amber;
+      case '정관':
+      case '편관':
+        return Colors.red;
+      case '정인':
+      case '편인':
+        return Colors.purple;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override

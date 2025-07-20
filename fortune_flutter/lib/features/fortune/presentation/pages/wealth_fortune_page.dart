@@ -14,13 +14,16 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
 class WealthFortunePage extends BaseFortunePage {
-  const WealthFortunePage({Key? key})
-      : super(
+  const WealthFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '재물운',
           description: '당신의 재물운을 확인해보세요',
           fortuneType: 'wealth',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override

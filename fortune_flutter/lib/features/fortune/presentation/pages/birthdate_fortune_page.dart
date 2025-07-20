@@ -185,9 +185,9 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
   void _loadProfileBirthDate() {
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
-    if (profile?.birthdate != null) {
+    if (profile?.birthDate != null) {
       setState(() {
-        _selectedDate = profile!.birthdate;
+        _selectedDate = profile!.birthDate;
       });
     }
   }

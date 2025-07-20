@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/social_auth_service.dart';
 import '../../core/utils/logger.dart';
 import 'auth_provider.dart';
+import 'providers.dart';
 
 // Social Auth Service Provider
 final socialAuthServiceProvider = Provider<SocialAuthService>((ref) {
@@ -44,6 +45,15 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         final authService = _ref.read(authServiceProvider);
         await authService.ensureUserProfile();
         
+        // Update consecutive days on social sign in
+        try {
+          final statisticsService = _ref.read(userStatisticsServiceProvider);
+          await statisticsService.updateConsecutiveDays(response.user!.id);
+        } catch (e) {
+          Logger.error('Failed to update consecutive days', e);
+          // Don't throw - this is not critical for sign in
+        }
+        
         Logger.info('Google Sign-In successful');
       } else {
         state = const AsyncValue.data(null);
@@ -72,6 +82,15 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         final authService = _ref.read(authServiceProvider);
         await authService.ensureUserProfile();
         
+        // Update consecutive days on social sign in
+        try {
+          final statisticsService = _ref.read(userStatisticsServiceProvider);
+          await statisticsService.updateConsecutiveDays(response.user!.id);
+        } catch (e) {
+          Logger.error('Failed to update consecutive days', e);
+          // Don't throw - this is not critical for sign in
+        }
+        
         Logger.info('Apple Sign-In successful');
       } else {
         state = const AsyncValue.data(null);
@@ -79,6 +98,43 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
       Logger.error('Apple Sign-In error', error, stackTrace);
+    }
+  }
+  
+  // Facebook Sign In
+  Future<void> signInWithFacebook() async {
+    state = const AsyncValue.loading();
+    
+    try {
+      final response = await _socialAuthService.signInWithFacebook();
+      
+      if (response != null && response.user != null) {
+        state = AsyncValue.data(response);
+        
+        // 인증 상태 새로고침
+        _ref.invalidate(userProvider);
+        _ref.invalidate(userProfileProvider);
+        
+        // 프로필 자동 생성 확인
+        final authService = _ref.read(authServiceProvider);
+        await authService.ensureUserProfile();
+        
+        // Update consecutive days on social sign in
+        try {
+          final statisticsService = _ref.read(userStatisticsServiceProvider);
+          await statisticsService.updateConsecutiveDays(response.user!.id);
+        } catch (e) {
+          Logger.error('Failed to update consecutive days', e);
+          // Don't throw - this is not critical for sign in
+        }
+        
+        Logger.info('Facebook Sign-In successful');
+      } else {
+        state = const AsyncValue.data(null);
+      }
+    } catch (error, stackTrace) {
+      state = AsyncValue.error(error, stackTrace);
+      Logger.error('Facebook Sign-In error', error, stackTrace);
     }
   }
   
@@ -99,6 +155,15 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // 프로필 자동 생성 확인
         final authService = _ref.read(authServiceProvider);
         await authService.ensureUserProfile();
+        
+        // Update consecutive days on social sign in
+        try {
+          final statisticsService = _ref.read(userStatisticsServiceProvider);
+          await statisticsService.updateConsecutiveDays(response.user!.id);
+        } catch (e) {
+          Logger.error('Failed to update consecutive days', e);
+          // Don't throw - this is not critical for sign in
+        }
         
         Logger.info('Kakao Sign-In successful');
       } else {
@@ -127,6 +192,15 @@ class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {
         // 프로필 자동 생성 확인
         final authService = _ref.read(authServiceProvider);
         await authService.ensureUserProfile();
+        
+        // Update consecutive days on social sign in
+        try {
+          final statisticsService = _ref.read(userStatisticsServiceProvider);
+          await statisticsService.updateConsecutiveDays(response.user!.id);
+        } catch (e) {
+          Logger.error('Failed to update consecutive days', e);
+          // Don't throw - this is not critical for sign in
+        }
         
         Logger.info('Naver Sign-In successful');
       } else {

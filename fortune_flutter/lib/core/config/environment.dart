@@ -64,6 +64,13 @@ class Environment {
     return dotenv.env['ADMOB_ANDROID_INTERSTITIAL_AD_UNIT_ID'] ?? '';
   }
   
+  static String get admobRewardedAdUnitId {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return dotenv.env['ADMOB_IOS_REWARDED_AD_UNIT_ID'] ?? '';
+    }
+    return dotenv.env['ADMOB_ANDROID_REWARDED_AD_UNIT_ID'] ?? '';
+  }
+  
   // 보안 설정
   static String get encryptionKey => dotenv.env['ENCRYPTION_KEY'] ?? '';
   static String get jwtSecret => dotenv.env['JWT_SECRET'] ?? '';

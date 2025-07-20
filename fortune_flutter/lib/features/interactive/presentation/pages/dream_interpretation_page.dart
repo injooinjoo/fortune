@@ -11,6 +11,8 @@ import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
 import '../../../../presentation/providers/providers.dart';
+import '../../../../services/speech_recognition_service.dart';
+import '../../../../core/utils/haptic_utils.dart';
 
 final dreamAnalysisProvider = StateNotifierProvider.family<DreamAnalysisNotifier, AsyncValue<DreamAnalysisResult?>, DreamInput>(
   (ref, input) => DreamAnalysisNotifier(ref, input),
@@ -198,7 +200,7 @@ class _DreamInterpretationPageState extends ConsumerState<DreamInterpretationPag
   }
 }
 
-class _DreamInputForm extends StatelessWidget {
+class _DreamInputForm extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController dreamController;
   final DateTime? selectedBirthDate;
@@ -214,6 +216,54 @@ class _DreamInputForm extends StatelessWidget {
     required this.onAnalyze,
     required this.fontScale,
   });
+
+  @override
+  State<_DreamInputForm> createState() => _DreamInputFormState();
+}
+
+class _DreamInputFormState extends State<_DreamInputForm> {
+  final _speechService = SpeechRecognitionService();
+  bool _isRecording = false;
+  String _inputType = 'text'; // 'text' or 'voice'
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSpeechService();
+  }
+
+  Future<void> _initializeSpeechService() async {
+    await _speechService.initialize();
+  }
+
+  @override
+  void dispose() {
+    _speechService.dispose();
+    super.dispose();
+  }
+
+  Future<void> _toggleRecording() async {
+    HapticUtils.mediumImpact();
+    
+    if (_isRecording) {
+      await _speechService.stopListening();
+      setState(() {
+        _isRecording = false;
+      });
+    } else {
+      setState(() {
+        _isRecording = true;
+      });
+      await _speechService.startListening(
+        onResult: (text) {
+          setState(() {
+            widget.dreamController.text = text;
+            _isRecording = false;
+          });
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +293,7 @@ class _DreamInputForm extends StatelessWidget {
             '꿈의 의미를 해석해드립니다',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * fontScale,
+              fontSize: 24 * widget.fontScale,
             ),
             textAlign: TextAlign.center,
           ),
@@ -252,7 +302,7 @@ class _DreamInputForm extends StatelessWidget {
             '꿈 내용을 자세히 입력해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 16 * fontScale,
+              fontSize: 16 * widget.fontScale,
             ),
             textAlign: TextAlign.center,
           ),
@@ -268,13 +318,13 @@ class _DreamInputForm extends StatelessWidget {
                   '이름',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * fontScale,
+                    fontSize: 16 * widget.fontScale,
                   ),
                 ),
                 const SizedBox(height: 12),
                 TextField(
-                  controller: nameController,
-                  style: TextStyle(fontSize: 16 * fontScale),
+                  controller: widget.nameController,
+                  style: TextStyle(fontSize: 16 * widget.fontScale),
                   decoration: InputDecoration(
                     hintText: '이름을 입력하세요',
                     filled: true,
@@ -301,13 +351,13 @@ class _DreamInputForm extends StatelessWidget {
                   '생년월일',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16 * fontScale,
+                    fontSize: 16 * widget.fontScale,
                   ),
                 ),
                 const SizedBox(height: 12),
                 KoreanDatePicker(
-                  initialDate: selectedBirthDate,
-                  onDateSelected: onBirthDateChanged,
+                  initialDate: widget.selectedBirthDate,
+                  onDateSelected: widget.onBirthDateChanged,
                 ),
               ],
             ),
@@ -320,29 +370,51 @@ class _DreamInputForm extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '꿈 내용',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16 * fontScale,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '꿈 내용',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16 * widget.fontScale,
+                      ),
+                    ),
+                    // Input Type Toggle
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surface.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildToggleButton('text', Icons.keyboard, '텍스트'),
+                          _buildToggleButton('voice', Icons.mic, '음성'),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                TextField(
-                  controller: dreamController,
-                  style: TextStyle(fontSize: 16 * fontScale),
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
-                    filled: true,
-                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                if (_inputType == 'text')
+                  TextField(
+                    controller: widget.dreamController,
+                    style: TextStyle(fontSize: 16 * widget.fontScale),
+                    maxLines: 5,
+                    decoration: InputDecoration(
+                      hintText: '예: 넓은 바다에서 헤엄치다가 황금 용을 만나는 꿈을 꾸었습니다.',
+                      filled: true,
+                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.all(16),
                     ),
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                ),
+                  )
+                else
+                  _buildVoiceInput(theme),
               ],
             ),
           ),
@@ -352,18 +424,18 @@ class _DreamInputForm extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: GlassButton(
-              onPressed: onAnalyze,
+              onPressed: widget.onAnalyze,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.auto_awesome, size: 20 * fontScale),
+                    Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
                     const SizedBox(width: 8),
                     Text(
                       '꿈 해몽 분석하기',
                       style: TextStyle(
-                        fontSize: 18 * fontScale,
+                        fontSize: 18 * widget.fontScale,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -374,6 +446,139 @@ class _DreamInputForm extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildToggleButton(String type, IconData icon, String label) {
+    final theme = Theme.of(context);
+    final isSelected = _inputType == type;
+    
+    return GestureDetector(
+      onTap: () {
+        HapticUtils.lightImpact();
+        setState(() {
+          _inputType = type;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVoiceInput(ThemeData theme) {
+    return Column(
+      children: [
+        ValueListenableBuilder<String>(
+          valueListenable: _speechService.recognizedTextNotifier,
+          builder: (context, recognizedText, _) {
+            if (recognizedText.isNotEmpty) {
+              widget.dreamController.text = recognizedText;
+            }
+            return Container(
+              height: 120,
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: _isRecording 
+                      ? theme.colorScheme.primary 
+                      : Colors.transparent,
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  recognizedText.isEmpty
+                      ? (_isRecording
+                          ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
+                          : '마이크 버튼을 눌러 녹음을 시작하세요')
+                      : recognizedText,
+                  style: TextStyle(
+                    fontSize: 16 * widget.fontScale,
+                    color: recognizedText.isEmpty
+                        ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                        : theme.colorScheme.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: _toggleRecording,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: _isRecording
+                    ? [Colors.red.shade400, Colors.red.shade600]
+                    : [theme.colorScheme.primary, theme.colorScheme.primary.withValues(alpha: 0.8)],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (_isRecording ? Colors.red : theme.colorScheme.primary)
+                      .withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Icon(
+              _isRecording ? Icons.stop : Icons.mic,
+              size: 40,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        ValueListenableBuilder<String>(
+          valueListenable: _speechService.statusNotifier,
+          builder: (context, status, _) {
+            return Text(
+              status,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }

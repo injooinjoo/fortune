@@ -76,7 +76,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '토큰 구매'),
+            const AppHeader(title: '영혼 상점'),
             Expanded(
               child: _buildContent(),
             ),

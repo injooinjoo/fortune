@@ -6,15 +6,21 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
+import '../widgets/blood_type_compatibility_matrix.dart';
+import '../widgets/blood_type_personality_chart.dart';
+import '../../../../services/blood_type_analysis_service.dart';
 
 class BloodTypeFortunePage extends BaseFortunePage {
-  const BloodTypeFortunePage({Key? key})
-      : super(
+  const BloodTypeFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '혈액형 운세',
           description: '혈액형별 성격과 오늘의 운세를 확인해보세요',
           fortuneType: 'blood-type',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
@@ -23,7 +29,11 @@ class BloodTypeFortunePage extends BaseFortunePage {
 
 class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePage> {
   String? _selectedBloodType;
-  String? _selectedRhType;
+  String? _selectedRhType = '+';
+  String? _selectedType1;
+  String? _selectedRh1;
+  String? _selectedType2;
+  String? _selectedRh2;
 
   final Map<String, Map<String, dynamic>> _bloodTypeInfo = {
     'A': {
@@ -71,7 +81,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
 
     return {
       'bloodType': _selectedBloodType,
-      'rhType': _selectedRhType ?? 'positive',
+      'rhType': _selectedRhType == '-' ? 'negative' : 'positive',
     };
   }
 
@@ -170,11 +180,11 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
               Row(
                 children: [
                   Expanded(
-                    child: _buildRhOption('positive', 'RH+'),
+                    child: _buildRhOption('+', 'RH+'),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildRhOption('negative', 'RH-'),
+                    child: _buildRhOption('-', 'RH-'),
                   ),
                 ],
               ),
@@ -234,8 +244,8 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
       children: [
         _buildBloodTypeHeader(),
         super.buildFortuneResult(),
-        _buildPersonalityAnalysis(),
-        _buildCompatibilityChart(),
+        _buildEnhancedPersonalityAnalysis(),
+        _buildEnhancedCompatibilitySection(),
         _buildBloodTypeTips(),
       ],
     );
@@ -272,7 +282,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
             ),
             const SizedBox(height: 16),
             Text(
-              '${info['title']}${_selectedRhType == 'negative' ? ' RH-' : ''} 운세',
+              '${info['title']}${_selectedRhType == '-' ? ' RH-' : ''} 운세',
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: info['color'] as Color,
                 fontWeight: FontWeight.bold,
@@ -289,169 +299,39 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
     );
   }
 
-  Widget _buildPersonalityAnalysis() {
-    final personalities = {
-      'A': [
-        '책임감이 강하고 신중한 편',
-        '완벽주의 성향이 있음',
-        '타인을 배려하는 마음이 깊음',
-        '규칙과 질서를 중요시함',
-      ],
-      'B': [
-        '창의적이고 독창적인 사고',
-        '자유로운 영혼의 소유자',
-        '호기심이 많고 도전적',
-        '유연한 사고방식을 가짐',
-      ],
-      'O': [
-        '리더십이 뛰어남',
-        '사교적이고 활발한 성격',
-        '목표 지향적이고 추진력이 강함',
-        '낙천적이고 긍정적',
-      ],
-      'AB': [
-        '논리적이고 분석적인 사고',
-        '독특한 개성과 센스',
-        '양면성을 가진 매력',
-        '예술적 감각이 뛰어남',
-      ],
-    };
-
-    if (_selectedBloodType == null) return const SizedBox.shrink();
-    
-    final traits = personalities[_selectedBloodType!] ?? [];
-    final theme = Theme.of(context);
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.person_outline_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '성격 분석',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...traits.map((trait) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.circle,
-                    size: 8,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      trait,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompatibilityChart() {
-    final compatibilities = {
-      'A': {'good': ['A', 'AB'], 'neutral': ['O'], 'challenging': ['B']},
-      'B': {'good': ['B', 'AB'], 'neutral': ['O'], 'challenging': ['A']},
-      'O': {'good': ['O', 'AB'], 'neutral': ['A', 'B'], 'challenging': []},
-      'AB': {'good': ['AB'], 'neutral': ['A', 'B', 'O'], 'challenging': []},
-    };
-
-    if (_selectedBloodType == null) return const SizedBox.shrink();
-    
-    final compatibility = compatibilities[_selectedBloodType!]!;
-    final theme = Theme.of(context);
+  Widget _buildEnhancedPersonalityAnalysis() {
+    if (_selectedBloodType == null || _selectedRhType == null) return const SizedBox.shrink();
     
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.favorite_rounded,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '혈액형 궁합',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildCompatibilityRow('좋은 궁합', compatibility['good'] as List<String>, Colors.green),
-            const SizedBox(height: 12),
-            _buildCompatibilityRow('보통 궁합', compatibility['neutral'] as List<String>, Colors.orange),
-            if ((compatibility['challenging'] as List<String>).isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _buildCompatibilityRow('어려운 궁합', compatibility['challenging'] as List<String>, Colors.red),
-            ],
-          ],
-        ),
+      child: BloodTypePersonalityChart(
+        bloodType: _selectedBloodType!,
+        rhType: _selectedRhType!,
+        showAnimation: true,
       ),
     );
   }
 
-  Widget _buildCompatibilityRow(String label, List<String> types, Color color) {
-    final theme = Theme.of(context);
+  Widget _buildEnhancedCompatibilitySection() {
+    if (_selectedBloodType == null || _selectedRhType == null) return const SizedBox.shrink();
     
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(width: 16),
-        ...types.map((type) => Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Chip(
-            label: Text(
-              '${type}형',
-              style: theme.textTheme.bodySmall,
-            ),
-            backgroundColor: color.withValues(alpha: 0.2),
-            side: BorderSide(color: color.withValues(alpha: 0.5)),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-        )).toList(),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: BloodTypeCompatibilityMatrix(
+        selectedType1: _selectedType1 ?? _selectedBloodType,
+        selectedRh1: _selectedRh1 ?? _selectedRhType,
+        selectedType2: _selectedType2,
+        selectedRh2: _selectedRh2,
+        onPairSelected: (type1, rh1, type2, rh2) {
+          setState(() {
+            _selectedType1 = type1;
+            _selectedRh1 = rh1;
+            _selectedType2 = type2;
+            _selectedRh2 = rh2;
+          });
+        },
+        showAnimation: true,
+      ),
     );
   }
 

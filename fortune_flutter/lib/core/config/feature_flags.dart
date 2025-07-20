@@ -9,10 +9,10 @@ class FeatureFlags {
   static FeatureFlags get instance => _instance;
 
   // Feature flag for Edge Functions migration
-  bool _useEdgeFunctions = false;
+  bool _useEdgeFunctions = true; // Enable by default for development
   
   // Percentage of users to enable Edge Functions for (0-100)
-  int _edgeFunctionsRolloutPercentage = 10; // Start with 10%
+  int _edgeFunctionsRolloutPercentage = 100; // Enable for all users
   
   // Specific user IDs to always enable Edge Functions for (testing)
   final Set<String> _edgeFunctionsTestUsers = {

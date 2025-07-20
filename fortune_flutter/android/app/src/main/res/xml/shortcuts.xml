@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <shortcut
+        android:shortcutId="daily_fortune"
+        android:enabled="true"
+        android:icon="@drawable/ic_daily_fortune"
+        android:shortcutShortLabel="@string/shortcut_daily_fortune_short"
+        android:shortcutLongLabel="@string/shortcut_daily_fortune_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.beyond.fortune_flutter"
+            android:targetClass="com.beyond.fortune_flutter.MainActivity">
+            <extra android:name="route" android:value="/fortune/daily" />
+        </intent>
+    </shortcut>
+    
+    <shortcut
+        android:shortcutId="compatibility"
+        android:enabled="true"
+        android:icon="@drawable/ic_compatibility"
+        android:shortcutShortLabel="@string/shortcut_compatibility_short"
+        android:shortcutLongLabel="@string/shortcut_compatibility_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.beyond.fortune_flutter"
+            android:targetClass="com.beyond.fortune_flutter.MainActivity">
+            <extra android:name="route" android:value="/fortune/compatibility" />
+        </intent>
+    </shortcut>
+    
+    <shortcut
+        android:shortcutId="lucky_numbers"
+        android:enabled="true"
+        android:icon="@drawable/ic_lucky_numbers"
+        android:shortcutShortLabel="@string/shortcut_lucky_numbers_short"
+        android:shortcutLongLabel="@string/shortcut_lucky_numbers_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.beyond.fortune_flutter"
+            android:targetClass="com.beyond.fortune_flutter.MainActivity">
+            <extra android:name="route" android:value="/fortune/lucky-numbers" />
+        </intent>
+    </shortcut>
+    
+</shortcuts>

@@ -1,8 +1,10 @@
 # 🔮 Fortune Project Master Guide
 
-> **최종 업데이트**: 2025년 7월 11일  
-> **프로젝트 버전**: 3.0.0 (Flutter + API Server)  
-> **상태**: API 서버 배포 준비 중
+> **최종 업데이트**: 2025년 7월 15일  
+> **프로젝트 버전**: 3.1.0 (Flutter + Supabase Edge Functions)  
+> **상태**: 프로덕션 배포 준비 완료
+> 
+> 📚 **모든 문서 찾기**: [MASTER_DOCUMENTATION_INDEX.md](./MASTER_DOCUMENTATION_INDEX.md)
 
 ## 📑 목차
 
@@ -73,18 +75,18 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
 - 푸시 알림
 - 소셜 공유
 
-### 🚀 API 서버 (90% 완료)
+### 🚀 Supabase Edge Functions (100% 완료)
 
 **기술 스택**
-- Runtime: Node.js 20.x
-- Framework: Express + TypeScript
+- Runtime: Deno (Supabase Edge Runtime)
+- Language: TypeScript
 - Database: Supabase (PostgreSQL)
-- Cache: Redis (Upstash)
-- Deploy: Firebase Cloud Run
+- Cache: 내장 캐싱 시스템
+- Deploy: Supabase Platform
 
 **주요 기능**
-- 59개 운세 API 엔드포인트
-- JWT 기반 인증
+- 77개 운세 API 엔드포인트 (운세 74개 + 토큰 2개 + 결제 1개)
+- Supabase Auth 연동
 - IAP 결제 검증
 - Rate Limiting
 - 토큰 관리 시스템
@@ -125,22 +127,22 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
 - 로컬 DB 구조 완성
 - 테스트 및 최적화 완료
 
-**API 서버 (90%)**
-- 핵심 기능 100% 구현
-- 6개 컨트롤러, 6개 서비스 완성
-- IAP 결제 검증 시스템
-- 배포 환경 구성 완료
+**Supabase Edge Functions (100%)**
+- 모든 운세 API 구현 완료
+- 77개 함수 배포 완료
+- IAP 결제 검증 시스템 구현
+- 프로덕션 환경 활성화
 
 ### 🔄 진행 중인 작업
 
-1. **Cloud Run 배포**
-   - Google Cloud SDK 설치
-   - 첫 배포 실행
-   - Secret Manager 설정
+1. **앱 스토어 출시 준비**
+   - 앱 아이콘/스크린샷 준비
+   - 스토어 설명 작성
+   - 심사 제출 준비
 
-2. **Flutter-API 연동**
-   - API URL 업데이트
+2. **Flutter-Edge Functions 최종 테스트**
    - 통합 테스트
+   - 성능 최적화
 
 ### ⏳ 예정된 작업
 
@@ -149,9 +151,9 @@ Fortune은 전통적인 지혜와 최신 AI 기술을 결합하여 사용자에�
    - 스토어 설명 작성
    - 심사 제출
 
-2. **웹 코드 제거**
-   - Next.js 코드 삭제
-   - 프로젝트 구조 정리
+2. **문서 정리 및 최적화**
+   - 오래된 문서 정리
+   - 통합 문서 체계 구축
 
 ---
 
@@ -166,17 +168,21 @@ flutter pub get
 flutter run --flavor dev
 ```
 
-**API 서버**
+**Supabase Edge Functions**
 ```bash
-cd fortune-api-server
-npm install
-npm run dev
+# Supabase CLI 설치
+npm install -g supabase
+
+# 로컬 개발
+supabase start
+supabase functions serve
 ```
 
 ### 📚 주요 문서
 
+- [마스터 문서 인덱스](./MASTER_DOCUMENTATION_INDEX.md) - 모든 문서 찾기
 - [Flutter 개발 가이드](./docs/FLUTTER_DEVELOPMENT_GUIDE.md)
-- [API 서버 가이드](./docs/API_SERVER_GUIDE.md)
+- [Edge Functions 종합 가이드](./docs/EDGE_FUNCTIONS_COMPLETE_GUIDE.md)
 - [운세 생성 가이드](./docs/FORTUNE_GENERATION_GUIDE.md)
 - [환경 설정 가이드](./docs/ENVIRONMENT_SETUP_GUIDE.md)
 
@@ -239,19 +245,20 @@ INTERNAL_API_KEY=
 
 ### 2025년 7월
 - [x] Flutter 앱 개발 완료
-- [x] API 서버 구현 완료
-- [ ] Cloud Run 배포
-- [ ] Flutter-API 연동 테스트
+- [x] Supabase Edge Functions 배포 완료
+- [x] 프로덕션 환경 구축 완료
+- [ ] 앱 스토어 심사 제출
+- [ ] 문서 체계 정리
 
 ### 2025년 8월
-- [ ] 앱 스토어 심사 제출
-- [ ] 프로덕션 환경 설정
-- [ ] 초기 사용자 테스트
+- [ ] 정식 출시
+- [ ] 초기 사용자 피드백 수집
+- [ ] 성능 최적화
 
 ### 2025년 9월
-- [ ] 정식 출시
 - [ ] 마케팅 캠페인
-- [ ] 웹 코드 완전 제거
+- [ ] 기능 업데이트
+- [ ] 다국어 지원 준비
 
 ### 향후 계획
 - 다국어 지원 (영어, 일본어, 중국어)

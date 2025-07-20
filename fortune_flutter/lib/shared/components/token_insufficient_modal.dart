@@ -1,5 +1,5 @@
-// This modal is preserved for future premium features that will require tokens
-// Currently not used for regular fortune viewing (which uses ads instead)
+// This modal is used for premium features that require souls
+// Premium fortunes consume souls while regular fortunes give souls
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -104,7 +104,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     color: theme.colorScheme.error.withValues(alpha: 0.2),
                   ),
                   child: Icon(
-                    Icons.token_outlined,
+                    Icons.auto_awesome_outlined,
                     size: 40,
                     color: theme.colorScheme.error,
                   ),
@@ -113,7 +113,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                 
                 // Title
                 Text(
-                  '토큰이 부족합니다',
+                  '영혼이 부족합니다',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -122,7 +122,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                 
                 // Description
                 Text(
-                  '이 운세를 보려면 ${widget.requiredTokens}개의 토큰이 필요합니다.',
+                  '이 프리미엄 운세를 보려면 ${widget.requiredTokens}개의 영혼이 필요합니다.',
                   style: theme.textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -139,8 +139,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildTokenInfo(
-                        label: '보유 토큰',
-                        value: remainingTokens.toString(),
+                        label: '보유 영혼',
+                        value: '$remainingTokens개',
                         color: theme.colorScheme.primary,
                       ),
                       Container(
@@ -149,8 +149,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                       ),
                       _buildTokenInfo(
-                        label: '필요 토큰',
-                        value: widget.requiredTokens.toString(),
+                        label: '필요 영혼',
+                        value: '${widget.requiredTokens}개',
                         color: theme.colorScheme.error,
                       ),
                       Container(
@@ -170,7 +170,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                 
                 // Options
                 Text(
-                  '토큰을 충전하시겠습니까?',
+                  '영혼을 얻으시겠습니까?',
                   style: theme.textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 16),
@@ -181,7 +181,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     Expanded(
                       child: _buildActionButton(
                         icon: Icons.shopping_cart_rounded,
-                        label: '토큰 구매',
+                        label: '영혼 상점',
                         color: theme.colorScheme.primary,
                         onTap: () {
                           context.pop();
@@ -193,7 +193,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                     Expanded(
                       child: _buildActionButton(
                         icon: Icons.card_giftcard_rounded,
-                        label: '무료 토큰',
+                        label: '무료 영혼',
                         color: Colors.green,
                         onTap: () async {
                           final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
@@ -251,7 +251,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                                     ),
                                   ),
                                   Text(
-                                    '월 ₩9,900으로 모든 운세 무제한',
+                                    '월 ₩30,000으로 모든 프리미엄 운세 무제한',
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                     ),
@@ -366,8 +366,8 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       SnackBar(
         content: Text(
           tokenError == 'ALREADY_CLAIMED'
-              ? '오늘은 이미 무료 토큰을 받으셨습니다'
-              : '무료 토큰 받기에 실패했습니다',
+              ? '오늘은 이미 무료 영혼을 받으셨습니다'
+              : '무료 영혼 받기에 실패했습니다',
         ),
         backgroundColor: theme.colorScheme.error,
         behavior: SnackBarBehavior.floating,

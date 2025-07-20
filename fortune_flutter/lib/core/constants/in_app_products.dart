@@ -1,14 +1,14 @@
 /// In-App Purchase Product IDs
 class InAppProducts {
   // Consumable Products (Token Packages)
-  static const String tokens10 = 'com.fortune.app.tokens10';
-  static const String tokens50 = 'com.fortune.app.tokens50';
-  static const String tokens100 = 'com.fortune.app.tokens100';
-  static const String tokens200 = 'com.fortune.app.tokens200';
+  static const String tokens10 = 'com.beyond.fortune.tokens10';
+  static const String tokens50 = 'com.beyond.fortune.tokens50';
+  static const String tokens100 = 'com.beyond.fortune.tokens100';
+  static const String tokens200 = 'com.beyond.fortune.tokens200';
   
   // Subscription Products
-  static const String monthlySubscription = 'com.fortune.app.subscription.monthly';
-  static const String yearlySubscription = 'com.fortune.app.subscription.yearly';
+  static const String monthlySubscription = 'com.beyond.fortune.subscription.monthly';
+  static const String yearlySubscription = 'com.beyond.fortune.subscription.yearly';
   
   // Product Details
   static const Map<String, ProductInfo> productDetails = {

@@ -173,7 +173,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       }
       
       if (mounted) {
-        context.go('/home');
+        context.go('/home?firstTime=true');
       }
     } catch (e) {
       debugPrint('프로필 저장 실패: $e');

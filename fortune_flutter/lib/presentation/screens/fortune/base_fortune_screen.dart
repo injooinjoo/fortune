@@ -9,7 +9,10 @@ import '../../../domain/entities/fortune.dart';
 import '../../../domain/entities/token.dart';
 import '../../providers/providers.dart';
 import '../../widgets/loading_indicator.dart';
+import '../../widgets/fortune_explanation_bottom_sheet.dart';
 import '../ad_loading_screen.dart';
+import '../../../features/fortune/presentation/mixins/screenshot_detection_mixin.dart';
+import '../../../services/screenshot_detection_service.dart';
 
 /// Fortune 화면의 기본 템플릿
 /// 웹 디자인과 동일한 레이아웃 유지
@@ -32,11 +35,23 @@ abstract class BaseFortuneScreen extends ConsumerStatefulWidget {
 }
 
 abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
-    extends ConsumerState<T> {
+    extends ConsumerState<T> with ScreenshotDetectionMixin<T> {
   bool _isLoading = false;
   String? _errorMessage;
   dynamic _fortuneData;
   bool _showAdLoading = false;
+  
+  // Global key for screenshot capture
+  final GlobalKey _screenshotKey = GlobalKey();
+  
+  @override
+  GlobalKey get screenshotKey => _screenshotKey;
+  
+  @override
+  String get fortuneTitle => widget.title;
+  
+  @override
+  String get fortuneContent => _getFortuneText();
 
   @override
   void initState() {
@@ -61,28 +76,8 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
       return;
     }
 
-    // 프리미엄 사용자는 바로 로드
-    if (userProfile.isPremiumActive) {
-      await _loadFortune();
-      return;
-    }
-
-    // 무료 사용자 토큰 체크
-    if (tokenBalance == null || tokenBalance.balance < widget.tokenCost) {
-      // 일일 무료 사용 가능 여부 확인
-      if (tokenBalance?.canUseFree ?? false) {
-        // 광고 보고 운세 확인
-        setState(() => _showAdLoading = true);
-      } else {
-        setState(() {
-          _errorMessage = '토큰이 부족합니다. 토큰을 구매하거나 내일 다시 시도해주세요.';
-        });
-      }
-      return;
-    }
-
-    // 토큰이 충분한 경우 광고 표시 후 로드
-    setState(() => _showAdLoading = true);
+    // 운세 로드
+    await _loadFortune();
   }
 
   /// 운세 데이터 로드 (하위 클래스에서 구현)
@@ -103,18 +98,10 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
       _fortuneData = await loadFortuneData();
       Logger.endTimer('Load ${widget.fortuneType} fortune', stopwatch);
 
-      // 토큰 소비
-      final tokenDataSource = ref.read(tokenRemoteDataSourceProvider);
-      await tokenDataSource.consumeTokens(widget.tokenCost, widget.fortuneType);
-
-      // 토큰 잔액 새로고침
-      ref.invalidate(tokenBalanceProvider);
-
       setState(() => _isLoading = false);
 
       Logger.analytics('fortune_viewed', {
         'type': widget.fortuneType,
-        'token_cost': widget.tokenCost,
       });
     } catch (error) {
       Logger.error('Failed to load fortune', error);
@@ -167,12 +154,21 @@ https://fortune.app
 ''';
   }
 
-  /// 운세 이미지 저장
-  Future<void> _saveFortuneImage() async {
-    // TODO: 운세 이미지 생성 및 저장
-    HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('이미지 저장 기능은 준비 중입니다.')),
+  // Screenshot detection mixin handles the save functionality
+  // via saveFortuneToGallery() and buildSaveButton()
+
+  /// 운세 설명 바텀시트 표시
+  void _showFortuneExplanation() {
+    FortuneExplanationBottomSheet.show(
+      context,
+      fortuneType: widget.fortuneType,
+      fortuneData: _fortuneData,
+      onFortuneButtonPressed: () {
+        // 이미 운세 화면에 있으므로, 운세 데이터가 없을 때만 다시 로드
+        if (_fortuneData == null && !_isLoading) {
+          _loadFortune();
+        }
+      },
     );
   }
 
@@ -221,15 +217,16 @@ https://fortune.app
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, color: Colors.black87),
+            onPressed: () => _showFortuneExplanation(),
+          ),
           if (_fortuneData != null) ...[
             IconButton(
               icon: const Icon(Icons.share_outlined, color: Colors.black87),
               onPressed: _shareFortune,
             ),
-            IconButton(
-              icon: const Icon(Icons.download_outlined, color: Colors.black87),
-              onPressed: _saveFortuneImage,
-            ),
+            buildSaveButton(),
           ],
         ],
       ),
@@ -250,25 +247,28 @@ https://fortune.app
       return const Center(child: Text('운세 데이터가 없습니다.'));
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          // 헤더 카드
-          _buildHeaderCard(),
-          const SizedBox(height: 24),
-          
-          // 운세 컨텐츠
-          buildFortuneContent(context, _fortuneData)
-              .animate()
-              .fadeIn(duration: 600.ms)
-              .slideY(begin: 0.1, end: 0),
-          
-          const SizedBox(height: 32),
-          
-          // 하단 액션
-          _buildBottomActions(),
-        ],
+    return RepaintBoundary(
+      key: _screenshotKey,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // 헤더 카드
+            _buildHeaderCard(),
+            const SizedBox(height: 24),
+            
+            // 운세 컨텐츠
+            buildFortuneContent(context, _fortuneData)
+                .animate()
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: 0.1, end: 0),
+            
+            const SizedBox(height: 32),
+            
+            // 하단 액션
+            _buildBottomActions(),
+          ],
+        ),
       ),
     );
   }

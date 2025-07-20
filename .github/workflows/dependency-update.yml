@@ -1,0 +1,66 @@
+name: Dependency Update & Security Patch
+
+on:
+  schedule:
+    # Run every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Flutter dependencies
+        working-directory: ./fortune_flutter
+        run: |
+          flutter pub upgrade --major-versions
+          flutter pub outdated
+
+      - name: Update npm dependencies
+        if: hashFiles('package.json') != ''
+        run: |
+          npm update
+          npm audit fix --force || true
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore: update dependencies and security patches'
+          title: 'Weekly Dependency Update'
+          body: |
+            ## 🔄 Automated Dependency Update
+            
+            This PR contains:
+            - Flutter package updates
+            - npm package updates (if applicable)
+            - Security patches
+            
+            Please review and test before merging.
+          branch: deps/weekly-update
+          delete-branch: true
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run npm audit
+        if: hashFiles('package-lock.json') != ''
+        run: |
+          npm audit --production
+          echo "## NPM Audit Report" >> $GITHUB_STEP_SUMMARY
+          npm audit --production >> $GITHUB_STEP_SUMMARY || true
+
+      - name: Run Flutter dependency audit
+        working-directory: ./fortune_flutter
+        run: |
+          flutter pub outdated
+          echo "## Flutter Outdated Packages" >> $GITHUB_STEP_SUMMARY
+          flutter pub outdated >> $GITHUB_STEP_SUMMARY || true

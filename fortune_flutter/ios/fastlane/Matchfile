@@ -10,7 +10,7 @@ storage_mode("git")
 type("development") # or "appstore", "adhoc", "enterprise"
 
 # App identifier
-app_identifier(["com.fortune.app"])
+app_identifier(["com.beyond.fortuneFlutter"])
 
 # Your Apple Developer Portal username
 username("your-apple-id@example.com")

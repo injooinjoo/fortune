@@ -241,7 +241,7 @@ class _EnhancedOnboardingFlowState extends State<EnhancedOnboardingFlow> {
   }
 
   Future<bool> _showBirthdateBottomSheet() async {
-    DateTime selectedDate = _birthDate ?? DateTime(2000, 1, 1);
+    DateTime selectedDate = _birthDate ?? DateTime(1980, 1, 1);
     DateTime tempSelectedDate = selectedDate;
     
     bool? result = await showModalBottomSheet<bool>(

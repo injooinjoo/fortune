@@ -1,16 +1,20 @@
+import '../../core/config/environment.dart';
+
 /// Supabase Edge Functions API Endpoints
 /// This file maps all API endpoints to Supabase Edge Functions
 class EdgeFunctionsEndpoints {
   // Base URL for Supabase Edge Functions
-  static const String baseUrl = 'https://hayjukwfcsdmppairazc.supabase.co/functions/v1';
+  static String get baseUrl => '${Environment.supabaseUrl}/functions/v1';
   
   // Development URL for local testing
   static const String devBaseUrl = 'http://localhost:54321/functions/v1';
   
   // Get the appropriate base URL based on environment
   static String get currentBaseUrl {
-    const bool isProduction = bool.fromEnvironment('dart.vm.product');
-    return isProduction ? baseUrl : devBaseUrl;
+    if (Environment.current == Environment.development && !Environment.supabaseUrl.contains('supabase.co')) {
+      return devBaseUrl;
+    }
+    return baseUrl;
   }
 
   // Token Management
@@ -23,6 +27,10 @@ class EdgeFunctionsEndpoints {
   static const String verifySubscription = '/payment-verify-subscription';
   static const String restorePurchases = '/payment-restore-purchases';
 
+  // Batch and System endpoints
+  static const String fortuneBatch = '/fortune-batch';
+  static const String fortuneSystem = '/fortune-system';
+
   // Fortune endpoints - 59개 운세 타입
   // 일일/시간별 운세
   static const String dailyFortune = '/fortune-daily';
@@ -32,6 +40,7 @@ class EdgeFunctionsEndpoints {
   static const String weeklyFortune = '/fortune-weekly';
   static const String monthlyFortune = '/fortune-monthly';
   static const String yearlyFortune = '/fortune-yearly';
+  static const String timeFortune = '/fortune-time'; // Enhanced time-based fortune
 
   // 전통 운세
   static const String sajuFortune = '/fortune-saju';
@@ -113,6 +122,7 @@ class EdgeFunctionsEndpoints {
   static const String luckyHikingFortune = '/fortune-lucky-hiking';
   static const String luckyFitnessFortune = '/fortune-lucky-fitness';
   static const String luckyYogaFortune = '/fortune-lucky-yoga';
+  static const String luckyEsportsFortune = '/fortune-esports';
 
   // 특별 운세
   static const String pastLifeFortune = '/fortune-past-life';
@@ -124,6 +134,20 @@ class EdgeFunctionsEndpoints {
   static const String celebrityMatchFortune = '/fortune-celebrity-match';
   static const String avoidPeopleFortune = '/fortune-avoid-people';
   static const String networkReportFortune = '/fortune-network-report';
+  static const String influencerFortune = '/fortune-influencer';
+  static const String politicianFortune = '/fortune-politician';
+  static const String sportsPlayerFortune = '/fortune-sports-player';
+  static const String dreamFortune = '/fortune-dream';
+
+  // 반려동물/육아 운세
+  static const String petFortune = '/fortune-pet';
+  static const String petDogFortune = '/fortune-pet-dog';
+  static const String petCatFortune = '/fortune-pet-cat';
+  static const String petCompatibilityFortune = '/fortune-pet-compatibility';
+  static const String childrenFortune = '/fortune-children';
+  static const String parentingFortune = '/fortune-parenting';
+  static const String pregnancyFortune = '/fortune-pregnancy';
+  static const String familyHarmonyFortune = '/fortune-family-harmony';
 
   // Helper method to construct full URL
   static String getFullUrl(String endpoint) {
@@ -156,12 +180,14 @@ class EdgeFunctionsEndpoints {
   static String getEndpointForType(String fortuneType) {
     final endpointMap = {
       'daily': dailyFortune,
-      'today': todayFortune,
+      'today': dailyFortune, // Map 'today' to use the same endpoint as 'daily' for consistency
       'tomorrow': tomorrowFortune,
       'hourly': hourlyFortune,
       'weekly': weeklyFortune,
       'monthly': monthlyFortune,
       'yearly': yearlyFortune,
+      'time': timeFortune,
+      'time_based': timeFortune,
       'saju': sajuFortune,
       'traditional-saju': traditionalSaju,
       'tojeong': tojeongFortune,
@@ -223,6 +249,7 @@ class EdgeFunctionsEndpoints {
       'lucky-hiking': luckyHikingFortune,
       'lucky-fitness': luckyFitnessFortune,
       'lucky-yoga': luckyYogaFortune,
+      'lucky-esports': luckyEsportsFortune,
       'past-life': pastLifeFortune,
       'talent': talentFortune,
       'wish': wishFortune,
@@ -232,6 +259,18 @@ class EdgeFunctionsEndpoints {
       'celebrity-match': celebrityMatchFortune,
       'avoid-people': avoidPeopleFortune,
       'network-report': networkReportFortune,
+      'influencer': influencerFortune,
+      'politician': politicianFortune,
+      'sports-player': sportsPlayerFortune,
+      'dream': dreamFortune,
+      'pet': petFortune,
+      'pet-dog': petDogFortune,
+      'pet-cat': petCatFortune,
+      'pet-compatibility': petCompatibilityFortune,
+      'children': childrenFortune,
+      'parenting': parentingFortune,
+      'pregnancy': pregnancyFortune,
+      'family-harmony': familyHarmonyFortune,
     };
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';

@@ -12,13 +12,14 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
 class CompatibilityPage extends BaseFortunePage {
-  const CompatibilityPage({Key? key})
+  const CompatibilityPage({Key? key, Map<String, dynamic>? initialParams})
       : super(
           key: key,
           title: '궁합',
           description: '두 사람의 궁합을 확인해보세요',
           fortuneType: 'compatibility',
           requiresUserInfo: true,
+          initialParams: initialParams,
         );
 
   @override
@@ -33,6 +34,21 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
   DateTime? _person2BirthDate;
   
   Map<String, dynamic>? _compatibilityData;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Pre-fill first person's data with user profile if available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (userProfile != null) {
+        setState(() {
+          _person1NameController.text = userProfile!.name ?? '';
+          _person1BirthDate = userProfile!.birthDate;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {

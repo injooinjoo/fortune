@@ -6,6 +6,7 @@ class StorageService {
   static const String _recentFortunesKey = 'recentFortunes';
   static const String _lastUpdateDateKey = 'fortune_last_update_date';
   static const String _guestModeKey = 'isGuestMode';
+  static const String _userStatisticsKey = 'userStatistics';
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -97,5 +98,35 @@ class StorageService {
   Future<void> clearGuestMode() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_guestModeKey);
+  }
+  
+  // User statistics management
+  Future<Map<String, dynamic>?> getUserStatistics() async {
+    final prefs = await SharedPreferences.getInstance();
+    final statsString = prefs.getString(_userStatisticsKey);
+    
+    if (statsString != null) {
+      try {
+        return json.decode(statsString) as Map<String, dynamic>;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+  
+  Future<void> saveUserStatistics(Map<String, dynamic> statistics) async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Merge with existing statistics
+    final existingStats = await getUserStatistics() ?? {};
+    existingStats.addAll(statistics);
+    
+    await prefs.setString(_userStatisticsKey, json.encode(existingStats));
+  }
+  
+  Future<void> clearUserStatistics() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userStatisticsKey);
   }
 }

@@ -68,9 +68,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
   void _loadUserProfile() {
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
-    if (profile?.birthdate != null) {
+    if (profile?.birthDate != null) {
       setState(() {
-        _birthdate = profile!.birthdate;
+        _birthdate = profile!.birthDate;
       });
     }
   }

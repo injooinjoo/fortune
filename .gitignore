@@ -50,9 +50,12 @@ next-env.d.ts
 **/service-account*.json
 **/api-keys/
 **/secrets/
+secrets.txt
 *.key
 *.pem
 *.p12
+*.secret
+*_secret*
 
 # Local environment files
 .env.local

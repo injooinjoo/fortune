@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 
 /// Helper class for profile validation and completion checks
@@ -15,7 +16,35 @@ class ProfileValidation {
         return false;
       }
       
-      final profile = await storageService.getUserProfile();
+      // First check local storage
+      var profile = await storageService.getUserProfile();
+      
+      // If no local profile, check database for authenticated users
+      if (profile == null) {
+        final user = Supabase.instance.client.auth.currentUser;
+        if (user != null) {
+          debugPrint('ProfileValidation: No local profile, checking database for user: ${user.id}');
+          
+          try {
+            final dbProfile = await Supabase.instance.client
+                .from('user_profiles')
+                .select()
+                .eq('id', user.id)
+                .maybeSingle();
+            
+            if (dbProfile != null) {
+              debugPrint('ProfileValidation: Found profile in database');
+              // Save to local storage for future use
+              await storageService.saveUserProfile(dbProfile);
+              profile = dbProfile;
+            } else {
+              debugPrint('ProfileValidation: No profile in database either');
+            }
+          } catch (e) {
+            debugPrint('ProfileValidation: Error fetching profile from database: $e');
+          }
+        }
+      }
       
       // No profile at all - needs onboarding
       if (profile == null) {

@@ -18,10 +18,12 @@ interface TokenPackage {
 }
 
 const TOKEN_PACKAGES: Record<string, TokenPackage> = {
-  'com.fortune.tokens.small': { productId: 'com.fortune.tokens.small', tokens: 10, price: 990 },
-  'com.fortune.tokens.medium': { productId: 'com.fortune.tokens.medium', tokens: 30, price: 2990 },
-  'com.fortune.tokens.large': { productId: 'com.fortune.tokens.large', tokens: 100, price: 9900 },
-  'com.fortune.tokens.mega': { productId: 'com.fortune.tokens.mega', tokens: 200, price: 19900 },
+  'com.beyond.fortune.tokens10': { productId: 'com.beyond.fortune.tokens10', tokens: 10, price: 1000 },
+  'com.beyond.fortune.tokens50': { productId: 'com.beyond.fortune.tokens50', tokens: 50, price: 4500 },
+  'com.beyond.fortune.tokens100': { productId: 'com.beyond.fortune.tokens100', tokens: 100, price: 8000 },
+  'com.beyond.fortune.tokens200': { productId: 'com.beyond.fortune.tokens200', tokens: 200, price: 14000 },
+  'com.beyond.fortune.subscription.monthly': { productId: 'com.beyond.fortune.subscription.monthly', tokens: -1, price: 9900 },
+  'com.beyond.fortune.subscription.yearly': { productId: 'com.beyond.fortune.subscription.yearly', tokens: -1, price: 99000 },
 }
 
 serve(async (req: Request) => {
@@ -104,11 +106,47 @@ serve(async (req: Request) => {
       )
     }
 
-    // TODO: Verify with Apple/Google servers
-    // For now, we'll trust the client (NOT FOR PRODUCTION)
-    // In production, implement actual verification:
-    // - For iOS: Verify receipt with Apple's verifyReceipt API
-    // - For Android: Verify purchase with Google Play API
+    // Import verification utilities
+    const { verifyPurchase } = await import('../_shared/payment-verification.ts')
+
+    // Verify the purchase with Apple/Google servers
+    const verificationResult = await verifyPurchase(platform, {
+      productId,
+      purchaseToken,
+      transactionReceipt,
+      packageName: platform === 'android' ? 'com.beyond.fortune' : undefined,
+    })
+
+    if (!verificationResult.valid) {
+      console.error('Purchase verification failed:', verificationResult.error)
+      return new Response(
+        JSON.stringify({ 
+          error: 'Purchase verification failed',
+          details: verificationResult.error 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    // Additional validation: Check if the verified data matches our request
+    if (platform === 'ios' && verificationResult.data) {
+      if (verificationResult.data.productId !== productId) {
+        return new Response(
+          JSON.stringify({ 
+            error: 'Product ID mismatch',
+            expected: productId,
+            received: verificationResult.data.productId
+          }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+    }
 
     // Get token package
     const tokenPackage = TOKEN_PACKAGES[productId]

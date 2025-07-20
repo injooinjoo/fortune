@@ -18,58 +18,58 @@ serve(async (req: Request) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
-    // Get user's token balance and profile
-    const { data: profile, error } = await supabase
+    // Get user's token balance
+    const { data: tokenBalance, error: balanceError } = await supabase
+      .from('token_balances')
+      .select('balance, total_purchased, total_used')
+      .eq('user_id', user!.id)
+      .single()
+
+    // If no token balance record exists (PGRST116), continue with defaults
+    // For other errors, log them but still continue
+    if (balanceError) {
+      if (balanceError.code !== 'PGRST116') {
+        console.error('Error fetching token balance:', balanceError)
+      }
+      // Continue with default values instead of failing
+    }
+
+    // Get user's profile for daily claim info - but don't fail if not found
+    const { data: profile, error: profileError } = await supabase
       .from('user_profiles')
-      .select('token_balance, daily_token_claimed_at')
+      .select('id')
       .eq('id', user!.id)
       .single()
 
-    if (error || !profile) {
-      return new Response(
-        JSON.stringify({ error: 'Profile not found' }),
-        { 
-          status: 404, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
+    // If profile doesn't exist, continue with default values
+    // This allows new users to still see their token balance
+    if (profileError && profileError.code !== 'PGRST116') {
+      console.error('Error fetching profile:', profileError)
     }
 
-    // Check if daily tokens can be claimed
-    const now = new Date()
-    const lastClaimed = profile.daily_token_claimed_at 
-      ? new Date(profile.daily_token_claimed_at) 
-      : null
+    // For now, we'll skip daily claim checks since we don't have that field in token_balances
+    // TODO: Add daily claim tracking to token_balances table
     
-    let canClaimDaily = true
-    let nextClaimTime = null
+    const balance = tokenBalance?.balance || 0
+    const totalPurchased = tokenBalance?.total_purchased || 0
+    const totalUsed = tokenBalance?.total_used || 0
 
-    if (lastClaimed) {
-      const nextClaim = new Date(lastClaimed)
-      nextClaim.setDate(nextClaim.getDate() + 1)
-      nextClaim.setHours(0, 0, 0, 0)
-      
-      canClaimDaily = now >= nextClaim
-      if (!canClaimDaily) {
-        nextClaimTime = nextClaim.toISOString()
-      }
-    }
-
-    // Get recent token history
-    const { data: history } = await supabase
-      .from('token_usage')
-      .select('*')
+    // Check if user has unlimited access (e.g., subscription)
+    const { data: subscription } = await supabase
+      .from('subscriptions')
+      .select('status, ends_at')
       .eq('user_id', user!.id)
-      .order('created_at', { ascending: false })
-      .limit(10)
+      .eq('status', 'active')
+      .single()
+
+    const isUnlimited = subscription !== null
 
     return new Response(
       JSON.stringify({
-        balance: profile.token_balance,
-        canClaimDaily,
-        nextClaimTime,
-        lastClaimedAt: profile.daily_token_claimed_at,
-        recentHistory: history || []
+        balance,
+        totalPurchased,
+        totalUsed,
+        isUnlimited
       }),
       { 
         status: 200, 

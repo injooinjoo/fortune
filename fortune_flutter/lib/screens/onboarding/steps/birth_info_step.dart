@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/custom_calendar_picker.dart';
 import '../widgets/bottom_sheet_time_picker.dart';
 
@@ -27,7 +28,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
   void _selectDate() async {
     final date = await CustomCalendarPicker.show(
       context,
-      initialDate: _selectedDate ?? DateTime(2000, 1, 1),
+      initialDate: _selectedDate ?? DateTime(1980, 1, 1),
     );
     
     if (date != null) {
@@ -89,7 +90,19 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                     color: Colors.black,
                   ),
                   textAlign: TextAlign.center,
+                ).animate().fadeIn(duration: 600.ms).shimmer(
+                  duration: 1200.ms,
+                  color: Colors.white.withOpacity(0.3),
                 ),
+                const SizedBox(height: 16),
+                Text(
+                  '정확한 운세를 위해 필요해요',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate(delay: 300.ms).fadeIn(duration: 600.ms),
                 const SizedBox(height: 48),
                 
                 // Birth date selector
@@ -125,6 +138,10 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                       ],
                     ),
                   ),
+                ).animate(delay: 500.ms).fadeIn(duration: 600.ms).slideY(
+                  begin: 0.1,
+                  end: 0,
+                  curve: Curves.easeOutQuart,
                 ),
                 
                 const SizedBox(height: 32),
@@ -161,6 +178,10 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                         ],
                       ),
                     ),
+                  ).animate().fadeIn(duration: 400.ms).slideY(
+                    begin: 0.1,
+                    end: 0,
+                    curve: Curves.easeOutQuart,
                   ),
                 
                 const SizedBox(height: 80),
@@ -187,7 +208,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                       ),
                     ),
                   ),
-                ),
+                ).animate(delay: 700.ms).fadeIn(duration: 600.ms),
               ],
             ),
           ),

@@ -2,9 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/token.dart';
 import '../../data/services/token_api_service.dart';
 import '../../core/errors/exceptions.dart';
+import '../../core/constants/soul_rates.dart';
 import 'auth_provider.dart';
+import 'providers.dart';
+import 'soul_animation_provider.dart';
 
 // Token State
+// TODO: Phase 2 - Rename to SoulState and update all references
+// 영혼 시스템으로 전환 예정 - 현재는 하위 호환성을 위해 Token 명칭 유지
 class TokenState {
   final TokenBalance? balance;
   final bool isLoading;
@@ -109,6 +114,9 @@ class TokenState {
   int getTokensForFortuneType(String fortuneType) {
     return consumptionRates[fortuneType] ?? 1;
   }
+
+  // Getter for current tokens (compatibility)
+  int get currentTokens => balance?.remainingTokens ?? 0;
 }
 
 // Token Notifier
@@ -159,7 +167,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     );
   }
 
-  // 토큰 소비
+  // 토큰 소비 (프리미엄 운세를 볼 때)
   Future<bool> consumeTokens({
     required String fortuneType,
     required int amount,
@@ -170,8 +178,19 @@ class TokenNotifier extends StateNotifier<TokenState> {
       return true;
     }
 
+    // 운세 타입에 따른 영혼 소비량 확인 (음수)
+    final soulAmount = SoulRates.getSoulAmount(fortuneType);
+    
+    // 획득형 운세는 이 메서드를 사용하지 않음
+    if (soulAmount >= 0) {
+      return earnSouls(fortuneType: fortuneType, referenceId: referenceId);
+    }
+    
+    // 실제 소비량 (양수로 변환)
+    final actualAmount = -soulAmount;
+
     // 토큰 부족 체크
-    if (!state.canConsumeTokens(amount)) {
+    if (!state.canConsumeTokens(actualAmount)) {
       state = state.copyWith(error: 'INSUFFICIENT_TOKENS');
       return false;
     }
@@ -188,8 +207,8 @@ class TokenNotifier extends StateNotifier<TokenState> {
       if (state.balance != null) {
         state = state.copyWith(
           balance: state.balance!.copyWith(
-            remainingTokens: state.balance!.remainingTokens - amount,
-            usedTokens: state.balance!.usedTokens + amount,
+            remainingTokens: state.balance!.remainingTokens - actualAmount,
+            usedTokens: state.balance!.usedTokens + actualAmount,
           ),
         );
       }
@@ -198,7 +217,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
       final newBalance = await _apiService.consumeTokens(
         userId: user.id,
         fortuneType: fortuneType,
-        amount: amount,
+        amount: actualAmount,
         referenceId: referenceId,
       );
 
@@ -206,6 +225,15 @@ class TokenNotifier extends StateNotifier<TokenState> {
         balance: newBalance,
         isConsumingToken: false,
       );
+
+      // Track token usage in statistics
+      try {
+        final statisticsService = ref.read(userStatisticsServiceProvider);
+        await statisticsService.updateTokenUsage(user.id, actualAmount, 0);
+      } catch (e) {
+        // Don't throw - statistics tracking is not critical
+        // Logger is already imported through providers.dart
+      }
 
       return true;
     } catch (e) {
@@ -318,7 +346,71 @@ class TokenNotifier extends StateNotifier<TokenState> {
     }
   }
 
-  // 광고 시청 후 토큰 보상
+  // 영혼 획득 (무료 운세를 볼 때)
+  Future<bool> earnSouls({
+    required String fortuneType,
+    String? referenceId,
+  }) async {
+    // 운세 타입에 따른 영혼 획득량 확인
+    final soulAmount = SoulRates.getSoulAmount(fortuneType);
+    
+    // 소비형 운세는 이 메서드를 사용하지 않음
+    if (soulAmount <= 0) {
+      return false;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final user = ref.read(userProvider).value;
+      if (user == null) {
+        throw UnauthorizedException('로그인이 필요합니다');
+      }
+
+      // 낙관적 업데이트
+      if (state.balance != null) {
+        state = state.copyWith(
+          balance: state.balance!.copyWith(
+            remainingTokens: state.balance!.remainingTokens + soulAmount,
+            totalTokens: state.balance!.totalTokens + soulAmount,
+          ),
+        );
+      }
+
+      // API 호출 (기존 rewardTokensForAdView 사용)
+      final newBalance = await _apiService.rewardTokensForAdView(
+        userId: user.id,
+        fortuneType: fortuneType,
+        rewardAmount: soulAmount,
+      );
+
+      state = state.copyWith(
+        balance: newBalance,
+        isLoading: false,
+      );
+
+      // Track soul earnings in statistics
+      try {
+        final statisticsService = ref.read(userStatisticsServiceProvider);
+        await statisticsService.updateTokenUsage(user.id, 0, soulAmount);
+      } catch (e) {
+        // Don't throw - statistics tracking is not critical
+      }
+
+      return true;
+    } catch (e) {
+      // 실패 시 롤백
+      await loadTokenData();
+      
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+      return false;
+    }
+  }
+
+  // 광고 시청 후 토큰 보상 (레거시 - 향후 제거 예정)
   Future<bool> rewardTokensForAd({
     required String fortuneType,
     int rewardAmount = 1,
@@ -353,6 +445,14 @@ class TokenNotifier extends StateNotifier<TokenState> {
         isLoading: false,
       );
 
+      // Track token earnings in statistics
+      try {
+        final statisticsService = ref.read(userStatisticsServiceProvider);
+        await statisticsService.updateTokenUsage(user.id, 0, rewardAmount);
+      } catch (e) {
+        // Don't throw - statistics tracking is not critical
+      }
+
       return true;
     } catch (e) {
       // 실패 시 롤백
@@ -364,6 +464,48 @@ class TokenNotifier extends StateNotifier<TokenState> {
       );
       return false;
     }
+  }
+
+  // 운세 타입에 따른 영혼 처리 (통합 메서드)
+  Future<bool> processSoulForFortune(String fortuneType) async {
+    final soulAmount = SoulRates.getSoulAmount(fortuneType);
+    
+    if (soulAmount > 0) {
+      // 영혼 획득 (무료 운세)
+      return earnSouls(fortuneType: fortuneType);
+    } else if (soulAmount < 0) {
+      // 영혼 소비 (프리미엄 운세)
+      return consumeTokens(
+        fortuneType: fortuneType,
+        amount: -soulAmount,
+      );
+    }
+    
+    // 변화 없음
+    return true;
+  }
+
+  // 운세가 프리미엄인지 확인
+  bool isPremiumFortune(String fortuneType) {
+    return SoulRates.isPremiumFortune(fortuneType);
+  }
+
+  // 운세 실행에 필요한 영혼 확인
+  bool canAccessFortune(String fortuneType) {
+    // 무제한 이용권이 있으면 모든 운세 이용 가능
+    if (state.hasUnlimitedAccess) {
+      return true;
+    }
+    
+    final soulAmount = SoulRates.getSoulAmount(fortuneType);
+    
+    // 무료 운세는 항상 이용 가능
+    if (soulAmount >= 0) {
+      return true;
+    }
+    
+    // 프리미엄 운세는 영혼 확인
+    return state.canConsumeTokens(-soulAmount);
   }
 
   // 에러 클리어

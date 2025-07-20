@@ -41,7 +41,7 @@ class _SignupScreenState extends State<SignupScreen> {
         if (response.user != null) {
           // 프로필 생성
           await supabase.from('user_profiles').insert({
-            'user_id': response.user!.id,
+            'id': response.user!.id,
             'name': name,
             'email': email,
             'created_at': DateTime.now().toIso8601String(),

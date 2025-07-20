@@ -98,7 +98,7 @@ class DailyTokenBanner extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '일일 무료 토큰',
+                            '일일 무료 영혼',
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black87,
@@ -106,7 +106,7 @@ class DailyTokenBanner extends ConsumerWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '매일 3개의 무료 토큰을 받으세요!',
+                            '매일 10개의 무료 영혼을 받으세요!',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: (isDark ? Colors.white : Colors.black87)
                                   .withValues(alpha: 0.7),

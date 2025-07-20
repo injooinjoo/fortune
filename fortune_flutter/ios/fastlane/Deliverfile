@@ -1,7 +1,7 @@
 # Deliverfile for iOS App Store deployment
 
 # App Store Connect information
-app_identifier "com.fortune.app"
+app_identifier "com.beyond.fortuneFlutter"
 username "your-apple-id@example.com"
 
 # Metadata and screenshots
@@ -24,8 +24,8 @@ app_review_information(
   first_name: "John",
   last_name: "Doe",
   phone_number: "+1 123 456 7890",
-  email_address: "review@fortune.com",
-  demo_user: "test@fortune.com",
+  email_address: "review@beyond.com",
+  demo_user: "test@beyond.com",
   demo_password: "TestPassword123!",
   notes: "This app provides AI-based fortune telling services. Test account provided for review."
 )
@@ -56,6 +56,6 @@ trade_representative_contact_information(
   country: "South Korea",
   postal_code: "12345",
   phone_number: "+82 10 1234 5678",
-  email_address: "legal@fortune.com",
+  email_address: "legal@beyond.com",
   is_displayed_on_app_store: false
 )

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/auth_service.dart';
+import '../services/social_auth_service.dart';
 import '../services/storage_service.dart';
 import '../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../core/utils/url_cleaner_web.dart';
@@ -25,11 +26,13 @@ class _LandingPageState extends ConsumerState<LandingPage> {
   bool _isCheckingAuth = true;
   bool _isAuthProcessing = false;
   final _authService = AuthService();
+  late final SocialAuthService _socialAuthService;
   final _storageService = StorageService();
 
   @override
   void initState() {
     super.initState();
+    _socialAuthService = SocialAuthService(Supabase.instance.client);
     _checkAuthState();
     _checkUrlParameters();
     
@@ -38,6 +41,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       debugPrint('Landing page auth state changed: ${data.event}');
       if (data.session != null && mounted) {
         debugPrint('User logged in, checking profile...');
+        
+        // Try to sync profile from Supabase first
+        await _syncProfileFromSupabase();
         
         // Check if user needs onboarding
         final needsOnboarding = await ProfileValidation.needsOnboarding();
@@ -52,9 +58,118 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     });
   }
 
+  Future<void> _syncProfileFromSupabase() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+      
+      debugPrint('Syncing profile from Supabase for user: ${user.id}');
+      
+      // Try to get profile from Supabase
+      var response = await Supabase.instance.client
+          .from('user_profiles')
+          .select()
+          .eq('id', user.id)
+          .maybeSingle();
+      
+      if (response != null) {
+        debugPrint('Profile found in Supabase, saving to local storage');
+        
+        // Ensure onboarding_completed is set if all required fields are present
+        if (response['name'] != null && 
+            response['birth_date'] != null && 
+            response['gender'] != null) {
+          response['onboarding_completed'] = true;
+        }
+        
+        // Save to local storage
+        await _storageService.saveUserProfile(response);
+      } else {
+        debugPrint('No profile found in Supabase');
+        
+        // Create profile automatically for OAuth users
+        debugPrint('Creating new profile for OAuth user...');
+        debugPrint('User metadata: ${user.userMetadata}');
+        debugPrint('App metadata: ${user.appMetadata}');
+        
+        // Start with basic profile data that's always supported
+        final profileData = {
+          'id': user.id,
+          'email': user.email,
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        };
+        
+        // Add additional info from user metadata if available
+        if (user.userMetadata != null) {
+          if (user.userMetadata?['full_name'] != null) {
+            profileData['name'] = user.userMetadata?['full_name'];
+          } else if (user.userMetadata?['name'] != null) {
+            profileData['name'] = user.userMetadata?['name'];
+          } else {
+            profileData['name'] = '사용자';
+          }
+          
+          if (user.userMetadata?['avatar_url'] != null) {
+            profileData['profile_image_url'] = user.userMetadata?['avatar_url'];
+          } else if (user.userMetadata?['picture'] != null) {
+            profileData['profile_image_url'] = user.userMetadata?['picture'];
+          }
+        } else {
+          profileData['name'] = '사용자';
+        }
+        
+        try {
+          // First try with social auth columns
+          final profileWithSocialAuth = Map<String, dynamic>.from(profileData);
+          profileWithSocialAuth['primary_provider'] = user.appMetadata['provider'] ?? 'google';
+          profileWithSocialAuth['linked_providers'] = [user.appMetadata['provider'] ?? 'google'];
+          
+          await Supabase.instance.client
+              .from('user_profiles')
+              .insert(profileWithSocialAuth);
+          debugPrint('Profile created successfully with social auth columns');
+          
+          // Save to local storage
+          await _storageService.saveUserProfile(profileWithSocialAuth);
+        } catch (insertError) {
+          debugPrint('Error creating profile with social auth: $insertError');
+          
+          // If social auth columns don't exist, try without them
+          if (insertError.toString().contains('linked_providers') || 
+              insertError.toString().contains('primary_provider')) {
+            debugPrint('Social auth columns not found, creating profile without them...');
+            try {
+              await Supabase.instance.client
+                  .from('user_profiles')
+                  .insert(profileData);
+              debugPrint('Profile created successfully without social auth columns');
+              
+              // Save to local storage
+              await _storageService.saveUserProfile(profileData);
+            } catch (fallbackError) {
+              debugPrint('Error creating profile without social auth: $fallbackError');
+              // Continue even if profile creation fails
+            }
+          } else {
+            debugPrint('Profile creation failed with unexpected error');
+            // Continue even if profile creation fails
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error syncing profile from Supabase: $e');
+    }
+  }
+
   Future<void> _checkAuthState() async {
     try {
       final session = Supabase.instance.client.auth.currentSession;
+      
+      // Try to sync profile from Supabase first
+      if (session != null) {
+        await _syncProfileFromSupabase();
+      }
       
       // Check if user (authenticated or guest) needs onboarding
       final needsOnboarding = await ProfileValidation.needsOnboarding();
@@ -241,8 +356,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
   }
 
   void _startOnboarding() async {
-    // Show social login bottom sheet
-    _showSocialLoginBottomSheet();
+    // Navigate directly to onboarding flow
+    context.go('/onboarding/flow');
   }
 
   void _showSocialLoginBottomSheet() async {
@@ -316,17 +431,15 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                           ),
                           const SizedBox(height: 12),
                           
-                          // Apple Login (iOS only)
-                          if (!kIsWeb && Platform.isIOS) ...[  
-                            _buildModernSocialButton(
-                              onPressed: _isAuthProcessing ? null : () {
-                                Navigator.pop(context);
-                                _handleAppleLogin();
-                              },
-                              type: 'apple',
-                            ),
-                            const SizedBox(height: 12),
-                          ],
+                          // Apple Login
+                          _buildModernSocialButton(
+                            onPressed: _isAuthProcessing ? null : () {
+                              Navigator.pop(context);
+                              _handleAppleLogin();
+                            },
+                            type: 'apple',
+                          ),
+                          const SizedBox(height: 12),
                           
                           // Kakao Login
                           _buildModernSocialButton(
@@ -405,6 +518,29 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     
     try {
       if (provider == 'Google') {
+        // 즉시 로딩 피드백 표시
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Text('Google 로그인 진행 중...'),
+                ],
+              ),
+              duration: Duration(seconds: 10), // Auth timeout과 동일
+            ),
+          );
+        }
+        
         // 브라우저 확장 프로그램 간섭 제거
         final prefs = await SharedPreferences.getInstance();
         final keys = prefs.getKeys().where((key) => 
@@ -416,16 +552,17 @@ class _LandingPageState extends ConsumerState<LandingPage> {
           await prefs.remove(key);
         }
         
-        // Google OAuth 로그인
-        await _authService.signInWithGoogle();
+        // Google Sign-In SDK 사용
+        final response = await _socialAuthService.signInWithGoogle();
         
+        // 로딩 스낵바 닫기
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Google 로그인을 처리하고 있습니다...'),
-            ),
-          );
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
         }
+        
+        // The auth state listener will handle navigation after successful login
+        // OAuth 리다이렉트 방식은 항상 null을 반환하므로
+        // 취소 메시지를 표시하지 않음
       } else if (provider == 'Kakao') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -599,25 +736,31 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                         
                         const SizedBox(height: 80),
 
-                        // Start Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 56,
-                          child: ElevatedButton(
-                            onPressed: _startOnboarding,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(28),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              '시작하기',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                        // Start Button with Hero Animation
+                        Hero(
+                          tag: 'start-button-hero',
+                          child: Material(
+                            color: Colors.transparent,
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton(
+                                onPressed: _startOnboarding,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(28),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  '시작하기',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

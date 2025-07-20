@@ -28,24 +28,46 @@ class FortuneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    
+    // Light mode용 밝은 그라데이션 색상
+    final lightModeGradients = {
+      // 사주팔자 - 밝은 노란색
+      0xFF000000: [Color(0xFFFFF8E1), Color(0xFFFFF3CD)],
+      // AI 관상 - 밝은 회색
+      0xFF1A1A1A: [Color(0xFFF5F5F5), Color(0xFFEEEEEE)],
+      // 프리미엄 - 밝은 보라색
+      0xFF2C2C2C: [Color(0xFFF3E5F5), Color(0xFFE1BEE7)],
+      // 전체 운세 - 밝은 파란색
+      0xFF4A4A4A: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
+    };
+    
+    List<Color>? adjustedGradient;
+    if (gradient != null && !isDarkMode) {
+      // Light mode에서는 밝은 색상으로 변경
+      adjustedGradient = lightModeGradients[gradient!.first.value] ?? 
+          gradient!.map((color) => Color.lerp(color, Colors.white, 0.85)!).toList();
+    } else {
+      adjustedGradient = gradient;
+    }
     
     return GestureDetector(
       onTap: onTap,
       child: Container(
         height: 180,
         decoration: BoxDecoration(
-          gradient: gradient != null
+          gradient: adjustedGradient != null
               ? LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: gradient!,
+                  colors: adjustedGradient,
                 )
               : null,
-          color: gradient == null ? backgroundColor ?? Colors.white : null,
+          color: adjustedGradient == null ? (backgroundColor ?? (isDarkMode ? Color(0xFF1F2937) : Colors.white)) : null,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: (gradient?.first ?? theme.colorScheme.primary).withValues(alpha: 0.3),
+              color: (adjustedGradient?.first ?? theme.colorScheme.primary).withValues(alpha: isDarkMode ? 0.3 : 0.15),
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
@@ -78,7 +100,9 @@ class FortuneCard extends StatelessWidget {
                       child: Icon(
                         icon,
                         size: 28,
-                        color: gradient != null ? Colors.white : (iconColor ?? theme.colorScheme.primary),
+                        color: adjustedGradient != null 
+                            ? (isDarkMode ? Colors.white : (iconColor ?? theme.colorScheme.primary))
+                            : (iconColor ?? theme.colorScheme.primary),
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -86,7 +110,9 @@ class FortuneCard extends StatelessWidget {
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: gradient != null ? Colors.white : theme.colorScheme.onSurface,
+                      color: adjustedGradient != null 
+                          ? (isDarkMode ? Colors.white : theme.colorScheme.onSurface)
+                          : theme.colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -97,8 +123,8 @@ class FortuneCard extends StatelessWidget {
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: gradient != null 
-                          ? Colors.white.withValues(alpha: 0.9)
+                      color: adjustedGradient != null 
+                          ? (isDarkMode ? Colors.white.withValues(alpha: 0.9) : theme.colorScheme.onSurface.withValues(alpha: 0.6))
                           : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       fontWeight: FontWeight.w400,
                     ),
@@ -120,7 +146,9 @@ class FortuneCard extends StatelessWidget {
                       child: Text(
                         badge!,
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: gradient != null ? Colors.white : theme.textTheme.bodyMedium?.color,
+                          color: adjustedGradient != null 
+                              ? (isDarkMode ? Colors.white : theme.textTheme.bodyMedium?.color)
+                              : theme.textTheme.bodyMedium?.color,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

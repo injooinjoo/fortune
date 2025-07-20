@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget Colors -->
+    <color name="widget_background">#F5F5F5</color>
+    <color name="widget_title_color">#212121</color>
+    <color name="widget_subtitle_color">#757575</color>
+    <color name="widget_text_color">#424242</color>
+    <color name="widget_score_color">#1976D2</color>
+    <color name="widget_accent_color">#2196F3</color>
+    <color name="widget_lucky_items_background">#E3F2FD</color>
+    <color name="widget_button_background">#E1F5FE</color>
+    
+    <!-- Dark mode widget colors -->
+    <color name="widget_background_dark">#121212</color>
+    <color name="widget_title_color_dark">#FFFFFF</color>
+    <color name="widget_subtitle_color_dark">#B0B0B0</color>
+    <color name="widget_text_color_dark">#E0E0E0</color>
+    <color name="widget_score_color_dark">#64B5F6</color>
+    <color name="widget_accent_color_dark">#90CAF9</color>
+    <color name="widget_lucky_items_background_dark">#1E3A5F</color>
+    <color name="widget_button_background_dark">#263238</color>
+</resources>

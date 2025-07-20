@@ -60,7 +60,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
 
     return Scaffold(
       appBar: const AppHeader(
-        title: '토큰 사용 내역',
+        title: '영혼 사용 내역',
         showShareButton: false,
         showFontSizeSelector: false,
         showTokenBalance: true,

@@ -11,7 +11,7 @@ class SupabaseHelper {
       final response = await _client
           .from('user_profiles')
           .select()
-          .eq('user_id', userId)
+          .eq('id', userId)
           .maybeSingle();
           
       return response;
@@ -23,7 +23,7 @@ class SupabaseHelper {
         try {
           final rpcResponse = await _client.rpc(
             'get_user_profile',
-            params: {'p_user_id': userId},
+            params: {'p_id': userId},
           ).maybeSingle();
           
           return rpcResponse;
@@ -44,15 +44,15 @@ class SupabaseHelper {
   /// user_profiles 테이블에 새 프로필 생성
   static Future<Map<String, dynamic>?> createUserProfile({
     required String userId,
-    required String email,
+    String? email,
     String? name,
     String? profileImageUrl,
     int tokenBalance = 100,
   }) async {
     try {
       final profile = {
-        'user_id': userId,
-        'email': email,
+        'id': userId,
+        'email': email ?? 'unknown@example.com',
         'name': name,
         'profile_image_url': profileImageUrl,
         'token_balance': tokenBalance,
@@ -83,7 +83,7 @@ class SupabaseHelper {
   /// 프로필이 없으면 생성, 있으면 조회
   static Future<Map<String, dynamic>?> ensureUserProfile({
     required String userId,
-    required String email,
+    String? email,
     String? name,
     String? profileImageUrl,
   }) async {
@@ -103,15 +103,67 @@ class SupabaseHelper {
     
     return profile;
   }
+  
+  /// user_profiles 테이블 업데이트
+  static Future<Map<String, dynamic>?> updateUserProfile({
+    required String userId,
+    Map<String, dynamic>? updates,
+  }) async {
+    if (updates == null || updates.isEmpty) {
+      Logger.warning('No updates provided for user profile');
+      return null;
+    }
+    
+    // Add updated_at timestamp
+    final updateData = {
+      ...updates,
+      'updated_at': DateTime.now().toIso8601String(),
+    };
+    
+    try {
+      final response = await _client
+          .from('user_profiles')
+          .update(updateData)
+          .eq('id', userId)
+          .select()
+          .single();
+          
+      Logger.info('User profile updated successfully');
+      return response;
+    } on PostgrestException catch (e) {
+      Logger.error('Failed to update user profile', e);
+      
+      // Try RPC function as fallback
+      if (e.code == '406') {
+        try {
+          final rpcResponse = await _client.rpc(
+            'update_user_profile',
+            params: {
+              'p_id': userId,
+              'p_updates': updateData,
+            },
+          ).single();
+          
+          return rpcResponse;
+        } catch (rpcError) {
+          Logger.error('RPC update fallback failed', rpcError);
+        }
+      }
+      
+      return null;
+    } catch (e) {
+      Logger.error('Unexpected error updating user profile', e);
+      return null;
+    }
+  }
 }
 
 // SQL 함수를 생성하는 스크립트 (Supabase SQL 에디터에서 실행)
 const createRpcFunctionSQL = r'''
 -- RPC function to get user profile (bypasses RLS issues)
-CREATE OR REPLACE FUNCTION get_user_profile(p_user_id UUID)
+CREATE OR REPLACE FUNCTION get_user_profile(p_id UUID)
 RETURNS TABLE (
   id UUID,
-  user_id UUID,
   email TEXT,
   name TEXT,
   phone_number TEXT,
@@ -131,14 +183,13 @@ SET search_path = public
 AS $$
 BEGIN
   -- Only allow users to get their own profile
-  IF p_user_id != auth.uid() THEN
+  IF p_id != auth.uid() THEN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
   
   RETURN QUERY
   SELECT 
     up.id,
-    up.user_id,
     up.email,
     up.name,
     up.phone_number,
@@ -152,7 +203,7 @@ BEGIN
     up.created_at,
     up.updated_at
   FROM public.user_profiles up
-  WHERE up.user_id = p_user_id;
+  WHERE up.id = p_id;
 END;
 $$;
 

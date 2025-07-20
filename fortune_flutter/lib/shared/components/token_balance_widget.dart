@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../presentation/providers/soul_animation_provider.dart';
 
 class TokenBalanceWidget extends ConsumerWidget {
   const TokenBalanceWidget({Key? key}) : super(key: key);
@@ -20,13 +21,14 @@ class TokenBalanceWidget extends ConsumerWidget {
     return GestureDetector(
       onTap: () => context.push('/payment/history'),
       child: GlassContainer(
+        key: tokenBalanceGlobalKey,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         borderRadius: BorderRadius.circular(20),
         blur: 10,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Token Icon
+            // Soul Icon
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -34,7 +36,7 @@ class TokenBalanceWidget extends ConsumerWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.token_rounded,
+                Icons.auto_awesome_rounded,
                 size: 16,
                 color: theme.colorScheme.primary,
               ),
@@ -73,7 +75,7 @@ class TokenBalanceWidget extends ConsumerWidget {
               )
             else
               Text(
-                '${balance?.remainingTokens ?? 0}',
+                '${balance?.remainingTokens ?? 0} 영혼',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -102,7 +104,7 @@ class TokenBalanceWidget extends ConsumerWidget {
   }
 }
 
-// Detailed Token Balance Card (for use in dashboards)
+// Detailed Soul Balance Card (for use in dashboards)
 class TokenBalanceCard extends ConsumerWidget {
   const TokenBalanceCard({Key? key}) : super(key: key);
 
@@ -128,7 +130,7 @@ class TokenBalanceCard extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '토큰 잔액',
+                '영혼 포인트',
                 style: theme.textTheme.headlineSmall,
               ),
               const Spacer(),
@@ -170,24 +172,24 @@ class TokenBalanceCard extends ConsumerWidget {
               child: CircularProgressIndicator(),
             )
           else if (balance != null) ...[
-            // Token Stats
+            // Soul Stats
             Row(
               children: [
                 Expanded(
                   child: _buildTokenStat(
                     context: context,
-                    label: '보유 토큰',
-                    value: balance.remainingTokens.toString(),
+                    label: '보유 영혼',
+                    value: '${balance.remainingTokens} 영혼',
                     color: theme.colorScheme.primary,
-                    icon: Icons.token_rounded,
+                    icon: Icons.auto_awesome_rounded,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildTokenStat(
                     context: context,
-                    label: '사용 토큰',
-                    value: balance.usedTokens.toString(),
+                    label: '사용한 영혼',
+                    value: '${balance.usedTokens} 영혼',
                     color: theme.colorScheme.secondary,
                     icon: Icons.history_rounded,
                   ),
@@ -245,7 +247,7 @@ class TokenBalanceCard extends ConsumerWidget {
                   child: ElevatedButton.icon(
                     onPressed: () => context.push('/payment/tokens'),
                     icon: const Icon(Icons.add_rounded, size: 18),
-                    label: const Text('토큰 충전'),
+                    label: const Text('영혼 상태'),
                   ),
                 ),
               ],
@@ -272,7 +274,7 @@ class TokenBalanceCard extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '매일 무료 토큰을 받을 수 있어요!',
+                      '매일 무료 영혼을 받을 수 있어요!',
                       style: theme.textTheme.bodySmall,
                     ),
                   ),

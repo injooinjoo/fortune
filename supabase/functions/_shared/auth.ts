@@ -46,14 +46,25 @@ export async function checkTokenBalance(userId: string, requiredTokens: number) 
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Get user's token balance
-  const { data: profile, error } = await supabase
-    .from('user_profiles')
-    .select('token_balance')
-    .eq('id', userId)
+  // Get user's token balance from token_balances table
+  const { data: tokenBalance, error } = await supabase
+    .from('token_balances')
+    .select('balance')
+    .eq('user_id', userId)
     .single()
 
-  if (error || !profile) {
+  if (error || !tokenBalance) {
+    // If record not found (new user), they should have initial tokens
+    if (error?.code === 'PGRST116') {
+      console.log(`No token balance record found for user ${userId}, assuming initial balance`)
+      return {
+        hasBalance: true,
+        balance: 100, // Initial token grant for new users
+        error: null
+      }
+    }
+    
+    console.error('Error fetching token balance:', error)
     return {
       hasBalance: false,
       balance: 0,
@@ -61,11 +72,11 @@ export async function checkTokenBalance(userId: string, requiredTokens: number) 
     }
   }
 
-  const hasBalance = profile.token_balance >= requiredTokens
+  const hasBalance = tokenBalance.balance >= requiredTokens
 
   return {
     hasBalance,
-    balance: profile.token_balance,
+    balance: tokenBalance.balance,
     error: null
   }
 }
@@ -76,27 +87,30 @@ export async function deductTokens(userId: string, amount: number, description: 
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Start a transaction
-  const { data: profile, error: fetchError } = await supabase
-    .from('user_profiles')
-    .select('token_balance')
-    .eq('id', userId)
+  // Get current token balance
+  const { data: tokenBalance, error: fetchError } = await supabase
+    .from('token_balances')
+    .select('balance')
+    .eq('user_id', userId)
     .single()
 
-  if (fetchError || !profile) {
-    return { success: false, error: 'Failed to fetch profile' }
+  if (fetchError || !tokenBalance) {
+    return { success: false, error: 'Failed to fetch token balance' }
   }
 
-  const newBalance = profile.token_balance - amount
+  const newBalance = tokenBalance.balance - amount
   if (newBalance < 0) {
     return { success: false, error: 'Insufficient token balance' }
   }
 
-  // Update balance
+  // Update balance in token_balances table
   const { error: updateError } = await supabase
-    .from('user_profiles')
-    .update({ token_balance: newBalance })
-    .eq('id', userId)
+    .from('token_balances')
+    .update({ 
+      balance: newBalance,
+      updated_at: new Date().toISOString()
+    })
+    .eq('user_id', userId)
 
   if (updateError) {
     return { success: false, error: 'Failed to update balance' }
@@ -107,10 +121,9 @@ export async function deductTokens(userId: string, amount: number, description: 
     .from('token_usage')
     .insert({
       user_id: userId,
-      amount: -amount,
-      balance_after: newBalance,
-      description,
-      transaction_type: 'debit'
+      tokens_used: amount,
+      fortune_type: description,
+      metadata: { balance_after: newBalance }
     })
 
   if (logError) {

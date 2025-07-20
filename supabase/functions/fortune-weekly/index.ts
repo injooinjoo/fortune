@@ -4,6 +4,7 @@ import { corsHeaders, handleCors } from '../_shared/cors.ts'
 import { authenticateUser, checkTokenBalance, deductTokens } from '../_shared/auth.ts'
 import { generateFortune, getSystemPrompt } from '../_shared/openai.ts'
 import { FortuneRequest, FortuneResponse, FORTUNE_TOKEN_COSTS } from '../_shared/types.ts'
+import { checkExistingFortune, getDateRange, CACHE_DURATIONS } from '../_shared/fortune-cache.ts'
 
 const FORTUNE_TYPE = 'weekly'
 const TOKEN_COST = FORTUNE_TOKEN_COSTS[FORTUNE_TYPE]
@@ -20,6 +21,29 @@ serve(async (req: Request) => {
 
     // Parse request body
     const body: FortuneRequest = await req.json()
+
+    // Check existing fortune (cache + database)
+    const existingCheck = await checkExistingFortune(
+      user!.id,
+      FORTUNE_TYPE,
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    )
+
+    if (existingCheck.found) {
+      return new Response(
+        JSON.stringify({
+          ...existingCheck.data,
+          cached: true,
+          source: existingCheck.source,
+          tokensUsed: 0
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
 
     // Check token balance
     const { hasBalance, balance, error: balanceError } = await checkTokenBalance(
@@ -51,32 +75,10 @@ serve(async (req: Request) => {
       )
     }
 
-    // Check cache first
-    const cacheKey = `${FORTUNE_TYPE}_${user!.id}_${new Date().toISOString().split('T')[0]}`
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
-
-    const { data: cached } = await supabase
-      .from('fortune_cache')
-      .select('fortune_data')
-      .eq('cache_key', cacheKey)
-      .single()
-
-    if (cached) {
-      return new Response(
-        JSON.stringify({
-          ...cached.fortune_data,
-          cached: true,
-          tokensUsed: 0
-        }),
-        { 
-          status: 200, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
 
     // Generate fortune
     const systemPrompt = getSystemPrompt(FORTUNE_TYPE)
@@ -100,6 +102,10 @@ serve(async (req: Request) => {
     }
 
     // Cache the result
+    const { start } = getDateRange(FORTUNE_TYPE)
+    const cacheKey = `${FORTUNE_TYPE}_${user!.id}_${start.toISOString().split('T')[0]}`
+    const cacheDuration = CACHE_DURATIONS[FORTUNE_TYPE] || CACHE_DURATIONS.default
+    
     await supabase
       .from('fortune_cache')
       .upsert({
@@ -107,7 +113,7 @@ serve(async (req: Request) => {
         user_id: user!.id,
         fortune_type: FORTUNE_TYPE,
         fortune_data: { fortune },
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        expires_at: new Date(Date.now() + cacheDuration).toISOString()
       })
 
     // Save to fortune history

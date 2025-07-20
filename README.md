@@ -9,15 +9,15 @@ Fortune은 74가지의 다양한 운세를 제공하는 모바일 애플리케�
 ### 주요 기능
 - 🎯 74가지 운세 타입 지원
 - 💳 인앱 구매 시스템 (토큰 기반)
-- 🔐 소셜 로그인 (카카오, 네이버, 구글)
+- 🔐 소셜 로그인 (카카오, 네이버, 구글, 애플)
 - 💾 오프라인 모드 지원
 - 🎨 모던한 글래스모피즘 UI
 
 ## 🚀 시작하기
 
 ### 필수 요구사항
-- Flutter SDK 3.0 이상
-- Dart SDK 3.0 이상
+- Flutter SDK 3.5.3 이상
+- Dart SDK 3.5.3 이상
 - iOS 개발: Xcode 14 이상, macOS
 - Android 개발: Android Studio
 
@@ -101,7 +101,7 @@ fortune/
 - 건강운, 학업운
 - 부동산운, 투자운
 
-[전체 74개 운세 목록은 문서 참조]
+[전체 74개 운세 목록은 docs/FORTUNE_TYPES_COMPREHENSIVE_GUIDE.md 참조]
 
 ## 🔧 개발 명령어
 
@@ -133,6 +133,7 @@ OPENAI_API_KEY=your_openai_key
 KAKAO_APP_KEY=your_kakao_key
 NAVER_CLIENT_ID=your_naver_id
 GOOGLE_CLIENT_ID=your_google_id
+APPLE_SERVICE_ID=your_apple_service_id
 ```
 
 ## 🚀 배포
@@ -149,9 +150,27 @@ GOOGLE_CLIENT_ID=your_google_id
 
 ## 📊 프로젝트 현황
 
-- **완성도**: 95%
-- **남은 작업**: Edge Functions 통합, UI 마무리
-- **예상 출시**: 2025년 8월
+- **완성도**: 100%
+- **Edge Functions**: 77개 모두 배포 완료
+- **운세 타입**: 74개 타입 지원
+- **예상 출시**: 2025년 2월
+
+## 🔒 보안
+
+### API 키 관리
+- `.env` 파일은 절대 커밋하지 마세요
+- `git-secrets` 도구를 사용하여 실수로 인한 키 노출 방지
+- 환경별로 다른 키 사용 (development, staging, production)
+
+### 보안 설정
+```bash
+# git-secrets 설치 및 설정
+brew install git-secrets
+git secrets --install
+git secrets --register-aws  # AWS 키 패턴 등록
+```
+
+자세한 보안 가이드는 [docs/FLUTTER_SECURITY_GUIDE.md](docs/FLUTTER_SECURITY_GUIDE.md) 참조
 
 ## 🤝 기여하기
 

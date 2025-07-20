@@ -183,9 +183,9 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
   void _loadProfileBirthMonth() {
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
-    if (profile?.birthdate != null) {
+    if (profile?.birthDate != null) {
       setState(() {
-        _selectedMonth = profile!.birthdate!.month;
+        _selectedMonth = profile!.birthDate!.month;
       });
     }
   }

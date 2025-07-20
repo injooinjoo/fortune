@@ -8,6 +8,8 @@ import '../../../core/utils/logger.dart';
 enum SocialProvider {
   google,
   apple,
+  facebook,
+  kakao,
   naver,
 }
 
@@ -45,6 +47,12 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           break;
         case SocialProvider.apple:
           await socialAuthNotifier.signInWithApple();
+          break;
+        case SocialProvider.facebook:
+          await socialAuthNotifier.signInWithFacebook();
+          break;
+        case SocialProvider.kakao:
+          await socialAuthNotifier.signInWithKakao();
           break;
         case SocialProvider.naver:
           await socialAuthNotifier.signInWithNaver();
@@ -132,7 +140,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
       children: [
         const SizedBox(height: 40),
         Text(
-          '환영합니다!',
+          '거의 다 왔습니다!',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -140,7 +148,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
         ),
         const SizedBox(height: 16),
         Text(
-          '소셜 계정으로 간편하게 시작하세요',
+          '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -184,14 +192,52 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           onPressed: () => _handleSocialLogin(SocialProvider.google),
         ),
 
-        if (Theme.of(context).platform == TargetPlatform.iOS)
-          _buildSocialButton(
-            label: 'Apple로 계속하기',
-            icon: Icon(Icons.apple, size: 24, color: Colors.white),
-            onPressed: () => _handleSocialLogin(SocialProvider.apple),
-            backgroundColor: Colors.black,
-            textColor: Colors.white,
+        _buildSocialButton(
+          label: 'Apple로 계속하기',
+          icon: Icon(Icons.apple, size: 24, color: Colors.white),
+          onPressed: () => _handleSocialLogin(SocialProvider.apple),
+          backgroundColor: Colors.black,
+          textColor: Colors.white,
+        ),
+
+        _buildSocialButton(
+          label: 'Facebook으로 계속하기',
+          icon: Icon(Icons.facebook, size: 24, color: Colors.white),
+          onPressed: () => _handleSocialLogin(SocialProvider.facebook),
+          backgroundColor: const Color(0xFF1877F2),
+          textColor: Colors.white,
+        ),
+
+        _buildSocialButton(
+          label: '카카오로 계속하기',
+          icon: Image.network(
+            'https://developers.kakao.com/static/images/pc/product/icon/kakaoTalk.png',
+            height: 24,
+            width: 24,
+            errorBuilder: (context, error, stackTrace) => 
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text(
+                      'K',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFFEE500),
+                      ),
+                    ),
+                  ),
+                ),
           ),
+          onPressed: () => _handleSocialLogin(SocialProvider.kakao),
+          backgroundColor: const Color(0xFFFEE500),
+          textColor: Colors.black87,
+        ),
 
         _buildSocialButton(
           label: '네이버로 계속하기',

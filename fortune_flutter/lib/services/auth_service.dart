@@ -4,29 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final _supabase = Supabase.instance.client;
 
+  @Deprecated('Use SocialAuthService.signInWithGoogle() instead for better performance')
   Future<void> signInWithGoogle() async {
-    try {
-      // Use different redirect URLs for web and mobile platforms
-      final redirectUrl = kIsWeb 
-          ? 'http://localhost:9002/auth/callback'
-          : 'io.supabase.flutter://login-callback/';
-      
-      print('=== GOOGLE SIGN IN START ===');
-      print('Platform: ${kIsWeb ? "Web" : "Mobile"}');
-      print('Redirect URL: $redirectUrl');
-      
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: redirectUrl,
-      );
-      
-      print('OAuth flow initiated successfully');
-      print('=== GOOGLE SIGN IN END ===');
-    } catch (e, stack) {
-      print('Google sign in error: $e');
-      print('Stack trace: $stack');
-      rethrow;
-    }
+    // This method is deprecated. Use SocialAuthService for OAuth login
+    throw UnimplementedError(
+      'Google Sign-In has been moved to SocialAuthService. '
+      'Please use SocialAuthService.signInWithGoogle() instead.'
+    );
   }
 
   Future<AuthResponse> signInWithKakao() async {
@@ -34,33 +18,22 @@ class AuthService {
     throw UnimplementedError('Kakao login is not implemented yet');
   }
 
+  @Deprecated('Use SocialAuthService.signInWithApple() instead for better performance')
   Future<void> signInWithApple() async {
-    try {
-      final redirectUrl = kIsWeb 
-          ? 'http://localhost:9002/auth/callback'
-          : 'io.supabase.flutter://login-callback/';
-      
-      print('=== APPLE SIGN IN START ===');
-      print('Platform: ${kIsWeb ? "Web" : "Mobile"}');
-      print('Redirect URL: $redirectUrl');
-      
-      await _supabase.auth.signInWithOAuth(
-        OAuthProvider.apple,
-        redirectTo: redirectUrl,
-      );
-      
-      print('OAuth flow initiated successfully');
-      print('=== APPLE SIGN IN END ===');
-    } catch (e, stack) {
-      print('Apple sign in error: $e');
-      print('Stack trace: $stack');
-      rethrow;
-    }
+    // This method is deprecated. Use SocialAuthService for OAuth login
+    throw UnimplementedError(
+      'Apple Sign-In has been moved to SocialAuthService. '
+      'Please use SocialAuthService.signInWithApple() instead.'
+    );
   }
 
+  @Deprecated('Use SocialAuthService.signInWithNaver() instead for better performance')
   Future<void> signInWithNaver() async {
-    // Naver 로그인은 추후 구현
-    throw UnimplementedError('Naver login is not implemented yet');
+    // This method is deprecated. Use SocialAuthService for OAuth login
+    throw UnimplementedError(
+      'Naver Sign-In has been moved to SocialAuthService. '
+      'Please use SocialAuthService.signInWithNaver() instead.'
+    );
   }
 
   Future<void> signOut() async {

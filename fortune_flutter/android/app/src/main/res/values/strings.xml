@@ -10,4 +10,16 @@
     
     <!-- App Name -->
     <string name="app_name" translatable="false">Fortune</string>
+    
+    <!-- Widget Descriptions -->
+    <string name="widget_daily_description">오늘의 운세를 홈 화면에서 바로 확인하세요</string>
+    <string name="widget_love_description">연애운과 궁합을 홈 화면에서 확인하세요</string>
+    
+    <!-- App Shortcuts -->
+    <string name="shortcut_daily_fortune_short">오늘의 운세</string>
+    <string name="shortcut_daily_fortune_long">오늘의 운세 확인하기</string>
+    <string name="shortcut_compatibility_short">궁합 보기</string>
+    <string name="shortcut_compatibility_long">상대방과의 궁합 확인하기</string>
+    <string name="shortcut_lucky_numbers_short">행운의 숫자</string>
+    <string name="shortcut_lucky_numbers_long">오늘의 행운의 숫자 확인하기</string>
 </resources>

@@ -7,6 +7,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/environment.dart';
 import '../errors/exceptions.dart' as app_exceptions;
 import '../utils/logger.dart';
+import 'token_refresh_interceptor.dart';
+import 'cache_interceptor.dart';
 
 class ApiClient {
   late final Dio _dio;
@@ -33,81 +35,94 @@ class ApiClient {
       // 커스텀 로깅 인터셉터
       InterceptorsWrapper(
         onRequest: (options, handler) {
+          // Track request timing
+          options.extra['requestTime'] = DateTime.now();
+          options.extra['requestId'] = DateTime.now().millisecondsSinceEpoch.toString();
+          
           Logger.apiRequest(
             options.method,
             options.uri.toString(),
             options.data,
           );
+          
+          // Log fortune-specific requests
+          if (options.uri.toString().contains('/fortune/')) {
+            final fortuneType = options.uri.pathSegments.lastOrNull ?? 'unknown';
+            Logger.info('🚀 [ApiClient] Fortune API request initiated', {
+              'requestId': options.extra['requestId'],
+              'fortuneType': fortuneType,
+              'method': options.method,
+              'endpoint': options.uri.toString(),
+            });
+          }
+          
           handler.next(options);
         },
         onResponse: (response, handler) {
+          // Calculate response time
+          final requestTime = response.requestOptions.extra['requestTime'] as DateTime?;
+          final responseTime = requestTime != null 
+              ? DateTime.now().difference(requestTime).inMilliseconds 
+              : null;
+          
           Logger.apiResponse(
             response.requestOptions.method,
             response.requestOptions.uri.toString(),
             response.statusCode ?? 0,
             response.data,
           );
+          
+          // Log fortune-specific responses
+          if (response.requestOptions.uri.toString().contains('/fortune/')) {
+            final fortuneType = response.requestOptions.uri.pathSegments.lastOrNull ?? 'unknown';
+            Logger.info('✅ [ApiClient] Fortune API request completed', {
+              'requestId': response.requestOptions.extra['requestId'],
+              'fortuneType': fortuneType,
+              'statusCode': response.statusCode,
+              'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
+              'hasData': response.data != null,
+            });
+          }
+          
           handler.next(response);
         },
         onError: (error, handler) {
+          // Calculate response time even for errors
+          final requestTime = error.requestOptions.extra['requestTime'] as DateTime?;
+          final responseTime = requestTime != null 
+              ? DateTime.now().difference(requestTime).inMilliseconds 
+              : null;
+          
           Logger.apiResponse(
             error.requestOptions.method,
             error.requestOptions.uri.toString(),
             error.response?.statusCode ?? 0,
             error.response?.data,
           );
-          handler.next(error);
-        },
-      ),
-      // 인증 인터셉터
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          // Supabase 세션 토큰 추가
-          final session = _supabase.client.auth.currentSession;
-          if (session != null) {
-            options.headers['Authorization'] = 'Bearer ${session.accessToken}';
+          
+          // Log fortune-specific errors
+          if (error.requestOptions.uri.toString().contains('/fortune/')) {
+            final fortuneType = error.requestOptions.uri.pathSegments.lastOrNull ?? 'unknown';
+            Logger.error('❌ [ApiClient] Fortune API request failed', {
+              'requestId': error.requestOptions.extra['requestId'],
+              'fortuneType': fortuneType,
+              'statusCode': error.response?.statusCode ?? 0,
+              'errorType': error.type.toString(),
+              'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
+              'errorMessage': error.message,
+            });
           }
           
-          handler.next(options);
-        },
-        onError: (error, handler) async {
-          if (error.response?.statusCode == 401) {
-            // 토큰 갱신 시도
-            try {
-              await _supabase.client.auth.refreshSession();
-              // 원래 요청 재시도
-              final retryOptions = error.requestOptions;
-              final session = _supabase.client.auth.currentSession;
-              if (session != null) {
-                retryOptions.headers['Authorization'] = 'Bearer ${session.accessToken}';
-              }
-              final response = await _dio.request(
-                retryOptions.path,
-                options: Options(
-                  method: retryOptions.method,
-                  headers: retryOptions.headers,
-                ),
-                data: retryOptions.data,
-                queryParameters: retryOptions.queryParameters,
-              );
-              handler.resolve(response);
-              return;
-            } catch (e) {
-              // 토큰 갱신 실패
-              handler.reject(DioException(
-                requestOptions: error.requestOptions,
-                error: app_exceptions.AuthException(
-                  message: '인증이 만료되었습니다. 다시 로그인해주세요.',
-                  code: 'auth_expired',
-                ),
-              ));
-              return;
-            }
-          }
           handler.next(error);
         },
       ),
     ]);
+    
+    // Add improved token refresh interceptor
+    _dio.addTokenRefreshInterceptor(_supabase.client);
+    
+    // Add cache interceptor
+    _dio.addCacheInterceptor();
   }
 
   // GET 요청

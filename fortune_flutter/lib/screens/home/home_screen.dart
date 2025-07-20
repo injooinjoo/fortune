@@ -6,11 +6,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/entities/fortune.dart';
 import '../../domain/entities/user_profile.dart';
-import '../../presentation/widgets/daily_fortune_card.dart';
+import '../../presentation/widgets/daily_fortune_summary_card.dart';
 import '../../presentation/widgets/fortune_card.dart';
 import '../../presentation/widgets/profile_completion_banner.dart';
 import '../../core/theme/app_theme_extensions.dart';
-import '../../shared/components/daily_token_banner.dart';
+import '../../presentation/providers/fortune_provider.dart';
+import '../../presentation/providers/recommendation_provider.dart';
+import '../../presentation/screens/ad_loading_screen.dart';
+import '../../services/cache_service.dart';
+import '../../services/storage_service.dart';
+import '../../models/fortune_model.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -19,12 +24,17 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   final supabase = Supabase.instance.client;
+  final _cacheService = CacheService();
+  final _storageService = StorageService();
   Map<String, dynamic>? userProfile;
   UserProfile? userProfileEntity;
   List<Map<String, dynamic>> recentFortunes = [];
   DailyFortune? todaysFortune;
+  Fortune? cachedFortune; // 캐시된 전체 운세 데이터
   bool isLoadingFortune = false;
 
   @override
@@ -32,7 +42,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _loadUserProfile();
     _loadRecentFortunes();
-    _loadTodaysFortune();
+    
+    // Delay fortune loading to avoid modifying provider during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Load today's fortune after the widget tree is built
+      _loadTodaysFortune();
+      
+      // Check if user just completed onboarding
+      final isFirstTime = Uri.base.queryParameters['firstTime'] == 'true';
+      if (isFirstTime) {
+        // Show welcome message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('환영합니다! 오늘의 운세를 확인해보세요 ✨'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    });
   }
 
   Future<void> _loadUserProfile() async {
@@ -53,8 +81,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               id: response['id'] ?? userId,
               email: response['email'] ?? supabase.auth.currentUser?.email ?? '',
               name: response['name'] ?? '',
-              birthdate: response['birthdate'] != null 
-                  ? DateTime.tryParse(response['birthdate']) 
+              birthdate: response['birth_date'] != null 
+                  ? DateTime.tryParse(response['birth_date']) 
                   : null,
               birthTime: response['birth_time'],
               isLunar: response['is_lunar'] ?? false,
@@ -62,7 +90,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mbti: response['mbti'],
               bloodType: response['blood_type'],
               zodiacSign: response['zodiac_sign'],
-              zodiacAnimal: response['zodiac_animal'],
+              zodiacAnimal: response['chinese_zodiac'],
               onboardingCompleted: response['onboarding_completed'] ?? false,
               isPremium: response['is_premium'] ?? false,
               premiumExpiry: response['premium_expiry'] != null
@@ -86,48 +114,185 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _loadRecentFortunes() async {
-    // TODO: Load from local storage
+    final fortunes = await _storageService.getRecentFortunes();
     setState(() {
-      recentFortunes = [];
+      recentFortunes = fortunes;
     });
   }
 
   Future<void> _loadTodaysFortune() async {
-    setState(() => isLoadingFortune = true);
+    debugPrint('🔍 [HomeScreen] _loadTodaysFortune: Starting to load today\'s fortune');
+    
     try {
-      // TODO: Load from API or cache
-      // For now, use mock data
-      await Future.delayed(const Duration(seconds: 1));
+      final currentUser = supabase.auth.currentUser;
+      final userId = currentUser?.id;
+      
+      if (userId == null) {
+        debugPrint('❌ [HomeScreen] User ID is null - cannot load fortune');
+        return;
+      }
+      
+      // 1. 먼저 캐시에서 오늘의 운세 확인
+      debugPrint('🔍 [HomeScreen] Checking cache for today\'s fortune...');
+      final cachedFortuneData = await _cacheService.getCachedFortune('daily', {'userId': userId});
+      
+      if (cachedFortuneData != null) {
+        debugPrint('✅ [HomeScreen] Found cached fortune! Loading from cache...');
+        // 캐시된 데이터로 UI 즉시 업데이트
+        final fortuneEntity = cachedFortuneData.toEntity();
+        _updateFortuneUI(fortuneEntity);
+        cachedFortune = fortuneEntity; // 캐시된 전체 데이터 저장
+        
+        // 백그라운드에서 새로운 데이터 가져오기 (선택적)
+        _refreshFortuneInBackground();
+      } else {
+        debugPrint('🔍 [HomeScreen] No cached fortune found. Loading from API...');
+        setState(() => isLoadingFortune = true);
+        await _fetchFortuneFromAPI();
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ [HomeScreen] Error loading fortune: $e');
+      debugPrint('❌ [HomeScreen] Stack trace: $stackTrace');
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('운세를 불러오는 중 오류가 발생했습니다: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  void _updateFortuneUI(Fortune fortune) {
+    debugPrint('🔍 [HomeScreen] Updating UI with fortune data');
+    
+    // Try to extract daily fortune data from metadata or content
+    if (fortune.metadata != null && fortune.metadata!.containsKey('dailyFortune')) {
+      final dailyData = fortune.metadata!['dailyFortune'] as Map<String, dynamic>;
       setState(() {
-        todaysFortune = const DailyFortune(
-          score: 75,
-          keywords: ['행운', '기회', '성장'],
-          summary: '좋은 하루가 될 것 같습니다. 긍정적인 마음으로 하루를 시작하세요.',
-          luckyColor: '#000000',
-          luckyNumber: 7,
+        todaysFortune = DailyFortune(
+          score: dailyData['score'] ?? 75,
+          keywords: List<String>.from(dailyData['keywords'] ?? ['행운', '기회', '성장']),
+          summary: dailyData['summary'] ?? fortune.content,
+          luckyColor: dailyData['luckyColor'] ?? '#FF6B6B',
+          luckyNumber: dailyData['luckyNumber'] ?? 7,
+          energy: dailyData['energy'] ?? 80,
+          mood: dailyData['mood'] ?? '평온함',
+          advice: dailyData['advice'] ?? '차분하게 하루를 보내세요',
+          caution: dailyData['caution'] ?? '조급하게 서두르지 마세요',
+          bestTime: dailyData['bestTime'] ?? '오후 2시-4시',
+          compatibility: dailyData['compatibility'] ?? '좋은 사람들과 함께',
+          elements: FortuneElements(
+            love: dailyData['elements']?['love'] ?? 75,
+            career: dailyData['elements']?['career'] ?? 80,
+            money: dailyData['elements']?['money'] ?? 70,
+            health: dailyData['elements']?['health'] ?? 85,
+          ),
+        );
+      });
+    } else {
+      // Fallback: Create a basic DailyFortune from the Fortune content
+      setState(() {
+        todaysFortune = DailyFortune(
+          score: fortune.overallScore ?? 75,
+          keywords: fortune.recommendations ?? ['행운', '기회', '성장'],
+          summary: fortune.summary ?? fortune.content,
+          luckyColor: fortune.luckyItems?['color'] ?? '#FF6B6B',
+          luckyNumber: fortune.luckyItems?['number'] ?? 7,
           energy: 80,
           mood: '평온함',
-          advice: '차분하게 하루를 보내세요',
+          advice: fortune.description ?? '차분하게 하루를 보내세요',
           caution: '조급하게 서두르지 마세요',
           bestTime: '오후 2시-4시',
           compatibility: '좋은 사람들과 함께',
           elements: FortuneElements(
-            love: 75,
-            career: 80,
-            money: 70,
-            health: 85,
+            love: fortune.scoreBreakdown?['love'] ?? 75,
+            career: fortune.scoreBreakdown?['career'] ?? 80,
+            money: fortune.scoreBreakdown?['money'] ?? 70,
+            health: fortune.scoreBreakdown?['health'] ?? 85,
           ),
         );
       });
-    } catch (e) {
-      debugPrint('Error loading fortune: $e');
+    }
+  }
+  
+  Future<void> _fetchFortuneFromAPI() async {
+    try {
+      await Future(() async {
+        final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
+        final today = DateTime.now();
+        
+        dailyFortuneNotifier.setDate(today);
+        await dailyFortuneNotifier.loadFortune();
+        
+        final fortuneState = ref.read(dailyFortuneProvider);
+        
+        if (fortuneState.fortune != null && !fortuneState.isLoading) {
+          debugPrint('🔍 [HomeScreen] Fortune loaded successfully from API');
+          final fortune = fortuneState.fortune!;
+          cachedFortune = fortune; // 전체 데이터 저장
+          _updateFortuneUI(fortune);
+          
+          // 캐시에 저장
+          try {
+            final userId = supabase.auth.currentUser?.id;
+            if (userId != null) {
+              await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune));
+              debugPrint('✅ [HomeScreen] Fortune cached successfully');
+            }
+          } catch (e) {
+            debugPrint('❌ [HomeScreen] Failed to cache fortune: $e');
+          }
+        }
+      });
     } finally {
       setState(() => isLoadingFortune = false);
+    }
+  }
+  
+  Future<void> _refreshFortuneInBackground() async {
+    // 백그라운드에서 새로운 데이터 가져오기 (UI 블로킹 없음)
+    try {
+      await Future(() async {
+        final dailyFortuneNotifier = ref.read(dailyFortuneProvider.notifier);
+        final today = DateTime.now();
+        
+        dailyFortuneNotifier.setDate(today);
+        await dailyFortuneNotifier.loadFortune();
+        
+        final fortuneState = ref.read(dailyFortuneProvider);
+        
+        if (fortuneState.fortune != null && !fortuneState.isLoading) {
+          final fortune = fortuneState.fortune!;
+          
+          // 새로운 데이터가 캐시된 데이터와 다른 경우만 업데이트
+          if (cachedFortune == null || fortune.id != cachedFortune!.id) {
+            debugPrint('🔍 [HomeScreen] New fortune data available, updating UI');
+            cachedFortune = fortune;
+            _updateFortuneUI(fortune);
+            
+            // 새로운 데이터 캐시
+            try {
+              final userId = supabase.auth.currentUser?.id;
+              if (userId != null) {
+                await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune));
+              }
+            } catch (e) {
+              debugPrint('❌ [HomeScreen] Failed to cache updated fortune: $e');
+            }
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('❌ [HomeScreen] Background refresh failed: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
       backgroundColor: Colors.white, // Instagram style clean white
       body: SafeArea(
@@ -138,19 +303,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // Profile completion banner
               const ProfileCompletionBanner(),
               
+              // 일일 운세 요약 카드 (환영 메시지 대신) - 전체 너비
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: DailyFortuneSummaryCard(
+                  fortune: todaysFortune,
+                  isLoading: isLoadingFortune,
+                  userName: userProfile?['name'],
+                  onTap: () => _navigateToFortune('/fortune/time-based', '시간별 운세'),
+                ),
+              ),
+              
               Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 오늘의 운세 카드
-                    DailyFortuneCard(
-                      fortune: todaysFortune,
-                      isLoading: isLoadingFortune,
-                      onTap: () => _navigateToFortune('/fortune/daily', '일일 운세'),
-                      onRefresh: _refreshFortune,
-                    ),
-                    const SizedBox(height: 32),
                     
                     // Instagram-style section title
                     Row(
@@ -220,33 +388,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildMainServices(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final fortuneTheme = context.fortuneTheme;
-    
     final services = [
+      {
+        'icon': Icons.dashboard_rounded,
+        'emoji': '🎯',
+        'title': '운세 패키지',
+        'desc': '여러 운세 한번에',
+        'route': '/fortune/batch',
+        'gradient': [Color(0xFFEC4899), Color(0xFF8B5CF6)],
+      },
+      {
+        'icon': Icons.psychology_alt_rounded,
+        'emoji': '🤖',
+        'title': 'AI 종합 운세',
+        'desc': '모든 데이터 분석',
+        'route': '/fortune/ai-comprehensive',
+        'gradient': [Color(0xFF9C27B0), Color(0xFF673AB7)],
+      },
       {
         'icon': Icons.wb_sunny,
         'emoji': '☀️',
         'title': '사주팔자',
         'desc': '정통 사주 풀이',
         'route': '/fortune/saju',
-        'gradient': [Color(0xFF000000), Color(0xFF333333)],
-      },
-      {
-        'icon': Icons.camera_alt,
-        'emoji': '📸',
-        'title': 'AI 관상',
-        'desc': '셀카로 보는 운세',
-        'route': '/physiognomy',
-        'gradient': [Color(0xFF1A1A1A), Color(0xFF4A4A4A)],
-      },
-      {
-        'icon': Icons.auto_awesome,
-        'emoji': '✨',
-        'title': '프리미엄',
-        'desc': '특별한 운세',
-        'route': '/premium',
-        'gradient': [Color(0xFF2C2C2C), Color(0xFF666666)],
+        'gradient': [Color(0xFFEF4444), Color(0xFFEC4899)],
       },
       {
         'icon': Icons.star,
@@ -254,7 +419,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         'title': '전체 운세',
         'desc': '모든 운세 보기',
         'route': '/fortune',
-        'gradient': [Color(0xFF4A4A4A), Color(0xFF808080)],
+        'gradient': [Color(0xFF7C3AED), Color(0xFF3B82F6)],
       },
     ];
 
@@ -289,20 +454,52 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildRecentFortunes(BuildContext context) {
+    // 아이콘 매핑
+    final iconMap = {
+      '/fortune/mbti': Icons.psychology,
+      '/fortune/zodiac': Icons.star,
+      '/fortune/zodiac-animal': Icons.pets,
+      '/fortune/chemistry': Icons.favorite,
+      '/fortune/saju': Icons.wb_sunny,
+      '/fortune/love': Icons.favorite_border,
+      '/fortune/wealth': Icons.account_balance_wallet,
+      '/fortune/career': Icons.work,
+      '/fortune/marriage': Icons.favorite,
+      '/fortune/compatibility': Icons.people,
+    };
+    
     return Column(
       children: recentFortunes.map((fortune) {
+        // 시간 차이 계산
+        final visitedAt = DateTime.fromMillisecondsSinceEpoch(fortune['visitedAt'] as int);
+        final now = DateTime.now();
+        final difference = now.difference(visitedAt);
+        
+        String timeAgo;
+        if (difference.inMinutes < 1) {
+          timeAgo = '방금 전';
+        } else if (difference.inHours < 1) {
+          timeAgo = '${difference.inMinutes}분 전';
+        } else if (difference.inDays < 1) {
+          timeAgo = '${difference.inHours}시간 전';
+        } else if (difference.inDays < 7) {
+          timeAgo = '${difference.inDays}일 전';
+        } else {
+          timeAgo = '${(difference.inDays / 7).floor()}주 전';
+        }
+        
+        final path = fortune['path'] as String;
+        final title = fortune['title'] as String;
+        
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(
-            onTap: () => _navigateToFortune(
-              fortune['route'] as String,
-              fortune['title'] as String,
-            ),
+            onTap: () => _navigateToFortune(path, title),
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: context.fortuneTheme.dividerColor),
                 boxShadow: [
@@ -319,13 +516,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Icon(
-                      fortune['icon'] as IconData,
+                      iconMap[path] ?? Icons.auto_awesome,
                       size: 24,
-                      color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -334,14 +531,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          fortune['title'] as String,
+                          title,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
-                              ),
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          fortune['desc'] as String,
+                          _getFortuneDescription(path),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: context.fortuneTheme.subtitleText,
                           ),
@@ -357,13 +554,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          fortune['timeAgo'] as String,
+                          timeAgo,
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -383,47 +581,274 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }).toList(),
     );
   }
+  
+  String _getFortuneDescription(String path) {
+    final descriptions = {
+      '/fortune/mbti': '성격 유형별 조언',
+      '/fortune/zodiac': '별이 알려주는 흐름',
+      '/fortune/zodiac-animal': '12간지로 보는 운세',
+      '/fortune/saju': '정통 사주 풀이',
+      '/fortune/love': '사랑과 인연의 흐름',
+      '/fortune/wealth': '재물과 투자의 운',
+      '/fortune/career': '커리어와 성공의 길',
+      '/fortune/marriage': '평생의 동반자 운세',
+      '/fortune/compatibility': '둘의 운명적 만남',
+      '/fortune/chemistry': '상대방과의 특별한 연결',
+    };
+    
+    return descriptions[path] ?? '운세를 확인해보세요';
+  }
 
   Widget _buildPersonalizedFortunes(BuildContext context) {
-    final fortunes = [
+    final recommendedFortunesAsync = ref.watch(recommendedFortunesProvider);
+    
+    return recommendedFortunesAsync.when(
+      data: (recommendations) {
+        if (recommendations.isEmpty) {
+          // 추천이 없을 경우 기본 운세 표시
+          return _buildDefaultFortunes(context);
+        }
+        
+        return Column(
+          children: recommendations.asMap().entries.map((entry) {
+            final index = entry.key;
+            final fortune = entry.value;
+            
+            // 아이콘 매핑
+            final iconMap = {
+              'mbti': Icons.psychology,
+              'zodiac': Icons.star,
+              'zodiac-animal': Icons.pets,
+              'chemistry': Icons.favorite,
+              'lucky-job': Icons.work,
+              'new-year': Icons.celebration,
+              'saju': Icons.wb_sunny,
+              'love': Icons.favorite_border,
+              'wealth': Icons.account_balance_wallet,
+            };
+            
+            // 배지 결정
+            String badge = '';
+            if (fortune.relevanceScore >= 0.9) {
+              badge = '추천';
+            } else if (fortune.reason.contains('관심')) {
+              badge = '관심사';
+            } else if (fortune.reason.contains('인기')) {
+              badge = '인기';
+            } else if (fortune.reason.contains('맞춤')) {
+              badge = '맞춤';
+            }
+            
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: InkWell(
+                onTap: () {
+                  // 최근 방문 기록에 추가
+                  _storageService.addRecentFortune(fortune.route, fortune.title);
+                  _navigateToFortune(fortune.route, fortune.title);
+                },
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: context.fortuneTheme.dividerColor),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          iconMap[fortune.id] ?? Icons.auto_awesome,
+                          size: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  fortune.title,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (badge.isNotEmpty) ...[
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      badge,
+                                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              fortune.description,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: context.fortuneTheme.subtitleText,
+                              ),
+                            ),
+                            if (fortune.reason.isNotEmpty && !fortune.reason.contains('인기')) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                fortune.reason,
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: context.fortuneTheme.subtitleText,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ).animate()
+              .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
+              .slideX(begin: 0.1, end: 0);
+          }).toList(),
+        );
+      },
+      loading: () => _buildLoadingRecommendations(context),
+      error: (error, stack) => _buildDefaultFortunes(context),
+    );
+  }
+  
+  Widget _buildLoadingRecommendations(BuildContext context) {
+    return Column(
+      children: List.generate(3, (index) => Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: context.fortuneTheme.dividerColor),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: context.fortuneTheme.dividerColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ).animate(onPlay: (controller) => controller.repeat())
+                .shimmer(duration: 1.5.seconds),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: context.fortuneTheme.dividerColor,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                  ).animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(duration: 1.5.seconds, delay: 0.2.seconds),
+                  const SizedBox(height: 6),
+                  Container(
+                    width: 180,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: context.fortuneTheme.dividerColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ).animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(duration: 1.5.seconds, delay: 0.4.seconds),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )),
+    );
+  }
+  
+  Widget _buildDefaultFortunes(BuildContext context) {
+    // 기본 추천 운세
+    final defaultFortunes = [
       {
-        'icon': Icons.bolt,
-        'title': 'MBTI 주간 운세',
-        'desc': '성격 유형별 조언',
+        'icon': Icons.schedule_rounded,
+        'title': '시간별 운세',
+        'desc': '오늘/내일/주간/월간',
         'badge': 'NEW',
-        'route': '/fortune/mbti',
+        'route': '/fortune/time-based',
       },
       {
-        'icon': Icons.star,
-        'title': '별자리 월간 운세',
-        'desc': '별이 알려주는 흐름',
+        'icon': Icons.work_rounded,
+        'title': '커리어 운세',
+        'desc': '취업/직업/사업 종합',
         'badge': '인기',
-        'route': '/fortune/zodiac',
+        'route': '/fortune/career',
       },
       {
-        'icon': Icons.pets,
-        'title': '띠 운세',
-        'desc': '12간지로 보는 이달의 운세',
-        'badge': '전통',
-        'route': '/fortune/zodiac-animal',
+        'icon': Icons.history_rounded,
+        'title': '운세 히스토리',
+        'desc': '나의 운세 기록',
+        'badge': 'NEW',
+        'route': '/fortune/history',
       },
     ];
-
+    
     return Column(
-      children: fortunes.map((fortune) {
-        final index = fortunes.indexOf(fortune);
+      children: defaultFortunes.asMap().entries.map((entry) {
+        final index = entry.key;
+        final fortune = entry.value;
+        
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(
-            onTap: () => _navigateToFortune(
-              fortune['route'] as String,
-              fortune['title'] as String,
-            ),
+            onTap: () {
+              _storageService.addRecentFortune(
+                fortune['route'] as String,
+                fortune['title'] as String,
+              );
+              _navigateToFortune(
+                fortune['route'] as String,
+                fortune['title'] as String,
+              );
+            },
             borderRadius: BorderRadius.circular(12),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: context.fortuneTheme.dividerColor),
               ),
@@ -453,7 +878,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               fortune['title'] as String,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                      ),
+                              ),
                             ),
                             const SizedBox(width: 8),
                             Container(
@@ -502,11 +927,58 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _navigateToFortune(String route, String title) {
-    // TODO: Implement navigation with ad loading for free users
-    context.go(route);
+    // 최근 방문 기록에 저장
+    _storageService.addRecentFortune(route, title);
+    
+    // Check if user is premium
+    final isPremium = userProfile?['is_premium'] ?? false;
+    
+    // 오늘의 운세 상세보기인 경우 캐시된 데이터 전달
+    Map<String, dynamic>? fortuneParams;
+    if (route == '/fortune/time-based' && cachedFortune != null) {
+      fortuneParams = {
+        'cachedFortune': cachedFortune,
+        'todaysFortune': todaysFortune,
+      };
+    }
+    
+    if (!isPremium) {
+      // Show ad loading screen for free users
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AdLoadingScreen(
+            fortuneType: route.split('/').last,
+            fortuneTitle: title,
+            isPremium: false,
+            fortuneRoute: route,
+            fortuneParams: fortuneParams,
+            fetchData: route == '/fortune/time-based' && cachedFortune != null
+                ? null // 캐시가 있으면 API 호출하지 않음
+                : null,
+            onComplete: () {
+              // Navigate to fortune page after ad
+              context.go(route);
+              // 최근 운세 목록 새로고침
+              _loadRecentFortunes();
+            },
+            onSkip: () {
+              // If user skips (premium feature), just go back
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+    } else {
+      // Premium users go directly with cached data
+      if (fortuneParams != null) {
+        context.go(route, extra: fortuneParams);
+      } else {
+        context.go(route);
+      }
+      // 최근 운세 목록 새로고침
+      _loadRecentFortunes();
+    }
   }
 
-  Future<void> _refreshFortune() async {
-    await _loadTodaysFortune();
-  }
 }

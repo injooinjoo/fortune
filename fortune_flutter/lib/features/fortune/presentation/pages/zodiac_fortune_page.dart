@@ -8,13 +8,16 @@ import '../../../../presentation/providers/auth_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ZodiacFortunePage extends BaseFortunePage {
-  const ZodiacFortunePage({Key? key})
-      : super(
+  const ZodiacFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '별자리 운세',
           description: '당신의 별자리로 알아보는 오늘의 운세',
           fortuneType: 'zodiac',
           requiresUserInfo: true,
+          initialParams: initialParams,
         );
 
   @override

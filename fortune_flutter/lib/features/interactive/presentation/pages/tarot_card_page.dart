@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -9,6 +10,13 @@ import '../../../../core/constants/api_endpoints.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../fortune/presentation/widgets/flip_card_widget.dart';
+import '../../../fortune/presentation/widgets/celtic_cross_layout.dart';
+import '../../../fortune/presentation/widgets/mystical_background.dart';
+import 'package:go_router/go_router.dart';
+
+// Provider to hold current spread type
+final currentSpreadTypeProvider = StateProvider<String?>((ref) => null);
 
 class TarotCardInput {
   final String question;
@@ -76,14 +84,34 @@ class TarotReadingNotifier extends StateNotifier<AsyncValue<TarotResult?>> {
     _performReading();
   }
 
+  int _getTokenCost(String spreadType) {
+    switch (spreadType) {
+      case 'single':
+        return 1;
+      case 'three':
+        return 3;
+      case 'celtic':
+        return 5;
+      case 'relationship':
+        return 4;
+      case 'decision':
+        return 3;
+      default:
+        return 3;
+    }
+  }
+
   Future<void> _performReading() async {
     try {
       final apiService = ref.read(fortuneApiServiceProvider);
       final tokenService = ref.read(tokenServiceProvider.notifier);
       
-      // Check token balance
+      // Check token balance based on spread type
+      final spreadType = ref.read(currentSpreadTypeProvider) ?? 'three';
+      final tokenCost = _getTokenCost(spreadType);
+      
       final hasEnoughTokens = await tokenService.checkAndConsumeTokens(
-        3,
+        tokenCost,
         'tarot',
       );
       
@@ -101,6 +129,7 @@ class TarotReadingNotifier extends StateNotifier<AsyncValue<TarotResult?>> {
           'type': 'tarot',
           'userInfo': {
             'question': input.question,
+            'spreadType': ref.read(currentSpreadTypeProvider) ?? 'three',
           },
         },
       );
@@ -117,7 +146,14 @@ class TarotReadingNotifier extends StateNotifier<AsyncValue<TarotResult?>> {
 }
 
 class TarotCardPage extends ConsumerStatefulWidget {
-  const TarotCardPage({super.key});
+  final String? spreadType;
+  final String? initialQuestion;
+  
+  const TarotCardPage({
+    super.key,
+    this.spreadType,
+    this.initialQuestion,
+  });
 
   @override
   ConsumerState<TarotCardPage> createState() => _TarotCardPageState();
@@ -131,23 +167,57 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
   // Animation controllers for card selection
   late AnimationController _shuffleController;
   late AnimationController _flipController;
+  late AnimationController _fanController;
   late Animation<double> _shuffleAnimation;
   late Animation<double> _flipAnimation;
+  late Animation<double> _fanAnimation;
   
   // Card selection state
   final List<int> _selectedCards = [];
   bool _isSelecting = false;
   bool _cardsRevealed = false;
+  
+  // Spread configuration
+  int get _requiredCards {
+    switch (widget.spreadType) {
+      case 'single':
+        return 1;
+      case 'three':
+        return 3;
+      case 'celtic':
+        return 10;
+      case 'relationship':
+        return 5;
+      case 'decision':
+        return 5;
+      default:
+        return 3;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    
+    if (widget.initialQuestion != null) {
+      _questionController.text = widget.initialQuestion!;
+    }
+    
+    // Set the spread type in the provider
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(currentSpreadTypeProvider.notifier).state = widget.spreadType ?? 'three';
+    });
+    
     _shuffleController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
     _flipController = AnimationController(
       duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fanController = AnimationController(
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     
@@ -166,6 +236,14 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
       parent: _flipController,
       curve: Curves.easeInOut,
     ));
+    
+    _fanAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(
+      parent: _fanController,
+      curve: Curves.easeOutBack,
+    ));
   }
 
   @override
@@ -173,11 +251,12 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     _questionController.dispose();
     _shuffleController.dispose();
     _flipController.dispose();
+    _fanController.dispose();
     super.dispose();
   }
 
   void _startCardSelection() {
-    if (_questionController.text.isEmpty) {
+    if (widget.spreadType != 'single' && _questionController.text.isEmpty) {
       Toast.show(
         context,
         message: '질문을 입력해주세요',
@@ -186,6 +265,9 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
       return;
     }
 
+    // Light haptic feedback for start
+    HapticFeedback.lightImpact();
+
     setState(() {
       _isSelecting = true;
       _selectedCards.clear();
@@ -193,28 +275,37 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     });
     
     _shuffleController.repeat();
+    _fanController.forward();
   }
 
   void _selectCard(int index) {
-    if (_selectedCards.contains(index) || _selectedCards.length >= 3) return;
+    if (_selectedCards.contains(index) || _selectedCards.length >= _requiredCards) return;
+    
+    // Haptic feedback for card selection
+    HapticFeedback.mediumImpact();
     
     setState(() {
       _selectedCards.add(index);
     });
     
-    if (_selectedCards.length == 3) {
+    if (_selectedCards.length == _requiredCards) {
       _shuffleController.stop();
+      // Heavy impact for completion
+      HapticFeedback.heavyImpact();
       _performReading();
     }
   }
 
   void _performReading() {
-    setState(() {
-      _currentInput = TarotCardInput(
-        question: _questionController.text,
-      );
-      _showResult = true;
-    });
+    // Navigate to storytelling page instead of showing result
+    context.pushNamed(
+      'tarot-storytelling',
+      extra: {
+        'selectedCards': _selectedCards,
+        'spreadType': widget.spreadType ?? 'three',
+        'question': _questionController.text.isNotEmpty ? _questionController.text : null,
+      },
+    );
   }
 
   void _reset() {
@@ -237,34 +328,41 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          children: [
-            AppHeader(
-              title: '타로카드',
-              showBackButton: true,
-              showActions: !_showResult,
-            ),
-            Expanded(
-              child: _showResult && _currentInput != null
-                  ? _TarotResultView(
-                      input: _currentInput!,
-                      selectedCards: _selectedCards,
-                      onReset: _reset,
-                      fontScale: fontScale,
-                    )
-                  : _TarotInputView(
-                      questionController: _questionController,
-                      isSelecting: _isSelecting,
-                      selectedCards: _selectedCards,
-                      shuffleAnimation: _shuffleAnimation,
-                      onStartSelection: _startCardSelection,
-                      onSelectCard: _selectCard,
-                      fontScale: fontScale,
-                    ),
-            ),
-          ],
+      backgroundColor: Colors.black,
+      body: MysticalBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              AppHeader(
+                title: '타로카드',
+                showBackButton: true,
+                showActions: !_showResult,
+                backgroundColor: Colors.transparent,
+              ),
+              Expanded(
+                child: _showResult && _currentInput != null
+                    ? _TarotResultView(
+                        input: _currentInput!,
+                        selectedCards: _selectedCards,
+                        spreadType: widget.spreadType,
+                        onReset: _reset,
+                        fontScale: fontScale,
+                      )
+                    : _TarotInputView(
+                        questionController: _questionController,
+                        isSelecting: _isSelecting,
+                        selectedCards: _selectedCards,
+                        shuffleAnimation: _shuffleAnimation,
+                        fanAnimation: _fanAnimation,
+                        requiredCards: _requiredCards,
+                        spreadType: widget.spreadType,
+                        onStartSelection: _startCardSelection,
+                        onSelectCard: _selectCard,
+                        fontScale: fontScale,
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -276,6 +374,9 @@ class _TarotInputView extends StatelessWidget {
   final bool isSelecting;
   final List<int> selectedCards;
   final Animation<double> shuffleAnimation;
+  final Animation<double> fanAnimation;
+  final int requiredCards;
+  final String? spreadType;
   final VoidCallback onStartSelection;
   final Function(int) onSelectCard;
   final double fontScale;
@@ -285,6 +386,9 @@ class _TarotInputView extends StatelessWidget {
     required this.isSelecting,
     required this.selectedCards,
     required this.shuffleAnimation,
+    required this.fanAnimation,
+    required this.requiredCards,
+    this.spreadType,
     required this.onStartSelection,
     required this.onSelectCard,
     required this.fontScale,
@@ -300,21 +404,58 @@ class _TarotInputView extends StatelessWidget {
         children: [
           // Icon
           GlassContainer(
-            width: 100,
-            height: 100,
-            borderRadius: BorderRadius.circular(50),
+            width: 120,
+            height: 120,
+            borderRadius: BorderRadius.circular(60),
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withValues(alpha: 0.3),
-                Colors.indigo.withValues(alpha: 0.3),
+                Colors.purple.withValues(alpha: 0.4),
+                Colors.indigo.withValues(alpha: 0.4),
               ],
             ),
-            child: Center(
-              child: Icon(
-                Icons.style_outlined,
-                size: 48,
-                color: theme.colorScheme.primary,
-              ),
+            blur: 15,
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.2),
+              width: 1,
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  Icons.auto_awesome,
+                  size: 56,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+                // Rotating glow effect
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: 2 * math.pi),
+                  duration: const Duration(seconds: 10),
+                  builder: (context, value, child) {
+                    return Transform.rotate(
+                      angle: value,
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: SweepGradient(
+                            colors: [
+                              Colors.purple.withValues(alpha: 0.3),
+                              Colors.transparent,
+                              Colors.indigo.withValues(alpha: 0.3),
+                              Colors.transparent,
+                              Colors.purple.withValues(alpha: 0.3),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  onEnd: () {
+                    // Animation repeats automatically
+                  },
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),
@@ -324,67 +465,80 @@ class _TarotInputView extends StatelessWidget {
             '타로카드로 보는 운세',
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 24 * fontScale,
+              fontSize: 28 * fontScale,
+              color: Colors.white,
+              letterSpacing: 1.5,
+              shadows: [
+                Shadow(
+                  color: Colors.purple.withValues(alpha: 0.5),
+                  blurRadius: 10,
+                ),
+              ],
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             isSelecting 
-                ? '카드를 3장 선택해주세요 (${selectedCards.length}/3)'
-                : '마음 속 질문을 입력하고 카드를 뽑아보세요',
+                ? '카드를 ${requiredCards}장 선택해주세요 (${selectedCards.length}/$requiredCards)'
+                : spreadType == 'single' 
+                    ? '오늘의 메시지를 받아보세요'
+                    : '마음 속 질문을 입력하고 카드를 뽑아보세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 16 * fontScale,
+              letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
           
           if (!isSelecting) ...[
-            // Question Input
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.help_outline,
-                        color: theme.colorScheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '질문하기',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16 * fontScale,
+            // Question Input (hide for single card)
+            if (spreadType != 'single') ...[
+              GlassContainer(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.help_outline,
+                          color: theme.colorScheme.primary,
+                          size: 20,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: questionController,
-                    style: TextStyle(fontSize: 16 * fontScale),
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: '예: 지금 진행하는 프로젝트가 잘 될까요?',
-                      filled: true,
-                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.all(16),
+                        const SizedBox(width: 8),
+                        Text(
+                          '질문하기',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16 * fontScale,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: questionController,
+                      style: TextStyle(fontSize: 16 * fontScale),
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: '예: 지금 진행하는 프로젝트가 잘 될까요?',
+                        filled: true,
+                        fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.all(16),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
+            ],
             
             // Start Button
             SizedBox(
@@ -411,103 +565,14 @@ class _TarotInputView extends StatelessWidget {
               ),
             ),
           ] else ...[
-            // Card Selection Grid
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: 12,
-              itemBuilder: (context, index) {
-                final isSelected = selectedCards.contains(index);
-                final selectionOrder = selectedCards.indexOf(index);
-                
-                return AnimatedBuilder(
-                  animation: shuffleAnimation,
-                  builder: (context, child) {
-                    return Transform(
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(isSelected ? 0 : shuffleAnimation.value * 0.1),
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        onTap: () => onSelectCard(index),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          transform: isSelected
-                              ? (Matrix4.identity()..scale(0.95))
-                              : Matrix4.identity(),
-                          child: Stack(
-                            children: [
-                              GlassContainer(
-                                gradient: LinearGradient(
-                                  colors: isSelected
-                                      ? [
-                                          Colors.purple.withValues(alpha: 0.4),
-                                          Colors.indigo.withValues(alpha: 0.4),
-                                        ]
-                                      : [
-                                          theme.colorScheme.primary.withValues(alpha: 0.2),
-                                          theme.colorScheme.secondary.withValues(alpha: 0.2),
-                                        ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                                border: isSelected
-                                    ? Border.all(
-                                        color: theme.colorScheme.primary,
-                                        width: 2,
-                                      )
-                                    : null,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.style,
-                                        size: 48,
-                                        color: isSelected
-                                            ? theme.colorScheme.primary
-                                            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                                      ),
-                                      if (isSelected) ...[
-                                        const SizedBox(height: 8),
-                                        Container(
-                                          width: 32,
-                                          height: 32,
-                                          decoration: BoxDecoration(
-                                            color: theme.colorScheme.primary,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              '${selectionOrder + 1}',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16 * fontScale,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+            // Enhanced Card Selection with Fan Layout
+            _TarotCardFanSelection(
+              shuffleAnimation: shuffleAnimation,
+              fanAnimation: fanAnimation,
+              selectedCards: selectedCards,
+              requiredCards: requiredCards,
+              onSelectCard: onSelectCard,
+              fontScale: fontScale,
             ),
           ],
         ],
@@ -519,12 +584,14 @@ class _TarotInputView extends StatelessWidget {
 class _TarotResultView extends ConsumerWidget {
   final TarotCardInput input;
   final List<int> selectedCards;
+  final String? spreadType;
   final VoidCallback onReset;
   final double fontScale;
 
   const _TarotResultView({
     required this.input,
     required this.selectedCards,
+    this.spreadType,
     required this.onReset,
     required this.fontScale,
   });
@@ -647,35 +714,44 @@ class _TarotResultView extends ConsumerWidget {
                   
                   // Selected Cards
                   if (result.cards.isNotEmpty) ...[
-                    Text(
-                      '선택하신 카드',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20 * fontScale,
+                    if (spreadType == 'celtic') ...[
+                      // Celtic Cross Layout
+                      CelticCrossLayout(
+                        cards: result.cards,
+                        fontScale: fontScale,
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 280,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: result.cards.length,
-                        itemBuilder: (context, index) {
-                          final card = result.cards[index];
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              left: index == 0 ? 0 : 8,
-                              right: index == result.cards.length - 1 ? 0 : 8,
-                            ),
-                            child: _TarotCardWidget(
-                              card: card,
-                              cardNumber: index + 1,
-                              fontScale: fontScale,
-                            ),
-                          );
-                        },
+                    ] else ...[
+                      // Standard horizontal layout for other spreads
+                      Text(
+                        '선택하신 카드',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20 * fontScale,
+                        ),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 280,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: result.cards.length,
+                          itemBuilder: (context, index) {
+                            final card = result.cards[index];
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                left: index == 0 ? 0 : 8,
+                                right: index == result.cards.length - 1 ? 0 : 8,
+                              ),
+                              child: _TarotCardWidget(
+                                card: card,
+                                cardNumber: index + 1,
+                                fontScale: fontScale,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                   ],
                   
@@ -877,4 +953,369 @@ class _TarotCardWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+// Enhanced card selection with fan layout
+class _TarotCardFanSelection extends StatelessWidget {
+  final Animation<double> shuffleAnimation;
+  final Animation<double> fanAnimation;
+  final List<int> selectedCards;
+  final int requiredCards;
+  final Function(int) onSelectCard;
+  final double fontScale;
+
+  const _TarotCardFanSelection({
+    required this.shuffleAnimation,
+    required this.fanAnimation,
+    required this.selectedCards,
+    required this.requiredCards,
+    required this.onSelectCard,
+    required this.fontScale,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardCount = 22; // Major Arcana cards
+    final centerX = screenWidth / 2;
+    
+    return AnimatedBuilder(
+      animation: Listenable.merge([fanAnimation, shuffleAnimation]),
+      builder: (context, child) {
+        return Container(
+          height: 400,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Selection hint
+              if (selectedCards.isEmpty && fanAnimation.value > 0.8)
+                Positioned(
+                  bottom: 20,
+                  child: FadeTransition(
+                    opacity: fanAnimation,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.purple.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.touch_app,
+                            color: Colors.white.withValues(alpha: 0.8),
+                            size: 16,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '카드를 선택해주세요',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 14 * fontScale,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              
+              // Cards
+              ...List.generate(cardCount, (index) {
+                final progress = fanAnimation.value;
+                final shuffleOffset = shuffleAnimation.value * 2 * math.pi;
+                
+                // Create arc layout
+                final cardPosition = (index - cardCount / 2) / (cardCount / 2);
+                final angle = cardPosition * 0.8 * progress; // Arc spread
+                final radius = 200.0 * progress;
+                
+                // Calculate position on arc
+                final x = radius * math.sin(angle);
+                final y = radius * (1 - math.cos(angle)) - 100;
+                
+                // Add shuffle movement
+                final shuffleX = math.sin(shuffleOffset + index) * 5;
+                final shuffleY = math.cos(shuffleOffset + index) * 3;
+                
+                final isSelected = selectedCards.contains(index);
+                final selectionOrder = selectedCards.indexOf(index);
+                
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 600),
+                  curve: Curves.easeOutBack,
+                  left: centerX + x + shuffleX - 40,
+                  top: 200 + y + shuffleY - 60,
+                  child: Transform.rotate(
+                    angle: angle * 0.7,
+                    alignment: Alignment.bottomCenter,
+                    child: AnimatedScale(
+                      duration: const Duration(milliseconds: 300),
+                      scale: isSelected ? 1.15 : 1.0,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        transform: isSelected
+                            ? (Matrix4.identity()
+                              ..translate(0.0, -20.0))
+                            : Matrix4.identity(),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (!isSelected && selectedCards.length < requiredCards) {
+                              onSelectCard(index);
+                            }
+                          },
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: _EnhancedTarotCard(
+                              cardIndex: index,
+                              isSelected: isSelected,
+                              selectionOrder: selectionOrder,
+                              fontScale: fontScale,
+                              isHoverable: !isSelected && selectedCards.length < requiredCards,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Enhanced tarot card widget with better visuals
+class _EnhancedTarotCard extends StatefulWidget {
+  final int cardIndex;
+  final bool isSelected;
+  final int selectionOrder;
+  final double fontScale;
+  final bool isHoverable;
+
+  const _EnhancedTarotCard({
+    required this.cardIndex,
+    required this.isSelected,
+    required this.selectionOrder,
+    required this.fontScale,
+    required this.isHoverable,
+  });
+
+  @override
+  State<_EnhancedTarotCard> createState() => _EnhancedTarotCardState();
+}
+
+class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _glowController;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _glowController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _glowController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        if (widget.isHoverable) {
+          setState(() => _isHovered = true);
+        }
+      },
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedBuilder(
+        animation: _glowController,
+        builder: (context, child) {
+          final glowIntensity = widget.isSelected || _isHovered 
+              ? _glowController.value 
+              : 0.0;
+          
+          return Container(
+            width: 80,
+            height: 120,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                // Base shadow
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
+                ),
+                // Glow effect
+                if (widget.isSelected)
+                  BoxShadow(
+                    color: const Color(0xFF9333EA).withValues(alpha: 0.6 + glowIntensity * 0.2),
+                    blurRadius: 20 + glowIntensity * 10,
+                    spreadRadius: 2,
+                  ),
+                if (_isHovered && !widget.isSelected)
+                  BoxShadow(
+                    color: const Color(0xFF7C3AED).withValues(alpha: 0.4),
+                    blurRadius: 15,
+                    spreadRadius: 1,
+                  ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                children: [
+                  // Card back design
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          const Color(0xFF2D1B69),
+                          const Color(0xFF0F0C29),
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  // Pattern overlay
+                  CustomPaint(
+                    painter: _CardBackPatternPainter(
+                      glowIntensity: glowIntensity,
+                    ),
+                    size: const Size(80, 120),
+                  ),
+                  
+                  // Center emblem
+                  Center(
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 32,
+                      color: Colors.white.withValues(alpha: 0.8 + glowIntensity * 0.2),
+                    ),
+                  ),
+                  
+                  // Selection indicator
+                  if (widget.isSelected)
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF9333EA),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${widget.selectionOrder + 1}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  
+                  // Hover effect overlay
+                  if (_isHovered && !widget.isSelected)
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.1),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Card back pattern painter
+class _CardBackPatternPainter extends CustomPainter {
+  final double glowIntensity;
+
+  _CardBackPatternPainter({required this.glowIntensity});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    // Draw mystical patterns
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
+
+    // Outer circle
+    paint.color = Colors.white.withValues(alpha: 0.1 + glowIntensity * 0.1);
+    canvas.drawCircle(Offset(centerX, centerY), 30, paint);
+
+    // Inner patterns
+    for (int i = 0; i < 8; i++) {
+      final angle = i * math.pi / 4;
+      final x1 = centerX + 20 * math.cos(angle);
+      final y1 = centerY + 20 * math.sin(angle);
+      final x2 = centerX + 30 * math.cos(angle);
+      final y2 = centerY + 30 * math.sin(angle);
+      
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
+    }
+
+    // Corner decorations
+    paint.color = Colors.white.withValues(alpha: 0.2 + glowIntensity * 0.1);
+    final cornerSize = 10.0;
+    
+    // Top left
+    canvas.drawLine(Offset(0, cornerSize), const Offset(0, 0), paint);
+    canvas.drawLine(const Offset(0, 0), Offset(cornerSize, 0), paint);
+    
+    // Top right
+    canvas.drawLine(Offset(size.width - cornerSize, 0), Offset(size.width, 0), paint);
+    canvas.drawLine(Offset(size.width, 0), Offset(size.width, cornerSize), paint);
+    
+    // Bottom left
+    canvas.drawLine(Offset(0, size.height - cornerSize), Offset(0, size.height), paint);
+    canvas.drawLine(Offset(0, size.height), Offset(cornerSize, size.height), paint);
+    
+    // Bottom right
+    canvas.drawLine(Offset(size.width - cornerSize, size.height), Offset(size.width, size.height), paint);
+    canvas.drawLine(Offset(size.width, size.height), Offset(size.width, size.height - cornerSize), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

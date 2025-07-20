@@ -15,6 +15,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
   final Color dividerColor;
   final Color shimmerBase;
   final Color shimmerHighlight;
+  final Color errorColor;
+  final Color successColor;
+  final Color warningColor;
 
   const FortuneThemeExtension({
     required this.scoreExcellent,
@@ -29,6 +32,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     required this.dividerColor,
     required this.shimmerBase,
     required this.shimmerHighlight,
+    required this.errorColor,
+    required this.successColor,
+    required this.warningColor,
   });
 
   /// Light theme extension
@@ -45,6 +51,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     dividerColor: Color(0xFFE5E7EB),
     shimmerBase: Color(0xFFE5E7EB),
     shimmerHighlight: Color(0xFFF3F4F6),
+    errorColor: Color(0xFFEF4444), // Red
+    successColor: Color(0xFF10B981), // Green
+    warningColor: Color(0xFFF59E0B), // Orange
   );
 
   /// Dark theme extension
@@ -61,6 +70,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     dividerColor: Color(0xFF374151),
     shimmerBase: Color(0xFF374151),
     shimmerHighlight: Color(0xFF4B5563),
+    errorColor: Color(0xFFF87171), // Lighter red for dark mode
+    successColor: Color(0xFF34D399), // Lighter green for dark mode
+    warningColor: Color(0xFFFBBF24), // Lighter orange for dark mode
   );
 
   @override
@@ -77,6 +89,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     Color? dividerColor,
     Color? shimmerBase,
     Color? shimmerHighlight,
+    Color? errorColor,
+    Color? successColor,
+    Color? warningColor,
   }) {
     return FortuneThemeExtension(
       scoreExcellent: scoreExcellent ?? this.scoreExcellent,
@@ -91,6 +106,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       dividerColor: dividerColor ?? this.dividerColor,
       shimmerBase: shimmerBase ?? this.shimmerBase,
       shimmerHighlight: shimmerHighlight ?? this.shimmerHighlight,
+      errorColor: errorColor ?? this.errorColor,
+      successColor: successColor ?? this.successColor,
+      warningColor: warningColor ?? this.warningColor,
     );
   }
 
@@ -112,6 +130,9 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       dividerColor: Color.lerp(dividerColor, other.dividerColor, t)!,
       shimmerBase: Color.lerp(shimmerBase, other.shimmerBase, t)!,
       shimmerHighlight: Color.lerp(shimmerHighlight, other.shimmerHighlight, t)!,
+      errorColor: Color.lerp(errorColor, other.errorColor, t)!,
+      successColor: Color.lerp(successColor, other.successColor, t)!,
+      warningColor: Color.lerp(warningColor, other.warningColor, t)!,
     );
   }
 }

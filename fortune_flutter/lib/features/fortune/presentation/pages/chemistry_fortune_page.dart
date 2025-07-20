@@ -32,7 +32,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
     if (profile != null) {
       setState(() {
         _name1Controller.text = profile.name ?? '';
-        _birthdate1 = profile.birthdate;
+        _birthdate1 = profile.birthDate;
         _gender1 = profile.gender;
       });
     }

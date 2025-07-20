@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../core/constants/fortune_detailed_metadata.dart';
 
 // 기본 운세 엔티티
 class Fortune extends Equatable {
@@ -16,8 +17,19 @@ class Fortune extends Equatable {
   final Map<String, dynamic>? scoreBreakdown;
   final Map<String, dynamic>? luckyItems;
   final List<String>? recommendations;
+  final List<String>? warnings;
   final String? summary;
   final Map<String, dynamic>? additionalInfo;
+  // New field for detailed lucky items
+  final Map<String, List<DetailedLuckyItem>>? detailedLuckyItems;
+  // Enhanced fields for time-based fortunes
+  final String? greeting;
+  final Map<String, int>? hexagonScores; // 총운, 학업운, 재물운, 건강운, 연애운, 사업운
+  final List<TimeSpecificFortune>? timeSpecificFortunes;
+  final List<BirthYearFortune>? birthYearFortunes;
+  final Map<String, dynamic>? fiveElements;
+  final String? specialTip;
+  final String? period; // today, tomorrow, weekly, monthly, yearly
 
   const Fortune({
     required this.id,
@@ -33,15 +45,40 @@ class Fortune extends Equatable {
     this.scoreBreakdown,
     this.luckyItems,
     this.recommendations,
+    this.warnings,
     this.summary,
     this.additionalInfo,
+    this.detailedLuckyItems,
+    this.greeting,
+    this.hexagonScores,
+    this.timeSpecificFortunes,
+    this.birthYearFortunes,
+    this.fiveElements,
+    this.specialTip,
+    this.period,
   });
+
+  // Getter for backwards compatibility
+  int get score => overallScore ?? 80;
+  String get message => content;
+  Map<String, dynamic>? get details => additionalInfo;
+  
+  // Getters for lucky items
+  String? get luckyColor => luckyItems?['color'] as String?;
+  int? get luckyNumber => luckyItems?['number'] as int?;
+  String? get luckyDirection => luckyItems?['direction'] as String?;
+  String? get bestTime => luckyItems?['time'] as String?;
+  
+  // Getters for common fields
+  String? get advice => metadata?['advice'] as String? ?? recommendations?.firstOrNull;
+  String? get caution => metadata?['caution'] as String? ?? warnings?.firstOrNull;
 
   @override
   List<Object?> get props => [
     id, userId, type, content, createdAt, metadata, tokenCost,
     category, overallScore, description, scoreBreakdown, luckyItems, recommendations,
-    summary, additionalInfo
+    warnings, summary, additionalInfo, detailedLuckyItems, greeting, hexagonScores,
+    timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period
   ];
 }
 
@@ -246,4 +283,42 @@ class FortuneTypeInfo extends Equatable {
     id, title, description, category, tokenCost, 
     iconName, color, gradient, isPremium, isNew, isPopular
   ];
+}
+
+// Time-specific fortune for hourly/daily/weekly breakdowns
+class TimeSpecificFortune extends Equatable {
+  final String time; // e.g., "06:00-09:00", "월요일", "첫째 주"
+  final String title;
+  final int score;
+  final String description;
+  final String? recommendation;
+
+  const TimeSpecificFortune({
+    required this.time,
+    required this.title,
+    required this.score,
+    required this.description,
+    this.recommendation,
+  });
+
+  @override
+  List<Object?> get props => [time, title, score, description, recommendation];
+}
+
+// Birth year specific fortune
+class BirthYearFortune extends Equatable {
+  final String birthYear; // e.g., "1988", "용띠"
+  final String zodiacAnimal;
+  final String description;
+  final String? advice;
+
+  const BirthYearFortune({
+    required this.birthYear,
+    required this.zodiacAnimal,
+    required this.description,
+    this.advice,
+  });
+
+  @override
+  List<Object?> get props => [birthYear, zodiacAnimal, description, advice];
 }

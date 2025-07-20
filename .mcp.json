@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+      "figma-dev-mode-mcp-server": {
+        "type": "sse",
+        "url": "http://127.0.0.1:3845/sse",
+        "headers": {
+          "Authorization": "Bearer figd_bR2cafXDSpDf6bhXpQJ0eoRZGrCkRM0W60YOpbdF"
+        }
+      }
+    }
+  }

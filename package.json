@@ -26,7 +26,7 @@
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/mcp": "^0.0.29",
+    "@playwright/mcp": "^0.0.30",
     "dotenv": "^16.5.0"
   }
 }

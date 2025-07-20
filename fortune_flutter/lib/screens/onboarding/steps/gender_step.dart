@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../constants/fortune_constants.dart';
 
 class GenderStep extends StatefulWidget {
@@ -61,7 +62,19 @@ class _GenderStepState extends State<GenderStep> {
                     color: Colors.black,
                   ),
                   textAlign: TextAlign.center,
+                ).animate().fadeIn(duration: 600.ms).shimmer(
+                  duration: 1200.ms,
+                  color: Colors.white.withOpacity(0.3),
                 ),
+                const SizedBox(height: 16),
+                Text(
+                  '음양의 조화를 살펴볼게요',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                ).animate(delay: 300.ms).fadeIn(duration: 600.ms),
                 const SizedBox(height: 60),
                 
                 // Gender buttons
@@ -72,12 +85,20 @@ class _GenderStepState extends State<GenderStep> {
                       gender: Gender.female,
                       label: '여자',
                       isSelected: _selectedGender == Gender.female,
+                    ).animate(delay: 500.ms).fadeIn(duration: 600.ms).scale(
+                      begin: Offset(0.8, 0.8),
+                      end: Offset(1, 1),
+                      curve: Curves.easeOutBack,
                     ),
                     const SizedBox(width: 20),
                     _buildGenderButton(
                       gender: Gender.male,
                       label: '남자',
                       isSelected: _selectedGender == Gender.male,
+                    ).animate(delay: 600.ms).fadeIn(duration: 600.ms).scale(
+                      begin: Offset(0.8, 0.8),
+                      end: Offset(1, 1),
+                      curve: Curves.easeOutBack,
                     ),
                   ],
                 ),

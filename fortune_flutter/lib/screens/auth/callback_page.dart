@@ -35,7 +35,63 @@ class _CallbackPageState extends State<CallbackPage> {
       // Clear guest mode when user logs in
       await _storageService.clearGuestMode();
       
-      // Check if user needs onboarding using the validation helper
+      // First, try to sync profile from Supabase before checking local storage
+      debugPrint('Attempting to sync profile from Supabase for user: ${user.id}');
+      try {
+        var response = await Supabase.instance.client
+            .from('user_profiles')
+            .select()
+            .eq('id', user.id)
+            .maybeSingle();
+        
+        if (response != null) {
+          debugPrint('Found profile in Supabase: ${response['onboarding_completed']}');
+          // Save to local storage
+          await _storageService.saveUserProfile(response);
+          debugPrint('Profile synced from Supabase to local storage');
+        } else {
+          debugPrint('No profile found in Supabase for user: ${user.id}');
+          
+          // Create profile automatically for OAuth users
+          debugPrint('Creating new profile for OAuth user...');
+          final profileData = {
+            'id': user.id,
+            'email': user.email,
+            'primary_provider': user.appMetadata['provider'] ?? 'google',
+            'linked_providers': [user.appMetadata['provider'] ?? 'google'],
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          };
+          
+          // Add additional info from user metadata if available
+          if (user.userMetadata != null) {
+            if (user.userMetadata?['full_name'] != null) {
+              profileData['name'] = user.userMetadata?['full_name'];
+            }
+            if (user.userMetadata?['avatar_url'] != null) {
+              profileData['profile_image_url'] = user.userMetadata?['avatar_url'];
+            }
+          }
+          
+          try {
+            await Supabase.instance.client
+                .from('user_profiles')
+                .insert(profileData);
+            debugPrint('Profile created successfully');
+            
+            // Save to local storage
+            await _storageService.saveUserProfile(profileData);
+          } catch (insertError) {
+            debugPrint('Error creating profile: $insertError');
+            // Continue to onboarding even if profile creation fails
+          }
+        }
+      } catch (e) {
+        debugPrint('Error syncing profile from Supabase: $e');
+        // Continue even if sync fails - will check local storage
+      }
+      
+      // Now check if user needs onboarding (will use synced data if available)
       final needsOnboarding = await ProfileValidation.needsOnboarding();
       debugPrint('User needs onboarding: $needsOnboarding');
       
@@ -65,6 +121,25 @@ class _CallbackPageState extends State<CallbackPage> {
       final code = uri.queryParameters['code'];
       debugPrint('Auth code: $code');
       
+      // Extract error parameter if present
+      final error = uri.queryParameters['error'];
+      final errorDescription = uri.queryParameters['error_description'];
+      if (error != null) {
+        debugPrint('OAuth Error: $error');
+        debugPrint('Error Description: $errorDescription');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('로그인 실패: ${errorDescription ?? error}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          context.go('/');
+          return;
+        }
+      }
+      
       // Clean up the URL by removing the code parameter (web only)
       if (code != null && kIsWeb) {
         final cleanUrl = uri.toString().split('?')[0];
@@ -78,16 +153,32 @@ class _CallbackPageState extends State<CallbackPage> {
       
       // Try to recover session from URL
       debugPrint('Attempting to recover session from URL...');
-      final response = await Supabase.instance.client.auth.getSessionFromUrl(uri);
-      debugPrint('Session recovery response: ${response.session?.user?.id}');
-      
-      if (response.session != null) {
-        debugPrint('Session recovered successfully!');
-        if (mounted) {
-          // Check if user has completed onboarding
-          await _checkAndNavigate(response.session!.user);
-          return;
+      try {
+        final response = await Supabase.instance.client.auth.getSessionFromUrl(uri);
+        debugPrint('Session recovery response: ${response.session?.user?.id}');
+        
+        if (response.session != null) {
+          debugPrint('Session recovered successfully!');
+          if (mounted) {
+            // Check if user has completed onboarding
+            await _checkAndNavigate(response.session!.user);
+            return;
+          }
         }
+      } catch (authError) {
+        debugPrint('Auth error details: $authError');
+        if (authError.toString().contains('Invalid API key')) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
+                backgroundColor: Colors.red,
+                duration: Duration(seconds: 5),
+              ),
+            );
+          }
+        }
+        rethrow;
       }
       
       // Listen for auth state changes
@@ -105,9 +196,9 @@ class _CallbackPageState extends State<CallbackPage> {
         }
       });
       
-      // Wait for auth state to settle
-      debugPrint('Waiting for auth state to settle...');
-      await Future.delayed(const Duration(seconds: 3));
+      // Give auth state a moment to propagate
+      debugPrint('Checking auth state...');
+      await Future.delayed(const Duration(milliseconds: 500));
       
       // Final check
       final finalSession = Supabase.instance.client.auth.currentSession;

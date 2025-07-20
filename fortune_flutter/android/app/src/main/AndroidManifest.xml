@@ -1,8 +1,24 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- In-App Purchase Permission -->
     <uses-permission android:name="com.android.vending.BILLING" />
     <!-- Internet Permission for OAuth -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Notification Permissions -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Widget Permissions -->
+    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />
+    <!-- Background Work -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Storage Permissions for Screenshot Detection and Image Saving -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <!-- Speech Recognition Permissions -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     
     <application
         android:label="fortune_flutter"
@@ -55,7 +71,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data 
-                    android:scheme="com.fortune.fortune"
+                    android:scheme="com.beyond.fortune"
                     android:host="auth-callback" />
             </intent-filter>
         </activity>
@@ -69,6 +85,66 @@
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="79a067e199f5984dd47438d057ecb0c5" />
+            
+        <!-- Widget Receivers -->
+        <receiver 
+            android:name=".FortuneDailyWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/fortune_daily_widget_info" />
+        </receiver>
+        
+        <receiver 
+            android:name=".FortuneLoveWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/fortune_love_widget_info" />
+        </receiver>
+        
+        <!-- WorkManager initialization -->
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:exported="false"
+            tools:node="remove" />
+            
+        <!-- Boot Receiver for Widget Updates -->
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Notification Channels Configuration -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="fortune_default" />
+            
+        <!-- App Shortcuts -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
+            
+        <!-- Material You Dynamic Colors -->
+        <meta-data
+            android:name="android.app.dynamic_colors"
+            android:value="true" />
+            
+        <!-- Google Mobile Ads (AdMob) App ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2803643717997352~8320790178" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

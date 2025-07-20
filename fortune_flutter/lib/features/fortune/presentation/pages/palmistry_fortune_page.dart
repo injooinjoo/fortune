@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui' as ui;
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
@@ -31,6 +33,8 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
   bool _hasMarriageLine = false;
   bool _hasChildrenLine = false;
   String? _palmShape;
+  File? _palmImage;
+  final ImagePicker _picker = ImagePicker();
 
   final Map<String, String> _palmShapes = {
     'earth': '땅형 손 (사각형)',
@@ -85,6 +89,9 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
 
     return Column(
       children: [
+        // Camera Capture Section
+        _buildCameraCaptureSection(),
+        const SizedBox(height: 16),
         // Palm Guide Illustration
         GlassCard(
           padding: const EdgeInsets.all(20),
@@ -900,4 +907,199 @@ class PalmGuidePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+extension on _PalmistryFortunePageState {
+  Widget _buildCameraCaptureSection() {
+    final theme = Theme.of(context);
+
+    return GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.camera_alt_rounded,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '손 사진 촬영',
+                style: theme.textTheme.headlineSmall,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_palmImage != null) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                children: [
+                  Image.file(
+                    _palmImage!,
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _palmImage = null;
+                        });
+                      },
+                      icon: const Icon(Icons.close),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.black54,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
+          Row(
+            children: [
+              Expanded(
+                child: InkWell(
+                  onTap: _takePicture,
+                  borderRadius: BorderRadius.circular(12),
+                  child: GlassContainer(
+                    padding: const EdgeInsets.all(16),
+                    borderRadius: BorderRadius.circular(12),
+                    blur: 10,
+                    borderColor: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    borderWidth: 1,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.camera_alt,
+                          size: 32,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '사진 촬영',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: InkWell(
+                  onTap: _pickFromGallery,
+                  borderRadius: BorderRadius.circular(12),
+                  child: GlassContainer(
+                    padding: const EdgeInsets.all(16),
+                    borderRadius: BorderRadius.circular(12),
+                    blur: 10,
+                    borderColor: theme.colorScheme.primary.withValues(alpha: 0.3),
+                    borderWidth: 1,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.photo_library,
+                          size: 32,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '갤러리에서 선택',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  size: 20,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '밝은 곳에서 손바닥을 평평하게 펴고 촬영해주세요',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _takePicture() async {
+    try {
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+      
+      if (photo != null) {
+        setState(() {
+          _palmImage = File(photo.path);
+        });
+      }
+    } catch (e) {
+      Toast.show(
+        context,
+        message: '카메라를 사용할 수 없습니다: $e',
+        type: ToastType.error,
+      );
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _palmImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      Toast.show(
+        context,
+        message: '갤러리에서 이미지를 선택할 수 없습니다: $e',
+        type: ToastType.error,
+      );
+    }
+  }
 }

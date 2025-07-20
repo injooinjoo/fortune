@@ -45,7 +45,7 @@ class _LuckyJobFortunePageState extends ConsumerState<LuckyJobFortunePage> {
     if (profile != null) {
       setState(() {
         _name = profile.name;
-        _birthdate = profile.birthdate;
+        _birthdate = profile.birthDate;
       });
     }
   }

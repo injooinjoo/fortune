@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/config/environment.dart';
 import '../../core/config/feature_flags.dart';
 import '../../core/constants/api_endpoints.dart';
 import '../../core/constants/edge_functions_endpoints.dart';
@@ -23,7 +25,13 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     required String userId,
     DateTime? date,
   }) async {
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] getDailyFortune called');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] userId: $userId');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] date: $date');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Edge Functions enabled: ${_featureFlags.isEdgeFunctionsEnabled()}');
+    
     if (_featureFlags.isEdgeFunctionsEnabled()) {
+      debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Using Edge Functions for daily fortune');
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.dailyFortune,
         userId: userId,
@@ -35,6 +43,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     }
     
     // Fall back to original implementation
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Falling back to traditional API');
     return super.getDailyFortune(userId: userId, date: date);
   }
 
@@ -46,38 +55,85 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
     Map<String, dynamic>? data,
   }) async {
     try {
-      debugPrint('Using Edge Function for $fortuneType fortune');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Using Edge Function for $fortuneType fortune');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Endpoint: $endpoint');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] UserId: $userId');
+      
+      // Get user profile to include name
+      final supabase = Supabase.instance.client;
+      final userProfileResponse = await supabase
+          .from('user_profiles')
+          .select('name, birth_date, birth_time, gender, mbti, blood_type, zodiac_sign, chinese_zodiac')
+          .eq('id', userId)
+          .maybeSingle();
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] User profile: $userProfileResponse');
       
       // Prepare request data
       final requestData = {
         ...?data,
         'userId': userId,
+        if (userProfileResponse != null) ...{
+          'name': userProfileResponse['name'] ?? '',
+          'birthDate': userProfileResponse['birth_date'],
+          'birthTime': userProfileResponse['birth_time'],
+          'gender': userProfileResponse['gender'],
+          'mbtiType': userProfileResponse['mbti'],
+          'bloodType': userProfileResponse['blood_type'],
+          'zodiacSign': userProfileResponse['zodiac_sign'],
+        },
       };
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Request data: $requestData');
 
       // Create a custom Dio instance for Edge Functions
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Base URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
+      
+      // Validate Supabase anon key
+      if (Environment.supabaseAnonKey.isEmpty) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY is missing!');
+        debugPrint('❌ Please check your .env file and ensure SUPABASE_ANON_KEY is set');
+        throw Exception('SUPABASE_ANON_KEY is not configured. Please check your environment settings.');
+      }
+      
       final edgeFunctionsDio = Dio(BaseOptions(
         baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
         headers: {
           'Content-Type': 'application/json',
-          'apikey': const String.fromEnvironment('SUPABASE_ANON_KEY'),
+          'apikey': Environment.supabaseAnonKey,
         },
       ));
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY present: ${Environment.supabaseAnonKey.isNotEmpty}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
 
-      // Add auth token from the main client
-      final apiClient = _ref.read(apiClientProvider);
-      final authToken = apiClient.dio.options.headers['Authorization'];
-      if (authToken != null) {
-        edgeFunctionsDio.options.headers['Authorization'] = authToken;
+      // Get auth token from Supabase session
+      final session = Supabase.instance.client.auth.currentSession;
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Session present: ${session != null}');
+      
+      if (session == null) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] No active session found!');
+        throw Exception('No active session. Please login first.');
       }
+      
+      final authToken = 'Bearer ${session.accessToken}';
+      edgeFunctionsDio.options.headers['Authorization'] = authToken;
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Auth token added to headers');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Auth token prefix: ${authToken.substring(0, 30)}...');
 
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Making POST request to: ${EdgeFunctionsEndpoints.currentBaseUrl}$endpoint');
       final response = await edgeFunctionsDio.post(
         endpoint,
         data: requestData,
       );
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response status: ${response.statusCode}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response data: ${response.data}');
 
       // Edge Functions return a slightly different format
       final fortuneData = response.data['fortune'];
       final tokensUsed = response.data['tokensUsed'] ?? 0;
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune data: $fortuneData');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Tokens used: $tokensUsed');
       
       // Convert to FortuneResponseModel format
       final fortuneDataModel = FortuneData(
@@ -87,12 +143,23 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         content: fortuneData['content'] ?? fortuneData['description'] ?? '',
         createdAt: DateTime.now(),
         metadata: fortuneData,
-        score: fortuneData['score']?.toInt(),
+        score: fortuneData['score']?.toInt() ?? fortuneData['overallScore']?.toInt(),
         summary: fortuneData['summary'],
-        luckyColor: fortuneData['luckyColor'],
-        luckyNumber: fortuneData['luckyNumber']?.toInt(),
+        luckyColor: fortuneData['luckyColor'] ?? fortuneData['luckyItems']?['color'],
+        luckyNumber: fortuneData['luckyNumber']?.toInt() ?? fortuneData['luckyItems']?['number'],
+        luckyDirection: fortuneData['luckyItems']?['direction'],
+        bestTime: fortuneData['luckyItems']?['time'],
         advice: fortuneData['advice'],
         caution: fortuneData['caution'],
+        greeting: fortuneData['greeting'],
+        hexagonScores: fortuneData['hexagonScores'] != null 
+            ? Map<String, int>.from(fortuneData['hexagonScores']) 
+            : null,
+        timeSpecificFortunes: fortuneData['timeSpecificFortunes'],
+        birthYearFortunes: fortuneData['birthYearFortunes'],
+        fiveElements: fortuneData['fiveElements'],
+        specialTip: fortuneData['specialTip'],
+        period: fortuneData['period'],
       );
       
       final fortuneResponse = FortuneResponseModel(
@@ -101,19 +168,33 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         tokensUsed: tokensUsed,
       );
 
-      return fortuneResponse.toEntity();
+      final fortune = fortuneResponse.toEntity();
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune entity created successfully');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune ID: ${fortune.id}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune type: ${fortune.type}');
       
-    } catch (e) {
-      debugPrint('Edge Function error: $e');
+      return fortune;
+      
+    } catch (e, stackTrace) {
+      debugPrint('❌ [_getFortuneFromEdgeFunction] Edge Function error: $e');
+      debugPrint('❌ [_getFortuneFromEdgeFunction] Stack trace: $stackTrace');
+      
+      if (e is DioException) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] DioException type: ${e.type}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Response data: ${e.response?.data}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Status code: ${e.response?.statusCode}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Headers: ${e.response?.headers}');
+      }
       
       // If Edge Functions fail, fall back to traditional API
       if (!kReleaseMode) {
         // In debug mode, we might want to see the error
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Rethrowing error in debug mode');
         rethrow;
       }
       
       // In production, silently fall back
-      debugPrint('Falling back to traditional API');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Falling back to traditional API');
       return super.getDailyFortune(userId: userId);
     }
   }
@@ -168,15 +249,14 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
           headers: {
             'Content-Type': 'application/json',
-            'apikey': const String.fromEnvironment('SUPABASE_ANON_KEY'),
+            'apikey': Environment.supabaseAnonKey,
           },
         ));
 
-        // Add auth token
-        final apiClient = _ref.read(apiClientProvider);
-        final authToken = apiClient.dio.options.headers['Authorization'];
-        if (authToken != null) {
-          edgeFunctionsDio.options.headers['Authorization'] = authToken;
+        // Add auth token from Supabase session
+        final session = Supabase.instance.client.auth.currentSession;
+        if (session != null) {
+          edgeFunctionsDio.options.headers['Authorization'] = 'Bearer ${session.accessToken}';
         }
 
         final response = await edgeFunctionsDio.get(
@@ -204,15 +284,14 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
           baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
           headers: {
             'Content-Type': 'application/json',
-            'apikey': const String.fromEnvironment('SUPABASE_ANON_KEY'),
+            'apikey': Environment.supabaseAnonKey,
           },
         ));
 
-        // Add auth token
-        final apiClient = _ref.read(apiClientProvider);
-        final authToken = apiClient.dio.options.headers['Authorization'];
-        if (authToken != null) {
-          edgeFunctionsDio.options.headers['Authorization'] = authToken;
+        // Add auth token from Supabase session
+        final session = Supabase.instance.client.auth.currentSession;
+        if (session != null) {
+          edgeFunctionsDio.options.headers['Authorization'] = 'Bearer ${session.accessToken}';
         }
 
         final response = await edgeFunctionsDio.post(
@@ -546,7 +625,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
   // Lucky Items Fortune
   @override
-  Future<Fortune> getLuckyItemsFortune({required String userId}) async {
+  Future<Fortune> getLuckyItemsFortune({
+    required String userId,
+    String fortuneType = 'lucky_items',
+    Map<String, dynamic>? params,
+  }) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.luckyItemsFortune,
@@ -611,7 +694,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
 
   // Personality Fortune
   @override
-  Future<Fortune> getPersonalityFortune({required String userId}) async {
+  Future<Fortune> getPersonalityFortune({
+    required String userId,
+    String fortuneType = 'personality',
+    Map<String, dynamic>? params,
+  }) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.personalityFortune,
@@ -770,5 +857,31 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       );
     }
     return super.getLuckyFishingFortune(userId: userId);
+  }
+
+  // Time-based Fortune (Enhanced)
+  @override
+  Future<Fortune> getTimeFortune({
+    required String userId,
+    String fortuneType = 'time',
+    Map<String, dynamic>? params,
+  }) async {
+    if (_featureFlags.isEdgeFunctionsEnabled()) {
+      // Extract period from params or default to 'today'
+      final period = params?['period'] ?? 'today';
+      
+      return _getFortuneFromEdgeFunction(
+        endpoint: EdgeFunctionsEndpoints.timeFortune,
+        userId: userId,
+        fortuneType: 'time',
+        data: {
+          'period': period,
+          ...?params,
+        },
+      );
+    }
+    
+    // Fall back to parent class method
+    return super.getTimeFortune(userId: userId, fortuneType: fortuneType, params: params);
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -5,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+// import 'firebase_options.dart'; // Replaced with secure version
+import 'firebase_options_secure.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/environment.dart';
 import 'core/config/feature_flags.dart';
@@ -21,6 +24,11 @@ import 'presentation/providers/app_providers.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'core/utils/url_cleaner_stub.dart'
     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
+import 'services/native_features_initializer.dart';
+import 'services/token_monitor_service.dart';
+import 'services/screenshot_detection_service.dart';
+import 'services/ad_service.dart';
+import 'services/analytics_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,14 +41,17 @@ void main() async {
   );
   
   try {
+    // 한국어 날짜 형식 초기화
+    await initializeDateFormatting('ko_KR', null);
+    
     // 환경 변수 초기화
     await Environment.initialize();
     Environment.printDebugInfo();
     Logger.securityCheckpoint('Environment variables loaded');
     
-    // Firebase 초기화
+    // Firebase 초기화 (보안 버전)
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      options: SecureFirebaseOptions.currentPlatform,
     );
     Logger.securityCheckpoint('Firebase initialized');
     
@@ -51,15 +62,40 @@ void main() async {
     Logger.securityCheckpoint('Kakao SDK initialized');
     
     // Supabase 초기화
-    await Supabase.initialize(
-      url: Environment.supabaseUrl,
-      anonKey: Environment.supabaseAnonKey,
-      authOptions: const FlutterAuthClientOptions(
-        authFlowType: AuthFlowType.pkce,
-      ),
-      debug: Environment.current != Environment.production,
-    );
-    Logger.securityCheckpoint('Supabase initialized');
+    try {
+      await Supabase.initialize(
+        url: Environment.supabaseUrl,
+        anonKey: Environment.supabaseAnonKey,
+        authOptions: const FlutterAuthClientOptions(
+          authFlowType: AuthFlowType.pkce,
+        ),
+        debug: Environment.current != Environment.production,
+      );
+      Logger.securityCheckpoint('Supabase initialized');
+      
+      // Test the connection immediately
+      try {
+        final testResponse = await Supabase.instance.client.auth.signInWithPassword(
+          email: 'test@test.com',
+          password: 'test123'
+        );
+      } catch (testError) {
+        if (testError.toString().contains('Invalid API key')) {
+          Logger.error('Supabase API key is invalid! Please check your .env file', testError);
+          debugPrint('=== SUPABASE API KEY ERROR ===');
+          debugPrint('URL: ${Environment.supabaseUrl}');
+          debugPrint('Key prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
+          debugPrint('Please verify:');
+          debugPrint('1. The Supabase project is active');
+          debugPrint('2. The API keys match those in Supabase dashboard');
+          debugPrint('3. The project URL is correct');
+          debugPrint('==============================');
+        }
+      }
+    } catch (e) {
+      Logger.error('Failed to initialize Supabase', e);
+      rethrow;
+    }
     
     // Handle initial deep link if any
     final initialUri = Uri.base;
@@ -97,6 +133,24 @@ void main() async {
     await FeatureFlags.instance.initialize();
     Logger.securityCheckpoint('Feature flags initialized with Edge Functions: ${FeatureFlags.instance.isEdgeFunctionsEnabled()}');
     
+    // Native platform features 초기화 (widgets, notifications)
+    if (!kIsWeb) {
+      await NativeFeaturesInitializer.initialize();
+      Logger.securityCheckpoint('Native platform features initialized');
+    }
+    
+    // Initialize AdMob SDK
+    if (!kIsWeb && Environment.enableAds) {
+      await AdService.instance.initialize();
+      Logger.securityCheckpoint('AdMob SDK initialized');
+    }
+    
+    // Initialize Analytics
+    if (Environment.enableAnalytics) {
+      await AnalyticsService.instance.initialize();
+      Logger.securityCheckpoint('Analytics initialized');
+    }
+    
     // Stripe 초기화 (결제 기능이 활성화된 경우)
     if (Environment.enablePayment && !kIsWeb) {
       // Stripe is only initialized on mobile platforms
@@ -131,6 +185,9 @@ void main() async {
     final authTokens = await SecureStorage.getAuthTokens();
     if (authTokens['accessToken'] != null) {
       Logger.info('Found existing auth session');
+      
+      // Start token monitoring for authenticated users
+      TokenMonitorService.instance.startMonitoring();
     }
     
     // Initialize provider overrides
@@ -186,11 +243,69 @@ void main() async {
   }
 }
 
-class FortuneApp extends ConsumerWidget {
+class FortuneApp extends ConsumerStatefulWidget {
   const FortuneApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FortuneApp> createState() => _FortuneAppState();
+}
+
+class _FortuneAppState extends ConsumerState<FortuneApp> with WidgetsBindingObserver {
+  late final StreamSubscription<AuthState> _authStateSubscription;
+  late final ScreenshotDetectionService _screenshotDetectionService;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    
+    // Initialize screenshot detection service
+    _screenshotDetectionService = ref.read(screenshotDetectionServiceProvider);
+    _screenshotDetectionService.initialize();
+    
+    // Listen to auth state changes
+    _authStateSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final session = data.session;
+      final event = data.event;
+      
+      if (session != null && event == AuthChangeEvent.signedIn) {
+        // Start monitoring when user signs in
+        TokenMonitorService.instance.startMonitoring();
+        Logger.info('Started token monitoring after sign in');
+      } else if (event == AuthChangeEvent.signedOut) {
+        // Stop monitoring when user signs out
+        TokenMonitorService.instance.stopMonitoring();
+        Logger.info('Stopped token monitoring after sign out');
+      } else if (event == AuthChangeEvent.tokenRefreshed) {
+        Logger.info('Token refreshed via auth state change');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _authStateSubscription.cancel();
+    TokenMonitorService.instance.dispose();
+    _screenshotDetectionService.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // Handle app lifecycle changes
+    if (state == AppLifecycleState.resumed) {
+      // Check token when app comes to foreground
+      if (Supabase.instance.client.auth.currentSession != null) {
+        TokenMonitorService.instance.forceRefresh();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(appRouterProvider);
     final themeMode = ref.watch(themeModeProvider);
     

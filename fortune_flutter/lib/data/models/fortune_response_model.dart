@@ -1,5 +1,5 @@
 import '../../domain/entities/fortune.dart';
-import '../../domain/entities/detailed_fortune.dart';
+import '../../core/constants/fortune_detailed_metadata.dart';
 
 class FortuneResponseModel {
   final bool success;
@@ -63,6 +63,38 @@ class FortuneResponseModel {
     if (data!.bestTime != null) {
       luckyItems['time'] = data!.bestTime!;
     }
+    if (data!.luckyDirection != null) {
+      luckyItems['direction'] = data!.luckyDirection!;
+    }
+    if (data!.luckyFood != null) {
+      luckyItems['food'] = data!.luckyFood!;
+    }
+    if (data!.luckyItem != null) {
+      luckyItems['item'] = data!.luckyItem!;
+    }
+
+    // Build detailed lucky items
+    final detailedLuckyItems = <String, List<DetailedLuckyItem>>{};
+    if (data!.detailedLuckyNumbers != null) {
+      detailedLuckyItems['numbers'] = (data!.detailedLuckyNumbers as List)
+          .map((item) => DetailedLuckyItem.fromJson(item))
+          .toList();
+    }
+    if (data!.detailedLuckyColors != null) {
+      detailedLuckyItems['colors'] = (data!.detailedLuckyColors as List)
+          .map((item) => DetailedLuckyItem.fromJson(item))
+          .toList();
+    }
+    if (data!.detailedLuckyFoods != null) {
+      detailedLuckyItems['foods'] = (data!.detailedLuckyFoods as List)
+          .map((item) => DetailedLuckyItem.fromJson(item))
+          .toList();
+    }
+    if (data!.detailedLuckyItems != null) {
+      detailedLuckyItems['items'] = (data!.detailedLuckyItems as List)
+          .map((item) => DetailedLuckyItem.fromJson(item))
+          .toList();
+    }
 
     // Build recommendations
     final recommendations = <String>[];
@@ -74,7 +106,7 @@ class FortuneResponseModel {
     }
     recommendations.addAll(data!.strengthsList ?? []);
 
-    return DetailedFortune(
+    return Fortune(
       id: data!.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       userId: data!.userId ?? '',
       type: data!.type,
@@ -85,10 +117,40 @@ class FortuneResponseModel {
       category: data!.type,
       overallScore: overallScore,
       description: data!.summary ?? data!.content ?? '',
-      scoreBreakdown: scoreBreakdown.map((key, value) => 
-          MapEntry(key, value is int ? value : int.tryParse(value.toString()) ?? 0)),
-      luckyItems: luckyItems,
-      recommendations: recommendations,
+      scoreBreakdown: scoreBreakdown.isNotEmpty ? scoreBreakdown : null,
+      luckyItems: luckyItems.isNotEmpty ? luckyItems : null,
+      recommendations: recommendations.isNotEmpty ? recommendations : null,
+      warnings: data!.caution != null ? [data!.caution!] : null,
+      summary: data!.summary,
+      additionalInfo: {
+        if (data!.advice != null) 'advice': data!.advice,
+        if (data!.luckyColor != null) 'luckyColor': data!.luckyColor,
+        if (data!.luckyNumber != null) 'luckyNumber': data!.luckyNumber,
+        if (data!.score != null) 'score': data!.score,
+      },
+      detailedLuckyItems: detailedLuckyItems.isNotEmpty ? detailedLuckyItems : null,
+      greeting: data!.greeting,
+      hexagonScores: data!.hexagonScores,
+      timeSpecificFortunes: data!.timeSpecificFortunes != null
+          ? (data!.timeSpecificFortunes as List).map((item) => TimeSpecificFortune(
+              time: item['time'] ?? '',
+              title: item['title'] ?? '',
+              score: item['score'] ?? 0,
+              description: item['description'] ?? '',
+              recommendation: item['recommendation'],
+            )).toList()
+          : null,
+      birthYearFortunes: data!.birthYearFortunes != null
+          ? (data!.birthYearFortunes as List).map((item) => BirthYearFortune(
+              birthYear: item['birthYear'] ?? '',
+              zodiacAnimal: item['zodiacAnimal'] ?? '',
+              description: item['description'] ?? '',
+              advice: item['advice'],
+            )).toList()
+          : null,
+      fiveElements: data!.fiveElements,
+      specialTip: data!.specialTip,
+      period: data!.period,
     );
   }
 }
@@ -145,6 +207,26 @@ class FortuneData {
   final String? longTermPotential;
   final List<String>? strengthsList;
   final List<String>? challenges;
+  
+  // Additional lucky item fields
+  final String? luckyDirection;
+  final String? luckyFood;
+  final String? luckyItem;
+  
+  // Detailed lucky items
+  final List<dynamic>? detailedLuckyNumbers;
+  final List<dynamic>? detailedLuckyColors;
+  final List<dynamic>? detailedLuckyFoods;
+  final List<dynamic>? detailedLuckyItems;
+  
+  // Enhanced fields for time-based fortunes
+  final String? greeting;
+  final Map<String, int>? hexagonScores;
+  final List<dynamic>? timeSpecificFortunes;
+  final List<dynamic>? birthYearFortunes;
+  final Map<String, dynamic>? fiveElements;
+  final String? specialTip;
+  final String? period;
 
   FortuneData({
     this.id,
@@ -190,6 +272,20 @@ class FortuneData {
     this.longTermPotential,
     this.strengthsList,
     this.challenges,
+    this.luckyDirection,
+    this.luckyFood,
+    this.luckyItem,
+    this.detailedLuckyNumbers,
+    this.detailedLuckyColors,
+    this.detailedLuckyFoods,
+    this.detailedLuckyItems,
+    this.greeting,
+    this.hexagonScores,
+    this.timeSpecificFortunes,
+    this.birthYearFortunes,
+    this.fiveElements,
+    this.specialTip,
+    this.period,
   });
 
   factory FortuneData.fromJson(Map<String, dynamic> json) {
@@ -255,6 +351,28 @@ class FortuneData {
       challenges: json['challenges'] != null 
           ? List<String>.from(json['challenges']) 
           : null,
+      
+      // Additional lucky items
+      luckyDirection: json['luckyDirection'],
+      luckyFood: json['luckyFood'],
+      luckyItem: json['luckyItem'],
+      
+      // Detailed lucky items
+      detailedLuckyNumbers: json['detailedLuckyNumbers'],
+      detailedLuckyColors: json['detailedLuckyColors'],
+      detailedLuckyFoods: json['detailedLuckyFoods'],
+      detailedLuckyItems: json['detailedLuckyItems'],
+      
+      // Enhanced time-based fortune fields
+      greeting: json['greeting'],
+      hexagonScores: json['hexagonScores'] != null 
+          ? Map<String, int>.from(json['hexagonScores']) 
+          : null,
+      timeSpecificFortunes: json['timeSpecificFortunes'],
+      birthYearFortunes: json['birthYearFortunes'],
+      fiveElements: json['fiveElements'],
+      specialTip: json['specialTip'],
+      period: json['period'],
     );
   }
 

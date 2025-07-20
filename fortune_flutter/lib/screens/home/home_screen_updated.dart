@@ -13,6 +13,9 @@ import '../../shared/glassmorphism/glass_container.dart';
 import '../../shared/glassmorphism/glass_effects.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../services/storage_service.dart';
+import '../../presentation/widgets/ads/cross_platform_ad_widget.dart';
+import '../../core/config/environment.dart';
 
 class HomeScreenUpdated extends ConsumerStatefulWidget {
   const HomeScreenUpdated({super.key});
@@ -23,6 +26,7 @@ class HomeScreenUpdated extends ConsumerStatefulWidget {
 
 class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
   final supabase = Supabase.instance.client;
+  final _storageService = StorageService();
   Map<String, dynamic>? userProfile;
   List<Map<String, dynamic>> recentFortunes = [];
   DailyFortune? todaysFortune;
@@ -38,6 +42,15 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
 
   Future<void> _loadUserProfile() async {
     try {
+      // First try to load from local storage
+      final localProfile = await _storageService.getUserProfile();
+      if (localProfile != null) {
+        setState(() {
+          userProfile = localProfile;
+        });
+      }
+      
+      // Then sync with Supabase
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
         final response = await supabase
@@ -46,9 +59,13 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
             .eq('id', userId)
             .maybeSingle();
         
-        setState(() {
-          userProfile = response;
-        });
+        if (response != null) {
+          // Save to local storage for offline access
+          await _storageService.saveUserProfile(response);
+          setState(() {
+            userProfile = response;
+          });
+        }
       }
     } catch (e) {
       debugPrint('Error loading profile: $e');
@@ -191,6 +208,14 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
             ),
             const SizedBox(height: 16),
             _buildMainServices(),
+
+            // Banner Ad (show only for free users and if ads are enabled)
+            if (Environment.enableAds && userProfile?['is_premium'] != true) ...[
+              const SizedBox(height: 24),
+              CommonAdPlacements.listBottomAd(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ).animate().fadeIn(delay: 350.ms),
+            ],
 
             // Recent Fortunes
             if (recentFortunes.isNotEmpty) ...[

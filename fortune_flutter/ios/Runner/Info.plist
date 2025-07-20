@@ -67,6 +67,12 @@
 	<string>This app needs access to photo library for face reading features.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access for face reading features.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Fortune AI가 운세 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Fortune AI가 음성으로 꿈 내용을 입력받기 위해 마이크 접근 권한이 필요합니다.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
 	<!-- Stripe Configuration -->
 	<key>StripePublishableKey</key>
 	<string>$(STRIPE_PUBLISHABLE_KEY)</string>
@@ -106,7 +112,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.fortune.fortune</string>
+				<string>com.beyond.fortune</string>
 			</array>
 		</dict>
 	</array>
@@ -133,5 +139,167 @@
 	<string>Hu5KdO9DxK</string>
 	<key>naverServiceAppName</key>
 	<string>Fortune</string>
+	<!-- Widget Configuration -->
+	<key>NSWidgetExtensionBundleIdentifiers</key>
+	<array>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
+	</array>
+	<!-- App Groups for Widget Data Sharing -->
+	<key>NSApplicationGroupIdentifier</key>
+	<string>group.com.fortune.fortune</string>
+	<!-- Live Activities Support -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<!-- Live Activity Frequency Updates -->
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+	<!-- Background Modes for Notifications and Remote Notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>processing</string>
+	</array>
+	<!-- User Notifications -->
+	<key>NSUserNotificationUsageDescription</key>
+	<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
+	<!-- Siri Intents -->
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>com.fortune.fortune.checkDailyFortune</string>
+		<string>com.fortune.fortune.checkCompatibility</string>
+		<string>com.fortune.fortune.checkLuckyNumbers</string>
+	</array>
+	<!-- App Shortcuts -->
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.fortune.fortune.dailyFortune</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>오늘의 운세</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>오늘의 운세를 확인하세요</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeDate</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.fortune.fortune.compatibility</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>궁합 보기</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>상대방과의 궁합을 확인하세요</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeLove</string>
+		</dict>
+	</array>
+	<!-- Haptic Feedback -->
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<!-- Google Mobile Ads (AdMob) App ID -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2803643717997352~5970615545</string>
+	<!-- SKAdNetwork identifiers for iOS 14+ -->
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>4fzdc2evr5.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>4pfyvq9l8r.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>2fnua5tdw4.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>ydx93a7ass.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>5a6flpkh64.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>p78axxw29g.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>v72qych5uu.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>ludvb6z3bs.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cp8zw746q7.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>3sh42y64q3.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>c6k4g5qg8m.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>s39g8k73mm.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>3qy4746246.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>f38h382jlk.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>hs6bdukanm.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>v4nxqhlyqp.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>wzmmz9fp6w.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>yclnxrl5pm.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>t38b2kh725.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>7ug5zh24hu.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>gta9lk7p23.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>vutu7akeur.skadnetwork</string>
+		</dict>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>y5ghdn5j9k.skadnetwork</string>
+		</dict>
+	</array>
 </dict>
 </plist>

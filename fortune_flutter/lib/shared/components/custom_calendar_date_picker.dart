@@ -45,7 +45,7 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
     _pageController = PageController(initialPage: initialPage);
     
     // Initialize scroll controllers
-    int yearIndex = widget.lastDate.year - _viewingDate.year;
+    int yearIndex = _viewingDate.year - widget.firstDate.year;
     int monthIndex = _viewingDate.month - 1;
     _yearScrollController = FixedExtentScrollController(initialItem: yearIndex);
     _monthScrollController = FixedExtentScrollController(initialItem: monthIndex);

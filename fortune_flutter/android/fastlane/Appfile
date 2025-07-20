@@ -1,7 +1,7 @@
 # Appfile for Android
 
 # Package name for your app
-package_name("com.fortune.fortune_flutter")
+package_name("com.beyond.fortune_flutter")
 
 # Path to the json secret file
 # Download from Google Play Console > Settings > API access > Service Accounts

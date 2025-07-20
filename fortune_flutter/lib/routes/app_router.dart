@@ -9,6 +9,9 @@ import '../screens/auth/callback_page.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/profile/profile_screen.dart';
 import '../screens/profile/profile_edit_page.dart';
+import '../screens/settings/settings_screen.dart';
+import '../screens/settings/social_accounts_screen.dart';
+import '../screens/settings/phone_management_screen.dart';
 import '../screens/onboarding/onboarding_page.dart';
 import '../screens/onboarding/onboarding_page_v2.dart';
 import '../screens/onboarding/onboarding_flow_page.dart';
@@ -17,11 +20,9 @@ import '../shared/layouts/main_shell.dart';
 import '../screens/physiognomy/physiognomy_screen.dart';
 import '../screens/premium/premium_screen.dart';
 import '../features/fortune/presentation/pages/fortune_list_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/daily_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/today_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/tomorrow_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/weekly_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/monthly_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/time_based_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/investment_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/sports_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/saju_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/compatibility_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/love_fortune_page.dart' as fortune_pages;
@@ -54,6 +55,7 @@ import '../features/about/presentation/pages/about_page.dart';
 import '../features/policy/presentation/pages/policy_page.dart';
 import '../features/policy/presentation/pages/privacy_policy_page.dart';
 import '../features/policy/presentation/pages/terms_of_service_page.dart';
+import '../features/notification/presentation/pages/notification_settings_page.dart';
 import '../features/fortune/presentation/pages/lucky_tennis_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_running_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_cycling_fortune_page.dart' as fortune_pages;
@@ -80,7 +82,6 @@ import '../features/fortune/presentation/pages/lucky_series_fortune_page.dart' a
 import '../features/fortune/presentation/pages/moving_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/moving_date_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/network_report_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/new_year_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/personality_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/saju_psychology_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_lottery_fortune_page.dart' as fortune_pages;
@@ -93,11 +94,19 @@ import '../features/fortune/presentation/pages/past_life_fortune_page.dart' as f
 import '../features/fortune/presentation/pages/wish_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/timeline_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/yearly_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/startup_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_sidejob_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/time_based_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/children_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/pet_compatibility_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/fortune_best_practices_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/daily_inspiration_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/batch_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/dream_fortune_page.dart' as fortune_pages;
 import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
 import '../screens/payment/token_history_page.dart';
 import '../screens/subscription/subscription_page.dart';
@@ -107,6 +116,8 @@ import '../features/interactive/presentation/pages/interactive_list_page.dart';
 import '../features/interactive/presentation/pages/dream_interpretation_page.dart';
 import '../features/interactive/presentation/pages/psychology_test_page.dart';
 import '../features/interactive/presentation/pages/tarot_card_page.dart';
+import '../features/fortune/presentation/pages/tarot_storytelling_page.dart';
+import '../features/fortune/presentation/pages/tarot_summary_page.dart';
 import '../features/interactive/presentation/pages/face_reading_page.dart';
 import '../features/interactive/presentation/pages/taemong_page.dart';
 import '../features/interactive/presentation/pages/worry_bead_page.dart';
@@ -115,14 +126,17 @@ import '../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../features/admin/presentation/pages/redis_monitor_page.dart';
 import '../features/admin/presentation/pages/token_usage_stats_page.dart';
 import '../features/support/presentation/pages/customer_support_page.dart';
+import '../features/support/presentation/pages/help_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/feedback/presentation/pages/feedback_page.dart';
+import '../features/profile/presentation/pages/statistics_detail_page.dart';
+import '../features/profile/presentation/pages/profile_verification_page.dart';
 import '../features/misc/presentation/pages/consult_page.dart';
 import '../features/misc/presentation/pages/explore_page.dart';
 import '../features/misc/presentation/pages/special_page.dart';
 import '../features/misc/presentation/pages/test_ads_page.dart';
 import '../features/misc/presentation/pages/wish_wall_page.dart';
-import '../features/feed/presentation/pages/feed_page.dart';
+import '../features/trend/presentation/pages/trend_page.dart';
 import '../core/utils/profile_validation.dart';
 import '../services/storage_service.dart';
 
@@ -235,7 +249,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/flow',
         name: 'onboarding-flow',
-        builder: (context, state) => const EnhancedOnboardingFlow(),
+        builder: (context, state) => const OnboardingFlowPage(),
       ),
       
       // Main app shell with persistent navigation
@@ -249,7 +263,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/home',
             name: 'home',
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) => const HomeScreen(
+              key: PageStorageKey('home_screen'),
+            ),
           ),
           
           // Profile route (now top-level within shell)
@@ -263,7 +279,41 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 name: 'profile-edit',
                 builder: (context, state) => const ProfileEditPage(),
               ),
+              GoRoute(
+                path: 'statistics',
+                name: 'profile-statistics',
+                builder: (context, state) => const StatisticsDetailPage(),
+              ),
+              GoRoute(
+                path: 'verification',
+                name: 'profile-verification',
+                builder: (context, state) => const ProfileVerificationPage(),
+              ),
             ],
+          ),
+          
+          // Settings route
+          GoRoute(
+            path: '/settings',
+            name: 'settings',
+            builder: (context, state) => const SettingsScreen(),
+          ),
+          
+          // Settings sub-routes
+          GoRoute(
+            path: '/settings/social-accounts',
+            name: 'social-accounts',
+            builder: (context, state) => const SocialAccountsScreen(),
+          ),
+          GoRoute(
+            path: '/settings/phone',
+            name: 'phone-management',
+            builder: (context, state) => const PhoneManagementScreen(),
+          ),
+          GoRoute(
+            path: '/settings/notifications',
+            name: 'notification-settings',
+            builder: (context, state) => const NotificationSettingsPage(),
           ),
           
           // Physiognomy route
@@ -280,11 +330,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const PremiumScreen(),
           ),
           
-          // Feed route
+          // Trend route
           GoRoute(
-            path: '/feed',
-            name: 'feed',
-            builder: (context, state) => const FeedPage(),
+            path: '/trend',
+            name: 'trend',
+            builder: (context, state) => const TrendPage(),
           ),
           
           // Admin routes
@@ -311,6 +361,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/support',
             name: 'support',
             builder: (context, state) => const CustomerSupportPage(),
+          ),
+          
+          // Help route
+          GoRoute(
+            path: '/help',
+            name: 'help',
+            builder: (context, state) => const HelpPage(),
           ),
           
           // About route
@@ -411,7 +468,40 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'tarot',
                 name: 'interactive-tarot',
-                builder: (context, state) => const TarotCardPage(),
+                builder: (context, state) {
+                  final extra = state.extra as Map<String, dynamic>?;
+                  return TarotCardPage(
+                    spreadType: extra?['spreadType'],
+                    initialQuestion: extra?['question'],
+                  );
+                },
+                routes: [
+                  GoRoute(
+                    path: 'storytelling',
+                    name: 'tarot-storytelling',
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      return TarotStorytellingPage(
+                        selectedCards: extra?['selectedCards'] ?? [],
+                        spreadType: extra?['spreadType'] ?? 'three',
+                        question: extra?['question'],
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'summary',
+                    name: 'tarot-summary',
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>?;
+                      return TarotSummaryPage(
+                        cards: extra?['cards'] ?? [],
+                        interpretations: extra?['interpretations'] ?? [],
+                        spreadType: extra?['spreadType'] ?? 'three',
+                        question: extra?['question'],
+                      );
+                    },
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'face-reading',
@@ -443,84 +533,137 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const fortune_pages.FortuneListPage(),
             routes: [
           GoRoute(
-            path: 'today',
-            name: 'fortune-today',
-            builder: (context, state) => const fortune_pages.TodayFortunePage(),
+            path: 'batch',
+            name: 'fortune-batch',
+            builder: (context, state) => const fortune_pages.BatchFortunePage(),
           ),
           GoRoute(
-            path: 'tomorrow',
-            name: 'fortune-tomorrow',
-            builder: (context, state) => const fortune_pages.TomorrowFortunePage(),
+            path: 'time',
+            name: 'fortune-time',
+            builder: (context, state) {
+              final periodParam = state.uri.queryParameters['period'];
+              fortune_pages.TimePeriod? initialPeriod;
+              if (periodParam != null) {
+                initialPeriod = fortune_pages.TimePeriod.values.firstWhere(
+                  (p) => p.value == periodParam,
+                  orElse: () => fortune_pages.TimePeriod.today,
+                );
+              }
+              
+              // Pass extra data to the page
+              final extra = state.extra as Map<String, dynamic>?;
+              
+              return fortune_pages.TimeBasedFortunePage(
+                initialPeriod: initialPeriod ?? fortune_pages.TimePeriod.today,
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
-            path: 'weekly',
-            name: 'fortune-weekly',
-            builder: (context, state) => const fortune_pages.WeeklyFortunePage(),
-          ),
-          GoRoute(
-            path: 'monthly',
-            name: 'fortune-monthly',
-            builder: (context, state) => const fortune_pages.MonthlyFortunePage(),
-          ),
-          GoRoute(
-            path: 'daily',
-            name: 'fortune-daily',
-            builder: (context, state) => const fortune_pages.DailyFortunePage(),
+            path: 'time-based',
+            name: 'fortune-time-based',
+            redirect: (_, state) {
+              final tabParam = state.uri.queryParameters['tab'];
+              if (tabParam != null) {
+                return '/fortune/time?period=$tabParam';
+              }
+              return '/fortune/time';
+            },
           ),
           GoRoute(
             path: 'saju',
             name: 'fortune-saju',
-            builder: (context, state) => const fortune_pages.SajuPage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.SajuPage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'compatibility',
             name: 'fortune-compatibility',
-            builder: (context, state) => const fortune_pages.CompatibilityPage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.CompatibilityPage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'love',
             name: 'fortune-love',
-            builder: (context, state) => const fortune_pages.LoveFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.LoveFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'wealth',
             name: 'fortune-wealth',
-            builder: (context, state) => const fortune_pages.WealthFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.WealthFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'mbti',
             name: 'fortune-mbti',
-            builder: (context, state) => const fortune_pages.MbtiFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.MbtiFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'zodiac',
             name: 'fortune-zodiac',
-            builder: (context, state) => const fortune_pages.ZodiacFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.ZodiacFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'zodiac-animal',
             name: 'fortune-zodiac-animal',
-            builder: (context, state) => const fortune_pages.ZodiacAnimalFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.ZodiacAnimalFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'blood-type',
             name: 'fortune-blood-type',
-            builder: (context, state) => const fortune_pages.BloodTypeFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.BloodTypeFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'career',
             name: 'fortune-career',
-            builder: (context, state) => const fortune_pages.CareerFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.CareerFortunePage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'health',
             name: 'fortune-health',
             builder: (context, state) => const fortune_pages.HealthFortunePage(),
-          ),
-          GoRoute(
-            path: 'hourly',
-            name: 'fortune-hourly',
-            builder: (context, state) => const fortune_pages.HourlyFortunePage(),
           ),
           GoRoute(
             path: 'lucky-color',
@@ -598,65 +741,95 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const fortune_pages.BlindDateFortunePage(),
           ),
           GoRoute(
-            path: 'lucky-golf',
-            name: 'fortune-lucky-golf',
-            builder: (context, state) => const fortune_pages.LuckyGolfFortunePage(),
+            path: 'sports',
+            name: 'fortune-sports',
+            builder: (context, state) {
+              final sportParam = state.uri.queryParameters['type'];
+              fortune_pages.SportType? initialType;
+              if (sportParam != null) {
+                initialType = fortune_pages.SportType.values.firstWhere(
+                  (s) => s.value == sportParam,
+                  orElse: () => fortune_pages.SportType.fitness,
+                );
+              }
+              return fortune_pages.SportsFortunePage(
+                initialType: initialType ?? fortune_pages.SportType.fitness,
+              );
+            },
           ),
           GoRoute(
-            path: 'lucky-baseball',
-            name: 'fortune-lucky-baseball',
-            builder: (context, state) => const fortune_pages.LuckyBaseballFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-tennis',
-            name: 'fortune-lucky-tennis',
-            builder: (context, state) => const fortune_pages.LuckyTennisFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-running',
-            name: 'fortune-lucky-running',
-            builder: (context, state) => const fortune_pages.LuckyRunningFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-cycling',
-            name: 'fortune-lucky-cycling',
-            builder: (context, state) => const fortune_pages.LuckyCyclingFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-swim',
-            name: 'fortune-lucky-swim',
-            builder: (context, state) => const fortune_pages.LuckySwimFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-investment',
-            name: 'fortune-lucky-investment',
-            builder: (context, state) => const fortune_pages.LuckyInvestmentFortunePage(),
+            path: 'investment',
+            name: 'fortune-investment',
+            builder: (context, state) {
+              final typeParam = state.uri.queryParameters['type'];
+              fortune_pages.InvestmentType? initialType;
+              if (typeParam != null) {
+                initialType = fortune_pages.InvestmentType.values.firstWhere(
+                  (t) => t.value == typeParam,
+                  orElse: () => fortune_pages.InvestmentType.general,
+                );
+              }
+              return fortune_pages.InvestmentFortunePage(
+                initialType: initialType ?? fortune_pages.InvestmentType.general,
+              );
+            },
           ),
           GoRoute(
             path: 'business',
             name: 'fortune-business',
             builder: (context, state) => const fortune_pages.BusinessFortunePage(),
           ),
+          // Sports routes redirect to integrated sports page
+          GoRoute(
+            path: 'lucky-golf',
+            name: 'fortune-lucky-golf',
+            redirect: (_, __) => '/fortune/sports?type=golf',
+          ),
+          GoRoute(
+            path: 'lucky-baseball',
+            name: 'fortune-lucky-baseball',
+            redirect: (_, __) => '/fortune/sports?type=baseball',
+          ),
+          GoRoute(
+            path: 'lucky-tennis',
+            name: 'fortune-lucky-tennis',
+            redirect: (_, __) => '/fortune/sports?type=tennis',
+          ),
+          GoRoute(
+            path: 'lucky-running',
+            name: 'fortune-lucky-running',
+            redirect: (_, __) => '/fortune/sports?type=running',
+          ),
+          GoRoute(
+            path: 'lucky-cycling',
+            name: 'fortune-lucky-cycling',
+            redirect: (_, __) => '/fortune/sports?type=cycling',
+          ),
+          GoRoute(
+            path: 'lucky-swim',
+            name: 'fortune-lucky-swim',
+            redirect: (_, __) => '/fortune/sports?type=swimming',
+          ),
           GoRoute(
             path: 'lucky-fishing',
             name: 'fortune-lucky-fishing',
-            builder: (context, state) => const fortune_pages.LuckyFishingFortunePage(),
+            redirect: (_, __) => '/fortune/sports?type=fishing',
           ),
           GoRoute(
             path: 'lucky-hiking',
             name: 'fortune-lucky-hiking',
-            builder: (context, state) => const fortune_pages.LuckyHikingFortunePage(),
+            redirect: (_, __) => '/fortune/sports?type=hiking',
           ),
           GoRoute(
             path: 'lucky-yoga',
             name: 'fortune-lucky-yoga',
-            builder: (context, state) => const fortune_pages.LuckyYogaFortunePage(),
+            redirect: (_, __) => '/fortune/sports?type=yoga',  
           ),
           GoRoute(
             path: 'lucky-fitness',
             name: 'fortune-lucky-fitness',
-            builder: (context, state) => const fortune_pages.LuckyFitnessFortunePage(),
-            ),
+            redirect: (_, __) => '/fortune/sports?type=fitness',
+          ),
           GoRoute(
             path: 'birth-season',
             name: 'fortune-birth-season',
@@ -691,6 +864,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'celebrity-match',
             name: 'fortune-celebrity-match',
             builder: (context, state) => const fortune_pages.CelebrityMatchPage(),
+          ),
+          GoRoute(
+            path: 'same-birthday-celebrity',
+            name: 'fortune-same-birthday-celebrity',
+            builder: (context, state) => const fortune_pages.SameBirthdayCelebrityFortunePage(),
           ),
           GoRoute(
             path: 'chemistry',
@@ -740,7 +918,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'new-year',
             name: 'fortune-new-year',
-            builder: (context, state) => const fortune_pages.NewYearFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.TimeBasedFortunePage(
+                initialPeriod: fortune_pages.TimePeriod.yearly,
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'personality',
@@ -788,6 +972,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const fortune_pages.PastLifeFortunePage(),
           ),
           GoRoute(
+            path: 'dream',
+            name: 'fortune-dream',
+            builder: (context, state) => const fortune_pages.DreamFortunePage(),
+          ),
+          GoRoute(
             path: 'wish',
             name: 'fortune-wish',
             builder: (context, state) => const fortune_pages.WishFortunePage(),
@@ -805,17 +994,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'yearly',
             name: 'fortune-yearly',
-            builder: (context, state) => const fortune_pages.YearlyFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.TimeBasedFortunePage(
+                initialPeriod: fortune_pages.TimePeriod.yearly,
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'startup',
             name: 'fortune-startup',
             builder: (context, state) => const fortune_pages.StartupFortunePage(),
-          ),
-          GoRoute(
-            path: 'lucky-sidejob',
-            name: 'fortune-lucky-sidejob',
-            builder: (context, state) => const fortune_pages.LuckySideJobFortunePage(),
           ),
           GoRoute(
             path: 'lucky-exam',
@@ -826,6 +1016,84 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'lucky-realestate',
             name: 'fortune-lucky-realestate',
             builder: (context, state) => const fortune_pages.LuckyRealEstateFortunePage(),
+          ),
+          GoRoute(
+            path: 'best-practices',
+            name: 'fortune-best-practices',
+            builder: (context, state) => const fortune_pages.FortuneBestPracticesPage(),
+          ),
+          GoRoute(
+            path: 'inspiration',
+            name: 'fortune-inspiration',
+            builder: (context, state) => const fortune_pages.DailyInspirationPage(),
+          ),
+          GoRoute(
+            path: 'history',
+            name: 'fortune-history',
+            builder: (context, state) => const FortuneHistoryPage(),
+          ),
+          // Pet & Family Fortune routes
+          GoRoute(
+            path: 'pet',
+            name: 'fortune-pet',
+            builder: (context, state) {
+              final typeParam = state.uri.queryParameters['type'];
+              return fortune_pages.PetFortunePage(
+                fortuneType: 'pet',
+                title: '반려동물 운세',
+                description: '반려동물과의 특별한 운세를 확인해보세요',
+                petType: typeParam,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'pet-compatibility',
+            name: 'fortune-pet-compatibility',
+            builder: (context, state) => const fortune_pages.PetCompatibilityPage(
+              fortuneType: 'pet-compatibility',
+              title: '반려동물 궁합',
+              description: '나와 반려동물의 궁합을 확인해보세요',
+            ),
+          ),
+          GoRoute(
+            path: 'children',
+            name: 'fortune-children',
+            builder: (context, state) => const fortune_pages.ChildrenFortunePage(
+              fortuneType: 'children',
+              title: '자녀 운세',
+              description: '자녀와 관련된 운세를 확인해보세요',
+              specificFortuneType: 'children',
+            ),
+          ),
+          GoRoute(
+            path: 'parenting',
+            name: 'fortune-parenting',
+            builder: (context, state) => const fortune_pages.ChildrenFortunePage(
+              fortuneType: 'parenting',
+              title: '육아 운세',
+              description: '육아와 관련된 운세를 확인해보세요',
+              specificFortuneType: 'parenting',
+            ),
+          ),
+          GoRoute(
+            path: 'pregnancy',
+            name: 'fortune-pregnancy',
+            builder: (context, state) => const fortune_pages.ChildrenFortunePage(
+              fortuneType: 'pregnancy',
+              title: '태교 운세',
+              description: '태교와 관련된 운세를 확인해보세요',
+              specificFortuneType: 'pregnancy',
+            ),
+          ),
+          GoRoute(
+            path: 'family-harmony',
+            name: 'fortune-family-harmony',
+            builder: (context, state) => const fortune_pages.ChildrenFortunePage(
+              fortuneType: 'family-harmony',
+              title: '가족 화합 운세',
+              description: '가족의 화합과 관련된 운세를 확인해보세요',
+              specificFortuneType: 'family-harmony',
+            ),
           ),
           ],
         ),

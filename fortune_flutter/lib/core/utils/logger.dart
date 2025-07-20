@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../config/environment.dart';
+import '../../services/analytics_service.dart';
 
 /// 로깅 유틸리티 클래스
 /// 보안: 프로덕션 환경에서는 민감한 정보 로깅 방지
@@ -70,16 +71,23 @@ class Logger {
   static void apiRequest(String method, String url, [dynamic data]) {
     if (kDebugMode) {
       final sanitizedData = _sanitizeData(data);
-      debug('$_green→ $method$_reset $url', sanitizedData);
+      final fullUrl = url.startsWith('http') ? url : '${Environment.apiBaseUrl}$url';
+      debug('$_green→ $method$_reset $fullUrl', sanitizedData);
     }
   }
   
   // API 응답 로그
   static void apiResponse(String method, String url, int statusCode, [dynamic data]) {
     if (kDebugMode) {
-      final color = statusCode < 400 ? _green : _red;
+      final color = statusCode < 400 ? _green : statusCode == 0 ? _yellow : _red;
       final sanitizedData = _sanitizeData(data);
-      debug('$color← $method $statusCode$_reset $url', sanitizedData);
+      final fullUrl = url.startsWith('http') ? url : '${Environment.apiBaseUrl}$url';
+      final statusMsg = statusCode == 0 ? '0 (Network Error/CORS)' : statusCode.toString();
+      debug('$color← $method $statusMsg$_reset $fullUrl', sanitizedData);
+      
+      if (statusCode == 0) {
+        debug('⚠️  Possible causes: Network error, CORS issue, or server not running');
+      }
     }
   }
   
@@ -87,6 +95,11 @@ class Logger {
   static void analytics(String event, [Map<String, dynamic>? parameters]) {
     if (kDebugMode) {
       debug('$_magenta[Analytics]$_reset $event', parameters);
+    }
+    
+    // Send to Firebase Analytics if initialized
+    if (AnalyticsService.instance.isInitialized) {
+      AnalyticsService.instance.logEvent(event, parameters: parameters);
     }
   }
   
@@ -180,5 +193,51 @@ class Logger {
     if (!passed && Environment.current == Environment.production) {
       debugPrint('SECURITY ALERT: $checkpoint failed at ${DateTime.now().toIso8601String()}');
     }
+  }
+  
+  // Fortune generation flow summary
+  static void fortuneFlowSummary({
+    required String fortuneType,
+    required int totalTimeMs,
+    required bool success,
+    bool fromCache = false,
+    int? apiTimeMs,
+    int? cacheTimeMs,
+    int? overallScore,
+    String? errorMessage,
+  }) {
+    if (!kDebugMode) return;
+    
+    final color = success ? _green : _red;
+    final icon = success ? '✨' : '❌';
+    
+    debugPrint('\n${"=" * 60}');
+    debugPrint('$color$icon FORTUNE GENERATION SUMMARY$_reset');
+    debugPrint('Fortune Type: $fortuneType');
+    debugPrint('Status: ${success ? "SUCCESS" : "FAILED"}');
+    debugPrint('Total Time: ${totalTimeMs}ms');
+    
+    if (fromCache) {
+      debugPrint('Source: CACHE');
+      if (cacheTimeMs != null) {
+        debugPrint('Cache Lookup Time: ${cacheTimeMs}ms');
+      }
+    } else {
+      debugPrint('Source: API');
+      if (apiTimeMs != null) {
+        debugPrint('API Call Time: ${apiTimeMs}ms');
+      }
+    }
+    
+    if (overallScore != null) {
+      debugPrint('Overall Score: $overallScore');
+    }
+    
+    if (errorMessage != null) {
+      debugPrint('Error: $errorMessage');
+    }
+    
+    debugPrint('Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('${"=" * 60}\n');
   }
 }

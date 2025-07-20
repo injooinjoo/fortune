@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'base_fortune_page.dart';
+import '../widgets/cognitive_functions_radar_chart.dart';
+import '../widgets/fortune_display.dart';
+import '../widgets/mbti_compatibility_matrix.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../services/mbti_cognitive_functions_service.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/components/fortune_result_display.dart';
@@ -13,23 +17,29 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
 class MbtiFortunePage extends BaseFortunePage {
-  const MbtiFortunePage({Key? key})
-      : super(
+  const MbtiFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: 'MBTI 운세',
           description: '당신의 MBTI 성격 유형에 따른 운세를 확인해보세요',
           fortuneType: 'mbti',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
   ConsumerState<MbtiFortunePage> createState() => _MbtiFortunePageState();
 }
 
-class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
+class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with TickerProviderStateMixin {
   String? _selectedMbti;
   final List<String> _selectedCategories = [];
+  Map<String, double>? _cognitiveFunctions;
   late AnimationController _animationController;
+  String? _selectedType1;
+  String? _selectedType2;
 
   // MBTI Types
   static const List<String> _mbtiTypes = [
@@ -125,6 +135,14 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       throw Exception('운세를 불러올 수 없습니다');
     }
 
+    // Calculate cognitive functions for today
+    _cognitiveFunctions = MbtiCognitiveFunctionsService.calculateDailyCognitiveFunctions(
+      _selectedMbti!,
+      DateTime.now(),
+    );
+
+    _animationController.forward();
+    
     return state.fortune!;
   }
 
@@ -147,18 +165,35 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
 
   @override
   Widget buildFortuneResult() {
-    // Use the common fortune result display widget
-    return FortuneResultDisplay(
-      fortune: fortune!,
-      headerWidget: _buildMbtiHeader(),
-      additionalSections: [
-        _buildMbtiInsights(),
-        _buildMbtiStrengthsWeaknesses(),
-        _buildMbtiCompatibility(),
-      ],
-      onShare: () {
-        Toast.info(context, '공유 기능이 곧 추가됩니다!');
-      },
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Show the base fortune result
+          FortuneDisplay(
+            title: fortune!.summary ?? 'MBTI 운세',
+            description: fortune!.description ?? fortune!.content,
+            overallScore: fortune!.score,
+            luckyItems: fortune!.luckyItems,
+            advice: fortune!.recommendations?.join('\n') ?? '',
+            detailedFortune: {'content': fortune!.content},
+            warningMessage: fortune!.warnings?.join('\n'),
+          ),
+          const SizedBox(height: 24),
+          // MBTI specific sections
+          if (_cognitiveFunctions != null) ...[
+            _buildCognitiveFunctionsSection(),
+            const SizedBox(height: 16),
+          ],
+          _buildMbtiInsights(),
+          const SizedBox(height: 16),
+          _buildMbtiStrengthsWeaknesses(),
+          const SizedBox(height: 16),
+          _buildMbtiCompatibility(),
+          const SizedBox(height: 16),
+          _buildEnhancedCompatibilityMatrix(),
+        ],
+      ),
     );
   }
 
@@ -327,8 +362,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     final theme = Theme.of(context);
     final canGenerate = canGenerateFortune;
 
-    return glass.GlassButton(
-      onPressed: canGenerate ? generateFortuneAction : null,
+    return GlassButton(
+      onPressed: canGenerate ? () => generateFortuneAction() : () {},
       child: Container(
         height: 56,
         decoration: BoxDecoration(
@@ -357,62 +392,6 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     );
   }
 
-  Widget _buildMbtiHeader() {
-    final theme = Theme.of(context);
-    final colors = _mbtiColors[_selectedMbti!]!;
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: LiquidGlassContainer(
-        padding: const EdgeInsets.all(32),
-        borderRadius: BorderRadius.circular(32),
-        liquidColors: [...colors, colors.first.withValues(alpha: 0.5)],
-        child: Column(
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(colors: colors),
-                boxShadow: [
-                  BoxShadow(
-                    color: colors.first.withValues(alpha: 0.5),
-                    blurRadius: 30,
-                    spreadRadius: 10,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  _selectedMbti!,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              _getMbtiTitle(_selectedMbti!),
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _getMbtiDescription(_selectedMbti!),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ).animate()
-          .fadeIn()
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
-    );
-  }
 
   Widget _buildMbtiInsights() {
     final theme = Theme.of(context);
@@ -676,6 +655,132 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
     );
   }
 
+  Widget _buildCognitiveFunctionsSection() {
+    return glass.GlassCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          CognitiveFunctionsRadarChart(
+            mbtiType: _selectedMbti!,
+            functionLevels: _cognitiveFunctions!,
+            showAnimation: true,
+          ),
+          const SizedBox(height: 16),
+          _buildCognitiveInsights(),
+        ],
+      ),
+    ).animate()
+        .fadeIn(delay: 200.ms)
+        .slideY(begin: 0.1, end: 0);
+  }
+
+  Widget _buildCognitiveInsights() {
+    final fortuneData = MbtiCognitiveFunctionsService.getDailyFortune(
+      _selectedMbti!,
+      DateTime.now(),
+      _cognitiveFunctions!,
+    );
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.purple.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.purple.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: Colors.purple,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '오늘의 인지기능 메시지',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            fortuneData['message'] as String,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withOpacity(0.9),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _buildInsightChip(
+                  '오늘의 행운 활동',
+                  fortuneData['luckyActivity'] as String,
+                  Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildInsightChip(
+                  '주의할 점',
+                  fortuneData['cautionArea'] as String,
+                  Colors.orange,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInsightChip(String label, String value, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // MBTI Helper Methods
   String _getMbtiTitle(String mbti) {
     final titles = {
@@ -803,6 +908,25 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> {
       'ESFP': ['ISFJ', 'ISTJ', 'ESTP'],
     };
     return compatibility[mbti] ?? [];
+  }
+
+  Widget _buildEnhancedCompatibilityMatrix() {
+    if (_selectedMbti == null) return const SizedBox.shrink();
+    
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: MbtiCompatibilityMatrix(
+        selectedType1: _selectedType1 ?? _selectedMbti,
+        selectedType2: _selectedType2,
+        onPairSelected: (type1, type2) {
+          setState(() {
+            _selectedType1 = type1;
+            _selectedType2 = type2;
+          });
+        },
+        showAnimation: true,
+      ),
+    );
   }
 }
 

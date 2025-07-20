@@ -45,7 +45,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.initialDate ?? DateTime(2000, 1, 1);
+    _selectedDate = widget.initialDate ?? DateTime(1980, 1, 1);
     _focusedDate = _selectedDate;
     _selectedYear = _selectedDate.year;
     _selectedMonth = _selectedDate.month;

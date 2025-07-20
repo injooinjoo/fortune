@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../presentation/providers/providers.dart';
-import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../services/user_statistics_service.dart';
+import '../../../../services/storage_service.dart';
 
 // Fortune history provider
 final fortuneHistoryProvider = FutureProvider.autoDispose<List<FortuneHistory>>((ref) async {
@@ -25,6 +29,19 @@ final fortuneHistoryProvider = FutureProvider.autoDispose<List<FortuneHistory>>(
   } catch (e) {
     throw Exception('운세 기록 조회 실패: $e');
   }
+});
+
+// User statistics provider
+final userStatisticsProvider = FutureProvider.autoDispose<UserStatistics>((ref) async {
+  final supabase = Supabase.instance.client;
+  final userId = supabase.auth.currentUser?.id;
+  
+  if (userId == null) {
+    throw Exception('사용자 정보를 찾을 수 없습니다');
+  }
+  
+  final statisticsService = UserStatisticsService(supabase, StorageService());
+  return await statisticsService.getUserStatistics(userId);
 });
 
 // Fortune history model
@@ -67,11 +84,499 @@ class FortuneHistoryPage extends ConsumerStatefulWidget {
 class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
   String _selectedFilter = 'all';
   final List<String> _filters = ['all', 'daily', 'love', 'wealth', 'career', 'health'];
+  DateTimeRange? _selectedDateRange;
+  
+  Widget _buildStatisticsDashboard(BuildContext context, UserStatistics statistics, double fontScale) {
+    final theme = Theme.of(context);
+    
+    // Find most used fortune type
+    String? mostUsedType;
+    int maxCount = 0;
+    statistics.fortuneTypeCount.forEach((type, count) {
+      if (count > maxCount) {
+        maxCount = count;
+        mostUsedType = type;
+      }
+    });
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '나의 운세 통계',
+            style: TextStyle(
+              fontSize: 20 * fontScale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Stats cards grid
+          GridView.count(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            childAspectRatio: 1.8,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            children: [
+              _buildStatCard(
+                context: context,
+                icon: Icons.auto_awesome,
+                title: '총 운세',
+                value: '${statistics.totalFortunes}회',
+                color: Colors.purple,
+                fontScale: fontScale,
+              ),
+              _buildStatCard(
+                context: context,
+                icon: Icons.local_fire_department,
+                title: '연속 접속',
+                value: '${statistics.consecutiveDays}일',
+                color: Colors.orange,
+                fontScale: fontScale,
+              ),
+              _buildStatCard(
+                context: context,
+                icon: Icons.toll,
+                title: '사용 토큰',
+                value: '${statistics.totalTokensUsed}개',
+                color: Colors.blue,
+                fontScale: fontScale,
+              ),
+              _buildStatCard(
+                context: context,
+                icon: Icons.favorite,
+                title: '즐겨찾는 운세',
+                value: mostUsedType != null ? FortuneTypeNames.getName(mostUsedType!) : '-',
+                color: Colors.pink,
+                fontScale: fontScale,
+                isText: true,
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Insights section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary.withValues(alpha: 0.05),
+                  theme.colorScheme.primary.withValues(alpha: 0.02),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lightbulb_outline,
+                  color: theme.colorScheme.primary,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _getPersonalizedInsight(statistics),
+                    style: TextStyle(
+                      fontSize: 14 * fontScale,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildStatCard({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String value,
+    required Color color,
+    required double fontScale,
+    bool isText = false,
+  }) {
+    final theme = Theme.of(context);
+    
+    return GlassContainer(
+      gradient: LinearGradient(
+        colors: [
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  icon,
+                  color: color,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12 * fontScale,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: isText ? 16 * fontScale : 20 * fontScale,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  String _getPersonalizedInsight(UserStatistics statistics) {
+    // Generate personalized insights based on user statistics
+    if (statistics.consecutiveDays >= 7) {
+      return '🎆 일주일 연속 접속하셨네요! 꾸준한 운세 확인이 행운을 불러옵니다.';
+    }
+    
+    if (statistics.totalFortunes > 50) {
+      return '✨ 이미 $statistics.totalFortunes번의 운세를 확인하셨네요! 당신은 진정한 운세 마스터입니다.';
+    }
+    
+    String? favoriteType = statistics.favoriteFortuneType;
+    if (favoriteType != null) {
+      final typeName = FortuneTypeNames.getName(favoriteType);
+      return '💕 $typeName을(를) 가장 많이 확인하셨네요. 오늘도 확인해보세요!';
+    }
+    
+    return '🌟 다양한 운세를 확인하고 나만의 행운을 찾아보세요!';
+  }
+  
+  // Group history by month for trend chart
+  Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {
+    final Map<String, int> monthlyData = {};
+    final now = DateTime.now();
+    
+    // Initialize last 6 months
+    for (int i = 5; i >= 0; i--) {
+      final month = DateTime(now.year, now.month - i, 1);
+      final key = DateFormat('yyyy-MM').format(month);
+      monthlyData[key] = 0;
+    }
+    
+    // Count fortunes per month
+    for (final item in history) {
+      final key = DateFormat('yyyy-MM').format(item.createdAt);
+      if (monthlyData.containsKey(key)) {
+        monthlyData[key] = monthlyData[key]! + 1;
+      }
+    }
+    
+    return monthlyData;
+  }
+  
+  // Group history by category for pie chart
+  Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
+    final Map<String, int> categoryData = {};
+    
+    for (final item in history) {
+      final category = FortuneTypeNames.getCategory(item.fortuneType);
+      categoryData[category] = (categoryData[category] ?? 0) + 1;
+    }
+    
+    return categoryData;
+  }
+  
+  // Build category distribution pie chart
+  Widget _buildCategoryPieChart(BuildContext context, List<FortuneHistory> history, double fontScale) {
+    final theme = Theme.of(context);
+    final categoryData = _groupHistoryByCategory(history);
+    final total = categoryData.values.fold(0, (sum, count) => sum + count);
+    
+    if (total == 0) return const SizedBox.shrink();
+    
+    final colors = [
+      Colors.purple,
+      Colors.pink,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.red,
+      Colors.indigo,
+      Colors.cyan,
+    ];
+    
+    int colorIndex = 0;
+    final sections = categoryData.entries.map((entry) {
+      final percentage = (entry.value / total * 100).toStringAsFixed(1);
+      final color = colors[colorIndex % colors.length];
+      colorIndex++;
+      
+      return PieChartSectionData(
+        color: color,
+        value: entry.value.toDouble(),
+        title: '$percentage%',
+        radius: 60,
+        titleStyle: TextStyle(
+          fontSize: 12 * fontScale,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '카테고리별 분포',
+            style: TextStyle(
+              fontSize: 18 * fontScale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              // Pie chart
+              SizedBox(
+                width: 150,
+                height: 150,
+                child: PieChart(
+                  PieChartData(
+                    sections: sections,
+                    centerSpaceRadius: 30,
+                    sectionsSpace: 2,
+                    pieTouchData: PieTouchData(enabled: false),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 24),
+              // Legend
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: categoryData.entries.map((entry) {
+                    final index = categoryData.keys.toList().indexOf(entry.key);
+                    final color = colors[index % colors.length];
+                    
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              '${entry.key} (${entry.value}회)',
+                              style: TextStyle(
+                                fontSize: 12 * fontScale,
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Build monthly trend chart
+  Widget _buildMonthlyTrendChart(BuildContext context, List<FortuneHistory> history, double fontScale) {
+    final theme = Theme.of(context);
+    final monthlyData = _groupHistoryByMonth(history);
+    final months = monthlyData.keys.toList();
+    final values = monthlyData.values.toList();
+    final maxValue = values.isEmpty ? 10 : values.reduce((a, b) => a > b ? a : b).toDouble() + 5;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '월별 운세 조회 트렌드',
+            style: TextStyle(
+              fontSize: 18 * fontScale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            height: 200,
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: theme.colorScheme.outline.withValues(alpha: 0.1),
+              ),
+            ),
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  horizontalInterval: 5,
+                  getDrawingHorizontalLine: (value) {
+                    return FlLine(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
+                titlesData: FlTitlesData(
+                  show: true,
+                  rightTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  topTitles: const AxisTitles(
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 30,
+                      interval: 1,
+                      getTitlesWidget: (value, meta) {
+                        if (value.toInt() >= 0 && value.toInt() < months.length) {
+                          final month = months[value.toInt()];
+                          final date = DateFormat('yyyy-MM').parse(month);
+                          return Text(
+                            DateFormat('M월').format(date),
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              fontSize: 12,
+                            ),
+                          );
+                        }
+                        return const Text('');
+                      },
+                    ),
+                  ),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      interval: 5,
+                      reservedSize: 30,
+                      getTitlesWidget: (value, meta) {
+                        return Text(
+                          value.toInt().toString(),
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                    left: BorderSide(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                minX: 0,
+                maxX: months.length - 1,
+                minY: 0,
+                maxY: maxValue.toDouble(),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: values.asMap().entries.map((entry) {
+                      return FlSpot(entry.key.toDouble(), entry.value.toDouble());
+                    }).toList(),
+                    isCurved: true,
+                    color: theme.colorScheme.primary,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    dotData: FlDotData(
+                      show: true,
+                      getDotPainter: (spot, percent, barData, index) {
+                        return FlDotCirclePainter(
+                          radius: 4,
+                          color: theme.colorScheme.primary,
+                          strokeWidth: 2,
+                          strokeColor: theme.colorScheme.surface,
+                        );
+                      },
+                    ),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
-    if (_selectedFilter == 'all') return history;
+    var filtered = history;
     
-    return history.where((item) {
+    // Apply date range filter
+    if (_selectedDateRange != null) {
+      filtered = filtered.where((item) {
+        return item.createdAt.isAfter(_selectedDateRange!.start) &&
+               item.createdAt.isBefore(_selectedDateRange!.end.add(const Duration(days: 1)));
+      }).toList();
+    }
+    
+    // Apply category filter
+    if (_selectedFilter == 'all') return filtered;
+    
+    return filtered.where((item) {
       switch (_selectedFilter) {
         case 'daily':
           return item.fortuneType.contains('daily') || 
@@ -116,6 +621,326 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     if (fortuneType.contains('health')) return Colors.orange;
     return Colors.purple;
   }
+  
+  Color _getScoreColor(int score) {
+    if (score >= 80) return Colors.green;
+    if (score >= 60) return Colors.blue;
+    if (score >= 40) return Colors.orange;
+    return Colors.red;
+  }
+  
+  Widget _buildLuckyItem({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required double fontScale,
+  }) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: color.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 14,
+              color: color,
+            ),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10 * fontScale,
+                      color: color.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 11 * fontScale,
+                      color: color,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  void _showFortuneDetail(BuildContext context, FortuneHistory item) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) {
+          final theme = Theme.of(context);
+          final color = _getFortuneColor(item.fortuneType);
+          
+          return Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            child: Column(
+              children: [
+                // Handle
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                
+                // Header
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _getFortuneIcon(item.fortuneType),
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.title,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              DateFormat('yyyy년 M월 d일 HH:mm').format(item.createdAt),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const Divider(height: 1),
+                
+                // Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Score section
+                        if (item.summary['score'] != null) ...[
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  color.withValues(alpha: 0.1),
+                                  color.withValues(alpha: 0.05),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '운세 점수',
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                                Text(
+                                  '${item.summary['score']}점',
+                                  style: theme.textTheme.headlineMedium?.copyWith(
+                                    color: _getScoreColor(item.summary['score'] as int),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                        
+                        // Summary content
+                        if (item.summary['content'] != null) ...[
+                          Text(
+                            '운세 내용',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            item.summary['content'] ?? '',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              height: 1.6,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                        
+                        // Keywords
+                        if (item.summary['keywords'] != null) ...[
+                          Text(
+                            '핵심 키워드',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: (item.summary['keywords'] as List).map<Widget>((keyword) {
+                              return Chip(
+                                label: Text(keyword.toString()),
+                                backgroundColor: color.withValues(alpha: 0.1),
+                                side: BorderSide(
+                                  color: color.withValues(alpha: 0.3),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                        
+                        // Lucky items
+                        if (item.summary['luckyItems'] != null) ...[
+                          Text(
+                            '행운 아이템',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...((item.summary['luckyItems'] as Map).entries.map<Widget>((entry) {
+                            IconData icon;
+                            String label;
+                            switch (entry.key) {
+                              case 'color':
+                                icon = Icons.palette;
+                                label = '행운의 색';
+                                break;
+                              case 'number':
+                                icon = Icons.looks_one;
+                                label = '행운의 숫자';
+                                break;
+                              case 'item':
+                                icon = Icons.diamond;
+                                label = '행운의 물건';
+                                break;
+                              default:
+                                icon = Icons.star;
+                                label = entry.key;
+                            }
+                            
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                children: [
+                                  Icon(icon, size: 20, color: color),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    label,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    entry.value.toString(),
+                                    style: theme.textTheme.bodyLarge?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList()),
+                        ],
+                        
+                        const SizedBox(height: 40),
+                        
+                        // Share button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              // Implement share functionality
+                              Toast.show(
+                                context,
+                                message: '공유 기능은 준비 중입니다',
+                                type: ToastType.info,
+                              );
+                            },
+                            icon: const Icon(Icons.share),
+                            label: const Text('운세 공유하기'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: color,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +948,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
     final historyAsync = ref.watch(fortuneHistoryProvider);
+    final statisticsAsync = ref.watch(userStatisticsProvider);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -177,15 +1003,144 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                 data: (history) {
                   final filteredHistory = _filterHistory(history);
                   
-                  return Column(
-                    children: [
-                      // Filter chips
-                      Container(
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                  return CustomScrollView(
+                    slivers: [
+                      // Statistics Dashboard
+                      SliverToBoxAdapter(
+                        child: statisticsAsync.when(
+                          loading: () => const SizedBox(
+                            height: 120,
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (statistics) => _buildStatisticsDashboard(context, statistics, fontScale),
+                        ),
+                      ),
+                      
+                      // Monthly trend chart
+                      SliverToBoxAdapter(
+                        child: statisticsAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (_) => _buildMonthlyTrendChart(context, history, fontScale),
+                        ),
+                      ),
+                      
+                      // Category distribution pie chart
+                      SliverToBoxAdapter(
+                        child: statisticsAsync.when(
+                          loading: () => const SizedBox.shrink(),
+                          error: (_, __) => const SizedBox.shrink(),
+                          data: (_) => _buildCategoryPieChart(context, history, fontScale),
+                        ),
+                      ),
+                      
+                      // Filter section
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            // Date range selector
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        final range = await showDateRangePicker(
+                                          context: context,
+                                          firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                                          lastDate: DateTime.now(),
+                                          initialDateRange: _selectedDateRange,
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: theme.copyWith(
+                                                colorScheme: theme.colorScheme.copyWith(
+                                                  primary: theme.colorScheme.primary,
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
+                                        );
+                                        
+                                        if (range != null) {
+                                          setState(() {
+                                            _selectedDateRange = range;
+                                          });
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.surface,
+                                          borderRadius: BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: _selectedDateRange != null
+                                                ? theme.colorScheme.primary
+                                                : theme.colorScheme.outline.withValues(alpha: 0.3),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.calendar_month,
+                                              size: 20,
+                                              color: _selectedDateRange != null
+                                                  ? theme.colorScheme.primary
+                                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                _selectedDateRange != null
+                                                    ? '${DateFormat('M/d').format(_selectedDateRange!.start)} - ${DateFormat('M/d').format(_selectedDateRange!.end)}'
+                                                    : '기간 선택',
+                                                style: TextStyle(
+                                                  fontSize: 14 * fontScale,
+                                                  color: _selectedDateRange != null
+                                                      ? theme.colorScheme.primary
+                                                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                                  fontWeight: _selectedDateRange != null
+                                                      ? FontWeight.w600
+                                                      : FontWeight.normal,
+                                                ),
+                                              ),
+                                            ),
+                                            if (_selectedDateRange != null)
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  size: 18,
+                                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _selectedDateRange = null;
+                                                  });
+                                                },
+                                                constraints: const BoxConstraints(
+                                                  minWidth: 32,
+                                                  minHeight: 32,
+                                                ),
+                                                padding: EdgeInsets.zero,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            
+                            // Category filter chips
+                            Container(
+                              height: 50,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: _filters.length,
                           itemBuilder: (context, index) {
                             final filter = _filters[index];
@@ -219,158 +1174,306 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                             );
                           },
                         ),
+                        ),
+                          ],
+                        ),
                       ),
                       
                       // History list
-                      Expanded(
-                        child: filteredHistory.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.history,
-                                      size: 64,
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      '운세 기록이 없습니다',
-                                      style: TextStyle(
-                                        fontSize: 18 * fontScale,
-                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      filteredHistory.isEmpty
+                            ? SliverFillRemaining(
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.history,
+                                        size: 64,
+                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        '운세 기록이 없습니다',
+                                        style: TextStyle(
+                                          fontSize: 18 * fontScale,
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               )
-                            : ListView.builder(
+                            : SliverPadding(
                                 padding: const EdgeInsets.all(16),
-                                itemCount: filteredHistory.length,
-                                itemBuilder: (context, index) {
+                                sliver: SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
                                   final item = filteredHistory[index];
                                   final color = _getFortuneColor(item.fortuneType);
                                   
+                                  // Score from summary if available
+                                  final score = item.summary['score'] as int? ?? 0;
+                                  final luckyItems = item.summary['luckyItems'] as Map<String, dynamic>?;
+                                  final keywords = item.summary['keywords'] as List<dynamic>?;
+                                  
                                   return Padding(
-                                    padding: const EdgeInsets.only(bottom: 12),
+                                    padding: const EdgeInsets.only(bottom: 16),
                                     child: GestureDetector(
                                       onTap: () {
-                                        // Navigate to detail view if needed
-                                        Toast.show(
-                                          context,
-                                          message: '상세 보기는 준비 중입니다',
-                                          type: ToastType.info,
-                                        );
+                                        _showFortuneDetail(context, item);
                                       },
-                                      child: GlassContainer(
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            color.withValues(alpha: 0.1),
-                                            color.withValues(alpha: 0.05),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              color.withValues(alpha: 0.15),
+                                              color.withValues(alpha: 0.05),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: color.withValues(alpha: 0.2),
+                                            width: 1.5,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: color.withValues(alpha: 0.1),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
                                           ],
                                         ),
-                                        child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Row(
-                                          children: [
-                                            // Icon
-                                            Container(
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                color: color.withValues(alpha: 0.2),
-                                                borderRadius: BorderRadius.circular(25),
-                                              ),
-                                              child: Center(
-                                                child: Text(
-                                                  _getFortuneIcon(item.fortuneType),
-                                                  style: TextStyle(fontSize: 24),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            
-                                            // Content
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    item.title,
-                                                    style: TextStyle(
-                                                      fontSize: 16 * fontScale,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    DateFormat('yyyy년 MM월 dd일 HH:mm').format(item.createdAt),
-                                                    style: TextStyle(
-                                                      fontSize: 12 * fontScale,
-                                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                                    ),
-                                                  ),
-                                                  if (item.summary.isNotEmpty) ...[
-                                                    const SizedBox(height: 8),
-                                                    Text(
-                                                      item.summary['brief'] ?? '',
-                                                      style: TextStyle(
-                                                        fontSize: 14 * fontScale,
-                                                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                                                      ),
-                                                      maxLines: 2,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ],
-                                                ],
-                                              ),
-                                            ),
-                                            
-                                            // Token info
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                                                    borderRadius: BorderRadius.circular(12),
-                                                  ),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.token,
-                                                        size: 14,
-                                                        color: theme.colorScheme.primary,
-                                                      ),
-                                                      const SizedBox(width: 4),
-                                                      Text(
-                                                        '${item.tokenUsed}',
-                                                        style: TextStyle(
-                                                          fontSize: 12 * fontScale,
-                                                          fontWeight: FontWeight.bold,
-                                                          color: theme.colorScheme.primary,
-                                                        ),
-                                                      ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(20),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              // Header with score
+                                              Container(
+                                                padding: const EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      color.withValues(alpha: 0.3),
+                                                      color.withValues(alpha: 0.15),
                                                     ],
                                                   ),
                                                 ),
-                                                const SizedBox(height: 8),
-                                                Icon(
-                                                  Icons.chevron_right,
-                                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                                child: Row(
+                                                  children: [
+                                                    // Icon and title
+                                                    Container(
+                                                      width: 48,
+                                                      height: 48,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white.withValues(alpha: 0.9),
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: color.withValues(alpha: 0.3),
+                                                            blurRadius: 8,
+                                                            offset: const Offset(0, 2),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          _getFortuneIcon(item.fortuneType),
+                                                          style: const TextStyle(fontSize: 24),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            item.title,
+                                                            style: TextStyle(
+                                                              fontSize: 16 * fontScale,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 2),
+                                                          Text(
+                                                            DateFormat('M월 d일 (E) HH:mm', 'ko').format(item.createdAt),
+                                                            style: TextStyle(
+                                                              fontSize: 12 * fontScale,
+                                                              color: Colors.white.withValues(alpha: 0.8),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    // Score gauge
+                                                    if (score > 0)
+                                                      Stack(
+                                                        alignment: Alignment.center,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 60,
+                                                            height: 60,
+                                                            child: CircularProgressIndicator(
+                                                              value: score / 100,
+                                                              strokeWidth: 6,
+                                                              backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                                                _getScoreColor(score),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            '$score',
+                                                            style: TextStyle(
+                                                              fontSize: 18 * fontScale,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ],
+                                              ),
+                                              
+                                              // Content
+                                              Padding(
+                                                padding: const EdgeInsets.all(16),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Keywords or summary
+                                                    if (keywords != null && keywords.isNotEmpty) ...[
+                                                      Wrap(
+                                                        spacing: 8,
+                                                        runSpacing: 8,
+                                                        children: keywords.take(3).map((keyword) {
+                                                          return Container(
+                                                            padding: const EdgeInsets.symmetric(
+                                                              horizontal: 12,
+                                                              vertical: 6,
+                                                            ),
+                                                            decoration: BoxDecoration(
+                                                              color: color.withValues(alpha: 0.1),
+                                                              borderRadius: BorderRadius.circular(16),
+                                                              border: Border.all(
+                                                                color: color.withValues(alpha: 0.3),
+                                                              ),
+                                                            ),
+                                                            child: Text(
+                                                              keyword.toString(),
+                                                              style: TextStyle(
+                                                                fontSize: 12 * fontScale,
+                                                                color: color,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                      const SizedBox(height: 12),
+                                                    ] else if (item.summary['brief'] != null) ...[
+                                                      Text(
+                                                        item.summary['brief'] ?? '',
+                                                        style: TextStyle(
+                                                          fontSize: 14 * fontScale,
+                                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                                                          height: 1.4,
+                                                        ),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      ),
+                                                      const SizedBox(height: 12),
+                                                    ],
+                                                    
+                                                    // Lucky items
+                                                    if (luckyItems != null && luckyItems.isNotEmpty)
+                                                      Row(
+                                                        children: [
+                                                          if (luckyItems['color'] != null)
+                                                            _buildLuckyItem(
+                                                              icon: Icons.palette,
+                                                              label: '색상',
+                                                              value: luckyItems['color'],
+                                                              color: color,
+                                                              fontScale: fontScale,
+                                                            ),
+                                                          if (luckyItems['number'] != null)
+                                                            _buildLuckyItem(
+                                                              icon: Icons.looks_one,
+                                                              label: '숫자',
+                                                              value: luckyItems['number'].toString(),
+                                                              color: color,
+                                                              fontScale: fontScale,
+                                                            ),
+                                                        ],
+                                                      ),
+                                                    
+                                                    // Bottom info
+                                                    const SizedBox(height: 8),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        // Category badge
+                                                        Container(
+                                                          padding: const EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 4,
+                                                          ),
+                                                          decoration: BoxDecoration(
+                                                            color: theme.colorScheme.surface,
+                                                            borderRadius: BorderRadius.circular(12),
+                                                            border: Border.all(
+                                                              color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            FortuneTypeNames.getCategory(item.fortuneType),
+                                                            style: TextStyle(
+                                                              fontSize: 11 * fontScale,
+                                                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        // Token info
+                                                        Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.toll,
+                                                              size: 16,
+                                                              color: theme.colorScheme.primary,
+                                                            ),
+                                                            const SizedBox(width: 4),
+                                                            Text(
+                                                              '${item.tokenUsed} 토큰',
+                                                              style: TextStyle(
+                                                                fontSize: 12 * fontScale,
+                                                                color: theme.colorScheme.primary,
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
+                                  );
+                                    },
+                                    childCount: filteredHistory.length,
                                   ),
-                                );
-                                },
+                                ),
                               ),
-                      ),
                     ],
                   );
                 },

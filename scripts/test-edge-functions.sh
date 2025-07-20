@@ -82,7 +82,7 @@ test_endpoint "Zodiac Fortune" "POST" "/fortune-zodiac" '{
 echo "=== Payment Tests ==="
 test_endpoint "Verify Purchase" "POST" "/payment-verify-purchase" '{
     "platform": "ios",
-    "productId": "com.fortune.tokens.small",
+    "productId": "com.beyond.fortune.tokens10",
     "transactionId": "test-transaction-123",
     "transactionReceipt": "dummy-receipt"
 }'

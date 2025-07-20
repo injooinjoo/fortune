@@ -5,12 +5,26 @@ import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
+import '../../../../shared/components/token_insufficient_modal.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../domain/entities/fortune.dart';
+import '../../../../data/models/user_profile.dart';
 import '../../../../core/theme/app_theme_extensions.dart';
+import '../../../../core/constants/fortune_type_names.dart';
+import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/utils/haptic_utils.dart';
+import '../../../../core/utils/logger.dart';
 import '../../../../presentation/screens/ad_loading_screen.dart';
+import '../../../../presentation/widgets/fortune_explanation_bottom_sheet.dart';
+import '../../../../presentation/widgets/user_info_visualization.dart';
+import '../../../../presentation/providers/providers.dart';
+import '../../../../presentation/providers/user_statistics_provider.dart';
+import '../../../../presentation/providers/soul_animation_provider.dart';
+import '../../../../core/constants/soul_rates.dart';
+import '../../../../shared/components/soul_earn_animation.dart';
+import '../../../../shared/components/soul_consume_animation.dart';
 
 abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final String title;
@@ -19,6 +33,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final bool requiresUserInfo;
   final bool showShareButton;
   final bool showFontSizeSelector;
+  final Map<String, dynamic>? initialParams;
 
   const BaseFortunePage({
     Key? key,
@@ -28,6 +43,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
     this.requiresUserInfo = true,
     this.showShareButton = true,
     this.showFontSizeSelector = true,
+    this.initialParams,
   }) : super(key: key);
 }
 
@@ -36,18 +52,28 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   Fortune? _fortune;
   bool _isLoading = false;
   String? _error;
+  Map<String, dynamic>? _userParams;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  UserProfile? _userProfile;
   
   // Protected getters for subclasses
   Fortune? get fortune => _fortune;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  UserProfile? get userProfile => _userProfile;
 
   @override
   void initState() {
     super.initState();
+    Logger.info('🎯 [BaseFortunePage] Initializing fortune page', {
+      'fortuneType': widget.fortuneType,
+      'title': widget.title,
+      'requiresUserInfo': widget.requiresUserInfo,
+      'hasInitialParams': widget.initialParams != null,
+    });
+    
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -66,6 +92,56 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       parent: _animationController,
       curve: Curves.easeOutBack,
     ));
+    
+    // Load user profile if authenticated
+    _loadUserProfile();
+    
+    // Check if we should auto-generate fortune
+    final autoGenerate = widget.initialParams?['autoGenerate'] as bool? ?? false;
+    final fortuneParams = widget.initialParams?['fortuneParams'] as Map<String, dynamic>?;
+    
+    // If autoGenerate flag is set or initial params with fortuneParams are provided, generate fortune immediately
+    if (autoGenerate || fortuneParams != null) {
+      Logger.debug('🚀 [BaseFortunePage] Auto-generating fortune', {
+        'autoGenerate': autoGenerate,
+        'hasFortuneParams': fortuneParams != null,
+        'initialParams': widget.initialParams,
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        generateFortuneAction(params: fortuneParams ?? widget.initialParams);
+      });
+    }
+  }
+  
+  Future<void> _loadUserProfile() async {
+    try {
+      Logger.debug('👤 [BaseFortunePage] Loading user profile');
+      final userProfileAsync = ref.read(userProfileProvider);
+      userProfileAsync.when(
+        data: (profile) {
+          if (mounted) {
+            Logger.debug('✅ [BaseFortunePage] User profile loaded', {
+              'hasProfile': profile != null,
+              'userName': profile?.name,
+            });
+            setState(() {
+              _userProfile = profile;
+            });
+          }
+        },
+        error: (error, stackTrace) {
+          Logger.warning('⚠️ [BaseFortunePage] Failed to load user profile', error);
+          // Silently handle error - user profile is optional
+        },
+        loading: () {
+          Logger.debug('⏳ [BaseFortunePage] User profile is loading');
+          // Profile is loading
+        },
+      );
+    } catch (e) {
+      Logger.error('❌ [BaseFortunePage] Error loading user profile', e);
+      // Silently handle any errors
+    }
   }
 
   @override
@@ -79,10 +155,54 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
 
   // Common method to handle fortune generation - made protected for subclasses
   @protected
-  Future<void> generateFortuneAction() async {
+  Future<void> generateFortuneAction({Map<String, dynamic>? params}) async {
+    final stopwatch = Logger.startTimer('Fortune Generation - ${widget.fortuneType}');
+    
+    Logger.info('🎲 [BaseFortunePage] Starting fortune generation', {
+      'fortuneType': widget.fortuneType,
+      'hasParams': params != null,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+    
     // Check if user has unlimited access (premium)
     final tokenState = ref.read(tokenProvider);
+    final tokenNotifier = ref.read(tokenProvider.notifier);
     final isPremium = tokenState.hasUnlimitedAccess;
+    
+    Logger.debug('💎 [BaseFortunePage] User premium status', {
+      'isPremium': isPremium,
+      'currentSouls': tokenState.balance?.remainingTokens ?? 0,
+    });
+    
+    // 프리미엄 운세인 경우 영혼 확인
+    if (!isPremium && SoulRates.isPremiumFortune(widget.fortuneType)) {
+      final canAccess = tokenNotifier.canAccessFortune(widget.fortuneType);
+      final requiredSouls = -SoulRates.getSoulAmount(widget.fortuneType);
+      
+      Logger.debug('💰 [BaseFortunePage] Soul check for premium fortune', {
+        'fortuneType': widget.fortuneType,
+        'requiredSouls': requiredSouls,
+        'canAccess': canAccess,
+      });
+      
+      if (!canAccess) {
+        Logger.warning('⛔ [BaseFortunePage] Insufficient souls for fortune', {
+          'fortuneType': widget.fortuneType,
+          'requiredSouls': requiredSouls,
+          'currentSouls': tokenState.balance?.remainingTokens ?? 0,
+        });
+        
+        // 영혼 부족 모달 표시
+        HapticUtils.warning();
+        await TokenInsufficientModal.show(
+          context: context,
+          requiredTokens: requiredSouls,
+          fortuneType: widget.fortuneType,
+        );
+        Logger.endTimer('Fortune Generation - ${widget.fortuneType}', stopwatch);
+        return;
+      }
+    }
     
     setState(() {
       _isLoading = true;
@@ -90,48 +210,103 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     });
 
     try {
-      final params = await getFortuneParams();
-      if (params == null && widget.requiresUserInfo) {
-        Toast.warning(context, '운세를 보려면 정보를 입력해주세요');
-        setState(() => _isLoading = false);
-        return;
-      }
+      // Use provided params or get default params
+      final fortuneParams = params ?? await getFortuneParams() ?? {};
+      
+      Logger.debug('📝 [BaseFortunePage] Fortune parameters prepared', {
+        'fortuneType': widget.fortuneType,
+        'paramKeys': fortuneParams.keys.toList(),
+      });
+      
+      // Store user params for visualization
+      _userParams = fortuneParams;
 
-      // Show ad loading screen (or premium loading for premium users)
-      final fortuneData = await Navigator.push<Fortune?>(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AdLoadingScreen(
-            fortuneType: widget.fortuneType,
-            fortuneTitle: widget.title,
-            isPremium: isPremium,
-            onComplete: () {
-              // This will be called after ad completion and fortune generation
-              Navigator.pop(context, _fortune);
-            },
-            onSkip: () {
-              Navigator.pop(context);
-              // Navigate to premium page
-              Navigator.pushNamed(context, '/premium');
-            },
-            fetchData: () async {
-              final fortune = await generateFortune(params ?? {});
-              setState(() {
-                _fortune = fortune;
-              });
-              return fortune;
-            },
-            onAdComplete: isPremium ? null : () async {
-              // Reward tokens for watching ad (free users only)
-              await ref.read(tokenProvider.notifier).rewardTokensForAd(
-                fortuneType: widget.fortuneType,
-                rewardAmount: 1,
+      // Generate fortune directly without showing ad screen
+      // (Ad screen is now shown before navigating to this page)
+      Logger.debug('🔮 [BaseFortunePage] Calling generateFortune implementation');
+      final fortuneStopwatch = Logger.startTimer('API Call - ${widget.fortuneType}');
+      
+      final fortune = await generateFortune(fortuneParams);
+      
+      Logger.endTimer('API Call - ${widget.fortuneType}', fortuneStopwatch);
+      Logger.info('✨ [BaseFortunePage] Fortune generated successfully', {
+        'fortuneType': widget.fortuneType,
+        'fortuneId': fortune.id,
+        'overallScore': fortune.overallScore,
+        'hasDescription': fortune.description?.isNotEmpty ?? false,
+        'luckyItemsCount': fortune.luckyItems?.length ?? 0,
+      });
+      
+      setState(() {
+        _fortune = fortune;
+      });
+      
+      // Track fortune access in statistics
+      final currentUser = ref.read(authStateProvider).value;
+      if (currentUser != null) {
+        Logger.debug('📊 [BaseFortunePage] Updating user statistics');
+        try {
+          await ref.read(userStatisticsNotifierProvider.notifier)
+              .incrementFortuneCount(widget.fortuneType);
+          Logger.debug('✅ [BaseFortunePage] Statistics updated successfully');
+        } catch (e) {
+          Logger.error('❌ [BaseFortunePage] Failed to update statistics', e);
+        }
+        
+        // Also add to recent fortunes
+        ref.read(recentFortunesProvider.notifier).addFortune(
+          widget.fortuneType,
+          widget.title,
+        );
+        
+        // Add to storage service for offline access
+        final storageService = ref.read(storageServiceProvider);
+        await storageService.addRecentFortune(
+          widget.fortuneType,
+          widget.title,
+        );
+        Logger.debug('💾 [BaseFortunePage] Fortune saved to recent history');
+      }
+      
+      // 영혼 시스템 처리
+      // 프리미엄 회원이 아닌 경우에만 영혼 처리
+      if (!isPremium) {
+        Logger.debug('💫 [BaseFortunePage] Processing soul transaction');
+        final result = await ref.read(tokenProvider.notifier).processSoulForFortune(
+          widget.fortuneType,
+        );
+        
+        final soulAmount = SoulRates.getSoulAmount(widget.fortuneType);
+        Logger.debug('💫 [BaseFortunePage] Soul transaction result', {
+          'success': result,
+          'soulAmount': soulAmount,
+          'fortuneType': widget.fortuneType,
+        });
+        
+        // 애니메이션 표시
+        if (result && mounted) {
+          // 약간의 딜레이 후 애니메이션 표시
+          await Future.delayed(const Duration(milliseconds: 500));
+          
+          if (mounted) {
+            if (soulAmount > 0) {
+              Logger.debug('🎁 [BaseFortunePage] Showing soul earn animation', {'amount': soulAmount});
+              // 영혼 획득 애니메이션 (무료 운세)
+              SoulEarnAnimation.show(
+                context: context,
+                soulAmount: soulAmount,
               );
-            },
-          ),
-          fullscreenDialog: true,
-        ),
-      );
+            } else if (soulAmount < 0) {
+              Logger.debug('💸 [BaseFortunePage] Showing soul consume animation', {'amount': -soulAmount});
+              // 영혼 소비 애니메이션 (프리미엄 운세)
+              SoulConsumeAnimation.show(
+                context: context,
+                soulAmount: -soulAmount,
+              );
+            }
+          }
+        }
+      }
 
       setState(() {
         _isLoading = false;
@@ -140,7 +315,16 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       // Success haptic feedback
       HapticUtils.success();
       _animationController.forward();
-    } catch (e) {
+      
+      Logger.endTimer('Fortune Generation - ${widget.fortuneType}', stopwatch);
+      Logger.info('🎉 [BaseFortunePage] Fortune generation completed successfully', {
+        'fortuneType': widget.fortuneType,
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
+      });
+    } catch (e, stackTrace) {
+      Logger.error('❌ [BaseFortunePage] Fortune generation failed', e, stackTrace);
+      Logger.endTimer('Fortune Generation - ${widget.fortuneType}', stopwatch);
+      
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -156,14 +340,24 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     return {};
   }
 
-  // Common UI for input form - override if needed
+  // Common UI for input form - deprecated, use bottom sheet instead
+  @Deprecated('설정 폼은 FortuneExplanationBottomSheet에서 처리합니다')
   Widget buildInputForm() {
     return const SizedBox.shrink();
   }
 
   // Common UI for fortune result
   Widget buildFortuneResult() {
-    if (_fortune == null) return const SizedBox.shrink();
+    if (_fortune == null) {
+      Logger.debug('🚫 [BaseFortunePage] buildFortuneResult called but fortune is null');
+      return const SizedBox.shrink();
+    }
+
+    Logger.debug('🏗️ [BaseFortunePage] Building fortune result UI', {
+      'fortuneType': widget.fortuneType,
+      'fortuneId': _fortune?.id,
+      'hasUserParams': _userParams != null,
+    });
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -173,6 +367,14 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Add user info visualization if params exist
+              if (_userParams != null && _userParams!.isNotEmpty) ...[
+                UserInfoVisualization(
+                  userInfo: _userParams!,
+                  fortuneType: widget.fortuneType,
+                ),
+                const SizedBox(height: 20),
+              ],
               _buildOverallScore(),
               const SizedBox(height: 16),
               _buildScoreBreakdown(),
@@ -198,31 +400,71 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  scoreColor.withValues(alpha: 0.2),
-                  scoreColor.withValues(alpha: 0.05),
-                ],
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      scoreColor.withValues(alpha: 0.2),
+                      scoreColor.withValues(alpha: 0.05),
+                    ],
+                  ),
+                  border: Border.all(
+                    color: scoreColor.withValues(alpha: 0.3),
+                    width: 3,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '$score점',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                          color: scoreColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
               ),
-              border: Border.all(
-                color: scoreColor.withValues(alpha: 0.3),
-                width: 3,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '$score점',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: scoreColor,
-                      fontWeight: FontWeight.bold,
+              Positioned(
+                top: -8,
+                right: -8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.help_outline,
+                      color: Colors.white,
+                      size: 20,
                     ),
+                    onPressed: () {
+                      HapticUtils.lightImpact();
+                      FortuneExplanationBottomSheet.show(
+                        context,
+                        fortuneType: widget.fortuneType,
+                        fortuneData: {
+                          'score': score,
+                          'luckyItems': _fortune?.luckyItems,
+                          'recommendations': _fortune?.recommendations,
+                        },
+                      );
+                    },
+                    tooltip: '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: 16),
           Text(
@@ -356,9 +598,33 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '상세 운세',
-            style: Theme.of(context).textTheme.headlineSmall,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '상세 운세',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.help_outline,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  HapticUtils.lightImpact();
+                  FortuneExplanationBottomSheet.show(
+                    context,
+                    fortuneType: widget.fortuneType,
+                    fortuneData: {
+                      'score': _fortune?.overallScore,
+                      'luckyItems': _fortune?.luckyItems,
+                      'recommendations': _fortune?.recommendations,
+                    },
+                  );
+                },
+                tooltip: '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Text(
@@ -524,16 +790,46 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          // Hero image at the top
+          Hero(
+            tag: 'fortune-hero-${widget.fortuneType}',
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: SizedBox(
+                height: 200,
+                width: double.infinity,
+                child: Image.asset(
+                  FortuneCardImages.getRandomThumbnail(widget.fortuneType),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Fallback gradient if image fails
+                    return Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
+                            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
+                          ],
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 64,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           GlassCard(
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 64,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(height: 16),
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.headlineMedium,
@@ -547,11 +843,16 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       ),
                   textAlign: TextAlign.center,
                 ),
+                const SizedBox(height: 24),
+                Text(
+                  '아래 버튼을 눌러 운세를 확인해보세요',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 24),
-          buildInputForm(),
         ],
       ),
     );
@@ -600,7 +901,33 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: generateFortuneAction,
+          onPressed: () {
+            Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button', {
+              'fortuneType': widget.fortuneType,
+              'title': widget.title,
+              'hasUserProfile': _userProfile != null,
+              'requiresUserInfo': widget.requiresUserInfo,
+              'timestamp': DateTime.now().toIso8601String(),
+            });
+            
+            Logger.debug('📋 [BaseFortunePage] Opening fortune explanation bottom sheet', {
+              'fortuneType': widget.fortuneType,
+            });
+            
+            // Show bottom sheet for fortune settings
+            FortuneExplanationBottomSheet.show(
+              context,
+              fortuneType: widget.fortuneType,
+              fortuneData: null,
+              onFortuneButtonPressed: () {
+                Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed', {
+                  'fortuneType': widget.fortuneType,
+                  'timestamp': DateTime.now().toIso8601String(),
+                });
+                // This will be handled by the bottom sheet
+              },
+            );
+          },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),

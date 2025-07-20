@@ -400,7 +400,7 @@ class CustomerSupportPage extends ConsumerWidget {
   Future<void> _rateApp() async {
     // TODO: 실제 앱스토어 URL로 변경
     final Uri appStoreUri = Uri.parse('https://apps.apple.com/app/id123456789');
-    final Uri playStoreUri = Uri.parse('https://play.google.com/store/apps/details?id=com.fortune.app');
+    final Uri playStoreUri = Uri.parse('https://play.google.com/store/apps/details?id=com.beyond.fortune_flutter');
     
     // Platform check and launch appropriate store
   }

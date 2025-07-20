@@ -15,6 +15,10 @@ class AppTheme {
   static const Color borderColor = Color(0xFFE5E7EB);
   static const Color textColor = Color(0xFF1F2937);
   static const Color textSecondaryColor = Color(0xFF6B7280);
+  static const Color dividerColor = borderColor; // Added for compatibility
+
+  // Added for theme mode checking
+  static bool isDarkMode = false;
 
   static const double radiusSmall = 8.0;
   static const double radiusMedium = 16.0;
@@ -54,7 +58,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      fontFamily: 'SF Pro Text', // Instagram uses SF Pro on iOS
+      fontFamily: 'NotoSansKR',
       textTheme: TextTheme(
         displayLarge: TextStyle(
           fontSize: 32,
@@ -187,7 +191,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      fontFamily: '.SF Pro Display',
+      fontFamily: 'NotoSansKR',
       textTheme: const TextTheme(
         displayLarge: TextStyle(
           fontSize: 32,

@@ -76,13 +76,27 @@ case "$1" in
         echo "Running integration tests..."
         echo -e "${YELLOW}Note: Integration tests require a device or emulator${NC}"
         
-        # Check if Chrome is available for web tests
-        if flutter devices | grep -q "Chrome"; then
-            flutter test integration_test/app_test.dart -d chrome
+        # Check if specific test file is provided
+        if [ -n "$2" ]; then
+            echo -e "${YELLOW}Running specific integration test: $2${NC}"
+            # Check if Chrome is available for web tests
+            if flutter devices | grep -q "Chrome"; then
+                flutter test integration_test/$2 -d chrome
+            else
+                echo -e "${RED}No Chrome device found. Please ensure Chrome is installed.${NC}"
+                echo "Running on available device..."
+                flutter test integration_test/$2
+            fi
         else
-            echo -e "${RED}No Chrome device found. Please ensure Chrome is installed.${NC}"
-            echo "Running on available device..."
-            flutter test integration_test/app_test.dart
+            echo -e "${YELLOW}Running all integration tests...${NC}"
+            # Check if Chrome is available for web tests
+            if flutter devices | grep -q "Chrome"; then
+                flutter test integration_test/ -d chrome
+            else
+                echo -e "${RED}No Chrome device found. Please ensure Chrome is installed.${NC}"
+                echo "Running on available device..."
+                flutter test integration_test/
+            fi
         fi
         ;;
     "coverage")
@@ -131,13 +145,18 @@ case "$1" in
         echo "Usage: ./run_test.sh [command]"
         echo ""
         echo "Commands:"
-        echo "  unit        - Run unit tests only"
-        echo "  widget      - Run widget tests only"
-        echo "  integration - Run integration tests"
-        echo "  coverage    - Run all tests with coverage report"
-        echo "  watch       - Run tests in watch mode"
-        echo "  ci          - Run tests for CI/CD pipeline"
-        echo "  help        - Show this help message"
+        echo "  unit            - Run unit tests only"
+        echo "  widget          - Run widget tests only"
+        echo "  integration     - Run all integration tests"
+        echo "  integration <file> - Run specific integration test file"
+        echo "  coverage        - Run all tests with coverage report"
+        echo "  watch           - Run tests in watch mode"
+        echo "  ci              - Run tests for CI/CD pipeline"
+        echo "  help            - Show this help message"
+        echo ""
+        echo "Examples:"
+        echo "  ./run_test.sh integration                      # Run all integration tests"
+        echo "  ./run_test.sh integration auth_flow_test.dart  # Run specific test"
         echo ""
         echo "If no command is specified, all tests will be run."
         ;;

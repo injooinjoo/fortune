@@ -10,6 +10,7 @@ class UserProfile extends Equatable {
   final String? gender;
   final String? mbtiType;
   final String? zodiacSign;
+  final String? chineseZodiac;
   final String? profileImageUrl;
   final Map<String, dynamic>? preferences;
   final int tokenBalance;
@@ -26,6 +27,7 @@ class UserProfile extends Equatable {
     this.gender,
     this.mbtiType,
     this.zodiacSign,
+    this.chineseZodiac,
     this.profileImageUrl,
     this.preferences,
     this.tokenBalance = 0,
@@ -35,22 +37,27 @@ class UserProfile extends Equatable {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      id: json['id'],
-      userId: json['user_id'],
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phone_number'],
+      id: json['id'] as String? ?? '',
+      userId: json['user_id'] as String? ?? json['id'] as String? ?? '',
+      name: json['name'] as String?,
+      email: json['email'] as String?,
+      phoneNumber: json['phone_number'] as String?,
       birthDate: json['birth_date'] != null 
           ? DateTime.parse(json['birth_date']) 
           : null,
-      gender: json['gender'],
-      mbtiType: json['mbti_type'],
-      zodiacSign: json['zodiac_sign'],
-      profileImageUrl: json['profile_image_url'],
-      preferences: json['preferences'],
-      tokenBalance: json['token_balance'] ?? 0,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      gender: json['gender'] as String?,
+      mbtiType: json['mbti_type'] as String?,
+      zodiacSign: json['zodiac_sign'] as String?,
+      chineseZodiac: json['chinese_zodiac'] as String?,
+      profileImageUrl: json['profile_image_url'] as String?,
+      preferences: json['preferences'] as Map<String, dynamic>?,
+      tokenBalance: json['token_balance'] as int? ?? 0,
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at']) 
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.parse(json['updated_at']) 
+          : DateTime.now(),
     );
   }
 
@@ -65,6 +72,7 @@ class UserProfile extends Equatable {
       'gender': gender,
       'mbti_type': mbtiType,
       'zodiac_sign': zodiacSign,
+      'chinese_zodiac': chineseZodiac,
       'profile_image_url': profileImageUrl,
       'preferences': preferences,
       'token_balance': tokenBalance,
@@ -72,6 +80,9 @@ class UserProfile extends Equatable {
       'updated_at': updatedAt.toIso8601String(),
     };
   }
+
+  // Check if user has premium access (temporary compatibility method)
+  bool get isPremiumActive => false;
 
   UserProfile copyWith({
     String? id,
@@ -83,6 +94,7 @@ class UserProfile extends Equatable {
     String? gender,
     String? mbtiType,
     String? zodiacSign,
+    String? chineseZodiac,
     String? profileImageUrl,
     Map<String, dynamic>? preferences,
     int? tokenBalance,
@@ -99,6 +111,7 @@ class UserProfile extends Equatable {
       gender: gender ?? this.gender,
       mbtiType: mbtiType ?? this.mbtiType,
       zodiacSign: zodiacSign ?? this.zodiacSign,
+      chineseZodiac: chineseZodiac ?? this.chineseZodiac,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       preferences: preferences ?? this.preferences,
       tokenBalance: tokenBalance ?? this.tokenBalance,
@@ -118,6 +131,7 @@ class UserProfile extends Equatable {
     gender,
     mbtiType,
     zodiacSign,
+    chineseZodiac,
     profileImageUrl,
     preferences,
     tokenBalance,

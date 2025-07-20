@@ -25,10 +25,10 @@ class FortuneBottomNavigationBar extends StatelessWidget {
       route: '/fortune',
     ),
     _NavItem(
-      icon: Icons.dashboard_outlined,
-      selectedIcon: Icons.dashboard_rounded,
-      label: '피드',
-      route: '/feed',
+      icon: Icons.trending_up,
+      selectedIcon: Icons.trending_up,
+      label: '트렌드',
+      route: '/trend',
     ),
     _NavItem(
       icon: Icons.stars_outlined,

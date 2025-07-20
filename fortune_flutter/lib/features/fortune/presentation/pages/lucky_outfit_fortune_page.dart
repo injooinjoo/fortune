@@ -82,8 +82,8 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
   void _loadUserProfile() {
     final profileAsync = ref.read(userProfileProvider);
     final profile = profileAsync.value;
-    if (profile?.birthdate != null) {
-      _zodiacSign = _getZodiacSign(profile!.birthdate!);
+    if (profile?.birthDate != null) {
+      _zodiacSign = _getZodiacSign(profile!.birthDate!);
     }
   }
   

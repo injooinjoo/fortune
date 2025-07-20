@@ -29,22 +29,26 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   final Map<String, SocialProviderInfo> _providers = {
     'google': SocialProviderInfo(
       name: 'Google',
-      icon: 'assets/icons/google.png',
+      iconType: SocialIconType.network,
+      iconData: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
       color: const Color(0xFF4285F4),
     ),
     'apple': SocialProviderInfo(
       name: 'Apple',
-      icon: 'assets/icons/apple.png', 
+      iconType: SocialIconType.icon,
+      iconData: Icons.apple,
       color: Colors.black,
     ),
     'kakao': SocialProviderInfo(
       name: 'Kakao',
-      icon: 'assets/icons/kakao.png',
+      iconType: SocialIconType.text,
+      iconData: 'K',
       color: const Color(0xFFFEE500),
     ),
     'naver': SocialProviderInfo(
       name: 'Naver',
-      icon: 'assets/icons/naver.png',
+      iconType: SocialIconType.text,
+      iconData: 'N',
       color: const Color(0xFF03C75A),
     ),
   };
@@ -223,18 +227,7 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
-              child: Image.asset(
-                providerInfo.icon,
-                width: 24,
-                height: 24,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.link,
-                    color: providerInfo.color,
-                    size: 24,
-                  );
-                },
-              ),
+              child: _buildProviderIcon(providerInfo),
             ),
           ),
           const SizedBox(width: 12),
@@ -296,6 +289,51 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
     );
   }
   
+  Widget _buildProviderIcon(SocialProviderInfo providerInfo) {
+    switch (providerInfo.iconType) {
+      case SocialIconType.network:
+        return Image.network(
+          providerInfo.iconData as String,
+          width: 24,
+          height: 24,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.link,
+              color: providerInfo.color,
+              size: 24,
+            );
+          },
+        );
+      case SocialIconType.icon:
+        return Icon(
+          providerInfo.iconData as IconData,
+          size: 24,
+          color: providerInfo.iconType == SocialIconType.icon && providerInfo.name == 'Apple' 
+              ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+              : providerInfo.color,
+        );
+      case SocialIconType.text:
+        return Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: providerInfo.color,
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              providerInfo.iconData as String,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: providerInfo.name == 'Kakao' ? Colors.black : Colors.white,
+              ),
+            ),
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -326,14 +364,22 @@ class _SocialAccountsSectionState extends State<SocialAccountsSection> {
   }
 }
 
+enum SocialIconType {
+  network,
+  icon,
+  text,
+}
+
 class SocialProviderInfo {
   final String name;
-  final String icon;
+  final SocialIconType iconType;
+  final dynamic iconData;
   final Color color;
   
   const SocialProviderInfo({
     required this.name,
-    required this.icon,
+    required this.iconType,
+    required this.iconData,
     required this.color,
   });
 }

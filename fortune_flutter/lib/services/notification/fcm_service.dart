@@ -8,7 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
-import '../../../firebase_options.dart';
+// import '../../../firebase_options.dart'; // Firebase options not available
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
 @pragma('vm:entry-point')
@@ -86,9 +86,10 @@ class FCMService {
   Future<void> initialize() async {
     try {
       // Firebase 초기화
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
+      // TODO: Firebase options not available
+      // await Firebase.initializeApp(
+      //   options: DefaultFirebaseOptions.currentPlatform,
+      // );
       
       // 백그라운드 메시지 핸들러 설정
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -116,7 +117,7 @@ class FCMService {
       
       Logger.info('FCM 서비스 초기화 완료');
     } catch (e) {
-      Logger.error('FCM 초기화 실패', error: e);
+      Logger.error('FCM 초기화 실패', e);
     }
   }
   
@@ -130,9 +131,8 @@ class FCMService {
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {
-        // iOS 9 이하에서 포그라운드 알림 처리
-      },
+      // onDidReceiveLocalNotification is deprecated
+      // iOS 9 이하에서 포그라운드 알림 처리
     );
     
     // 초기화
@@ -236,7 +236,7 @@ class FCMService {
         await _sendTokenToServer(newToken);
       });
     } catch (e) {
-      Logger.error('FCM 토큰 획득 실패', error: e);
+      Logger.error('FCM 토큰 획득 실패', e);
     }
   }
   
@@ -254,7 +254,7 @@ class FCMService {
       
       Logger.info('FCM 토큰 서버 전송 완료');
     } catch (e) {
-      Logger.error('FCM 토큰 서버 전송 실패', error: e);
+      Logger.error('FCM 토큰 서버 전송 실패', e);
     }
   }
   
@@ -344,7 +344,7 @@ class FCMService {
         final data = jsonDecode(response.payload!) as Map<String, dynamic>;
         _handleNotificationTap(data);
       } catch (e) {
-        Logger.error('알림 페이로드 파싱 실패', error: e);
+        Logger.error('알림 페이로드 파싱 실패', e);
       }
     }
   }
@@ -397,7 +397,7 @@ class FCMService {
       
       Logger.info('FCM 토픽 구독 완료');
     } catch (e) {
-      Logger.error('토픽 구독 실패', error: e);
+      Logger.error('토픽 구독 실패', e);
     }
   }
   
@@ -413,7 +413,7 @@ class FCMService {
         );
       }
     } catch (e) {
-      Logger.error('알림 설정 로드 실패', error: e);
+      Logger.error('알림 설정 로드 실패', e);
     }
   }
   
@@ -434,7 +434,7 @@ class FCMService {
       
       Logger.info('알림 설정 업데이트 완료');
     } catch (e) {
-      Logger.error('알림 설정 업데이트 실패', error: e);
+      Logger.error('알림 설정 업데이트 실패', e);
     }
   }
   

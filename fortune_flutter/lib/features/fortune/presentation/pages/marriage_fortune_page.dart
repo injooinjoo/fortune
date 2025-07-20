@@ -84,6 +84,23 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
   DateTime? _birthDate;
   String? _gender;
   String? _mbti;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Pre-fill user data with profile if available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (userProfile != null) {
+        setState(() {
+          _nameController.text = userProfile!.name ?? '';
+          _birthDate = userProfile!.birthDate;
+          _gender = userProfile!.gender;
+          _mbti = userProfile!.mbtiType;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {

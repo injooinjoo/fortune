@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
@@ -8,94 +8,66 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/utils/logger.dart';
 import '../core/config/environment.dart';
+import '../core/cache/profile_cache.dart';
+import '../core/utils/performance_monitor.dart';
 
 class SocialAuthService {
   final SupabaseClient _supabase;
-  late final GoogleSignIn _googleSignIn;
+  final _profileCache = ProfileCache();
   
-  SocialAuthService(this._supabase) {
-    // Platform-specific client ID 설정
-    String? clientId;
-    if (kIsWeb) {
-      clientId = Environment.googleWebClientId;
-    } else if (!kIsWeb && Platform.isIOS) {
-      // iOS는 Info.plist에서 설정하므로 여기서는 필요 없음
-      clientId = null;
-    } else if (!kIsWeb && Platform.isAndroid) {
-      // Android는 strings.xml에서 설정하므로 여기서는 필요 없음
-      clientId = null;
-    }
-    
-    _googleSignIn = GoogleSignIn(
-      scopes: ['email', 'profile'],
-      clientId: clientId?.isNotEmpty == true ? clientId : null,
-    );
-  }
+  SocialAuthService(this._supabase);
 
-  // Google Sign In
+  // Google Sign In - Supabase OAuth 방식 사용
   Future<AuthResponse?> signInWithGoogle() async {
     try {
-      Logger.info('Starting Google Sign-In process');
+      Logger.info('Starting Google OAuth process');
       
-      // Google Sign-In 프로세스 시작
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
-      if (googleUser == null) {
-        Logger.info('User cancelled Google Sign-In');
-        return null;
-      }
-      
-      // Google 인증 정보 가져오기
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
-      final String? accessToken = googleAuth.accessToken;
-      final String? idToken = googleAuth.idToken;
-      
-      if (accessToken == null || idToken == null) {
-        throw Exception('Failed to obtain Google auth tokens');
-      }
-      
-      // Supabase에 Google 토큰으로 로그인
-      final response = await _supabase.auth.signInWithIdToken(
-        provider: OAuthProvider.google,
-        idToken: idToken,
-        accessToken: accessToken,
+      // Supabase OAuth 리다이렉트 방식 사용
+      await _supabase.auth.signInWithOAuth(
+        OAuthProvider.google,
+        redirectTo: kIsWeb ? null : 'io.supabase.fortune://login-callback/',
+        scopes: 'email',
       );
       
-      Logger.securityCheckpoint('User signed in with Google: ${response.user?.id}');
-      
-      // 사용자 프로필 업데이트
-      if (response.user != null) {
-        await _updateUserProfile(
-          userId: response.user!.id,
-          email: googleUser.email,
-          name: googleUser.displayName,
-          photoUrl: googleUser.photoUrl,
-          provider: 'google',
-        );
-      }
-      
-      return response;
+      Logger.info('Google OAuth redirect initiated');
+      // 리다이렉트 방식이므로 응답을 기다리지 않고 null 반환
+      // 실제 인증 완료는 auth callback에서 처리됨
+      return null;
     } catch (error) {
-      Logger.error('Google Sign-In failed', error);
+      Logger.error('Google OAuth failed', error);
       rethrow;
     }
   }
   
-  // Apple Sign In (iOS only)
+  // Apple Sign In
   Future<AuthResponse?> signInWithApple() async {
-    if (!kIsWeb && !Platform.isIOS && !Platform.isMacOS) {
-      throw UnsupportedError('Apple Sign-In is only available on iOS and macOS');
-    }
-    
     try {
       Logger.info('Starting Apple Sign-In process');
       
-      // Apple Sign-In 가능 여부 확인
-      final isAvailable = await SignInWithApple.isAvailable();
-      if (!isAvailable) {
-        throw Exception('Apple Sign-In is not available on this device');
+      // Use native Sign in with Apple on iOS/macOS, OAuth on other platforms
+      if (!kIsWeb && (Platform.isIOS || Platform.isMacOS)) {
+        // Check if native Apple Sign-In is available
+        final isAvailable = await SignInWithApple.isAvailable();
+        if (!isAvailable) {
+          // Fall back to OAuth if native is not available
+          return await _signInWithAppleOAuth();
+        }
+        // Native Sign in with Apple for iOS/macOS
+        return await _signInWithAppleNative();
+      } else {
+        // Use Supabase OAuth for web and Android
+        return await _signInWithAppleOAuth();
       }
+    } catch (error) {
+      Logger.error('Apple Sign-In failed', error);
+      rethrow;
+    }
+  }
+  
+  // Native Apple Sign In for iOS/macOS
+  Future<AuthResponse?> _signInWithAppleNative() async {
+    try {
+      Logger.info('Using native Apple Sign-In');
       
       // Apple Sign-In 요청
       final credential = await SignInWithApple.getAppleIDCredential(
@@ -118,24 +90,52 @@ class SocialAuthService {
       
       Logger.securityCheckpoint('User signed in with Apple: ${response.user?.id}');
       
-      // 사용자 프로필 업데이트
+      // 사용자 프로필 업데이트 (비동기로 처리)
       if (response.user != null && credential.givenName != null) {
-        await _updateUserProfile(
+        // Fire and forget - 프로필 업데이트는 백그라운드에서 처리
+        _updateUserProfile(
           userId: response.user!.id,
           email: credential.email,
           name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}'.trim(),
           provider: 'apple',
-        );
+        ).catchError((error) {
+          Logger.error('Background profile update failed', error);
+        });
       }
       
       return response;
     } catch (error) {
-      Logger.error('Apple Sign-In failed', error);
+      Logger.error('Native Apple Sign-In failed', error);
       rethrow;
     }
   }
   
-  // 사용자 프로필 업데이트
+  // OAuth Apple Sign In for web and Android
+  Future<AuthResponse?> _signInWithAppleOAuth() async {
+    try {
+      Logger.info('Using Apple OAuth sign in');
+      
+      final response = await _supabase.auth.signInWithOAuth(
+        OAuthProvider.apple,
+        redirectTo: kIsWeb 
+          ? null 
+          : 'com.beyond.fortune://auth-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+      
+      if (!response) {
+        throw Exception('Apple OAuth sign in failed');
+      }
+      
+      Logger.securityCheckpoint('Apple OAuth sign in initiated');
+      return null; // OAuth flow will handle the callback
+    } catch (error) {
+      Logger.error('Apple OAuth Sign-In failed', error);
+      rethrow;
+    }
+  }
+  
+  // 사용자 프로필 업데이트 (최적화됨)
   Future<void> _updateUserProfile({
     required String userId,
     String? email,
@@ -144,25 +144,96 @@ class SocialAuthService {
     required String provider,
   }) async {
     try {
-      // 기존 프로필 확인
-      final existingProfile = await _supabase
-          .from('user_profiles')
-          .select()
-          .eq('id', userId)
-          .maybeSingle();
+      // 프로필 데이터 준비
+      final now = DateTime.now().toIso8601String();
+      
+      // Upsert 사용으로 단일 쿼리로 처리
+      final profileData = {
+        'id': userId,
+        'email': email,
+        'updated_at': now,
+      };
+      
+      // 조건부 필드 추가
+      if (name != null) profileData['name'] = name;
+      if (photoUrl != null && provider == 'google') {
+        profileData['profile_image_url'] = photoUrl;
+      }
+      
+      // 캐시에서 먼저 확인
+      var existingProfile = _profileCache.get(userId);
+      
+      // 캐시에 없으면 DB에서 조회
+      if (existingProfile == null) {
+        existingProfile = await _supabase
+            .from('user_profiles')
+            .select('linked_providers, primary_provider, name, profile_image_url')
+            .eq('id', userId)
+            .maybeSingle();
+            
+        // 조회 결과를 캐시에 저장
+        if (existingProfile != null) {
+          _profileCache.set(userId, existingProfile);
+        }
+      }
       
       if (existingProfile == null) {
         // 새 프로필 생성
-        await _supabase.from('user_profiles').insert({
-          'id': userId,
-          'email': email,
-          'name': name,
-          'profile_image_url': photoUrl,
-          'primary_provider': provider,
-          'linked_providers': [provider],
-          'created_at': DateTime.now().toIso8601String(),
-          'updated_at': DateTime.now().toIso8601String(),
-        });
+        Logger.info('Creating new profile for user: $userId');
+        
+        try {
+          // First try with social auth columns
+          profileData.addAll({
+            'primary_provider': provider,
+            'linked_providers': jsonEncode([provider]),
+            'created_at': now,
+          });
+          
+          await _supabase.from('user_profiles').insert(profileData);
+          Logger.info('Profile created successfully with social auth columns');
+        } catch (insertError) {
+          Logger.error('Error creating profile with social auth', insertError);
+          
+          // Handle various schema issues
+          if (insertError.toString().contains('linked_providers') || 
+              insertError.toString().contains('primary_provider') ||
+              insertError.toString().contains('profile_image_url') ||
+              insertError.toString().contains('avatar_url')) {
+            Logger.warning('Schema mismatch detected, creating profile with minimal fields');
+            
+            // Create minimal profile with only essential fields
+            final minimalProfile = {
+              'id': userId,
+              'email': email,
+              'name': name ?? email?.split('@')[0] ?? 'User',
+              'created_at': now,
+              'updated_at': now,
+            };
+            
+            try {
+              await _supabase.from('user_profiles').insert(minimalProfile);
+              Logger.info('Minimal profile created successfully');
+              
+              // Try to update with additional fields separately
+              final updates = <String, dynamic>{};
+              if (photoUrl != null && provider == 'google') {
+                // Try both column names
+                try {
+                  await _supabase.from('user_profiles')
+                    .update({'profile_image_url': photoUrl})
+                    .eq('id', userId);
+                } catch (e) {
+                  Logger.warning('Could not update profile image: $e');
+                }
+              }
+            } catch (fallbackError) {
+              Logger.error('Failed to create minimal profile', fallbackError);
+              // Don't throw - allow login to continue
+            }
+          } else {
+            throw insertError;
+          }
+        }
       } else {
         // 기존 프로필 업데이트
         final updates = <String, dynamic>{
@@ -174,9 +245,15 @@ class SocialAuthService {
           updates['name'] = name;
         }
         
-        // Update profile image if not set
-        if (photoUrl != null && existingProfile['profile_image_url'] == null) {
-          updates['profile_image_url'] = photoUrl;
+        // Handle profile image update
+        if (photoUrl != null) {
+          // For Google, always update; for others, only if not set
+          final shouldUpdate = provider == 'google' || 
+            existingProfile['profile_image_url'] == null;
+          
+          if (shouldUpdate) {
+            updates['profile_image_url'] = photoUrl;
+          }
         }
         
         // Update linked providers
@@ -199,11 +276,43 @@ class SocialAuthService {
               .from('user_profiles')
               .update(updates)
               .eq('id', userId);
+              
+          // 캐시 업데이트
+          _profileCache.updateFields(userId, updates);
         }
       }
     } catch (error) {
       Logger.error('Failed to update user profile', error);
       // 프로필 업데이트 실패는 로그인을 막지 않음
+    }
+  }
+  
+  // Facebook Sign In
+  Future<AuthResponse?> signInWithFacebook() async {
+    try {
+      Logger.info('Starting Facebook Sign-In process with Supabase OAuth');
+      
+      // Supabase OAuth를 사용한 Facebook 로그인
+      final response = await _supabase.auth.signInWithOAuth(
+        OAuthProvider.facebook,
+        redirectTo: kIsWeb 
+          ? null 
+          : 'com.beyond.fortune://auth-callback',
+        authScreenLaunchMode: LaunchMode.externalApplication,
+      );
+      
+      if (!response) {
+        throw Exception('Facebook OAuth sign in failed');
+      }
+      
+      Logger.securityCheckpoint('Facebook OAuth sign in initiated');
+      
+      // OAuth 로그인은 웹브라우저를 통해 진행되며,
+      // 완료 후 앱으로 돌아올 때 Supabase가 자동으로 세션을 처리합니다.
+      return null;
+    } catch (error) {
+      Logger.error('Facebook Sign-In failed', error);
+      rethrow;
     }
   }
   
@@ -217,7 +326,7 @@ class SocialAuthService {
         OAuthProvider.kakao,
         redirectTo: kIsWeb 
           ? null 
-          : 'com.fortune.fortune://auth-callback',
+          : 'com.beyond.fortune://auth-callback',
         authScreenLaunchMode: LaunchMode.externalApplication,
       );
       
@@ -251,40 +360,44 @@ class SocialAuthService {
         return null;
       }
       
-      // Supabase 커스텀 인증 (백엔드 API 필요)
-      // 임시로 이메일/패스워드로 계정 생성 또는 로그인
-      final email = result.account.email ?? '${result.account.id}@naver.local';
-      final password = 'naver_${result.account.id}_${Environment.naverClientId}';
-      
-      AuthResponse response;
-      try {
-        // 먼저 로그인 시도
-        response = await _supabase.auth.signInWithPassword(
-          email: email,
-          password: password,
-        );
-      } catch (e) {
-        // 로그인 실패시 회원가입
-        response = await _supabase.auth.signUp(
-          email: email,
-          password: password,
-        );
+      // Get access token
+      final NaverAccessToken tokenResult = await FlutterNaverLogin.currentAccessToken;
+      if (tokenResult.accessToken == null) {
+        throw Exception('Failed to get Naver access token');
       }
       
-      Logger.securityCheckpoint('User signed in with Naver: ${response.user?.id}');
+      // Call our Edge Function to handle OAuth
+      final response = await _supabase.functions.invoke(
+        'naver-oauth',
+        body: {
+          'accessToken': tokenResult.accessToken,
+        },
+      );
       
-      // 사용자 프로필 업데이트
-      if (response.user != null) {
-        await _updateUserProfile(
-          userId: response.user!.id,
-          email: result.account.email,
-          name: result.account.name,
-          photoUrl: result.account.profileImage,
-          provider: 'naver',
-        );
+      if (response.status != 200) {
+        throw Exception('Naver OAuth failed: ${response.data}');
       }
       
-      return response;
+      final data = response.data as Map<String, dynamic>;
+      
+      // Set the session in Supabase client
+      await _supabase.auth.setSession(
+        data['refresh_token'] as String,
+      );
+      
+      // Get the current session to return as AuthResponse
+      final session = _supabase.auth.currentSession;
+      if (session == null) {
+        throw Exception('Failed to establish session');
+      }
+      
+      Logger.securityCheckpoint('User signed in with Naver: ${session.user.id}');
+      
+      // Return AuthResponse-like object
+      return AuthResponse(
+        session: session,
+        user: session.user,
+      );
     } catch (error) {
       Logger.error('Naver Sign-In failed', error);
       rethrow;
@@ -297,10 +410,8 @@ class SocialAuthService {
       // 현재 provider 확인
       final provider = await getCurrentProvider();
       
-      // Google Sign-In 로그아웃
-      if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.signOut();
-      }
+      // Google Sign-Out은 Supabase signOut이 자동으로 처리함
+      // Supabase OAuth를 사용하므로 별도의 Google Sign-Out 불필요
       
       // Kakao 로그아웃
       try {
@@ -318,6 +429,9 @@ class SocialAuthService {
       
       // Supabase 로그아웃
       await _supabase.auth.signOut();
+      
+      // 프로필 캐시 클리어
+      _profileCache.clearAll();
       
       Logger.securityCheckpoint('User signed out');
     } catch (error) {
@@ -338,9 +452,9 @@ class SocialAuthService {
   
   // Google 계정 연결 해제
   Future<void> disconnectGoogle() async {
-    if (await _googleSignIn.isSignedIn()) {
-      await _googleSignIn.disconnect();
-    }
+    // Supabase OAuth를 사용하므로 별도의 Google disconnect 불필요
+    // 계정 삭제 시 Supabase가 자동으로 OAuth 연결 해제
+    Logger.info('Google disconnect handled by Supabase');
   }
   
   // Kakao 계정 연결 해제
@@ -374,6 +488,10 @@ class SocialAuthService {
         case 'apple':
           final result = await signInWithApple();
           return result != null;
+        case 'facebook':
+          // Facebook uses OAuth flow
+          await signInWithFacebook();
+          return true;
         case 'kakao':
           // Kakao uses OAuth flow
           await signInWithKakao();
@@ -410,6 +528,72 @@ class SocialAuthService {
     } catch (e) {
       Logger.error('Failed to get linked providers', e);
       return [];
+    }
+  }
+  
+  // Unlink a provider from current account
+  Future<void> unlinkProvider(String provider) async {
+    try {
+      final user = _supabase.auth.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+      
+      // Get all user identities
+      final identities = user.identities ?? [];
+      
+      // Check if user has more than one identity
+      if (identities.length <= 1) {
+        throw Exception('연동된 계정이 하나뿐이라 해제할 수 없습니다');
+      }
+      
+      // Find the identity to unlink
+      final identityToUnlink = identities.firstWhere(
+        (identity) => identity.provider == provider,
+        orElse: () => throw Exception('해당 계정이 연동되어 있지 않습니다'),
+      );
+      
+      // Use Supabase's unlinkIdentity method
+      await _supabase.auth.unlinkIdentity(identityToUnlink);
+      
+      // Update linked providers in user profile
+      await _updateLinkedProviders(user.id, provider, false);
+      
+      Logger.securityCheckpoint('Successfully unlinked $provider');
+    } catch (e) {
+      Logger.error('Error unlinking provider: $e');
+      rethrow;
+    }
+  }
+  
+  Future<void> _updateLinkedProviders(String userId, String provider, bool isAdding) async {
+    try {
+      // Get current profile
+      final profile = await _supabase
+          .from('user_profiles')
+          .select('linked_providers')
+          .eq('id', userId)
+          .maybeSingle();
+      
+      List<dynamic> linkedProviders = profile?['linked_providers'] ?? [];
+      
+      if (isAdding) {
+        // Add provider if not already in list
+        if (!linkedProviders.contains(provider)) {
+          linkedProviders.add(provider);
+        }
+      } else {
+        // Remove provider
+        linkedProviders.remove(provider);
+      }
+      
+      // Update profile
+      await _supabase.from('user_profiles').update({
+        'linked_providers': linkedProviders,
+        'updated_at': DateTime.now().toIso8601String(),
+      }).eq('id', userId);
+      
+    } catch (e) {
+      Logger.error('Error updating linked providers: $e');
+      // Non-critical error, don't rethrow
     }
   }
 }

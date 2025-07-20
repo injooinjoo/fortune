@@ -134,8 +134,33 @@
       "Bash(./scripts/test-production-edge-functions.sh:*)",
       "Bash(./scripts/deploy-edge-functions.sh:*)",
       "Bash(./scripts/setup-mcp.sh:*)",
-      "Bash(dart:*)"
+      "Bash(dart:*)",
+      "Bash(./scripts/security-audit.sh:*)",
+      "Bash(python3:*)",
+      "Bash(unzip:*)",
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(/bin/bash -c \"flutter analyze\")",
+      "Bash(npm search:*)",
+      "Bash(pod repo update:*)",
+      "Bash(do mv \"/Users/jacobmac/Desktop/Dev/fortune/$i.jpg\" \"/Users/jacobmac/Desktop/Dev/fortune/fortune_flutter/assets/images/random_thumbnails/thumbnail_$i.jpg\")",
+      "Bash(gem update:*)",
+      "WebFetch(domain:steve-p.org)",
+      "Bash(./download-tarot-images.sh:*)",
+      "WebFetch(domain:api.figma.com)",
+      "Bash(claude-talk-to-figma-mcp:*)",
+      "Bash(FIGMA_API_KEY=figd_bR2cafXDSpDf6bhXpQJ0eoRZGrCkRM0W60YOpbdF npx @tothienbao6a0/figma-mcp-server)",
+      "Bash(ps:*)",
+      "mcp__figma-dev-mode-mcp-server__get_code",
+      "Bash(mcp list:*)",
+      "Bash(claude mcp:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(brew install:*)",
+      "Bash(./download-tarot-images-v2.sh:*)"
     ],
     "deny": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "figma-dev-mode-mcp-server"
+  ]
 }

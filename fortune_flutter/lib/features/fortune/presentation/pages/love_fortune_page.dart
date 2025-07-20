@@ -11,13 +11,16 @@ import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 
 class LoveFortunePage extends BaseFortunePage {
-  const LoveFortunePage({Key? key})
-      : super(
+  const LoveFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '연애운',
           description: '당신의 연애운을 확인해보세요',
           fortuneType: 'love',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override

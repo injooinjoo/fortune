@@ -36,8 +36,8 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
   @override
   void initState() {
     super.initState();
-    // Default to 2000-01-01 for birthdate selection
-    _selectedDate = widget.initialDate ?? DateTime(2000, 1, 1);
+    // Default to 1980-01-01 for birthdate selection
+    _selectedDate = widget.initialDate ?? DateTime(1980, 1, 1);
   }
 
   @override

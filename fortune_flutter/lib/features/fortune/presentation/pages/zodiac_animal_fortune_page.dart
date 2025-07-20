@@ -6,15 +6,22 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../widgets/zodiac_compatibility_wheel.dart';
+import '../widgets/zodiac_compatibility_matrix.dart';
+import '../widgets/zodiac_element_chart.dart';
+import '../../../../services/zodiac_compatibility_service.dart';
 
 class ZodiacAnimalFortunePage extends BaseFortunePage {
-  const ZodiacAnimalFortunePage({Key? key})
-      : super(
+  const ZodiacAnimalFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '띠 운세',
           description: '12간지 띠로 알아보는 오늘의 운세',
           fortuneType: 'zodiac-animal',
           requiresUserInfo: true,
+          initialParams: initialParams,
         );
 
   @override
@@ -25,20 +32,22 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
   String? _selectedAnimal;
   DateTime? _birthDate;
   int? _birthYear;
+  String? _selectedCompatibilityZodiac1;
+  String? _selectedCompatibilityZodiac2;
 
   final List<Map<String, dynamic>> _zodiacAnimals = [
-    {'key': 'rat', 'name': '쥐띠', 'emoji': '🐭', 'years': [1948, 1960, 1972, 1984, 1996, 2008, 2020]},
-    {'key': 'ox', 'name': '소띠', 'emoji': '🐮', 'years': [1949, 1961, 1973, 1985, 1997, 2009, 2021]},
-    {'key': 'tiger', 'name': '호랑이띠', 'emoji': '🐯', 'years': [1950, 1962, 1974, 1986, 1998, 2010, 2022]},
-    {'key': 'rabbit', 'name': '토끼띠', 'emoji': '🐰', 'years': [1951, 1963, 1975, 1987, 1999, 2011, 2023]},
-    {'key': 'dragon', 'name': '용띠', 'emoji': '🐲', 'years': [1952, 1964, 1976, 1988, 2000, 2012, 2024]},
-    {'key': 'snake', 'name': '뱀띠', 'emoji': '🐍', 'years': [1953, 1965, 1977, 1989, 2001, 2013, 2025]},
-    {'key': 'horse', 'name': '말띠', 'emoji': '🐴', 'years': [1954, 1966, 1978, 1990, 2002, 2014, 2026]},
-    {'key': 'sheep', 'name': '양띠', 'emoji': '🐑', 'years': [1955, 1967, 1979, 1991, 2003, 2015, 2027]},
-    {'key': 'monkey', 'name': '원숭이띠', 'emoji': '🐵', 'years': [1956, 1968, 1980, 1992, 2004, 2016, 2028]},
-    {'key': 'rooster', 'name': '닭띠', 'emoji': '🐔', 'years': [1957, 1969, 1981, 1993, 2005, 2017, 2029]},
-    {'key': 'dog', 'name': '개띠', 'emoji': '🐶', 'years': [1958, 1970, 1982, 1994, 2006, 2018, 2030]},
-    {'key': 'pig', 'name': '돼지띠', 'emoji': '🐷', 'years': [1959, 1971, 1983, 1995, 2007, 2019, 2031]},
+    {'key': 'rat', 'name': '쥐띠', 'koreanName': '쥐', 'emoji': '🐭', 'years': [1948, 1960, 1972, 1984, 1996, 2008, 2020]},
+    {'key': 'ox', 'name': '소띠', 'koreanName': '소', 'emoji': '🐮', 'years': [1949, 1961, 1973, 1985, 1997, 2009, 2021]},
+    {'key': 'tiger', 'name': '호랑이띠', 'koreanName': '호랑이', 'emoji': '🐯', 'years': [1950, 1962, 1974, 1986, 1998, 2010, 2022]},
+    {'key': 'rabbit', 'name': '토끼띠', 'koreanName': '토끼', 'emoji': '🐰', 'years': [1951, 1963, 1975, 1987, 1999, 2011, 2023]},
+    {'key': 'dragon', 'name': '용띠', 'koreanName': '용', 'emoji': '🐲', 'years': [1952, 1964, 1976, 1988, 2000, 2012, 2024]},
+    {'key': 'snake', 'name': '뱀띠', 'koreanName': '뱀', 'emoji': '🐍', 'years': [1953, 1965, 1977, 1989, 2001, 2013, 2025]},
+    {'key': 'horse', 'name': '말띠', 'koreanName': '말', 'emoji': '🐴', 'years': [1954, 1966, 1978, 1990, 2002, 2014, 2026]},
+    {'key': 'sheep', 'name': '양띠', 'koreanName': '양', 'emoji': '🐑', 'years': [1955, 1967, 1979, 1991, 2003, 2015, 2027]},
+    {'key': 'monkey', 'name': '원숭이띠', 'koreanName': '원숭이', 'emoji': '🐵', 'years': [1956, 1968, 1980, 1992, 2004, 2016, 2028]},
+    {'key': 'rooster', 'name': '닭띠', 'koreanName': '닭', 'emoji': '🐔', 'years': [1957, 1969, 1981, 1993, 2005, 2017, 2029]},
+    {'key': 'dog', 'name': '개띠', 'koreanName': '개', 'emoji': '🐶', 'years': [1958, 1970, 1982, 1994, 2006, 2018, 2030]},
+    {'key': 'pig', 'name': '돼지띠', 'koreanName': '돼지', 'emoji': '🐷', 'years': [1959, 1971, 1983, 1995, 2007, 2019, 2031]},
   ];
 
   @override
@@ -298,7 +307,7 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
         super.buildFortuneResult(),
         _buildAnimalProfile(),
         _buildCharacteristics(),
-        _buildCompatibilitySection(),
+        _buildEnhancedCompatibilitySection(),
         _buildMonthlyTrendChart(),
         _buildLuckyYears(),
         const SizedBox(height: 32),
@@ -538,50 +547,49 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
     );
   }
 
-  Widget _buildCompatibilitySection() {
-    final fortune = this.fortune;
-    if (fortune == null) return const SizedBox.shrink();
-
-    final compatibility = fortune.metadata?['compatibility'] as Map<String, dynamic>?;
-    if (compatibility == null) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.people,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '띠 궁합',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildCompatibilityRow(
-              '최상의 궁합',
-              compatibility['best'] as List,
-              Colors.green,
-              Icons.favorite,
-            ),
-            const SizedBox(height: 16),
-            _buildCompatibilityRow(
-              '상극 관계',
-              compatibility['worst'] as List,
-              Colors.orange,
-              Icons.warning,
-            ),
-          ],
+  Widget _buildEnhancedCompatibilitySection() {
+    if (_selectedAnimal == null) return const SizedBox.shrink();
+    
+    final selectedKoreanName = _zodiacAnimals
+        .firstWhere((a) => a['key'] == _selectedAnimal)['koreanName'];
+    
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ZodiacCompatibilityWheel(
+            selectedZodiac: selectedKoreanName,
+            onZodiacSelected: (zodiac) {
+              setState(() {
+                _selectedCompatibilityZodiac1 = selectedKoreanName;
+                _selectedCompatibilityZodiac2 = zodiac;
+              });
+            },
+            showAnimation: true,
+          ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ZodiacCompatibilityMatrix(
+            selectedZodiac1: _selectedCompatibilityZodiac1,
+            selectedZodiac2: _selectedCompatibilityZodiac2,
+            onPairSelected: (zodiac1, zodiac2) {
+              setState(() {
+                _selectedCompatibilityZodiac1 = zodiac1;
+                _selectedCompatibilityZodiac2 = zodiac2;
+              });
+            },
+            showAnimation: true,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: ZodiacElementChart(
+            selectedZodiac: selectedKoreanName,
+            showAnimation: true,
+          ),
+        ),
+      ],
     );
   }
 

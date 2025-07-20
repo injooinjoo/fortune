@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="연애운 궁합"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_title_color" />
+        
+        <TextView
+            android:id="@+id/last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:00"
+            android:textSize="12sp"
+            android:textColor="@color/widget_subtitle_color" />
+    </LinearLayout>
+
+    <!-- Compatibility Score Circle -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
+        
+        <ProgressBar
+            android:id="@+id/compatibility_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:progressDrawable="@drawable/circular_progress"
+            android:background="@drawable/circular_progress_background"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="75" />
+        
+        <TextView
+            android:id="@+id/compatibility_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="75%"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/widget_score_color" />
+    </FrameLayout>
+
+    <!-- Partner Name -->
+    <TextView
+        android:id="@+id/partner_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="김철수님과의 궁합"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/widget_text_color"
+        android:gravity="center"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Love Message -->
+    <TextView
+        android:id="@+id/love_message"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="서로를 이해하려는 노력이 필요한 시기입니다. 대화를 통해 마음을 열어보세요."
+        android:textSize="14sp"
+        android:textColor="@color/widget_text_color"
+        android:gravity="center"
+        android:maxLines="3"
+        android:ellipsize="end" />
+        
+    <!-- Action Button -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="자세히 보기 ›"
+        android:textSize="14sp"
+        android:textColor="@color/widget_accent_color"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/widget_button_background" />
+
+</LinearLayout>

@@ -4,9 +4,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/network/api_client.dart';
 import '../../data/datasources/fortune_remote_data_source.dart';
 import '../../data/datasources/token_remote_data_source.dart';
+import '../../data/services/fortune_api_service_edge_functions.dart';
 import '../../domain/entities/fortune.dart';
 import '../../domain/entities/token.dart';
 import '../../domain/entities/user_profile.dart';
+import '../../services/user_statistics_service.dart';
+import '../../services/storage_service.dart';
 
 // Export providers for easy access
 export 'auth_provider.dart';
@@ -16,6 +19,9 @@ export 'social_auth_provider.dart';
 export 'today_fortune_provider.dart';
 export 'font_size_provider.dart';
 export 'theme_provider.dart';
+export 'user_statistics_provider.dart';
+export 'recommendation_provider.dart';
+export 'navigation_visibility_provider.dart';
 
 // Core providers
 final supabaseProvider = Provider<SupabaseClient>((ref) {
@@ -39,55 +45,17 @@ final tokenRemoteDataSourceProvider = Provider<TokenRemoteDataSource>((ref) {
   );
 });
 
-// User profile provider
-final userProfileProvider = StreamProvider<UserProfile?>((ref) async* {
-  final supabase = ref.watch(supabaseProvider);
-  final user = supabase.auth.currentUser;
-  
-  if (user == null) {
-    yield null;
-    return;
-  }
-
-  // Stream user profile changes
-  final stream = supabase
-      .from('user_profiles')
-      .stream(primaryKey: ['id'])
-      .eq('user_id', user.id)
-      .map((data) {
-        if (data.isEmpty) return null;
-        final profile = data.first;
-        
-        return UserProfile(
-          id: profile['id'],
-          email: profile['email'],
-          name: profile['name'] ?? '',
-          birthdate: profile['birthdate'] != null 
-              ? DateTime.parse(profile['birthdate']) 
-              : null,
-          birthTime: profile['birth_time'],
-          isLunar: profile['is_lunar'] ?? false,
-          gender: profile['gender'],
-          mbti: profile['mbti'],
-          bloodType: profile['blood_type'],
-          zodiacSign: profile['zodiac_sign'],
-          zodiacAnimal: profile['zodiac_animal'],
-          onboardingCompleted: profile['onboarding_completed'] ?? false,
-          isPremium: profile['is_premium'] ?? false,
-          premiumExpiry: profile['premium_expiry'] != null
-              ? DateTime.parse(profile['premium_expiry'])
-              : null,
-          tokenBalance: profile['token_balance'] ?? 0,
-          preferences: profile['preferences'],
-          createdAt: DateTime.parse(profile['created_at']),
-          updatedAt: DateTime.parse(profile['updated_at']),
-        );
-      });
-  
-  await for (final profile in stream) {
-    yield profile;
-  }
+// Service providers
+final storageServiceProvider = Provider<StorageService>((ref) {
+  return StorageService();
 });
+
+final userStatisticsServiceProvider = Provider<UserStatisticsService>((ref) {
+  final supabase = ref.watch(supabaseProvider);
+  final storageService = ref.watch(storageServiceProvider);
+  return UserStatisticsService(supabase, storageService);
+});
+
 
 // Token balance provider
 final tokenBalanceProvider = FutureProvider<TokenBalance>((ref) async {
@@ -412,3 +380,8 @@ class RecentFortunesNotifier extends StateNotifier<List<RecentFortune>> {
     state = [];
   }
 }
+
+// Fortune API Service with Edge Functions Provider
+final fortuneApiServiceEdgeFunctionsProvider = Provider<FortuneApiServiceWithEdgeFunctions>((ref) {
+  return FortuneApiServiceWithEdgeFunctions(ref);
+});

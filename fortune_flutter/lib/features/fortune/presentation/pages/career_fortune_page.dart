@@ -9,13 +9,16 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class CareerFortunePage extends BaseFortunePage {
-  const CareerFortunePage({Key? key})
-      : super(
+  const CareerFortunePage({
+    Key? key,
+    Map<String, dynamic>? initialParams,
+  }) : super(
           key: key,
           title: '직업운',
           description: '커리어 발전과 직장에서의 성공을 위한 운세',
           fortuneType: 'career',
           requiresUserInfo: false,
+          initialParams: initialParams,
         );
 
   @override
