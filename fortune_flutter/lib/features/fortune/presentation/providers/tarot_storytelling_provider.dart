@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/tarot_metadata.dart';
+import '../../../../core/constants/tarot_minor_arcana.dart';
 import '../../../../core/constants/edge_functions_endpoints.dart';
 import '../../../../data/services/fortune_api_service_edge_functions.dart';
 import '../../../../presentation/providers/providers.dart';
@@ -110,41 +111,68 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
     }
   }
   
-  // Minor Arcana mapping
+  // Minor Arcana (22-77)
+  TarotCardInfo? minorCard;
   String suit = '';
-  int number = 0;
   
+  // Wands (22-35)
   if (cardIndex >= 22 && cardIndex < 36) {
     suit = 'Wands';
-    number = cardIndex - 21;
-  } else if (cardIndex >= 36 && cardIndex < 50) {
+    final wandsCards = TarotMinorArcana.wands.values.toList();
+    final index = cardIndex - 22;
+    if (index < wandsCards.length) {
+      minorCard = wandsCards[index];
+    }
+  }
+  // Cups (36-49)
+  else if (cardIndex >= 36 && cardIndex < 50) {
     suit = 'Cups';
-    number = cardIndex - 35;
-  } else if (cardIndex >= 50 && cardIndex < 64) {
+    final cupsCards = TarotMinorArcana.cups.values.toList();
+    final index = cardIndex - 36;
+    if (index < cupsCards.length) {
+      minorCard = cupsCards[index];
+    }
+  }
+  // Swords (50-63)
+  else if (cardIndex >= 50 && cardIndex < 64) {
     suit = 'Swords';
-    number = cardIndex - 49;
-  } else if (cardIndex >= 64 && cardIndex < 78) {
+    final swordsCards = TarotMinorArcana.swords.values.toList();
+    final index = cardIndex - 50;
+    if (index < swordsCards.length) {
+      minorCard = swordsCards[index];
+    }
+  }
+  // Pentacles (64-77)
+  else if (cardIndex >= 64 && cardIndex < 78) {
     suit = 'Pentacles';
-    number = cardIndex - 63;
+    final pentaclesCards = TarotMinorArcana.pentacles.values.toList();
+    final index = cardIndex - 64;
+    if (index < pentaclesCards.length) {
+      minorCard = pentaclesCards[index];
+    }
   }
   
-  String cardName = '';
-  if (number == 1) cardName = 'Ace';
-  else if (number == 11) cardName = 'Page';
-  else if (number == 12) cardName = 'Knight';
-  else if (number == 13) cardName = 'Queen';
-  else if (number == 14) cardName = 'King';
-  else cardName = number.toString();
+  if (minorCard != null) {
+    return {
+      'index': cardIndex,
+      'type': 'minor',
+      'name': minorCard.name,
+      'keywords': minorCard.keywords,
+      'element': minorCard.element,
+      'meaning': minorCard.uprightMeaning,
+      'advice': minorCard.advice,
+      'suit': suit,
+    };
+  }
   
+  // Fallback
   return {
     'index': cardIndex,
-    'type': 'minor',
-    'name': '$cardName of $suit',
-    'suit': suit,
-    'number': number,
-    'keywords': _getMinorArcanaKeywords(suit, number),
-    'element': _getSuitElement(suit),
-    'meaning': _getMinorArcanaMeaning(suit, number),
+    'type': 'unknown',
+    'name': 'Unknown Card',
+    'keywords': [],
+    'element': 'Unknown',
+    'meaning': 'Card information not available',
   };
 }
 

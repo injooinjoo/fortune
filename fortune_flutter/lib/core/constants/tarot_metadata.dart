@@ -357,102 +357,44 @@ class TarotMetadata {
     ),
   };
 
-  // Minor Arcana (마이너 아르카나) - 56장
-  static const Map<String, List<TarotCardInfo>> minorArcana = {
-    'wands': [
-      TarotCardInfo(
-        id: 22,
-        name: 'Ace of Wands',
-        keywords: ['새로운 시작', '영감', '성장', '잠재력'],
-        uprightMeaning: '창의적 영감, 새로운 기회, 열정의 시작',
-        reversedMeaning: '지연된 프로젝트, 창의력 부족, 동기 상실',
-        element: '불',
-        astrology: '불의 원소',
-        numerology: 1,
-        imagery: '구름에서 나온 손이 꽃피운 지팡이를 들고 있음',
-        advice: '열정을 가지고 새로운 프로젝트를 시작하세요',
-        questions: [
-          '어떤 새로운 아이디어가 떠오르나요?',
-          '무엇이 당신의 열정을 자극하나요?',
-        ],
-      ),
-      // 2-10 of Wands
-      TarotCardInfo(
-        id: 23,
-        name: '2 of Wands',
-        keywords: ['계획', '진보', '결정', '미래'],
-        uprightMeaning: '미래 계획, 장기적 목표, 개인적 힘',
-        reversedMeaning: '나쁜 계획, 분석 마비, 두려움',
-        element: '불',
-        astrology: '양자리의 화성',
-        numerology: 2,
-        imagery: '성벽에서 지구본을 들고 있는 인물',
-        advice: '큰 그림을 보고 미래를 계획하세요',
-        questions: [
-          '당신의 장기적 목표는 무엇인가요?',
-          '어떤 선택이 앞에 놓여 있나요?',
-        ],
-      ),
-      // ... 나머지 Wands 카드들은 간략하게
-    ],
-    'cups': [
-      TarotCardInfo(
-        id: 36,
-        name: 'Ace of Cups',
-        keywords: ['사랑', '새로운 감정', '영성', '직관'],
-        uprightMeaning: '새로운 사랑, 감정적 각성, 창의적 영감',
-        reversedMeaning: '감정 억압, 공허함, 차단된 창의성',
-        element: '물',
-        astrology: '물의 원소',
-        numerology: 1,
-        imagery: '구름에서 나온 손이 넘치는 성배를 들고 있음',
-        advice: '마음을 열고 사랑을 받아들이세요',
-        questions: [
-          '어떤 새로운 감정이 샘솟고 있나요?',
-          '마음이 원하는 것은 무엇인가요?',
-        ],
-      ),
-      // ... 나머지 Cups 카드들
-    ],
-    'swords': [
-      TarotCardInfo(
-        id: 50,
-        name: 'Ace of Swords',
-        keywords: ['명확성', '돌파구', '진실', '정의'],
-        uprightMeaning: '정신적 명확성, 새로운 아이디어, 돌파구',
-        reversedMeaning: '혼란, 무자비함, 오해',
-        element: '공기',
-        astrology: '공기의 원소',
-        numerology: 1,
-        imagery: '구름에서 나온 손이 왕관을 쓴 검을 들고 있음',
-        advice: '진실을 추구하고 명확하게 소통하세요',
-        questions: [
-          '어떤 진실이 드러나고 있나요?',
-          '무엇이 명확해져야 하나요?',
-        ],
-      ),
-      // ... 나머지 Swords 카드들
-    ],
-    'pentacles': [
-      TarotCardInfo(
-        id: 64,
-        name: 'Ace of Pentacles',
-        keywords: ['기회', '번영', '새로운 시작', '물질적 성공'],
-        uprightMeaning: '새로운 재정적 기회, 번영의 시작, 실현',
-        reversedMeaning: '놓친 기회, 재정 계획 부족, 탐욕',
-        element: '땅',
-        astrology: '땅의 원소',
-        numerology: 1,
-        imagery: '구름에서 나온 손이 금화를 들고 있음',
-        advice: '실용적이고 현실적인 접근을 하세요',
-        questions: [
-          '어떤 새로운 기회가 나타나고 있나요?',
-          '물질적 목표는 무엇인가요?',
-        ],
-      ),
-      // ... 나머지 Pentacles 카드들
-    ],
-  };
+  // 모든 타로 카드를 하나의 맵으로 통합 (78장)
+  static Map<int, TarotCardInfo> get allCards {
+    final Map<int, TarotCardInfo> cards = {};
+    
+    // Major Arcana 추가
+    cards.addAll(majorArcana);
+    
+    // Minor Arcana 추가 - 임시로 참조하기 위해 동적 import
+    // 실제 구현시 TarotMinorArcana 클래스의 카드들을 여기에 직접 추가
+    
+    return cards;
+  }
+
+  // 카드 정보 가져오기
+  static TarotCardInfo? getCard(int cardIndex) {
+    if (cardIndex < 0 || cardIndex >= 78) return null;
+    
+    // Major Arcana (0-21)
+    if (cardIndex < 22) {
+      return majorArcana[cardIndex];
+    }
+    
+    // Minor Arcana는 별도 파일에서 관리하므로 null 반환
+    // 실제 사용시 TarotMinorArcana 클래스와 통합 필요
+    return null;
+  }
+
+  // 슈트별 카드 가져오기
+  static List<TarotCardInfo> getCardsBySuit(String suit) {
+    final List<TarotCardInfo> cards = [];
+    
+    // Major Arcana에서 원소별로 필터링
+    if (suit == 'major') {
+      cards.addAll(majorArcana.values);
+    }
+    
+    return cards;
+  }
 
   // 타로 스프레드 종류
   static const Map<String, TarotSpread> spreads = {

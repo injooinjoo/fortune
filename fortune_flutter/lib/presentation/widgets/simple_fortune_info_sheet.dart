@@ -271,8 +271,8 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
                   theme,
                   icon: Icons.access_time_rounded,
                   label: '생시',
-                  value: _selectedBirthTime ?? profile?.preferences?['birth_time'] as String?,
-                  isRequired: _selectedBirthTime == null && profile?.preferences?['birth_time'] == null,
+                  value: _selectedBirthTime ?? (profile?.preferences?['birth_time'] as String?),
+                  isRequired: _selectedBirthTime == null && (profile?.preferences?['birth_time'] as String?) == null,
                   fieldKey: 'birthTime',
                   fieldType: 'time',
                 ),
@@ -662,7 +662,7 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
       
       // Validate fortune-specific fields
       if ((widget.fortuneType == 'saju' || widget.fortuneType == 'traditional') && 
-          _selectedBirthTime == null && profile?.preferences?['birth_time'] == null) {
+          _selectedBirthTime == null && (profile?.preferences?['birth_time'] as String?) == null) {
         _showErrorSnackBar('생시를 선택해주세요');
         return false;
       }
@@ -694,12 +694,12 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
         updateData['mbti_type'] = _selectedMbti;
       }
       
+      if (_selectedBirthTime != null) {
+        updateData['birth_time'] = _selectedBirthTime;
+      }
+      
       // Handle preferences
       final preferences = Map<String, dynamic>.from(profile?.preferences ?? {});
-      
-      if (_selectedBirthTime != null) {
-        preferences['birth_time'] = _selectedBirthTime;
-      }
       
       if (_selectedBloodType != null) {
         preferences['blood_type'] = _selectedBloodType;

@@ -14,11 +14,6 @@ struct FortuneWidgetBundle: WidgetBundle {
         if #available(iOS 16.0, *) {
             LockScreenFortuneWidget()
         }
-        
-        // Live Activity (iOS 16.2+)
-        if #available(iOS 16.2, *) {
-            FortuneActivityWidget()
-        }
     }
 }
 

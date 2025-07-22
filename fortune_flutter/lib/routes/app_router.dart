@@ -63,6 +63,13 @@ import '../features/fortune/presentation/pages/lucky_swim_fortune_page.dart' as 
 import '../features/fortune/presentation/pages/lucky_investment_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/business_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_fishing_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/investment_fortune_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/lucky_items_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/traditional_fortune_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/health_sports_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/pet_fortune_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/family_fortune_unified_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/personality_fortune_unified_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_hiking_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_yoga_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_fitness_fortune_page.dart' as fortune_pages;
@@ -95,9 +102,7 @@ import '../features/fortune/presentation/pages/wish_fortune_page.dart' as fortun
 import '../features/fortune/presentation/pages/timeline_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/talisman_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/startup_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/lucky_sidejob_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_exam_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/time_based_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_realestate_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/pet_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/children_fortune_page.dart' as fortune_pages;
@@ -106,7 +111,8 @@ import '../features/fortune/presentation/pages/fortune_best_practices_page.dart'
 import '../features/fortune/presentation/pages/daily_inspiration_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/same_birthday_celebrity_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/batch_fortune_page.dart' as fortune_pages;
-import '../features/fortune/presentation/pages/dream_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/dream_fortune_chat_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/fortune_snap_scroll_page.dart' as fortune_pages;
 import '../features/payment/presentation/pages/token_purchase_page_v2.dart';
 import '../screens/payment/token_history_page.dart';
 import '../screens/subscription/subscription_page.dart';
@@ -118,6 +124,7 @@ import '../features/interactive/presentation/pages/psychology_test_page.dart';
 import '../features/interactive/presentation/pages/tarot_card_page.dart';
 import '../features/fortune/presentation/pages/tarot_storytelling_page.dart';
 import '../features/fortune/presentation/pages/tarot_summary_page.dart';
+import '../features/fortune/presentation/pages/tarot_deck_selection_page.dart';
 import '../features/interactive/presentation/pages/face_reading_page.dart';
 import '../features/interactive/presentation/pages/taemong_page.dart';
 import '../features/interactive/presentation/pages/worry_bead_page.dart';
@@ -130,6 +137,7 @@ import '../features/support/presentation/pages/help_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/feedback/presentation/pages/feedback_page.dart';
 import '../features/profile/presentation/pages/statistics_detail_page.dart';
+import '../screens/demo/fortune_snap_scroll_demo.dart';
 import '../features/profile/presentation/pages/profile_verification_page.dart';
 import '../features/misc/presentation/pages/consult_page.dart';
 import '../features/misc/presentation/pages/explore_page.dart';
@@ -370,6 +378,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HelpPage(),
           ),
           
+          // Demo routes
+          GoRoute(
+            path: '/demo/snap-scroll',
+            name: 'demo-snap-scroll',
+            builder: (context, state) => const FortuneSnapScrollDemo(),
+          ),
+          
+          // Snap scroll fortune page
+          GoRoute(
+            path: '/fortune/snap-scroll',
+            name: 'fortune-snap-scroll',
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              final fortuneTypes = extra?['fortuneTypes'] as List<String>? ?? 
+                  ['daily', 'love', 'money', 'health', 'career'];
+              final title = extra?['title'] as String? ?? '종합 운세';
+              final description = extra?['description'] as String? ?? 
+                  '여러 운세를 한 번에 확인하세요';
+              
+              return fortune_pages.FortuneSnapScrollPage(
+                title: title,
+                description: description,
+                fortuneTypes: fortuneTypes,
+              );
+            },
+          ),
+          
           // About route
           GoRoute(
             path: '/about',
@@ -498,6 +533,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                         interpretations: extra?['interpretations'] ?? [],
                         spreadType: extra?['spreadType'] ?? 'three',
                         question: extra?['question'],
+                      );
+                    },
+                  ),
+                  GoRoute(
+                    path: 'deck-selection',
+                    name: 'tarot-deck-selection',
+                    builder: (context, state) {
+                      return TarotDeckSelectionPage(
+                        spreadType: state.uri.queryParameters['spreadType'],
+                        initialQuestion: state.uri.queryParameters['question'],
                       );
                     },
                   ),
@@ -681,11 +726,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const fortune_pages.LuckyFoodFortunePage(),
           ),
           GoRoute(
-            path: 'lucky-items',
-            name: 'fortune-lucky-items',
-            builder: (context, state) => const fortune_pages.LuckyItemsFortunePage(),
-          ),
-          GoRoute(
             path: 'lucky-place',
             name: 'fortune-lucky-place',
             builder: (context, state) => const fortune_pages.LuckyPlaceFortunePage(),
@@ -760,19 +800,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'investment',
             name: 'fortune-investment',
-            builder: (context, state) {
-              final typeParam = state.uri.queryParameters['type'];
-              fortune_pages.InvestmentType? initialType;
-              if (typeParam != null) {
-                initialType = fortune_pages.InvestmentType.values.firstWhere(
-                  (t) => t.value == typeParam,
-                  orElse: () => fortune_pages.InvestmentType.general,
-                );
-              }
-              return fortune_pages.InvestmentFortunePage(
-                initialType: initialType ?? fortune_pages.InvestmentType.general,
-              );
-            },
+            builder: (context, state) => const fortune_pages.InvestmentFortuneUnifiedPage(),
           ),
           GoRoute(
             path: 'business',
@@ -927,11 +955,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             },
           ),
           GoRoute(
-            path: 'personality',
-            name: 'fortune-personality',
-            builder: (context, state) => const fortune_pages.PersonalityFortunePage(),
-          ),
-          GoRoute(
             path: 'saju-psychology',
             name: 'fortune-saju-psychology',
             builder: (context, state) => const fortune_pages.SajuPsychologyFortunePage(),
@@ -974,7 +997,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'dream',
             name: 'fortune-dream',
-            builder: (context, state) => const fortune_pages.DreamFortunePage(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.DreamFortuneChatPage(
+                initialParams: extra,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'dream-chat',
+            name: 'fortune-dream-chat',
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return fortune_pages.DreamFortuneChatPage(
+                initialParams: extra,
+              );
+            },
           ),
           GoRoute(
             path: 'wish',
@@ -1032,20 +1070,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             name: 'fortune-history',
             builder: (context, state) => const FortuneHistoryPage(),
           ),
-          // Pet & Family Fortune routes
-          GoRoute(
-            path: 'pet',
-            name: 'fortune-pet',
-            builder: (context, state) {
-              final typeParam = state.uri.queryParameters['type'];
-              return fortune_pages.PetFortunePage(
-                fortuneType: 'pet',
-                title: '반려동물 운세',
-                description: '반려동물과의 특별한 운세를 확인해보세요',
-                petType: typeParam,
-              );
-            },
-          ),
           GoRoute(
             path: 'pet-compatibility',
             name: 'fortune-pet-compatibility',
@@ -1094,6 +1118,36 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               description: '가족의 화합과 관련된 운세를 확인해보세요',
               specificFortuneType: 'family-harmony',
             ),
+          ),
+          GoRoute(
+            path: 'lucky-items',
+            name: 'fortune-lucky-items',
+            builder: (context, state) => const fortune_pages.LuckyItemsUnifiedPage(),
+          ),
+          GoRoute(
+            path: 'traditional',
+            name: 'fortune-traditional',
+            builder: (context, state) => const fortune_pages.TraditionalFortuneUnifiedPage(),
+          ),
+          GoRoute(
+            path: 'health-sports',
+            name: 'fortune-health-sports',
+            builder: (context, state) => const fortune_pages.HealthSportsUnifiedPage(),
+          ),
+          GoRoute(
+            path: 'pet',
+            name: 'fortune-pet',
+            builder: (context, state) => const fortune_pages.PetFortuneUnifiedPage(),
+          ),
+          GoRoute(
+            path: 'family',
+            name: 'fortune-family',
+            builder: (context, state) => const fortune_pages.FamilyFortuneUnifiedPage(),
+          ),
+          GoRoute(
+            path: 'personality',
+            name: 'fortune-personality',
+            builder: (context, state) => const fortune_pages.PersonalityFortuneUnifiedPage(),
           ),
           ],
         ),

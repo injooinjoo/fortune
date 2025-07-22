@@ -7,6 +7,7 @@ class StorageService {
   static const String _lastUpdateDateKey = 'fortune_last_update_date';
   static const String _guestModeKey = 'isGuestMode';
   static const String _userStatisticsKey = 'userStatistics';
+  static const String _dailyFortuneRefreshKey = 'dailyFortuneRefresh';
 
   Future<Map<String, dynamic>?> getUserProfile() async {
     final prefs = await SharedPreferences.getInstance();
@@ -128,5 +129,47 @@ class StorageService {
   Future<void> clearUserStatistics() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userStatisticsKey);
+  }
+  
+  // Daily fortune refresh management
+  Future<Map<String, dynamic>> getDailyFortuneRefreshData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final refreshString = prefs.getString(_dailyFortuneRefreshKey);
+    
+    if (refreshString != null) {
+      try {
+        final data = json.decode(refreshString) as Map<String, dynamic>;
+        final date = data['date'] as String;
+        
+        // 날짜가 오늘이 아니면 리셋
+        final today = DateTime.now().toIso8601String().split('T')[0];
+        if (date != today) {
+          return {'date': today, 'count': 0};
+        }
+        
+        return data;
+      } catch (e) {
+        return {'date': DateTime.now().toIso8601String().split('T')[0], 'count': 0};
+      }
+    }
+    
+    return {'date': DateTime.now().toIso8601String().split('T')[0], 'count': 0};
+  }
+  
+  Future<void> saveDailyFortuneRefreshData(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final data = {'date': today, 'count': count};
+    await prefs.setString(_dailyFortuneRefreshKey, json.encode(data));
+  }
+  
+  Future<int> getDailyFortuneRefreshCount() async {
+    final data = await getDailyFortuneRefreshData();
+    return data['count'] as int;
+  }
+  
+  Future<void> incrementDailyFortuneRefreshCount() async {
+    final currentCount = await getDailyFortuneRefreshCount();
+    await saveDailyFortuneRefreshData(currentCount + 1);
   }
 }

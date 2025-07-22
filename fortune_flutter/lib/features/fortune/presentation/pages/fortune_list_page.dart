@@ -15,6 +15,7 @@ import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
 
 class FortuneCategory {
   final String title;
@@ -302,135 +303,74 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true,
     ),
     
-    // ==================== Batch Fortune (새로 추가) ====================
-    FortuneCategory(
-      title: '운세 패키지',
-      route: '/fortune/batch',
-      type: 'batch',
-      icon: Icons.dashboard_rounded,
-      gradientColors: [Color(0xFFEC4899), Color(0xFF8B5CF6)],
-      description: '여러 운세를 한 번에 받기',
-      category: 'lifestyle',
-      isNew: true,
-      isPremium: true,
-    ),
 
-    // ==================== Traditional Fortunes ====================
+    // ==================== Traditional Fortunes (통합) ====================
     FortuneCategory(
-      title: '정통 사주',
-      route: '/fortune/saju',
-      type: 'saju',
+      title: '전통 운세',
+      route: '/fortune/traditional',
+      type: 'traditional',
       icon: Icons.auto_awesome_rounded,
       gradientColors: [Color(0xFFEF4444), Color(0xFFEC4899)],
-      description: '사주팔자/운명/전생 종합',
+      description: '사주/토정비결',
       category: 'traditional',
-      isPremium: true,
     ),
-    FortuneCategory(
-      title: '사주 차트 해석',
-      route: '/fortune/saju-chart',
-      type: 'saju',
-      icon: Icons.insights_rounded,
-      gradientColors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
-      description: '시각적 사주 분석',
-      category: 'traditional',
-      isNew: true,
-    ),
-    FortuneCategory(
-      title: '토정비결',
-      route: '/fortune/traditional?type=tojeong',
-      type: 'traditional',
-      icon: Icons.menu_book_rounded,
-      gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-      description: '전통 토정비결',
-      category: 'traditional',
-      isPremium: true,
-    ),
+    
+    // ==================== Tarot Fortune ====================
     FortuneCategory(
       title: '타로 카드',
-      route: '/fortune/traditional?type=tarot',
+      route: '/fortune/tarot',
       type: 'tarot',
       icon: Icons.style_rounded,
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-      description: '타로카드 점술',
-      category: 'traditional',
-      isPremium: true,
-    ),
-    FortuneCategory(
-      title: '꿈 해몽',
-      route: '/fortune/traditional?type=dream',
-      type: 'dream',
-      icon: Icons.bedtime_rounded,
-      gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-      description: '꿈의 의미 해석',
-      category: 'traditional',
-    ),
-    FortuneCategory(
-      title: '관상',
-      route: '/fortune/traditional?type=physiognomy',
-      type: 'default',
-      icon: Icons.face_rounded,
-      gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
-      description: '얼굴로 보는 운세',
+      description: '카드가 전하는 오늘의 메시지',
       category: 'traditional',
       isNew: true,
     ),
+    
+    // ==================== Dream Interpretation ====================
+    FortuneCategory(
+      title: '꿈해몽',
+      route: '/fortune/dream',
+      type: 'dream',
+      icon: Icons.bedtime_rounded,
+      gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+      description: '꿈이 전하는 숨겨진 의미',
+      category: 'traditional',
+      isNew: true,
+    ),
+    
+    // ==================== Physiognomy ====================
+    FortuneCategory(
+      title: '관상',
+      route: '/fortune/physiognomy',
+      type: 'physiognomy',
+      icon: Icons.face_rounded,
+      gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+      description: '얼굴에 나타난 운명의 징표',
+      category: 'traditional',
+    ),
+    
+    // ==================== Talisman ====================
     FortuneCategory(
       title: '부적',
-      route: '/fortune/traditional?type=talisman',
-      type: 'default',
+      route: '/fortune/talisman',
+      type: 'talisman',
       icon: Icons.shield_rounded,
-      gradientColors: [Color(0xFF8D6E63), Color(0xFF6D4C41)],
-      description: '액운을 막는 부적',
+      gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+      description: '액운을 막고 행운을 부르는 부적',
       category: 'traditional',
     ),
 
-    // ==================== Personal/Character-based Fortunes ====================
+    // ==================== Personal/Character-based Fortunes (통합) ====================
     FortuneCategory(
-      title: '생일 운세',
-      route: '/fortune/lifestyle?type=birthdate',
-      type: 'daily',
-      icon: Icons.cake_rounded,
-      gradientColors: [Color(0xFFEC4899), Color(0xFF8B5CF6)],
-      description: '생일 기반 운세',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: '별자리 운세',
-      route: '/fortune/lifestyle?type=zodiac',
-      type: 'zodiac',
-      icon: Icons.stars_rounded,
-      gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-      description: '서양 별자리 운세',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: '띠 운세',
-      route: '/fortune/lifestyle?type=zodiac-animal',
-      type: 'zodiac',
-      icon: Icons.pets_rounded,
-      gradientColors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
-      description: '12간지 띠 운세',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: 'MBTI 운세',
-      route: '/fortune/lifestyle?type=mbti',
-      type: 'daily',
+      title: '성격 운세',
+      route: '/fortune/personality',
+      type: 'personality',
       icon: Icons.psychology_rounded,
       gradientColors: [Color(0xFF6366F1), Color(0xFF3B82F6)],
-      description: 'MBTI 성격 기반 운세',
+      description: 'MBTI/혈액형',
       category: 'lifestyle',
       isNew: true,
-    ),
-    FortuneCategory(
-      title: '혈액형 운세',
-      route: '/fortune/lifestyle?type=blood-type',
-      type: 'daily',
-      icon: Icons.water_drop_rounded,
-      gradientColors: [Color(0xFFDC2626), Color(0xFFEF4444)],
-      description: '혈액형별 성격과 운세',
-      category: 'lifestyle',
     ),
     FortuneCategory(
       title: '바이오리듬',
@@ -454,16 +394,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'love',
     ),
     FortuneCategory(
-      title: '결혼운',
-      route: '/fortune/relationship?type=marriage',
-      type: 'marriage',
-      icon: Icons.favorite_border_rounded,
-      gradientColors: [Color(0xFFDB2777), Color(0xFFBE185D)],
-      description: '결혼과 배우자 운',
-      category: 'love',
-      isPremium: true,
-    ),
-    FortuneCategory(
       title: '궁합',
       route: '/fortune/relationship?type=compatibility',
       type: 'compatibility',
@@ -471,16 +401,6 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFFBE185D), Color(0xFF9333EA)],
       description: '두 사람의 궁합 보기',
       category: 'love',
-    ),
-    FortuneCategory(
-      title: '소울메이트',
-      route: '/fortune/relationship?type=soulmate',
-      type: 'relationship',
-      icon: Icons.connect_without_contact_rounded,
-      gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-      description: '운명의 짝 찾기',
-      category: 'love',
-      isNew: true,
     ),
     FortuneCategory(
       title: '피해야 할 사람',
@@ -514,98 +434,32 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'career',
     ),
 
-    // ==================== Investment/Money Fortunes ====================
+    // ==================== Investment/Money Fortunes (통합) ====================
     FortuneCategory(
-      title: '재물운',
-      route: '/fortune/investment?type=wealth',
-      type: 'money',
-      icon: Icons.attach_money_rounded,
-      gradientColors: [Color(0xFF16A34A), Color(0xFF15803D)],
-      description: '금전운과 재물운',
-      category: 'money',
-    ),
-    FortuneCategory(
-      title: '부동산운',
-      route: '/fortune/investment?type=realestate',
-      type: 'investment',
-      icon: Icons.home_rounded,
-      gradientColors: [Color(0xFF059669), Color(0xFF047857)],
-      description: '부동산 투자 운세',
-      category: 'money',
-      isPremium: true,
-    ),
-    FortuneCategory(
-      title: '주식 운세',
-      route: '/fortune/investment?type=stock',
+      title: '투자 운세',
+      route: '/fortune/investment',
       type: 'investment',
       icon: Icons.trending_up_rounded,
-      gradientColors: [Color(0xFF1E88E5), Color(0xFF1565C0)],
-      description: '오늘의 주식 투자 운세',
+      gradientColors: [Color(0xFF16A34A), Color(0xFF15803D)],
+      description: '재물/부동산/주식/암호화폐/로또',
       category: 'money',
       isPremium: true,
-    ),
-    FortuneCategory(
-      title: '암호화폐 운세',
-      route: '/fortune/investment?type=crypto',
-      type: 'investment',
-      icon: Icons.currency_bitcoin_rounded,
-      gradientColors: [Color(0xFFFF6F00), Color(0xFFE65100)],
-      description: '암호화폐 투자 운세',
-      category: 'money',
-      isPremium: true,
-    ),
-    FortuneCategory(
-      title: '로또 운세',
-      route: '/fortune/investment?type=lottery',
-      type: 'lottery',
-      icon: Icons.confirmation_number_rounded,
-      gradientColors: [Color(0xFFFFB300), Color(0xFFF57C00)],
-      description: '행운의 로또 번호',
-      category: 'money',
-      isNew: true,
     ),
 
-    // ==================== Lifestyle/Lucky Items ====================
+    // ==================== Lifestyle/Lucky Items (통합) ====================
     FortuneCategory(
-      title: '행운의 색깔',
-      route: '/fortune/lifestyle?type=lucky-color',
-      type: 'color',
-      icon: Icons.palette_rounded,
-      gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-      description: '오늘의 행운 색상',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: '행운의 숫자',
-      route: '/fortune/lifestyle?type=lucky-number',
-      type: 'daily',
-      icon: Icons.looks_one_rounded,
-      gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-      description: '행운을 부르는 숫자',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: '행운의 음식',
-      route: '/fortune/lifestyle?type=lucky-food',
-      type: 'daily',
-      icon: Icons.restaurant_rounded,
-      gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-      description: '운을 높이는 음식',
-      category: 'lifestyle',
-    ),
-    FortuneCategory(
-      title: '행운의 아이템',
-      route: '/fortune/lifestyle?type=lucky-items',
-      type: 'daily',
-      icon: Icons.diamond_rounded,
-      gradientColors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
-      description: '행운을 부르는 물건',
+      title: '행운 아이템',
+      route: '/fortune/lucky-items',
+      type: 'lucky_items',
+      icon: Icons.auto_awesome_rounded,
+      gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
+      description: '색깔/숫자/음식/아이템',
       category: 'lifestyle',
     ),
     FortuneCategory(
       title: '재능 발견',
       route: '/fortune/lifestyle?type=talent',
-      type: 'daily',
+      type: 'talent',
       icon: Icons.stars_rounded,
       gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
       description: '숨겨진 재능 발견',
@@ -614,67 +468,28 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '소원 성취',
       route: '/fortune/lifestyle?type=wish',
-      type: 'daily',
+      type: 'wish',
       icon: Icons.star_rounded,
       gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
       description: '소원 성취 가능성',
       category: 'lifestyle',
     ),
-    FortuneCategory(
-      title: '인생 타임라인',
-      route: '/fortune/lifestyle?type=timeline',
-      type: 'daily',
-      icon: Icons.timeline_rounded,
-      gradientColors: [Color(0xFF00897B), Color(0xFF00695C)],
-      description: '인생의 중요한 시점들',
-      category: 'lifestyle',
-      isPremium: true,
-    ),
 
-    // ==================== Sports Fortunes (통합) ====================
+    // ==================== Health/Sports Fortunes (통합) ====================
     FortuneCategory(
-      title: '스포츠 운세',
-      route: '/fortune/sports',
+      title: '건강 & 운동',
+      route: '/fortune/health-sports',
       type: 'health',
-      icon: Icons.sports_rounded,
+      icon: Icons.health_and_safety_rounded,
       gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      description: '골프/테니스/런닝/낚시 등',
+      description: '건강/피트니스/요가/스포츠',
       category: 'health',
       isNew: true,
-    ),
-
-    // ==================== Health/Fitness Fortunes ====================
-    FortuneCategory(
-      title: '요가 운세',
-      route: '/fortune/lifestyle?type=yoga',
-      type: 'health',
-      icon: Icons.self_improvement_rounded,
-      gradientColors: [Color(0xFF9C27B0), Color(0xFF7B1FA2)],
-      description: '요가 수행 운세',
-      category: 'health',
-    ),
-    FortuneCategory(
-      title: '피트니스 운세',
-      route: '/fortune/lifestyle?type=fitness',
-      type: 'health',
-      icon: Icons.fitness_center_rounded,
-      gradientColors: [Color(0xFFE91E63), Color(0xFFC2185B)],
-      description: '운동 효과 운세',
-      category: 'health',
-    ),
-    FortuneCategory(
-      title: '건강운',
-      route: '/fortune/lifestyle?type=health',
-      type: 'health',
-      icon: Icons.favorite_rounded,
-      gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      description: '오늘의 건강 상태',
-      category: 'health',
     ),
     FortuneCategory(
       title: '이사운',
       route: '/fortune/lifestyle?type=moving',
-      type: 'daily',
+      type: 'moving',
       icon: Icons.home_work_rounded,
       gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
       description: '이사 길일과 방향',
@@ -685,7 +500,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     FortuneCategory(
       title: '포춘 쿠키',
       route: '/fortune/interactive?type=fortune-cookie',
-      type: 'daily',
+      type: 'fortune-cookie',
       icon: Icons.cookie_rounded,
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
       description: '오늘의 행운 메시지',
@@ -693,31 +508,20 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true,
     ),
     FortuneCategory(
-      title: '같은 생일 연예인',
-      route: '/fortune/same-birthday-celebrity',
+      title: '유명인 운세',
+      route: '/fortune/celebrity',
       type: 'celebrity',
-      icon: Icons.cake_outlined,
+      icon: Icons.star_rounded,
       gradientColors: [Color(0xFFFF1744), Color(0xFFE91E63)],
-      description: '나와 생일이 같은 연예인 운세',
+      description: '연예인/유튜버/프로게이머/축구선수 등',
       category: 'interactive',
       isNew: true,
     ),
     
-    // ==================== AI/Smart Fortunes (새로 추가) ====================
-    FortuneCategory(
-      title: 'AI 종합 운세',
-      route: '/fortune/ai-comprehensive',
-      type: 'ai',
-      icon: Icons.psychology_alt_rounded,
-      gradientColors: [Color(0xFF9C27B0), Color(0xFF673AB7)],
-      description: '모든 데이터를 분석한 AI 운세',
-      category: 'lifestyle',
-      isNew: true,
-      isPremium: true,
-    ),
+    // ==================== Fortune History (프로필로 이동) ====================
     FortuneCategory(
       title: '운세 히스토리',
-      route: '/fortune/history',
+      route: '/profile/history',
       type: 'history',
       icon: Icons.history_rounded,
       gradientColors: [Color(0xFF795548), Color(0xFF5D4037)],
@@ -726,82 +530,27 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true,
     ),
 
-    // ==================== Pet & Family Fortunes ====================
+    // ==================== Pet Fortunes (통합) ====================
     FortuneCategory(
       title: '반려동물 운세',
       route: '/fortune/pet',
       type: 'pet',
       icon: Icons.pets_rounded,
       gradientColors: [Color(0xFFE11D48), Color(0xFFBE123C)],
-      description: '반려동물과의 교감과 건강',
+      description: '반려동물/반려견/반려묘/궁합',
       category: 'petFamily',
       isNew: true,
     ),
+    // ==================== Family Fortunes (통합) ====================
     FortuneCategory(
-      title: '반려견 운세',
-      route: '/fortune/pet?type=dog',
-      type: 'pet',
-      icon: Icons.pets_rounded,
-      gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
-      description: '강아지와의 특별한 하루',
-      category: 'petFamily',
-    ),
-    FortuneCategory(
-      title: '반려묘 운세',
-      route: '/fortune/pet?type=cat',
-      type: 'pet',
-      icon: Icons.pets_rounded,
-      gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
-      description: '고양이와의 행복한 일상',
-      category: 'petFamily',
-    ),
-    FortuneCategory(
-      title: '반려동물 궁합',
-      route: '/fortune/pet-compatibility',
-      type: 'pet',
-      icon: Icons.favorite_rounded,
-      gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
-      description: '나와 반려동물의 궁합',
-      category: 'petFamily',
-      isPremium: true,
-    ),
-    FortuneCategory(
-      title: '자녀 운세',
-      route: '/fortune/children',
-      type: 'children',
-      icon: Icons.child_care_rounded,
-      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
-      description: '우리 아이의 운세와 성장',
-      category: 'petFamily',
-      isNew: true,
-    ),
-    FortuneCategory(
-      title: '육아 운세',
-      route: '/fortune/parenting',
-      type: 'parenting',
-      icon: Icons.family_restroom_rounded,
-      gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
-      description: '오늘의 육아 조언',
-      category: 'petFamily',
-    ),
-    FortuneCategory(
-      title: '태교 운세',
-      route: '/fortune/pregnancy',
-      type: 'pregnancy',
-      icon: Icons.pregnant_woman_rounded,
-      gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-      description: '예비 엄마를 위한 태교 가이드',
-      category: 'petFamily',
-      isPremium: true,
-    ),
-    FortuneCategory(
-      title: '가족 화합 운세',
-      route: '/fortune/family-harmony',
+      title: '가족 운세',
+      route: '/fortune/family',
       type: 'family',
-      icon: Icons.home_rounded,
-      gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
-      description: '가족 간의 조화와 행복',
+      icon: Icons.family_restroom_rounded,
+      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+      description: '자녀/육아/태교/가족화합',
       category: 'petFamily',
+      isNew: true,
     ),
   ];
 
@@ -933,48 +682,59 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                               print('[FortuneListPage] Route: ${category.route}');
                               print('[FortuneListPage] Type: $fortuneType');
                               
-                              // Get thumbnail image path and show animation
-                              final thumbnailPath = FortuneCardImages.getRandomThumbnail(category.type);
-                              final thumbnailKey = _getThumbnailKey(category.route);
-                              
-                              // Show animated thumbnail
-                              _showAnimatedThumbnail(context, thumbnailKey, thumbnailPath, () {
-                                // Callback when animation is dismissed
-                              });
-                              
-                              // Show bottom sheet
-                              SimpleFortunInfoSheet.show(
-                                context,
-                                fortuneType: fortuneType,
-                                onDismiss: () {
-                                  // Call the dismiss callback to remove the overlay
-                                  _currentDismissCallback?.call();
-                                },
-                                onFortuneButtonPressed: () {
-                                  print('[FortuneListPage] Fortune button pressed, navigating to AdLoadingScreen');
-                                  
-                                  // Navigate directly to AdLoadingScreen instead of fortune page
-                                  final isPremium = ref.read(hasUnlimitedAccessProvider);
-                                  
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => AdLoadingScreen(
-                                        fortuneType: fortuneType,
-                                        fortuneTitle: category.title,
-                                        fortuneRoute: category.route,
-                                        isPremium: isPremium,
-                                        onComplete: () {
-                                          // This won't be called since we're using fortuneRoute
-                                        },
-                                        onSkip: () {
-                                          // Navigate to premium page or handle skip
-                                          context.push('/subscription');
-                                        },
+                              // Check if this is time-based fortune
+                              if (category.route == '/fortune/time') {
+                                // Show time-based fortune bottom sheet directly without animated thumbnail
+                                TimeBasedFortuneBottomSheet.show(
+                                  context,
+                                  onDismiss: () {
+                                    // No overlay to dismiss for time-based fortune
+                                  },
+                                );
+                              } else {
+                                // Get thumbnail image path and show animation for other fortunes
+                                final thumbnailPath = FortuneCardImages.getImagePath(category.type);
+                                final thumbnailKey = _getThumbnailKey(category.route);
+                                
+                                // Show animated thumbnail
+                                _showAnimatedThumbnail(context, thumbnailKey, thumbnailPath, () {
+                                  // Callback when animation is dismissed
+                                });
+                                
+                                // Show regular bottom sheet
+                                SimpleFortunInfoSheet.show(
+                                  context,
+                                  fortuneType: fortuneType,
+                                  onDismiss: () {
+                                    // Call the dismiss callback to remove the overlay
+                                    _currentDismissCallback?.call();
+                                  },
+                                  onFortuneButtonPressed: () {
+                                    print('[FortuneListPage] Fortune button pressed, navigating to AdLoadingScreen');
+                                    
+                                    // Navigate directly to AdLoadingScreen instead of fortune page
+                                    final isPremium = ref.read(hasUnlimitedAccessProvider);
+                                    
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => AdLoadingScreen(
+                                          fortuneType: fortuneType,
+                                          fortuneTitle: category.title,
+                                          fortuneRoute: category.route,
+                                          isPremium: isPremium,
+                                          onComplete: () {
+                                            // This won't be called since we're using fortuneRoute
+                                          },
+                                          onSkip: () {
+                                            // Navigate to premium page or handle skip
+                                            context.push('/subscription');
+                                          },
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
+                                    );
+                                  },
+                                );
+                              }
                             },
                           ))
                           : FortuneListTile(
@@ -990,33 +750,36 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                     ),
                                   );
                                 } else {
-                                  // Same logic as FortuneListCard
-                                  String fortuneType = category.type;
-                                  
-                                  if (category.route.contains('?type=')) {
-                                    final queryPart = category.route.split('?type=').last;
-                                    fortuneType = queryPart;
-                                  } else if (category.route.contains('/fortune/')) {
-                                    final segments = category.route.split('/');
-                                    if (segments.length > 2) {
-                                      fortuneType = segments[2];
+                                  // Check if this is time-based fortune
+                                  if (category.route == '/fortune/time') {
+                                    // Show time-based fortune bottom sheet directly
+                                    TimeBasedFortuneBottomSheet.show(
+                                      context,
+                                      onDismiss: () {
+                                        // No overlay to dismiss in list view
+                                      },
+                                    );
+                                  } else {
+                                    // Same logic as FortuneListCard
+                                    String fortuneType = category.type;
+                                    
+                                    if (category.route.contains('?type=')) {
+                                      final queryPart = category.route.split('?type=').last;
+                                      fortuneType = queryPart;
+                                    } else if (category.route.contains('/fortune/')) {
+                                      final segments = category.route.split('/');
+                                      if (segments.length > 2) {
+                                        fortuneType = segments[2];
+                                      }
                                     }
-                                  }
-                                  
-                                  // Get thumbnail image path and show animation
-                                  final thumbnailPath = FortuneCardImages.getRandomThumbnail(category.type);
-                                  final thumbnailKey = _getThumbnailKey(category.route);
-                                  
-                                  // For list view, we don't have a thumbnail key in the card, so create a temporary one
-                                  final tempKey = GlobalKey();
-                                  
-                                  SimpleFortunInfoSheet.show(
-                                    context,
-                                    fortuneType: fortuneType,
-                                    onDismiss: () {
-                                      // No overlay to dismiss in list view
-                                    },
-                                    onFortuneButtonPressed: () {
+                                    
+                                    SimpleFortunInfoSheet.show(
+                                      context,
+                                      fortuneType: fortuneType,
+                                      onDismiss: () {
+                                        // No overlay to dismiss in list view
+                                      },
+                                      onFortuneButtonPressed: () {
                                       final isPremium = ref.read(hasUnlimitedAccessProvider);
                                       
                                       Navigator.of(context).push(
@@ -1035,6 +798,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                       );
                                     },
                                   );
+                                  }
                                 }
                               },
                             ),
@@ -1085,79 +849,48 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final theme = Theme.of(context);
     final viewMode = ref.watch(_viewModeProvider);
     
-    return GestureDetector(
-      onTap: () {
-        // Toggle between grid and list view
-        if (viewMode == ViewMode.trend) {
-          ref.read(_viewModeProvider.notifier).state = ViewMode.list;
-        } else {
-          ref.read(_viewModeProvider.notifier).state = ViewMode.trend;
-        }
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 80,
-        height: 36,
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.3),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          // Toggle between grid and list view
+          if (viewMode == ViewMode.trend) {
+            ref.read(_viewModeProvider.notifier).state = ViewMode.list;
+          } else {
+            ref.read(_viewModeProvider.notifier).state = ViewMode.trend;
+          }
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: theme.colorScheme.outline.withValues(alpha: 0.2),
             ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // Sliding indicator
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              left: viewMode == ViewMode.trend ? 2 : 42,
-              top: 2,
-              child: Container(
-                width: 36,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(18),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                viewMode == ViewMode.trend 
+                    ? Icons.grid_view_rounded 
+                    : Icons.view_list_rounded,
+                size: 20,
+                color: theme.colorScheme.onSurface,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                viewMode == ViewMode.trend ? '카드' : '리스트',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-            ),
-            // Icons
-            Row(
-              children: [
-                Expanded(
-                  child: Icon(
-                    Icons.grid_view_rounded,
-                    size: 20,
-                    color: viewMode == ViewMode.trend
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  height: 20,
-                  color: theme.colorScheme.outline.withValues(alpha: 0.2),
-                ),
-                Expanded(
-                  child: Icon(
-                    Icons.list_rounded,
-                    size: 20,
-                    color: viewMode == ViewMode.list
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -121,7 +121,7 @@ class _MainShellState extends ConsumerState<MainShell>
                 final totalNavHeight = _navBarHeight + bottomPadding;
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: totalNavHeight * (1.0 - _paddingAnimation.value),
+                    bottom: totalNavHeight * _paddingAnimation.value,
                   ),
                   child: widget.child,
                 );

@@ -43,24 +43,34 @@ struct FortuneProvider: TimelineProvider {
     }
     
     func getSnapshot(in context: Context, completion: @escaping (FortuneEntry) -> ()) {
-        let entry = loadFortuneData() ?? FortuneEntry.placeholder
-        completion(entry)
+        // For preview and quick display, always use placeholder
+        if context.isPreview {
+            completion(FortuneEntry.placeholder)
+            return
+        }
+        
+        // Try to load data with a timeout
+        DispatchQueue.global(qos: .userInitiated).async {
+            let entry = self.loadFortuneData() ?? FortuneEntry.placeholder
+            DispatchQueue.main.async {
+                completion(entry)
+            }
+        }
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<FortuneEntry>) -> ()) {
-        var entries: [FortuneEntry] = []
-        
-        // Load current fortune data
-        let currentEntry = loadFortuneData() ?? FortuneEntry.empty
-        entries.append(currentEntry)
-        
-        // Create timeline that updates every hour
-        let currentDate = Date()
-        for hourOffset in 1 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            // Keep the same fortune data but update the date
-            let entry = FortuneEntry(
-                date: entryDate,
+        // Use async to prevent blocking
+        DispatchQueue.global(qos: .userInitiated).async {
+            var entries: [FortuneEntry] = []
+            
+            // Load current fortune data with error handling
+            let currentEntry = self.loadFortuneData() ?? FortuneEntry.empty
+            entries.append(currentEntry)
+            
+            // Only create one additional entry (reduced from 5)
+            let nextUpdate = Calendar.current.date(byAdding: .hour, value: 1, to: Date()) ?? Date()
+            let nextEntry = FortuneEntry(
+                date: nextUpdate,
                 fortuneScore: currentEntry.fortuneScore,
                 fortuneMessage: currentEntry.fortuneMessage,
                 luckyColor: currentEntry.luckyColor,
@@ -68,29 +78,52 @@ struct FortuneProvider: TimelineProvider {
                 detailedFortune: currentEntry.detailedFortune,
                 isPlaceholder: false
             )
-            entries.append(entry)
+            entries.append(nextEntry)
+            
+            // Update policy to refresh every 2 hours instead of at the end
+            let timeline = Timeline(entries: entries, policy: .after(nextUpdate))
+            
+            DispatchQueue.main.async {
+                completion(timeline)
+            }
         }
-        
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
     }
     
     private func loadFortuneData() -> FortuneEntry? {
-        guard let sharedDefaults = UserDefaults(suiteName: "group.com.fortune.fortune"),
-              let data = sharedDefaults.data(forKey: "widget_fortune_daily"),
-              let fortuneData = try? JSONDecoder().decode(FortuneWidgetData.self, from: data) else {
+        // Add timeout protection
+        let startTime = Date()
+        
+        guard let sharedDefaults = UserDefaults(suiteName: "group.com.fortune.fortune") else {
+            print("[Widget] Failed to access app group UserDefaults")
             return nil
         }
         
-        return FortuneEntry(
-            date: Date(),
-            fortuneScore: fortuneData.score,
-            fortuneMessage: fortuneData.message,
-            luckyColor: fortuneData.luckyColor,
-            luckyNumber: fortuneData.luckyNumber,
-            detailedFortune: fortuneData.detailedFortune,
-            isPlaceholder: false
-        )
+        // Check if loading is taking too long
+        if Date().timeIntervalSince(startTime) > 0.5 {
+            print("[Widget] UserDefaults access taking too long")
+            return nil
+        }
+        
+        guard let data = sharedDefaults.data(forKey: "widget_fortune_daily") else {
+            print("[Widget] No fortune data found in UserDefaults")
+            return nil
+        }
+        
+        do {
+            let fortuneData = try JSONDecoder().decode(FortuneWidgetData.self, from: data)
+            return FortuneEntry(
+                date: Date(),
+                fortuneScore: fortuneData.score,
+                fortuneMessage: fortuneData.message,
+                luckyColor: fortuneData.luckyColor,
+                luckyNumber: fortuneData.luckyNumber,
+                detailedFortune: fortuneData.detailedFortune,
+                isPlaceholder: false
+            )
+        } catch {
+            print("[Widget] Failed to decode fortune data: \(error)")
+            return nil
+        }
     }
 }
 

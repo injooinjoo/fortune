@@ -25,19 +25,13 @@ struct SmallFortuneView: View {
     
     var body: some View {
         ZStack {
+            // Simplified background - single color instead of gradient
             ContainerRelativeShape()
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [Color("WidgetBackground1"), Color("WidgetBackground2")]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                ))
+                .fill(Color("AccentColor").opacity(0.9))
             
             VStack(spacing: 8) {
-                // Header
+                // Simplified header
                 HStack {
-                    Image(systemName: "sparkles")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.8))
                     Text("오늘의 운세")
                         .font(.caption)
                         .fontWeight(.semibold)

@@ -42,7 +42,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
     required this.fortuneType,
     this.requiresUserInfo = true,
     this.showShareButton = true,
-    this.showFontSizeSelector = true,
+    this.showFontSizeSelector = false,
     this.initialParams,
   }) : super(key: key);
 }
@@ -778,7 +778,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                           ? buildFortuneResult()
                           : _buildInitialState(),
             ),
-            if (_fortune == null && !_isLoading) _buildGenerateButton(),
+            if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton(),
           ],
         ),
       ),

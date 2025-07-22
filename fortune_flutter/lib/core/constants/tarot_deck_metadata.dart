@@ -258,7 +258,12 @@ enum TarotStyle {
   classic('고전', '역사적 전통'),
   narrative('내러티브', '스토리텔링 중심'),
   ceremonial('의식용', '마법과 의식'),
-  divinatory('점술용', '예언과 점술'),
+  divinatory('점술용', '예언과 점술');
+
+  final String label;
+  final String description;
+
+  const TarotStyle(this.label, this.description);
 }
 
 // 타로 난이도 열거형
@@ -267,7 +272,12 @@ enum TarotDifficulty {
   intermediate('중급', '어느 정도 경험 필요'),
   advanced('고급', '깊은 이해 필요'),
   expert('전문가', '전문 지식 필요'),
-  unique('독특함', '특별한 접근 필요'),
+  unique('독특함', '특별한 접근 필요');
+
+  final String label;
+  final String description;
+
+  const TarotDifficulty(this.label, this.description);
 }
 
 // 확장 메서드

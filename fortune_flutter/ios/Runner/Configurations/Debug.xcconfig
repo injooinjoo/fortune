@@ -19,8 +19,11 @@ SWIFT_OPTIMIZATION_LEVEL = -Onone
 OTHER_SWIFT_FLAGS = $(inherited) -D DEBUG
 
 // Deployment Target
-IPHONEOS_DEPLOYMENT_TARGET = 12.0
+IPHONEOS_DEPLOYMENT_TARGET = 13.0
 
 // Debug Settings
 ENABLE_NS_ASSERTIONS = YES
 DEBUG_INFORMATION_FORMAT = dwarf
+
+// Dart Observatory Bonjour Service (Debug only)
+DART_DEBUG_BONJOUR_SERVICE = _dartobservatory._tcp

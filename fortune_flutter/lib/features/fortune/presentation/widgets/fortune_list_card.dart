@@ -80,8 +80,8 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
   }
 
   Widget _buildThumbnail() {
-    // Use random thumbnail instead of predefined images
-    final imagePath = FortuneCardImages.getRandomThumbnail(widget.category.type);
+    // Use specific fortune type image instead of random thumbnail
+    final imagePath = FortuneCardImages.getImagePath(widget.category.type);
 
     return Container(
       decoration: BoxDecoration(
@@ -362,18 +362,6 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                   const SizedBox(height: 6),
                   // Hashtags
                   _buildCategoryHashtags(),
-                  const SizedBox(height: 8),
-                  // View more
-                  GestureDetector(
-                    onTap: widget.onTap,
-                    child: Text(
-                      '운세 보러가기',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 12),
                   // Gray divider line
                   Container(

@@ -553,16 +553,34 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         }
         
         // Google Sign-In SDK 사용
-        final response = await _socialAuthService.signInWithGoogle();
-        
-        // 로딩 스낵바 닫기
-        if (mounted) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        try {
+          final response = await _socialAuthService.signInWithGoogle();
+          
+          // 로딩 스낭바 닫기
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
+          
+          // The auth state listener will handle navigation after successful login
+          // OAuth 리다이렉트 방식은 항상 null을 반환하므로
+          // 취소 메시지를 표시하지 않음
+        } catch (e) {
+          // 로딩 스낵바 닫기
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
+          
+          // Show error message
+          if (mounted && e.toString().contains('Invalid API key')) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('인증 서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          rethrow;
         }
-        
-        // The auth state listener will handle navigation after successful login
-        // OAuth 리다이렉트 방식은 항상 null을 반환하므로
-        // 취소 메시지를 표시하지 않음
       } else if (provider == 'Kakao') {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

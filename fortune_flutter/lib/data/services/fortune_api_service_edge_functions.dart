@@ -84,9 +84,14 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         },
       };
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Request data: $requestData');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Request data keys: ${requestData.keys.toList()}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Period value in request: ${requestData['period']}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Date value in request: ${requestData['date']}');
 
       // Create a custom Dio instance for Edge Functions
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Base URL: ${EdgeFunctionsEndpoints.currentBaseUrl}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Full endpoint: $endpoint');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Full URL: ${EdgeFunctionsEndpoints.currentBaseUrl}$endpoint');
       
       // Validate Supabase anon key
       if (Environment.supabaseAnonKey.isEmpty) {
@@ -95,12 +100,24 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         throw Exception('SUPABASE_ANON_KEY is not configured. Please check your environment settings.');
       }
       
+      // Configure headers based on platform
+      final headers = <String, dynamic>{
+        'Content-Type': 'application/json',
+        'apikey': Environment.supabaseAnonKey,
+      };
+      
+      // Only add XMLHttpRequest header for non-web platforms
+      if (!kIsWeb) {
+        headers['x-requested-with'] = 'XMLHttpRequest';
+      }
+      
       final edgeFunctionsDio = Dio(BaseOptions(
         baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': Environment.supabaseAnonKey,
-        },
+        headers: headers,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
+        validateStatus: (status) => status! < 500,
       ));
       debugPrint('🔍 [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY present: ${Environment.supabaseAnonKey.isNotEmpty}');
       debugPrint('🔍 [_getFortuneFromEdgeFunction] SUPABASE_ANON_KEY prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
@@ -120,22 +137,59 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Auth token prefix: ${authToken.substring(0, 30)}...');
 
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Making POST request to: ${EdgeFunctionsEndpoints.currentBaseUrl}$endpoint');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Request method: POST');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Request body: ${requestData}');
+      
+      final stopwatch = Stopwatch()..start();
       final response = await edgeFunctionsDio.post(
         endpoint,
         data: requestData,
       );
+      stopwatch.stop();
       
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response received in ${stopwatch.elapsedMilliseconds}ms');
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Response status: ${response.statusCode}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response headers: ${response.headers}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Response data type: ${response.data.runtimeType}');
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Response data: ${response.data}');
 
       // Edge Functions return a slightly different format
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Extracting fortune data from response...');
+      
+      if (response.data == null) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Response data is null!');
+        throw Exception('Empty response from Edge Function');
+      }
+      
+      if (response.data is! Map) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Response data is not a Map! Type: ${response.data.runtimeType}');
+        throw Exception('Invalid response format from Edge Function');
+      }
+      
       final fortuneData = response.data['fortune'];
       final tokensUsed = response.data['tokensUsed'] ?? 0;
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune data present: ${fortuneData != null}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune data type: ${fortuneData.runtimeType}');
       
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune data: $fortuneData');
       debugPrint('🔍 [_getFortuneFromEdgeFunction] Tokens used: $tokensUsed');
       
       // Convert to FortuneResponseModel format
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Converting to FortuneData model...');
+      
+      if (fortuneData == null) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Fortune data is null!');
+        throw Exception('No fortune data in response');
+      }
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] Fortune data keys: ${fortuneData.keys.toList()}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] content: ${fortuneData['content']}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] description: ${fortuneData['description']}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] overallScore: ${fortuneData['overallScore']}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] hexagonScores: ${fortuneData['hexagonScores']}');
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] luckyItems: ${fortuneData['luckyItems']}');
+      
       final fortuneDataModel = FortuneData(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
@@ -143,12 +197,12 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         content: fortuneData['content'] ?? fortuneData['description'] ?? '',
         createdAt: DateTime.now(),
         metadata: fortuneData,
-        score: fortuneData['score']?.toInt() ?? fortuneData['overallScore']?.toInt(),
+        score: fortuneData['score']?.toInt() ?? fortuneData['overall_score']?.toInt() ?? fortuneData['overallScore']?.toInt(),
         summary: fortuneData['summary'],
-        luckyColor: fortuneData['luckyColor'] ?? fortuneData['luckyItems']?['color'],
-        luckyNumber: fortuneData['luckyNumber']?.toInt() ?? fortuneData['luckyItems']?['number'],
-        luckyDirection: fortuneData['luckyItems']?['direction'],
-        bestTime: fortuneData['luckyItems']?['time'],
+        luckyColor: fortuneData['luckyColor'] ?? fortuneData['lucky_items']?['color'] ?? fortuneData['luckyItems']?['color'],
+        luckyNumber: fortuneData['luckyNumber']?.toInt() ?? fortuneData['lucky_items']?['number'] ?? fortuneData['luckyItems']?['number'],
+        luckyDirection: fortuneData['lucky_items']?['direction'] ?? fortuneData['luckyItems']?['direction'],
+        bestTime: fortuneData['lucky_items']?['time'] ?? fortuneData['luckyItems']?['time'],
         advice: fortuneData['advice'],
         caution: fortuneData['caution'],
         greeting: fortuneData['greeting'],
@@ -158,9 +212,11 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         timeSpecificFortunes: fortuneData['timeSpecificFortunes'],
         birthYearFortunes: fortuneData['birthYearFortunes'],
         fiveElements: fortuneData['fiveElements'],
-        specialTip: fortuneData['specialTip'],
+        specialTip: fortuneData['special_tip'] ?? fortuneData['specialTip'],
         period: fortuneData['period'],
       );
+      
+      debugPrint('🔍 [_getFortuneFromEdgeFunction] FortuneData model created successfully');
       
       final fortuneResponse = FortuneResponseModel(
         success: true,
@@ -181,22 +237,85 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       
       if (e is DioException) {
         debugPrint('❌ [_getFortuneFromEdgeFunction] DioException type: ${e.type}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Request data: ${e.requestOptions.data}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Request headers: ${e.requestOptions.headers}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Request URL: ${e.requestOptions.uri}');
         debugPrint('❌ [_getFortuneFromEdgeFunction] Response data: ${e.response?.data}');
         debugPrint('❌ [_getFortuneFromEdgeFunction] Status code: ${e.response?.statusCode}');
-        debugPrint('❌ [_getFortuneFromEdgeFunction] Headers: ${e.response?.headers}');
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Response headers: ${e.response?.headers}');
+        
+        // Handle specific error types
+        if (e.type == DioExceptionType.connectionError) {
+          debugPrint('❌ [_getFortuneFromEdgeFunction] Connection error - possible CORS issue or network problem');
+          debugPrint('❌ [_getFortuneFromEdgeFunction] Make sure Edge Functions are deployed and accessible');
+          debugPrint('❌ [_getFortuneFromEdgeFunction] Check if URL is correct: ${EdgeFunctionsEndpoints.currentBaseUrl}$endpoint');
+        } else if (e.type == DioExceptionType.connectionTimeout) {
+          debugPrint('❌ [_getFortuneFromEdgeFunction] Connection timeout - server may be down or slow');
+        } else if (e.type == DioExceptionType.receiveTimeout) {
+          debugPrint('❌ [_getFortuneFromEdgeFunction] Receive timeout - response took too long');
+        }
       }
       
       // If Edge Functions fail, fall back to traditional API
+      debugPrint('⚠️ [_getFortuneFromEdgeFunction] Edge Function failed, attempting fallback...');
+      
+      // For web platform with CORS errors, we need special handling
+      if (kIsWeb && e is DioException && e.type == DioExceptionType.connectionError) {
+        debugPrint('❌ [_getFortuneFromEdgeFunction] Web platform CORS error detected');
+        debugPrint('💡 [_getFortuneFromEdgeFunction] Consider using proxy or server-side rendering for web platform');
+      }
+      
+      // In debug mode, we might want to see the error
       if (!kReleaseMode) {
-        // In debug mode, we might want to see the error
         debugPrint('❌ [_getFortuneFromEdgeFunction] Rethrowing error in debug mode');
         rethrow;
       }
       
-      // In production, silently fall back
-      debugPrint('🔍 [_getFortuneFromEdgeFunction] Falling back to traditional API');
-      return super.getDailyFortune(userId: userId);
+      // In production, throw a user-friendly error
+      // We can't fall back to super.getDailyFortune here because this is a generic method
+      throw Exception('운세 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
+  }
+
+  // Time-based fortune method - Override from parent
+  @override
+  Future<Fortune> getTimeFortune({
+    required String userId,
+    String fortuneType = 'time',
+    Map<String, dynamic>? params,
+  }) async {
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] getTimeFortune called');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Timestamp: ${DateTime.now().toIso8601String()}');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] userId: $userId');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] fortuneType: $fortuneType');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] params: $params');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] params type: ${params.runtimeType}');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] period from params: ${params?['period']}');
+    
+    if (_featureFlags.isEdgeFunctionsEnabled()) {
+      debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Edge Functions ENABLED');
+      debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Preparing data for Edge Function call');
+      
+      final edgeFunctionData = {
+        'period': params?['period'] ?? 'today',
+        ...?params,
+      };
+      
+      debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Edge Function data prepared: $edgeFunctionData');
+      debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Calling _getFortuneFromEdgeFunction...');
+      
+      return _getFortuneFromEdgeFunction(
+        endpoint: EdgeFunctionsEndpoints.timeFortune,
+        userId: userId,
+        fortuneType: 'time_based',
+        data: edgeFunctionData,
+      );
+    }
+    
+    // Fall back to parent implementation
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Edge Functions DISABLED');
+    debugPrint('🔍 [FortuneApiServiceWithEdgeFunctions] Falling back to parent implementation');
+    return super.getTimeFortune(userId: userId, fortuneType: fortuneType, params: params);
   }
 
   // Add methods for other fortune types
@@ -245,12 +364,20 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Map<String, dynamic>> getTokenBalance({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       try {
+        // Configure headers based on platform
+        final headers = <String, dynamic>{
+          'Content-Type': 'application/json',
+          'apikey': Environment.supabaseAnonKey,
+        };
+        
+        // Only add XMLHttpRequest header for non-web platforms
+        if (!kIsWeb) {
+          headers['x-requested-with'] = 'XMLHttpRequest';
+        }
+        
         final edgeFunctionsDio = Dio(BaseOptions(
           baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': Environment.supabaseAnonKey,
-          },
+          headers: headers,
         ));
 
         // Add auth token from Supabase session
@@ -280,12 +407,20 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
   Future<Map<String, dynamic>> claimDailyTokens({required String userId}) async {
     if (_featureFlags.isEdgeFunctionsEnabled()) {
       try {
+        // Configure headers based on platform
+        final headers = <String, dynamic>{
+          'Content-Type': 'application/json',
+          'apikey': Environment.supabaseAnonKey,
+        };
+        
+        // Only add XMLHttpRequest header for non-web platforms
+        if (!kIsWeb) {
+          headers['x-requested-with'] = 'XMLHttpRequest';
+        }
+        
         final edgeFunctionsDio = Dio(BaseOptions(
           baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': Environment.supabaseAnonKey,
-          },
+          headers: headers,
         ));
 
         // Add auth token from Supabase session
@@ -857,31 +992,5 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       );
     }
     return super.getLuckyFishingFortune(userId: userId);
-  }
-
-  // Time-based Fortune (Enhanced)
-  @override
-  Future<Fortune> getTimeFortune({
-    required String userId,
-    String fortuneType = 'time',
-    Map<String, dynamic>? params,
-  }) async {
-    if (_featureFlags.isEdgeFunctionsEnabled()) {
-      // Extract period from params or default to 'today'
-      final period = params?['period'] ?? 'today';
-      
-      return _getFortuneFromEdgeFunction(
-        endpoint: EdgeFunctionsEndpoints.timeFortune,
-        userId: userId,
-        fortuneType: 'time',
-        data: {
-          'period': period,
-          ...?params,
-        },
-      );
-    }
-    
-    // Fall back to parent class method
-    return super.getTimeFortune(userId: userId, fortuneType: fortuneType, params: params);
   }
 }

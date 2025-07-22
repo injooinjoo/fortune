@@ -6,6 +6,7 @@ import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
 import '../../core/theme/app_theme.dart';
 import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
@@ -365,74 +366,17 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen>
                 ),
               ).animate().fadeIn(duration: 300.ms),
 
-            // Mock Ad Banner
-            Positioned(
-              bottom: 20,
-              left: 20,
-              right: 20,
-              child: GlassContainer(
-                height: 80,
-                padding: const EdgeInsets.all(12),
-                borderRadius: BorderRadius.circular(16),
-                blur: 20,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.ad_units_rounded,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '광고 영역',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Google AdMob',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'AD',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+            // Real Ad Banner (AdMob on mobile, AdSense on web)
+            if (!isPremium)
+              Positioned(
+                bottom: 20,
+                left: 20,
+                right: 20,
+                child: CommonAdPlacements.betweenContentAd(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  backgroundColor: Colors.black.withValues(alpha: 0.5),
                 ),
               ),
-            ),
           ],
         ),
       ),

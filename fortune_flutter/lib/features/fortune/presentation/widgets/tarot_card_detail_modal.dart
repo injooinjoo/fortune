@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
 import '../../../../core/constants/tarot_metadata.dart';
+import '../../../../core/constants/tarot_minor_arcana.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 
 class TarotCardDetailModal extends StatefulWidget {
@@ -703,7 +704,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   }
 
   Map<String, dynamic> _getCardInfo() {
-    // Get card info from provider (same logic as in storytelling provider)
+    // Major Arcana (0-21)
     if (widget.cardIndex < 22) {
       final majorCard = TarotMetadata.majorArcana[widget.cardIndex];
       if (majorCard != null) {
@@ -723,7 +724,59 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       }
     }
     
-    // Minor arcana logic here
+    // Minor Arcana (22-77)
+    TarotCardInfo? minorCard;
+    
+    // Wands (22-35)
+    if (widget.cardIndex >= 22 && widget.cardIndex < 36) {
+      final wandsCards = TarotMinorArcana.wands.values.toList();
+      final index = widget.cardIndex - 22;
+      if (index < wandsCards.length) {
+        minorCard = wandsCards[index];
+      }
+    }
+    // Cups (36-49)
+    else if (widget.cardIndex >= 36 && widget.cardIndex < 50) {
+      final cupsCards = TarotMinorArcana.cups.values.toList();
+      final index = widget.cardIndex - 36;
+      if (index < cupsCards.length) {
+        minorCard = cupsCards[index];
+      }
+    }
+    // Swords (50-63)
+    else if (widget.cardIndex >= 50 && widget.cardIndex < 64) {
+      final swordsCards = TarotMinorArcana.swords.values.toList();
+      final index = widget.cardIndex - 50;
+      if (index < swordsCards.length) {
+        minorCard = swordsCards[index];
+      }
+    }
+    // Pentacles (64-77)
+    else if (widget.cardIndex >= 64 && widget.cardIndex < 78) {
+      final pentaclesCards = TarotMinorArcana.pentacles.values.toList();
+      final index = widget.cardIndex - 64;
+      if (index < pentaclesCards.length) {
+        minorCard = pentaclesCards[index];
+      }
+    }
+    
+    if (minorCard != null) {
+      return {
+        'name': minorCard.name,
+        'keywords': minorCard.keywords,
+        'element': minorCard.element,
+        'astrology': minorCard.astrology,
+        'numerology': minorCard.numerology,
+        'imagery': minorCard.imagery,
+        'uprightMeaning': minorCard.uprightMeaning,
+        'reversedMeaning': minorCard.reversedMeaning,
+        'advice': minorCard.advice,
+        'questions': minorCard.questions,
+        'relatedCards': TarotHelper.getRelatedCards(widget.cardIndex),
+      };
+    }
+    
+    // Fallback
     return {
       'name': 'Unknown Card',
       'element': 'Mystery',

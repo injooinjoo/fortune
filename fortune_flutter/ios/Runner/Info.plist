@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -20,39 +22,61 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.676247567847-u13rae7nvi2ilcobf5shfdg5b1pkkvbu</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.supabase.flutter</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao79a067e199f5984dd47438d057ecb0c5</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>naverlogin</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.beyond.fortune</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2803643717997352~5970615545</string>
+	<key>KAKAO_APP_KEY</key>
+	<string>79a067e199f5984dd47438d057ecb0c5</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>storykompassauth</string>
+		<string>kakaolink</string>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<!-- App Transport Security for Production -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<!-- Add your API domain here -->
 			<key>api.fortune.com</key>
 			<dict>
 				<key>NSExceptionRequiresForwardSecrecy</key>
@@ -62,146 +86,41 @@
 			</dict>
 		</dict>
 	</dict>
-	<!-- Privacy Descriptions -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photo library for face reading features.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access for face reading features.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Fortune AI가 운세 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Fortune AI가 음성으로 꿈 내용을 입력받기 위해 마이크 접근 권한이 필요합니다.</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
-	<!-- Stripe Configuration -->
-	<key>StripePublishableKey</key>
-	<string>$(STRIPE_PUBLISHABLE_KEY)</string>
-	<!-- Google Sign-In Configuration -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- Replace with your REVERSED_CLIENT_ID from Google Console -->
-				<!-- Format: com.googleusercontent.apps.YOUR_CLIENT_ID -->
-				<string>com.googleusercontent.apps.676247567847-u13rae7nvi2ilcobf5shfdg5b1pkkvbu</string>
-			</array>
-		</dict>
-		<!-- Supabase Auth Deep Link -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>io.supabase.flutter</string>
-			</array>
-		</dict>
-		<!-- Kakao Login URL Scheme -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>kakao79a067e199f5984dd47438d057ecb0c5</string>
-			</array>
-		</dict>
-		<!-- Naver Login URL Scheme -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>naverlogin</string>
-			</array>
-		</dict>
-		<!-- App Deep Link Scheme -->
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.beyond.fortune</string>
-			</array>
-		</dict>
-	</array>
-	<!-- Kakao SDK Settings -->
-	<key>KAKAO_APP_KEY</key>
-	<string>79a067e199f5984dd47438d057ecb0c5</string>
-	<!-- LSApplicationQueriesSchemes for Social Login -->
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<!-- Kakao Talk -->
-		<string>kakaokompassauth</string>
-		<string>storykompassauth</string>
-		<string>kakaolink</string>
-		<!-- Naver App -->
-		<string>naversearchapp</string>
-		<string>naversearchthirdlogin</string>
-	</array>
-	<!-- Naver Login Settings -->
-	<key>naverServiceAppUrlScheme</key>
-	<string>naverlogin</string>
-	<key>naverConsumerKey</key>
-	<string>QMEfy6U82j8nKG3HSE8y</string>
-	<key>naverConsumerSecret</key>
-	<string>Hu5KdO9DxK</string>
-	<key>naverServiceAppName</key>
-	<string>Fortune</string>
-	<!-- Widget Configuration -->
-	<key>NSWidgetExtensionBundleIdentifiers</key>
-	<array>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
-	</array>
-	<!-- App Groups for Widget Data Sharing -->
 	<key>NSApplicationGroupIdentifier</key>
 	<string>group.com.fortune.fortune</string>
-	<!-- Live Activities Support -->
+	<key>NSBonjourServices</key>
+	<array>
+		<string>$(DART_DEBUG_BONJOUR_SERVICE)</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app needs local network access for Flutter debugging</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access for face reading features.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Fortune AI가 음성으로 꿈 내용을 입력받기 위해 마이크 접근 권한이 필요합니다.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Fortune AI가 운세 이미지를 저장하려면 사진 보관함 접근 권한이 필요합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to photo library for face reading features.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Fortune AI가 음성을 텍스트로 변환하여 꿈 해몽을 제공하기 위해 음성 인식 권한이 필요합니다.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
-	<!-- Live Activity Frequency Updates -->
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
-	<!-- Background Modes for Notifications and Remote Notifications -->
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>remote-notification</string>
-		<string>processing</string>
-	</array>
-	<!-- User Notifications -->
-	<key>NSUserNotificationUsageDescription</key>
-	<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
-	<!-- Siri Intents -->
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>com.fortune.fortune.checkDailyFortune</string>
 		<string>com.fortune.fortune.checkCompatibility</string>
 		<string>com.fortune.fortune.checkLuckyNumbers</string>
 	</array>
-	<!-- App Shortcuts -->
-	<key>UIApplicationShortcutItems</key>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>This app sends daily fortune notifications to keep you updated with your personalized fortunes.</string>
+	<key>NSWidgetExtensionBundleIdentifiers</key>
 	<array>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>com.fortune.fortune.dailyFortune</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>오늘의 운세</string>
-			<key>UIApplicationShortcutItemSubtitle</key>
-			<string>오늘의 운세를 확인하세요</string>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeDate</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>com.fortune.fortune.compatibility</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>궁합 보기</string>
-			<key>UIApplicationShortcutItemSubtitle</key>
-			<string>상대방과의 궁합을 확인하세요</string>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeLove</string>
-		</dict>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneWidget</string>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER).FortuneLiveActivity</string>
 	</array>
-	<!-- Haptic Feedback -->
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
-	<!-- Google Mobile Ads (AdMob) App ID -->
-	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-2803643717997352~5970615545</string>
-	<!-- SKAdNetwork identifiers for iOS 14+ -->
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -301,5 +220,65 @@
 			<string>y5ghdn5j9k.skadnetwork</string>
 		</dict>
 	</array>
+	<key>StripePublishableKey</key>
+	<string>$(STRIPE_PUBLISHABLE_KEY)</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeDate</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>오늘의 운세를 확인하세요</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>오늘의 운세</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.fortune.fortune.dailyFortune</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeLove</string>
+			<key>UIApplicationShortcutItemSubtitle</key>
+			<string>상대방과의 궁합을 확인하세요</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>궁합 보기</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>com.fortune.fortune.compatibility</string>
+		</dict>
+	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+		<string>processing</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+	<key>naverConsumerKey</key>
+	<string>QMEfy6U82j8nKG3HSE8y</string>
+	<key>naverConsumerSecret</key>
+	<string>Hu5KdO9DxK</string>
+	<key>naverServiceAppName</key>
+	<string>Fortune</string>
+	<key>naverServiceAppUrlScheme</key>
+	<string>naverlogin</string>
 </dict>
 </plist>

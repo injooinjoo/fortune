@@ -11,6 +11,7 @@ import 'firebase_options_secure.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 import 'core/config/environment.dart';
 import 'core/config/feature_flags.dart';
@@ -49,11 +50,25 @@ void main() async {
     Environment.printDebugInfo();
     Logger.securityCheckpoint('Environment variables loaded');
     
-    // Firebase 초기화 (보안 버전)
-    await Firebase.initializeApp(
-      options: SecureFirebaseOptions.currentPlatform,
-    );
-    Logger.securityCheckpoint('Firebase initialized');
+    // Firebase 초기화 (보안 버전) - 개발 환경에서는 선택적
+    try {
+      // Firebase 키가 실제 값인지 확인
+      if (Environment.current == Environment.development && 
+          (dotenv.dotenv.env['FIREBASE_IOS_API_KEY']?.contains('Development') ?? false)) {
+        Logger.info('Skipping Firebase initialization in development with dummy keys');
+      } else {
+        await Firebase.initializeApp(
+          options: SecureFirebaseOptions.currentPlatform,
+        );
+        Logger.securityCheckpoint('Firebase initialized');
+      }
+    } catch (e) {
+      Logger.error('Firebase initialization failed', e);
+      // 개발 환경에서는 Firebase 없이도 계속 진행
+      if (Environment.current != Environment.development) {
+        rethrow;
+      }
+    }
     
     // Kakao SDK 초기화
     kakao.KakaoSdk.init(
@@ -63,33 +78,43 @@ void main() async {
     
     // Supabase 초기화
     try {
+      final supabaseUrl = Environment.supabaseUrl;
+      final supabaseAnonKey = Environment.supabaseAnonKey;
+      
+      // Debug: Log the actual Supabase URL being used
+      Logger.info('Initializing Supabase with URL: $supabaseUrl');
+      
       await Supabase.initialize(
-        url: Environment.supabaseUrl,
-        anonKey: Environment.supabaseAnonKey,
+        url: supabaseUrl,
+        anonKey: supabaseAnonKey,
         authOptions: const FlutterAuthClientOptions(
           authFlowType: AuthFlowType.pkce,
         ),
         debug: Environment.current != Environment.production,
       );
-      Logger.securityCheckpoint('Supabase initialized');
+      Logger.securityCheckpoint('Supabase initialized with URL: $supabaseUrl');
       
-      // Test the connection immediately
+      // Test the connection immediately with a simple health check
       try {
-        final testResponse = await Supabase.instance.client.auth.signInWithPassword(
-          email: 'test@test.com',
-          password: 'test123'
-        );
+        // Try a simple auth check instead of sign in
+        final health = await Supabase.instance.client.auth.getUser();
+        Logger.info('Supabase connection test passed');
       } catch (testError) {
-        if (testError.toString().contains('Invalid API key')) {
+        if (testError.toString().contains('Invalid API key') || 
+            testError.toString().contains('401')) {
           Logger.error('Supabase API key is invalid! Please check your .env file', testError);
           debugPrint('=== SUPABASE API KEY ERROR ===');
-          debugPrint('URL: ${Environment.supabaseUrl}');
-          debugPrint('Key prefix: ${Environment.supabaseAnonKey.substring(0, 20)}...');
-          debugPrint('Please verify:');
-          debugPrint('1. The Supabase project is active');
-          debugPrint('2. The API keys match those in Supabase dashboard');
-          debugPrint('3. The project URL is correct');
+          debugPrint('URL: $supabaseUrl');
+          debugPrint('Key length: ${supabaseAnonKey.length}');
+          debugPrint('Key prefix: ${supabaseAnonKey.substring(0, 50)}...');
+          debugPrint('');
+          debugPrint('Please verify in Supabase Dashboard:');
+          debugPrint('1. Go to https://supabase.com/dashboard/project/hayjukwfcsdmppairazc/settings/api');
+          debugPrint('2. Check that the anon key matches the one in .env file');
+          debugPrint('3. Make sure the project is not paused');
           debugPrint('==============================');
+          
+          // Don't throw here - let the app continue but auth won't work
         }
       }
     } catch (e) {

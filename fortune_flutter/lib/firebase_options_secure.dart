@@ -65,7 +65,7 @@ class SecureFirebaseOptions {
     messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? _throwMissingKey('FIREBASE_MESSAGING_SENDER_ID'),
     projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? _throwMissingKey('FIREBASE_PROJECT_ID'),
     storageBucket: '${dotenv.env['FIREBASE_PROJECT_ID']}.firebasestorage.app',
-    iosBundleId: 'com.beyond.fortuneFlutter',
+    iosBundleId: 'com.beyond.fortune',
   );
 
   static FirebaseOptions get macos => FirebaseOptions(
@@ -74,7 +74,7 @@ class SecureFirebaseOptions {
     messagingSenderId: dotenv.env['FIREBASE_MESSAGING_SENDER_ID'] ?? _throwMissingKey('FIREBASE_MESSAGING_SENDER_ID'),
     projectId: dotenv.env['FIREBASE_PROJECT_ID'] ?? _throwMissingKey('FIREBASE_PROJECT_ID'),
     storageBucket: '${dotenv.env['FIREBASE_PROJECT_ID']}.firebasestorage.app',
-    iosBundleId: 'com.beyond.fortuneFlutter',
+    iosBundleId: 'com.beyond.fortune',
   );
 
   static String _throwMissingKey(String key) {

@@ -32,21 +32,29 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
   String? _errorMessage;
 
   Future<void> _handleSocialLogin(SocialProvider provider) async {
+    print('🔵 [SocialLoginStep] _handleSocialLogin called with provider: $provider');
+    
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
+      print('🔵 [SocialLoginStep] Getting socialAuthNotifier...');
       final socialAuthNotifier = ref.read(socialAuthProvider.notifier);
+      print('🔵 [SocialLoginStep] socialAuthNotifier obtained');
       
       // Call the appropriate sign-in method based on provider
       switch (provider) {
         case SocialProvider.google:
+          print('🔵 [SocialLoginStep] Calling signInWithGoogle()...');
           await socialAuthNotifier.signInWithGoogle();
+          print('🔵 [SocialLoginStep] signInWithGoogle() completed');
           break;
         case SocialProvider.apple:
+          print('🔵 [SocialLoginStep] Calling signInWithApple()...');
           await socialAuthNotifier.signInWithApple();
+          print('🔵 [SocialLoginStep] signInWithApple() completed');
           break;
         case SocialProvider.facebook:
           await socialAuthNotifier.signInWithFacebook();

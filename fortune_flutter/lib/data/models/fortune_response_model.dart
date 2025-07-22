@@ -300,7 +300,7 @@ class FortuneData {
       metadata: json['metadata'],
       
       // Daily fortune fields
-      score: json['score'],
+      score: json['score'] ?? json['overall_score'],
       keywords: json['keywords'] != null 
           ? List<String>.from(json['keywords']) 
           : null,
@@ -371,7 +371,7 @@ class FortuneData {
       timeSpecificFortunes: json['timeSpecificFortunes'],
       birthYearFortunes: json['birthYearFortunes'],
       fiveElements: json['fiveElements'],
-      specialTip: json['specialTip'],
+      specialTip: json['special_tip'] ?? json['specialTip'],
       period: json['period'],
     );
   }

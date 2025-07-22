@@ -5,11 +5,14 @@ import 'base_fortune_page.dart';
 import '../../../../domain/entities/fortune.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
+import '../../../../presentation/providers/auth_provider.dart';
+import '../../../../data/models/user_profile.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../presentation/widgets/hexagon_chart.dart';
 import '../../../../presentation/widgets/time_specific_fortune_card.dart';
 import '../../../../presentation/widgets/birth_year_fortune_list.dart';
+import '../../../../core/utils/logger.dart';
 
 enum TimePeriod {
   today('오늘', 'today'),
@@ -48,42 +51,115 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
   DateTime _selectedDate = DateTime.now();
   Map<String, dynamic>? _chartData;
   Fortune? _currentFortune;
+  bool _showAdditionalFortunes = true;
 
   @override
   void initState() {
     super.initState();
-    _selectedPeriod = widget.initialPeriod;
+    
+    // Check if period is provided in initialParams
+    final periodParam = widget.initialParams?['fortuneParams']?['period'] as String?;
+    if (periodParam != null) {
+      // Find the matching TimePeriod enum value
+      _selectedPeriod = TimePeriod.values.firstWhere(
+        (period) => period.value == periodParam,
+        orElse: () => widget.initialPeriod,
+      );
+    } else {
+      _selectedPeriod = widget.initialPeriod;
+    }
+    
+    Logger.debug('🕐 [TimeBasedFortunePage] Initialized with period', {
+      'selectedPeriod': _selectedPeriod.value,
+      'periodParam': periodParam,
+      'initialParams': widget.initialParams,
+    });
   }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
+    Logger.info('🎲 [TimeBasedFortunePage] generateFortune called', {
+      'selectedPeriod': _selectedPeriod.value,
+      'selectedDate': _selectedDate.toIso8601String(),
+      'params': params,
+    });
+    
     final fortuneService = ref.read(fortuneServiceProvider);
     
+    // Wait for user profile if not yet loaded
+    UserProfile? profile = userProfile;
+    if (profile == null) {
+      Logger.debug('🔄 [TimeBasedFortunePage] Waiting for user profile...');
+      // Wait for user profile to load
+      final userProfileAsync = await ref.read(userProfileProvider.future);
+      profile = userProfileAsync;
+      Logger.debug('✅ [TimeBasedFortunePage] User profile loaded', {
+        'profileName': profile?.name,
+        'profileId': profile?.id,
+      });
+    }
+    
     // Get userId from params or user profile
-    final userId = params['userId'] ?? userProfile?.id;
+    final userId = params['userId'] ?? profile?.id;
     if (userId == null) {
-      throw Exception('User ID not found');
+      Logger.error('❌ [TimeBasedFortunePage] User ID not found', {
+        'params': params,
+        'profile': profile?.toJson(),
+      });
+      throw Exception('User ID not found after waiting for profile');
     }
     
     // Add period-specific parameters
     params['period'] = _selectedPeriod.value;
     params['date'] = _selectedDate.toIso8601String();
     
-    final fortune = await fortuneService.getTimeFortune(
-      userId: userId,
-      fortuneType: 'time',
-      params: {
-        'period': _selectedPeriod.value,
-        'date': _selectedDate.toIso8601String(),
-      },
-    );
-
-    // Store the current fortune
-    setState(() {
-      _currentFortune = fortune;
+    Logger.debug('📝 [TimeBasedFortunePage] Final params prepared', {
+      'userId': userId,
+      'period': params['period'],
+      'date': params['date'],
+      'allParams': params,
     });
     
-    return fortune;
+    // Use the getTimeFortune method with proper parameters
+    Logger.debug('🚀 [TimeBasedFortunePage] Calling getTimeFortune', {
+      'userId': userId,
+      'fortuneType': 'time',
+      'period': _selectedPeriod.value,
+      'date': _selectedDate.toIso8601String(),
+    });
+    
+    try {
+      final fortune = await fortuneService.getTimeFortune(
+        userId: userId,
+        fortuneType: 'time',
+        params: {
+          'period': _selectedPeriod.value,
+          'date': _selectedDate.toIso8601String(),
+        },
+      );
+      
+      Logger.info('✅ [TimeBasedFortunePage] Fortune generated successfully', {
+        'fortuneId': fortune.id,
+        'fortuneType': fortune.type,
+        'score': fortune.score,
+        'metadata': fortune.metadata,
+      });
+
+      // Store the current fortune
+      setState(() {
+        _currentFortune = fortune;
+      });
+      
+      return fortune;
+    } catch (error, stackTrace) {
+      Logger.error('❌ [TimeBasedFortunePage] Fortune generation failed', {
+        'error': error.toString(),
+        'stackTrace': stackTrace.toString(),
+        'userId': userId,
+        'period': _selectedPeriod.value,
+      });
+      rethrow;
+    }
   }
 
   Map<String, dynamic> _extractChartData(Fortune fortune) {
@@ -164,6 +240,11 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
 
   @override
   Widget buildContent(BuildContext context, Fortune fortune) {
+    // Store the current fortune for UI reference
+    if (_currentFortune == null) {
+      _currentFortune = fortune;
+    }
+    
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -175,7 +256,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           
           // Date Selector (if applicable)
           if (_showDateSelector()) ...[
-            _buildDateSelector(),
+            _buildDateSelector()
+                .animate()
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: -0.1, end: 0),
             const SizedBox(height: 20),
           ],
           
@@ -188,17 +272,26 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
-            ),
+            ).animate()
+              .fadeIn(duration: 600.ms, delay: 200.ms)
+              .slideY(begin: 0.1, end: 0),
             const SizedBox(height: 20),
           ],
           
           // Main Fortune Card
-          _buildMainFortuneCard(fortune),
+          _buildMainFortuneCard(fortune)
+              .animate()
+              .fadeIn(duration: 800.ms, delay: 400.ms)
+              .slideY(begin: 0.1, end: 0)
+              .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.0, 1.0)),
           const SizedBox(height: 20),
           
           // Hexagon Chart (if available)
           if (fortune.hexagonScores != null) ...[
-            _buildHexagonSection(fortune),
+            _buildHexagonSection(fortune)
+                .animate()
+                .fadeIn(duration: 800.ms, delay: 600.ms)
+                .slideX(begin: -0.1, end: 0),
             const SizedBox(height: 20),
           ],
           
@@ -207,7 +300,9 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             TimeSpecificFortuneList(
               fortunes: fortune.timeSpecificFortunes!,
               title: _getTimeSpecificTitle(),
-            ),
+            ).animate()
+              .fadeIn(duration: 800.ms, delay: 800.ms)
+              .slideY(begin: 0.1, end: 0),
             const SizedBox(height: 20),
           ],
           
@@ -229,48 +324,143 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           
           // Period-specific additional content
           ..._buildPeriodSpecificContent(fortune),
+          
+          // Additional fortunes (생일, 별자리, 띠 운세)
+          if (_showAdditionalFortunes) ...[
+            const SizedBox(height: 20),
+            _buildAdditionalFortunesSection(fortune),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildPeriodSelector() {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: TimePeriod.values.length,
-        itemBuilder: (context, index) {
-          final period = TimePeriod.values[index];
-          final isSelected = period == _selectedPeriod;
-          
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-            child: ChoiceChip(
-              label: Text(period.label),
-              selected: isSelected,
-              onSelected: (selected) {
-                if (selected) {
-                  setState(() {
-                    _selectedPeriod = period;
-                  });
-                  _onGenerateFortune();
-                }
-              },
-              selectedColor: AppTheme.primaryColor,
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : AppTheme.textColor,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    // Check if the fortune was auto-generated (came from bottom sheet)
+    final isAutoGenerated = widget.initialParams?['autoGenerate'] as bool? ?? false;
+    final hasFortune = _currentFortune != null;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (isAutoGenerated && hasFortune) ...[
+          // Show the selected period as a static display when auto-generated
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppTheme.primaryColor.withOpacity(0.1),
+                  AppTheme.primaryColor.withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppTheme.primaryColor.withOpacity(0.3),
+                width: 1,
               ),
             ),
-          );
-        },
-      ),
+            child: Row(
+              children: [
+                Icon(
+                  _getPeriodIcon(_selectedPeriod),
+                  color: AppTheme.primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '선택된 기간',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.textSecondaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _selectedPeriod.label,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () {
+                    // Navigate back to bottom sheet
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.refresh, size: 18),
+                  label: const Text('다시 선택'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppTheme.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ] else ...[
+          // Show the interactive period selector when not auto-generated
+          Container(
+            height: 50,
+            decoration: BoxDecoration(
+              color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: TimePeriod.values.length,
+              itemBuilder: (context, index) {
+                final period = TimePeriod.values[index];
+                final isSelected = period == _selectedPeriod;
+                
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  child: ChoiceChip(
+                    label: Text(period.label),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedPeriod = period;
+                        });
+                        _onGenerateFortune();
+                      }
+                    },
+                    selectedColor: AppTheme.primaryColor,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : AppTheme.textColor,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
     );
+  }
+  
+  IconData _getPeriodIcon(TimePeriod period) {
+    switch (period) {
+      case TimePeriod.today:
+        return Icons.today;
+      case TimePeriod.tomorrow:
+        return Icons.upcoming;
+      case TimePeriod.weekly:
+        return Icons.calendar_view_week;
+      case TimePeriod.monthly:
+        return Icons.calendar_month;
+      case TimePeriod.yearly:
+        return Icons.calendar_today;
+    }
   }
 
   bool _showDateSelector() {
@@ -1130,5 +1320,284 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     if (score >= 60) return Colors.blue;
     if (score >= 40) return Colors.orange;
     return Colors.red;
+  }
+
+  Widget _buildAdditionalFortunesSection(Fortune fortune) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '추가 운세 정보',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    _showAdditionalFortunes
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _showAdditionalFortunes = !_showAdditionalFortunes;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // 생일 운세 (생일인 경우에만)
+            if (_isBirthday()) ...[
+              _buildBirthdayFortune(),
+              const SizedBox(height: 16),
+            ],
+            
+            // 별자리 운세
+            _buildZodiacFortune(),
+            const SizedBox(height: 16),
+            
+            // 띠 운세
+            _buildChineseZodiacFortune(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  bool _isBirthday() {
+    final userBirthDate = userProfile?.birthDate;
+    if (userBirthDate == null) return false;
+    
+    final today = DateTime.now();
+    return userBirthDate.month == today.month && userBirthDate.day == today.day;
+  }
+
+  Widget _buildBirthdayFortune() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.pink.withOpacity(0.1),
+            Colors.purple.withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.pink.withOpacity(0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.cake_rounded,
+                color: Colors.pink,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              const Text(
+                '🎉 생일 특별 운세',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '생일을 맞이한 당신에게 특별한 행운이 찾아옵니다! 오늘은 평소보다 더 많은 긍정적인 에너지가 당신을 둘러싸고 있습니다.',
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.textColor,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    ).animate()
+      .fadeIn(duration: 600.ms)
+      .shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3));
+  }
+
+  Widget _buildZodiacFortune() {
+    final zodiacSign = _getZodiacSign();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.primaryColor.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.primaryColor.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.stars_rounded,
+                color: AppTheme.primaryColor,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '별자리 운세 - $zodiacSign',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.primaryColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _getZodiacFortuneMessage(zodiacSign),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.textColor,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChineseZodiacFortune() {
+    final chineseZodiac = userProfile?.chineseZodiac ?? _calculateChineseZodiac();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.orange.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.pets_rounded,
+                color: Colors.orange,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '띠 운세 - ${chineseZodiac}띠',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.orange,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _getChineseZodiacFortuneMessage(chineseZodiac),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppTheme.textColor,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getZodiacSign() {
+    final birthDate = userProfile?.birthDate;
+    if (birthDate == null) return '물병자리'; // Default
+    
+    final month = birthDate.month;
+    final day = birthDate.day;
+    
+    if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return '양자리';
+    if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return '황소자리';
+    if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return '쌍둥이자리';
+    if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return '게자리';
+    if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return '사자자리';
+    if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return '처녀자리';
+    if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return '천칭자리';
+    if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return '전갈자리';
+    if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return '사수자리';
+    if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return '염소자리';
+    if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return '물병자리';
+    return '물고기자리';
+  }
+
+  String _calculateChineseZodiac() {
+    final birthYear = userProfile?.birthDate?.year;
+    if (birthYear == null) return '용';
+    
+    final zodiacAnimals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    return zodiacAnimals[birthYear % 12];
+  }
+
+  String _getZodiacFortuneMessage(String zodiac) {
+    final messages = {
+      '양자리': '오늘은 새로운 도전을 시작하기에 좋은 날입니다. 용기를 내세요!',
+      '황소자리': '안정과 평화가 찾아오는 날입니다. 재정 관리에 신경 쓰세요.',
+      '쌍둥이자리': '소통과 교류가 활발한 날입니다. 새로운 인연을 만날 수 있습니다.',
+      '게자리': '가족과 함께하는 시간이 행복을 가져다줄 것입니다.',
+      '사자자리': '당신의 카리스마가 빛나는 날입니다. 리더십을 발휘하세요.',
+      '처녀자리': '세심한 계획이 성공으로 이어집니다. 디테일에 신경 쓰세요.',
+      '천칭자리': '균형과 조화가 중요한 날입니다. 중재자 역할을 잘 해낼 수 있습니다.',
+      '전갈자리': '직관력이 뛰어난 날입니다. 내면의 목소리에 귀 기울이세요.',
+      '사수자리': '모험과 자유를 추구하기 좋은 날입니다. 새로운 경험을 즐기세요.',
+      '염소자리': '목표 달성에 한 걸음 더 가까워지는 날입니다. 꾸준히 노력하세요.',
+      '물병자리': '창의적인 아이디어가 샘솟는 날입니다. 혁신적인 시도를 해보세요.',
+      '물고기자리': '감성과 직관이 풍부한 날입니다. 예술적 활동이 도움이 됩니다.',
+    };
+    
+    return messages[zodiac] ?? '오늘은 평온하고 안정적인 하루가 될 것입니다.';
+  }
+
+  String _getChineseZodiacFortuneMessage(String zodiac) {
+    final periodSpecific = _selectedPeriod == TimePeriod.today ? '오늘' :
+                          _selectedPeriod == TimePeriod.tomorrow ? '내일' :
+                          _selectedPeriod == TimePeriod.weekly ? '이번 주' :
+                          _selectedPeriod == TimePeriod.monthly ? '이번 달' : '올해';
+    
+    final messages = {
+      '쥐': '$periodSpecific는 재빠른 판단력이 빛을 발하는 시기입니다.',
+      '소': '$periodSpecific는 꾸준한 노력이 결실을 맺는 시기입니다.',
+      '호랑이': '$periodSpecific는 용기와 도전정신이 필요한 시기입니다.',
+      '토끼': '$periodSpecific는 신중하고 조심스러운 접근이 필요합니다.',
+      '용': '$periodSpecific는 큰 성취를 이룰 수 있는 기회가 찾아옵니다.',
+      '뱀': '$periodSpecific는 지혜롭고 현명한 결정이 중요합니다.',
+      '말': '$periodSpecific는 활발한 활동과 사교가 행운을 가져옵니다.',
+      '양': '$periodSpecific는 온화하고 평화로운 분위기가 지속됩니다.',
+      '원숭이': '$periodSpecific는 재치와 유머가 좋은 결과를 가져옵니다.',
+      '닭': '$periodSpecific는 부지런함과 성실함이 인정받는 시기입니다.',
+      '개': '$periodSpecific는 충성과 신뢰가 중요한 역할을 합니다.',
+      '돼지': '$periodSpecific는 풍요와 행복이 가득한 시기입니다.',
+    };
+    
+    return messages[zodiac] ?? '$periodSpecific는 안정적이고 평온한 시기가 될 것입니다.';
   }
 }

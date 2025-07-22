@@ -7,12 +7,18 @@ import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../../core/constants/tarot_metadata.dart';
+import '../../../../core/constants/tarot_minor_arcana.dart';
+import '../../../../core/constants/tarot_card_orientation.dart';
 import '../../../../data/services/fortune_api_service.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../presentation/providers/token_provider.dart';
+import '../../../../presentation/providers/tarot_deck_provider.dart';
+import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../fortune/presentation/widgets/flip_card_widget.dart';
 import '../../../fortune/presentation/widgets/celtic_cross_layout.dart';
 import '../../../fortune/presentation/widgets/mystical_background.dart';
+import '../../../fortune/presentation/widgets/tarot_card_display.dart';
 import 'package:go_router/go_router.dart';
 
 // Provider to hold current spread type
@@ -174,8 +180,12 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
   
   // Card selection state
   final List<int> _selectedCards = [];
+  final List<TarotCardState> _selectedCardStates = [];
   bool _isSelecting = false;
   bool _cardsRevealed = false;
+  
+  // Check if deck is selected on first load
+  bool _hasCheckedDeck = false;
   
   // Spread configuration
   int get _requiredCards {
@@ -206,6 +216,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     // Set the spread type in the provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(currentSpreadTypeProvider.notifier).state = widget.spreadType ?? 'three';
+      _checkDeckSelection();
     });
     
     _shuffleController = AnimationController(
@@ -254,6 +265,27 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     _fanController.dispose();
     super.dispose();
   }
+  
+  void _checkDeckSelection() {
+    if (!_hasCheckedDeck) {
+      _hasCheckedDeck = true;
+      final selectedDeck = ref.read(selectedTarotDeckProvider);
+      // If no deck is selected, navigate to deck selection
+      if (selectedDeck == null || selectedDeck.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            context.pushReplacementNamed(
+              'tarot-deck-selection',
+              queryParameters: {
+                if (widget.spreadType != null) 'spreadType': widget.spreadType!,
+                if (widget.initialQuestion != null) 'question': widget.initialQuestion!,
+              },
+            );
+          }
+        });
+      }
+    }
+  }
 
   void _startCardSelection() {
     if (widget.spreadType != 'single' && _questionController.text.isEmpty) {
@@ -286,6 +318,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     
     setState(() {
       _selectedCards.add(index);
+      _selectedCardStates.add(TarotCardState.fromSelection(index));
     });
     
     if (_selectedCards.length == _requiredCards) {
@@ -297,6 +330,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
   }
 
   void _performReading() {
+    final selectedDeck = ref.read(selectedTarotDeckProvider);
     // Navigate to storytelling page instead of showing result
     context.pushNamed(
       'tarot-storytelling',
@@ -304,6 +338,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
         'selectedCards': _selectedCards,
         'spreadType': widget.spreadType ?? 'three',
         'question': _questionController.text.isNotEmpty ? _questionController.text : null,
+        'deckId': selectedDeck,
       },
     );
   }
@@ -326,6 +361,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     final theme = Theme.of(context);
     final fontSize = ref.watch(fontSizeProvider);
     final fontScale = fontSize == FontSize.small ? 0.85 : fontSize == FontSize.large ? 1.15 : 1.0;
+    final selectedDeck = ref.watch(currentTarotDeckProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -338,15 +374,32 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
                 showBackButton: true,
                 showActions: !_showResult,
                 backgroundColor: Colors.transparent,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.style),
+                    onPressed: () {
+                      context.pushNamed(
+                        'tarot-deck-selection',
+                        queryParameters: {
+                          if (widget.spreadType != null) 'spreadType': widget.spreadType!,
+                          if (_questionController.text.isNotEmpty) 'question': _questionController.text,
+                        },
+                      );
+                    },
+                    tooltip: '덱 변경',
+                  ),
+                ],
               ),
               Expanded(
                 child: _showResult && _currentInput != null
                     ? _TarotResultView(
                         input: _currentInput!,
                         selectedCards: _selectedCards,
+                        selectedCardStates: _selectedCardStates,
                         spreadType: widget.spreadType,
                         onReset: _reset,
                         fontScale: fontScale,
+                        selectedDeck: selectedDeck,
                       )
                     : _TarotInputView(
                         questionController: _questionController,
@@ -359,6 +412,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
                         onStartSelection: _startCardSelection,
                         onSelectCard: _selectCard,
                         fontScale: fontScale,
+                        selectedDeck: selectedDeck,
                       ),
               ),
             ],
@@ -380,6 +434,7 @@ class _TarotInputView extends StatelessWidget {
   final VoidCallback onStartSelection;
   final Function(int) onSelectCard;
   final double fontScale;
+  final TarotDeck selectedDeck;
 
   const _TarotInputView({
     required this.questionController,
@@ -392,6 +447,7 @@ class _TarotInputView extends StatelessWidget {
     required this.onStartSelection,
     required this.onSelectCard,
     required this.fontScale,
+    required this.selectedDeck,
   });
 
   @override
@@ -478,6 +534,29 @@ class _TarotInputView extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
+          
+          // Selected deck info
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: selectedDeck.primaryColor.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: selectedDeck.primaryColor.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            child: Text(
+              selectedDeck.koreanName,
+              style: TextStyle(
+                fontSize: 14 * fontScale,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          
           Text(
             isSelecting 
                 ? '카드를 ${requiredCards}장 선택해주세요 (${selectedCards.length}/$requiredCards)'
@@ -573,6 +652,7 @@ class _TarotInputView extends StatelessWidget {
               requiredCards: requiredCards,
               onSelectCard: onSelectCard,
               fontScale: fontScale,
+              selectedDeck: selectedDeck,
             ),
           ],
         ],
@@ -584,16 +664,20 @@ class _TarotInputView extends StatelessWidget {
 class _TarotResultView extends ConsumerWidget {
   final TarotCardInput input;
   final List<int> selectedCards;
+  final List<TarotCardState> selectedCardStates;
   final String? spreadType;
   final VoidCallback onReset;
   final double fontScale;
+  final TarotDeck selectedDeck;
 
   const _TarotResultView({
     required this.input,
     required this.selectedCards,
+    required this.selectedCardStates,
     this.spreadType,
     required this.onReset,
     required this.fontScale,
+    required this.selectedDeck,
   });
 
   @override
@@ -736,18 +820,40 @@ class _TarotResultView extends ConsumerWidget {
                           scrollDirection: Axis.horizontal,
                           itemCount: result.cards.length,
                           itemBuilder: (context, index) {
-                            final card = result.cards[index];
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                left: index == 0 ? 0 : 8,
-                                right: index == result.cards.length - 1 ? 0 : 8,
-                              ),
-                              child: _TarotCardWidget(
-                                card: card,
-                                cardNumber: index + 1,
-                                fontScale: fontScale,
-                              ),
-                            );
+                            if (index < selectedCardStates.length) {
+                              final cardState = selectedCardStates[index];
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  left: index == 0 ? 0 : 8,
+                                  right: index == result.cards.length - 1 ? 0 : 8,
+                                ),
+                                child: Column(
+                                  children: [
+                                    TarotCardDisplay(
+                                      cardState: cardState,
+                                      selectedDeck: selectedDeck,
+                                      width: 120,
+                                      height: 180,
+                                      isFlipped: true,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: 120,
+                                      child: Text(
+                                        result.cards[index].position,
+                                        style: TextStyle(
+                                          fontSize: 12 * fontScale,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white70,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            return const SizedBox();
                           },
                         ),
                       ),
@@ -963,6 +1069,7 @@ class _TarotCardFanSelection extends StatelessWidget {
   final int requiredCards;
   final Function(int) onSelectCard;
   final double fontScale;
+  final TarotDeck selectedDeck;
 
   const _TarotCardFanSelection({
     required this.shuffleAnimation,
@@ -971,13 +1078,14 @@ class _TarotCardFanSelection extends StatelessWidget {
     required this.requiredCards,
     required this.onSelectCard,
     required this.fontScale,
+    required this.selectedDeck,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardCount = 22; // Major Arcana cards
+    final cardCount = 78; // All tarot cards (22 Major + 56 Minor Arcana)
     final centerX = screenWidth / 2;
     
     return AnimatedBuilder(
@@ -1077,6 +1185,7 @@ class _TarotCardFanSelection extends StatelessWidget {
                               selectionOrder: selectionOrder,
                               fontScale: fontScale,
                               isHoverable: !isSelected && selectedCards.length < requiredCards,
+                              selectedDeck: selectedDeck,
                             ),
                           ),
                         ),
@@ -1100,6 +1209,7 @@ class _EnhancedTarotCard extends StatefulWidget {
   final int selectionOrder;
   final double fontScale;
   final bool isHoverable;
+  final TarotDeck selectedDeck;
 
   const _EnhancedTarotCard({
     required this.cardIndex,
@@ -1107,6 +1217,7 @@ class _EnhancedTarotCard extends StatefulWidget {
     required this.selectionOrder,
     required this.fontScale,
     required this.isHoverable,
+    required this.selectedDeck,
   });
 
   @override
@@ -1187,8 +1298,8 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          const Color(0xFF2D1B69),
-                          const Color(0xFF0F0C29),
+                          widget.selectedDeck.primaryColor.withValues(alpha: 0.8),
+                          widget.selectedDeck.secondaryColor.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
@@ -1202,12 +1313,27 @@ class _EnhancedTarotCardState extends State<_EnhancedTarotCard>
                     size: const Size(80, 120),
                   ),
                   
-                  // Center emblem
+                  // Center emblem with deck initial
                   Center(
-                    child: Icon(
-                      Icons.auto_awesome,
-                      size: 32,
-                      color: Colors.white.withValues(alpha: 0.8 + glowIntensity * 0.2),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.auto_awesome,
+                          size: 28,
+                          color: Colors.white.withValues(alpha: 0.8 + glowIntensity * 0.2),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.selectedDeck.code.substring(0, 2).toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white.withValues(alpha: 0.6 + glowIntensity * 0.2),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   

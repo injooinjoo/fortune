@@ -36,12 +36,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
   DailyFortune? todaysFortune;
   Fortune? cachedFortune; // 캐시된 전체 운세 데이터
   bool isLoadingFortune = false;
+  bool isRefreshing = false;
+  int refreshCount = 0;
+  static const int maxRefreshCount = 3;
 
   @override
   void initState() {
     super.initState();
     _loadUserProfile();
     _loadRecentFortunes();
+    _loadRefreshCount();
     
     // Delay fortune loading to avoid modifying provider during build
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -168,21 +172,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
   void _updateFortuneUI(Fortune fortune) {
     debugPrint('🔍 [HomeScreen] Updating UI with fortune data');
     
+    // Log the actual API response for debugging
+    debugPrint('🔍 [HomeScreen] Fortune metadata: ${fortune.metadata}');
+    debugPrint('🔍 [HomeScreen] Fortune luckyItems: ${fortune.luckyItems}');
+    debugPrint('🔍 [HomeScreen] Fortune overallScore: ${fortune.overallScore}');
+    
+    final userId = supabase.auth.currentUser?.id;
+    final today = DateTime.now();
+    
     // Try to extract daily fortune data from metadata or content
     if (fortune.metadata != null && fortune.metadata!.containsKey('dailyFortune')) {
       final dailyData = fortune.metadata!['dailyFortune'] as Map<String, dynamic>;
+      final score = dailyData['score'] ?? fortune.overallScore ?? 75;
+      
       setState(() {
         todaysFortune = DailyFortune(
-          score: dailyData['score'] ?? 75,
+          score: score,
           keywords: List<String>.from(dailyData['keywords'] ?? ['행운', '기회', '성장']),
           summary: dailyData['summary'] ?? fortune.content,
           luckyColor: dailyData['luckyColor'] ?? '#FF6B6B',
-          luckyNumber: dailyData['luckyNumber'] ?? 7,
-          energy: dailyData['energy'] ?? 80,
-          mood: dailyData['mood'] ?? '평온함',
-          advice: dailyData['advice'] ?? '차분하게 하루를 보내세요',
-          caution: dailyData['caution'] ?? '조급하게 서두르지 마세요',
-          bestTime: dailyData['bestTime'] ?? '오후 2시-4시',
+          luckyNumber: dailyData['luckyNumber'] ?? _generateLuckyNumber(userId, today),
+          energy: dailyData['energy'] ?? _getEnergyByScore(score),
+          mood: dailyData['mood'] ?? _getMoodByScore(score),
+          advice: dailyData['advice'] ?? _getAdviceByScore(score),
+          caution: dailyData['caution'] ?? _getCautionByScore(score),
+          bestTime: dailyData['bestTime'] ?? _getBestTimeByUser(userId, today),
           compatibility: dailyData['compatibility'] ?? '좋은 사람들과 함께',
           elements: FortuneElements(
             love: dailyData['elements']?['love'] ?? 75,
@@ -195,17 +209,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
     } else {
       // Fallback: Create a basic DailyFortune from the Fortune content
       setState(() {
+        // Get lucky color and ensure it's a hex value
+        String luckyColor = fortune.luckyItems?['color'] ?? '#FF6B6B';
+        // If it's not a hex color (doesn't start with #), use default
+        if (!luckyColor.startsWith('#')) {
+          luckyColor = '#FF6B6B'; // Default red color
+        }
+        
+        final score = fortune.overallScore ?? 75;
+        
         todaysFortune = DailyFortune(
-          score: fortune.overallScore ?? 75,
+          score: score,
           keywords: fortune.recommendations ?? ['행운', '기회', '성장'],
           summary: fortune.summary ?? fortune.content,
-          luckyColor: fortune.luckyItems?['color'] ?? '#FF6B6B',
-          luckyNumber: fortune.luckyItems?['number'] ?? 7,
-          energy: 80,
-          mood: '평온함',
-          advice: fortune.description ?? '차분하게 하루를 보내세요',
-          caution: '조급하게 서두르지 마세요',
-          bestTime: '오후 2시-4시',
+          luckyColor: luckyColor,
+          luckyNumber: fortune.luckyItems?['number'] ?? _generateLuckyNumber(userId, today),
+          energy: _getEnergyByScore(score),
+          mood: _getMoodByScore(score),
+          advice: fortune.description ?? _getAdviceByScore(score),
+          caution: _getCautionByScore(score),
+          bestTime: _getBestTimeByUser(userId, today),
           compatibility: '좋은 사람들과 함께',
           elements: FortuneElements(
             love: fortune.scoreBreakdown?['love'] ?? 75,
@@ -215,6 +238,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           ),
         );
       });
+    }
+  }
+  
+  Future<void> _loadRefreshCount() async {
+    final count = await _storageService.getDailyFortuneRefreshCount();
+    setState(() {
+      refreshCount = count;
+    });
+  }
+  
+  Future<void> _refreshFortune() async {
+    if (refreshCount >= maxRefreshCount) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('오늘의 새로고침 횟수를 모두 사용했습니다. 내일 다시 시도해주세요!'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+    
+    setState(() => isRefreshing = true);
+    
+    try {
+      // 캐시를 지우고 새로운 운세를 가져옴
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        // 캐시 삭제
+        await _cacheService.removeCachedFortune('daily', {'userId': userId});
+        
+        // 새로운 운세 가져오기
+        await _fetchFortuneFromAPI();
+        
+        // 새로고침 횟수 증가
+        await _storageService.incrementDailyFortuneRefreshCount();
+        setState(() {
+          refreshCount++;
+        });
+        
+        // 성공 메시지
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('새로운 운세를 받았습니다! (남은 횟수: ${maxRefreshCount - refreshCount - 1})'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ [HomeScreen] Error refreshing fortune: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('운세를 새로고침하는 중 오류가 발생했습니다.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      setState(() => isRefreshing = false);
     }
   }
   
@@ -311,6 +395,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   isLoading: isLoadingFortune,
                   userName: userProfile?['name'],
                   onTap: () => _navigateToFortune('/fortune/time-based', '시간별 운세'),
+                  onRefresh: _refreshFortune,
+                  isRefreshing: isRefreshing,
+                  refreshCount: refreshCount,
+                  maxRefreshCount: maxRefreshCount,
                 ),
               ),
               
@@ -419,6 +507,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'title': '전체 운세',
         'desc': '모든 운세 보기',
         'route': '/fortune',
+      },
+      {
+        'icon': Icons.view_carousel_rounded,
+        'emoji': '📱',
+        'title': '스냅 스크롤 운세',
+        'desc': '스와이프로 운세 보기',
+        'route': '/demo/snap-scroll',
         'gradient': [Color(0xFF7C3AED), Color(0xFF3B82F6)],
       },
     ];
@@ -924,6 +1019,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           .slideX(begin: 0.1, end: 0);
       }).toList(),
     );
+  }
+
+  // Dynamic value generation helpers
+  int _generateLuckyNumber(String? userId, DateTime date) {
+    // Generate a consistent lucky number based on user ID and date
+    final seed = '${userId ?? 'default'}_${date.year}_${date.month}_${date.day}';
+    int hash = seed.hashCode.abs();
+    // Return a number between 1 and 45 (lottery number range)
+    return (hash % 45) + 1;
+  }
+  
+  String _getMoodByScore(int score) {
+    if (score >= 90) return '최고의 기분';
+    if (score >= 80) return '활기찬';
+    if (score >= 70) return '평온함';
+    if (score >= 60) return '보통';
+    if (score >= 50) return '주의 필요';
+    return '조심스러운';
+  }
+  
+  int _getEnergyByScore(int score) {
+    // Energy level based on score (50-100 range)
+    return 50 + (score * 0.5).round();
+  }
+  
+  String _getBestTimeByUser(String? userId, DateTime date) {
+    // Generate consistent time based on user ID
+    final seed = '${userId ?? 'default'}_besttime'.hashCode.abs();
+    final timeSlot = seed % 8; // 8 time slots throughout the day
+    
+    switch (timeSlot) {
+      case 0: return '오전 6시-8시';
+      case 1: return '오전 9시-11시';
+      case 2: return '오후 12시-2시';
+      case 3: return '오후 2시-4시';
+      case 4: return '오후 4시-6시';
+      case 5: return '오후 6시-8시';
+      case 6: return '오후 8시-10시';
+      case 7: return '오후 10시-12시';
+      default: return '오후 2시-4시';
+    }
+  }
+  
+  String _getAdviceByScore(int score) {
+    if (score >= 90) return '오늘은 무엇이든 도전해보세요! 큰 성과가 기대됩니다.';
+    if (score >= 80) return '긍정적인 에너지가 넘치는 날입니다. 적극적으로 행동하세요.';
+    if (score >= 70) return '안정적인 하루가 될 것입니다. 차분하게 계획을 실행하세요.';
+    if (score >= 60) return '평범한 하루지만 작은 행복을 찾아보세요.';
+    if (score >= 50) return '신중하게 행동하고 무리하지 마세요.';
+    return '오늘은 휴식이 필요한 날입니다. 자신을 돌보세요.';
+  }
+  
+  String _getCautionByScore(int score) {
+    if (score >= 90) return '과도한 자신감은 경계하세요.';
+    if (score >= 80) return '지나친 낙관은 피하고 현실적으로 판단하세요.';
+    if (score >= 70) return '작은 실수가 큰 문제가 될 수 있으니 주의하세요.';
+    if (score >= 60) return '감정 기복에 휘둘리지 마세요.';
+    if (score >= 50) return '충동적인 결정은 피하고 신중히 생각하세요.';
+    return '무리한 도전보다는 안정을 추구하세요.';
   }
 
   void _navigateToFortune(String route, String title) {

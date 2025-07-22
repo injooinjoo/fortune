@@ -375,12 +375,13 @@ class _UserInfoCardState extends State<UserInfoCard> {
                   ],
                 ),
               ),
-              if (item.onTap != null)
-                Icon(
-                  Icons.edit_outlined,
-                  size: 16,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                ),
+              // Edit icon hidden but functionality remains
+              // if (item.onTap != null)
+              //   Icon(
+              //     Icons.edit_outlined,
+              //     size: 16,
+              //     color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              //   ),
             ],
           ),
         ),

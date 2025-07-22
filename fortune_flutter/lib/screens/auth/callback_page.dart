@@ -21,6 +21,8 @@ class _CallbackPageState extends State<CallbackPage> {
   @override
   void initState() {
     super.initState();
+    debugPrint('=== CALLBACK PAGE INITIALIZED ===');
+    debugPrint('Current URI: ${Uri.base}');
     _handleCallback();
   }
   
@@ -115,18 +117,28 @@ class _CallbackPageState extends State<CallbackPage> {
       final uri = Uri.base;
       debugPrint('=== AUTH CALLBACK HANDLER ===');
       debugPrint('Full URI: $uri');
+      debugPrint('URI Scheme: ${uri.scheme}');
+      debugPrint('URI Host: ${uri.host}');
+      debugPrint('URI Path: ${uri.path}');
       debugPrint('Query parameters: ${uri.queryParameters}');
+      
+      // Log current Supabase session
+      final currentSession = Supabase.instance.client.auth.currentSession;
+      debugPrint('Current Supabase session exists: ${currentSession != null}');
+      if (currentSession != null) {
+        debugPrint('Session user: ${currentSession.user.email}');
+      }
       
       // Extract the code parameter
       final code = uri.queryParameters['code'];
-      debugPrint('Auth code: $code');
+      debugPrint('Auth code: ${code != null ? "present (${code.length} chars)" : "null"}');
       
       // Extract error parameter if present
       final error = uri.queryParameters['error'];
       final errorDescription = uri.queryParameters['error_description'];
       if (error != null) {
-        debugPrint('OAuth Error: $error');
-        debugPrint('Error Description: $errorDescription');
+        debugPrint('❌ OAuth Error: $error');
+        debugPrint('❌ Error Description: $errorDescription');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

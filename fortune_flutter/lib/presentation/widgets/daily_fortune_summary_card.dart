@@ -9,6 +9,10 @@ class DailyFortuneSummaryCard extends StatelessWidget {
   final bool isLoading;
   final VoidCallback onTap;
   final String? userName;
+  final VoidCallback? onRefresh;
+  final bool isRefreshing;
+  final int refreshCount;
+  final int maxRefreshCount;
 
   const DailyFortuneSummaryCard({
     super.key,
@@ -16,6 +20,10 @@ class DailyFortuneSummaryCard extends StatelessWidget {
     required this.isLoading,
     required this.onTap,
     this.userName,
+    this.onRefresh,
+    this.isRefreshing = false,
+    this.refreshCount = 0,
+    this.maxRefreshCount = 3,
   });
 
   @override
@@ -55,38 +63,96 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Icon(
+                        timeGreeting['icon'] as IconData,
+                        size: 24,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                          userName != null && userName!.isNotEmpty 
+                              ? '$userName님의 ${timeGreeting['greeting']} 운세'
+                              : '${timeGreeting['greeting']} 운세',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Row(
                   children: [
-                    Icon(
-                      timeGreeting['icon'] as IconData,
-                      size: 24,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      userName != null && userName!.isNotEmpty 
-                          ? '$userName님의 ${timeGreeting['greeting']} 운세'
-                          : '${timeGreeting['greeting']} 운세',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                    if (fortune != null && onRefresh != null && refreshCount < maxRefreshCount) ...[
+                      Container(
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: isRefreshing ? null : onRefresh,
+                            borderRadius: BorderRadius.circular(18),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                children: [
+                                  isRefreshing
+                                      ? SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              Theme.of(context).colorScheme.primary,
+                                            ),
+                                          ),
+                                        )
+                                      : Icon(
+                                          Icons.refresh,
+                                          size: 18,
+                                          color: Theme.of(context).colorScheme.primary,
+                                        ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '$refreshCount/$maxRefreshCount',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${now.month}월 ${now.day}일 ${_getWeekday(now.weekday)}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${now.month}월 ${now.day}일 ${_getWeekday(now.weekday)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -367,9 +433,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Color(int.parse(
-                      fortune!.luckyColor.replaceAll('#', '0xFF')
-                    )),
+                    color: _getColorFromName(context, fortune!.luckyColor),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: context.fortuneTheme.dividerColor,
@@ -643,5 +707,39 @@ class DailyFortuneSummaryCard extends StatelessWidget {
   String _getWeekday(int weekday) {
     const weekdays = ['월', '화', '수', '목', '금', '토', '일'];
     return '${weekdays[weekday - 1]}요일';
+  }
+
+  Color _getColorFromName(BuildContext context, String colorName) {
+    // First, check if it's a hex color
+    if (colorName.startsWith('#')) {
+      try {
+        return Color(int.parse(colorName.replaceAll('#', '0xFF')));
+      } catch (e) {
+        // If hex parsing fails, continue to color name mapping
+      }
+    }
+
+    // Korean color name to Flutter color mapping
+    final colorMap = {
+      '빨간색': Colors.red,
+      '파란색': Colors.blue,
+      '노란색': Colors.yellow,
+      '초록색': Colors.green,
+      '보라색': Colors.purple,
+      '주황색': Colors.orange,
+      '분홍색': Colors.pink,
+      '하얀색': Colors.white,
+      '검은색': Colors.black,
+      '회색': Colors.grey,
+      '갈색': Colors.brown,
+      '금색': Colors.amber,
+      '은색': Colors.grey[300]!,
+      '하늘색': Colors.lightBlue,
+      '남색': Colors.indigo,
+      '청록색': Colors.teal,
+    };
+    
+    // Return mapped color or default to primary color
+    return colorMap[colorName] ?? Theme.of(context).colorScheme.primary;
   }
 }

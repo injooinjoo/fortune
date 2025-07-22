@@ -18,36 +18,55 @@ class FortuneCardImages {
     'marriage': '${basePath}marriage_fortune.png',
     'breakup': '${basePath}breakup_fortune.png',
     'crush': '${basePath}crush_fortune.png',
-    'relationship': '${basePath}relationship_fortune.png',
+    'relationship': '${basePath}people_to_avoid_fortune.png',
+    'compatibility': '${basePath}compatibility_fortune.png',
     
     // Career & Money
     'career': '${basePath}career_fortune.png',
     'job': '${basePath}job_fortune.png',
     'business': '${basePath}business_fortune.png',
-    'study': '${basePath}study_fortune.png',
+    'study': '${basePath}exam_fortune.png',
     'money': '${basePath}money_fortune.png',
     'investment': '${basePath}investment_fortune.png',
     
     // Traditional
-    'saju': '${basePath}saju_fortune.png',
+    'saju': '${basePath}traditional_fortune.png',
     'zodiac': '${basePath}zodiac_fortune.png',
     'constellation': '${basePath}constellation_fortune.png',
     'tarot': '${basePath}tarot_fortune.png',
     'dream': '${basePath}dream_fortune.png',
+    'traditional': '${basePath}traditional_fortune.png',
+    'physiognomy': '${basePath}physiognomy_fortune.png',
+    'talisman': '${basePath}traditional_fortune.png',
     
     // Daily & Personal
-    'daily': '${basePath}daily_fortune.png',
-    'health': '${basePath}health_fortune.png',
+    'daily': '${basePath}time_fortune.png',
+    'time': '${basePath}time_fortune.png',
+    'health': '${basePath}health_sports_fortune.png',
+    'health_sports': '${basePath}health_sports_fortune.png',
     'travel': '${basePath}travel_fortune.png',
     'moving': '${basePath}moving_fortune.png',
     'naming': '${basePath}naming_fortune.png',
+    'personality': '${basePath}personality_fortune.png',
+    'talent': '${basePath}talent_fortune.png',
     
     // Interactive & Fun
-    'compatibility': '${basePath}compatibility_fortune.png',
     'biorhythm': '${basePath}biorhythm_fortune.png',
     'color': '${basePath}color_fortune.png',
     'pet': '${basePath}pet_fortune.png',
     'lottery': '${basePath}lottery_fortune.png',
+    'lucky_items': '${basePath}lucky_items_fortune.png',
+    'fortune-cookie': '${basePath}fortune_cookie_fortune.png',
+    'wish': '${basePath}wish_fulfillment_fortune.png',
+    
+    // Family
+    'family': '${basePath}family_fortune.png',
+    
+    // Celebrity
+    'celebrity': '${basePath}celebrity_fortune.png',
+    
+    // History
+    'history': '${basePath}fortune_history_fortune.png',
     
     // Default fallback
     'default': '${basePath}default_fortune.png',

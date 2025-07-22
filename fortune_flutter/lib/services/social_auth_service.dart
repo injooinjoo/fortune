@@ -20,21 +20,64 @@ class SocialAuthService {
   // Google Sign In - Supabase OAuth 방식 사용
   Future<AuthResponse?> signInWithGoogle() async {
     try {
-      Logger.info('Starting Google OAuth process');
+      print('🟡 [SocialAuthService] signInWithGoogle() started');
+      Logger.info('=== GOOGLE OAUTH PROCESS STARTED ===');
+      
+      // Debug: Log the Supabase URL being used
+      final supabaseUrl = Environment.supabaseUrl;
+      print('🟡 [SocialAuthService] Supabase URL: $supabaseUrl');
+      Logger.info('Supabase URL: $supabaseUrl');
+      
+      // Verify the URL is correct
+      if (supabaseUrl.contains('your-project')) {
+        Logger.error('ERROR: Supabase URL contains placeholder: $supabaseUrl');
+        throw Exception('Supabase URL is not properly configured');
+      }
+      
+      // Debug: Log platform and redirect URL
+      final isWeb = kIsWeb;
+      final isIOS = !kIsWeb && Platform.isIOS;
+      final isAndroid = !kIsWeb && Platform.isAndroid;
+      print('🟡 [SocialAuthService] Platform - Web: $isWeb, iOS: $isIOS, Android: $isAndroid');
+      Logger.info('Platform - Web: $isWeb, iOS: $isIOS, Android: $isAndroid');
       
       // Supabase OAuth 리다이렉트 방식 사용
+      final redirectUrl = kIsWeb ? null : 'io.supabase.flutter://login-callback/';
+      print('🟡 [SocialAuthService] Redirect URL: ${redirectUrl ?? "null (web default)"}');
+      Logger.info('Redirect URL: ${redirectUrl ?? "null (web default)"}');
+      
+      // Debug: Log OAuth provider settings
+      print('🟡 [SocialAuthService] OAuth Provider: ${OAuthProvider.google}');
+      Logger.info('OAuth Provider: ${OAuthProvider.google}');
+      Logger.info('OAuth Scopes: email');
+      
+      // Log before calling signInWithOAuth
+      print('🟡 [SocialAuthService] Calling Supabase signInWithOAuth...');
+      Logger.info('Calling Supabase signInWithOAuth...');
+      
       await _supabase.auth.signInWithOAuth(
         OAuthProvider.google,
-        redirectTo: kIsWeb ? null : 'io.supabase.fortune://login-callback/',
+        redirectTo: redirectUrl,
         scopes: 'email',
+        queryParams: {
+          'access_type': 'offline',
+          'prompt': 'consent',
+        },
       );
       
-      Logger.info('Google OAuth redirect initiated');
+      print('🟡 [SocialAuthService] OAuth redirect initiated successfully');
+      Logger.info('=== GOOGLE OAUTH REDIRECT INITIATED ===');
+      Logger.info('Check browser/webview for Google login page');
+      Logger.info('Expected redirect URL pattern: $redirectUrl');
+      
       // 리다이렉트 방식이므로 응답을 기다리지 않고 null 반환
       // 실제 인증 완료는 auth callback에서 처리됨
       return null;
-    } catch (error) {
-      Logger.error('Google OAuth failed', error);
+    } catch (error, stackTrace) {
+      print('🔴 [SocialAuthService] Google OAuth error: $error');
+      Logger.error('=== GOOGLE OAUTH FAILED ===', error, stackTrace);
+      Logger.error('Error type: ${error.runtimeType}');
+      Logger.error('Error details: $error');
       rethrow;
     }
   }
@@ -353,16 +396,17 @@ class SocialAuthService {
       Logger.info('Starting Naver Sign-In process');
       
       // 네이버 로그인
-      final NaverLoginResult result = await FlutterNaverLogin.logIn();
+      final loginResult = await FlutterNaverLogin.logIn();
       
-      if (result.status != NaverLoginStatus.loggedIn) {
+      // Check if logged in
+      if (loginResult.status.toString() != 'NaverLoginStatus.loggedIn') {
         Logger.info('User cancelled Naver Sign-In');
         return null;
       }
       
       // Get access token
-      final NaverAccessToken tokenResult = await FlutterNaverLogin.currentAccessToken;
-      if (tokenResult.accessToken == null) {
+      final tokenResult = await FlutterNaverLogin.getCurrentAccessToken();
+      if (tokenResult.accessToken.isEmpty) {
         throw Exception('Failed to get Naver access token');
       }
       

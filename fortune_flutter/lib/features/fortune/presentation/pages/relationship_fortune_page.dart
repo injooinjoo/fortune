@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 enum RelationshipType {
   love('연애운', 'love', '현재 연애 상황과 앞으로의 전망을 알아보세요'),
   compatibility('궁합', 'compatibility', '상대방과의 궁합을 확인해보세요'),
+  soulmate('소울메이트', 'soulmate', '운명의 짝을 찾아보세요'),
   marriage('결혼운', 'marriage', '결혼 시기와 결혼 생활을 알아보세요'),
   exLover('전애인', 'ex_lover', '전 애인과의 재회 가능성을 확인해보세요'),
   blindDate('소개팅', 'blind_date', '새로운 만남의 기회를 알아보세요'),
@@ -88,6 +89,10 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
       RelationshipType.chemistry,
       RelationshipType.coupleMatch,
     ].contains(_selectedType);
+  }
+
+  bool _isSoulmateSearch() {
+    return _selectedType == RelationshipType.soulmate;
   }
 
   @override
@@ -193,89 +198,125 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           ),
           const SizedBox(height: 24),
 
-          // Partner Info (if required)
-          if (_requiresPartnerInfo()) ...[
+          // Partner Info (if required) or Soulmate Search Info
+          if (_requiresPartnerInfo() || _isSoulmateSearch()) ...[
             Text(
-              '상대방 정보',
+              _isSoulmateSearch() ? '소울메이트 찾기' : '상대방 정보',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _partnerNameController,
-              decoration: InputDecoration(
-                labelText: '상대방 이름',
-                prefixIcon: const Icon(Icons.person_outline),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: () async {
-                final picked = await showDatePicker(
-                  context: context,
-                  initialDate: _partnerBirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
-                  firstDate: DateTime(1950),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null) {
-                  setState(() {
-                    _partnerBirthDate = picked;
-                  });
-                }
-              },
-              child: InputDecorator(
+            if (!_isSoulmateSearch()) ...[
+              TextField(
+                controller: _partnerNameController,
                 decoration: InputDecoration(
-                  labelText: '상대방 생년월일',
-                  prefixIcon: const Icon(Icons.calendar_today),
+                  labelText: '상대방 이름',
+                  prefixIcon: const Icon(Icons.person_outline),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  _partnerBirthDate != null
-                      ? '${_partnerBirthDate!.year}년 ${_partnerBirthDate!.month}월 ${_partnerBirthDate!.day}일'
-                      : '생년월일을 선택하세요',
-                  style: TextStyle(
-                    color: _partnerBirthDate != null
-                        ? AppColors.textPrimary
-                        : AppColors.textSecondary,
+              ),
+            ] else ...[
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.connect_without_contact, color: AppColors.primary),
+                        const SizedBox(width: 8),
+                        Text(
+                          '소울메이트 찾기 안내',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '당신의 생년월일과 성별 정보를 기반으로 운명의 짝을 찾아드립니다.',
+                      style: TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            if (!_isSoulmateSearch()) ...[
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: _partnerBirthDate ?? DateTime.now().subtract(const Duration(days: 365 * 25)),
+                    firstDate: DateTime(1950),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _partnerBirthDate = picked;
+                    });
+                  }
+                },
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: '상대방 생년월일',
+                    prefixIcon: const Icon(Icons.calendar_today),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    _partnerBirthDate != null
+                        ? '${_partnerBirthDate!.year}년 ${_partnerBirthDate!.month}월 ${_partnerBirthDate!.day}일'
+                        : '생년월일을 선택하세요',
+                    style: TextStyle(
+                      color: _partnerBirthDate != null
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text('남성'),
-                    value: 'male',
-                    groupValue: _partnerGender,
-                    onChanged: (value) {
-                      setState(() {
-                        _partnerGender = value;
-                      });
-                    },
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('남성'),
+                      value: 'male',
+                      groupValue: _partnerGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _partnerGender = value;
+                        });
+                      },
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: RadioListTile<String>(
-                    title: const Text('여성'),
-                    value: 'female',
-                    groupValue: _partnerGender,
-                    onChanged: (value) {
-                      setState(() {
-                        _partnerGender = value;
-                      });
-                    },
+                  Expanded(
+                    child: RadioListTile<String>(
+                      title: const Text('여성'),
+                      value: 'female',
+                      groupValue: _partnerGender,
+                      onChanged: (value) {
+                        setState(() {
+                          _partnerGender = value;
+                        });
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
             const SizedBox(height: 24),
           ],
 
@@ -446,6 +487,8 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
         return Icons.favorite;
       case RelationshipType.compatibility:
         return Icons.people;
+      case RelationshipType.soulmate:
+        return Icons.connect_without_contact;
       case RelationshipType.marriage:
         return Icons.cake;
       case RelationshipType.exLover:
