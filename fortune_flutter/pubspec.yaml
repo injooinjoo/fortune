@@ -125,10 +125,11 @@ dependencies:
   table_calendar: ^3.1.2
   
   # Phone Number Input
-  intl_phone_number_input: ^0.7.4
+  # intl_phone_number_input: ^0.7.4  # Temporarily disabled due to PhoneNumberKit build issue
   
   # Rich Text
   flutter_html: ^3.0.0-beta.2
+  flutter_markdown: ^0.7.4
   
   # Clipboard
   clipboard: ^0.1.3
@@ -148,11 +149,11 @@ dependencies:
   google_sign_in: ^6.2.2
   sign_in_with_apple: ^6.1.3
   kakao_flutter_sdk_user: ^1.9.0
-  flutter_naver_login: ^1.8.0
+  flutter_naver_login: ^2.1.1  # Updated to fix deprecated APIs
   
   # Native Platform Features
-  home_widget: ^0.7.0  # iOS & Android home/lock screen widgets
-  workmanager: ^0.5.2  # Background tasks for Android
+  home_widget: ^0.8.0  # Updated to fix Swift concurrency warnings
+  workmanager: ^0.8.0  # Updated to fix deprecated APIs
   flutter_widgetkit: ^1.0.3  # iOS WidgetKit support
   flutter_dynamic_icon_plus: ^1.2.0  # Dynamic app icons
   app_links: ^6.3.2  # Deep linking for widgets
@@ -184,7 +185,7 @@ dev_dependencies:
   
   # App Icons & Splash Screen
   flutter_launcher_icons: ^0.14.2
-  flutter_native_splash: ^2.4.2
+  flutter_native_splash: ^2.4.6  # Updated to fix iOS deployment target issue
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -204,6 +205,8 @@ flutter:
     - assets/images/fortune_cards/
     - assets/images/social/
     - assets/images/random_thumbnails/
+    - assets/images/tarot/
+    - assets/images/tarot/decks/
     - assets/fonts/
     - assets/icons/
 

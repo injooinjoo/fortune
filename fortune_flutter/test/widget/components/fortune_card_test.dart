@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fortune/presentation/widgets/fortune_card.dart';
+import '../../test_utils/test_config.dart';
+import '../../test_utils/helpers/test_helpers.dart';
 
 void main() {
   group('FortuneCard Widget Tests', () {
