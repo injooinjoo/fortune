@@ -85,7 +85,9 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
       _selectedBloodType = profile.preferences?['blood_type'] as String?;
       _selectedGender = profile.gender;
       _selectedBirthDate = profile.birthDate;
-      _selectedBirthTime = profile.preferences?['birth_time'] as String?;
+      
+      // Birth time is now stored directly in the profile
+      _selectedBirthTime = profile.birthTime;
       
       // Initialize controllers with existing values
       if (profile.name != null) {
@@ -270,9 +272,9 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
                 _buildInfoRow(
                   theme,
                   icon: Icons.access_time_rounded,
-                  label: '생시',
-                  value: _selectedBirthTime ?? (profile?.preferences?['birth_time'] as String?),
-                  isRequired: _selectedBirthTime == null && (profile?.preferences?['birth_time'] as String?) == null,
+                  label: '태어난 시간',
+                  value: _selectedBirthTime ?? profile?.birthTime,
+                  isRequired: _selectedBirthTime == null && profile?.birthTime == null,
                   fieldKey: 'birthTime',
                   fieldType: 'time',
                 ),
@@ -372,40 +374,47 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
       return _buildEditingWidget(theme, fieldKey: fieldKey, fieldType: fieldType, label: label, icon: icon);
     }
     
-    // Show value with check mark
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: theme.colorScheme.primary,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
+    // Show value with check mark and make it clickable
+    return InkWell(
+      onTap: () => setState(() => _isEditing[fieldKey] = true),
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  Text(
+                    value!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                value!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
+            ),
+            Icon(
+              Icons.edit_rounded,
+              size: 20,
+              color: theme.colorScheme.primary.withValues(alpha: 0.6),
+            ),
+          ],
         ),
-        Icon(
-          Icons.check_circle_rounded,
-          size: 20,
-          color: theme.colorScheme.primary,
-        ),
-      ],
+      ),
     );
   }
 
@@ -662,8 +671,8 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
       
       // Validate fortune-specific fields
       if ((widget.fortuneType == 'saju' || widget.fortuneType == 'traditional') && 
-          _selectedBirthTime == null && (profile?.preferences?['birth_time'] as String?) == null) {
-        _showErrorSnackBar('생시를 선택해주세요');
+          _selectedBirthTime == null && profile?.birthTime == null) {
+        _showErrorSnackBar('태어난 시간을 선택해주세요');
         return false;
       }
       
@@ -694,6 +703,7 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
         updateData['mbti_type'] = _selectedMbti;
       }
       
+      // Add birth time as direct field
       if (_selectedBirthTime != null) {
         updateData['birth_time'] = _selectedBirthTime;
       }

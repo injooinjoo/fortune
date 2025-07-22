@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/glassmorphism/glass_container.dart';
 import '../widgets/fortune_list_card.dart';
 import '../widgets/fortune_list_tile.dart';
 import '../../../../presentation/widgets/simple_fortune_info_sheet.dart';
@@ -16,6 +15,7 @@ import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
 import '../../../../core/config/environment.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class FortuneCategory {
   final String title;
@@ -412,6 +412,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       category: 'love',
       isNew: true,
     ),
+    FortuneCategory(
+      title: '헤어진 애인',
+      route: '/fortune/ex-lover-enhanced',
+      type: 'ex-lover',
+      icon: Icons.heart_broken_rounded,
+      gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],
+      description: '헤어진 연인과의 재회 가능성',
+      category: 'love',
+      isNew: true,
+    ),
 
     // ==================== Career/Work Fortunes (통합) ====================
     FortuneCategory(
@@ -564,13 +574,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       }).toList();
     }
     
-    // Apply search filter
-    if (searchQuery.isNotEmpty) {
-      filtered = filtered.where((category) {
-        return category.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-               category.description.toLowerCase().contains(searchQuery.toLowerCase());
-      }).toList();
-    }
+    // Search filter is disabled - search bar has been removed
+    // if (searchQuery.isNotEmpty) {
+    //   filtered = filtered.where((category) {
+    //     return category.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+    //            category.description.toLowerCase().contains(searchQuery.toLowerCase());
+    //   }).toList();
+    // }
     
     return filtered;
   }
@@ -584,6 +594,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final filteredCategories = _filterCategories(searchQuery, selectedCategory);
 
     return Scaffold(
+      backgroundColor: AppColors.cardBackground,
       appBar: const AppHeader(
         showBackButton: false,
         centerTitle: true,
@@ -596,8 +607,22 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               child: Column(
                 children: [
                   _buildCategoryFilter(context, ref),
-                  const SizedBox(height: 12),
-                  _buildSearchBar(context, ref),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (selectedCategory != FortuneCategoryType.all)
+                        TextButton(
+                          onPressed: () {
+                            ref.read(_selectedCategoryProvider.notifier).state = FortuneCategoryType.all;
+                          },
+                          child: const Text('전체 보기'),
+                        )
+                      else
+                        const SizedBox.shrink(),
+                      _buildViewModeToggle(context, ref),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -606,30 +631,10 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
           if (Environment.enableAds && !(ref.watch(userProfileProvider).value?.isPremiumActive ?? false))
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                 child: CommonAdPlacements.listBottomAd(),
               ),
             ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (selectedCategory != FortuneCategoryType.all)
-                    TextButton(
-                      onPressed: () {
-                        ref.read(_selectedCategoryProvider.notifier).state = FortuneCategoryType.all;
-                      },
-                      child: const Text('전체 보기'),
-                    )
-                  else
-                    const SizedBox.shrink(),
-                  _buildViewModeToggle(context, ref),
-                ],
-              ),
-            ),
-          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
@@ -684,13 +689,25 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                               
                               // Check if this is time-based fortune
                               if (category.route == '/fortune/time') {
-                                // Show time-based fortune bottom sheet directly without animated thumbnail
-                                TimeBasedFortuneBottomSheet.show(
-                                  context,
-                                  onDismiss: () {
-                                    // No overlay to dismiss for time-based fortune
-                                  },
-                                );
+                                // Get thumbnail image path and show animation
+                                final thumbnailPath = FortuneCardImages.getImagePath(category.type);
+                                final thumbnailKey = _getThumbnailKey(category.route);
+                                
+                                // Show animated thumbnail
+                                _showAnimatedThumbnail(context, thumbnailKey, thumbnailPath, () {
+                                  // Callback when animation is dismissed
+                                });
+                                
+                                // Show time-based fortune bottom sheet with delay to ensure it appears on top
+                                Future.delayed(const Duration(milliseconds: 100), () {
+                                  TimeBasedFortuneBottomSheet.show(
+                                    context,
+                                    onDismiss: () {
+                                      // Call the dismiss callback to remove the overlay
+                                      _currentDismissCallback?.call();
+                                    },
+                                  );
+                                });
                               } else {
                                 // Get thumbnail image path and show animation for other fortunes
                                 final thumbnailPath = FortuneCardImages.getImagePath(category.type);
@@ -821,29 +838,30 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     );
   }
 
-  Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+  // Search bar removed as per request
+  // Widget _buildSearchBar(BuildContext context, WidgetRef ref) {
+  //   final theme = Theme.of(context);
 
-    return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      borderRadius: BorderRadius.circular(16),
-      blur: 10,
-      child: TextField(
-        onChanged: (value) {
-          ref.read(_searchQueryProvider.notifier).state = value;
-        },
-        decoration: InputDecoration(
-          hintText: '운세 검색...',
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
-        ),
-      ),
-    );
-  }
+  //   return GlassContainer(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+  //     borderRadius: BorderRadius.circular(16),
+  //     blur: 10,
+  //     child: TextField(
+  //       onChanged: (value) {
+  //         ref.read(_searchQueryProvider.notifier).state = value;
+  //       },
+  //       decoration: InputDecoration(
+  //         hintText: '운세 검색...',
+  //         prefixIcon: Icon(
+  //           Icons.search_rounded,
+  //           color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+  //         ),
+  //         border: InputBorder.none,
+  //         contentPadding: const EdgeInsets.symmetric(vertical: 12),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildViewModeToggle(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -871,25 +889,12 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               color: theme.colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                viewMode == ViewMode.trend 
-                    ? Icons.grid_view_rounded 
-                    : Icons.view_list_rounded,
-                size: 20,
-                color: theme.colorScheme.onSurface,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                viewMode == ViewMode.trend ? '카드' : '리스트',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-            ],
+          child: Icon(
+            viewMode == ViewMode.trend 
+                ? Icons.grid_view_rounded 
+                : Icons.view_list_rounded,
+            size: 20,
+            color: theme.colorScheme.onSurface,
           ),
         ),
       ),

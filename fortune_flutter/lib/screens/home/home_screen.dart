@@ -16,6 +16,7 @@ import '../../presentation/screens/ad_loading_screen.dart';
 import '../../services/cache_service.dart';
 import '../../services/storage_service.dart';
 import '../../models/fortune_model.dart';
+import '../../core/theme/app_colors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -378,7 +379,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Scaffold(
-      backgroundColor: Colors.white, // Instagram style clean white
+      backgroundColor: AppColors.cardBackground, // Light gray background for cards
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

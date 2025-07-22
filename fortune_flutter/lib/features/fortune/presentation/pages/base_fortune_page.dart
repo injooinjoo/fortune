@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
@@ -25,6 +26,7 @@ import '../../../../presentation/providers/soul_animation_provider.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../shared/components/soul_earn_animation.dart';
 import '../../../../shared/components/soul_consume_animation.dart';
+import '../../../../core/theme/app_colors.dart';
 
 abstract class BaseFortunePage extends ConsumerStatefulWidget {
   final String title;
@@ -757,6 +759,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.cardBackground,
       appBar: AppHeader(
         title: widget.title,
         showShareButton: widget.showShareButton,
@@ -765,6 +768,10 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         onFontSizeChanged: (size) {
           ref.read(fontSizeProvider.notifier).setFontSize(size);
         },
+        onBackPressed: _fortune != null ? () {
+          // When fortune result is displayed, navigate to fortune list
+          GoRouter.of(context).go('/fortune');
+        } : null,
       ),
       body: SafeArea(
         child: Column(

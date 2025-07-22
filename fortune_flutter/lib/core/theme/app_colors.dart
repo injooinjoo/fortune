@@ -18,6 +18,10 @@ class AppColors {
   static const Color surface = Color(0xFFFFFFFF); // Pure white
   static const Color surfaceDark = Color(0xFF121212); // Dark surface
   
+  // Card design system colors
+  static const Color cardBackground = Color(0xFFF6F6F6); // Light gray background for screens with cards
+  static const Color cardSurface = Color(0xFFFFFFFF); // White card surface
+  
   // Text colors - Instagram typography
   static const Color textPrimary = Color(0xFF262626); // Instagram black
   static const Color textSecondary = Color(0xFF8E8E8E); // Instagram gray

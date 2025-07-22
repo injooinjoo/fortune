@@ -47,7 +47,8 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
   late Animation<double> _fadeAnimation;
   
   TarotSpreadType? _selectedSpread;
-  bool _showSpreadSelection = true;
+  bool _showSpreadSelection = false;  // Start with question input, not spread selection
+  bool _showQuestionInput = true;
 
   @override
   void initState() {
@@ -98,6 +99,12 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
     });
   }
 
+  void _proceedFromQuestion() {
+    setState(() {
+      _showQuestionInput = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -121,7 +128,13 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
                   _MysticalBackground(),
                   
                   // Main content
-                  if (_showSpreadSelection)
+                  if (_showQuestionInput)
+                    _QuestionInputView(
+                      heroTag: widget.heroTag,
+                      onProceed: _proceedFromQuestion,
+                      fontScale: fontScale,
+                    )
+                  else if (_showSpreadSelection)
                     _SpreadSelectionView(
                       heroTag: widget.heroTag,
                       onSpreadSelected: _selectSpread,
@@ -185,6 +198,188 @@ class _MysticalParticlesPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _QuestionInputView extends ConsumerStatefulWidget {
+  final String? heroTag;
+  final VoidCallback onProceed;
+  final double fontScale;
+
+  const _QuestionInputView({
+    required this.onProceed,
+    required this.fontScale,
+    this.heroTag,
+  });
+
+  @override
+  ConsumerState<_QuestionInputView> createState() => _QuestionInputViewState();
+}
+
+class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
+  final _questionController = TextEditingController();
+  
+  @override
+  void dispose() {
+    _questionController.dispose();
+    super.dispose();
+  }
+
+  void _proceed() {
+    // Navigate directly to card selection with question
+    context.push('/interactive/tarot', extra: {
+      'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text,
+      'skipSpreadSelection': true,  // Skip spread selection, let user select cards first
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Hero animated header
+          if (widget.heroTag != null)
+            Hero(
+              tag: widget.heroTag!,
+              child: _TarotHeaderCard(fontScale: widget.fontScale),
+            )
+          else
+            _TarotHeaderCard(fontScale: widget.fontScale),
+          
+          const SizedBox(height: 32),
+          
+          // Title
+          Text(
+            '무엇이 궁금하신가요?',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 24 * widget.fontScale,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '마음을 가라앉히고 질문에 집중해주세요',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: 16 * widget.fontScale,
+            ),
+          ),
+          const SizedBox(height: 32),
+          
+          // Question input
+          GlassContainer(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '당신의 질문',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16 * widget.fontScale,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _questionController,
+                  style: TextStyle(fontSize: 16 * widget.fontScale),
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: '예: 나의 연애운은 어떨까요?\n예: 이직을 해야 할까요?\n예: 오늘 하루는 어떨까요?',
+                    filled: true,
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.all(16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          
+          // Tip
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.purple.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.purple.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.purple,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '질문이 없으시다면 오늘의 전반적인 운세를 봐드립니다',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      fontSize: 14 * widget.fontScale,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          
+          // Start button
+          SizedBox(
+            width: double.infinity,
+            child: GlassButton(
+              onPressed: _proceed,
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple,
+                  Colors.indigo,
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.shuffle, size: 20 * widget.fontScale),
+                    const SizedBox(width: 8),
+                    Text(
+                      '카드 섞기',
+                      style: TextStyle(
+                        fontSize: 18 * widget.fontScale,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _SpreadSelectionView extends StatelessWidget {

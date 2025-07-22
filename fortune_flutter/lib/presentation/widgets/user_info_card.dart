@@ -7,6 +7,8 @@ import '../../core/utils/logger.dart';
 import '../../constants/fortune_constants.dart';
 import '../../utils/date_utils.dart';
 import 'profile_edit_dialogs/index.dart';
+import '../../core/theme/app_colors.dart';
+import '../../shared/components/base_card.dart';
 
 class UserInfoCard extends StatefulWidget {
   final Map<String, dynamic>? userProfile;
@@ -92,15 +94,12 @@ class _UserInfoCardState extends State<UserInfoCard> {
     
     if (userProfile == null) return const SizedBox.shrink();
     
-    return Container(
+    return BaseCard(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: theme.colorScheme.outline.withValues(alpha: 0.1),
+        width: 1,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +343,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             left: items.indexOf(item) == 1 ? 6 : 0,
           ),
           decoration: BoxDecoration(
-            color: theme.colorScheme.outline.withValues(alpha: 0.05),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

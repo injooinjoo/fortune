@@ -13,6 +13,7 @@ import '../../presentation/widgets/fortune_history_chart.dart';
 import '../../presentation/widgets/five_elements_widget.dart';
 import '../../data/services/fortune_api_service.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../shared/components/base_card.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -163,7 +164,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
     
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.cardBackground, // #F6F6F6
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -366,46 +367,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             
             // 추천 활동 섹션
             const SizedBox(height: 24),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '추천 활동',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: SectionCard(
+                title: '추천 활동',
+                headerColor: Colors.blue.shade50,
+                child: Column(
                       children: [
                         _buildNextStepItem(
                           context,
@@ -433,51 +400,40 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           },
                         ),
                       ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             
             // 내 도구 섹션
             const SizedBox(height: 24),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.purple.shade50,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: BaseCard(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.shade50,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            '내 도구',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      children: [
-                        Text(
-                          '내 도구',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   _buildToolItem(
                     context,
                     icon: Icons.school_outlined,
@@ -512,7 +468,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     },
                     isLast: true,
                   ),
-                ],
+                  ],
+                ),
               ),
             ),
             
@@ -716,7 +673,7 @@ https://fortune.app''';
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(

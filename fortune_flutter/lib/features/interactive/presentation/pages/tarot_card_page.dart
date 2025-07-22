@@ -189,6 +189,10 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
   
   // Spread configuration
   int get _requiredCards {
+    // If no spread type selected, allow flexible card selection
+    if (widget.spreadType == null) {
+      return -1;  // -1 means no limit, user decides
+    }
     switch (widget.spreadType) {
       case 'single':
         return 1;
@@ -205,6 +209,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     }
   }
 
+  bool _skipSpreadSelection = false;
+  
   @override
   void initState() {
     super.initState();
@@ -212,12 +218,6 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
     if (widget.initialQuestion != null) {
       _questionController.text = widget.initialQuestion!;
     }
-    
-    // Set the spread type in the provider
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(currentSpreadTypeProvider.notifier).state = widget.spreadType ?? 'three';
-      _checkDeckSelection();
-    });
     
     _shuffleController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -255,6 +255,37 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
       parent: _fanController,
       curve: Curves.easeOutBack,
     ));
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    
+    // Check if this was called from the new flow with extra data
+    final goRouterState = GoRouterState.of(context);
+    final extra = goRouterState.extra as Map<String, dynamic>?;
+    final skipSpreadSelection = extra?['skipSpreadSelection'] ?? false;
+    final question = extra?['question'] as String?;
+    
+    if (question != null && _questionController.text.isEmpty) {
+      _questionController.text = question;
+    }
+    
+    _skipSpreadSelection = skipSpreadSelection;
+    
+    // Set the spread type in the provider - null initially to let user select cards first
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Only set spread type if explicitly provided, otherwise let user select cards first
+      if (widget.spreadType != null) {
+        ref.read(currentSpreadTypeProvider.notifier).state = widget.spreadType;
+      }
+      _checkDeckSelection();
+      
+      // If coming from new flow, start card selection immediately
+      if (_skipSpreadSelection && _questionController.text.isNotEmpty) {
+        _startCardSelection();
+      }
+    });
   }
 
   @override
@@ -311,7 +342,27 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
   }
 
   void _selectCard(int index) {
-    if (_selectedCards.contains(index) || _selectedCards.length >= _requiredCards) return;
+    // Special signal to complete selection in flexible mode
+    if (index == -1 && _requiredCards == -1 && _selectedCards.isNotEmpty) {
+      _shuffleController.stop();
+      HapticFeedback.heavyImpact();
+      _performReading();
+      return;
+    }
+    
+    if (_selectedCards.contains(index)) return;
+    
+    // If no required cards set (flexible selection), check reasonable limits
+    if (_requiredCards == -1 && _selectedCards.length >= 10) {
+      Toast.show(
+        context,
+        message: '최대 10장까지 선택할 수 있습니다',
+        type: ToastType.warning,
+      );
+      return;
+    } else if (_requiredCards != -1 && _selectedCards.length >= _requiredCards) {
+      return;
+    }
     
     // Haptic feedback for card selection
     HapticFeedback.mediumImpact();
@@ -321,7 +372,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
       _selectedCardStates.add(TarotCardState.fromSelection(index));
     });
     
-    if (_selectedCards.length == _requiredCards) {
+    if (_requiredCards != -1 && _selectedCards.length == _requiredCards) {
       _shuffleController.stop();
       // Heavy impact for completion
       HapticFeedback.heavyImpact();
@@ -331,16 +382,82 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> with TickerProvid
 
   void _performReading() {
     final selectedDeck = ref.read(selectedTarotDeckProvider);
-    // Navigate to storytelling page instead of showing result
-    context.pushNamed(
-      'tarot-storytelling',
-      extra: {
-        'selectedCards': _selectedCards,
-        'spreadType': widget.spreadType ?? 'three',
-        'question': _questionController.text.isNotEmpty ? _questionController.text : null,
-        'deckId': selectedDeck,
-      },
-    );
+    
+    // If no spread type selected, show spread selection based on card count
+    if (widget.spreadType == null) {
+      _showSpreadSelection();
+    } else {
+      // Navigate to storytelling page
+      context.pushNamed(
+        'tarot-storytelling',
+        extra: {
+          'selectedCards': _selectedCards,
+          'spreadType': widget.spreadType ?? 'three',
+          'question': _questionController.text.isNotEmpty ? _questionController.text : null,
+          'deckId': selectedDeck,
+        },
+      );
+    }
+  }
+  
+  void _showSpreadSelection() {
+    final cardCount = _selectedCards.length;
+    List<String> availableSpreads = [];
+    
+    // Determine available spreads based on card count
+    switch (cardCount) {
+      case 1:
+        availableSpreads = ['single'];
+        break;
+      case 3:
+        availableSpreads = ['three'];
+        break;
+      case 5:
+        availableSpreads = ['relationship', 'decision'];
+        break;
+      case 10:
+        availableSpreads = ['celtic'];
+        break;
+      default:
+        // Default to three card spread if count doesn't match
+        availableSpreads = ['three'];
+    }
+    
+    // If only one option, use it directly
+    if (availableSpreads.length == 1) {
+      final selectedDeck = ref.read(selectedTarotDeckProvider);
+      context.pushNamed(
+        'tarot-storytelling',
+        extra: {
+          'selectedCards': _selectedCards,
+          'spreadType': availableSpreads.first,
+          'question': _questionController.text.isNotEmpty ? _questionController.text : null,
+          'deckId': selectedDeck,
+        },
+      );
+    } else {
+      // Show selection dialog
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (context) => _SpreadSelectionSheet(
+          availableSpreads: availableSpreads,
+          onSelect: (spread) {
+            Navigator.pop(context);
+            final selectedDeck = ref.read(selectedTarotDeckProvider);
+            context.pushNamed(
+              'tarot-storytelling',
+              extra: {
+                'selectedCards': _selectedCards,
+                'spreadType': spread,
+                'question': _questionController.text.isNotEmpty ? _questionController.text : null,
+                'deckId': selectedDeck,
+              },
+            );
+          },
+        ),
+      );
+    }
   }
 
   void _reset() {
@@ -559,7 +676,9 @@ class _TarotInputView extends StatelessWidget {
           
           Text(
             isSelecting 
-                ? '카드를 ${requiredCards}장 선택해주세요 (${selectedCards.length}/$requiredCards)'
+                ? requiredCards == -1
+                    ? '카드를 선택해주세요 (${selectedCards.length}장 선택됨)'
+                    : '카드를 ${requiredCards}장 선택해주세요 (${selectedCards.length}/$requiredCards)'
                 : spreadType == 'single' 
                     ? '오늘의 메시지를 받아보세요'
                     : '마음 속 질문을 입력하고 카드를 뽑아보세요',
@@ -654,6 +773,27 @@ class _TarotInputView extends StatelessWidget {
               fontScale: fontScale,
               selectedDeck: selectedDeck,
             ),
+            // Show complete button when in flexible mode and cards are selected
+            if (requiredCards == -1 && selectedCards.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              GlassButton(
+                onPressed: () {
+                  // Stop the shuffle animation and perform reading
+                  // Need to access parent methods
+                  onSelectCard(-1); // Special signal to complete selection
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  child: Text(
+                    '선택 완료 (${selectedCards.length}장)',
+                    style: TextStyle(
+                      fontSize: 16 * fontScale,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ],
       ),
@@ -1055,6 +1195,139 @@ class _TarotCardWidget extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SpreadSelectionSheet extends StatelessWidget {
+  final List<String> availableSpreads;
+  final Function(String) onSelect;
+  
+  const _SpreadSelectionSheet({
+    required this.availableSpreads,
+    required this.onSelect,
+  });
+  
+  String _getSpreadName(String spread) {
+    switch (spread) {
+      case 'single':
+        return '일일 카드';
+      case 'three':
+        return '3장 스프레드';
+      case 'celtic':
+        return '켈틱 크로스';
+      case 'relationship':
+        return '관계 스프레드';
+      case 'decision':
+        return '결정 스프레드';
+      default:
+        return spread;
+    }
+  }
+  
+  String _getSpreadDescription(String spread) {
+    switch (spread) {
+      case 'single':
+        return '오늘의 에너지와 조언';
+      case 'three':
+        return '과거, 현재, 미래';
+      case 'celtic':
+        return '깊은 통찰력';
+      case 'relationship':
+        return '관계의 역학';
+      case 'decision':
+        return '선택을 위한 가이드';
+      default:
+        return '';
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      padding: EdgeInsets.only(
+        top: 24,
+        left: 24,
+        right: 24,
+        bottom: MediaQuery.of(context).padding.bottom + 24,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '스프레드를 선택하세요',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '선택한 카드로 가능한 스프레드입니다',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ...availableSpreads.map((spread) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: InkWell(
+              onTap: () => onSelect(spread),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.auto_awesome,
+                      color: theme.colorScheme.primary,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getSpreadName(spread),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _getSpreadDescription(spread),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )).toList(),
         ],
       ),
     );

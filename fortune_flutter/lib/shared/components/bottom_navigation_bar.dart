@@ -82,7 +82,21 @@ class FortuneBottomNavigationBar extends StatelessWidget {
                 isSelected: index == activeIndex,
                 onTap: () {
                   HapticFeedback.lightImpact();
-                  context.go(_items[index].route);
+                  // If already on the same route, refresh the page
+                  if (currentPath == _items[index].route || currentPath.startsWith(_items[index].route)) {
+                    // Special handling for fortune page to refresh and close any open sheets
+                    if (_items[index].route == '/fortune') {
+                      // Navigate away and back to force refresh
+                      context.go('/home');
+                      Future.delayed(const Duration(milliseconds: 50), () {
+                        context.go('/fortune');
+                      });
+                    } else {
+                      context.go(_items[index].route);
+                    }
+                  } else {
+                    context.go(_items[index].route);
+                  }
                 },
               ),
             ),

@@ -46,7 +46,7 @@ class AppTheme {
         surface: Color(0xFFF3F4F6),
         // background is deprecated, use surface instead
       ),
-      scaffoldBackgroundColor: Colors.white,
+      scaffoldBackgroundColor: AppColors.cardBackground,
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,

@@ -172,7 +172,10 @@
       "Bash(__NEW_LINE__ mv IMPLEMENTATION_EXAMPLES.md 07-implementation-examples.md)",
       "Bash(__NEW_LINE__ mv IOS_NATIVE_FEATURES_IMPLEMENTATION.md 08-ios-native-features-implementation.md)",
       "Bash(__NEW_LINE__ mv NATIVE_PLATFORM_FEATURES_GUIDE.md 09-native-platform-features-guide.md)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(xmllint:*)",
+      "Bash(plutil:*)",
+      "Bash(gem list:*)"
     ],
     "deny": []
   },

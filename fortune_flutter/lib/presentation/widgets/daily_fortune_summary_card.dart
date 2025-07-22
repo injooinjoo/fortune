@@ -42,8 +42,8 @@ class DailyFortuneSummaryCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(context).colorScheme.surface,
-              Theme.of(context).colorScheme.surface.withValues(alpha: 0.98),
+              Colors.white,
+              Colors.white.withValues(alpha: 0.98),
             ],
           ),
           borderRadius: BorderRadius.circular(20),

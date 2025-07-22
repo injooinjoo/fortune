@@ -7,6 +7,7 @@ class UserProfile extends Equatable {
   final String? email;
   final String? phoneNumber;
   final DateTime? birthDate;
+  final String? birthTime;
   final String? gender;
   final String? mbtiType;
   final String? zodiacSign;
@@ -24,6 +25,7 @@ class UserProfile extends Equatable {
     this.email,
     this.phoneNumber,
     this.birthDate,
+    this.birthTime,
     this.gender,
     this.mbtiType,
     this.zodiacSign,
@@ -45,6 +47,7 @@ class UserProfile extends Equatable {
       birthDate: json['birth_date'] != null 
           ? DateTime.parse(json['birth_date']) 
           : null,
+      birthTime: json['birth_time'] as String?,
       gender: json['gender'] as String?,
       mbtiType: json['mbti_type'] as String?,
       zodiacSign: json['zodiac_sign'] as String?,
@@ -69,6 +72,7 @@ class UserProfile extends Equatable {
       'email': email,
       'phone_number': phoneNumber,
       'birth_date': birthDate?.toIso8601String(),
+      'birth_time': birthTime,
       'gender': gender,
       'mbti_type': mbtiType,
       'zodiac_sign': zodiacSign,
@@ -91,6 +95,7 @@ class UserProfile extends Equatable {
     String? email,
     String? phoneNumber,
     DateTime? birthDate,
+    String? birthTime,
     String? gender,
     String? mbtiType,
     String? zodiacSign,
@@ -108,6 +113,7 @@ class UserProfile extends Equatable {
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       birthDate: birthDate ?? this.birthDate,
+      birthTime: birthTime ?? this.birthTime,
       gender: gender ?? this.gender,
       mbtiType: mbtiType ?? this.mbtiType,
       zodiacSign: zodiacSign ?? this.zodiacSign,
@@ -128,6 +134,7 @@ class UserProfile extends Equatable {
     email,
     phoneNumber,
     birthDate,
+    birthTime,
     gender,
     mbtiType,
     zodiacSign,

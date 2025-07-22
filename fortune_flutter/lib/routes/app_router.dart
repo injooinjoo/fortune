@@ -48,6 +48,7 @@ import '../features/fortune/presentation/pages/marriage_fortune_page.dart' as fo
 import '../features/fortune/presentation/pages/traditional_compatibility_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/couple_match_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/ex_lover_fortune_page.dart' as fortune_pages;
+import '../features/fortune/presentation/pages/ex_lover_fortune_enhanced_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/blind_date_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_golf_fortune_page.dart' as fortune_pages;
 import '../features/fortune/presentation/pages/lucky_baseball_fortune_page.dart' as fortune_pages;
@@ -774,6 +775,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: 'ex-lover',
             name: 'fortune-ex-lover',
             builder: (context, state) => const fortune_pages.ExLoverFortunePage(),
+          ),
+          GoRoute(
+            path: 'ex-lover-enhanced',
+            name: 'fortune-ex-lover-enhanced',
+            builder: (context, state) => const fortune_pages.ExLoverFortuneEnhancedPage(),
           ),
           GoRoute(
             path: 'blind-date',

@@ -20,6 +20,7 @@ class FortuneCardImages {
     'crush': '${basePath}crush_fortune.png',
     'relationship': '${basePath}people_to_avoid_fortune.png',
     'compatibility': '${basePath}compatibility_fortune.png',
+    'ex-lover': '${basePath}ex_lover_fortune.png',
     
     // Career & Money
     'career': '${basePath}career_fortune.png',
@@ -37,7 +38,7 @@ class FortuneCardImages {
     'dream': '${basePath}dream_fortune.png',
     'traditional': '${basePath}traditional_fortune.png',
     'physiognomy': '${basePath}physiognomy_fortune.png',
-    'talisman': '${basePath}traditional_fortune.png',
+    'talisman': '${basePath}talisman_fortune.png',
     
     // Daily & Personal
     'daily': '${basePath}time_fortune.png',
@@ -146,6 +147,7 @@ class FortuneCardImages {
     'breakup': '이별 후 새로운 시작',
     'crush': '짝사랑, 이뤄질 수 있을까?',
     'relationship': '오늘 우리 사이 온도는?',
+    'ex-lover': '그 사람과의 인연, 아직 끝나지 않았을까?',
     
     // Career & Money - 성공과 풍요를 암시하는 문구
     'career': '승진과 성공의 타이밍',

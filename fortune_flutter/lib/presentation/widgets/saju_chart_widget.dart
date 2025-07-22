@@ -144,7 +144,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: theme.colorScheme.outline.withValues(alpha: 0.1),
@@ -179,7 +179,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: 0.1),

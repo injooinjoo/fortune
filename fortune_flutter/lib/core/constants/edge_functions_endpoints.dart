@@ -73,6 +73,7 @@ class EdgeFunctionsEndpoints {
   static const String chemistryFortune = '/fortune-chemistry';
   static const String coupleMatchFortune = '/fortune-couple-match';
   static const String exLoverFortune = '/fortune-ex-lover';
+  static const String exLoverEnhancedFortune = '/fortune-ex-lover-enhanced';
   static const String blindDateFortune = '/fortune-blind-date';
 
   // 직업/사업
@@ -212,6 +213,7 @@ class EdgeFunctionsEndpoints {
       'chemistry': chemistryFortune,
       'couple-match': coupleMatchFortune,
       'ex-lover': exLoverFortune,
+      'ex-lover-enhanced': exLoverEnhancedFortune,
       'blind-date': blindDateFortune,
       'career': careerFortune,
       'employment': employmentFortune,

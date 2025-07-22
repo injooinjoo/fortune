@@ -39,7 +39,8 @@ class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
       isScrollControlled: true,
       isDismissible: true,
       enableDrag: true,
-      barrierColor: Colors.black54,
+      barrierColor: Colors.transparent, // Remove background dimming
+      useRootNavigator: true, // Ensure bottom sheet appears above all widgets
       builder: (context) => TimeBasedFortuneBottomSheet(
         onDismiss: onDismiss,
       ),
