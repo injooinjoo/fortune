@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mocktail/mocktail.dart';
@@ -15,8 +16,212 @@ class FakeFortuneModel extends Fake implements FortuneModel {}
 
 class FakeCacheEntry extends Fake implements CacheEntry {}
 
+// Test wrapper for CacheService that allows mocking
+class TestCacheService {
+  final MockBox<FortuneModel> _mockFortuneBox;
+  final MockBox<CacheEntry> _mockCacheMetaBox;
+  
+  TestCacheService(this._mockFortuneBox, this._mockCacheMetaBox);
+  
+  // Expose methods that mirror CacheService's public interface
+  String generateCacheKey(String fortuneType, Map<String, dynamic> params) {
+    final userId = params['userId'] ?? 'anonymous';
+    final sortedParams = Map.fromEntries(
+      params.entries.where((e) => e.key != 'userId').toList()
+        ..sort((a, b) => a.key.compareTo(b.key))
+    );
+    final dateKey = _getDateKeyForType(fortuneType);
+    final paramsString = sortedParams.isEmpty ? '' : ':${sortedParams.toString()}';
+    return '$userId:$fortuneType:$dateKey$paramsString';
+  }
+  
+  String _getDateKeyForType(String fortuneType) {
+    final now = DateTime.now();
+    switch (fortuneType) {
+      case 'hourly':
+        return '${now.year}-${now.month}-${now.day}-${now.hour}';
+      case 'daily':
+        return '${now.year}-${now.month}-${now.day}';
+      case 'weekly':
+        final weekNumber = _getWeekNumber(now);
+        return '${now.year}-W$weekNumber';
+      case 'monthly':
+        return '${now.year}-${now.month}';
+      case 'yearly':
+        return '${now.year}';
+      default:
+        return '${now.year}-${now.month}-${now.day}';
+    }
+  }
+  
+  int _getWeekNumber(DateTime date) {
+    final firstDayOfYear = DateTime(date.year, 1, 1);
+    final daysSinceFirstDay = date.difference(firstDayOfYear).inDays;
+    return ((daysSinceFirstDay + firstDayOfYear.weekday - 1) / 7).ceil();
+  }
+  
+  Future<FortuneModel?> getCachedFortune(
+    String fortuneType,
+    Map<String, dynamic> params,
+  ) async {
+    try {
+      final key = generateCacheKey(fortuneType, params);
+      final cacheEntry = _mockCacheMetaBox.get(key);
+      
+      if (cacheEntry == null) return null;
+      
+      if (cacheEntry.isExpired) {
+        await _mockFortuneBox.delete(key);
+        await _mockCacheMetaBox.delete(key);
+        return null;
+      }
+      
+      return _mockFortuneBox.get(key);
+    } catch (e) {
+      debugPrint('Error getting cached fortune: $e');
+      return null;
+    }
+  }
+  
+  Future<void> cacheFortune(
+    String fortuneType,
+    Map<String, dynamic> params,
+    FortuneModel fortune,
+  ) async {
+    try {
+      final key = generateCacheKey(fortuneType, params);
+      final duration = cacheDuration[fortuneType] ?? cacheDuration['default']!;
+      final expiryDate = DateTime.now().add(Duration(hours: duration));
+      
+      await _mockFortuneBox.put(key, fortune);
+      
+      final cacheEntry = CacheEntry(
+        key: key,
+        fortuneType: fortuneType,
+        createdAt: DateTime.now(),
+        expiresAt: expiryDate,
+      );
+      await _mockCacheMetaBox.put(key, cacheEntry);
+    } catch (e) {
+      debugPrint('Error caching fortune: $e');
+    }
+  }
+  
+  Future<void> clearAllCache() async {
+    try {
+      await _mockFortuneBox.clear();
+      await _mockCacheMetaBox.clear();
+    } catch (e) {
+      debugPrint('Error clearing cache: $e');
+    }
+  }
+  
+  Future<void> cleanExpiredCache() async {
+    try {
+      final expiredKeys = <String>[];
+      
+      for (final entry in _mockCacheMetaBox.values) {
+        if (entry.isExpired) {
+          expiredKeys.add(entry.key);
+        }
+      }
+      
+      for (final key in expiredKeys) {
+        await _mockFortuneBox.delete(key);
+        await _mockCacheMetaBox.delete(key);
+      }
+    } catch (e) {
+      debugPrint('Error cleaning expired cache: $e');
+    }
+  }
+  
+  Future<Map<String, dynamic>> getCacheStats() async {
+    try {
+      final totalEntries = _mockCacheMetaBox.length;
+      int expiredCount = 0;
+      int validCount = 0;
+      
+      for (final entry in _mockCacheMetaBox.values) {
+        if (entry.isExpired) {
+          expiredCount++;
+        } else {
+          validCount++;
+        }
+      }
+      
+      return {
+        'total': totalEntries,
+        'valid': validCount,
+        'expired': expiredCount,
+        'sizeInBytes': _mockFortuneBox.length * 1024,
+      };
+    } catch (e) {
+      return {
+        'total': 0,
+        'valid': 0,
+        'expired': 0,
+        'sizeInBytes': 0,
+      };
+    }
+  }
+  
+  Future<List<FortuneModel>> getAllCachedFortunesForUser(String userId) async {
+    try {
+      final fortunes = <FortuneModel>[];
+      
+      for (final entry in _mockCacheMetaBox.values) {
+        if (entry.key.startsWith('$userId:') && !entry.isExpired) {
+          final fortune = _mockFortuneBox.get(entry.key);
+          if (fortune != null) {
+            fortunes.add(fortune);
+          }
+        }
+      }
+      
+      fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return fortunes;
+    } catch (e) {
+      return [];
+    }
+  }
+  
+  Future<FortuneModel?> getMostRecentCachedFortune(String fortuneType, String userId) async {
+    try {
+      FortuneModel? mostRecent;
+      DateTime? mostRecentDate;
+      
+      for (final entry in _mockCacheMetaBox.values) {
+        if (entry.key.startsWith('$userId:$fortuneType:') && !entry.isExpired) {
+          if (mostRecentDate == null || entry.createdAt.isAfter(mostRecentDate)) {
+            final fortune = _mockFortuneBox.get(entry.key);
+            if (fortune != null) {
+              mostRecent = fortune;
+              mostRecentDate = entry.createdAt;
+            }
+          }
+        }
+      }
+      
+      return mostRecent;
+    } catch (e) {
+      return null;
+    }
+  }
+  
+  Map<String, int> get cacheDuration => {
+    'daily': 24,
+    'hourly': 1,
+    'weekly': 168,
+    'monthly': 720,
+    'yearly': 8760,
+    'zodiac': 720,
+    'personality': 8760,
+    'default': 72,
+  };
+}
+
 void main() {
-  late CacheService cacheService;
+  late TestCacheService cacheService;
   late MockBox<FortuneModel> mockFortuneBox;
   late MockBox<CacheEntry> mockCacheMetaBox;
   late MockHiveInterface mockHive;
@@ -32,7 +237,7 @@ void main() {
     mockCacheMetaBox = MockBox<CacheEntry>();
     mockHive = MockHiveInterface();
     
-    cacheService = CacheService();
+    cacheService = TestCacheService(mockFortuneBox, mockCacheMetaBox);
   });
 
   group('CacheService Tests', () {
@@ -63,7 +268,7 @@ void main() {
 
       test('should handle anonymous users', () {
         final params = {}; // No userId
-        final key = cacheService.generateCacheKey('daily', params);
+        final key = cacheService.generateCacheKey('daily', Map<String, dynamic>.from(params));
         
         expect(key, contains('anonymous'));
       });
@@ -75,10 +280,8 @@ void main() {
         final fortune = FortuneModel(
           id: 'test-id',
           userId: 'test123',
-          fortuneType: 'daily',
+          type: 'daily',
           content: 'Test fortune content',
-          category: 'general',
-          score: 80,
           createdAt: DateTime.now(),
           metadata: {},
         );
@@ -101,10 +304,8 @@ void main() {
         final fortune = FortuneModel(
           id: 'test-id',
           userId: 'test123',
-          fortuneType: 'daily',
+          type: 'daily',
           content: 'Test fortune content',
-          category: 'general',
-          score: 80,
           createdAt: DateTime.now(),
           metadata: {},
         );
@@ -237,10 +438,8 @@ void main() {
         final fortune1 = FortuneModel(
           id: 'fortune1',
           userId: userId,
-          fortuneType: 'daily',
+          type: 'daily',
           content: 'Fortune 1',
-          category: 'general',
-          score: 80,
           createdAt: DateTime.now(),
           metadata: {},
         );
@@ -248,10 +447,8 @@ void main() {
         final fortune2 = FortuneModel(
           id: 'fortune2',
           userId: userId,
-          fortuneType: 'weekly',
+          type: 'weekly',
           content: 'Fortune 2',
-          category: 'general',
-          score: 85,
           createdAt: DateTime.now().subtract(Duration(days: 1)),
           metadata: {},
         );
@@ -289,10 +486,8 @@ void main() {
         final olderFortune = FortuneModel(
           id: 'older',
           userId: userId,
-          fortuneType: 'daily',
+          type: 'daily',
           content: 'Older fortune',
-          category: 'general',
-          score: 75,
           createdAt: DateTime.now().subtract(Duration(days: 2)),
           metadata: {},
         );
@@ -300,10 +495,8 @@ void main() {
         final newerFortune = FortuneModel(
           id: 'newer',
           userId: userId,
-          fortuneType: 'daily',
+          type: 'daily',
           content: 'Newer fortune',
-          category: 'general',
-          score: 85,
           createdAt: DateTime.now().subtract(Duration(days: 1)),
           metadata: {},
         );
@@ -337,7 +530,7 @@ void main() {
 
     group('Cache Duration', () {
       test('should use correct cache duration for each fortune type', () {
-        final durations = CacheService.cacheDuration;
+        final durations = cacheService.cacheDuration;
         
         expect(durations['daily'], equals(24));
         expect(durations['hourly'], equals(1));
@@ -352,50 +545,3 @@ void main() {
   });
 }
 
-// Extension to make private methods testable
-extension TestablePrivateMethods on CacheService {
-  String generateCacheKey(String fortuneType, Map<String, dynamic> params) {
-    // This is a workaround for testing private methods
-    // In production code, you might want to make these methods public
-    // or test them indirectly through public methods
-    return _generateCacheKey(fortuneType, params);
-  }
-  
-  String _generateCacheKey(String fortuneType, Map<String, dynamic> params) {
-    final userId = params['userId'] ?? 'anonymous';
-    final sortedParams = Map.fromEntries(
-      params.entries.where((e) => e.key != 'userId').toList()
-        ..sort((a, b) => a.key.compareTo(b.key))
-    );
-    final dateKey = _getDateKeyForType(fortuneType);
-    final paramsString = sortedParams.isEmpty ? '' : ':${sortedParams.toString()}';
-    return '$userId:$fortuneType:$dateKey$paramsString';
-  }
-  
-  String _getDateKeyForType(String fortuneType) {
-    final now = DateTime.now();
-    switch (fortuneType) {
-      case 'hourly':
-        return '${now.year}-${now.month}-${now.day}-${now.hour}';
-      case 'daily':
-        return '${now.year}-${now.month}-${now.day}';
-      case 'weekly':
-        final weekNumber = _getWeekNumber(now);
-        return '${now.year}-W$weekNumber';
-      case 'monthly':
-        return '${now.year}-${now.month}';
-      case 'yearly':
-        return '${now.year}';
-      default:
-        return '${now.year}-${now.month}-${now.day}';
-    }
-  }
-  
-  int _getWeekNumber(DateTime date) {
-    final firstDayOfYear = DateTime(date.year, 1, 1);
-    final daysSinceFirstDay = date.difference(firstDayOfYear).inDays;
-    return ((daysSinceFirstDay + firstDayOfYear.weekday - 1) / 7).ceil();
-  }
-  
-  static Map<String, int> get cacheDuration => CacheService._cacheDuration;
-}

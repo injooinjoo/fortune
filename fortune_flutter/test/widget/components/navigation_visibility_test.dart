@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import '../lib/routes/navigation_helper.dart';
+import 'package:fortune/routes/navigation_helper.dart';
 
 void main() {
   group('NavigationHelper', () {
@@ -36,18 +36,47 @@ void main() {
       }
     });
 
-    test('should hide navigation bar for sub-routes', () {
-      // Test sub-routes
-      final subRoutes = [
+    test('should show navigation bar for fortune sub-routes', () {
+      // Test fortune sub-routes - should show navigation
+      final fortuneSubRoutes = [
         '/fortune/daily',
         '/fortune/saju',
         '/fortune/time',
+        '/fortune/love',
+        '/fortune/career',
+      ];
+
+      for (final route in fortuneSubRoutes) {
+        final state = GoRouterState(
+          location: route,
+          matchedLocation: route,
+          name: route.substring(route.lastIndexOf('/') + 1),
+          path: route,
+          fullPath: route,
+          pathParameters: const {},
+          queryParameters: const {},
+          queryParametersAll: const {},
+          extra: null,
+          pageKey: const ValueKey('test'),
+        );
+
+        expect(
+          NavigationHelper.shouldShowNavigationBar(state),
+          true,
+          reason: 'Navigation bar should be visible for fortune sub-route: $route',
+        );
+      }
+    });
+
+    test('should hide navigation bar for non-fortune sub-routes', () {
+      // Test non-fortune sub-routes
+      final subRoutes = [
         '/profile/edit',
         '/profile/statistics',
         '/settings',
         '/settings/social-accounts',
-        '/todo/create',
-        '/physiognomy/analysis',
+        '/trend/detail',
+        '/premium/subscribe',
       ];
 
       for (final route in subRoutes) {

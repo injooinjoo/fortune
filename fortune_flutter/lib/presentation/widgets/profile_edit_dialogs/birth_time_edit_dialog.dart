@@ -142,7 +142,7 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(8),
-              color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
+              color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : null,
             ),
             child: Row(
               children: [

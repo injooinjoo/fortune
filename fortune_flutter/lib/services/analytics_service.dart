@@ -105,23 +105,83 @@ class AnalyticsService {
     if (!_isInitialized || _analytics == null) return;
 
     try {
-      // Also log to our custom logger
-      Logger.analytics(name, parameters);
+      // Convert parameters to Map<String, Object> if needed
+      final Map<String, Object>? safeParameters = parameters?.map((key, value) {
+        // Convert null values to empty string
+        final Object safeValue = value ?? '';
+        return MapEntry(key, safeValue);
+      });
       
-      // Convert parameters to Map<String, Object>? for Firebase Analytics
-      final Map<String, Object>? firebaseParams = parameters?.map(
-        (key, value) => MapEntry(key, value ?? '' as Object),
-      );
-      
-      // Log to Firebase Analytics
       await _analytics!.logEvent(
         name: name,
-        parameters: firebaseParams,
+        parameters: safeParameters,
       );
+      Logger.info('Analytics event logged: $name', parameters);
     } catch (e) {
       Logger.error('Failed to log analytics event: $name', e);
     }
   }
+
+  /// Log fortune recommendation impression
+  Future<void> logFortuneRecommendationImpression({
+    required String fortuneType,
+    required String category,
+    required double score,
+    required String recommendationType,
+    required int position,
+  }) async {
+    await logEvent(
+      'fortune_recommendation_impression',
+      parameters: {
+        'fortune_type': fortuneType,
+        'category': category,
+        'score': score,
+        'recommendation_type': recommendationType,
+        'position': position,
+      },
+    );
+  }
+
+  /// Log fortune recommendation click
+  Future<void> logFortuneRecommendationClick({
+    required String fortuneType,
+    required String category,
+    required double score,
+    required String recommendationType,
+    required int position,
+  }) async {
+    await logEvent(
+      'fortune_recommendation_click',
+      parameters: {
+        'fortune_type': fortuneType,
+        'category': category,
+        'score': score,
+        'recommendation_type': recommendationType,
+        'position': position,
+        'action': 'click',
+      },
+    );
+  }
+
+  /// Log recommendation effectiveness
+  Future<void> logRecommendationEffectiveness({
+    required String fortuneType,
+    required bool visited,
+    required double personalScore,
+    required double popularityScore,
+  }) async {
+    await logEvent(
+      'recommendation_effectiveness',
+      parameters: {
+        'fortune_type': fortuneType,
+        'visited': visited,
+        'personal_score': personalScore,
+        'popularity_score': popularityScore,
+        'effectiveness': visited ? 1.0 : 0.0,
+      },
+    );
+  }
+
 
   /// Log screen view
   Future<void> logScreenView({

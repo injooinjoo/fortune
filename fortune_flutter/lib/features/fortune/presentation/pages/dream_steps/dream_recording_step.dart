@@ -1,9 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../../shared/glassmorphism/glass_effects.dart';
-import '../../../../../shared/components/toast.dart';
 import '../../../../../core/utils/haptic_utils.dart';
 import '../../../../../services/speech_recognition_service.dart';
 import '../../providers/dream_analysis_provider.dart';
@@ -28,6 +27,11 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
   bool _isRecording = false;
   String _inputType = 'text';
   late AnimationController _animationController;
+  String _accumulatedText = '';
+  String _currentPartialText = '';
+  String _feedbackMessage = '';
+  List<String> _detectedKeywords = [];
+  Timer? _feedbackDebouncer;
   
   // Guiding questions
   final List<Map<String, String>> _guidingQuestions = [
@@ -103,6 +107,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
   
   @override
   void dispose() {
+    _feedbackDebouncer?.cancel();
     _dreamController.dispose();
     _speechService.dispose();
     _focusNode.dispose();
@@ -135,6 +140,11 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
             _buildTextInput(theme)
           else
             _buildVoiceInput(theme),
+          const SizedBox(height: 24),
+          
+          // Feedback section
+          if (_feedbackMessage.isNotEmpty)
+            _buildFeedbackSection(theme),
           const SizedBox(height: 24),
           
           // Dream examples
@@ -259,6 +269,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         ),
         onChanged: (value) {
           ref.read(dreamAnalysisProvider.notifier).updateDreamContent(value);
+          _provideFeedback(value);
         },
       ),
     ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
@@ -267,50 +278,63 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
   Widget _buildVoiceInput(ThemeData theme) {
     return Column(
       children: [
-        ValueListenableBuilder<String>(
-          valueListenable: _speechService.recognizedTextNotifier,
-          builder: (context, recognizedText, _) {
-            if (recognizedText.isNotEmpty) {
-              _dreamController.text = recognizedText;
-              ref.read(dreamAnalysisProvider.notifier).updateDreamContent(recognizedText);
-            }
-            return GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              blur: 10,
-              child: Column(
-                children: [
-                  if (recognizedText.isEmpty)
-                    Text(
-                      _isRecording
-                          ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
-                          : '마이크 버튼을 눌러 녹음을 시작하세요',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white60,
-                      ),
-                      textAlign: TextAlign.center,
-                    )
-                  else
-                    Text(
-                      recognizedText,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
+        GlassContainer(
+          padding: const EdgeInsets.all(20),
+          borderRadius: BorderRadius.circular(16),
+          blur: 10,
+          child: Column(
+            children: [
+              if (_accumulatedText.isEmpty && _currentPartialText.isEmpty)
+                Text(
+                  _isRecording
+                      ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
+                      : '마이크 버튼을 눌러 녹음을 시작하세요',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.white60,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              else
+                Container(
+                  constraints: const BoxConstraints(maxHeight: 200),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (_accumulatedText.isNotEmpty)
+                          Text(
+                            _accumulatedText,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        if (_currentPartialText.isNotEmpty)
+                          Text(
+                            _currentPartialText,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: Colors.white70,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-              ),
-            );
-          },
+                  ),
+                ),
+            ],
+          ),
         ),
         const SizedBox(height: 24),
         _buildVoiceButton(theme),
+        if (_accumulatedText.isNotEmpty || _currentPartialText.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _buildVoiceControls(theme),
+        ],
       ],
     ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
   }
   
   Widget _buildVoiceButton(ThemeData theme) {
-    return GestureDetector(
+    final button = GestureDetector(
       onTap: _toggleRecording,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -339,6 +363,26 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         ),
       ),
     );
+    
+    if (_isRecording) {
+      return button
+          .animate(onPlay: (controller) => controller.repeat())
+          .scale(
+            begin: const Offset(1, 1),
+            end: const Offset(1.1, 1.1),
+            duration: 1.seconds,
+            curve: Curves.easeInOut,
+          )
+          .then()
+          .scale(
+            begin: const Offset(1.1, 1.1),
+            end: const Offset(1, 1),
+            duration: 1.seconds,
+            curve: Curves.easeInOut,
+          );
+    }
+    
+    return button;
   }
   
   Future<void> _toggleRecording() async {
@@ -348,19 +392,259 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
       await _speechService.stopListening();
       setState(() {
         _isRecording = false;
+        // 마지막 partial text를 accumulated text에 추가
+        if (_currentPartialText.isNotEmpty) {
+          _accumulatedText += (_accumulatedText.isEmpty ? '' : '\n') + _currentPartialText;
+          _currentPartialText = '';
+          _updateDreamContent();
+        }
       });
     } else {
       setState(() {
         _isRecording = true;
       });
+      
+      // Speech service 수정하여 partial과 final 구분
       await _speechService.startListening(
-        onResult: (text) {
+        onResult: (finalText) {
+          // Final result - 문장이 완성되었을 때
           setState(() {
-            _isRecording = false;
+            _accumulatedText += (_accumulatedText.isEmpty ? '' : '\n') + finalText;
+            _currentPartialText = '';
+            _updateDreamContent();
+          });
+        },
+        onPartialResult: (partialText) {
+          // Partial result - 말하는 중간 과정
+          setState(() {
+            _currentPartialText = partialText;
           });
         },
       );
     }
+  }
+  
+  void _updateDreamContent() {
+    final fullText = _accumulatedText + (_currentPartialText.isNotEmpty ? '\n' + _currentPartialText : '');
+    _dreamController.text = fullText;
+    ref.read(dreamAnalysisProvider.notifier).updateDreamContent(fullText);
+    _provideFeedback(fullText);
+  }
+  
+  void _provideFeedback(String dreamText) {
+    // 디바운싱으로 너무 빈번한 피드백 업데이트 방지
+    _feedbackDebouncer?.cancel();
+    _feedbackDebouncer = Timer(const Duration(milliseconds: 500), () {
+      // 꿈 내용 분석 및 피드백 제공
+      final keywords = _analyzeDreamKeywords(dreamText);
+      final emotions = _analyzeEmotions(dreamText);
+      
+      setState(() {
+        _detectedKeywords = keywords;
+        _feedbackMessage = _generateFeedback(keywords, emotions, dreamText);
+      });
+    });
+  }
+  
+  List<String> _analyzeDreamKeywords(String text) {
+    final keywords = <String>[];
+    final dreamKeywords = {
+      '추락': ['떨어지', '추락', '낙하', '떨어뜨리'],
+      '날기': ['날아', '날다', '비행', '하늘'],
+      '물': ['물', '바다', '강', '호수', '수영'],
+      '추격': ['쫓기', '도망', '추격', '쫓아'],
+      '죽음': ['죽', '사망', '죽음'],
+      '동물': ['동물', '개', '고양이', '새', '뱀'],
+      '가족': ['엄마', '아빠', '부모', '형제', '자매', '가족'],
+      '집': ['집', '방', '건물', '아파트'],
+    };
+    
+    dreamKeywords.forEach((category, words) {
+      for (final word in words) {
+        if (text.contains(word)) {
+          keywords.add(category);
+          break;
+        }
+      }
+    });
+    
+    return keywords;
+  }
+  
+  List<String> _analyzeEmotions(String text) {
+    final emotions = <String>[];
+    final emotionKeywords = {
+      '무서움': ['무서', '두려', '공포', '겁'],
+      '기쁨': ['기쁘', '행복', '즐거', '좋'],
+      '슬픔': ['슬프', '우울', '눈물', '아프'],
+      '불안': ['불안', '걱정', '초조', '긴장'],
+      '평화': ['평화', '편안', '고요', '안정'],
+    };
+    
+    emotionKeywords.forEach((emotion, words) {
+      for (final word in words) {
+        if (text.contains(word)) {
+          emotions.add(emotion);
+          break;
+        }
+      }
+    });
+    
+    return emotions;
+  }
+  
+  String _generateFeedback(List<String> keywords, List<String> emotions, String dreamText) {
+    if (keywords.isEmpty && emotions.isEmpty) {
+      // 일반적인 격려 메시지
+      final encouragements = [
+        '좋아요! 꿈의 세부사항을 더 자세히 설명해주시면 더 정확한 해석이 가능해요.',
+        '잘 하고 계세요. 꿈에서 느낀 감정이나 색깔, 소리 등도 기억나시면 추가해주세요.',
+        '꿈 속의 인물이나 장소에 대해서도 자세히 적어주시면 좋아요.',
+      ];
+      return encouragements[DateTime.now().millisecondsSinceEpoch % encouragements.length];
+    }
+    
+    final feedbackParts = <String>[];
+    
+    // 키워드 기반 피드백
+    if (keywords.contains('추락')) {
+      feedbackParts.add('추락하는 꿈을 꾸셨군요. 떨어지는 순간의 느낌이나 착지 상황도 중요해요.');
+    }
+    if (keywords.contains('날기')) {
+      feedbackParts.add('날아다니는 꿈이네요! 어떻게 날게 되었는지, 날면서 본 풍경도 설명해주세요.');
+    }
+    if (keywords.contains('물')) {
+      feedbackParts.add('물과 관련된 꿈이시군요. 물의 상태(맑음/탁함)나 깊이도 의미가 있어요.');
+    }
+    if (keywords.contains('추격')) {
+      feedbackParts.add('쫓기는 꿈을 꾸셨네요. 누가 쫓아왔는지, 결국 어떻게 되었는지도 중요해요.');
+    }
+    
+    // 감정 기반 피드백
+    if (emotions.contains('무서움')) {
+      feedbackParts.add('무서운 감정을 느끼셨군요. 그 감정의 원인이 무엇이었는지 더 설명해주세요.');
+    }
+    if (emotions.contains('기쁨')) {
+      feedbackParts.add('기쁜 감정이 있었네요! 그 기쁨의 이유나 상황을 더 자세히 알려주세요.');
+    }
+    
+    // 추가 질문
+    if (dreamText.length < 50) {
+      feedbackParts.add('조금 더 자세한 설명이 필요해요. 꿈의 배경이나 등장인물도 중요합니다.');
+    }
+    
+    return feedbackParts.join(' ');
+  }
+  
+  Widget _buildFeedbackSection(ThemeData theme) {
+    return GlassContainer(
+      padding: const EdgeInsets.all(16),
+      borderRadius: BorderRadius.circular(16),
+      blur: 10,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                color: Colors.amber.shade300,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'AI 피드백',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: Colors.amber.shade300,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _feedbackMessage,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Colors.white,
+              height: 1.5,
+            ),
+          ),
+          if (_detectedKeywords.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _detectedKeywords.map((keyword) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple.shade300.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.deepPurple.shade300.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Text(
+                    '#$keyword',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    ).animate()
+      .fadeIn(duration: 500.ms)
+      .slideY(begin: 0.1, end: 0, duration: 500.ms);
+  }
+  
+  Widget _buildVoiceControls(ThemeData theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // 초기화 버튼
+        TextButton.icon(
+          onPressed: () {
+            HapticUtils.lightImpact();
+            setState(() {
+              _accumulatedText = '';
+              _currentPartialText = '';
+              _dreamController.clear();
+              ref.read(dreamAnalysisProvider.notifier).updateDreamContent('');
+            });
+          },
+          icon: const Icon(Icons.clear, size: 16),
+          label: const Text('초기화'),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white60,
+          ),
+        ),
+        const SizedBox(width: 16),
+        // 완료 버튼
+        TextButton.icon(
+          onPressed: () {
+            HapticUtils.lightImpact();
+            setState(() {
+              if (_currentPartialText.isNotEmpty) {
+                _accumulatedText += (_accumulatedText.isEmpty ? '' : '\n') + _currentPartialText;
+                _currentPartialText = '';
+              }
+              _updateDreamContent();
+              _inputType = 'text'; // 텍스트 모드로 전환
+            });
+          },
+          icon: const Icon(Icons.check, size: 16),
+          label: const Text('완료'),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.green.shade300,
+          ),
+        ),
+      ],
+    );
   }
   
   Widget _buildDreamExamples(ThemeData theme) {

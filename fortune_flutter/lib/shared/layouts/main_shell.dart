@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +51,14 @@ class _MainShellState extends ConsumerState<MainShell>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    
+    // Set initial animation state based on current route
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final shouldShow = NavigationHelper.shouldShowNavigationBar(widget.state);
+      if (!shouldShow) {
+        _animationController.value = 1.0;
+      }
+    });
   }
 
   @override
@@ -76,11 +85,18 @@ class _MainShellState extends ConsumerState<MainShell>
 
   void _updateNavigationVisibility() {
     final shouldShow = NavigationHelper.shouldShowNavigationBar(widget.state);
+    final currentVisibility = ref.read(navigationVisibilityProvider).isVisible;
     
-    // Update the navigation visibility state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(navigationVisibilityProvider.notifier).setVisibility(shouldShow);
-    });
+    // Only update if visibility actually changed
+    if (shouldShow != currentVisibility) {
+      if (kDebugMode) {
+        print('[MainShell] Navigation visibility changing from $currentVisibility to $shouldShow for route: ${widget.state.uri.path}');
+      }
+      // Update the navigation visibility state
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(navigationVisibilityProvider.notifier).setVisibility(shouldShow);
+      });
+    }
   }
 
   @override
@@ -103,10 +119,12 @@ class _MainShellState extends ConsumerState<MainShell>
     final navigationState = ref.watch(navigationVisibilityProvider);
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    // Control animation based on visibility state
-    if (navigationState.isVisible) {
+    // Control animation based on visibility state with proper timing
+    if (navigationState.isVisible && _animationController.value > 0) {
+      // Navigation should be visible - slide up animation
       _animationController.reverse();
-    } else {
+    } else if (!navigationState.isVisible && _animationController.value < 1) {
+      // Navigation should be hidden - slide down animation
       _animationController.forward();
     }
 
@@ -133,6 +151,7 @@ class _MainShellState extends ConsumerState<MainShell>
             left: 0,
             right: 0,
             bottom: 0,
+            height: _navBarHeight + bottomPadding, // Add explicit height
             child: SlideTransition(
               position: _slideAnimation,
               child: FortuneBottomNavigationBar(

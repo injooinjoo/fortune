@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/token.dart';
+import '../../data/models/user_profile.dart';
 import '../../data/services/token_api_service.dart';
 import '../../core/errors/exceptions.dart';
 import '../../core/constants/soul_rates.dart';
+import '../../core/services/test_account_service.dart';
 import 'auth_provider.dart';
 import 'providers.dart';
 import 'soul_animation_provider.dart';
@@ -19,6 +21,7 @@ class TokenState {
   final UnlimitedSubscription? subscription;
   final Map<String, int> consumptionRates;
   final bool isConsumingToken;
+  final UserProfile? userProfile;
 
   const TokenState({
     this.balance,
@@ -29,6 +32,7 @@ class TokenState {
     this.subscription,
     Map<String, int>? consumptionRates,
     this.isConsumingToken = false,
+    this.userProfile,
   }) : consumptionRates = consumptionRates ?? _defaultConsumptionRates;
   
   static const Map<String, int> _defaultConsumptionRates = {
@@ -90,6 +94,7 @@ class TokenState {
     UnlimitedSubscription? subscription,
     Map<String, int>? consumptionRates,
     bool? isConsumingToken,
+    UserProfile? userProfile,
   }) {
     return TokenState(
       balance: balance ?? this.balance,
@@ -100,15 +105,23 @@ class TokenState {
       subscription: subscription ?? this.subscription,
       consumptionRates: consumptionRates ?? this.consumptionRates,
       isConsumingToken: isConsumingToken ?? this.isConsumingToken,
+      userProfile: userProfile ?? this.userProfile,
     );
   }
 
   bool get hasUnlimitedAccess => 
-      balance?.hasUnlimitedAccess == true || subscription?.isActive == true;
+      balance?.hasUnlimitedAccess == true || subscription?.isActive == true || hasUnlimitedTokens;
 
   bool canConsumeTokens(int amount) {
     if (hasUnlimitedAccess) return true;
     return (balance?.remainingTokens ?? 0) >= amount;
+  }
+  
+  // Check if user has unlimited tokens (for test accounts)
+  bool get hasUnlimitedTokens {
+    if (userProfile == null) return false;
+    return userProfile!.hasUnlimitedTokens || 
+           (userProfile!.isTestAccount && userProfile!.isPremiumActive);
   }
 
   int getTokensForFortuneType(String fortuneType) {
@@ -138,6 +151,9 @@ class TokenNotifier extends StateNotifier<TokenState> {
         throw UnauthorizedException('로그인이 필요합니다');
       }
 
+      // Load user profile
+      final userProfile = await ref.read(userProfileProvider.future);
+
       // 병렬로 데이터 로드
       final results = await Future.wait([
         _apiService.getTokenBalance(userId: user.id),
@@ -149,6 +165,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
         balance: results[0] as TokenBalance,
         subscription: results[1] as UnlimitedSubscription?,
         consumptionRates: results[2] as Map<String, int>,
+        userProfile: userProfile,
         isLoading: false,
       );
     } catch (e) {
@@ -173,6 +190,12 @@ class TokenNotifier extends StateNotifier<TokenState> {
     required int amount,
     String? referenceId,
   }) async {
+    // 테스트 계정 확인
+    final userProfile = await ref.read(userProfileProvider.future);
+    if (userProfile != null && userProfile.hasUnlimitedTokens) {
+      return true;
+    }
+    
     // 무제한 이용권이 있으면 토큰 소비 안함
     if (state.hasUnlimitedAccess) {
       return true;
@@ -492,6 +515,12 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
   // 운세 실행에 필요한 영혼 확인
   bool canAccessFortune(String fortuneType) {
+    // 테스트 계정 확인 (동기적으로 체크)
+    final userProfile = ref.read(userProfileProvider).value;
+    if (userProfile != null && userProfile.hasUnlimitedTokens) {
+      return true;
+    }
+    
     // 무제한 이용권이 있으면 모든 운세 이용 가능
     if (state.hasUnlimitedAccess) {
       return true;

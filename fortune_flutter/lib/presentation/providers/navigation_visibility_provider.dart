@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// State for managing navigation bar visibility
@@ -29,10 +28,13 @@ class NavigationVisibilityNotifier extends StateNotifier<NavigationVisibilitySta
   void show() {
     if (!state.isVisible && !state.isAnimating) {
       state = state.copyWith(isAnimating: true);
-      state = state.copyWith(isVisible: true);
-      // Reset animating state after animation completes
-      Future.delayed(const Duration(milliseconds: 300), () {
-        state = state.copyWith(isAnimating: false);
+      // Add a small delay before showing to ensure smooth transition
+      Future.delayed(const Duration(milliseconds: 50), () {
+        state = state.copyWith(isVisible: true);
+        // Reset animating state after animation completes
+        Future.delayed(const Duration(milliseconds: 300), () {
+          state = state.copyWith(isAnimating: false);
+        });
       });
     }
   }

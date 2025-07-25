@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 // Dream analysis state model
 class DreamAnalysisState {
@@ -335,6 +336,3 @@ class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
 final dreamAnalysisProvider = StateNotifierProvider<DreamAnalysisNotifier, DreamAnalysisState>((ref) {
   return DreamAnalysisNotifier();
 });
-
-// Import IconData for the models
-import 'package:flutter/material.dart';

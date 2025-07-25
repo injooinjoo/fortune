@@ -163,8 +163,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
         print('[AdLoadingScreen] Navigating to: ${widget.fortuneRoute}');
         print('[AdLoadingScreen] Fortune params: ${widget.fortuneParams}');
         
-        // Pass any fetched data or params to the fortune page
-        // Add a flag to indicate fortune should be auto-generated
+        // Use pushReplacement to replace the current AdLoadingScreen with the fortune page
+        // This ensures the AdLoadingScreen is removed from the navigation stack
         context.pushReplacement(
           widget.fortuneRoute!,
           extra: {
@@ -184,8 +184,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
               backgroundColor: Colors.red,
             ),
           );
-          // Navigate back
-          Navigator.of(context).pop();
+          // Navigate back using go_router
+          context.pop();
         }
       }
     } else {
@@ -328,6 +328,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
               top: 0,
               left: 0,
               right: 0,
+              height: 80, // Add explicit height
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 decoration: BoxDecoration(
@@ -354,15 +355,13 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                       },
                     ),
                     const SizedBox(width: 8),
-                    // 제목
-                    Expanded(
-                      child: Text(
-                        widget.fortuneTitle,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+                    // 제목 - Remove Expanded widget
+                    Text(
+                      widget.fortuneTitle,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
                     ),
                   ],
@@ -376,6 +375,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
                 left: 0,
                 right: 0,
                 bottom: 0,
+                height: 200, // Add explicit height
                 child: Container(
                   padding: EdgeInsets.only(
                     left: 24,

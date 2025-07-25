@@ -8,7 +8,8 @@ import 'package:fortune/services/cache_service.dart';
 import 'package:fortune/data/services/fortune_api_service.dart';
 import 'package:fortune/data/services/token_api_service.dart';
 import 'package:fortune/core/network/api_client.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Headers;
+import 'package:dio/dio.dart' as dio;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
@@ -18,7 +19,6 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 class MockSupabaseClient extends Mock implements SupabaseClient {}
 class MockGoTrueClient extends Mock implements GoTrueClient {}
 class MockSupabaseStorageClient extends Mock implements SupabaseStorageClient {}
-class MockStorageBucket extends Mock implements StorageBucket {}
 
 // Service mocks
 class MockAuthService extends Mock implements AuthService {}
@@ -35,7 +35,7 @@ class MockGoogleSignIn extends Mock implements GoogleSignIn {}
 class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
 class MockGoogleSignInAuthentication extends Mock implements GoogleSignInAuthentication {}
 class MockKakaoUser extends Mock implements kakao.User {}
-class MockNaverLoginResult extends Mock implements NaverLoginResult {}
+// NaverLoginResult is handled differently in the social_auth_service_test
 class MockAppleIDCredential extends Mock implements AuthorizationCredentialAppleID {}
 
 // HTTP mocks
@@ -66,9 +66,11 @@ class MockServiceFactory {
     final service = MockAuthService();
     
     when(() => service.currentUser).thenReturn(currentUser);
-    when(() => service.isAuthenticated).thenReturn(isAuthenticated);
     when(() => service.authStateChanges).thenAnswer(
-      (_) => Stream.value(currentUser != null ? AuthState.authenticated : AuthState.unauthenticated),
+      (_) => Stream.value(AuthState(
+        event: currentUser != null ? AuthChangeEvent.signedIn : AuthChangeEvent.signedOut,
+        session: null,
+      )),
     );
     
     return service;
@@ -76,29 +78,25 @@ class MockServiceFactory {
   
   static MockStorageService createMockStorageService() {
     final service = MockStorageService();
-    final storage = <String, dynamic>{};
+    final profiles = <String, Map<String, dynamic>>{};
     
-    when(() => service.getString(any())).thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      return Future.value(storage[key] as String?);
+    when(() => service.getUserProfile()).thenAnswer((_) {
+      return Future.value(profiles['default']);
     });
     
-    when(() => service.setString(any(), any())).thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      final value = invocation.positionalArguments[1] as String;
-      storage[key] = value;
-      return Future.value(true);
+    when(() => service.saveUserProfile(any())).thenAnswer((invocation) {
+      final profile = invocation.positionalArguments[0] as Map<String, dynamic>;
+      profiles['default'] = profile;
+      return Future.value();
     });
     
-    when(() => service.remove(any())).thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      storage.remove(key);
-      return Future.value(true);
+    when(() => service.clearUserProfile()).thenAnswer((_) {
+      profiles.remove('default');
+      return Future.value();
     });
     
-    when(() => service.clear()).thenAnswer((_) {
-      storage.clear();
-      return Future.value(true);
+    when(() => service.getRecentFortunes()).thenAnswer((_) {
+      return Future.value([]);
     });
     
     return service;
@@ -108,27 +106,19 @@ class MockServiceFactory {
     final service = MockCacheService();
     final cache = <String, dynamic>{};
     
-    when(() => service.get(any())).thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      return Future.value(cache[key]);
+    when(() => service.getCachedFortune(any(), any())).thenAnswer((_) {
+      return Future.value(null);
     });
     
-    when(() => service.set(any(), any(), duration: any(named: 'duration')))
-        .thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      final value = invocation.positionalArguments[1];
-      cache[key] = value;
+    when(() => service.cacheFortune(any(), any(), any())).thenAnswer((_) {
       return Future.value();
     });
     
-    when(() => service.remove(any())).thenAnswer((invocation) {
-      final key = invocation.positionalArguments[0] as String;
-      cache.remove(key);
+    when(() => service.clearAllCache()).thenAnswer((_) {
       return Future.value();
     });
     
-    when(() => service.clear()).thenAnswer((_) {
-      cache.clear();
+    when(() => service.cleanExpiredCache()).thenAnswer((_) {
       return Future.value();
     });
     
@@ -157,7 +147,7 @@ class MockServiceFactory {
     when(() => response.data).thenReturn(data);
     when(() => response.statusCode).thenReturn(statusCode);
     when(() => response.statusMessage).thenReturn(statusMessage);
-    when(() => response.headers).thenReturn(Headers.fromMap(headers ?? {}));
+    when(() => response.headers).thenReturn(dio.Headers.fromMap(headers ?? {}));
     when(() => response.requestOptions).thenReturn(requestOptions);
     
     return response;

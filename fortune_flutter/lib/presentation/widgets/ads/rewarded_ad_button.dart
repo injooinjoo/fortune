@@ -140,7 +140,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: theme.colorScheme.onPrimary.withOpacity(0.2),
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(

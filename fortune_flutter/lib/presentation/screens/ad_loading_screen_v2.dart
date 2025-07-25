@@ -304,8 +304,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.purple.shade900.withOpacity(0.3),
-                          Colors.indigo.shade900.withOpacity(0.3),
+                          Colors.purple.shade900.withValues(alpha: 0.3),
+                          Colors.indigo.shade900.withValues(alpha: 0.3),
                         ],
                         transform: GradientRotation(
                           _animationController.value * 2 * 3.14159,
@@ -332,8 +332,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            Colors.white.withOpacity(0.2),
-                            Colors.white.withOpacity(0.05),
+                            Colors.white.withValues(alpha: 0.2),
+                            Colors.white.withValues(alpha: 0.05),
                           ],
                         ),
                       ),
@@ -351,7 +351,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       curve: Curves.easeInOut,
                     ).shimmer(
                       duration: 2.seconds,
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                     ),
                     
                     const SizedBox(height: 48),
@@ -389,7 +389,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       height: 8,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: AnimatedBuilder(
@@ -412,7 +412,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                               onPlay: (controller) => controller.repeat(),
                             ).shimmer(
                               duration: 1.5.seconds,
-                              color: Colors.white.withOpacity(0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                             ),
                           );
                         },

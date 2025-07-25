@@ -17,6 +17,13 @@ final authStateProvider = StreamProvider<AuthState?>((ref) {
   return client.auth.onAuthStateChange;
 });
 
+// Auth token provider
+final authTokenProvider = FutureProvider<String?>((ref) async {
+  final client = ref.watch(supabaseClientProvider);
+  final session = client.auth.currentSession;
+  return session?.accessToken;
+});
+
 // Current user provider
 final userProvider = StreamProvider<User?>((ref) {
   final client = ref.watch(supabaseClientProvider);

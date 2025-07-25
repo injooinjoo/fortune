@@ -7,23 +7,24 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class MockFactory {
   static UserProfile createUserProfile({
     String? id,
+    String? userId,
     String? email,
     String? name,
     DateTime? birthDate,
     String? gender,
-    bool? isLunar,
     String? birthTime,
     int? tokenBalance,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
+    final userIdValue = userId ?? id ?? 'test-user-123';
     return UserProfile(
-      id: id ?? 'test-user-123',
+      id: id ?? userIdValue,
+      userId: userIdValue,
       email: email ?? 'test@example.com',
       name: name ?? '테스트 사용자',
       birthDate: birthDate ?? DateTime(1990, 1, 1),
       gender: gender ?? 'male',
-      isLunar: isLunar ?? false,
       birthTime: birthTime,
       tokenBalance: tokenBalance ?? 100,
       createdAt: createdAt ?? DateTime.now(),
@@ -32,24 +33,24 @@ class MockFactory {
   }
   
   static FortuneResponseModel createFortuneResponse({
-    String? id,
-    String? userId,
-    String? fortuneType,
+    bool? success,
+    String? message,
+    String? type,
     String? content,
-    String? category,
+    int? tokensUsed,
+    int? remainingTokens,
     Map<String, dynamic>? metadata,
-    int? tokenCost,
-    DateTime? createdAt,
   }) {
     return FortuneResponseModel(
-      id: id ?? 'fortune-123',
-      userId: userId ?? 'test-user-123',
-      fortuneType: fortuneType ?? 'daily',
-      content: content ?? '오늘은 행운이 가득한 날입니다.',
-      category: category ?? 'general',
-      metadata: metadata ?? {'score': 85},
-      tokenCost: tokenCost ?? 10,
-      createdAt: createdAt ?? DateTime.now(),
+      success: success ?? true,
+      message: message,
+      data: FortuneData(
+        type: type ?? 'daily',
+        content: content ?? '오늘은 행운이 가득한 날입니다.',
+        metadata: metadata ?? {'score': 85},
+      ),
+      tokensUsed: tokensUsed ?? 10,
+      remainingTokens: remainingTokens ?? 90,
     );
   }
   

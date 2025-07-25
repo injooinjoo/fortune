@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 
 /// Helper class to determine navigation visibility based on GoRouter state
@@ -17,21 +18,48 @@ class NavigationHelper {
 
     // Check if current location is exactly a main route
     if (mainRoutes.contains(location)) {
+      if (kDebugMode) {
+        print('[NavigationHelper] Showing navigation for main route: $location');
+      }
       return true;
     }
 
     // Settings and other nested routes should hide navigation
     if (location.startsWith('/settings')) {
+      if (kDebugMode) {
+        print('[NavigationHelper] Hiding navigation for settings route: $location');
+      }
       return false;
     }
 
-    // Fortune sub-routes should hide navigation
-    if (location.startsWith('/fortune/') && location != '/fortune') {
-      return false;
+    // Fortune sub-routes should SHOW navigation bar by default
+    // This allows fortune pages to have navigation bar visible when no bottom sheet is present
+    if (location.startsWith('/fortune/')) {
+      // Add specific routes that should hide navigation if needed
+      const hideNavigationRoutes = [
+        // Add specific fortune routes that should hide navigation here if needed
+      ];
+      
+      if (hideNavigationRoutes.contains(location)) {
+        if (kDebugMode) {
+          print('[NavigationHelper] Hiding navigation for specific fortune route: $location');
+        }
+        return false;
+      }
+      
+      // Default: show navigation for fortune sub-routes
+      if (kDebugMode) {
+        print('[NavigationHelper] Showing navigation for fortune sub-route: $location');
+      }
+      return true;
     }
 
-    // Profile sub-routes should hide navigation
-    if (location.startsWith('/profile/') && location != '/profile') {
+    // Profile sub-routes (except history which should show navigation)
+    if (location.startsWith('/profile/')) {
+      // History is accessible from profile but should show navigation
+      if (location == '/profile/history') {
+        return false;
+      }
       return false;
     }
 
@@ -46,6 +74,9 @@ class NavigationHelper {
     }
 
     // All other routes hide navigation bar
+    if (kDebugMode) {
+      print('[NavigationHelper] Hiding navigation for other route: $location');
+    }
     return false;
   }
 

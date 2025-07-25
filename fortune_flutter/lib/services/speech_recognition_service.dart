@@ -62,6 +62,7 @@ class SpeechRecognitionService {
   
   Future<void> startListening({
     required Function(String) onResult,
+    Function(String)? onPartialResult,
     String locale = 'ko-KR',
   }) async {
     if (!_isInitialized) {
@@ -73,11 +74,25 @@ class SpeechRecognitionService {
     
     try {
       recognizedTextNotifier.value = '';
+      String lastFinalResult = '';
+      
       await _speech.listen(
         onResult: (result) {
-          recognizedTextNotifier.value = result.recognizedWords;
-          if (result.finalResult) {
-            onResult(result.recognizedWords);
+          // Partial result 처리
+          if (!result.finalResult) {
+            // 현재까지 인식된 부분적인 텍스트
+            final currentText = result.recognizedWords;
+            recognizedTextNotifier.value = currentText;
+            onPartialResult?.call(currentText);
+          } else {
+            // Final result 처리
+            final finalText = result.recognizedWords;
+            if (finalText != lastFinalResult && finalText.isNotEmpty) {
+              lastFinalResult = finalText;
+              onResult(finalText);
+              // Final result 후 recognizedText 초기화
+              recognizedTextNotifier.value = '';
+            }
           }
         },
         localeId: locale,

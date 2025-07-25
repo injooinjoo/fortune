@@ -123,6 +123,14 @@ dependencies:
   
   # Date & Time
   table_calendar: ^3.1.2
+  lunar: ^1.2.2  # 음력 계산 라이브러리
+  
+  # Map & Location
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  location: ^7.0.0
   
   # Phone Number Input
   # intl_phone_number_input: ^0.7.4  # Temporarily disabled due to PhoneNumberKit build issue

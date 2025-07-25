@@ -12,6 +12,7 @@ import '../../../../core/constants/fortune_type_names.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../../../../services/user_statistics_service.dart';
 import '../../../../services/storage_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 // Fortune history provider
 final fortuneHistoryProvider = FutureProvider.autoDispose<List<FortuneHistory>>((ref) async {
@@ -685,6 +686,217 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     );
   }
   
+  Future<void> _shareFortuneDetail(FortuneHistory item) async {
+    final score = item.summary['score'] as int? ?? 0;
+    final content = item.summary['content'] as String? ?? '';
+    final keywords = (item.summary['keywords'] as List?)?.join(', ') ?? '';
+    
+    String shareText = '''🔮 ${item.title} 운세
+    
+날짜: ${DateFormat('yyyy년 M월 d일').format(item.createdAt)}
+점수: $score점
+
+${content.isNotEmpty ? '📝 운세 내용:\n$content\n' : ''}
+${keywords.isNotEmpty ? '🏷️ 키워드: $keywords\n' : ''}
+
+Fortune 앱에서 나만의 운세를 확인해보세요!
+https://fortune.app''';
+    
+    await Share.share(
+      shareText,
+      subject: '${item.title} - Fortune 운세',
+    );
+  }
+  
+  Widget _buildTimelineView(BuildContext context, List<FortuneHistory> history, double fontScale) {
+    final theme = Theme.of(context);
+    
+    // Group history by month
+    final Map<String, List<FortuneHistory>> groupedByMonth = {};
+    for (final item in history) {
+      final monthKey = DateFormat('yyyy-MM').format(item.createdAt);
+      groupedByMonth.putIfAbsent(monthKey, () => []).add(item);
+    }
+    
+    // Sort months in descending order
+    final sortedMonths = groupedByMonth.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
+    
+    if (sortedMonths.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '나의 운세 여정',
+            style: TextStyle(
+              fontSize: 18 * fontScale,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Timeline
+          ...sortedMonths.take(3).map((month) {
+            final monthData = groupedByMonth[month]!;
+            final date = DateFormat('yyyy-MM').parse(month);
+            final isCurrentMonth = month == DateFormat('yyyy-MM').format(DateTime.now());
+            
+            // Calculate average score for the month
+            final scores = monthData
+                .where((item) => item.summary['score'] != null)
+                .map((item) => item.summary['score'] as int)
+                .toList();
+            final avgScore = scores.isEmpty 
+                ? 0 
+                : (scores.reduce((a, b) => a + b) / scores.length).round();
+            
+            // Count fortune types
+            final Map<String, int> typeCount = {};
+            for (final item in monthData) {
+              final type = FortuneTypeNames.getName(item.fortuneType);
+              typeCount[type] = (typeCount[type] ?? 0) + 1;
+            }
+            
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Timeline indicator
+                  Column(
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: isCurrentMonth 
+                              ? theme.colorScheme.primary 
+                              : theme.colorScheme.primary.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      if (month != sortedMonths.last)
+                        Container(
+                          width: 2,
+                          height: 80,
+                          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  
+                  // Content
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                DateFormat('yyyy년 M월').format(date),
+                                style: TextStyle(
+                                  fontSize: 16 * fontScale,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              if (avgScore > 0)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _getScoreColor(avgScore).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '평균 ${avgScore}점',
+                                    style: TextStyle(
+                                      fontSize: 12 * fontScale,
+                                      fontWeight: FontWeight.w600,
+                                      color: _getScoreColor(avgScore),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          
+                          // Fortune type breakdown
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: typeCount.entries.take(3).map((entry) {
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '${entry.key} x${entry.value}',
+                                  style: TextStyle(
+                                    fontSize: 11 * fontScale,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          
+                          // Achievement badges
+                          if (monthData.length >= 20) ...[
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.emoji_events,
+                                  size: 16,
+                                  color: Colors.amber,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '이달의 운세 마스터!',
+                                  style: TextStyle(
+                                    fontSize: 12 * fontScale,
+                                    color: Colors.amber[700],
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+  
   void _showFortuneDetail(BuildContext context, FortuneHistory item) {
     showModalBottomSheet(
       context: context,
@@ -910,13 +1122,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
-                            onPressed: () {
+                            onPressed: () async {
                               // Implement share functionality
-                              Toast.show(
-                                context,
-                                message: '공유 기능은 준비 중입니다',
-                                type: ToastType.info,
-                              );
+                              await _shareFortuneDetail(item);
                             },
                             icon: const Icon(Icons.share),
                             label: const Text('운세 공유하기'),
@@ -1024,6 +1232,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                           error: (_, __) => const SizedBox.shrink(),
                           data: (_) => _buildMonthlyTrendChart(context, history, fontScale),
                         ),
+                      ),
+                      
+                      // Timeline View
+                      SliverToBoxAdapter(
+                        child: _buildTimelineView(context, history, fontScale),
                       ),
                       
                       // Category distribution pie chart

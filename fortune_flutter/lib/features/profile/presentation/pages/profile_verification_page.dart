@@ -259,15 +259,15 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    verificationColor.withOpacity(0.2),
-                    verificationColor.withOpacity(0.1),
+                    verificationColor.withValues(alpha: 0.2),
+                    verificationColor.withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: verificationColor.withOpacity(0.3),
+                  color: verificationColor.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -277,7 +277,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: verificationColor.withOpacity(0.3),
+                          color: verificationColor.withValues(alpha: 0.3),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -516,10 +516,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.05),
+                        color: AppColors.primary.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.2),
+                          color: AppColors.primary.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Column(
@@ -741,7 +741,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -797,14 +797,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isCompleted 
-              ? Colors.green.withOpacity(0.3)
+              ? Colors.green.withValues(alpha: 0.3)
               : isLocked 
                   ? AppColors.divider
-                  : AppColors.primary.withOpacity(0.2),
+                  : AppColors.primary.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -824,10 +824,10 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     height: 40,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? Colors.green.withOpacity(0.1)
+                          ? Colors.green.withValues(alpha: 0.1)
                           : isLocked
                               ? AppColors.divider
-                              : AppColors.primary.withOpacity(0.1),
+                              : AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -872,7 +872,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: Colors.green.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

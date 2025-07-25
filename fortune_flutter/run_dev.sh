@@ -6,7 +6,10 @@ echo "Starting Fortune Flutter development server on port 9002..."
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
   echo "Loading environment variables from .env file..."
-  export $(cat .env | grep -v '^#' | xargs)
+  # Use set -a to export all variables and source the file directly
+  set -a
+  source .env
+  set +a
 fi
 
 # Check if Google Web Client ID is set

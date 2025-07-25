@@ -72,7 +72,7 @@ class _LocationStepState extends State<LocationStep> {
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                 ),
                 
                 const SizedBox(height: 16),
