@@ -70,7 +70,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                   color: mainLuckyColor,
                   boxShadow: [
                     BoxShadow(
-                      color: mainLuckyColor.withOpacity(0.4),
+                      color: mainLuckyColor.withValues(alpha: 0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -83,7 +83,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 3,
                       ),
                     ),
@@ -131,8 +131,8 @@ class LuckyColorDetailCard extends StatelessWidget {
 
   List<Color> _generateColorPalette(Color baseColor) {
     return [
-      baseColor.withOpacity(0.3),
-      baseColor.withOpacity(0.5),
+      baseColor.withValues(alpha: 0.3),
+      baseColor.withValues(alpha: 0.5),
       baseColor,
       Color.lerp(baseColor, Colors.black, 0.2)!,
       Color.lerp(baseColor, Colors.black, 0.4)!,
@@ -185,7 +185,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: mainLuckyColor.withOpacity(0.1),
+                      color: mainLuckyColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -318,7 +318,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: mainLuckyColor.withOpacity(0.1),
+                            color: mainLuckyColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -439,7 +439,7 @@ class LuckyColorDetailCard extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: itemColor.withOpacity(0.3),
+                          color: itemColor.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),

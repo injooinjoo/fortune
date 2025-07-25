@@ -234,8 +234,8 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    data.color.withOpacity(0.8),
-                    data.color.withOpacity(0.4),
+                    data.color.withValues(alpha: 0.8),
+                    data.color.withValues(alpha: 0.4),
                   ],
                 ),
                 border: Border.all(
@@ -244,7 +244,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 ),
                 boxShadow: isSelected ? [
                   BoxShadow(
-                    color: data.color.withOpacity(0.6),
+                    color: data.color.withValues(alpha: 0.6),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
@@ -290,12 +290,12 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            data.color.withOpacity(0.3),
-            data.color.withOpacity(0.1),
+            data.color.withValues(alpha: 0.3),
+            data.color.withValues(alpha: 0.1),
           ],
         ),
         border: Border.all(
-          color: data.color.withOpacity(0.5),
+          color: data.color.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -324,7 +324,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: data.color.withOpacity(0.3),
+                color: data.color.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
@@ -371,7 +371,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                       '${data.season} · ${data.direction}',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -396,10 +396,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: data.color.withOpacity(0.2),
+                  color: data.color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: data.color.withOpacity(0.4),
+                    color: data.color.withValues(alpha: 0.4),
                     width: 1,
                   ),
                 ),
@@ -417,10 +417,10 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -436,7 +436,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                   '해당 띠: ',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
                 ...data.zodiacs.map((zodiac) {
@@ -510,7 +510,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -532,7 +532,7 @@ class _ZodiacElementChartState extends State<ZodiacElementChart>
                 relation,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -626,7 +626,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawGeneratingCycle(Canvas canvas, Map<String, Offset> positions, List<String> elements) {
     final paint = Paint()
-      ..color = Colors.green.withOpacity(0.3 * animationValue)
+      ..color = Colors.green.withValues(alpha: 0.3 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
     
@@ -647,7 +647,7 @@ class _ElementRelationshipPainter extends CustomPainter {
 
   void _drawOvercomingCycle(Canvas canvas, Map<String, Offset> positions) {
     final paint = Paint()
-      ..color = Colors.red.withOpacity(0.2 * animationValue)
+      ..color = Colors.red.withValues(alpha: 0.2 * animationValue)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
     

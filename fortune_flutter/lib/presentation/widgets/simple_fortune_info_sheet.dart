@@ -11,12 +11,16 @@ import '../../core/utils/logger.dart';
 
 class SimpleFortunInfoSheet extends ConsumerStatefulWidget {
   final String fortuneType;
+  final String? title;
+  final String? description;
   final VoidCallback? onFortuneButtonPressed;
   final VoidCallback? onDismiss;
   
   const SimpleFortunInfoSheet({
     super.key,
     required this.fortuneType,
+    this.title,
+    this.description,
     this.onFortuneButtonPressed,
     this.onDismiss,
   });
@@ -24,6 +28,8 @@ class SimpleFortunInfoSheet extends ConsumerStatefulWidget {
   static Future<void> show(
     BuildContext context, {
     required String fortuneType,
+    String? title,
+    String? description,
     VoidCallback? onFortuneButtonPressed,
     VoidCallback? onDismiss,
   }) {
@@ -37,6 +43,8 @@ class SimpleFortunInfoSheet extends ConsumerStatefulWidget {
       useRootNavigator: true, // This ensures the modal appears above navigation bar
       builder: (context) => SimpleFortunInfoSheet(
         fortuneType: fortuneType,
+        title: title,
+        description: description,
         onFortuneButtonPressed: onFortuneButtonPressed,
         onDismiss: onDismiss,
       ),
@@ -146,9 +154,20 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Emotional description (moved to top)
+                            // Title if provided
+                            if (widget.title != null) ...[
+                              Text(
+                                widget.title!,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ).animate().fadeIn(duration: 300.ms),
+                              const SizedBox(height: 16),
+                            ],
+                            
+                            // Description (use provided description or fallback to emotional description)
                             Text(
-                              emotionalDescription,
+                              widget.description ?? emotionalDescription,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 height: 1.8,
                                 fontSize: 16,
@@ -855,6 +874,7 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
       left: 0,
       right: 0,
       bottom: 0,
+      height: 100 + bottomPadding, // Add explicit height
       child: Container(
         decoration: BoxDecoration(
           color: theme.brightness == Brightness.dark 
@@ -884,10 +904,13 @@ class _SimpleFortunInfoSheetState extends ConsumerState<SimpleFortunInfoSheet>
               return;
             }
             
-            // Close the bottom sheet
+            // Close the bottom sheet first
             if (mounted) {
               Navigator.of(context).pop();
             }
+            
+            // Call onDismiss to ensure overlay is removed
+            widget.onDismiss?.call();
             
             if (widget.onFortuneButtonPressed != null) {
               widget.onFortuneButtonPressed!();

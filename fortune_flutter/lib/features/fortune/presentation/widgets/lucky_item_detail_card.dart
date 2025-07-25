@@ -78,13 +78,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.deepPurple.withOpacity(0.8),
+                      Colors.deepPurple.withValues(alpha: 0.8),
                       Colors.purple,
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.purple.withOpacity(0.3),
+                      color: Colors.purple.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -111,8 +111,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.withOpacity(0.1),
-                      Colors.deepPurple.withOpacity(0.1),
+                      Colors.purple.withValues(alpha: 0.1),
+                      Colors.deepPurple.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
@@ -266,8 +266,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.purple.withOpacity(0.1),
-                          Colors.deepPurple.withOpacity(0.1),
+                          Colors.purple.withValues(alpha: 0.1),
+                          Colors.deepPurple.withValues(alpha: 0.1),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(8),
@@ -436,8 +436,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.purple.withOpacity(0.1),
-            Colors.deepPurple.withOpacity(0.05),
+            Colors.purple.withValues(alpha: 0.1),
+            Colors.deepPurple.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -451,7 +451,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.purple.withOpacity(0.2),
+                  color: Colors.purple.withValues(alpha: 0.2),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -576,8 +576,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            Colors.purple.withOpacity(0.1),
-                            Colors.deepPurple.withOpacity(0.2),
+                            Colors.purple.withValues(alpha: 0.1),
+                            Colors.deepPurple.withValues(alpha: 0.2),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(12),
@@ -605,7 +605,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                   ),
                                   margin: const EdgeInsets.only(right: 8),
                                   decoration: BoxDecoration(
-                                    color: Colors.purple.withOpacity(0.1),
+                                    color: Colors.purple.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
@@ -713,8 +713,8 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Colors.purple.withOpacity(0.2),
-                      Colors.deepPurple.withOpacity(0.3),
+                      Colors.purple.withValues(alpha: 0.2),
+                      Colors.deepPurple.withValues(alpha: 0.3),
                     ],
                   ),
                   shape: BoxShape.circle,
@@ -769,7 +769,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -797,7 +797,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.1),
+                    color: Colors.amber.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(

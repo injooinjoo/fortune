@@ -69,7 +69,7 @@ class FortuneDisplay extends StatelessWidget {
             description,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -85,8 +85,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          scoreColor.withOpacity(0.2),
-          scoreColor.withOpacity(0.1),
+          scoreColor.withValues(alpha: 0.2),
+          scoreColor.withValues(alpha: 0.1),
         ],
       ),
       child: Row(
@@ -99,7 +99,7 @@ class FortuneDisplay extends StatelessWidget {
                 '종합 운세',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 4),
@@ -213,10 +213,10 @@ class FortuneDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -271,7 +271,7 @@ class FortuneDisplay extends StatelessWidget {
                   entry.value.toString(),
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     height: 1.4,
                   ),
                 ),
@@ -288,8 +288,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.green.withOpacity(0.2),
-          Colors.green.withOpacity(0.1),
+          Colors.green.withValues(alpha: 0.2),
+          Colors.green.withValues(alpha: 0.1),
         ],
       ),
       child: Column(
@@ -318,7 +318,7 @@ class FortuneDisplay extends StatelessWidget {
             advice!,
             style: TextStyle(
               fontSize: 15,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
             ),
           ),
@@ -332,8 +332,8 @@ class FortuneDisplay extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.orange.withOpacity(0.2),
-          Colors.orange.withOpacity(0.1),
+          Colors.orange.withValues(alpha: 0.2),
+          Colors.orange.withValues(alpha: 0.1),
         ],
       ),
       child: Column(
@@ -362,7 +362,7 @@ class FortuneDisplay extends StatelessWidget {
             warningMessage!,
             style: TextStyle(
               fontSize: 15,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
             ),
           ),

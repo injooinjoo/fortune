@@ -102,13 +102,13 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                 verticalInterval: 1,
                 getDrawingHorizontalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
                 getDrawingVerticalLine: (value) {
                   return FlLine(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     strokeWidth: 1,
                   );
                 },
@@ -177,7 +177,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               borderData: FlBorderData(
                 show: true,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1,
                 ),
               ),
@@ -191,8 +191,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                   isCurved: true,
                   gradient: LinearGradient(
                     colors: [
-                      Colors.teal.withOpacity(0.8),
-                      Colors.blue.withOpacity(0.8),
+                      Colors.teal.withValues(alpha: 0.8),
+                      Colors.blue.withValues(alpha: 0.8),
                     ],
                   ),
                   barWidth: 3,
@@ -213,8 +213,8 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        Colors.teal.withOpacity(0.1),
-                        Colors.blue.withOpacity(0.1),
+                        Colors.teal.withValues(alpha: 0.1),
+                        Colors.blue.withValues(alpha: 0.1),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
@@ -320,13 +320,13 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: isSelected 
-                    ? _getEmotionColor(emotion).withOpacity(0.2)
-                    : Colors.white.withOpacity(0.05),
+                    ? _getEmotionColor(emotion).withValues(alpha: 0.2)
+                    : Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isSelected 
-                      ? _getEmotionColor(emotion).withOpacity(0.5)
-                      : Colors.white.withOpacity(0.1),
+                      ? _getEmotionColor(emotion).withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.1),
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -336,7 +336,7 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: _getEmotionColor(emotion).withOpacity(0.2),
+                      color: _getEmotionColor(emotion).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
@@ -502,17 +502,17 @@ class _DreamTimelineWidgetState extends State<DreamTimelineWidget>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
       child: Text(
         interpretation,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           fontSize: 14,
           height: 1.4,
         ),

@@ -34,8 +34,8 @@ class TimeSpecificFortuneCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                _getScoreColor(fortune.score).withOpacity(0.1),
-                _getScoreColor(fortune.score).withOpacity(0.05),
+                _getScoreColor(fortune.score).withValues(alpha: 0.1),
+                _getScoreColor(fortune.score).withValues(alpha: 0.05),
               ],
             ),
           ),
@@ -85,7 +85,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      color: AppTheme.primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -124,7 +124,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
       height: 60,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: _getScoreColor(fortune.score).withOpacity(0.2),
+        color: _getScoreColor(fortune.score).withValues(alpha: 0.2),
         border: Border.all(
           color: _getScoreColor(fortune.score),
           width: 3,

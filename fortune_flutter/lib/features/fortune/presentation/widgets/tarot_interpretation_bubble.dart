@@ -273,7 +273,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                     left: -10,
                     child: CustomPaint(
                       painter: _BubbleTailPainter(
-                        color: Colors.purple.withOpacity(0.2),
+                        color: Colors.purple.withValues(alpha: 0.2),
                       ),
                       size: const Size(20, 20),
                     ),
@@ -331,10 +331,10 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: _getCalloutColor(emoji).withOpacity(0.1),
+          color: _getCalloutColor(emoji).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: _getCalloutColor(emoji).withOpacity(0.3),
+            color: _getCalloutColor(emoji).withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -418,7 +418,7 @@ class _BubbleTailPainter extends CustomPainter {
 
     // Border
     final borderPaint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 

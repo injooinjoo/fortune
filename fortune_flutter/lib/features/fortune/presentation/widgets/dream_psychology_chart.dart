@@ -106,15 +106,15 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                     fontSize: 10,
                   ),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: Colors.deepPurple.withOpacity(0.5),
+                    color: Colors.deepPurple.withValues(alpha: 0.5),
                     width: 2,
                   ),
                   titleTextStyle: TextStyle(
@@ -132,7 +132,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.deepPurple.withOpacity(0.3),
+                      fillColor: Colors.deepPurple.withValues(alpha: 0.3),
                       borderColor: Colors.deepPurple,
                       borderWidth: 2,
                       entryRadius: 4,
@@ -200,10 +200,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: stateColor.withOpacity(0.2),
+            color: stateColor.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: stateColor.withOpacity(0.5),
+              color: stateColor.withValues(alpha: 0.5),
               width: 1,
             ),
           ),
@@ -244,10 +244,10 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -279,7 +279,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: leftValue / total,
-              backgroundColor: rightColor.withOpacity(0.3),
+              backgroundColor: rightColor.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation<Color>(leftColor),
               minHeight: 8,
             ),
@@ -318,7 +318,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
             _generateInsight(),
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
             ),
           ),
@@ -385,7 +385,7 @@ class _DreamPsychologyChartState extends State<DreamPsychologyChart>
                   rec,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ),
@@ -435,7 +435,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withValues(alpha: 0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

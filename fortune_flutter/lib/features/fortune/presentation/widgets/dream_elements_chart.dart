@@ -80,10 +80,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.deepPurple.withOpacity(0.2),
+            color: Colors.deepPurple.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.deepPurple.withOpacity(0.3),
+              color: Colors.deepPurple.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -186,10 +186,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withOpacity(0.2),
+        color: _getCategoryColor(category).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getCategoryColor(category).withOpacity(0.5),
+          color: _getCategoryColor(category).withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -285,10 +285,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withOpacity(0.1),
+        color: _getCategoryColor(category).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: _getCategoryColor(category).withOpacity(0.3),
+          color: _getCategoryColor(category).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -323,10 +323,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -366,7 +366,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -421,10 +421,10 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -443,7 +443,7 @@ class _DreamElementsChartState extends State<DreamElementsChart>
           Text(
             content,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 14,
               height: 1.4,
             ),

@@ -135,7 +135,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
         verticalInterval: 2,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             strokeWidth: 1,
           );
         },
@@ -143,13 +143,13 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           // 현재 시간 강조
           if (value.toInt() == widget.currentTime.hour) {
             return FlLine(
-              color: Colors.purple.withOpacity(0.5),
+              color: Colors.purple.withValues(alpha: 0.5),
               strokeWidth: 2,
               dashArray: [5, 5],
             );
           }
           return FlLine(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             strokeWidth: 1,
           );
         },
@@ -210,7 +210,7 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       borderData: FlBorderData(
         show: true,
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -228,8 +228,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
           isCurved: true,
           gradient: LinearGradient(
             colors: [
-              Colors.purple.withOpacity(0.8),
-              Colors.blue.withOpacity(0.8),
+              Colors.purple.withValues(alpha: 0.8),
+              Colors.blue.withValues(alpha: 0.8),
             ],
           ),
           barWidth: 3,
@@ -250,8 +250,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
             show: true,
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withOpacity(0.2),
-                Colors.blue.withOpacity(0.1),
+                Colors.purple.withValues(alpha: 0.2),
+                Colors.blue.withValues(alpha: 0.1),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -343,8 +343,8 @@ class _HourlyFortuneChartState extends State<HourlyFortuneChart>
       padding: const EdgeInsets.all(16),
       gradient: LinearGradient(
         colors: [
-          elementColors[currentElement]!.withOpacity(0.2),
-          elementColors[currentElement]!.withOpacity(0.1),
+          elementColors[currentElement]!.withValues(alpha: 0.2),
+          elementColors[currentElement]!.withValues(alpha: 0.1),
         ],
       ),
       child: Column(

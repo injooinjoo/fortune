@@ -93,7 +93,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),
@@ -146,7 +146,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 Icon(
                   Icons.auto_awesome,
                   size: 40,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -188,7 +188,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
                 stops: const [0.6, 1.0],
               ),
@@ -222,8 +222,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: isReversed
-                            ? Colors.orange.withOpacity(0.8)
-                            : Colors.green.withOpacity(0.8),
+                            ? Colors.orange.withValues(alpha: 0.8)
+                            : Colors.green.withValues(alpha: 0.8),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -270,8 +270,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                widget.selectedDeck.primaryColor.withOpacity(0.8),
-                widget.selectedDeck.secondaryColor.withOpacity(0.8),
+                widget.selectedDeck.primaryColor.withValues(alpha: 0.8),
+                widget.selectedDeck.secondaryColor.withValues(alpha: 0.8),
               ],
             ),
           ),
@@ -282,7 +282,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                 Icon(
                   _getCardIcon(cardInfo),
                   size: 60,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -290,7 +290,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -432,7 +432,7 @@ class _CardBackPatternPainter extends CustomPainter {
     final centerY = size.height / 2;
 
     // Outer circle
-    paint.color = Colors.white.withOpacity(0.2);
+    paint.color = Colors.white.withValues(alpha: 0.2);
     canvas.drawCircle(Offset(centerX, centerY), 40, paint);
 
     // Inner star pattern
@@ -454,7 +454,7 @@ class _CardBackPatternPainter extends CustomPainter {
     canvas.drawPath(path, paint);
 
     // Corner decorations
-    paint.color = Colors.white.withOpacity(0.3);
+    paint.color = Colors.white.withValues(alpha: 0.3);
     const cornerSize = 15.0;
     
     // Draw corner patterns

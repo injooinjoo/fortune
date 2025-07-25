@@ -142,7 +142,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                   fontWeight: FontWeight.bold,
                   color: _hoveredCol == col
                       ? Colors.red
-                      : Colors.white.withOpacity(0.8),
+                      : Colors.white.withValues(alpha: 0.8),
                 ),
                 child: Text('$bloodType$rh'),
               ),
@@ -175,7 +175,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                     fontWeight: FontWeight.bold,
                     color: _hoveredRow == row
                         ? Colors.red
-                        : Colors.white.withOpacity(0.8),
+                        : Colors.white.withValues(alpha: 0.8),
                   ),
                   child: Text('$bloodType1$rh1'),
                 ),
@@ -231,7 +231,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                   margin: const EdgeInsets.all(1),
                   decoration: BoxDecoration(
                     color: _getCompatibilityColor(compatibility)
-                        .withOpacity(_fadeAnimation.value * 0.8),
+                        .withValues(alpha: _fadeAnimation.value * 0.8),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: isSelected
@@ -242,7 +242,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                     boxShadow: (isSelected || isHovered) ? [
                       BoxShadow(
                         color: _getCompatibilityColor(compatibility)
-                            .withOpacity(0.5),
+                            .withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 2,
                       ),
@@ -291,7 +291,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         child: Text(
           '매트릭스에서 두 혈액형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -356,10 +356,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(compatibility).withOpacity(0.1),
+              color: _getCompatibilityColor(compatibility).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _getCompatibilityColor(compatibility).withOpacity(0.3),
+                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -412,7 +412,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withOpacity(0.4),
+                color: Colors.red.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -434,7 +434,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           characteristics['element'],
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -475,7 +475,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -491,7 +491,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                   dynamics['advice'],
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ),
@@ -510,7 +510,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           height: 50,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
           ),
           child: Center(
             child: Icon(icon, color: color, size: 24),
@@ -521,7 +521,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 2),
@@ -541,10 +541,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -590,7 +590,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             Text(
               range,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 10,
               ),
             ),

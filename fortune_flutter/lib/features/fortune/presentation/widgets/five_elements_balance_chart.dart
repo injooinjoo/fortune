@@ -144,10 +144,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.purple.withOpacity(0.2),
+        color: Colors.purple.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.purple.withOpacity(0.3),
+          color: Colors.purple.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -197,15 +197,15 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                     fontSize: 10,
                   ),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: Colors.purple.withOpacity(0.5),
+                    color: Colors.purple.withValues(alpha: 0.5),
                     width: 2,
                   ),
                   titleTextStyle: TextStyle(
@@ -223,7 +223,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.purple.withOpacity(0.3),
+                      fillColor: Colors.purple.withValues(alpha: 0.3),
                       borderColor: Colors.purple,
                       borderWidth: 2,
                       entryRadius: 4,
@@ -307,7 +307,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (info['color'] as Color).withOpacity(0.1),
+              color: (info['color'] as Color).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isStrongest
@@ -322,7 +322,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: (info['color'] as Color).withOpacity(0.2),
+                    color: (info['color'] as Color).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -354,7 +354,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.2),
+                                color: Colors.green.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -373,7 +373,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.2),
+                                color: Colors.orange.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -479,10 +479,10 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -561,7 +561,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -636,7 +636,7 @@ class _RadarBackgroundPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withValues(alpha: 0.1);
     
     // 동심원 그리기
     for (int i = 1; i <= 4; i++) {

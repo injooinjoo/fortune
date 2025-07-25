@@ -235,7 +235,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                   fontWeight: FontWeight.bold,
                                   color: _hoveredCol == col
                                       ? Colors.purple
-                                      : Colors.white.withOpacity(0.8),
+                                      : Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
                             ),
@@ -260,7 +260,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                               fontWeight: FontWeight.bold,
                               color: _hoveredRow == row
                                   ? Colors.purple
-                                  : Colors.white.withOpacity(0.8),
+                                  : Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -290,7 +290,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                 margin: const EdgeInsets.all(1),
                                 decoration: BoxDecoration(
                                   color: _getCompatibilityColor(score)
-                                      .withOpacity(_fadeAnimation.value * 0.8),
+                                      .withValues(alpha: _fadeAnimation.value * 0.8),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: isSelected
@@ -301,7 +301,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                                   boxShadow: (isSelected || isHovered) ? [
                                     BoxShadow(
                                       color: _getCompatibilityColor(score)
-                                          .withOpacity(0.5),
+                                          .withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     ),
@@ -342,7 +342,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 MBTI 유형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -389,10 +389,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(score).withOpacity(0.1),
+              color: _getCompatibilityColor(score).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _getCompatibilityColor(score).withOpacity(0.3),
+                color: _getCompatibilityColor(score).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -439,13 +439,13 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             shape: BoxShape.circle,
             gradient: LinearGradient(
               colors: [
-                color.withOpacity(0.8),
-                color.withOpacity(0.4),
+                color.withValues(alpha: 0.8),
+                color.withValues(alpha: 0.4),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.4),
+                color: color.withValues(alpha: 0.4),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -467,7 +467,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           info['title'],
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
           textAlign: TextAlign.center,
         ),
@@ -522,7 +522,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                         fontSize: 12,
                         color: commonFunctions.contains(func)
                             ? Colors.green
-                            : Colors.white.withOpacity(0.8),
+                            : Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )),
@@ -532,7 +532,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Container(
               width: 1,
               height: 80,
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               margin: const EdgeInsets.symmetric(horizontal: 16),
             ),
             Expanded(
@@ -556,7 +556,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
                         fontSize: 12,
                         color: commonFunctions.contains(func)
                             ? Colors.green
-                            : Colors.white.withOpacity(0.8),
+                            : Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   )),
@@ -570,10 +570,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.green.withOpacity(0.1),
+              color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.green.withOpacity(0.3),
+                color: Colors.green.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -606,10 +606,10 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -655,7 +655,7 @@ class _MbtiCompatibilityMatrixState extends State<MbtiCompatibilityMatrix>
             Text(
               range,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 10,
               ),
             ),

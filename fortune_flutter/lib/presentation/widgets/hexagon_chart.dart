@@ -25,7 +25,7 @@ class HexagonChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
-    final effectiveBackgroundColor = backgroundColor ?? Colors.grey.withOpacity(0.1);
+    final effectiveBackgroundColor = backgroundColor ?? Colors.grey.withValues(alpha: 0.1);
     final effectiveLabelStyle = labelStyle ?? TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.w500,
@@ -82,7 +82,7 @@ class HexagonChartPainter extends CustomPainter {
   }
 
   void _drawBackgroundGrid(Canvas canvas, Offset center, double radius, Paint paint) {
-    paint.color = backgroundColor.withOpacity(0.3);
+    paint.color = backgroundColor.withValues(alpha: 0.3);
     
     // Draw multiple hexagon layers
     for (int i = 1; i <= 5; i++) {
@@ -91,7 +91,7 @@ class HexagonChartPainter extends CustomPainter {
     }
 
     // Draw axes
-    paint.color = backgroundColor.withOpacity(0.5);
+    paint.color = backgroundColor.withValues(alpha: 0.5);
     final labels = scores.keys.toList();
     for (int i = 0; i < labels.length; i++) {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
@@ -128,7 +128,7 @@ class HexagonChartPainter extends CustomPainter {
     final path = Path();
     final paint = Paint()
       ..style = PaintingStyle.fill
-      ..color = primaryColor.withOpacity(0.3);
+      ..color = primaryColor.withValues(alpha: 0.3);
     
     final strokePaint = Paint()
       ..style = PaintingStyle.stroke

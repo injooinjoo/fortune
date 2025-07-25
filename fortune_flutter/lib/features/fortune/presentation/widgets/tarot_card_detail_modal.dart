@@ -92,7 +92,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           child: Container(
             height: screenHeight * 0.9,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.9),
+              color: Colors.black.withValues(alpha: 0.9),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             child: Stack(
@@ -114,7 +114,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -198,7 +198,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.purple.withOpacity(0.3),
+                color: Colors.purple.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -233,7 +233,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.3),
+                        color: Colors.purple.withValues(alpha: 0.3),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -257,8 +257,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(16),
               gradient: LinearGradient(
                 colors: [
-                  Colors.purple.withOpacity(0.1),
-                  Colors.indigo.withOpacity(0.1),
+                  Colors.purple.withValues(alpha: 0.1),
+                  Colors.indigo.withValues(alpha: 0.1),
                 ],
               ),
               child: Row(
@@ -317,10 +317,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.2),
+                    color: Colors.purple.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.purple.withOpacity(0.3),
+                      color: Colors.purple.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -449,8 +449,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
-                  Colors.amber.withOpacity(0.1),
-                  Colors.orange.withOpacity(0.1),
+                  Colors.amber.withValues(alpha: 0.1),
+                  Colors.orange.withValues(alpha: 0.1),
                 ],
               ),
               child: Column(
@@ -485,10 +485,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.indigo.withOpacity(0.1),
+                  color: Colors.indigo.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.indigo.withOpacity(0.3),
+                    color: Colors.indigo.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -535,7 +535,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               shape: BoxShape.circle,
               color: _currentPage == index
                   ? Colors.purple
-                  : Colors.white.withOpacity(0.3),
+                  : Colors.white.withValues(alpha: 0.3),
             ),
           );
         }),
@@ -555,7 +555,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
             fontSize: 12,
           ),
         ),
@@ -656,8 +656,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       padding: const EdgeInsets.all(16),
       gradient: LinearGradient(
         colors: [
-          (data['color'] as Color).withOpacity(0.1),
-          (data['color'] as Color).withOpacity(0.05),
+          (data['color'] as Color).withValues(alpha: 0.1),
+          (data['color'] as Color).withValues(alpha: 0.05),
         ],
       ),
       child: Column(
@@ -694,7 +694,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           Text(
             data['description'] as String,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.white.withValues(alpha: 0.7),
               fontSize: 12,
             ),
           ),

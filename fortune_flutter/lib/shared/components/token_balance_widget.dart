@@ -71,6 +71,40 @@ class TokenBalanceWidget extends ConsumerWidget {
                       color: theme.colorScheme.secondary,
                     ),
                   ),
+                  // Show test account badge if applicable
+                  if (tokenState.userProfile?.isTestAccount == true) ...[
+                    const SizedBox(width: 4),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.5),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.bug_report,
+                            size: 10,
+                            color: Colors.orange.shade700,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            'TEST',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               )
             else

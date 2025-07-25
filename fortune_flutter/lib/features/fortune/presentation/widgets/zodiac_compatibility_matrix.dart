@@ -117,7 +117,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               fontWeight: FontWeight.bold,
                               color: _hoveredCol == col
                                   ? Colors.amber
-                                  : Colors.white.withOpacity(0.8),
+                                  : Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                         ),
@@ -142,7 +142,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           fontWeight: FontWeight.bold,
                           color: _hoveredRow == row
                               ? Colors.amber
-                              : Colors.white.withOpacity(0.8),
+                              : Colors.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ),
@@ -175,7 +175,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                               margin: const EdgeInsets.all(1),
                               decoration: BoxDecoration(
                                 color: _getCompatibilityColor(compatibility)
-                                    .withOpacity(_fadeAnimation.value * 0.8),
+                                    .withValues(alpha: _fadeAnimation.value * 0.8),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: isSelected
@@ -186,7 +186,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                 boxShadow: (isSelected || isHovered) ? [
                                   BoxShadow(
                                     color: _getCompatibilityColor(compatibility)
-                                        .withOpacity(0.5),
+                                        .withValues(alpha: 0.5),
                                     blurRadius: 8,
                                     spreadRadius: 2,
                                   ),
@@ -226,7 +226,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
         child: Text(
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
             fontSize: 14,
           ),
           textAlign: TextAlign.center,
@@ -279,10 +279,10 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: _getCompatibilityColor(compatibility).withOpacity(0.1),
+              color: _getCompatibilityColor(compatibility).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _getCompatibilityColor(compatibility).withOpacity(0.3),
+                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -325,7 +325,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           '${info['hanja']} · ${info['element']}',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -374,13 +374,13 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
   Widget _buildAnalysisItem(String title, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white.withOpacity(0.6), size: 24),
+        Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 24),
         const SizedBox(height: 4),
         Text(
           title,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.6),
+            color: Colors.white.withValues(alpha: 0.6),
           ),
         ),
         const SizedBox(height: 2),

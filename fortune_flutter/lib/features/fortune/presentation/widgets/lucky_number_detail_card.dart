@@ -69,13 +69,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.8),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.8),
                       Theme.of(context).primaryColor,
                     ],
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
@@ -149,7 +149,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor.withOpacity(0.1),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -266,7 +266,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Theme.of(context)
                                 .primaryColor
-                                .withOpacity(0.1),
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(

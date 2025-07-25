@@ -292,7 +292,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             boxShadow: [
               if (widget.showGlow)
                 BoxShadow(
-                  color: const Color(0xFF9333EA).withOpacity(0.5 * _glowAnimation.value),
+                  color: const Color(0xFF9333EA).withValues(alpha: 0.5 * _glowAnimation.value),
                   blurRadius: 30 + 10 * _glowAnimation.value,
                   spreadRadius: 5,
                 ),
@@ -459,7 +459,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
@@ -484,7 +484,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
               ),
             ),
@@ -518,7 +518,9 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
         if (_flipAnimation.value > 0.8)
           Positioned.fill(
             child: _SparkleOverlay(
-              opacity: (_flipAnimation.value - 0.8) * 5,
+              // Clamp opacity to valid range [0.0, 1.0] as the calculation could exceed 1.0
+              // when _flipAnimation.value approaches 1.0: (1.0 - 0.8) * 5 = 1.0
+              opacity: ((_flipAnimation.value - 0.8) * 5).clamp(0.0, 1.0),
             ),
           ),
         
@@ -528,7 +530,7 @@ class _TarotCardRevealWidgetState extends State<TarotCardRevealWidget>
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -557,7 +559,7 @@ class _CardBackPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -589,7 +591,7 @@ class _CardBackPatternPainter extends CustomPainter {
 
     // Draw corner decorations
     final cornerPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.fill;
 
     final cornerSize = 20.0;
@@ -648,7 +650,7 @@ class _SparklePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(opacity * 0.3)
+      ..color = Colors.white.withValues(alpha: opacity * 0.3)
       ..style = PaintingStyle.fill;
 
     final random = math.Random(42);

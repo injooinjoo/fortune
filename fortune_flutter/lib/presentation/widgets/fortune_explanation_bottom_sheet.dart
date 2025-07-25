@@ -1184,6 +1184,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       left: 0,
       right: 0,
       bottom: 0,
+      height: 100 + bottomPadding, // Add explicit height
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,

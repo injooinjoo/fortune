@@ -110,7 +110,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.red.withOpacity(0.4),
+                      color: Colors.red.withValues(alpha: 0.4),
                       blurRadius: 15,
                       spreadRadius: 3,
                     ),
@@ -143,7 +143,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     '${characteristics['element']} 원소 · ${rhData['description']}',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -177,7 +177,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       ? LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                           ],
                         )
                       : null,
@@ -292,7 +292,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -390,7 +390,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -413,7 +413,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 content,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   height: 1.4,
                 ),
               ),
@@ -428,8 +428,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.1),
-          Colors.purple.withOpacity(0.05),
+          Colors.purple.withValues(alpha: 0.1),
+          Colors.purple.withValues(alpha: 0.05),
         ],
       ),
       padding: const EdgeInsets.all(16),
@@ -459,7 +459,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             rhData['description'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
           const SizedBox(height: 8),
@@ -470,10 +470,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.2),
+                  color: Colors.purple.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.purple.withOpacity(0.4),
+                    color: Colors.purple.withValues(alpha: 0.4),
                     width: 1,
                   ),
                 ),
@@ -492,10 +492,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.1),
+                color: Colors.amber.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: Colors.amber.withOpacity(0.3),
+                  color: Colors.amber.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -543,7 +543,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 '선택된 날짜',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
               GestureDetector(
@@ -561,10 +561,10 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                       width: 1,
                     ),
                   ),
@@ -632,7 +632,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                                     entry.key,
                                     style: TextStyle(
                                       fontSize: 14,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                     ),
                                   ),
                                 ],
@@ -652,7 +652,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
                               value: entry.value,
-                              backgroundColor: color.withOpacity(0.2),
+                              backgroundColor: color.withValues(alpha: 0.2),
                               valueColor: AlwaysStoppedAnimation<Color>(color),
                               minHeight: 8,
                             ),
@@ -700,22 +700,22 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     RadarChartData(
                       radarShape: RadarShape.polygon,
                       radarBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         width: 2,
                       ),
                       gridBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 1,
                       ),
                       tickBorderData: BorderSide(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         width: 1,
                       ),
                       titlePositionPercentageOffset: 0.2,
                       radarBackgroundColor: Colors.transparent,
                       dataSets: [
                         RadarDataSet(
-                          fillColor: Colors.red.withOpacity(0.3),
+                          fillColor: Colors.red.withValues(alpha: 0.3),
                           borderColor: Colors.red,
                           borderWidth: 2,
                           dataEntries: strengths.entries
@@ -732,7 +732,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       },
                       tickCount: 5,
                       ticksTextStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 10,
                       ),
                       titleTextStyle: const TextStyle(
@@ -765,7 +765,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 12),

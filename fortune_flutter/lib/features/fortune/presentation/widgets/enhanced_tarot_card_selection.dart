@@ -150,7 +150,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              Colors.purple.withOpacity(0.3 * _glowAnimation.value),
+                              Colors.purple.withValues(alpha: 0.3 * _glowAnimation.value),
                               Colors.transparent,
                             ],
                           ),
@@ -437,9 +437,9 @@ class _TarotCardWidget extends StatelessWidget {
         width: 80,
         height: 120,
         transform: isSelected
-            ? Matrix4.identity()
+            ? (Matrix4.identity()
               ..translate(0.0, -20.0)
-              ..scale(1.1)
+              ..scale(1.1))
             : Matrix4.identity(),
         child: Stack(
           children: [
@@ -455,7 +455,7 @@ class _TarotCardWidget extends StatelessWidget {
               border: Border.all(
                 color: isSelected
                     ? Colors.amber
-                    : Colors.white.withOpacity(0.3),
+                    : Colors.white.withValues(alpha: 0.3),
                 width: isSelected ? 3 : 1,
               ),
               child: Center(
@@ -495,7 +495,7 @@ class _TarotCardWidget extends StatelessWidget {
                       )
                     : Icon(
                         Icons.auto_awesome,
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                         size: 40,
                       ),
               ),
@@ -508,7 +508,7 @@ class _TarotCardWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.0),
+                      color: Colors.white.withValues(alpha: 0.0),
                       width: 2,
                     ),
                   ),

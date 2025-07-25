@@ -161,7 +161,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           height: isSelected ? 70 : 60,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _getCompatibilityColor(compatibility).withOpacity(0.2),
+            color: _getCompatibilityColor(compatibility).withValues(alpha: 0.2),
             border: Border.all(
               color: isSelected 
                   ? Colors.amber 
@@ -170,7 +170,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             ),
             boxShadow: (isSelected || isHovered) ? [
               BoxShadow(
-                color: _getCompatibilityColor(compatibility).withOpacity(0.5),
+                color: _getCompatibilityColor(compatibility).withValues(alpha: 0.5),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -210,12 +210,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         shape: BoxShape.circle,
         gradient: RadialGradient(
           colors: [
-            Colors.amber.withOpacity(0.3),
-            Colors.amber.withOpacity(0.1),
+            Colors.amber.withValues(alpha: 0.3),
+            Colors.amber.withValues(alpha: 0.1),
           ],
         ),
         border: Border.all(
-          color: Colors.amber.withOpacity(0.5),
+          color: Colors.amber.withValues(alpha: 0.5),
           width: 2,
         ),
       ),
@@ -238,7 +238,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             info['hanja'] as String,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           Text(
@@ -257,10 +257,10 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -306,7 +306,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
             Text(
               description,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
                 fontSize: 10,
               ),
             ),
@@ -375,7 +375,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final bestMatchIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(bestMatch);
     
     final paint = Paint()
-      ..color = Colors.green.withOpacity(0.6 * animationValue)
+      ..color = Colors.green.withValues(alpha: 0.6 * animationValue)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke;
     
@@ -400,7 +400,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
       if (group.contains(selectedZodiac)) {
         final paint = Paint()
-          ..color = Colors.blue.withOpacity(0.4 * animationValue)
+          ..color = Colors.blue.withValues(alpha: 0.4 * animationValue)
           ..strokeWidth = 2
           ..style = PaintingStyle.stroke;
         
@@ -438,7 +438,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final conflictIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(conflict);
     
     final paint = Paint()
-      ..color = Colors.red.withOpacity(0.5 * animationValue)
+      ..color = Colors.red.withValues(alpha: 0.5 * animationValue)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;

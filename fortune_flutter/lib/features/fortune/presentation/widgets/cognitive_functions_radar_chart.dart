@@ -105,10 +105,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.2),
+            color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withOpacity(0.3),
+              color: Color(int.parse(typeInfo['color'].replaceFirst('#', '0xFF'))).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -149,15 +149,15 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                     fontSize: 10,
                   ),
                   tickBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   gridBorderData: BorderSide(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   radarBorderData: BorderSide(
-                    color: Colors.purple.withOpacity(0.5),
+                    color: Colors.purple.withValues(alpha: 0.5),
                     width: 2,
                   ),
                   titleTextStyle: TextStyle(
@@ -175,7 +175,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   },
                   dataSets: [
                     RadarDataSet(
-                      fillColor: Colors.purple.withOpacity(0.3),
+                      fillColor: Colors.purple.withValues(alpha: 0.3),
                       borderColor: Colors.purple,
                       borderWidth: 2,
                       entryRadius: 4,
@@ -236,10 +236,10 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: _getFunctionColor(dominantFunction).withOpacity(0.2),
+            color: _getFunctionColor(dominantFunction).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: _getFunctionColor(dominantFunction).withOpacity(0.5),
+              color: _getFunctionColor(dominantFunction).withValues(alpha: 0.5),
               width: 1,
             ),
           ),
@@ -280,7 +280,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: _getFunctionColor(function).withOpacity(0.1),
+              color: _getFunctionColor(function).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: _selectedIndex == MbtiCognitiveFunctionsService.cognitiveFunctions.indexOf(function)
@@ -295,7 +295,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: _getFunctionColor(function).withOpacity(0.2),
+                    color: _getFunctionColor(function).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -327,7 +327,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: _getStackPositionColor(stackIndex).withOpacity(0.2),
+                              color: _getStackPositionColor(stackIndex).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -498,7 +498,7 @@ class _CognitiveFunctionsRadarChartState extends State<CognitiveFunctionsRadarCh
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -616,7 +616,7 @@ class _RadarGridPainter extends CustomPainter {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = Colors.white.withOpacity(0.1);
+      ..color = Colors.white.withValues(alpha: 0.1);
     
     // 동심원
     for (int i = 1; i <= 5; i++) {

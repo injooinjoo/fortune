@@ -1,0 +1,725 @@
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'direction_compass.dart';
+import '../../../../core/theme/app_colors.dart';
+
+class EnhancedMovingResult extends StatelessWidget {
+  final Map<String, dynamic> fortuneData;
+  final String? selectedDate;
+  final String? fromAddress;
+  final String? toAddress;
+  
+  const EnhancedMovingResult({
+    Key? key,
+    required this.fortuneData,
+    this.selectedDate,
+    this.fromAddress,
+    this.toAddress,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 종합 점수 카드
+          _buildOverallScoreCard(context),
+          const SizedBox(height: 20),
+          
+          // 이사 정보 요약
+          if (fromAddress != null || toAddress != null)
+            _buildMovingInfoCard(context),
+          const SizedBox(height: 20),
+          
+          // 방위 나침반
+          if (fortuneData['auspiciousDirections'] != null)
+            _buildDirectionSection(context),
+          const SizedBox(height: 20),
+          
+          // 지역 분석
+          if (fortuneData['areaAnalysis'] != null)
+            _buildAreaAnalysisSection(context),
+          const SizedBox(height: 20),
+          
+          // 길일 정보
+          if (fortuneData['dateAnalysis'] != null)
+            _buildDateAnalysisSection(context),
+          const SizedBox(height: 20),
+          
+          // 상세 점수 분석
+          _buildDetailedScoreSection(context),
+          const SizedBox(height: 20),
+          
+          // 추천사항
+          if (fortuneData['recommendations'] != null)
+            _buildRecommendationsSection(context),
+          const SizedBox(height: 20),
+          
+          // 주의사항
+          if (fortuneData['cautions'] != null)
+            _buildCautionsSection(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverallScoreCard(BuildContext context) {
+    final overallScore = fortuneData['overallScore'] ?? 75;
+    final scoreColor = _getScoreColor(overallScore);
+    
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            colors: [
+              scoreColor.withValues(alpha: 0.1),
+              scoreColor.withValues(alpha: 0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              '이사 운세 종합 점수',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 150,
+              width: 150,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: overallScore / 100,
+                    strokeWidth: 15,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$overallScore',
+                        style: TextStyle(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: scoreColor,
+                        ),
+                      ),
+                      Text(
+                        '점',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _getScoreDescription(overallScore),
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: scoreColor,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMovingInfoCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  '이사 정보',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (fromAddress != null) ...[
+              Row(
+                children: [
+                  const Icon(Icons.home_outlined, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '출발: $fromAddress',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (toAddress != null) ...[
+              Row(
+                children: [
+                  const Icon(Icons.home, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '도착: $toAddress',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+            if (selectedDate != null) ...[
+              Row(
+                children: [
+                  const Icon(Icons.calendar_today, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    '이사 예정일: $selectedDate',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDirectionSection(BuildContext context) {
+    final auspiciousDirections = List<String>.from(
+      fortuneData['auspiciousDirections'] ?? [],
+    );
+    final avoidDirections = List<String>.from(
+      fortuneData['avoidDirections'] ?? [],
+    );
+    final primaryDirection = fortuneData['primaryDirection'] as String?;
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.explore, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  '방위 분석',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Center(
+              child: DirectionCompass(
+                auspiciousDirections: auspiciousDirections,
+                avoidDirections: avoidDirections,
+                primaryDirection: primaryDirection,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAreaAnalysisSection(BuildContext context) {
+    final areaAnalysis = fortuneData['areaAnalysis'] as Map<String, dynamic>?;
+    if (areaAnalysis == null) return const SizedBox.shrink();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.location_city, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  '지역 상세 분석',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            
+            // 지역 점수 차트
+            if (areaAnalysis['scores'] != null)
+              _buildAreaScoreChart(context, areaAnalysis['scores']),
+            const SizedBox(height: 20),
+            
+            // 교통
+            if (areaAnalysis['transportation'] != null)
+              _buildAreaItem(
+                context,
+                Icons.directions_bus,
+                '교통',
+                areaAnalysis['transportation'],
+                Colors.blue,
+              ),
+            
+            // 교육
+            if (areaAnalysis['education'] != null)
+              _buildAreaItem(
+                context,
+                Icons.school,
+                '교육',
+                areaAnalysis['education'],
+                Colors.green,
+              ),
+            
+            // 편의시설
+            if (areaAnalysis['convenience'] != null)
+              _buildAreaItem(
+                context,
+                Icons.shopping_cart,
+                '편의시설',
+                areaAnalysis['convenience'],
+                Colors.orange,
+              ),
+            
+            // 의료
+            if (areaAnalysis['medical'] != null)
+              _buildAreaItem(
+                context,
+                Icons.local_hospital,
+                '의료',
+                areaAnalysis['medical'],
+                Colors.red,
+              ),
+            
+            // 미래 발전성
+            if (areaAnalysis['development'] != null)
+              _buildAreaItem(
+                context,
+                Icons.trending_up,
+                '발전 가능성',
+                areaAnalysis['development'],
+                Colors.purple,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAreaScoreChart(BuildContext context, Map<String, dynamic> scores) {
+    final radarData = scores.entries.map((e) => 
+      RadarEntry(value: (e.value as num).toDouble())
+    ).toList();
+    
+    return Container(
+      height: 200,
+      padding: const EdgeInsets.all(16),
+      child: RadarChart(
+        RadarChartData(
+          radarShape: RadarShape.polygon,
+          radarBorderData: const BorderSide(color: Colors.grey, width: 2),
+          gridBorderData: const BorderSide(color: Colors.grey, width: 0.5),
+          titlePositionPercentageOffset: 0.2,
+          radarBackgroundColor: Colors.transparent,
+          dataSets: [
+            RadarDataSet(
+              dataEntries: radarData,
+              fillColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+              borderColor: Theme.of(context).primaryColor,
+              borderWidth: 2,
+              entryRadius: 4,
+            ),
+          ],
+          getTitle: (index, angle) {
+            final titles = scores.keys.toList();
+            return RadarChartTitle(
+              text: titles[index],
+              angle: 0,
+            );
+          },
+          tickCount: 5,
+          ticksTextStyle: const TextStyle(fontSize: 10, color: Colors.grey),
+          tickBorderData: const BorderSide(color: Colors.grey, width: 0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAreaItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String description,
+    Color color,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateAnalysisSection(BuildContext context) {
+    final dateAnalysis = fortuneData['dateAnalysis'] as Map<String, dynamic>?;
+    if (dateAnalysis == null) return const SizedBox.shrink();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.calendar_month, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  '날짜 분석',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // 손없는날 여부
+            if (dateAnalysis['isAuspicious'] == true)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.star, color: Colors.amber),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '손없는날 - 모든 방향으로 이사하기 좋은 최고의 날입니다!',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 12),
+            
+            // 음력 정보
+            if (dateAnalysis['lunarDate'] != null)
+              _buildDateInfoRow(
+                context,
+                '음력',
+                dateAnalysis['lunarDate'],
+              ),
+            
+            // 절기
+            if (dateAnalysis['solarTerm'] != null)
+              _buildDateInfoRow(
+                context,
+                '절기',
+                dateAnalysis['solarTerm'],
+              ),
+            
+            // 오행
+            if (dateAnalysis['fiveElements'] != null)
+              _buildDateInfoRow(
+                context,
+                '오행',
+                dateAnalysis['fiveElements'],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateInfoRow(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailedScoreSection(BuildContext context) {
+    final scores = fortuneData['detailedScores'] as Map<String, dynamic>? ?? {
+      '날짜 길흉': 85,
+      '방위 조화': 75,
+      '지역 적합성': 90,
+      '가족 운': 80,
+      '재물 운': 70,
+    };
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.analytics, color: Theme.of(context).primaryColor),
+                const SizedBox(width: 8),
+                Text(
+                  '상세 운세 분석',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...scores.entries.map((entry) => _buildScoreBar(
+              context,
+              entry.key,
+              entry.value.toDouble(),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScoreBar(BuildContext context, String label, double score) {
+    final color = _getScoreColor(score.toInt());
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              Text(
+                '${score.toInt()}점',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: score / 100,
+              minHeight: 8,
+              backgroundColor: Colors.grey.shade200,
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendationsSection(BuildContext context) {
+    final recommendations = List<String>.from(
+      fortuneData['recommendations'] ?? [],
+    );
+    
+    if (recommendations.isEmpty) return const SizedBox.shrink();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.lightbulb, color: Colors.amber.shade700),
+                const SizedBox(width: 8),
+                Text(
+                  '추천사항',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...recommendations.map((rec) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.check_circle, 
+                    color: Colors.green, 
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      rec,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCautionsSection(BuildContext context) {
+    final cautions = List<String>.from(
+      fortuneData['cautions'] ?? [],
+    );
+    
+    if (cautions.isEmpty) return const SizedBox.shrink();
+    
+    return Card(
+      color: Colors.red.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.warning, color: Colors.red.shade700),
+                const SizedBox(width: 8),
+                Text(
+                  '주의사항',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            ...cautions.map((caution) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.error_outline, 
+                    color: Colors.red.shade700, 
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      caution,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.red.shade700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Color _getScoreColor(int score) {
+    if (score >= 80) return Colors.green;
+    if (score >= 60) return Colors.blue;
+    if (score >= 40) return Colors.orange;
+    return Colors.red;
+  }
+
+  String _getScoreDescription(int score) {
+    if (score >= 90) return '최고의 이사 운세! 모든 조건이 완벽합니다.';
+    if (score >= 80) return '매우 좋은 운세입니다. 순조로운 이사가 예상됩니다.';
+    if (score >= 70) return '좋은 운세입니다. 대체로 순조롭게 진행될 것입니다.';
+    if (score >= 60) return '보통 운세입니다. 신중한 준비가 필요합니다.';
+    if (score >= 50) return '주의가 필요한 운세입니다. 충분한 준비를 하세요.';
+    return '어려운 운세입니다. 시기를 재고려해보세요.';
+  }
+}

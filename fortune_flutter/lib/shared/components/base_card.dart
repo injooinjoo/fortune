@@ -15,6 +15,7 @@ class BaseCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? backgroundColor;
   final Border? border;
+  final Gradient? gradient;
 
   const BaseCard({
     super.key,
@@ -28,13 +29,14 @@ class BaseCard extends StatelessWidget {
     this.onTap,
     this.backgroundColor,
     this.border,
+    this.gradient,
   });
 
   @override
   Widget build(BuildContext context) {
     final defaultShadow = [
       BoxShadow(
-        color: Colors.black.withOpacity(0.04),
+        color: Colors.black.withValues(alpha: 0.04),
         blurRadius: 10,
         offset: const Offset(0, 2),
       ),
@@ -45,7 +47,8 @@ class BaseCard extends StatelessWidget {
       height: height,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.cardSurface,
+        color: gradient == null ? (backgroundColor ?? AppColors.cardSurface) : null,
+        gradient: gradient,
         borderRadius: borderRadius ?? BorderRadius.circular(16),
         border: border,
         boxShadow: boxShadow ?? defaultShadow,
@@ -110,7 +113,7 @@ class SectionCard extends StatelessWidget {
             Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: headerColor ?? AppColors.primary.withOpacity(0.05),
+                color: headerColor ?? AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
