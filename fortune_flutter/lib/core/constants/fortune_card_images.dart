@@ -24,6 +24,12 @@ class FortuneCardImages {
     
     // Career & Money
     'career': '${basePath}career_fortune.png',
+    'career_seeker': '${basePath}job_fortune.png',
+    'career_change': '${basePath}career_fortune.png',
+    'career_future': '${basePath}career_fortune.png',
+    'career_freelance': '${basePath}business_fortune.png',
+    'career_startup': '${basePath}business_fortune.png',
+    'career_crisis': '${basePath}career_fortune.png',
     'job': '${basePath}job_fortune.png',
     'business': '${basePath}business_fortune.png',
     'study': '${basePath}exam_fortune.png',
@@ -38,6 +44,7 @@ class FortuneCardImages {
     'dream': '${basePath}dream_fortune.png',
     'traditional': '${basePath}traditional_fortune.png',
     'physiognomy': '${basePath}physiognomy_fortune.png',
+    'face-reading': '${basePath}physiognomy_fortune.png',
     'talisman': '${basePath}talisman_fortune.png',
     
     // Daily & Personal
@@ -45,6 +52,8 @@ class FortuneCardImages {
     'time': '${basePath}time_fortune.png',
     'health': '${basePath}health_sports_fortune.png',
     'health_sports': '${basePath}health_sports_fortune.png',
+    'sports': '${basePath}health_sports_fortune.png',
+    'enhanced_sports': '${basePath}health_sports_fortune.png',
     'travel': '${basePath}travel_fortune.png',
     'moving': '${basePath}moving_fortune.png',
     'naming': '${basePath}naming_fortune.png',
@@ -151,6 +160,12 @@ class FortuneCardImages {
     
     // Career & Money - 성공과 풍요를 암시하는 문구
     'career': '승진과 성공의 타이밍',
+    'career_seeker': '꿈의 직장, 곧 만날까?',
+    'career_change': '더 나은 기회가 기다려',
+    'career_future': '내 커리어의 미래는?',
+    'career_freelance': '자유로운 성공의 길',
+    'career_startup': '도전이 기회가 되는 때',
+    'career_crisis': '위기를 기회로 바꾸는 법',
     'job': '새로운 기회가 찾아올까?',
     'business': '사업 번창의 비밀',
     'study': '합격을 부르는 공부운',
@@ -169,6 +184,7 @@ class FortuneCardImages {
     'health': '몸이 보내는 신호 체크',
     'travel': '떠나기 좋은 날일까?',
     'moving': '새 둥지 찾기 좋은 때',
+    'moving-enhanced': '완벽한 이사를 위한 상세 진단',
     'naming': '운을 부르는 이름 찾기',
     
     // Interactive & Fun - 재미있고 가벼운 느낌

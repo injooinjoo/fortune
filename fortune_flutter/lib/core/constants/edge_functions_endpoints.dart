@@ -30,6 +30,7 @@ class EdgeFunctionsEndpoints {
   // Batch and System endpoints
   static const String fortuneBatch = '/fortune-batch';
   static const String fortuneSystem = '/fortune-system';
+  static const String fortuneRecommendations = '/fortune-recommendations';
 
   // Fortune endpoints - 59개 운세 타입
   // 일일/시간별 운세
@@ -43,6 +44,7 @@ class EdgeFunctionsEndpoints {
   static const String timeFortune = '/fortune-time'; // Enhanced time-based fortune
 
   // 전통 운세
+  static const String traditionalUnifiedFortune = '/fortune-traditional-unified'; // 통합 전통운세
   static const String sajuFortune = '/fortune-saju';
   static const String traditionalSaju = '/fortune-traditional-saju';
   static const String tojeongFortune = '/fortune-tojeong';
@@ -78,6 +80,12 @@ class EdgeFunctionsEndpoints {
 
   // 직업/사업
   static const String careerFortune = '/fortune-career';
+  static const String careerSeekerFortune = '/fortune-career-seeker';
+  static const String careerChangeFortune = '/fortune-career-change';
+  static const String careerFutureFortune = '/fortune-career-future';
+  static const String careerFreelanceFortune = '/fortune-career-freelance';
+  static const String careerStartupFortune = '/fortune-career-startup';
+  static const String careerCrisisFortune = '/fortune-career-crisis';
   static const String employmentFortune = '/fortune-employment';
   static const String businessFortune = '/fortune-business';
   static const String startupFortune = '/fortune-startup';
@@ -89,6 +97,7 @@ class EdgeFunctionsEndpoints {
   static const String luckyStockFortune = '/fortune-lucky-stock';
   static const String luckyCryptoFortune = '/fortune-lucky-crypto';
   static const String luckyLotteryFortune = '/fortune-lucky-lottery';
+  static const String investmentEnhancedFortune = '/fortune-investment-enhanced';
 
   // 건강/운명
   static const String healthFortune = '/fortune-health';
@@ -97,6 +106,7 @@ class EdgeFunctionsEndpoints {
   // 이사/생활
   static const String movingFortune = '/fortune-moving';
   static const String movingDateFortune = '/fortune-moving-date';
+  static const String movingEnhancedFortune = '/fortune-moving-enhanced';
   static const String biorhythmFortune = '/fortune-biorhythm';
 
   // 행운의 아이템
@@ -189,6 +199,8 @@ class EdgeFunctionsEndpoints {
       'yearly': yearlyFortune,
       'time': timeFortune,
       'time_based': timeFortune,
+      'traditional': traditionalUnifiedFortune,
+      'traditional-unified': traditionalUnifiedFortune,
       'saju': sajuFortune,
       'traditional-saju': traditionalSaju,
       'tojeong': tojeongFortune,
@@ -216,6 +228,12 @@ class EdgeFunctionsEndpoints {
       'ex-lover-enhanced': exLoverEnhancedFortune,
       'blind-date': blindDateFortune,
       'career': careerFortune,
+      'career_seeker': careerSeekerFortune,
+      'career_change': careerChangeFortune,
+      'career_future': careerFutureFortune,
+      'career_freelance': careerFreelanceFortune,
+      'career_startup': careerStartupFortune,
+      'career_crisis': careerCrisisFortune,
       'employment': employmentFortune,
       'business': businessFortune,
       'startup': startupFortune,
@@ -225,10 +243,12 @@ class EdgeFunctionsEndpoints {
       'lucky-stock': luckyStockFortune,
       'lucky-crypto': luckyCryptoFortune,
       'lucky-lottery': luckyLotteryFortune,
+      'investment-enhanced': investmentEnhancedFortune,
       'health': healthFortune,
       'destiny': destinyFortune,
       'moving': movingFortune,
       'moving-date': movingDateFortune,
+      'moving-enhanced': movingEnhancedFortune,
       'biorhythm': biorhythmFortune,
       'lucky-color': luckyColorFortune,
       'lucky-number': luckyNumberFortune,

@@ -56,6 +56,7 @@ class SoulRates {
     // 프리미엄 운세 (10-20 영혼 소비)
     'saju': -15,
     'traditional-saju': -15,
+    'traditional-unified': -15,
     'saju-psychology': -12,
     'tojeong': -15,
     'past-life': -18,

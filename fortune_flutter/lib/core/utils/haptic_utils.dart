@@ -121,4 +121,14 @@ class HapticUtils {
       // 햅틱이 지원되지 않는 경우 무시
     }
   }
+
+  // 성공 알림 피드백 (success와 동일)
+  static Future<void> successNotification() async {
+    await success();
+  }
+
+  // 에러 알림 피드백 (error와 동일)
+  static Future<void> errorNotification() async {
+    await error();
+  }
 }

@@ -1274,6 +1274,18 @@ class FortuneApiService {
       params: params,
     );
   }
+  
+  // Investment Enhanced Fortune (for enhanced investment fortune page)
+  Future<Fortune> getInvestmentEnhancedFortune({
+    required String userId,
+    Map<String, dynamic>? params,
+  }) async {
+    return getFortune(
+      fortuneType: 'investment-enhanced',
+      userId: userId,
+      params: params,
+    );
+  }
 
   // Sports Fortune (for unified sports fortune page)
   Future<Fortune> getSportsFortune({

@@ -27,6 +27,7 @@ class AppColors {
   static const Color textSecondary = Color(0xFF8E8E8E); // Instagram gray
   static const Color textLight = Color(0xFFC7C7C7); // Light gray
   static const Color textDark = Color(0xFFFFFFFF); // Pure white
+  static const Color onSurface = textPrimary; // Alias for Material compatibility
   
   // Status colors
   static const Color success = Color(0xFF28A745);

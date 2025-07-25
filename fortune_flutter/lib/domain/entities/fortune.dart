@@ -80,6 +80,35 @@ class Fortune extends Equatable {
     warnings, summary, additionalInfo, detailedLuckyItems, greeting, hexagonScores,
     timeSpecificFortunes, birthYearFortunes, fiveElements, specialTip, period
   ];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'type': type,
+      'content': content,
+      'createdAt': createdAt.toIso8601String(),
+      'metadata': metadata,
+      'tokenCost': tokenCost,
+      if (category != null) 'category': category,
+      if (overallScore != null) 'overallScore': overallScore,
+      if (description != null) 'description': description,
+      if (scoreBreakdown != null) 'scoreBreakdown': scoreBreakdown,
+      if (luckyItems != null) 'luckyItems': luckyItems,
+      if (recommendations != null) 'recommendations': recommendations,
+      if (warnings != null) 'warnings': warnings,
+      if (summary != null) 'summary': summary,
+      if (additionalInfo != null) 'additionalInfo': additionalInfo,
+      if (detailedLuckyItems != null) 'detailedLuckyItems': detailedLuckyItems,
+      if (greeting != null) 'greeting': greeting,
+      if (hexagonScores != null) 'hexagonScores': hexagonScores,
+      if (timeSpecificFortunes != null) 'timeSpecificFortunes': timeSpecificFortunes?.map((e) => e.toJson()).toList(),
+      if (birthYearFortunes != null) 'birthYearFortunes': birthYearFortunes?.map((e) => e.toJson()).toList(),
+      if (fiveElements != null) 'fiveElements': fiveElements,
+      if (specialTip != null) 'specialTip': specialTip,
+      if (period != null) 'period': period,
+    };
+  }
 }
 
 // 일일 운세 엔티티
@@ -303,6 +332,16 @@ class TimeSpecificFortune extends Equatable {
 
   @override
   List<Object?> get props => [time, title, score, description, recommendation];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'time': time,
+      'title': title,
+      'score': score,
+      'description': description,
+      if (recommendation != null) 'recommendation': recommendation,
+    };
+  }
 }
 
 // Birth year specific fortune
@@ -321,4 +360,13 @@ class BirthYearFortune extends Equatable {
 
   @override
   List<Object?> get props => [birthYear, zodiacAnimal, description, advice];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'birthYear': birthYear,
+      'zodiacAnimal': zodiacAnimal,
+      'description': description,
+      if (advice != null) 'advice': advice,
+    };
+  }
 }
