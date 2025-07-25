@@ -113,13 +113,13 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF10B981).withOpacity(0.1),
-            Color(0xFFE91E63).withOpacity(0.05),
+            Color(0xFF10B981).withValues(alpha: 0.1),
+            Color(0xFFE91E63).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Color(0xFF10B981).withOpacity(0.3),
+          color: Color(0xFF10B981).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -195,7 +195,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: type.gradientColors[0].withOpacity(0.4),
+                    color: type.gradientColors[0].withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -299,13 +299,13 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withOpacity(0.1),
-            _selectedType.gradientColors[1].withOpacity(0.05),
+            _selectedType.gradientColors[0].withValues(alpha: 0.1),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withOpacity(0.3),
+          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -467,7 +467,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: _selectedType.gradientColors[0].withOpacity(0.05),
+            color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

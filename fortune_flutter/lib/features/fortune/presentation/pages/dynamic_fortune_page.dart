@@ -194,8 +194,8 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              metadata.primaryColor.withOpacity(0.1),
-              metadata.secondaryColor.withOpacity(0.05),
+              metadata.primaryColor.withValues(alpha: 0.1),
+              metadata.secondaryColor.withValues(alpha: 0.05),
               theme.scaffoldBackgroundColor,
             ],
           ),
@@ -291,7 +291,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -312,7 +312,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
             Text(
               metadata.subtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
               ),
               textAlign: TextAlign.center,
             ),
@@ -321,7 +321,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(

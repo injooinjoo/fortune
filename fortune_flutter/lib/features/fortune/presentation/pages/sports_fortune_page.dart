@@ -303,7 +303,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppTheme.primaryColor.withOpacity(0.1)
+                      ? AppTheme.primaryColor.withValues(alpha: 0.1)
                       : Colors.transparent,
                   border: Border.all(
                     color: isSelected
@@ -367,8 +367,8 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getSportColor(_selectedType).withOpacity(0.1),
-              _getSportColor(_selectedType).withOpacity(0.05),
+              _getSportColor(_selectedType).withValues(alpha: 0.1),
+              _getSportColor(_selectedType).withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -404,7 +404,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: conditionColor.withOpacity(0.2),
+                                color: conditionColor.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -733,7 +733,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                 RadarChartData(
                   dataSets: [
                     RadarDataSet(
-                      fillColor: AppTheme.primaryColor.withOpacity(0.3),
+                      fillColor: AppTheme.primaryColor.withValues(alpha: 0.3),
                       borderColor: AppTheme.primaryColor,
                       borderWidth: 2,
                       dataEntries: scores
@@ -755,7 +755,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
                   ticksTextStyle: const TextStyle(fontSize: 10),
                   tickBorderData: BorderSide(color: AppTheme.dividerColor),
                   gridBorderData: BorderSide(
-                    color: AppTheme.dividerColor.withOpacity(0.5),
+                    color: AppTheme.dividerColor.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -879,7 +879,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -1236,7 +1236,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1331,7 +1331,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isToday ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+        color: isToday ? Colors.blue.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isToday ? Colors.blue : AppTheme.dividerColor,
@@ -1397,7 +1397,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.2),
+                color: Colors.green.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Text(

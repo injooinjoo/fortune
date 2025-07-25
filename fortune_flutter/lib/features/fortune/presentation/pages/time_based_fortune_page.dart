@@ -352,13 +352,13 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppTheme.primaryColor.withOpacity(0.1),
-                  AppTheme.primaryColor.withOpacity(0.05),
+                  AppTheme.primaryColor.withValues(alpha: 0.1),
+                  AppTheme.primaryColor.withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppTheme.primaryColor.withOpacity(0.3),
+                color: AppTheme.primaryColor.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -540,8 +540,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppTheme.primaryColor.withOpacity(0.1),
-              AppTheme.primaryColor.withOpacity(0.05),
+              AppTheme.primaryColor.withValues(alpha: 0.1),
+              AppTheme.primaryColor.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -590,7 +590,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.05),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -707,8 +707,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              Colors.amber.withOpacity(0.1),
-              Colors.amber.withOpacity(0.05),
+              Colors.amber.withValues(alpha: 0.1),
+              Colors.amber.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -1205,7 +1205,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: _getScoreColor(score).withOpacity(0.2),
+              color: _getScoreColor(score).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -1280,7 +1280,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         children: [
           CircleAvatar(
             radius: 20,
-            backgroundColor: AppTheme.primaryColor.withOpacity(0.2),
+            backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.2),
             child: Icon(
               icon,
               color: AppTheme.primaryColor,
@@ -1391,13 +1391,13 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.pink.withOpacity(0.1),
-            Colors.purple.withOpacity(0.1),
+            Colors.pink.withValues(alpha: 0.1),
+            Colors.purple.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.pink.withOpacity(0.3),
+          color: Colors.pink.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -1434,7 +1434,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       ),
     ).animate()
       .fadeIn(duration: 600.ms)
-      .shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3));
+      .shimmer(duration: 1500.ms, color: Colors.pink.withValues(alpha: 0.3));
   }
 
   Widget _buildZodiacFortune() {
@@ -1442,10 +1442,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.05),
+        color: AppTheme.primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.2),
+          color: AppTheme.primaryColor.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -1488,10 +1488,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.05),
+        color: Colors.orange.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.2),
+          color: Colors.orange.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

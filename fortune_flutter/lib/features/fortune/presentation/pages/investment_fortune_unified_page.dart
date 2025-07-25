@@ -141,7 +141,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: type.gradientColors[0].withOpacity(0.4),
+                                color: type.gradientColors[0].withValues(alpha: 0.4),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -188,13 +188,13 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withOpacity(0.1),
-            _selectedType.gradientColors[1].withOpacity(0.05),
+            _selectedType.gradientColors[0].withValues(alpha: 0.1),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withOpacity(0.3),
+          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -290,13 +290,13 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            _selectedType.gradientColors[0].withOpacity(0.1),
-            _selectedType.gradientColors[1].withOpacity(0.05),
+            _selectedType.gradientColors[0].withValues(alpha: 0.1),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _selectedType.gradientColors[0].withOpacity(0.3),
+          color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -461,7 +461,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               color: AppTheme.surfaceColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withOpacity(0.2),
+                color: _selectedType.gradientColors[0].withValues(alpha: 0.2),
               ),
             ),
             child: Row(

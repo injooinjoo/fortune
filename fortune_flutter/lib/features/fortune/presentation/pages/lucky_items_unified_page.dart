@@ -87,13 +87,13 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF7C3AED).withOpacity(0.1),
-            Color(0xFF3B82F6).withOpacity(0.05),
+            Color(0xFF7C3AED).withValues(alpha: 0.1),
+            Color(0xFF3B82F6).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Color(0xFF7C3AED).withOpacity(0.3),
+          color: Color(0xFF7C3AED).withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -237,7 +237,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
                   BoxShadow(
-                    color: displayColor.withOpacity(0.4),
+                    color: displayColor.withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -289,7 +289,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: gradientColors[0].withOpacity(0.3),
+            color: gradientColors[0].withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -301,14 +301,14 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           Icon(
             icon,
             size: 32,
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
           ),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 8),
@@ -365,7 +365,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFF7C3AED).withOpacity(0.05),
+                color: Color(0xFF7C3AED).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

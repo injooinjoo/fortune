@@ -117,8 +117,8 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.amber.withOpacity(0.2),
-              Colors.orange.withOpacity(0.1),
+              Colors.amber.withValues(alpha: 0.2),
+              Colors.orange.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -166,7 +166,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0)
       .then()
-      .shimmer(duration: 1500.ms, color: Colors.amber.withOpacity(0.3));
+      .shimmer(duration: 1500.ms, color: Colors.amber.withValues(alpha: 0.3));
   }
 
   Widget _buildNumberBall(int number, {bool isBonus = false}) {
@@ -193,7 +193,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: ballColor.withOpacity(0.5),
+            color: ballColor.withValues(alpha: 0.5),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -243,7 +243,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: chanceColor.withOpacity(0.2),
+                    color: chanceColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: chanceColor),
                   ),
@@ -361,7 +361,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -448,7 +448,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               children: hotNumbers.map((num) => 
                 Chip(
                   label: Text(num.toString()),
-                  backgroundColor: Colors.red.withOpacity(0.2),
+                  backgroundColor: Colors.red.withValues(alpha: 0.2),
                   labelStyle: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
@@ -470,7 +470,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
               children: coldNumbers.map((num) => 
                 Chip(
                   label: Text(num.toString()),
-                  backgroundColor: Colors.blue.withOpacity(0.2),
+                  backgroundColor: Colors.blue.withValues(alpha: 0.2),
                   labelStyle: const TextStyle(
                     color: Colors.blue,
                     fontWeight: FontWeight.bold,
@@ -486,7 +486,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
 
   Widget _buildTipsCard() {
     return Card(
-      color: Colors.amber.withOpacity(0.1),
+      color: Colors.amber.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -537,7 +537,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.amber.withOpacity(0.2),
+                color: Colors.amber.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.amber),
               ),

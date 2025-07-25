@@ -541,8 +541,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   padding: const EdgeInsets.all(12),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.purple.withOpacity(0.1),
-                      Colors.indigo.withOpacity(0.1),
+                      Colors.purple.withValues(alpha: 0.1),
+                      Colors.indigo.withValues(alpha: 0.1),
                     ],
                   ),
                   child: Row(
@@ -645,7 +645,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withOpacity(0.8),
+            Colors.black.withValues(alpha: 0.8),
           ],
         ),
       ),

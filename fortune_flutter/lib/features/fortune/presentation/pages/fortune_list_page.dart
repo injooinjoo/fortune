@@ -8,7 +8,7 @@ import '../../../../presentation/widgets/simple_fortune_info_sheet.dart';
 import '../../../../presentation/screens/ad_loading_screen.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../widgets/tarot_fortune_list_card.dart';
-import './tarot_enhanced_page.dart';
+// import './tarot_enhanced_page.dart'; // No longer needed - using tarot chat page
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
@@ -16,6 +16,8 @@ import '../../../../core/config/environment.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../presentation/widgets/time_based_fortune_bottom_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../presentation/providers/fortune_recommendation_provider.dart';
+import '../../../../data/models/fortune_card_score.dart';
 
 class FortuneCategory {
   final String title;
@@ -103,6 +105,11 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       vsync: this,
     );
     
+    // Ensure navigation is visible when this page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(navigationVisibilityProvider.notifier).show();
+    });
+    
     _slideAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0, // Will be used as a progress indicator
@@ -133,6 +140,17 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     _animationController.dispose();
     _removeOverlay();
     super.dispose();
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Ensure navigation is visible when returning to this page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(navigationVisibilityProvider.notifier).show();
+      }
+    });
   }
 
   void _removeOverlay() {
@@ -342,8 +360,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Physiognomy ====================
     FortuneCategory(
       title: '관상',
-      route: '/fortune/physiognomy',
-      type: 'physiognomy',
+      route: '/fortune/face-reading',
+      type: 'face-reading',
       icon: Icons.face_rounded,
       gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
       description: '얼굴에 나타난 운명의 징표',
@@ -447,13 +465,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Investment/Money Fortunes (통합) ====================
     FortuneCategory(
       title: '투자 운세',
-      route: '/fortune/investment',
+      route: '/fortune/investment-enhanced',
       type: 'investment',
       icon: Icons.trending_up_rounded,
       gradientColors: [Color(0xFF16A34A), Color(0xFF15803D)],
-      description: '재물/부동산/주식/암호화폐/로또',
+      description: '주식/부동산/코인/경매 등 10개 섹터',
       category: 'money',
       isPremium: true,
+      isNew: true,
     ),
 
     // ==================== Lifestyle/Lucky Items (통합) ====================
@@ -497,6 +516,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       isNew: true,
     ),
     FortuneCategory(
+      title: '스포츠 운세',
+      route: '/fortune/enhanced-sports',
+      type: 'enhanced_sports',
+      icon: Icons.sports_rounded,
+      gradientColors: [Color(0xFFEA580C), Color(0xFFDC2626)],
+      description: '모든 스포츠 종목별 운세와 팀 승부운',
+      category: 'health',
+      isNew: true,
+    ),
+    FortuneCategory(
       title: '이사운',
       route: '/fortune/lifestyle?type=moving',
       type: 'moving',
@@ -504,6 +533,16 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
       description: '이사 길일과 방향',
       category: 'lifestyle',
+    ),
+    FortuneCategory(
+      title: '이사운세 상세진단',
+      route: '/fortune/lifestyle?type=moving-enhanced',
+      type: 'moving-enhanced',
+      icon: Icons.explore_rounded,
+      gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+      description: '손없는날과 지역분석까지',
+      category: 'lifestyle',
+      isNew: true,
     ),
 
     // ==================== Interactive Fortunes ====================
@@ -523,7 +562,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       type: 'celebrity',
       icon: Icons.star_rounded,
       gradientColors: [Color(0xFFFF1744), Color(0xFFE91E63)],
-      description: '연예인/유튜버/프로게이머/축구선수 등',
+      description: '좋아하는 유명인과 나의 오늘 운세',
       category: 'interactive',
       isNew: true,
     ),
@@ -531,7 +570,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // ==================== Fortune History (프로필로 이동) ====================
     FortuneCategory(
       title: '운세 히스토리',
-      route: '/profile/history',
+      route: '/fortune/history',
       type: 'history',
       icon: Icons.history_rounded,
       gradientColors: [Color(0xFF795548), Color(0xFF5D4037)],
@@ -565,6 +604,28 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
   ];
 
   List<FortuneCategory> _filterCategories(String searchQuery, FortuneCategoryType selectedType) {
+    // Check if we have recommendations
+    final recommendationsState = ref.watch(fortuneRecommendationProvider);
+    
+    if (recommendationsState.hasValue && selectedType == FortuneCategoryType.all) {
+      // Use recommendations for 'all' category
+      final recommendations = recommendationsState.value!;
+      final recommendedCategories = <FortuneCategory>[];
+      
+      for (final score in recommendations) {
+        final category = ref.read(fortuneCategoryFromScoreProvider(score));
+        if (category != null) {
+          recommendedCategories.add(category);
+        }
+      }
+      
+      // If we have recommendations, return them
+      if (recommendedCategories.isNotEmpty) {
+        return recommendedCategories;
+      }
+    }
+    
+    // Fall back to static list or filter by category
     var filtered = _categories;
     
     // Apply category filter
@@ -592,6 +653,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     final selectedCategory = ref.watch(_selectedCategoryProvider);
     final viewMode = ref.watch(_viewModeProvider);
     final filteredCategories = _filterCategories(searchQuery, selectedCategory);
+    final isLoadingRecommendations = ref.watch(recommendationsLoadingProvider);
+    final recommendationsReady = ref.watch(recommendationsReadyProvider);
 
     return Scaffold(
       backgroundColor: AppColors.cardBackground,
@@ -635,6 +698,29 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 child: CommonAdPlacements.listBottomAd(),
               ),
             ),
+          // Show loading indicator when recommendations are loading for the first time
+          if (isLoadingRecommendations && !recommendationsReady && selectedCategory == FortuneCategoryType.all)
+            SliverToBoxAdapter(
+              child: Container(
+                height: 200,
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      Text(
+                        '맞춤 운세를 준비하고 있어요...',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
@@ -651,14 +737,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                   title: category.title,
                                   description: category.description,
                                   onTap: () {
-                                    // Navigate directly to enhanced tarot page with hero animation
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => TarotEnhancedPage(
-                                          heroTag: 'tarot-hero-${category.route}',
-                                        ),
-                                      ),
-                                    );
+                                    // Navigate to tarot chat page using push for proper navigation stack
+                                    context.push('/fortune/tarot');
                                   },
                                   isPremium: category.isPremium,
                                   soulCost: category.soulCost,
@@ -729,12 +809,23 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                   onFortuneButtonPressed: () {
                                     print('[FortuneListPage] Fortune button pressed, navigating to AdLoadingScreen');
                                     
+                                    // Remove overlay immediately before navigation
+                                    _removeOverlay();
+                                    
                                     // Navigate directly to AdLoadingScreen instead of fortune page
+                                    // Record visit for recommendation system
+                                    ref.read(fortuneRecommendationProvider.notifier).recordVisit(
+                                      fortuneType,
+                                      category.category,
+                                    );
+                                    
                                     final isPremium = ref.read(hasUnlimitedAccessProvider);
                                     
+                                    // Push the AdLoadingScreen onto the navigation stack
+                                    // It will replace itself with the fortune page after the ad
                                     Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => AdLoadingScreen(
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
                                           fortuneType: fortuneType,
                                           fortuneTitle: category.title,
                                           fortuneRoute: category.route,
@@ -747,6 +838,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                             context.push('/subscription');
                                           },
                                         ),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          // Use a fade transition for smoother navigation
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                        transitionDuration: const Duration(milliseconds: 300),
                                       ),
                                     );
                                   },
@@ -759,13 +858,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                               onTap: () {
                                 // Handle tarot specially
                                 if (category.type == 'tarot') {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => TarotEnhancedPage(
-                                        heroTag: 'tarot-hero-${category.route}',
-                                      ),
-                                    ),
-                                  );
+                                  context.push('/fortune/tarot');
                                 } else {
                                   // Check if this is time-based fortune
                                   if (category.route == '/fortune/time') {
@@ -797,11 +890,22 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                         // No overlay to dismiss in list view
                                       },
                                       onFortuneButtonPressed: () {
+                                      // Remove overlay immediately before navigation
+                                      _removeOverlay();
+                                      
+                                      // Record visit for recommendation system
+                                      ref.read(fortuneRecommendationProvider.notifier).recordVisit(
+                                        fortuneType,
+                                        category.category,
+                                      );
+                                      
                                       final isPremium = ref.read(hasUnlimitedAccessProvider);
                                       
+                                      // Push the AdLoadingScreen onto the navigation stack
+                                      // It will replace itself with the fortune page after the ad
                                       Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => AdLoadingScreen(
+                                        PageRouteBuilder(
+                                          pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
                                             fortuneType: fortuneType,
                                             fortuneTitle: category.title,
                                             fortuneRoute: category.route,
@@ -811,6 +915,14 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                               context.push('/subscription');
                                             },
                                           ),
+                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                            // Use a fade transition for smoother navigation
+                                            return FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            );
+                                          },
+                                          transitionDuration: const Duration(milliseconds: 300),
                                         ),
                                       );
                                     },

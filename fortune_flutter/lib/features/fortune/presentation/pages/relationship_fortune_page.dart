@@ -381,13 +381,13 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primary.withOpacity(0.1),
-            AppColors.secondary.withOpacity(0.1),
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.secondary.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -465,7 +465,7 @@ class _RelationshipFortunePageState extends BaseFortunePageState<RelationshipFor
               children: fortune.luckyItems!.map((item) {
                 return Chip(
                   label: Text(item),
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                   labelStyle: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w500,

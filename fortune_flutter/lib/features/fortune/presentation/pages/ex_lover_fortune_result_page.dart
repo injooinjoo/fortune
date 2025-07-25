@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../widgets/emotion_radar_chart.dart';
+import '../widgets/healing_progress_widget.dart';
 
 class ExLoverFortuneResultPage extends ConsumerStatefulWidget {
   final Map<String, dynamic> fortuneData;
@@ -103,7 +105,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: TabBar(
@@ -113,7 +115,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                     borderRadius: BorderRadius.circular(12),
                   ),
                   labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white.withOpacity(0.6),
+                  unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
                   tabs: const [
                     Tab(text: '감정 상태'),
                     Tab(text: '관계 분석'),
@@ -217,27 +219,50 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                 ),
                 const SizedBox(height: 12),
                 
-                // 치유 단계 표시
-                _buildHealingStages(emotionalState?['healing'] ?? 1),
-                const SizedBox(height: 12),
-                
-                // 진행도 바
-                LinearProgressIndicator(
-                  value: (emotionalState?['progress'] ?? 0) / 100,
-                  minHeight: 20,
-                  backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    _getProgressColor(emotionalState?['progress'] ?? 0),
-                  ),
+                // Use new healing progress widget
+                HealingProgressWidget(
+                  currentStage: emotionalState?['healing'] ?? 1,
+                  progress: (emotionalState?['progress'] ?? 0).toDouble(),
+                  onTap: () {
+                    // Show detailed healing information
+                    _showHealingDetails(context);
+                  },
                 ),
-                const SizedBox(height: 8),
-                Center(
-                  child: Text(
-                    '${emotionalState?['progress'] ?? 0}% 회복',
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: _getProgressColor(emotionalState?['progress'] ?? 0),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Emotion Radar Chart
+          GlassContainer(
+            padding: const EdgeInsets.all(20),
+            borderRadius: BorderRadius.circular(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.radar, color: theme.colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      '감정 분석',
+                      style: theme.textTheme.headlineSmall,
                     ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: EmotionRadarChart(
+                    emotions: {
+                      'healing': (emotionalState?['progress'] ?? 0).toDouble(),
+                      'acceptance': 65.0,
+                      'growth': 70.0,
+                      'peace': 55.0,
+                      'hope': 80.0,
+                      'strength': 75.0,
+                    },
+                    size: 250,
+                    primaryColor: theme.colorScheme.primary,
                   ),
                 ),
               ],
@@ -414,7 +439,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                       child: CircularProgressIndicator(
                         value: percentage / 100,
                         strokeWidth: 20,
-                        backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                        backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
                           _getProbabilityColor(percentage),
                         ),
@@ -591,7 +616,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                 LinearProgressIndicator(
                   value: readiness / 100,
                   minHeight: 20,
-                  backgroundColor: theme.colorScheme.onSurface.withOpacity(0.1),
+                  backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     _getProgressColor(readiness),
                   ),
@@ -701,9 +726,9 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                     children: (widget.fortuneData['healingActivities'] as List).map((activity) => 
                       Chip(
                         label: Text(activity.toString()),
-                        backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+                        backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                         side: BorderSide(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                         ),
                       ),
                     ).toList(),
@@ -766,7 +791,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                 shape: BoxShape.circle,
                 color: isCompleted 
                   ? theme.colorScheme.primary 
-                  : theme.colorScheme.onSurface.withOpacity(0.2),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.2),
               ),
               child: Center(
                 child: isCompleted
@@ -786,7 +811,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isCompleted 
                   ? theme.colorScheme.primary 
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               ),
             ),
           ],
@@ -854,5 +879,208 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
   
   void _shareFortune() {
     // TODO: 공유 기능 구현
+  }
+  
+  void _showHealingDetails(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final theme = Theme.of(context);
+        final emotionalState = widget.fortuneData['emotionalState'];
+        
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '치유 과정 상세 정보',
+                        style: theme.textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Stage details
+                      _buildStageDetails(context, emotionalState?['healing'] ?? 1),
+                      const SizedBox(height: 24),
+                      
+                      // Recommendations
+                      Text(
+                        '이 단계에서 추천하는 활동',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 12),
+                      ..._getStageRecommendations(emotionalState?['healing'] ?? 1).map(
+                        (rec) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              Icon(Icons.check_circle, 
+                                color: theme.colorScheme.primary, 
+                                size: 20
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(rec)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildStageDetails(BuildContext context, int stage) {
+    final theme = Theme.of(context);
+    final stageInfo = _getStageInfo(stage);
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                stageInfo['icon'] as IconData,
+                color: stageInfo['color'] as Color,
+                size: 32,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${stage}단계: ${stageInfo['name']}',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    stageInfo['duration'] as String,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            stageInfo['description'] as String,
+            style: theme.textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Map<String, dynamic> _getStageInfo(int stage) {
+    final stages = {
+      1: {
+        'name': '부정',
+        'icon': Icons.block,
+        'color': Colors.red,
+        'duration': '보통 1-2주',
+        'description': '이별의 현실을 받아들이기 어려워하는 시기입니다. "이건 실수일 거야", "다시 돌아올 거야"라는 생각이 들 수 있습니다.',
+      },
+      2: {
+        'name': '분노',
+        'icon': Icons.bolt,
+        'color': Colors.orange,
+        'duration': '보통 2-4주',
+        'description': '상대방이나 자신에게 화가 나는 시기입니다. "왜 이렇게 됐을까", "내가 뭘 잘못했을까"라는 생각이 듭니다.',
+      },
+      3: {
+        'name': '타협',
+        'icon': Icons.handshake,
+        'color': Colors.amber,
+        'duration': '보통 1-2개월',
+        'description': '"만약 내가 다르게 했다면..."이라는 생각을 하며 과거를 되돌리려 합니다.',
+      },
+      4: {
+        'name': '우울',
+        'icon': Icons.water_drop,
+        'color': Colors.blue,
+        'duration': '보통 2-3개월',
+        'description': '깊은 슬픔과 상실감을 느끼는 시기입니다. 이는 치유를 위한 필수적인 과정입니다.',
+      },
+      5: {
+        'name': '수용',
+        'icon': Icons.favorite,
+        'color': Colors.green,
+        'duration': '3개월 이후',
+        'description': '이별을 받아들이고 새로운 시작을 준비하는 시기입니다. 평화로운 마음을 되찾게 됩니다.',
+      },
+    };
+    
+    return stages[stage] ?? stages[1]!;
+  }
+  
+  List<String> _getStageRecommendations(int stage) {
+    final recommendations = {
+      1: [
+        '친구나 가족과 시간 보내기',
+        '일기 쓰기로 감정 표현하기',
+        '충분한 휴식 취하기',
+        '좋아하는 음악 듣기',
+      ],
+      2: [
+        '운동으로 에너지 발산하기',
+        '창의적인 활동 시도하기',
+        '명상이나 요가 하기',
+        '자연 속에서 산책하기',
+      ],
+      3: [
+        '새로운 취미 시작하기',
+        '자기계발 서적 읽기',
+        '봉사활동 참여하기',
+        '여행 계획 세우기',
+      ],
+      4: [
+        '전문가 상담 고려하기',
+        '예술 활동 참여하기',
+        '건강한 식습관 유지하기',
+        '충분한 수면 취하기',
+      ],
+      5: [
+        '새로운 목표 설정하기',
+        '사회 활동 늘리기',
+        '자신에게 보상하기',
+        '미래 계획 세우기',
+      ],
+    };
+    
+    return recommendations[stage] ?? recommendations[1]!;
   }
 }

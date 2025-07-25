@@ -205,8 +205,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getInvestmentColor(_selectedType).withOpacity(0.1),
-              _getInvestmentColor(_selectedType).withOpacity(0.05),
+              _getInvestmentColor(_selectedType).withValues(alpha: 0.1),
+              _getInvestmentColor(_selectedType).withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -456,7 +456,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.1),
+              color: Colors.orange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(25),
             ),
             child: Center(
@@ -508,9 +508,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -709,8 +709,8 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Colors.purple.withOpacity(0.1),
-              Colors.blue.withOpacity(0.1),
+              Colors.purple.withValues(alpha: 0.1),
+              Colors.blue.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(12),
@@ -739,7 +739,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.3),
+                        color: Colors.purple.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -803,9 +803,9 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

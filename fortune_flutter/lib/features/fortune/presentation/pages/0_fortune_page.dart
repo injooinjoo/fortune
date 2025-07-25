@@ -4,8 +4,8 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 
-class 0FortunePage extends ConsumerWidget {
-  const 0FortunePage({super.key});
+class FortunePage extends ConsumerWidget {
+  const FortunePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,8 +17,8 @@ class 0FortunePage extends ConsumerWidget {
         end: Alignment.bottomRight,
         colors: [Color(0xFFFFD54F), Color(0xFFFFB300)],
       ),
-      inputBuilder: (context, onSubmit) => _0InputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _0FortuneResult(
+      inputBuilder: (context, onSubmit) => _FortuneInputForm(onSubmit: onSubmit),
+      resultBuilder: (context, result, onShare) => _FortuneResult(
         result: result,
         onShare: onShare,
       ),
@@ -26,10 +26,10 @@ class 0FortunePage extends ConsumerWidget {
   }
 }
 
-class _0InputForm extends StatelessWidget {
+class _FortuneInputForm extends StatelessWidget {
   final Function(Map<String, dynamic>) onSubmit;
 
-  const _0InputForm({required this.onSubmit});
+  const _FortuneInputForm({required this.onSubmit});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _0InputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '당신의 �� 확인해보세요',
+          '당신의 �� 확인해보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
@@ -75,11 +75,11 @@ class _0InputForm extends StatelessWidget {
   }
 }
 
-class _0FortuneResult extends StatelessWidget {
+class _FortuneResult extends StatelessWidget {
   final FortuneResult result;
   final VoidCallback onShare;
 
-  const _0FortuneResult({
+  const _FortuneResult({
     required this.result,
     required this.onShare,
   });

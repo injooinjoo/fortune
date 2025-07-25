@@ -143,8 +143,8 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              AppColors.primary.withOpacity(0.1),
-                              AppColors.secondary.withOpacity(0.1),
+                              AppColors.primary.withValues(alpha: 0.1),
+                              AppColors.secondary.withValues(alpha: 0.1),
                             ],
                           )
                         : null,
@@ -164,7 +164,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                         height: 48,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.primary.withOpacity(0.2)
+                              ? AppColors.primary.withValues(alpha: 0.2)
                               : AppColors.surface,
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -286,7 +286,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   }
                 });
               },
-              selectedColor: AppColors.primary.withOpacity(0.2),
+              selectedColor: AppColors.primary.withValues(alpha: 0.2),
               checkmarkColor: AppColors.primary,
             );
           }).toList(),
@@ -603,13 +603,13 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  _getHealthColor(healthScore).withOpacity(0.1),
-                  _getHealthColor(healthScore).withOpacity(0.05),
+                  _getHealthColor(healthScore).withValues(alpha: 0.1),
+                  _getHealthColor(healthScore).withValues(alpha: 0.05),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _getHealthColor(healthScore).withOpacity(0.3),
+                color: _getHealthColor(healthScore).withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -844,13 +844,13 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -882,13 +882,13 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -963,10 +963,10 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withOpacity(0.1),
+                          color: AppColors.secondary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: AppColors.secondary.withOpacity(0.3),
+                            color: AppColors.secondary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
@@ -1018,10 +1018,10 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.1),
+                      color: AppColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppColors.success.withOpacity(0.3),
+                        color: AppColors.success.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(

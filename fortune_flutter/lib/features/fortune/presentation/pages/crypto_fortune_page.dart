@@ -120,8 +120,8 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              sentimentColor.withOpacity(0.2),
-              sentimentColor.withOpacity(0.05),
+              sentimentColor.withValues(alpha: 0.2),
+              sentimentColor.withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -302,7 +302,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                   ),
                   belowBarData: BarAreaData(
                     show: true,
-                    color: AppTheme.primaryColor.withOpacity(0.2),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
                   ),
                 ),
               ],
@@ -319,7 +319,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                          Colors.blue;
 
     return Card(
-      color: strategyColor.withOpacity(0.1),
+      color: strategyColor.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -517,7 +517,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: changeColor.withOpacity(0.2),
+              color: changeColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -536,7 +536,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
 
   Widget _buildRiskManagementCard() {
     return Card(
-      color: Colors.red.withOpacity(0.05),
+      color: Colors.red.withValues(alpha: 0.05),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -567,7 +567,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.1),
+                color: Colors.red.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.red),
               ),
@@ -607,7 +607,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.1),
+            color: Colors.red.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
@@ -654,14 +654,14 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppTheme.primaryColor.withOpacity(0.8),
-                        AppTheme.primaryColor.withOpacity(0.6),
+                        AppTheme.primaryColor.withValues(alpha: 0.8),
+                        AppTheme.primaryColor.withValues(alpha: 0.6),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryColor.withOpacity(0.3),
+                        color: AppTheme.primaryColor.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),

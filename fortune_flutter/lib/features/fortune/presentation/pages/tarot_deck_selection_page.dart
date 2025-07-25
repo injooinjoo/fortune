@@ -28,6 +28,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   String? _hoveredDeckId;
+  String? _tempSelectedDeckId;
 
   @override
   void initState() {
@@ -49,19 +50,28 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
     super.dispose();
   }
 
-  void _selectDeck(String deckId) async {
+  void _selectDeck(String deckId) {
+    HapticFeedback.lightImpact();
+    setState(() {
+      _tempSelectedDeckId = deckId;
+    });
+  }
+  
+  void _confirmSelection() async {
+    if (_tempSelectedDeckId == null) return;
+    
     HapticFeedback.mediumImpact();
     
     // 덱 선택 저장
-    await ref.read(selectedTarotDeckProvider.notifier).selectDeck(deckId);
+    await ref.read(selectedTarotDeckProvider.notifier).selectDeck(_tempSelectedDeckId!);
     
     // 사용 통계 업데이트
-    await ref.read(tarotDeckStatsProvider.notifier).incrementUsage(deckId);
+    await ref.read(tarotDeckStatsProvider.notifier).incrementUsage(_tempSelectedDeckId!);
     
     // 타로 카드 페이지로 이동
     if (mounted) {
       context.pushReplacementNamed(
-        'tarot',
+        'fortune-tarot',
         queryParameters: {
           if (widget.spreadType != null) 'spreadType': widget.spreadType!,
           if (widget.initialQuestion != null) 'question': widget.initialQuestion!,
@@ -86,18 +96,20 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
       backgroundColor: Colors.black,
       body: MysticalBackground(
         child: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              AppHeader(
-                title: '타로 덱 선택',
-                showBackButton: true,
-                backgroundColor: Colors.transparent,
-              ),
-              Expanded(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+              Column(
+                children: [
+                  AppHeader(
+                    title: '타로 덱 선택',
+                    showBackButton: true,
+                    backgroundColor: Colors.transparent,
+                  ),
+                  Expanded(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -108,7 +120,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                               Icon(
                                 Icons.style,
                                 size: 60,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -167,9 +179,33 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
               ),
             ],
           ),
+          // Floating Action Button
+          if (_tempSelectedDeckId != null)
+            Positioned(
+              bottom: 20,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: FloatingActionButton.extended(
+                  onPressed: _confirmSelection,
+                  backgroundColor: const Color(0xFF9333EA),
+                  label: Text(
+                    '선택 완료',
+                    style: TextStyle(
+                      fontSize: 16 * fontScale,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildSectionTitle(String title, double fontScale) {
@@ -243,8 +279,8 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                     ref.read(tarotExperienceLevelProvider.notifier).setExperienceLevel(level);
                   }
                 },
-                selectedColor: level.color.withOpacity(0.3),
-                backgroundColor: Colors.white.withOpacity(0.1),
+                selectedColor: level.color.withValues(alpha: 0.3),
+                backgroundColor: Colors.white.withValues(alpha: 0.1),
               );
             }).toList(),
           ),
@@ -273,7 +309,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         final deck = decks[index];
         return _buildDeckCard(
           deck,
-          isSelected: deck.id == currentDeckId,
+          isSelected: deck.id == (_tempSelectedDeckId ?? currentDeckId),
           isMostUsed: deck.id == mostUsedDeckId,
           fontScale: fontScale,
         );
@@ -306,14 +342,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    deck.primaryColor.withOpacity(0.2),
-                    deck.secondaryColor.withOpacity(0.2),
+                    deck.primaryColor.withValues(alpha: 0.2),
+                    deck.secondaryColor.withValues(alpha: 0.2),
                   ],
                 ),
                 border: Border.all(
                   color: isSelected
                       ? const Color(0xFF9333EA)
-                      : Colors.white.withOpacity(0.2),
+                      : Colors.white.withValues(alpha: 0.2),
                   width: isSelected ? 2 : 1,
                 ),
                 child: Column(
@@ -399,7 +435,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.8),
+                      color: Colors.orange.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
@@ -457,7 +493,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
         borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -470,11 +506,11 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              color: deck.primaryColor.withOpacity(0.3),
+              color: deck.primaryColor.withValues(alpha: 0.3),
               child: Center(
                 child: Icon(
                   Icons.style,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                   size: 30,
                 ),
               ),
@@ -489,10 +525,10 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.5),
+          color: color.withValues(alpha: 0.5),
           width: 1,
         ),
       ),

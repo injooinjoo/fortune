@@ -120,7 +120,7 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: _selectedType == type 
-                          ? AppColors.primary.withOpacity(0.1)
+                          ? AppColors.primary.withValues(alpha: 0.1)
                           : AppColors.surface,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
@@ -306,13 +306,13 @@ class _TraditionalFortunePageState extends BaseFortunePageState<TraditionalFortu
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  AppColors.primary.withOpacity(0.1),
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),

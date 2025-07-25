@@ -306,8 +306,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withOpacity(0.2),
-          Colors.indigo.withOpacity(0.2),
+          Colors.purple.withValues(alpha: 0.2),
+          Colors.indigo.withValues(alpha: 0.2),
         ],
       ),
       child: Column(
@@ -647,7 +647,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                     child: Container(
                       height: 20,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: FractionallySizedBox(
@@ -697,8 +697,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.green.withOpacity(0.2),
-          Colors.teal.withOpacity(0.2),
+          Colors.green.withValues(alpha: 0.2),
+          Colors.teal.withValues(alpha: 0.2),
         ],
       ),
       child: Column(
@@ -753,8 +753,8 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
       padding: const EdgeInsets.all(20),
       gradient: LinearGradient(
         colors: [
-          Colors.blue.withOpacity(0.2),
-          Colors.cyan.withOpacity(0.2),
+          Colors.blue.withValues(alpha: 0.2),
+          Colors.cyan.withValues(alpha: 0.2),
         ],
       ),
       child: Row(
@@ -833,7 +833,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -854,7 +854,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                 ),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -890,7 +890,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
         maxChildSize: 0.95,
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.9),
+            color: Colors.black.withValues(alpha: 0.9),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: ListView(
@@ -902,7 +902,7 @@ class _TarotSummaryPageState extends ConsumerState<TarotSummaryPage>
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

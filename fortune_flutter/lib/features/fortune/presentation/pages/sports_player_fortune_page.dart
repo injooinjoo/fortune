@@ -91,7 +91,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -190,7 +190,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFF00897B).withOpacity(0.3),
+                        color: const Color(0xFF00897B).withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -208,8 +208,8 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.2)
-                          : const Color(0xFF00897B).withOpacity(0.1),
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : const Color(0xFF00897B).withValues(alpha: 0.1),
                     ),
                     child: Icon(
                       _getSportIcon(player['sport']!),
@@ -231,7 +231,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.9)
+                          ? Colors.white.withValues(alpha: 0.9)
                           : AppColors.textSecondary,
                     ),
                   ),
@@ -240,7 +240,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
+                          ? Colors.white.withValues(alpha: 0.7)
                           : AppColors.textTertiary,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -387,8 +387,8 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF00897B).withOpacity(0.1),
-            const Color(0xFF00BFA5).withOpacity(0.1),
+            const Color(0xFF00897B).withValues(alpha: 0.1),
+            const Color(0xFF00BFA5).withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -435,7 +435,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
                 Container(
                   height: 20,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Colors.grey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -489,7 +489,7 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF00897B).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFF00897B).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -535,8 +535,8 @@ class _SportsPlayerFortunePageState extends State<SportsPlayerFortunePage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF00897B).withOpacity(0.05),
-            const Color(0xFF00BFA5).withOpacity(0.05),
+            const Color(0xFF00897B).withValues(alpha: 0.05),
+            const Color(0xFF00BFA5).withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(16),

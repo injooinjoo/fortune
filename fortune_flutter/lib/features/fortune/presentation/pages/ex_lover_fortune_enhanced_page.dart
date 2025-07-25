@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'dart:convert';
 
@@ -69,20 +70,190 @@ final exLoverDataProvider = StateProvider<ExLoverFortuneData>((ref) {
 });
 
 class ExLoverFortuneEnhancedPage extends ConsumerStatefulWidget {
-  const ExLoverFortuneEnhancedPage({Key? key}) : super(key: key);
+  final Map<String, dynamic>? extras;
+  
+  const ExLoverFortuneEnhancedPage({Key? key, this.extras}) : super(key: key);
 
   @override
   ConsumerState<ExLoverFortuneEnhancedPage> createState() => _ExLoverFortuneEnhancedPageState();
 }
 
-class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhancedPage> {
+class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhancedPage> 
+    with TickerProviderStateMixin {
   final PageController _pageController = PageController();
   final ImagePicker _imagePicker = ImagePicker();
+  bool _isUploadingImage = false;
+  
+  late AnimationController _fadeController;
+  late AnimationController _scaleController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Initialize animation controllers
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    ));
+    
+    _scaleAnimation = Tween<double>(
+      begin: 0.95,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeOutBack,
+    ));
+    
+    // Start animations
+    _fadeController.forward();
+    _scaleController.forward();
+    
+    // Check if we should auto-generate
+    if (widget.extras?['autoGenerate'] == true) {
+      // Skip to the last step if we have the necessary data
+      _handleAutoGenerate();
+    } else {
+      // Load saved progress if exists
+      _loadSavedProgress();
+    }
+  }
   
   @override
   void dispose() {
     _pageController.dispose();
+    _fadeController.dispose();
+    _scaleController.dispose();
     super.dispose();
+  }
+  
+  void _handleAutoGenerate() async {
+    // Get user profile data from extras if available
+    final fortuneParams = widget.extras?['fortuneParams'] as Map<String, dynamic>?;
+    
+    if (fortuneParams != null) {
+      // Update the provider with basic info from user profile
+      ref.read(exLoverDataProvider.notifier).update((state) {
+        // The SimpleFortunInfoSheet would have passed basic user info
+        // For ex-lover fortune, we need more specific data, so just set basics
+        return state;
+      });
+    }
+    
+    // For ex-lover fortune, we can't auto-generate without the specific relationship data
+    // So just load saved progress if any
+    _loadSavedProgress();
+  }
+  
+  Future<void> _loadSavedProgress() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedDataJson = prefs.getString('ex_lover_fortune_progress');
+      
+      if (savedDataJson != null) {
+        final savedData = jsonDecode(savedDataJson);
+        final currentStep = savedData['currentStep'] ?? 0;
+        
+        // Restore step
+        ref.read(exLoverStepProvider.notifier).setStep(currentStep);
+        
+        // Restore data
+        ref.read(exLoverDataProvider.notifier).update((state) {
+          state.name = savedData['name'] ?? '';
+          if (savedData['birthDate'] != null) {
+            state.birthDate = DateTime.parse(savedData['birthDate']);
+          }
+          state.gender = savedData['gender'];
+          state.mbti = savedData['mbti'];
+          state.relationshipDuration = savedData['relationshipDuration'];
+          state.breakupReason = savedData['breakupReason'];
+          state.timeSinceBreakup = savedData['timeSinceBreakup'];
+          state.currentFeeling = savedData['currentFeeling'];
+          state.stillInContact = savedData['stillInContact'] ?? false;
+          state.hasUnresolvedFeelings = savedData['hasUnresolvedFeelings'] ?? false;
+          state.currentStatus = savedData['currentStatus'];
+          state.readyForNewRelationship = savedData['readyForNewRelationship'] ?? false;
+          state.useImageAnalysis = savedData['useImageAnalysis'] ?? false;
+          state.useInstagramAnalysis = savedData['useInstagramAnalysis'] ?? false;
+          state.useStoryConsultation = savedData['useStoryConsultation'] ?? false;
+          state.instagramLink = savedData['instagramLink'];
+          state.detailedStory = savedData['detailedStory'];
+          return state;
+        });
+        
+        // Navigate to saved step
+        if (currentStep > 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _pageController.jumpToPage(currentStep);
+          });
+        }
+        
+        // Show restored message
+        if (mounted) {
+          Toast.success(context, '이전 진행상황을 불러왔습니다');
+        }
+      }
+    } catch (e) {
+      print('Failed to load saved progress: $e');
+    }
+  }
+  
+  Future<void> _saveProgress() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final data = ref.read(exLoverDataProvider);
+      final currentStep = ref.read(exLoverStepProvider);
+      
+      final saveData = {
+        'currentStep': currentStep,
+        'name': data.name,
+        'birthDate': data.birthDate?.toIso8601String(),
+        'gender': data.gender,
+        'mbti': data.mbti,
+        'relationshipDuration': data.relationshipDuration,
+        'breakupReason': data.breakupReason,
+        'timeSinceBreakup': data.timeSinceBreakup,
+        'currentFeeling': data.currentFeeling,
+        'stillInContact': data.stillInContact,
+        'hasUnresolvedFeelings': data.hasUnresolvedFeelings,
+        'currentStatus': data.currentStatus,
+        'readyForNewRelationship': data.readyForNewRelationship,
+        'useImageAnalysis': data.useImageAnalysis,
+        'useInstagramAnalysis': data.useInstagramAnalysis,
+        'useStoryConsultation': data.useStoryConsultation,
+        'instagramLink': data.instagramLink,
+        'detailedStory': data.detailedStory,
+        'savedAt': DateTime.now().toIso8601String(),
+      };
+      
+      await prefs.setString('ex_lover_fortune_progress', jsonEncode(saveData));
+    } catch (e) {
+      print('Failed to save progress: $e');
+    }
+  }
+  
+  Future<void> _clearSavedProgress() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('ex_lover_fortune_progress');
+    } catch (e) {
+      print('Failed to clear saved progress: $e');
+    }
   }
 
   @override
@@ -117,40 +288,57 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           },
         ),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              const Color(0xFF8B5CF6),
-              const Color(0xFFEC4899),
-              const Color(0xFF3B82F6),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Progress Indicator
-              _buildProgressIndicator(currentStep),
-              
-              // Content
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
+      body: AnimatedBuilder(
+        animation: _fadeAnimation,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _fadeAnimation.value,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: _getGradientColors(ref.watch(exLoverDataProvider).currentFeeling),
+                ),
+              ),
+              child: SafeArea(
+                child: Column(
                   children: [
-                    _buildStep1BasicInfo(),
-                    _buildStep2RelationshipInfo(),
-                    _buildStep3AdditionalAnalysis(),
-                    _buildStep4Confirmation(),
+                    // Progress Indicator with animation
+                    AnimatedBuilder(
+                      animation: _scaleAnimation,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _scaleAnimation.value,
+                          child: _buildProgressIndicator(currentStep),
+                        );
+                      },
+                    ),
+                    
+                    // Content with page transitions
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onPageChanged: (index) {
+                          // Trigger animation on page change
+                          _scaleController.forward(from: 0.0);
+                          _saveProgress(); // Auto-save progress
+                        },
+                        children: [
+                          _buildAnimatedStep(_buildStep1BasicInfo()),
+                          _buildAnimatedStep(_buildStep2RelationshipInfo()),
+                          _buildAnimatedStep(_buildStep3AdditionalAnalysis()),
+                          _buildAnimatedStep(_buildStep4Confirmation()),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -177,7 +365,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         decoration: BoxDecoration(
                           color: isActive 
                             ? Colors.white 
-                            : Colors.white.withOpacity(0.3),
+                            : Colors.white.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -223,7 +411,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Text(
                   '정확한 운세 분석을 위해 필요합니다',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -239,13 +427,14 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                   ),
                   onChanged: (value) {
                     ref.read(exLoverDataProvider.notifier).update((state) {
                       state.name = value;
                       return state;
                     });
+                    _saveProgress();
                   },
                 ),
                 const SizedBox(height: 16),
@@ -274,7 +463,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                     ),
                     child: Text(
                       data.birthDate != null
@@ -283,7 +472,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       style: TextStyle(
                         color: data.birthDate != null
                             ? theme.colorScheme.onSurface
-                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   ),
@@ -313,8 +502,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
                                 color: data.gender == 'male'
-                                    ? theme.colorScheme.primary.withOpacity(0.2)
-                                    : theme.colorScheme.surface.withOpacity(0.5),
+                                    ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                                    : theme.colorScheme.surface.withValues(alpha: 0.5),
                                 border: Border.all(
                                   color: data.gender == 'male'
                                       ? theme.colorScheme.primary
@@ -349,8 +538,8 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               decoration: BoxDecoration(
                                 color: data.gender == 'female'
-                                    ? theme.colorScheme.primary.withOpacity(0.2)
-                                    : theme.colorScheme.surface.withOpacity(0.5),
+                                    ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                                    : theme.colorScheme.surface.withValues(alpha: 0.5),
                                 border: Border.all(
                                   color: data.gender == 'female'
                                       ? theme.colorScheme.primary
@@ -388,7 +577,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                       borderRadius: BorderRadius.circular(12),
                     ),
                     filled: true,
-                    fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                    fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                   ),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('선택 안함')),
@@ -539,7 +728,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     );
                   }).toList(),
                 ),
@@ -570,7 +759,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     );
                   }).toList(),
                 ),
@@ -601,7 +790,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     );
                   }).toList(),
                 ),
@@ -654,7 +843,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: _getFeelingColor(entry.key).withOpacity(0.2),
+                      selectedColor: _getFeelingColor(entry.key).withValues(alpha: 0.2),
                     );
                   }).toList(),
                 ),
@@ -729,7 +918,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                           });
                         }
                       },
-                      selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     );
                   }).toList(),
                 ),
@@ -790,7 +979,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Text(
                   '더 깊이 있는 분석을 원하시면 선택해주세요',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -844,13 +1033,15 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
+                      fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                      errorText: _validateInstagramLink(data.instagramLink),
                     ),
                     onChanged: (value) {
                       ref.read(exLoverDataProvider.notifier).update((state) {
                         state.instagramLink = value;
                         return state;
                       });
+                      _saveProgress();
                     },
                   ),
                 ],
@@ -874,24 +1065,44 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 
                 if (data.useStoryConsultation) ...[
                   const SizedBox(height: 16),
-                  TextFormField(
-                    initialValue: data.detailedStory,
-                    maxLines: 5,
-                    decoration: InputDecoration(
-                      labelText: '사연을 자세히 적어주세요',
-                      hintText: '어떤 관계였는지, 왜 헤어졌는지, 현재 마음은 어떤지 자유롭게 작성해주세요',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        initialValue: data.detailedStory,
+                        maxLines: 5,
+                        maxLength: 1000,
+                        buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              '$currentLength / $maxLength',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: currentLength > maxLength! * 0.9
+                                    ? theme.colorScheme.error
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          );
+                        },
+                        decoration: InputDecoration(
+                          labelText: '사연을 자세히 적어주세요',
+                          hintText: '어떤 관계였는지, 왜 헤어졌는지, 현재 마음은 어떤지 자유롭게 작성해주세요',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                        ),
+                        onChanged: (value) {
+                          ref.read(exLoverDataProvider.notifier).update((state) {
+                            state.detailedStory = value;
+                            return state;
+                          });
+                          _saveProgress();
+                        },
                       ),
-                      filled: true,
-                      fillColor: theme.colorScheme.surface.withOpacity(0.5),
-                    ),
-                    onChanged: (value) {
-                      ref.read(exLoverDataProvider.notifier).update((state) {
-                        state.detailedStory = value;
-                        return state;
-                      });
-                    },
+                    ],
                   ),
                 ],
               ],
@@ -1011,7 +1222,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -1094,12 +1305,12 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           border: Border.all(
             color: isSelected 
               ? theme.colorScheme.primary 
-              : theme.colorScheme.onSurface.withOpacity(0.3),
+              : theme.colorScheme.onSurface.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
           color: isSelected 
-            ? theme.colorScheme.primary.withOpacity(0.1) 
+            ? theme.colorScheme.primary.withValues(alpha: 0.1) 
             : null,
         ),
         child: Row(
@@ -1108,7 +1319,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               icon,
               color: isSelected 
                 ? theme.colorScheme.primary 
-                : theme.colorScheme.onSurface.withOpacity(0.6),
+                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -1124,7 +1335,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -1204,7 +1415,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -1220,34 +1431,43 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               )),
               if (data.uploadedImages.length < 3)
                 GestureDetector(
-                  onTap: _pickImage,
+                  onTap: _isUploadingImage ? null : _pickImage,
                   child: Container(
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: theme.colorScheme.onSurface.withOpacity(0.3),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                         width: 2,
                         style: BorderStyle.solid,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add_a_photo,
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '사진 추가',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    child: _isUploadingImage
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                theme.colorScheme.primary,
+                              ),
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_a_photo,
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '사진 추가',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
             ],
@@ -1268,7 +1488,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
           Text(
             label,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           Text(
@@ -1327,52 +1547,122 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     final data = ref.read(exLoverDataProvider);
     
     if (data.name.isEmpty) {
-      Toast.error(context, '이름을 입력해주세요');
+      _showValidationError('이름을 입력해주세요', '상대방의 이름은 운세 분석에 중요한 정보입니다.');
+      return false;
+    }
+    
+    if (data.name.length < 2) {
+      _showValidationError('올바른 이름을 입력해주세요', '이름은 2글자 이상이어야 합니다.');
       return false;
     }
     
     if (data.birthDate == null) {
-      Toast.error(context, '생년월일을 선택해주세요');
+      _showValidationError('생년월일을 선택해주세요', '정확한 운세 분석을 위해 필요합니다.');
       return false;
     }
     
     if (data.gender == null) {
-      Toast.error(context, '성별을 선택해주세요');
+      _showValidationError('성별을 선택해주세요', '맞춤형 조언을 위해 필요합니다.');
       return false;
     }
     
     return true;
   }
   
+  void _showValidationError(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.info_outline, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(title, style: theme.textTheme.titleMedium),
+            ],
+          ),
+          content: Text(
+            message,
+            style: theme.textTheme.bodyMedium,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
   bool _validateStep2() {
     final data = ref.read(exLoverDataProvider);
     
     if (data.relationshipDuration == null) {
-      Toast.error(context, '교제 기간을 선택해주세요');
+      _showValidationError('교제 기간을 선택해주세요', '관계의 깊이를 이해하는데 필요합니다.');
       return false;
     }
     
     if (data.breakupReason == null) {
-      Toast.error(context, '이별 이유를 선택해주세요');
+      _showValidationError('이별 이유를 선택해주세요', '상황을 정확히 분석하기 위해 필요합니다.');
       return false;
     }
     
     if (data.timeSinceBreakup == null) {
-      Toast.error(context, '이별 후 시간을 선택해주세요');
+      _showValidationError('이별 후 시간을 선택해주세요', '치유 단계를 파악하는데 중요합니다.');
       return false;
     }
     
     if (data.currentFeeling == null) {
-      Toast.error(context, '현재 감정을 선택해주세요');
+      _showValidationError('현재 감정을 선택해주세요', '맞춤형 조언을 위해 필요합니다.');
       return false;
     }
     
     if (data.currentStatus == null) {
-      Toast.error(context, '현재 연애 상태를 선택해주세요');
+      _showValidationError('현재 연애 상태를 선택해주세요', '적절한 조언을 위해 필요합니다.');
       return false;
     }
     
     return true;
+  }
+  
+  String? _validateInstagramLink(String? value) {
+    if (value == null || value.isEmpty) {
+      return '인스타그램 아이디나 링크를 입력해주세요';
+    }
+    
+    // Check if it's a username (starts with @)
+    if (value.startsWith('@')) {
+      final username = value.substring(1);
+      if (username.isEmpty) {
+        return '올바른 아이디를 입력해주세요';
+      }
+      // Instagram username validation
+      final usernameRegex = RegExp(r'^[a-zA-Z0-9._]{1,30}$');
+      if (!usernameRegex.hasMatch(username)) {
+        return '올바른 인스타그램 아이디 형식이 아닙니다';
+      }
+      return null;
+    }
+    
+    // Check if it's a URL
+    final urlRegex = RegExp(
+      r'^https?:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._]{1,30}\/?',
+      caseSensitive: false,
+    );
+    
+    if (!urlRegex.hasMatch(value)) {
+      return '@username 또는 https://instagram.com/username 형식으로 입력해주세요';
+    }
+    
+    return null;
   }
   
   int _calculateTotalSouls() {
@@ -1407,21 +1697,163 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     }
   }
   
+  List<Color> _getGradientColors(String? feeling) {
+    if (feeling == null) {
+      return [
+        const Color(0xFF8B5CF6),
+        const Color(0xFFEC4899),
+        const Color(0xFF3B82F6),
+      ];
+    }
+    
+    switch (feeling) {
+      case 'miss':
+        return [
+          const Color(0xFF5B8DEE),
+          const Color(0xFF3F51B5),
+          const Color(0xFF7986CB),
+        ];
+      case 'anger':
+        return [
+          const Color(0xFFE91E63),
+          const Color(0xFFF44336),
+          const Color(0xFFFF5252),
+        ];
+      case 'sadness':
+        return [
+          const Color(0xFF3F51B5),
+          const Color(0xFF303F9F),
+          const Color(0xFF5C6BC0),
+        ];
+      case 'relief':
+        return [
+          const Color(0xFF4CAF50),
+          const Color(0xFF66BB6A),
+          const Color(0xFF81C784),
+        ];
+      case 'grateful':
+        return [
+          const Color(0xFFFFC107),
+          const Color(0xFFFFB300),
+          const Color(0xFFFFD54F),
+        ];
+      case 'confused':
+        return [
+          const Color(0xFF9C27B0),
+          const Color(0xFF8E24AA),
+          const Color(0xFFBA68C8),
+        ];
+      default:
+        return [
+          const Color(0xFF8B5CF6),
+          const Color(0xFFEC4899),
+          const Color(0xFF3B82F6),
+        ];
+    }
+  }
+  
+  Widget _buildAnimatedStep(Widget child) {
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, _) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: 1.0,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+  
   Future<void> _pickImage() async {
-    final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1024,
-      maxHeight: 1024,
-      imageQuality: 85,
+    // Show bottom sheet to choose between camera and gallery
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('카메라로 촬영'),
+              onTap: () => Navigator.pop(context, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('갤러리에서 선택'),
+              onTap: () => Navigator.pop(context, ImageSource.gallery),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('취소'),
+              onTap: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
     );
     
-    if (pickedFile != null) {
-      ref.read(exLoverDataProvider.notifier).update((state) {
-        if (state.uploadedImages.length < 3) {
-          state.uploadedImages.add(File(pickedFile.path));
+    if (source == null) return;
+    
+    setState(() {
+      _isUploadingImage = true;
+    });
+    
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      
+      if (pickedFile != null) {
+        // Simulate processing time for better UX
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        ref.read(exLoverDataProvider.notifier).update((state) {
+          if (state.uploadedImages.length < 3) {
+            state.uploadedImages.add(File(pickedFile.path));
+          }
+          return state;
+        });
+        _saveProgress();
+        
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('이미지가 추가되었습니다'),
+              duration: Duration(seconds: 1),
+            ),
+          );
         }
-        return state;
-      });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('이미지를 불러올 수 없습니다: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploadingImage = false;
+        });
+      }
     }
   }
   
@@ -1429,29 +1861,69 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     final data = ref.read(exLoverDataProvider);
     final totalSouls = _calculateTotalSouls();
     
-    // 로딩 다이얼로그 표시
+    // 로딩 다이얼로그 표시 with comforting messages
+    final loadingMessages = [
+      '당신의 마음을 읽고 있어요...',
+      '깊은 감정을 분석하고 있어요...',
+      '최선의 조언을 준비하고 있어요...',
+      '당신을 위한 메시지를 만들고 있어요...',
+    ];
+    
+    int messageIndex = 0;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Center(
-        child: GlassContainer(
-          padding: const EdgeInsets.all(32),
-          borderRadius: BorderRadius.circular(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(color: Colors.white),
-              const SizedBox(height: 16),
-              Text(
-                '운세를 분석하고 있습니다...',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.white,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // Change message every 2 seconds
+            Future.delayed(const Duration(seconds: 2), () {
+              if (mounted && Navigator.canPop(context)) {
+                setState(() {
+                  messageIndex = (messageIndex + 1) % loadingMessages.length;
+                });
+              }
+            });
+            
+            return Center(
+              child: GlassContainer(
+                padding: const EdgeInsets.all(32),
+                borderRadius: BorderRadius.circular(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 3,
+                    ),
+                    const SizedBox(height: 24),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: Text(
+                        loadingMessages[messageIndex],
+                        key: ValueKey(messageIndex),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '잠시만 기다려주세요',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
     
     try {
@@ -1507,6 +1979,9 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       
       Navigator.pop(context); // 로딩 닫기
       
+      // Clear saved progress after successful completion
+      await _clearSavedProgress();
+      
       // 결과 페이지로 이동
       if (mounted) {
         Navigator.push(
@@ -1521,7 +1996,191 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
       
     } catch (e) {
       Navigator.pop(context); // 로딩 닫기
-      Toast.error(context, '운세 분석 중 오류가 발생했습니다: $e');
+      
+      // Enhanced error handling with specific messages
+      String errorMessage = '운세 분석 중 오류가 발생했습니다';
+      String errorDetails = e.toString();
+      
+      if (errorDetails.contains('Insufficient soul balance')) {
+        errorMessage = '영혼이 부족합니다. 영혼을 충전해주세요.';
+        _showSoulRechargeDialog();
+      } else if (errorDetails.contains('Network') || errorDetails.contains('SocketException')) {
+        errorMessage = '네트워크 연결을 확인해주세요.';
+        _showErrorRecoveryDialog(
+          title: '네트워크 오류',
+          message: errorMessage,
+          retryAction: () => _startFortuneTelling(),
+        );
+      } else if (errorDetails.contains('timeout')) {
+        errorMessage = '요청 시간이 초과되었습니다. 다시 시도해주세요.';
+        _showErrorRecoveryDialog(
+          title: '시간 초과',
+          message: errorMessage,
+          retryAction: () => _startFortuneTelling(),
+        );
+      } else {
+        _showErrorRecoveryDialog(
+          title: '오류 발생',
+          message: errorMessage,
+          details: errorDetails,
+          retryAction: () => _startFortuneTelling(),
+        );
+      }
     }
+  }
+  
+  void _showErrorRecoveryDialog({
+    required String title,
+    required String message,
+    String? details,
+    VoidCallback? retryAction,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: theme.colorScheme.error,
+                size: 28,
+              ),
+              const SizedBox(width: 12),
+              Text(title),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message,
+                style: theme.textTheme.bodyLarge,
+              ),
+              if (details != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    details,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onErrorContainer,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('닫기'),
+            ),
+            if (retryAction != null)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  retryAction();
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('다시 시도'),
+              ),
+          ],
+        );
+      },
+    );
+  }
+  
+  void _showSoulRechargeDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+        
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.favorite, color: theme.colorScheme.primary),
+              const SizedBox(width: 8),
+              const Text('영혼 충전 필요'),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '운세를 보기 위해서는 영혼이 필요합니다.',
+                style: theme.textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '필요 영혼: ${_calculateTotalSouls()}개',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Navigate to soul recharge page
+                context.go('/soul-recharge');
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('영혼 충전하기'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

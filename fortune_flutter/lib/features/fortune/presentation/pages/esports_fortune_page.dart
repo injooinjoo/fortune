@@ -191,7 +191,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppTheme.primaryColor.withOpacity(0.1)
+                      ? AppTheme.primaryColor.withValues(alpha: 0.1)
                       : Colors.transparent,
                   border: Border.all(
                     color: isSelected
@@ -269,8 +269,8 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _getGameColor(_selectedGame).withOpacity(0.1),
-              _getGameColor(_selectedGame).withOpacity(0.05),
+              _getGameColor(_selectedGame).withValues(alpha: 0.1),
+              _getGameColor(_selectedGame).withValues(alpha: 0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -295,7 +295,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: predictionColor.withOpacity(0.2),
+                        color: predictionColor.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -410,7 +410,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
         RadarChartData(
           dataSets: [
             RadarDataSet(
-              fillColor: _getGameColor(_selectedGame).withOpacity(0.3),
+              fillColor: _getGameColor(_selectedGame).withValues(alpha: 0.3),
               borderColor: _getGameColor(_selectedGame),
               borderWidth: 2,
               dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
@@ -430,7 +430,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
           ticksTextStyle: const TextStyle(fontSize: 10),
           tickBorderData: BorderSide(color: AppTheme.dividerColor),
           gridBorderData: BorderSide(
-            color: AppTheme.dividerColor.withOpacity(0.5),
+            color: AppTheme.dividerColor.withValues(alpha: 0.5),
           ),
         ),
       ),
@@ -447,7 +447,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 : null;
 
     return Card(
-      color: _getGameColor(_selectedGame).withOpacity(0.1),
+      color: _getGameColor(_selectedGame).withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -503,7 +503,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
                 children: recommendations.map((char) => 
                   Chip(
                     label: Text(char),
-                    backgroundColor: _getGameColor(_selectedGame).withOpacity(0.2),
+                    backgroundColor: _getGameColor(_selectedGame).withValues(alpha: 0.2),
                     labelStyle: TextStyle(
                       color: _getGameColor(_selectedGame),
                       fontWeight: FontWeight.bold,
@@ -559,7 +559,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isToday ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+        color: isToday ? Colors.blue.withValues(alpha: 0.1) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isToday ? Colors.blue : AppTheme.dividerColor,
@@ -633,7 +633,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -692,7 +692,7 @@ class _EsportsFortunePageState extends BaseFortunePageState<EsportsFortunePage> 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

@@ -168,10 +168,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: color.withOpacity(0.3),
+              color: color.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -223,10 +223,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -293,10 +293,10 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                     children: gods.map((god) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getTenGodColor(god).withOpacity(0.2),
+                        color: _getTenGodColor(god).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: _getTenGodColor(god).withOpacity(0.3),
+                          color: _getTenGodColor(god).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),

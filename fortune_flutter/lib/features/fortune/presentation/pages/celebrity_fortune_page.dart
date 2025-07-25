@@ -8,6 +8,8 @@ import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
+import '../../../../data/models/celebrity.dart';
+import '../../../../presentation/providers/celebrity_provider.dart';
 
 class CelebrityFortunePage extends ConsumerWidget {
   const CelebrityFortunePage({super.key});
@@ -31,37 +33,21 @@ class CelebrityFortunePage extends ConsumerWidget {
   }
 }
 
-class _CelebrityInputForm extends StatefulWidget {
+class _CelebrityInputForm extends ConsumerStatefulWidget {
   final Function(Map<String, dynamic>) onSubmit;
 
   const _CelebrityInputForm({required this.onSubmit});
 
   @override
-  State<_CelebrityInputForm> createState() => _CelebrityInputFormState();
+  ConsumerState<_CelebrityInputForm> createState() => _CelebrityInputFormState();
 }
 
-class _CelebrityInputFormState extends State<_CelebrityInputForm> {
+class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
   final _nameController = TextEditingController();
   final _celebrityController = TextEditingController();
-  String? _selectedCategory;
+  Celebrity? _selectedCelebrity;
+  CelebrityCategory? _selectedCategory;
   DateTime? _birthDate;
-  final List<String> _categories = [
-    'K-POP 그룹',
-    '가수',
-    '배우',
-    '스포츠 스타',
-    '방송인',
-    '기타',
-  ];
-
-  // Popular celebrity list for autocomplete
-  final List<String> _popularCelebrities = [
-    'BTS', '블랙핑크', '뉴진스', 'aespa', '스트레이키즈',
-    '아이유', '태연', '박효신', '이승기', '임영웅',
-    '손흥민', '김연아', '박세리', '류현진', '김민재',
-    '박서준', '김고은', '이병헌', '전지현', '송중기',
-    '유재석', '강호동', '박나래', '신동엽', '이수근',
-  ];
 
   @override
   void dispose() {
@@ -119,17 +105,59 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
           ),
         ),
         const SizedBox(height: 12),
-        Autocomplete<String>(
+        Autocomplete<Celebrity>(
+          displayStringForOption: (Celebrity option) => option.name,
           optionsBuilder: (TextEditingValue textEditingValue) {
-            if (textEditingValue.text == '') {
-              return const Iterable<String>.empty();
+            if (textEditingValue.text.isEmpty) {
+              // Show popular celebrities when field is empty
+              final popularCelebrities = ref.read(popularCelebritiesProvider(_selectedCategory));
+              return popularCelebrities;
             }
-            return _popularCelebrities.where((String option) {
-              return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+            // Search celebrities based on input
+            final suggestions = ref.read(celebritySuggestionsProvider(textEditingValue.text));
+            return suggestions;
+          },
+          onSelected: (Celebrity selection) {
+            setState(() {
+              _selectedCelebrity = selection;
+              _celebrityController.text = selection.name;
+              _selectedCategory = selection.category;
             });
           },
-          onSelected: (String selection) {
-            _celebrityController.text = selection;
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Material(
+                elevation: 4.0,
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: 200,
+                    maxWidth: MediaQuery.of(context).size.width - 32,
+                  ),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: options.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final celebrity = options.elementAt(index);
+                      return ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                          child: Text(
+                            celebrity.name.substring(0, 1),
+                            style: TextStyle(color: theme.colorScheme.primary),
+                          ),
+                        ),
+                        title: Text(celebrity.name),
+                        subtitle: Text('${celebrity.category.displayName} • ${celebrity.age}세'),
+                        onTap: () => onSelected(celebrity),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            );
           },
           fieldViewBuilder: (
             BuildContext context,
@@ -144,6 +172,18 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
               decoration: InputDecoration(
                 hintText: '연예인 이름을 입력하세요',
                 prefixIcon: const Icon(Icons.star_outline),
+                suffixIcon: _selectedCelebrity != null
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          setState(() {
+                            _selectedCelebrity = null;
+                            _celebrityController.clear();
+                            fieldTextEditingController.clear();
+                          });
+                        },
+                      )
+                    : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
@@ -155,6 +195,11 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
               ),
               onChanged: (value) {
                 _celebrityController.text = value;
+                if (value.isEmpty) {
+                  setState(() {
+                    _selectedCelebrity = null;
+                  });
+                }
               },
             );
           },
@@ -172,10 +217,10 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _categories.map((category) {
+          children: CelebrityCategory.values.map((category) {
             final isSelected = _selectedCategory == category;
             return ChoiceChip(
-              label: Text(category),
+              label: Text(category.displayName),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {
@@ -189,6 +234,56 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
             );
           }).toList(),
         ),
+        if (_selectedCelebrity != null) ...[
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                  radius: 30,
+                  child: Text(
+                    _selectedCelebrity!.name.substring(0, 1),
+                    style: TextStyle(
+                      color: theme.colorScheme.primary,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _selectedCelebrity!.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${_selectedCelebrity!.category.displayName} • ${_selectedCelebrity!.age}세 • ${_selectedCelebrity!.zodiacSign}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 20),
         
         // Birth Date Selection
@@ -254,15 +349,20 @@ class _CelebrityInputFormState extends State<_CelebrityInputForm> {
                 Toast.error(context, '이름을 입력해주세요');
                 return;
               }
-              if (_celebrityController.text.isEmpty) {
-                Toast.error(context, '연예인 이름을 입력해주세요');
+              if (_selectedCelebrity == null && _celebrityController.text.isEmpty) {
+                Toast.error(context, '연예인을 선택하거나 이름을 입력해주세요');
                 return;
               }
               
               widget.onSubmit({
                 'user_name': _nameController.text,
-                'celebrity_name': _celebrityController.text,
-                'category': _selectedCategory,
+                'celebrity_name': _selectedCelebrity?.name ?? _celebrityController.text,
+                'celebrity_id': _selectedCelebrity?.id,
+                'category': _selectedCelebrity?.category.displayName ?? _selectedCategory?.displayName,
+                'celebrity_age': _selectedCelebrity?.age,
+                'celebrity_zodiac': _selectedCelebrity?.zodiacSign,
+                'celebrity_chinese_zodiac': _selectedCelebrity?.chineseZodiac,
+                'celebrity_birth_date': _selectedCelebrity?.birthDate.toIso8601String(),
                 'birth_date': _birthDate?.toIso8601String(),
               });
             },

@@ -345,8 +345,8 @@ ${inspiration.affirmation}
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              inspiration.themeColor.withOpacity(0.8),
-                              inspiration.themeColor.withOpacity(0.4),
+                              inspiration.themeColor.withValues(alpha: 0.8),
+                              inspiration.themeColor.withValues(alpha: 0.4),
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -354,7 +354,7 @@ ${inspiration.affirmation}
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: inspiration.themeColor.withOpacity(0.3),
+                              color: inspiration.themeColor.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -372,7 +372,7 @@ ${inspiration.affirmation}
                               dateFormat.format(now),
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -391,7 +391,7 @@ ${inspiration.affirmation}
                               '- ${inspiration.author}',
                               style: TextStyle(
                                 fontSize: 16 * fontScale,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -413,7 +413,7 @@ ${inspiration.affirmation}
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -426,7 +426,7 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withOpacity(0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -470,13 +470,13 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.blue.withOpacity(0.1),
-                          Colors.purple.withOpacity(0.1),
+                          Colors.blue.withValues(alpha: 0.1),
+                          Colors.purple.withValues(alpha: 0.1),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.blue.withOpacity(0.2),
+                        color: Colors.blue.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(
@@ -525,7 +525,7 @@ ${inspiration.affirmation}
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
@@ -539,7 +539,7 @@ ${inspiration.affirmation}
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withOpacity(0.1),
+                                color: Colors.amber.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -602,15 +602,15 @@ ${inspiration.affirmation}
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          AppColors.primary.withOpacity(0.1),
-                          AppColors.primary.withOpacity(0.05),
+                          AppColors.primary.withValues(alpha: 0.1),
+                          AppColors.primary.withValues(alpha: 0.05),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.2),
+                        color: AppColors.primary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Column(

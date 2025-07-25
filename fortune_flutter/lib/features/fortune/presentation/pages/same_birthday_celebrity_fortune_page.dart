@@ -7,6 +7,8 @@ import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/custom_calendar_date_picker.dart';
 import '../../../../shared/components/app_header.dart';
+import '../../../../data/models/celebrity.dart';
+import '../../../../presentation/providers/celebrity_provider.dart';
 
 class SameBirthdayCelebrityFortunePage extends ConsumerWidget {
   const SameBirthdayCelebrityFortunePage({super.key});
@@ -30,19 +32,20 @@ class SameBirthdayCelebrityFortunePage extends ConsumerWidget {
   }
 }
 
-class _SameBirthdayInputForm extends StatefulWidget {
+class _SameBirthdayInputForm extends ConsumerStatefulWidget {
   final Function(Map<String, dynamic>) onSubmit;
 
   const _SameBirthdayInputForm({required this.onSubmit});
 
   @override
-  State<_SameBirthdayInputForm> createState() => _SameBirthdayInputFormState();
+  ConsumerState<_SameBirthdayInputForm> createState() => _SameBirthdayInputFormState();
 }
 
-class _SameBirthdayInputFormState extends State<_SameBirthdayInputForm> {
+class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> {
   final _nameController = TextEditingController();
   DateTime? _birthDate;
   String _lunarSolarType = 'solar';
+  List<Celebrity> _sameBirthdayCelebrities = [];
 
   @override
   void dispose() {
@@ -118,6 +121,8 @@ class _SameBirthdayInputFormState extends State<_SameBirthdayInputForm> {
                   if (selectedDate != null) {
                     setState(() {
                       _birthDate = selectedDate;
+                      // Find celebrities with the same birthday
+                      _sameBirthdayCelebrities = ref.read(celebritiesWithBirthdayProvider(selectedDate!));
                     });
                   }
                 },
@@ -208,6 +213,79 @@ class _SameBirthdayInputFormState extends State<_SameBirthdayInputForm> {
             ),
           ],
         ),
+        
+        // Show celebrities with same birthday
+        if (_sameBirthdayCelebrities.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.star,
+                      color: theme.colorScheme.primary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '같은 생일의 연예인 (${_sameBirthdayCelebrities.length}명)',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _sameBirthdayCelebrities.take(5).map((celebrity) {
+                    return Chip(
+                      avatar: CircleAvatar(
+                        backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        child: Text(
+                          celebrity.name.substring(0, 1),
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      label: Text(
+                        celebrity.name,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      backgroundColor: theme.colorScheme.surface,
+                      side: BorderSide(
+                        color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                if (_sameBirthdayCelebrities.length > 5) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    '그 외 ${_sameBirthdayCelebrities.length - 5}명',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 32),
         
         // Submit Button
@@ -224,10 +302,22 @@ class _SameBirthdayInputFormState extends State<_SameBirthdayInputForm> {
                 return;
               }
               
+              // Include celebrity information in the submission
+              final celebrityData = _sameBirthdayCelebrities.map((celebrity) => {
+                'id': celebrity.id,
+                'name': celebrity.name,
+                'category': celebrity.category.displayName,
+                'age': celebrity.age,
+                'zodiac': celebrity.zodiacSign,
+                'description': celebrity.description,
+              }).toList();
+              
               widget.onSubmit({
                 'user_name': _nameController.text,
                 'birth_date': _birthDate!.toIso8601String(),
                 'lunar_solar': _lunarSolarType,
+                'same_birthday_celebrities': celebrityData,
+                'celebrity_count': _sameBirthdayCelebrities.length,
               });
             },
             style: ElevatedButton.styleFrom(

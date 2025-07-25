@@ -559,10 +559,10 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.deepPurple.withOpacity(0.1),
+              color: Colors.deepPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.deepPurple.withOpacity(0.3),
+                color: Colors.deepPurple.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),
@@ -601,7 +601,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
             interpretation['psychologicalInsight'] as String,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
             ),
           ),
@@ -633,7 +633,7 @@ class _DreamFortunePageState extends BaseFortunePageState<DreamFortunePage> with
                         element,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                         ),
                       ),
                     ),

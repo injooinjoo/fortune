@@ -80,7 +80,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -168,7 +168,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isSelected
-                    ? [partyColor, partyColor.withOpacity(0.7)]
+                    ? [partyColor, partyColor.withValues(alpha: 0.7)]
                     : [AppColors.surface, AppColors.surface],
               ),
               borderRadius: BorderRadius.circular(16),
@@ -179,7 +179,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: partyColor.withOpacity(0.3),
+                        color: partyColor.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -194,8 +194,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: isSelected 
-                        ? Colors.white.withOpacity(0.2)
-                        : partyColor.withOpacity(0.1),
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : partyColor.withValues(alpha: 0.1),
                     child: Text(
                       politician['name']!.substring(0, 2),
                       style: TextStyle(
@@ -219,7 +219,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.8)
+                          ? Colors.white.withValues(alpha: 0.8)
                           : AppColors.textSecondary,
                     ),
                   ),
@@ -228,7 +228,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
+                          ? Colors.white.withValues(alpha: 0.7)
                           : partyColor,
                       fontWeight: FontWeight.w500,
                     ),
@@ -367,7 +367,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1976D2).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFF1976D2).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,7 +389,7 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
                 Icon(
                   Icons.check_circle_outline,
                   size: 20,
-                  color: const Color(0xFF1976D2).withOpacity(0.7),
+                  color: const Color(0xFF1976D2).withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -430,8 +430,8 @@ class _PoliticianFortunePageState extends State<PoliticianFortunePage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFF1976D2).withOpacity(0.1),
-            const Color(0xFF42A5F5).withOpacity(0.1),
+            const Color(0xFF1976D2).withValues(alpha: 0.1),
+            const Color(0xFF42A5F5).withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(16),

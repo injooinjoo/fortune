@@ -225,10 +225,11 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
   }
 
   void _proceed() {
-    // Navigate directly to card selection with question
-    context.push('/interactive/tarot', extra: {
+    
+    // Navigate to animated tarot flow
+    context.push('/interactive/tarot/animated-flow', extra: {
       'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text,
-      'skipSpreadSelection': true,  // Skip spread selection, let user select cards first
+      'heroTag': 'daily-fortune-${DateTime.now().millisecondsSinceEpoch}',
     });
   }
 
@@ -346,35 +347,78 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
           ),
           const SizedBox(height: 32),
           
-          // Start button
-          SizedBox(
-            width: double.infinity,
-            child: GlassButton(
-              onPressed: _proceed,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.purple,
-                  Colors.indigo,
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.shuffle, size: 20 * widget.fontScale),
-                    const SizedBox(width: 8),
-                    Text(
-                      '카드 섞기',
-                      style: TextStyle(
-                        fontSize: 18 * widget.fontScale,
-                        fontWeight: FontWeight.bold,
-                      ),
+          // Start buttons
+          Column(
+            children: [
+              // Animated flow button
+              SizedBox(
+                width: double.infinity,
+                child: GlassButton(
+                  onPressed: _proceed,
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.orange.shade400,
+                      Colors.orange.shade600,
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
+                        const SizedBox(width: 8),
+                        Text(
+                          '애니메이션 타로 (신규)',
+                          style: TextStyle(
+                            fontSize: 18 * widget.fontScale,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 12),
+              // Classic flow button
+              SizedBox(
+                width: double.infinity,
+                child: GlassButton(
+                  onPressed: () {
+                    
+                    // Navigate directly to card selection with question
+                    context.push('/interactive/tarot', extra: {
+                      'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text,
+                      'skipSpreadSelection': true,  // Skip spread selection, let user select cards first
+                    });
+                  },
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.purple,
+                      Colors.indigo,
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.shuffle, size: 20 * widget.fontScale),
+                        const SizedBox(width: 8),
+                        Text(
+                          '클래식 타로',
+                          style: TextStyle(
+                            fontSize: 18 * widget.fontScale,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

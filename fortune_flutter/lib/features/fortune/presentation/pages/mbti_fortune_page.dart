@@ -684,10 +684,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.purple.withOpacity(0.1),
+        color: Colors.purple.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.purple.withOpacity(0.3),
+          color: Colors.purple.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -717,7 +717,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             fortuneData['message'] as String,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               height: 1.5,
             ),
           ),
@@ -750,10 +750,10 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -773,7 +773,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
             value,
             style: TextStyle(
               fontSize: 11,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],

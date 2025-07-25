@@ -80,7 +80,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -181,7 +181,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFE91E63).withOpacity(0.3),
+                        color: const Color(0xFFE91E63).withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -196,8 +196,8 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                   CircleAvatar(
                     radius: 30,
                     backgroundColor: isSelected 
-                        ? Colors.white.withOpacity(0.2)
-                        : const Color(0xFFE91E63).withOpacity(0.1),
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : const Color(0xFFE91E63).withValues(alpha: 0.1),
                     child: Text(
                       influencer['name']![0],
                       style: TextStyle(
@@ -226,7 +226,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.8)
+                          ? Colors.white.withValues(alpha: 0.8)
                           : AppColors.textSecondary,
                     ),
                   ),
@@ -235,7 +235,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
-                          ? Colors.white.withOpacity(0.7)
+                          ? Colors.white.withValues(alpha: 0.7)
                           : AppColors.textTertiary,
                     ),
                   ),
@@ -352,7 +352,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE91E63).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFE91E63).withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
