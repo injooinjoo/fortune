@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui';
+import 'dart:math';
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../core/constants/tarot_minor_arcana.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
@@ -122,20 +123,88 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     // Header
                     _buildHeader(cardInfo),
                     
-                    // Main content
+                    // Main content with navigation arrows
                     Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            _currentPage = index;
-                          });
-                        },
+                      child: Stack(
                         children: [
-                          _buildCardImagePage(cardInfo),
-                          _buildSymbolismPage(cardInfo),
-                          _buildMeaningsPage(cardInfo),
-                          _buildAdvicePage(cardInfo),
+                          PageView(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentPage = index;
+                              });
+                            },
+                            children: [
+                              _buildCardImagePage(cardInfo),
+                              _buildStoryPage(cardInfo),
+                              _buildSymbolismPage(cardInfo),
+                              _buildMeaningsPage(cardInfo),
+                              _buildDeepInterpretationPage(cardInfo),
+                              _buildPracticalGuidePage(cardInfo),
+                              _buildRelationshipsPage(cardInfo),
+                              _buildAdvicePage(cardInfo),
+                            ],
+                          ),
+                          
+                          // Left arrow
+                          if (_currentPage > 0)
+                            Positioned(
+                              left: 8,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: IconButton(
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.5),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_back_ios,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _pageController.previousPage(
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          
+                          // Right arrow
+                          if (_currentPage < 7)
+                            Positioned(
+                              right: 8,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: IconButton(
+                                  icon: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withValues(alpha: 0.5),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    _pageController.nextPage(
+                                      duration: const Duration(milliseconds: 300),
+                                      curve: Curves.easeInOut,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -181,6 +250,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   }
 
   Widget _buildHeader(Map<String, dynamic> cardInfo) {
+    final pageNames = [
+      '카드 이미지',
+      '스토리',
+      '상징',
+      '의미',
+      '심화 해석',
+      '실천 가이드',
+      '관계성',
+      '조언',
+    ];
+    
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -210,6 +290,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               ),
             ),
           ],
+          const SizedBox(height: 8),
+          Text(
+            pageNames[_currentPage],
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withValues(alpha: 0.7),
+            ),
+          ),
         ],
       ),
     );
@@ -522,23 +610,139 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   }
 
   Widget _buildPageIndicator() {
+    final pageNames = [
+      '이미지',
+      '스토리',
+      '상징',
+      '의미',
+      '심화해석',
+      '실천',
+      '관계',
+      '조언',
+    ];
+    
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(4, (index) {
-          return Container(
-            width: 8,
-            height: 8,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _currentPage == index
-                  ? Colors.purple
-                  : Colors.white.withValues(alpha: 0.3),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            Colors.black.withValues(alpha: 0.3),
+          ],
+        ),
+      ),
+      child: Column(
+        children: [
+          // Page dots with labels
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(8, (index) {
+                final isActive = _currentPage == index;
+                return GestureDetector(
+                  onTap: () {
+                    _pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Column(
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: isActive ? 40 : 32,
+                          height: isActive ? 40 : 32,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isActive
+                                ? Colors.purple
+                                : Colors.white.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: isActive
+                                  ? Colors.purple.shade300
+                                  : Colors.white.withValues(alpha: 0.3),
+                              width: 2,
+                            ),
+                            boxShadow: isActive
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.purple.withValues(alpha: 0.5),
+                                      blurRadius: 8,
+                                      spreadRadius: 2,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${index + 1}',
+                              style: TextStyle(
+                                color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                                fontSize: isActive ? 14 : 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          pageNames[index],
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isActive 
+                                ? Colors.purple 
+                                : Colors.white.withValues(alpha: 0.5),
+                            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ),
-          );
-        }),
+          ),
+          
+          // Swipe hint with animation
+          if (_currentPage == 0) ...[
+            const SizedBox(height: 12),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: 1),
+              duration: const Duration(seconds: 2),
+              curve: Curves.easeInOut,
+              builder: (context, value, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Transform.translate(
+                      offset: Offset(sin(value * pi * 2) * 10, 0),
+                      child: Icon(
+                        Icons.swipe,
+                        size: 20,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '좌우로 스와이프하거나 숫자를 탭하세요',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -784,16 +988,584 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
   }
 
   String _getCardImagePath() {
+    // Default to rider_waite deck
+    const deckPath = 'decks/rider_waite';
+    
     if (widget.cardIndex < 22) {
-      return 'major_${widget.cardIndex.toString().padLeft(2, '0')}.jpg';
+      // Major Arcana
+      final cardNames = [
+        'fool', 'magician', 'high_priestess', 'empress', 'emperor',
+        'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
+        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
+      ];
+      return '$deckPath/major/${widget.cardIndex.toString().padLeft(2, '0')}_${cardNames[widget.cardIndex]}.jpg';
     } else if (widget.cardIndex < 36) {
-      return 'wands_${(widget.cardIndex - 21).toString().padLeft(2, '0')}.jpg';
+      // Wands
+      final wandsIndex = widget.cardIndex - 21;
+      final cardName = wandsIndex <= 10 ? 'of_wands' : _getCourtCardName(wandsIndex, 'wands');
+      return '$deckPath/wands/${wandsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else if (widget.cardIndex < 50) {
-      return 'cups_${(widget.cardIndex - 35).toString().padLeft(2, '0')}.jpg';
+      // Cups
+      final cupsIndex = widget.cardIndex - 35;
+      final cardName = cupsIndex <= 10 ? 'of_cups' : _getCourtCardName(cupsIndex, 'cups');
+      return '$deckPath/cups/${cupsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else if (widget.cardIndex < 64) {
-      return 'swords_${(widget.cardIndex - 49).toString().padLeft(2, '0')}.jpg';
+      // Swords
+      final swordsIndex = widget.cardIndex - 49;
+      final cardName = swordsIndex <= 10 ? 'of_swords' : _getCourtCardName(swordsIndex, 'swords');
+      return '$deckPath/swords/${swordsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else {
-      return 'pentacles_${(widget.cardIndex - 63).toString().padLeft(2, '0')}.jpg';
+      // Pentacles
+      final pentaclesIndex = widget.cardIndex - 63;
+      final cardName = pentaclesIndex <= 10 ? 'of_pentacles' : _getCourtCardName(pentaclesIndex, 'pentacles');
+      return '$deckPath/pentacles/${pentaclesIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     }
+  }
+
+  String _getCourtCardName(int index, String suit) {
+    switch (index) {
+      case 11: return 'page_of_$suit';
+      case 12: return 'knight_of_$suit';
+      case 13: return 'queen_of_$suit';
+      case 14: return 'king_of_$suit';
+      default: return 'of_$suit';
+    }
+  }
+
+  // New page builders for extended content
+  Widget _buildStoryPage(Map<String, dynamic> cardInfo) {
+    final tarotCardInfo = widget.cardIndex < 22 
+        ? TarotMetadata.majorArcana[widget.cardIndex]
+        : null;
+    
+    if (tarotCardInfo?.story == null) {
+      return _buildComingSoonPage('스토리', '곧 업데이트됩니다');
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '카드의 이야기',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          GlassContainer(
+            padding: const EdgeInsets.all(20),
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepPurple.withValues(alpha: 0.1),
+                Colors.indigo.withValues(alpha: 0.1),
+              ],
+            ),
+            child: Text(
+              tarotCardInfo!.story!,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                height: 1.8,
+              ),
+            ),
+          ),
+          
+          if (tarotCardInfo.mythology != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '신화적 연결',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.amber.withValues(alpha: 0.1),
+                  Colors.orange.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Text(
+                tarotCardInfo.mythology!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  height: 1.8,
+                ),
+              ),
+            ),
+          ],
+          
+          if (tarotCardInfo.historicalContext != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '역사적 배경',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.teal.withValues(alpha: 0.1),
+                  Colors.cyan.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Text(
+                tarotCardInfo.historicalContext!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  height: 1.8,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeepInterpretationPage(Map<String, dynamic> cardInfo) {
+    final tarotCardInfo = widget.cardIndex < 22 
+        ? TarotMetadata.majorArcana[widget.cardIndex]
+        : null;
+    
+    if (tarotCardInfo?.psychologicalMeaning == null && 
+        tarotCardInfo?.spiritualMeaning == null) {
+      return _buildComingSoonPage('심화 해석', '곧 업데이트됩니다');
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (tarotCardInfo?.psychologicalMeaning != null) ...[
+            const Text(
+              '심리학적 해석',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.purple.withValues(alpha: 0.1),
+                  Colors.pink.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.psychology,
+                    size: 48,
+                    color: Colors.purple,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    tarotCardInfo!.psychologicalMeaning!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
+          if (tarotCardInfo?.spiritualMeaning != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '영적 의미',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.indigo.withValues(alpha: 0.1),
+                  Colors.deepPurple.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.self_improvement,
+                    size: 48,
+                    color: Colors.indigo,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    tarotCardInfo!.spiritualMeaning!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPracticalGuidePage(Map<String, dynamic> cardInfo) {
+    final tarotCardInfo = widget.cardIndex < 22 
+        ? TarotMetadata.majorArcana[widget.cardIndex]
+        : null;
+    
+    if (tarotCardInfo?.dailyApplications == null && 
+        tarotCardInfo?.meditation == null &&
+        tarotCardInfo?.affirmations == null) {
+      return _buildComingSoonPage('실천 가이드', '곧 업데이트됩니다');
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (tarotCardInfo?.dailyApplications != null) ...[
+            const Text(
+              '일상 적용법',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...tarotCardInfo!.dailyApplications!.map((application) => 
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: GlassContainer(
+                  padding: const EdgeInsets.all(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.green.withValues(alpha: 0.1),
+                      Colors.teal.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.check_circle,
+                        color: Colors.green,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          application,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ).toList(),
+          ],
+          
+          if (tarotCardInfo?.meditation != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '명상 가이드',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue.withValues(alpha: 0.1),
+                  Colors.cyan.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.spa,
+                    size: 48,
+                    color: Colors.blue,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    tarotCardInfo!.meditation!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          
+          if (tarotCardInfo?.affirmations != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '확언문',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...tarotCardInfo!.affirmations!.map((affirmation) => 
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: GlassContainer(
+                  padding: const EdgeInsets.all(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.pink.withValues(alpha: 0.1),
+                      Colors.purple.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      '"$affirmation"',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ).toList(),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRelationshipsPage(Map<String, dynamic> cardInfo) {
+    final tarotCardInfo = widget.cardIndex < 22 
+        ? TarotMetadata.majorArcana[widget.cardIndex]
+        : null;
+    
+    if (tarotCardInfo?.cardCombinations == null) {
+      return _buildComingSoonPage('카드 조합', '곧 업데이트됩니다');
+    }
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '다른 카드와의 조합',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          ...tarotCardInfo!.cardCombinations!.entries.map((entry) => 
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: GlassContainer(
+                padding: const EdgeInsets.all(20),
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.deepPurple.withValues(alpha: 0.1),
+                    Colors.purple.withValues(alpha: 0.1),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.link,
+                          color: Colors.purple,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            entry.key,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      entry.value,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ).toList(),
+          
+          if (tarotCardInfo.colorSymbolism != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '색채 상징',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GlassContainer(
+              padding: const EdgeInsets.all(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.orange.withValues(alpha: 0.1),
+                  Colors.yellow.withValues(alpha: 0.1),
+                ],
+              ),
+              child: Text(
+                tarotCardInfo.colorSymbolism!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  height: 1.8,
+                ),
+              ),
+            ),
+          ],
+          
+          if (tarotCardInfo.crystals != null) ...[
+            const SizedBox(height: 24),
+            const Text(
+              '연관 크리스탈',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ...tarotCardInfo.crystals!.map((crystal) => 
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                child: GlassContainer(
+                  padding: const EdgeInsets.all(16),
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.cyan.withValues(alpha: 0.1),
+                      Colors.blue.withValues(alpha: 0.1),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.diamond,
+                        color: Colors.cyan,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          crystal,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ).toList(),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComingSoonPage(String title, String message) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.hourglass_empty,
+            size: 64,
+            color: Colors.purple,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'dart:math' show Random;
 
 class BottomTarotDeckWidget extends StatefulWidget {
-  final Function(int) onCardSelected;
+  final Function(int, Offset, Size) onCardSelected;
   
   const BottomTarotDeckWidget({
     Key? key,
@@ -19,10 +20,12 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   late AnimationController _slideUpController;
   late AnimationController _fanController;
   late AnimationController _rotationController;
+  late AnimationController _scaleController;
   
   late Animation<double> _slideUpAnimation;
   late Animation<double> _fanAnimation;
   late Animation<double> _rotationAnimation;
+  late Animation<double> _scaleAnimation;
   
   final int cardCount = 30;
   final double cardWidth = 60;
@@ -31,10 +34,23 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   double _dragStartX = 0;
   double _currentRotation = 0;
   int _selectedIndex = 15; // Center card selected by default
+  int? _animatingToIndex; // Track which card is being animated to
+  
+  // GlobalKeys to track card positions
+  late List<GlobalKey> _cardKeys;
+  
+  // Random card mappings - each deck position maps to a tarot card
+  late List<int> _cardMappings;
   
   @override
   void initState() {
     super.initState();
+    
+    // Initialize card keys
+    _cardKeys = List.generate(cardCount, (index) => GlobalKey());
+    
+    // Initialize card mappings with random tarot cards (0-21 for Major Arcana)
+    _initializeCardMappings();
     
     // Slide up animation
     _slideUpController = AnimationController(
@@ -70,12 +86,27 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       vsync: this,
     );
     
+    // Initialize with current rotation
     _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.0,
+      begin: _currentRotation,
+      end: _currentRotation,
     ).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut,
+      curve: Curves.fastOutSlowIn,
+    ));
+    
+    // Scale animation for clicked cards
+    _scaleController = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+    
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeInOut,
     ));
     
     // Start animations
@@ -87,11 +118,18 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     await _fanController.forward();
   }
   
+  void _initializeCardMappings() {
+    final random = Random();
+    // Generate random card indices from 0-21 (22 Major Arcana cards)
+    _cardMappings = List.generate(cardCount, (index) => random.nextInt(22));
+  }
+  
   @override
   void dispose() {
     _slideUpController.dispose();
     _fanController.dispose();
     _rotationController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
   
@@ -101,7 +139,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     final screenHeight = MediaQuery.of(context).size.height;
     
     return AnimatedBuilder(
-      animation: Listenable.merge([_slideUpAnimation, _fanAnimation, _rotationAnimation]),
+      animation: Listenable.merge([_slideUpAnimation, _fanAnimation, _rotationAnimation, _scaleAnimation]),
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(0, screenHeight * 0.3 * _slideUpAnimation.value),
@@ -116,6 +154,10 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               });
             },
             onHorizontalDragEnd: (details) {
+              // Clear any animation state when dragging
+              setState(() {
+                _animatingToIndex = null;
+              });
               // Snap to nearest card
               final velocity = details.velocity.pixelsPerSecond.dx;
               _animateToNearestCard(velocity);
@@ -124,9 +166,18 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               height: cardHeight * 2.5,
               child: Stack(
                 alignment: Alignment.bottomCenter,
-                children: List.generate(cardCount, (index) {
-                  return _buildCard(index, screenWidth);
-                }),
+                children: [
+                  ...List.generate(cardCount, (index) {
+                    return _buildCard(index, screenWidth);
+                  }),
+                  // Swipe indicator
+                  Positioned(
+                    bottom: -20,
+                    left: 0,
+                    right: 0,
+                    child: _buildSwipeIndicator(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -141,20 +192,35 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     
     // Calculate arc position
     final baseAngle = normalizedIndex * math.pi * 0.5; // 90 degree spread
-    final angle = baseAngle + _currentRotation;
+    // Use animated rotation value for smooth movement
+    final animatedRotation = _rotationController.isAnimating 
+        ? _rotationAnimation.value 
+        : _currentRotation;
+    final angle = baseAngle + animatedRotation;
     
     // Calculate position on the arc
     final radius = screenWidth * 0.7; // Radius of the arc
     final x = radius * math.sin(angle);
-    final y = -radius * math.cos(angle) + radius * 0.8; // Lift cards up
+    var y = -radius * math.cos(angle) + radius * 0.8; // Lift cards up
     
     // Check if this is the center card
     final distanceFromCenter = (angle).abs();
     final isCenter = distanceFromCenter < 0.1;
     final scale = 1.0 - (distanceFromCenter * 0.2).clamp(0.0, 0.4);
     
+    // Lift center card higher
+    if (isCenter) {
+      y -= 15; // Lift center card 15 pixels higher
+    }
+    
     // Calculate z-index (cards in front should be on top)
     final zIndex = (cardCount - distanceFromCenter * 10).round();
+    
+    // Apply scale animation when this card is being animated to
+    double animationScale = scale;
+    if (_animatingToIndex == index) {
+      animationScale *= _scaleAnimation.value;
+    }
     
     return Positioned(
       bottom: 0,
@@ -164,20 +230,35 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
         transform: Matrix4.identity()
           ..translate(x * fanProgress, y * fanProgress, zIndex.toDouble())
           ..rotateZ(angle * 0.3 * fanProgress)
-          ..scale(scale * fanProgress),
+          ..scale(animationScale * fanProgress),
         child: Opacity(
           opacity: (0.3 + fanProgress * 0.7).clamp(0.0, 1.0),
           child: GestureDetector(
             onTap: () {
-              if (isCenter) {
+              HapticFeedback.selectionClick();
+              
+              if (isCenter && _selectedIndex == index) {
+                // If already centered and clicked again, trigger selection
                 HapticFeedback.mediumImpact();
-                widget.onCardSelected(index);
+                final RenderBox? renderBox = _cardKeys[index].currentContext?.findRenderObject() as RenderBox?;
+                if (renderBox != null) {
+                  final position = renderBox.localToGlobal(Offset.zero);
+                  final size = renderBox.size;
+                  // Pass the actual tarot card index from mappings
+                  widget.onCardSelected(_cardMappings[index], position, size);
+                }
               } else {
-                // Animate to this card
+                // Always animate to clicked card
                 _animateToCard(index);
               }
             },
-            child: _buildTarotCard(isCenter),
+            child: Container(
+              key: _cardKeys[index],
+              child: Hero(
+                tag: 'tarot-card-$index',
+                child: _buildTarotCard(isCenter, index),
+              ),
+            ),
           ),
         ),
       ),
@@ -185,20 +266,43 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   }
   
   void _animateToCard(int index) {
+    // Cancel any ongoing animations
+    _rotationController.stop();
+    _scaleController.stop();
+    
+    // Set the animating index for scale effect
+    setState(() {
+      _animatingToIndex = index;
+    });
+    
+    // Trigger scale animation
+    _scaleController.forward(from: 0).then((_) {
+      _scaleController.reverse();
+    });
+    
     final targetRotation = -(index - cardCount / 2) / (cardCount / 2) * math.pi * 0.5;
+    final rotationDifference = (targetRotation - _currentRotation).abs();
+    
+    // Faster dynamic duration based on rotation distance
+    final duration = Duration(
+      milliseconds: (200 + rotationDifference * 100).clamp(200, 400).toInt(),
+    );
+    
+    _rotationController.duration = duration;
     
     _rotationAnimation = Tween<double>(
       begin: _currentRotation,
       end: targetRotation,
     ).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut,
+      curve: Curves.fastOutSlowIn, // Snappier response
     ));
     
     _rotationController.forward(from: 0).then((_) {
       setState(() {
         _currentRotation = targetRotation;
         _selectedIndex = index;
+        _animatingToIndex = null; // Clear animating index
       });
     });
   }
@@ -206,30 +310,69 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   void _animateToNearestCard(double velocity) {
     // Calculate which card should be centered based on current rotation
     final cardAngle = math.pi * 0.5 / cardCount;
-    final nearestCardIndex = ((-_currentRotation / cardAngle) + cardCount / 2).round().clamp(0, cardCount - 1);
+    int nearestCardIndex = ((-_currentRotation / cardAngle) + cardCount / 2).round();
+    
+    // Apply velocity bias for more natural feel
+    if (velocity.abs() > 500) {
+      nearestCardIndex += velocity > 0 ? -1 : 1;
+    }
+    
+    // Ensure index is within bounds
+    nearestCardIndex = nearestCardIndex.clamp(0, cardCount - 1);
     
     _animateToCard(nearestCardIndex);
   }
   
-  Widget _buildTarotCard(bool isCenter) {
+  Widget _buildSwipeIndicator() {
+    return AnimatedBuilder(
+      animation: _fanAnimation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _fanAnimation.value * 0.4,
+          child: CustomPaint(
+            size: const Size(100, 30),
+            painter: SwipeIndicatorPainter(),
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildTarotCard(bool isCenter, int index) {
+    // Enhanced glow for animating cards
+    final isAnimating = _animatingToIndex == index;
+    
     return Container(
       width: cardWidth,
       height: cardHeight,
       margin: const EdgeInsets.symmetric(horizontal: 3),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        boxShadow: isCenter ? [
-          BoxShadow(
-            color: Colors.blue.withValues(alpha: 0.6),
-            blurRadius: 20,
-            spreadRadius: 5,
-          ),
-        ] : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
+        boxShadow: [
+          if (isAnimating) ...[
+            BoxShadow(
+              color: Colors.purple.withValues(alpha: 0.8 * _scaleAnimation.value),
+              blurRadius: 30,
+              spreadRadius: 8,
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.4 * _scaleAnimation.value),
+              blurRadius: 15,
+              spreadRadius: 2,
+            ),
+          ] else if (isCenter) ...[
+            BoxShadow(
+              color: Colors.blue.withValues(alpha: 0.6),
+              blurRadius: 20,
+              spreadRadius: 5,
+            ),
+          ] else ...[
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ],
       ),
       child: ClipRRect(
@@ -358,4 +501,59 @@ class TarotCardBackPainter extends CustomPainter {
   
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class SwipeIndicatorPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..strokeCap = StrokeCap.round;
+    
+    final centerX = size.width / 2;
+    final centerY = size.height / 2;
+    
+    // Left arrow
+    final leftPath = Path();
+    leftPath.moveTo(centerX - 30, centerY);
+    leftPath.quadraticBezierTo(
+      centerX - 40, centerY - 5,
+      centerX - 45, centerY - 10,
+    );
+    leftPath.moveTo(centerX - 30, centerY);
+    leftPath.quadraticBezierTo(
+      centerX - 40, centerY + 5,
+      centerX - 45, centerY + 10,
+    );
+    
+    // Right arrow
+    final rightPath = Path();
+    rightPath.moveTo(centerX + 30, centerY);
+    rightPath.quadraticBezierTo(
+      centerX + 40, centerY - 5,
+      centerX + 45, centerY - 10,
+    );
+    rightPath.moveTo(centerX + 30, centerY);
+    rightPath.quadraticBezierTo(
+      centerX + 40, centerY + 5,
+      centerX + 45, centerY + 10,
+    );
+    
+    // Draw curved lines
+    final curvePath = Path();
+    curvePath.moveTo(centerX - 25, centerY);
+    curvePath.quadraticBezierTo(
+      centerX, centerY - 5,
+      centerX + 25, centerY,
+    );
+    
+    canvas.drawPath(leftPath, paint);
+    canvas.drawPath(rightPath, paint);
+    canvas.drawPath(curvePath, paint);
+  }
+  
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

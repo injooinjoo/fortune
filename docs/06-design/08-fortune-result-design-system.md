@@ -1,6 +1,6 @@
 # 🎨 Fortune 앱 운세 결과 디자인 시스템
 
-> **최종 업데이트**: 2025년 1월 16일
+> **최종 업데이트**: 2025년 7월 26일
 > **작성자**: Fortune Design Team
 
 ## 📚 목차
@@ -19,23 +19,30 @@
 
 ### 핵심 디자인 철학
 - **Glass Morphism**: 투명도와 블러 효과를 활용한 현대적 디자인
-- **Instagram 스타일**: 친숙하고 트렌디한 비주얼 언어
+- **모노크롬 테마**: 깔끔하고 세련된 흑백 기반 디자인
+- **Instagram 스타일**: 친숙하고 미니멀한 비주얼 언어
 - **정보의 점진적 공개**: 스크롤하며 자연스럽게 정보 습득
-- **감성적 연결**: 운세에 대한 기대감과 설렘을 시각화
+- **Less is More**: 불필요한 장식을 제거한 본질적 디자인
 
 ### 색상 시스템
 
 ```dart
-// 기본 색상 팔레트
-static const Map<String, List<Color>> categoryColors = {
-  'love': [Color(0xFFEC4899), Color(0xFFDB2777)],      // 핑크 그라데이션
-  'career': [Color(0xFF6366F1), Color(0xFF4F46E5)],    // 인디고 그라데이션
-  'money': [Color(0xFF10B981), Color(0xFF059669)],     // 그린 그라데이션
-  'health': [Color(0xFFF59E0B), Color(0xFFD97706)],    // 오렌지 그라데이션
-  'traditional': [Color(0xFFDC2626), Color(0xFFB91C1C)], // 레드 그라데이션
-  'personality': [Color(0xFF8B5CF6), Color(0xFF7C3AED)], // 퍼플 그라데이션
-  'lifestyle': [Color(0xFF06B6D4), Color(0xFF0891B2)],   // 시안 그라데이션
-};
+// 모노크롬 색상 팔레트
+static const Color primary = Color(0xFF000000);          // 순수 검정
+static const Color primaryLight = Color(0xFF333333);     // 다크 그레이
+static const Color primaryDark = Color(0xFF1A1A1A);      // 매우 진한 그레이
+
+// 배경 색상
+static const Color background = Color(0xFFFAFAFA);       // 밝은 회색 배경
+static const Color surface = Color(0xFFFFFFFF);          // 순수 흰색
+static const Color cardBackground = Color(0xFFF6F6F6);   // 카드 배경
+
+// 텍스트 색상
+static const Color textPrimary = Color(0xFF262626);      // Instagram 블랙
+static const Color textSecondary = Color(0xFF8E8E8E);    // Instagram 그레이
+
+// 액센트 색상 (제한적 사용)
+static const Color secondary = Color(0xFFF56040);        // Instagram 오렌지
 ```
 
 ---
@@ -80,31 +87,25 @@ GlassContainer(
 
 ---
 
-## 🎨 카테고리별 디자인
+## 🎨 모든 카테고리 통합 디자인
 
-### 💕 연애/인연 카테고리
-- **메인 색상**: 핑크 그라데이션
-- **아이콘**: 하트, 링, 커플
-- **특수 효과**: 하트 파티클, 펄스 애니메이션
-- **추가 요소**: 매칭률 게이지, 데이트 추천 카드
+### 통일된 비주얼 언어
+- **색상**: 모든 카테고리가 동일한 모노크롬 테마 사용
+- **구분**: 아이콘과 레이아웃으로 카테고리 구별
+- **일관성**: 동일한 카드 스타일과 타이포그래피
+- **집중도**: 색상 대신 콘텐츠에 집중할 수 있는 환경
 
-### 💼 직업/사업 카테고리
-- **메인 색상**: 인디고 그라데이션
-- **아이콘**: 브리프케이스, 차트, 트로피
-- **특수 효과**: 상승 그래프 애니메이션
-- **추가 요소**: 성공 가능성 바, 타이밍 분석
+### 카테고리별 아이콘 시스템
+- **연애/인연**: 하트, 링, 커플 아이콘 (모노크롬)
+- **직업/사업**: 브리프케이스, 차트, 트로피 아이콘
+- **재물/투자**: 동전, 지갑, 다이아몬드 아이콘
+- **건강/라이프**: 하트비트, 요가, 러닝 아이콘
 
-### 💰 재물/투자 카테고리
-- **메인 색상**: 그린 그라데이션
-- **아이콘**: 동전, 지갑, 다이아몬드
-- **특수 효과**: 금화 떨어지는 애니메이션
-- **추가 요소**: 재물 흐름도, 투자 타이밍
-
-### 🏥 건강/라이프 카테고리
-- **메인 색상**: 오렌지 그라데이션
-- **아이콘**: 하트비트, 요가, 러닝
-- **특수 효과**: 펄스 웨이브 애니메이션
-- **추가 요소**: 건강 지수, 활력 게이지
+### 공통 애니메이션 효과
+- **진입**: fadeIn + scaleTransition (모든 카테고리 동일)
+- **상호작용**: 0.95 scale on tap
+- **데이터 시각화**: 모노크롬 차트와 그래프
+- **로딩**: 통일된 shimmer 효과
 
 ---
 

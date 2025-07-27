@@ -16,7 +16,11 @@ class Environment {
     if (kReleaseMode) {
       return production;
     }
-    return dotenv.env['ENVIRONMENT'] ?? development;
+    try {
+      return dotenv.env['ENVIRONMENT'] ?? development;
+    } catch (e) {
+      return development;
+    }
   }
   
   // API 설정
@@ -113,7 +117,24 @@ class Environment {
   
   // 환경 변수 초기화
   static Future<void> initialize() async {
-    await dotenv.load(fileName: _envFile);
+    try {
+      await dotenv.load(fileName: _envFile);
+    } catch (e) {
+      // 웹 환경에서 .env 파일을 찾을 수 없을 때의 대체 처리
+      if (kIsWeb) {
+        print('Warning: Could not load .env file in web environment. Using default values.');
+        // 기본값 설정
+        dotenv.env['ENVIRONMENT'] = development;
+        dotenv.env['SUPABASE_URL'] = 'https://hayjukwfcsdmppairazc.supabase.co';
+        dotenv.env['SUPABASE_ANON_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhheWp1a3dmY3NkbXBwYWlyYXpjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MTU4MzIsImV4cCI6MjA2Nzk5MTgzMn0.o5h68r7OZ_W9NE49-b-0pKQIaUFG4oZCXWRwhnmIqdI';
+        dotenv.env['API_BASE_URL'] = 'http://localhost:3000';
+        dotenv.env['EDGE_FUNCTIONS_URL'] = 'https://hayjukwfcsdmppairazc.supabase.co/functions/v1';
+        dotenv.env['USE_EDGE_FUNCTIONS'] = 'false';
+        return;
+      } else {
+        rethrow;
+      }
+    }
     _validateRequiredVariables();
   }
   

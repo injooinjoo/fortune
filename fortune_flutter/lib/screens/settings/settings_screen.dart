@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../presentation/providers/theme_provider.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../services/storage_service.dart';
@@ -27,19 +28,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         (themeMode == ThemeMode.system && 
          MediaQuery.of(context).platformBrightness == Brightness.dark);
     
+    final fortuneTheme = context.fortuneTheme;
+    
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.getCardBackground(context),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: Icon(Icons.arrow_back, color: fortuneTheme.primaryText),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: Text(
           '설정',
           style: TextStyle(
-            color: AppColors.textPrimary,
+            color: fortuneTheme.primaryText,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -54,11 +57,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: fortuneTheme.cardSurface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -128,11 +131,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: fortuneTheme.cardSurface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -194,11 +197,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: fortuneTheme.cardSurface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -252,11 +255,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: fortuneTheme.cardSurface,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),

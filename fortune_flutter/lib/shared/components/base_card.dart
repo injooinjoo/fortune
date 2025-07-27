@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
+import '../../core/utils/theme_utils.dart';
 
 /// Base card widget that enforces consistent design guidelines
-/// Background: #f6f6f6 (AppColors.cardBackground)
-/// Card color: #ffffff (AppColors.cardSurface)
+/// Light mode: Background #f6f6f6, Card #ffffff
+/// Dark mode: Background #0A0A0A, Card #1C1C1C
 class BaseCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -34,20 +36,17 @@ class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultShadow = [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.04),
-        blurRadius: 10,
-        offset: const Offset(0, 2),
-      ),
-    ];
+    final fortuneTheme = context.fortuneTheme;
+    final defaultShadow = ThemeUtils.getCardShadow(context);
+    
+    final cardColor = backgroundColor ?? fortuneTheme.cardSurface;
 
     final content = Container(
       width: width,
       height: height,
       padding: padding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: gradient == null ? (backgroundColor ?? AppColors.cardSurface) : null,
+        color: gradient == null ? cardColor : null,
         gradient: gradient,
         borderRadius: borderRadius ?? BorderRadius.circular(16),
         border: border,
@@ -113,7 +112,9 @@ class SectionCard extends StatelessWidget {
             Container(
               padding: padding ?? const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: headerColor ?? AppColors.primary.withValues(alpha: 0.05),
+                color: headerColor ?? (ThemeUtils.isDarkMode(context) 
+                  ? AppColors.primaryDarkMode.withValues(alpha: 0.1)
+                  : AppColors.primary.withValues(alpha: 0.05)),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
@@ -136,8 +137,8 @@ class SectionCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          style: TextStyle(
+                            color: context.fortuneTheme.subtitleText,
                             fontSize: 14,
                           ),
                         ),

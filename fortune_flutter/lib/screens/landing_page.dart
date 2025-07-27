@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -653,6 +654,94 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         children: [
+          // 몽환적인 배경 효과
+          // 떠다니는 원형 보케 효과
+          ...List.generate(15, (index) {
+            final random = math.Random(index);
+            final size = random.nextDouble() * 80 + 40;
+            final opacity = random.nextDouble() * 0.1 + 0.05;
+            final duration = random.nextInt(10) + 15;
+            
+            return Positioned(
+              left: random.nextDouble() * MediaQuery.of(context).size.width,
+              top: random.nextDouble() * MediaQuery.of(context).size.height,
+              child: Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.purple.withOpacity(opacity)
+                          : Colors.blue.withOpacity(opacity),
+                      Theme.of(context).brightness == Brightness.dark
+                          ? Colors.purple.withOpacity(opacity * 0.5)
+                          : Colors.blue.withOpacity(opacity * 0.5),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              )
+                .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(
+                  begin: -30,
+                  end: 30,
+                  duration: Duration(seconds: duration),
+                  curve: Curves.easeInOut,
+                )
+                .moveY(
+                  begin: -20,
+                  end: 20,
+                  duration: Duration(seconds: duration + 2),
+                  curve: Curves.easeInOut,
+                )
+                .fadeIn(duration: 2000.ms),
+            );
+          }),
+          
+          // 빛나는 작은 입자들
+          ...List.generate(20, (index) {
+            final random = math.Random(index + 100);
+            final duration = random.nextInt(5) + 10;
+            
+            return Positioned(
+              left: random.nextDouble() * MediaQuery.of(context).size.width,
+              top: random.nextDouble() * MediaQuery.of(context).size.height,
+              child: Container(
+                width: 3,
+                height: 3,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withOpacity(0.3)
+                      : Colors.black.withOpacity(0.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+              )
+                .animate(onPlay: (controller) => controller.repeat())
+                .fadeIn(duration: 1000.ms)
+                .then(delay: Duration(seconds: random.nextInt(3)))
+                .fadeOut(duration: 1000.ms)
+                .then(delay: Duration(seconds: random.nextInt(2)))
+                .moveY(
+                  begin: 0,
+                  end: -50,
+                  duration: Duration(seconds: duration),
+                  curve: Curves.linear,
+                ),
+            );
+          }),
+          
           SafeArea(
             child: Column(
               children: [
@@ -794,19 +883,6 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                   ),
                 ),
                 
-                // Bottom section
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text(
-                    '서비스를 이용하시려면 위의 방법 중 하나를 선택해주세요',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                    textAlign: TextAlign.center,
-                  ).animate()
-                    .fadeIn(delay: 1100.ms, duration: 600.ms),
-                ),
               ],
             ),
           ),

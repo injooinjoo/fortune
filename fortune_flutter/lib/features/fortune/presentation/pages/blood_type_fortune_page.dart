@@ -5,10 +5,8 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/toast.dart';
 import '../widgets/blood_type_compatibility_matrix.dart';
 import '../widgets/blood_type_personality_chart.dart';
-import '../../../../services/blood_type_analysis_service.dart';
 
 class BloodTypeFortunePage extends BaseFortunePage {
   const BloodTypeFortunePage({

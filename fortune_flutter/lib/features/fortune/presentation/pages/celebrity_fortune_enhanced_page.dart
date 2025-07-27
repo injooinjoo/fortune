@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
@@ -10,7 +9,6 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../data/models/celebrity.dart';
 import '../../../../presentation/providers/celebrity_provider.dart';
-import '../../../../core/theme/app_colors.dart';
 
 class CelebrityFortuneEnhancedPage extends ConsumerWidget {
   const CelebrityFortuneEnhancedPage({super.key});

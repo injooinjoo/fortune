@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import 'base_fortune_page_v2.dart';

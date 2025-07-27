@@ -175,7 +175,11 @@
       "Bash(git rm:*)",
       "Bash(xmllint:*)",
       "Bash(plutil:*)",
-      "Bash(gem list:*)"
+      "Bash(gem list:*)",
+      "Bash(awk:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(./run_web_debug.sh:*)",
+      "Bash(./run_ios.sh:*)"
     ],
     "deny": []
   },

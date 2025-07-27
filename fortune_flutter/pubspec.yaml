@@ -215,6 +215,12 @@ flutter:
     - assets/images/random_thumbnails/
     - assets/images/tarot/
     - assets/images/tarot/decks/
+    - assets/images/tarot/decks/rider_waite/
+    - assets/images/tarot/decks/rider_waite/major/
+    - assets/images/tarot/decks/rider_waite/cups/
+    - assets/images/tarot/decks/rider_waite/pentacles/
+    - assets/images/tarot/decks/rider_waite/swords/
+    - assets/images/tarot/decks/rider_waite/wands/
     - assets/fonts/
     - assets/icons/
 
@@ -264,19 +270,15 @@ flutter_launcher_icons:
 
 # Splash Screen Configuration
 flutter_native_splash:
-  color: "#FFD700"  # Gold background
-  image: assets/images/splash_logo.png
-  color_dark: "#1A1A1A"  # Dark mode background
-  image_dark: assets/images/splash_logo_dark.png
+  color: "#000000"  # Black background
+  color_dark: "#000000"  # Black background for dark mode too
   
   # Android 12+ specific
   android_12:
-    image: assets/images/splash_logo.png
-    image_dark: assets/images/splash_logo_dark.png
-    color: "#FFD700"
-    color_dark: "#1A1A1A"
-    icon_background_color: "#FFD700"
-    icon_background_color_dark: "#1A1A1A"
+    color: "#000000"
+    color_dark: "#000000"
+    icon_background_color: "#000000"
+    icon_background_color_dark: "#000000"
     
   # Platform specific options
   android: true

@@ -156,12 +156,12 @@ import '../features/support/presentation/pages/help_page.dart';
 import '../features/history/presentation/pages/fortune_history_page.dart';
 import '../features/feedback/presentation/pages/feedback_page.dart';
 import '../features/profile/presentation/pages/statistics_detail_page.dart';
-import '../screens/demo/fortune_snap_scroll_demo.dart';
+// import '../screens/demo/fortune_snap_scroll_demo.dart'; // File not found
 import '../features/profile/presentation/pages/profile_verification_page.dart';
 import '../features/misc/presentation/pages/consult_page.dart';
 import '../features/misc/presentation/pages/explore_page.dart';
 import '../features/misc/presentation/pages/special_page.dart';
-import '../features/misc/presentation/pages/test_ads_page.dart';
+// import '../features/misc/presentation/pages/test_ads_page.dart'; // File not found
 import '../features/misc/presentation/pages/wish_wall_page.dart';
 import '../features/trend/presentation/pages/trend_page.dart';
 import '../core/utils/profile_validation.dart';
@@ -172,7 +172,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final currentUri = Uri.base;
   final initialPath = currentUri.path.contains('/auth/callback') 
       ? currentUri.toString().replaceFirst(currentUri.origin, '')
-      : '/';
+      : '/splash';
   
   print('=== ROUTER INITIALIZATION ===');
   print('Current URI: $currentUri');
@@ -196,6 +196,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Define routes that don't require auth or profile
       final publicRoutes = [
         '/',
+        '/splash',
         '/signup',
         '/auth/callback',
         '/onboarding',
@@ -401,7 +402,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/demo/snap-scroll',
             name: 'demo-snap-scroll',
-            builder: (context, state) => const FortuneSnapScrollDemo(),
+            builder: (context, state) => const Scaffold(body: Center(child: Text('FortuneSnapScrollDemo not found'))),
           ),
           
           // Snap scroll fortune page
@@ -490,7 +491,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/test-ads',
             name: 'test-ads',
-            builder: (context, state) => const TestAdsPage(),
+            builder: (context, state) => const Scaffold(body: Center(child: Text('TestAdsPage not found'))),
           ),
           GoRoute(
             path: '/wish-wall',

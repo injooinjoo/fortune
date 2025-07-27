@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:fortune_flutter/main.dart' as app;
 import '../helpers/test_helpers.dart';
-import '../helpers/page_objects.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

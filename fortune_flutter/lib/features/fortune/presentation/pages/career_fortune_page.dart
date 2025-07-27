@@ -6,7 +6,6 @@ import '../../../../domain/entities/fortune.dart';
 import '../../../../presentation/providers/fortune_provider.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
-import '../../../../shared/components/toast.dart';
 
 class CareerFortunePage extends BaseFortunePage {
   const CareerFortunePage({

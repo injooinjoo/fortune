@@ -18,6 +18,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
   final Color errorColor;
   final Color successColor;
   final Color warningColor;
+  final Color cardBackground;
+  final Color cardSurface;
+  final Color shadowColor;
+  final Color primaryText;
+  final Color secondaryText;
 
   const FortuneThemeExtension({
     required this.scoreExcellent,
@@ -35,6 +40,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     required this.errorColor,
     required this.successColor,
     required this.warningColor,
+    required this.cardBackground,
+    required this.cardSurface,
+    required this.shadowColor,
+    required this.primaryText,
+    required this.secondaryText,
   });
 
   /// Light theme extension
@@ -54,6 +64,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     errorColor: Color(0xFFEF4444), // Red
     successColor: Color(0xFF10B981), // Green
     warningColor: Color(0xFFF59E0B), // Orange
+    cardBackground: Color(0xFFF6F6F6), // Light gray background
+    cardSurface: Color(0xFFFFFFFF), // White surface
+    shadowColor: Color(0x1A000000), // Light shadow
+    primaryText: Color(0xFF262626), // Dark text
+    secondaryText: Color(0xFF8E8E8E), // Gray text
   );
 
   /// Dark theme extension
@@ -64,15 +79,20 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     scorePoor: Color(0xFFF87171), // Lighter red for dark mode
     fortuneGradientStart: Color(0xFFE0E0E0), // Light gray
     fortuneGradientEnd: Color(0xFF999999), // Medium light gray
-    glassBackground: Color(0x14FFFFFF),
-    glassBorder: Color(0x1AFFFFFF),
-    subtitleText: Color(0xFF9CA3AF),
-    dividerColor: Color(0xFF374151),
-    shimmerBase: Color(0xFF374151),
-    shimmerHighlight: Color(0xFF4B5563),
+    glassBackground: Color(0x1A000000), // Dark glass background
+    glassBorder: Color(0x33FFFFFF), // Lighter border for dark mode
+    subtitleText: Color(0xFFB0B0B0), // Light gray for dark mode
+    dividerColor: Color(0xFF2D2D2D), // Dark divider
+    shimmerBase: Color(0xFF1C1C1C), // Dark shimmer base
+    shimmerHighlight: Color(0xFF2D2D2D), // Dark shimmer highlight
     errorColor: Color(0xFFF87171), // Lighter red for dark mode
     successColor: Color(0xFF34D399), // Lighter green for dark mode
     warningColor: Color(0xFFFBBF24), // Lighter orange for dark mode
+    cardBackground: Color(0xFF0A0A0A), // Very dark background
+    cardSurface: Color(0xFF1C1C1C), // Dark surface
+    shadowColor: Color(0x66000000), // Stronger shadow for dark mode
+    primaryText: Color(0xFFF5F5F5), // Off-white text
+    secondaryText: Color(0xFFB0B0B0), // Light gray text
   );
 
   @override
@@ -92,6 +112,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     Color? errorColor,
     Color? successColor,
     Color? warningColor,
+    Color? cardBackground,
+    Color? cardSurface,
+    Color? shadowColor,
+    Color? primaryText,
+    Color? secondaryText,
   }) {
     return FortuneThemeExtension(
       scoreExcellent: scoreExcellent ?? this.scoreExcellent,
@@ -109,6 +134,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       errorColor: errorColor ?? this.errorColor,
       successColor: successColor ?? this.successColor,
       warningColor: warningColor ?? this.warningColor,
+      cardBackground: cardBackground ?? this.cardBackground,
+      cardSurface: cardSurface ?? this.cardSurface,
+      shadowColor: shadowColor ?? this.shadowColor,
+      primaryText: primaryText ?? this.primaryText,
+      secondaryText: secondaryText ?? this.secondaryText,
     );
   }
 
@@ -133,6 +163,11 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       errorColor: Color.lerp(errorColor, other.errorColor, t)!,
       successColor: Color.lerp(successColor, other.successColor, t)!,
       warningColor: Color.lerp(warningColor, other.warningColor, t)!,
+      cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
+      cardSurface: Color.lerp(cardSurface, other.cardSurface, t)!,
+      shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
+      primaryText: Color.lerp(primaryText, other.primaryText, t)!,
+      secondaryText: Color.lerp(secondaryText, other.secondaryText, t)!,
     );
   }
 }

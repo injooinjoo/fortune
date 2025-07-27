@@ -1,4 +1,3 @@
-import 'dart:async';
 
 /// In-memory cache for user profiles to reduce repeated database queries
 class ProfileCache {

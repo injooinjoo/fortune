@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
-import '../../../../shared/components/app_header.dart';
-import '../../../../shared/components/bottom_navigation_bar.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/glassmorphism/glass_effects.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
-import '../../../../shared/components/toast.dart';
 
 class BiorhythmFortunePage extends ConsumerWidget {
   const BiorhythmFortunePage({super.key});

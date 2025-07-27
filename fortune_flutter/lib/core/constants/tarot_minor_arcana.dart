@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'tarot_metadata.dart';
 
 class TarotMinorArcana {

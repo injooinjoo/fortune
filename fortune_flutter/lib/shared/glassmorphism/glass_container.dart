@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme_extensions.dart';
+import '../../core/utils/theme_utils.dart';
 
 class GlassContainer extends StatelessWidget {
   final Widget child;
@@ -35,16 +37,17 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final fortuneTheme = context.fortuneTheme;
+    final glassColors = ThemeUtils.getGlassColors(context);
+    final isDark = ThemeUtils.isDarkMode(context);
 
     final defaultGradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: isDark
           ? [
-              Colors.white.withValues(alpha: 0.1),
-              Colors.white.withValues(alpha: 0.05),
+              glassColors.background,
+              glassColors.background.withValues(alpha: 0.5),
             ]
           : [
               Colors.white.withValues(alpha: 0.6),
@@ -52,13 +55,11 @@ class GlassContainer extends StatelessWidget {
             ],
     );
 
-    final defaultBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.2)
-        : Colors.white.withValues(alpha: 0.4);
+    final defaultBorderColor = borderColor ?? glassColors.border;
 
     final defaultShadow = [
       BoxShadow(
-        color: Colors.black.withValues(alpha: 0.1),
+        color: fortuneTheme.shadowColor.withValues(alpha: 0.15),
         blurRadius: 20,
         offset: const Offset(0, 10),
       ),

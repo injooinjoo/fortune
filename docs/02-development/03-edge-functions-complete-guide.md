@@ -1,7 +1,7 @@
 # 🚀 Supabase Edge Functions 완전 가이드
 
-> **최종 업데이트**: 2025년 7월 15일  
-> **현재 상태**: 77개 함수 프로덕션 배포 완료
+> **최종 업데이트**: 2025년 7월 26일  
+> **현재 상태**: 100개 이상 함수 프로덕션 배포 완료
 
 ## 📋 개요
 
@@ -92,10 +92,128 @@ supabase/functions/
 | fortune-guardian-angel | 수호천사 |
 | fortune-soul-card | 소울 카드 |
 
-### 시스템 함수 (1개)
+### 연애/관계 운세 (15개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-love | 연애운 |
+| fortune-marriage | 결혼운 |
+| fortune-compatibility | 궁합 |
+| fortune-chemistry | 케미스트리 |
+| fortune-couple-match | 커플 매칭 |
+| fortune-blind-date | 소개팅운 |
+| fortune-ex-lover | 전애인 운세 |
+| fortune-ex-lover-enhanced | 전애인 운세 (강화) |
+| fortune-salpuli | 살풀이 |
+| fortune-celebrity-match | 연예인 궁합 |
+| fortune-traditional-compatibility | 전통 궁합 |
+
+### 재물/투자 운세 (20개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-wealth | 재물운 |
+| fortune-lucky-investment | 투자운 |
+| fortune-lucky-lottery | 로또운 |
+| fortune-lucky-stock | 주식운 |
+| fortune-lucky-crypto | 암호화폐운 |
+| fortune-lucky-realestate | 부동산운 |
+| fortune-lucky-sidejob | 부업운 |
+| fortune-investment-enhanced | 투자 운세 (강화) |
+
+### 직업/사업 운세 (10개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-career | 직업운 |
+| fortune-employment | 취업운 |
+| fortune-business | 사업운 |
+| fortune-startup | 창업운 |
+| fortune-lucky-job | 행운의 직업 |
+| fortune-career-seeker | 구직자 운세 |
+
+### 스포츠/활동 운세 (15개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-lucky-golf | 골프운 |
+| fortune-lucky-tennis | 테니스운 |
+| fortune-lucky-baseball | 야구운 |
+| fortune-lucky-swim | 수영운 |
+| fortune-lucky-yoga | 요가운 |
+| fortune-lucky-running | 러닝운 |
+| fortune-lucky-cycling | 자전거운 |
+| fortune-lucky-hiking | 등산운 |
+| fortune-lucky-fishing | 낚시운 |
+| fortune-lucky-fitness | 피트니스운 |
+| fortune-esports | e스포츠운 |
+
+### 행운 아이템 운세 (8개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-lucky-color | 행운의 색상 |
+| fortune-lucky-number | 행운의 숫자 |
+| fortune-lucky-items | 행운의 아이템 |
+| fortune-lucky-food | 행운의 음식 |
+| fortune-lucky-outfit | 행운의 의상 |
+| fortune-lucky-place | 행운의 장소 |
+| fortune-lucky-exam | 시험운 |
+| fortune-lucky-series | 행운 시리즈 |
+
+### 특별 운세 (15개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-health | 건강운 |
+| fortune-pet | 반려동물 운세 |
+| fortune-pet-compatibility | 반려동물 궁합 |
+| fortune-children | 자녀운 |
+| fortune-wish | 소원 성취운 |
+| fortune-talent | 재능 발견 |
+| fortune-five-blessings | 오복운세 |
+| fortune-destiny | 운명 운세 |
+| fortune-face-reading | 관상 |
+| fortune-talisman | 부적 |
+| fortune-avoid-people | 피해야 할 사람 |
+
+### 유명인/정치인 운세 (6개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-celebrity | 연예인 운세 |
+| fortune-celebrity-enhanced | 연예인 운세 (강화) |
+| fortune-influencer | 인플루언서 운세 |
+| fortune-politician | 정치인 운세 |
+| fortune-sports-player | 스포츠 선수 운세 |
+| fortune-celebrity-daily-generator | 연예인 일일 운세 생성 |
+
+### 생활/이사 운세 (4개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-moving | 이사운 |
+| fortune-moving-date | 이사 날짜 |
+| fortune-moving-enhanced | 이사운 (강화) |
+| fortune-birth-season | 출생 계절 운세 |
+
+### 시스템/관리 함수 (15개)
 | 함수명 | 용도 |
 |--------|------|
 | verify-purchase | 인앱 결제 검증 |
+| payment-verify-purchase | 결제 검증 |
+| soul-consume | 영혼 소비 |
+| soul-earn | 영혼 획득 |
+| token-balance | 토큰 잔액 |
+| token-consumption-rates | 토큰 소비율 |
+| token-daily-claim | 일일 토큰 획득 |
+| token-history | 토큰 히스토리 |
+| subscription | 구독 관리 |
+| fortune-batch | 배치 처리 |
+| fortune-system | 시스템 운세 |
+| fortune-recommendations | 운세 추천 |
+| fortune-network-report | 네트워크 리포트 |
+| setup-test-account | 테스트 계정 설정 |
+| naver-oauth | 네이버 OAuth |
+
+### 스케줄러 함수 (3개)
+| 함수명 | 용도 |
+|--------|------|
+| fortune-celebrity-scheduler | 연예인 운세 스케줄러 |
+| fortune-zodiac-scheduler | 띠 운세 스케줄러 |
+| fortune-timeline | 타임라인 |
 
 ---
 

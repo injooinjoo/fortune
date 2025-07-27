@@ -369,25 +369,48 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
     final deckCode = widget.selectedDeck.code;
     final cardIndex = widget.cardState.cardIndex;
     
+    // Use deck path
+    final deckPath = 'decks/$deckCode';
+    
     if (cardIndex < 22) {
-      // Major Arcana (T-00 to T-21)
-      return '${deckCode}/major_${cardIndex.toString().padLeft(2, '0')}.jpg';
+      // Major Arcana
+      final cardNames = [
+        'fool', 'magician', 'high_priestess', 'empress', 'emperor',
+        'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
+        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
+      ];
+      return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
     } else if (cardIndex < 36) {
-      // Wands (W-01 to W-14)
-      final wandsNum = cardIndex - 21;
-      return '${deckCode}/wands_${wandsNum.toString().padLeft(2, '0')}.jpg';
+      // Wands
+      final wandsIndex = cardIndex - 21;
+      final cardName = wandsIndex <= 10 ? 'of_wands' : _getCourtCardName(wandsIndex, 'wands');
+      return '$deckPath/wands/${wandsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else if (cardIndex < 50) {
-      // Cups (C-01 to C-14)
-      final cupsNum = cardIndex - 35;
-      return '${deckCode}/cups_${cupsNum.toString().padLeft(2, '0')}.jpg';
+      // Cups
+      final cupsIndex = cardIndex - 35;
+      final cardName = cupsIndex <= 10 ? 'of_cups' : _getCourtCardName(cupsIndex, 'cups');
+      return '$deckPath/cups/${cupsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else if (cardIndex < 64) {
-      // Swords (S-01 to S-14)
-      final swordsNum = cardIndex - 49;
-      return '${deckCode}/swords_${swordsNum.toString().padLeft(2, '0')}.jpg';
+      // Swords
+      final swordsIndex = cardIndex - 49;
+      final cardName = swordsIndex <= 10 ? 'of_swords' : _getCourtCardName(swordsIndex, 'swords');
+      return '$deckPath/swords/${swordsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
     } else {
-      // Pentacles (P-01 to P-14)
-      final pentaclesNum = cardIndex - 63;
-      return '${deckCode}/pentacles_${pentaclesNum.toString().padLeft(2, '0')}.jpg';
+      // Pentacles
+      final pentaclesIndex = cardIndex - 63;
+      final cardName = pentaclesIndex <= 10 ? 'of_pentacles' : _getCourtCardName(pentaclesIndex, 'pentacles');
+      return '$deckPath/pentacles/${pentaclesIndex.toString().padLeft(2, '0')}_$cardName.jpg';
+    }
+  }
+
+  String _getCourtCardName(int index, String suit) {
+    switch (index) {
+      case 11: return 'page_of_$suit';
+      case 12: return 'knight_of_$suit';
+      case 13: return 'queen_of_$suit';
+      case 14: return 'king_of_$suit';
+      default: return 'of_$suit';
     }
   }
 

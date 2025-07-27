@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../services/storage_service.dart';
 import 'package:intl/intl.dart';
 import '../../presentation/providers/token_provider.dart';
+import '../../presentation/providers/theme_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../services/social_auth_service.dart';
 import '../../presentation/widgets/saju_chart_widget.dart';
@@ -157,6 +158,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = supabase.auth.currentUser;
     final theme = Theme.of(context);
     final tokenState = ref.watch(tokenProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final isDarkMode = themeMode == ThemeMode.dark || 
+        (themeMode == ThemeMode.system && 
+         MediaQuery.of(context).platformBrightness == Brightness.dark);
     
     if (isLoading) {
       return Scaffold(
@@ -185,6 +190,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ),
         actions: [
+          IconButton(
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color: AppColors.textPrimary,
+            ),
+            onPressed: () {
+              ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
             onPressed: () => context.push('/settings'),

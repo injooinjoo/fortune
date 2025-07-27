@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_theme_extensions.dart';
 
 class FortuneLoadingWidget extends StatefulWidget {
   final String? message;
@@ -55,6 +56,10 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
 
   @override
   Widget build(BuildContext context) {
+    final fortuneTheme = context.fortuneTheme;
+    final primaryColor = AppColors.getPrimary(context);
+    final surfaceColor = AppColors.getSurface(context);
+    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -75,9 +80,9 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
-                            AppColors.primary.withValues(alpha: 0.3),
-                            AppColors.primary,
-                            AppColors.primary.withValues(alpha: 0.3),
+                            primaryColor.withValues(alpha: 0.3),
+                            primaryColor,
+                            primaryColor.withValues(alpha: 0.3),
                           ],
                           stops: const [0.0, 0.5, 1.0],
                         ),
@@ -97,19 +102,19 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
                       height: 80,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.surface,
+                        color: surfaceColor,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: primaryColor.withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.auto_awesome,
                         size: 40,
-                        color: AppColors.primary,
+                        color: primaryColor,
                       ),
                     ),
                   );
@@ -122,15 +127,15 @@ class _FortuneLoadingWidgetState extends State<FortuneLoadingWidget>
             widget.message ?? '운세를 분석하는 중...',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.onSurface,
+              color: fortuneTheme.primaryText,
             ),
           ),
           const SizedBox(height: 8),
           SizedBox(
             width: 200,
             child: LinearProgressIndicator(
-              backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              backgroundColor: primaryColor.withValues(alpha: 0.2),
+              valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
             ),
           ),
         ],
