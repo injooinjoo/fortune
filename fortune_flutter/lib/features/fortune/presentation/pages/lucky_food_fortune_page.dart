@@ -140,7 +140,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
               _selectedPreference = selected ? pref['id'] as String : null;
             });
           },
-          selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+          selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
         );
       }).toList(),
     );
@@ -166,18 +166,18 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
               borderRadius: BorderRadius.circular(16),
               blur: 20,
               borderColor: isSelected 
-                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
                   : Colors.transparent,
               borderWidth: isSelected ? 2 : 0,
               gradient: LinearGradient(
                 colors: isSelected
                     ? [
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       ]
                     : [
-                        Colors.white.withValues(alpha: 0.1),
-                        Colors.white.withValues(alpha: 0.05),
+                        Colors.white.withOpacity(0.1),
+                        Colors.white.withOpacity(0.05),
                       ],
               ),
               child: InkWell(
@@ -210,7 +210,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
             ),
           ),
         );
-      }).toList(,
+      }).toList(),
     );
   }
 
@@ -408,13 +408,13 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.3),
-                  (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.1),
+                  (primaryCategoryInfo['color'] as Color).withOpacity(0.3),
+                  (primaryCategoryInfo['color'] as Color).withOpacity(0.1),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.5),
+                  color: (primaryCategoryInfo['color'] as Color).withOpacity(0.5),
                   blurRadius: 30,
                   spreadRadius: 10,
                 ),
@@ -438,7 +438,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: (primaryCategoryInfo['color'] as Color).withValues(alpha: 0.2),
+              color: (primaryCategoryInfo['color'] as Color).withOpacity(0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -500,20 +500,20 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
                   borderColor: isPrimary 
-                      ? (info['color'] as Color).withValues(alpha: 0.5)
+                      ? (info['color'] as Color).withOpacity(0.5)
                       : isSecondary
-                          ? (info['color'] as Color).withValues(alpha: 0.3)
+                          ? (info['color'] as Color).withOpacity(0.3)
                           : Colors.transparent,
                   borderWidth: isPrimary ? 2 : isSecondary ? 1 : 0,
                   gradient: LinearGradient(
                     colors: isPrimary || isSecondary
                         ? [
-                            (info['color'] as Color).withValues(alpha: 0.2),
-                            (info['color'] as Color).withValues(alpha: 0.1),
+                            (info['color'] as Color).withOpacity(0.2),
+                            (info['color'] as Color).withOpacity(0.1),
                           ]
                         : [
-                            Colors.white.withValues(alpha: 0.05),
-                            Colors.white.withValues(alpha: 0.02),
+                            Colors.white.withOpacity(0.05),
+                            Colors.white.withOpacity(0.02),
                           ],
                   ),
                   child: Column(
@@ -536,7 +536,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: (info['color'] as Color).withValues(alpha: 0.3),
+                            color: (info['color'] as Color).withOpacity(0.3),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -573,8 +573,8 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
       child: GlassCard(
         gradient: LinearGradient(
           colors: [
-            Colors.green.withValues(alpha: 0.1),
-            Colors.green.withValues(alpha: 0.05),
+            Colors.green.withOpacity(0.1),
+            Colors.green.withOpacity(0.05),
           ],
         ),
         padding: const EdgeInsets.all(20),
@@ -598,10 +598,10 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.green.withValues(alpha: 0.3),
+                  color: Colors.green.withOpacity(0.3),
                 ),
               ),
               child: Row(
@@ -647,9 +647,9 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               children: (nutritionData['foods'] as List<String>).map((food) {
                 return Chip(
                   label: Text(food),
-                  backgroundColor: Colors.green.withValues(alpha: 0.2),
+                  backgroundColor: Colors.green.withOpacity(0.2),
                   side: BorderSide(
-                    color: Colors.green.withValues(alpha: 0.5),
+                    color: Colors.green.withOpacity(0.5),
                   ),
                 );
               }).toList(),
@@ -702,7 +702,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
+                        color: color.withOpacity(0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -726,7 +726,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                           Text(
                             energy,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
                         ],

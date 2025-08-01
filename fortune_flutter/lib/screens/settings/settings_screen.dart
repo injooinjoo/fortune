@@ -61,7 +61,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -135,7 +135,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -201,7 +201,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -259,7 +259,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: fortuneTheme.shadowColor.withValues(alpha: 0.04),
+                    color: fortuneTheme.shadowColor.withOpacity(0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
