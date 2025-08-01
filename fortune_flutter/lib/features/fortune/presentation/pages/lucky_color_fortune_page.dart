@@ -6,7 +6,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
 class LuckyColorFortunePage extends BaseFortunePage {
-  const LuckyColorFortunePage({Key? key},
+  const LuckyColorFortunePage({Key? key})
       : super(
           key: key,
           title: '행운의 색깔',
@@ -637,6 +637,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             );
           }).toList(),
         ],
-      );
+      ),
+    );
   }
 }
