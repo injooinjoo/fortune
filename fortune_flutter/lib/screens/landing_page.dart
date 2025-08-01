@@ -184,15 +184,14 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         final uri = Uri.base;
         final returnUrl = uri.queryParameters['returnUrl'];
         
+
         if (returnUrl != null && mounted) {
           // Clean URL before navigation
           if (kIsWeb) {
-            cleanUrlInBrowser(
-    Uri.decodeComponent(returnUrl,
-  )}
-          context.go(
-    Uri.decodeComponent(returnUrl,
-  )} else if (mounted) {
+            cleanUrlInBrowser(Uri.decodeComponent(returnUrl));
+          }
+          context.go(Uri.decodeComponent(returnUrl));
+        } else if (mounted) {
           context.go('/home');
         }
       }
@@ -384,8 +383,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       children: [
               // Drag handle
               Container(
-                margin: EdgeInsets.only(to,
-      p: 12),
+                margin: const EdgeInsets.only(top: 12),
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(,
@@ -398,8 +396,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               Expanded(
                 child: SingleChildScrollView(,
       controller: scrollController,
-                  padding: EdgeInsets.symmetric(horizonta,
-      l: 40, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                   child: Column(,
       children: [
                       // Title
@@ -541,8 +538,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                   Text('Google 로그인 진행 중...'),
                 ],
               ),
-              duration: Duration(second,
-      s: 10), // Auth timeout과 동일
+              duration: Duration(seconds: 10), // Auth timeout과 동일
             ),
           );
         }
@@ -689,20 +685,17 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                   ),
                 ),
               )
-                .animate(onPlay: (controller) => controller.repeat(revers,
-      e: true))
+                .animate(onPlay: (controller) => controller.repeat(reverse: true))
                 .moveX(
                   begin: -30,
                   end: 30,
-                  duration: Duration(second,
-      s: duration),
+                  duration: Duration(seconds: duration),
                   curve: Curves.easeInOut,
                 )
                 .moveY(
                   begin: -20,
                   end: 20,
-                  duration: Duration(second,
-      s: duration + 2),
+                  duration: Duration(seconds: duration + 2),
                   curve: Curves.easeInOut,
                 )
                 .fadeIn(duration: 2000.ms),
@@ -738,16 +731,13 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               )
                 .animate(onPlay: (controller) => controller.repeat())
                 .fadeIn(duration: 1000.ms)
-                .then(delay: Duration(second,
-      s: random.nextInt(3)))
+                .then(delay: Duration(seconds: random.nextInt(3)))
                 .fadeOut(duration: 1000.ms)
-                .then(delay: Duration(second,
-      s: random.nextInt(2)))
+                .then(delay: Duration(seconds: random.nextInt(2)))
                 .moveY(
                   begin: 0,
                   end: -50,
-                  duration: Duration(second,
-      s: duration),
+                  duration: Duration(seconds: duration),
                   curve: Curves.linear,
                 ),
             );
@@ -770,8 +760,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(isDark ? '다크 모드로 전환되었습니다' : '라이트 모드로 전환되었습니다'),
-                          duration: Duration(second,
-      s: 1),
+                          duration: Duration(seconds: 1),
                         ),
                       );
                     },
@@ -804,8 +793,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                 // Main content
                 Expanded(
                   child: Padding(,
-      padding: const EdgeInsets.symmetric(horizont,
-      al: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Column(,
       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -1019,8 +1007,7 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         ),
       ),
     ).animate()
-      .fadeIn(delay: Duration(millisecond,
-      s: delay), duration: 600.ms)
+      .fadeIn(delay: Duration(milliseconds: delay), duration: 600.ms)
       .slideY(begin: 0.2, end: 0);
   }
   
