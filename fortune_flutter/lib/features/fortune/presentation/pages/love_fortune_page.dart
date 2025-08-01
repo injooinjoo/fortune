@@ -191,11 +191,11 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ],
         ),
-      ).animate(,
-          .fadeIn(,
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1),
-          .then(,
-          .shimmer(delay: 500.ms, duration: 1500.ms,
+        ).animate()
+            .fadeIn()
+            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
+            .then()
+            .shimmer(delay: 500.ms, duration: 1500.ms);
     );
   }
 
@@ -273,8 +273,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             }).toList(),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildAdviceTabs() {
@@ -323,8 +322,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildSingleAdvice() {
@@ -369,8 +367,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildCoupleAdvice() {
@@ -438,8 +435,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildReunionAdvice() {
@@ -486,8 +482,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildAdviceSection({
@@ -565,8 +560,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildActionMissions() {
@@ -654,7 +648,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                                   Icons.check_rounded,
                                   color: Colors.white,
                                   size: 16,
-                                ,
+                                )
                               : null,
                         ),
                         const SizedBox(width: 12),
@@ -675,14 +669,14 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
                     ),
                   ),
                 ),
-              ).animate(,
-                  .fadeIn(delay: Duration(milliseconds: 100 * index),
-                  .slideX(begin: 0.1, end: 0);
+                ).animate()
+                    .fadeIn(delay: Duration(milliseconds: 100 * index))
+                    .slideX(begin: 0.1, end: 0);
             }).toList(),
           ],
         ),
-      ,
-    );
+        );
+      );
   }
 
   Widget _buildLuckyBooster() {
@@ -785,7 +779,7 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ],
           ),
         ),
-      ,
+      ),
     );
   }
 
@@ -829,8 +823,8 @@ class _LoveFortunePageState extends BaseFortunePageState<LoveFortunePage> {
             ),
           ],
         ),
-      ,
-    );
+        ),
+      );
   }
 
   String _getLoveIndexMessage(int score) {

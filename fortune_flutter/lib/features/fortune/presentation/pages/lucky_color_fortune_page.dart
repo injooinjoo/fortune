@@ -241,8 +241,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
           _buildColorTips(),
           const SizedBox(height: 32),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildColorPreview() {
@@ -302,8 +301,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildColorCircle(Color color, String name, String label, bool isPrimary) {
@@ -407,8 +405,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildColorItemsGrid() {
@@ -479,8 +476,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   IconData _getItemIcon(String item) {
@@ -563,10 +559,9 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                                 color: colorInfo['color'] as Color,
                                 fontWeight: FontWeight.w600,
                               ),
-                            ,
-                          );
+                            );
                         }).toList(),
-                      ,
+                      
                     else if (harmonyColors is String)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -591,8 +586,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             }).toList(),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildColorTips() {
@@ -643,7 +637,6 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             );
           }).toList(),
         ],
-      ,
-    );
+      );
   }
 }

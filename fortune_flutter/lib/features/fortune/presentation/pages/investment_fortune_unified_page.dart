@@ -90,7 +90,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             _buildFortuneResult(_fortuneCache[_selectedType]!),
           ],
         ],
-      ,
+      ),
     );
   }
 
@@ -264,7 +264,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 

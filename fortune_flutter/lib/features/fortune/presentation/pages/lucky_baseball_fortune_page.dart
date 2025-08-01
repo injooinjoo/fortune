@@ -256,8 +256,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ],
           ),
         ],
-      ,
-    );
+      );
   }
 
   @override
@@ -667,8 +666,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildStatItem(String label, String value, IconData icon) {
@@ -749,8 +747,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildFieldPosition() {
@@ -816,8 +813,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildPitchingGuide() {
@@ -873,8 +869,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildPitchItem(String pitch, String description, Color color) {
@@ -911,8 +906,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildTeamChemistry() {
@@ -971,8 +965,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildGameMVPPrediction() {
@@ -1030,8 +1023,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 .shimmer(delay: 500.ms, duration: 1500.ms),
           ],
         ),
-      ,
-    );
+      );
   }
 
   int _calculateBattingAverage() {
