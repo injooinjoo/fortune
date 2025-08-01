@@ -30,7 +30,8 @@ class WealthFortunePage extends BaseFortunePage {
   ConsumerState<WealthFortunePage> createState() => _WealthFortunePageState();
 }
 
-class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
+class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage>
+    with TickerProviderStateMixin {
   Map<String, dynamic>? _wealthData;
   late AnimationController _coinController;
   late Animation<double> _coinAnimation;
@@ -46,13 +47,13 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       parent: _coinController,
       curve: Curves.easeInOut,
     );
-}
+  }
 
   @override
   void dispose() {
     _coinController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
@@ -61,34 +62,28 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       throw Exception('로그인이 필요합니다');
     }
 
-    // Call the actual API
     final wealthNotifier = ref.read(wealthFortuneProvider.notifier);
-    
-    // Set financial data if provided in params
+
     if (params.isNotEmpty) {
       wealthNotifier.setFinancialData(params);
     } else {
-      // Use default financial data
       wealthNotifier.setFinancialData({
         'monthlyIncome': 0,
         'monthlySavings': 0,
         'investmentGoals': [],
       });
-}
+    }
 
-    // Load the fortune
     await wealthNotifier.loadFortune();
-    
+
     final state = ref.read(wealthFortuneProvider);
     if (state.error != null) {
       throw Exception(state.error);
     }
-    
     if (state.fortune == null) {
       throw Exception('운세를 불러올 수 없습니다');
     }
 
-    // For now, we'll use mock data for the UI until the backend provides structured data
     _wealthData = {
       'wealthIndex': 85,
       'monthlyTrend': [
@@ -107,7 +102,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       },
       'financialAdvice': {
         'summary': '재물운이 상승하는 시기입니다',
-        'details': '이번 달은 예상치 못한 수입이 들어올 가능성이 높습니다. 투자보다는 저축에 집중하며 미래를 준비하는 것이 좋겠습니다.',
+        'details':
+            '이번 달은 예상치 못한 수입이 들어올 가능성이 높습니다. 투자보다는 저축에 집중하며 미래를 준비하는 것이 좋겠습니다.',
         'warnings': [
           '충동구매를 주의하세요',
           '과도한 투자는 피하세요',
@@ -141,7 +137,6 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       ],
     };
 
-    // Return the fortune from API with extended properties for UI
     final fortune = state.fortune!;
     return Fortune(
       id: fortune.id,
@@ -149,13 +144,12 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       type: fortune.type,
       content: fortune.content,
       createdAt: fortune.createdAt,
-      // Extended properties with mock data for UI
       category: 'wealth',
       overallScore: fortune.overallScore ?? 85,
       description: fortune.description ??
           '전반적으로 좋은 재물운이 예상됩니다. 예상치 못한 수입과 함께 저축의 기회가 찾아올 것입니다.',
-      scoreBreakdown: fortune.scoreBreakdown ??
-          _wealthData!['incomeBreakdown'] as Map<String, dynamic>,
+      scoreBreakdown:
+          fortune.scoreBreakdown ?? _wealthData!['incomeBreakdown'] as Map<String, dynamic>,
       luckyItems:
           fortune.luckyItems ?? _wealthData!['wealthBoosters'] as Map<String, dynamic>,
       recommendations: fortune.recommendations ?? [
@@ -164,7 +158,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         '비상금을 준비하는 것이 좋습니다',
       ],
     );
-}
+  }
 
   @override
   Widget buildFortuneResult() {
@@ -186,8 +180,9 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         const SizedBox(height: 24),
         _buildActionItems(),
         const SizedBox(height: 32),
+      ],
     );
-}
+  }
 
   Widget _buildWealthIndexCard() {
     final wealthIndex = _wealthData!['wealthIndex'] as int;
@@ -214,48 +209,57 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.amber.shade300)
-                      Colors.amber.shade600),
+                      Colors.amber.shade300,
+                      Colors.amber.shade600,
+                    ],
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withValues(alpha: 0.5),
+                      color: Colors.amber.withOpacity(0.5),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
+                  ],
+                ),
                 child: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center),
-                  children: [
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       Text(
-                        '₩'),
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                          color: Colors.white),
-                  fontWeight: FontWeight.bold)
+                        '₩',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
                       Text(
-                        '$wealthIndex점'),
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                          color: Colors.white),
-                  fontWeight: FontWeight.bold)
+                        '$wealthIndex점',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ],
                   ),
+                ),
               ),
+            ),
             const SizedBox(height: 24),
             Text(
-              '재물 지수'),
-                  style: theme.textTheme.headlineSmall),
+              '재물 지수',
+              style: theme.textTheme.headlineSmall,
+            ),
             const SizedBox(height: 8),
             Text(
               _getWealthIndexMessage(wealthIndex),
               style: theme.textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
-      ).animate()
-                  .fadeIn()
-          .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1),
-          .then()
-          .shimmer(delay: 500.ms, duration: 1500.ms);
-}
+          ],
+        ),
+      ).animate().fadeIn().scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)).then().shimmer(delay: 500.ms, duration: 1500.ms),
+    );
+  }
 
   Widget _buildMonthlyTrendChart() {
     final trendData = _wealthData!['monthlyTrend'] as List<dynamic>;
@@ -265,26 +269,31 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.green.shade400, Colors.green.shade600]),
+                      colors: [Colors.green.shade400, Colors.green.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.show_chart_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '월별 재물운 추이'),
+                  '월별 재물운 추이',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -293,44 +302,51 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 20),
-                  getDrawingHorizontalLine: (value) {
+                    horizontalInterval: 20,
+                    getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Colors.grey.shade300),
-                  strokeWidth: 1
+                        color: Colors.grey.shade300,
+                        strokeWidth: 1,
                       );
-},
+                    },
                   ),
                   titlesData: FlTitlesData(
-                    show: true),
-                  rightTitles: AxisTitles(
+                    show: true,
+                    rightTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
+                    ),
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
+                    ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
-                        showTitles: true),
-                  getTitlesWidget: (double value, TitleMeta meta) {
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
                           if (value.toInt() >= 0 && value.toInt() < trendData.length) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
                                 trendData[value.toInt()]['month'] as String,
-                                style: const TextStyle(fontSize: 12));
-}
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            );
+                          }
                           return const Text('');
-},
+                        },
                       ),
+                    ),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        interval: 20),
-                  getTitlesWidget: (double value, TitleMeta meta) {
+                        interval: 20,
+                        getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10));
-},
+                            style: const TextStyle(fontSize: 10),
+                          );
+                        },
                       ),
+                    ),
                   ),
                   borderData: FlBorderData(show: false),
                   minX: 0,
@@ -342,38 +358,50 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                       spots: trendData.asMap().entries.map((entry) {
                         return FlSpot(
                           entry.key.toDouble(),
-                          (entry.value['value'] as int).toDouble();
-}).toList(),
+                          (entry.value['value'] as int).toDouble(),
+                        );
+                      }).toList(),
                       isCurved: true,
                       gradient: LinearGradient(
                         colors: [
                           Colors.amber.shade400,
-                          Colors.orange.shade400),
+                          Colors.orange.shade400,
+                        ],
+                      ),
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
-                        show: true),
-                  getDotPainter: (spot, percent, barData, index) {
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) {
                           return FlDotCirclePainter(
                             radius: 4,
                             color: Colors.white,
-                            strokeWidth: 2),
-                  strokeColor: Colors.amber.shade600);
-},
+                            strokeWidth: 2,
+                            strokeColor: Colors.amber.shade600,
+                          );
+                        },
                       ),
                       belowBarData: BarAreaData(
-                        show: true),
-                  gradient: LinearGradient(
+                        show: true,
+                        gradient: LinearGradient(
                           colors: [
-                            Colors.amber.shade200.withValues(alpha: 0.3),
-                            Colors.amber.shade100.withValues(alpha: 0.1),
+                            Colors.amber.shade200.withOpacity(0.3),
+                            Colors.amber.shade100.withOpacity(0.1),
+                          ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
+                      ),
                     ),
+                  ],
+                ),
               ),
-        ));
-}
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildIncomeBreakdown() {
     final breakdown = _wealthData!['incomeBreakdown'] as Map<String, dynamic>;
@@ -383,26 +411,31 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.blue.shade600]),
+                      colors: [Colors.blue.shade400, Colors.blue.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.pie_chart_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '수입원별 운세'),
+                  '수입원별 운세',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...breakdown.entries.map((entry) {
               final score = entry.value as int;
@@ -411,11 +444,12 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                 child: Row(
                   children: [
                     Expanded(
-                      flex: 3),
-                  child: Text(
-                        entry.key),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                      flex: 3,
+                      child: Text(
+                        entry.key,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
+                    ),
                     Expanded(
                       flex: 7,
                       child: Row(
@@ -424,10 +458,11 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             child: Stack(
                               children: [
                                 Container(
-                                  height: 24),
-                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200),
-                  borderRadius: BorderRadius.circular(12),
+                                  height: 24,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 1000),
@@ -437,23 +472,35 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                                     gradient: LinearGradient(
                                       colors: [
                                         _getIncomeColor(score),
-                                        _getIncomeColor(score).withValues(alpha: 0.7),
+                                        _getIncomeColor(score).withOpacity(0.7),
+                                      ],
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
+                              ],
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            '$score점'),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold),
-                  color: _getIncomeColor(score),
+                            '$score점',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: _getIncomeColor(score),
+                                ),
                           ),
+                        ],
+                      ),
                     ),
+                  ],
+                ),
               );
-}).toList(),
-      
+            }).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildFinancialAdvice() {
     final advice = _wealthData!['financialAdvice'] as Map<String, dynamic>;
@@ -463,53 +510,63 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.indigo.shade400, Colors.indigo.shade600]),
+                      colors: [Colors.indigo.shade400, Colors.indigo.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.lightbulb_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '재테크 조언'),
+                  '재테크 조언',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.green.withValues(alpha: 0.1),
+                color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    advice['summary']),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold),
-                  color: Colors.green.shade700)
-                    ),
+                    advice['summary'],
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                        ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    advice['details']),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                    advice['details'],
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Text(
-              '주의사항'),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold)
-              ),
+              '주의사항',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
             const SizedBox(height: 8),
             ...(advice['warnings'] as List<dynamic>).map((warning) {
               return Padding(
@@ -518,20 +575,26 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.warning_amber_rounded),
-                  color: Colors.orange.shade600),
-                  size: 20),
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange.shade600,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         warning.toString(),
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                ));
-}).toList(),
-      
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildLuckyInvestments() {
     final investments = _wealthData!['luckyInvestments'] as List<dynamic>;
@@ -539,8 +602,8 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
@@ -549,18 +612,23 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.purple.shade400, Colors.purple.shade600]),
+                      colors: [Colors.purple.shade400, Colors.purple.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.trending_up_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '투자 운세'),
+                  '투자 운세',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           ...investments.map((investment) {
@@ -577,12 +645,13 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     CircularPercentIndicator(
                       radius: 30,
                       lineWidth: 6,
-                      percent: score / 100),
-                  center: Text(
-                        '$score'),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold)
-                        ),
+                      percent: score / 100,
+                      center: Text(
+                        '$score',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                       progressColor: _getInvestmentColor(score),
                       backgroundColor: Colors.grey.shade200,
                       animation: true,
@@ -591,23 +660,33 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Text(
-                            type),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold)
-                            ),
+                            type,
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
-                            description),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                            description,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                                ),
                           ),
+                        ],
+                      ),
                     ),
-              ));
-}).toList());
-}
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSpendingAnalysis() {
     final categories = _wealthData!['spendingCategories'] as Map<String, dynamic>;
@@ -617,26 +696,31 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.orange.shade400, Colors.orange.shade600]),
+                      colors: [Colors.orange.shade400, Colors.orange.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.account_balance_wallet_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '지출 분석'),
+                  '지출 분석',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...categories.entries.map((entry) {
               final category = entry.key;
@@ -649,19 +733,21 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: 80),
-                  child: Text(
-                        category),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                      width: 80,
+                      child: Text(
+                        category,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
+                    ),
                     Expanded(
                       child: Stack(
                         children: [
                           Container(
-                            height: 30),
-                  decoration: BoxDecoration(
-                              color: Colors.grey.shade200),
-                  borderRadius: BorderRadius.circular(15),
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
                           ),
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 1000),
@@ -670,36 +756,48 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: _getSpendingColors(status),
+                              ),
                               borderRadius: BorderRadius.circular(15),
+                            ),
                             child: Center(
                               child: Text(
                                 '$percentage%',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                  fontSize: 12)
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
                                 ),
+                              ),
                             ),
+                          ),
+                        ],
                       ),
+                    ),
                     const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(status).withValues(alpha: 0.1),
+                        color: _getStatusColor(status).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Text(
-                        status),
-                  style: TextStyle(
+                        status,
+                        style: TextStyle(
                           color: _getStatusColor(status),
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
+                      ),
                     ),
+                  ],
+                ),
               );
-}).toList(),
-      
+            }).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildWealthBoosters() {
     final boosters = _wealthData!['wealthBoosters'] as Map<String, dynamic>;
@@ -707,35 +805,40 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ShimmerGlass(
-        shimmerColor: Colors.amber),
-                  borderRadius: BorderRadius.circular(24),
+        shimmerColor: Colors.amber,
+        borderRadius: BorderRadius.circular(24),
         child: GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.shade400, Colors.amber.shade600]),
+                        colors: [Colors.amber.shade400, Colors.amber.shade600],
+                      ),
                       borderRadius: BorderRadius.circular(12),
+                    ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: Colors.white),
-                  size: 24)
+                      color: Colors.white,
+                      size: 24,
                     ),
+                  ),
                   const SizedBox(width: 12),
                   Text(
-                    '재물 부스터'),
-                  style: Theme.of(context).textTheme.headlineSmall,
+                    '재물 부스터',
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
+                ],
+              ),
               const SizedBox(height: 20),
               GridView.count(
-                shrinkWrap: true),
-                  physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 2,
                 childAspectRatio: 2.5,
                 mainAxisSpacing: 12,
@@ -743,24 +846,25 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                 children: boosters.entries.map((entry) {
                   final value = entry.value;
                   String displayValue = '';
-                  
                   if (value is List) {
                     displayValue = value.join(', ');
-} else {
+                  } else {
                     displayValue = value.toString();
-}
-
+                  }
                   return Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Colors.amber.shade50,
-                          Colors.amber.shade100),
+                          Colors.amber.shade100,
+                        ],
+                      ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.amber.shade300)
+                        color: Colors.amber.shade300,
                       ),
+                    ),
                     child: Row(
                       children: [
                         Icon(
@@ -772,65 +876,78 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center),
-                  children: [
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
                               Text(
-                                entry.key),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.amber.shade800),
-                  fontSize: 10)
-                                ),
+                                entry.key,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Colors.amber.shade800,
+                                      fontSize: 10,
+                                    ),
+                              ),
                               Text(
-                                displayValue),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold
-                                  color: Colors.amber.shade900),
-                  fontSize: 12),
+                                displayValue,
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.amber.shade900,
+                                      fontSize: 12,
+                                    ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
                   );
-}).toList(),
+                }).toList(),
+              ),
+            ],
           ),
-      
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildActionItems() {
     final items = _wealthData!['actionItems'] as List<dynamic>;
-    final List<bool> _itemChecks = List.filled(items.length, false);
+    final List<bool> itemChecks = List.filled(items.length, false);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.teal.shade400, Colors.teal.shade600]),
+                      colors: [Colors.teal.shade400, Colors.teal.shade600],
+                    ),
                     borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(
                     Icons.checklist_rounded,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const SizedBox(width: 12),
                 Text(
-                  '재물운 향상 액션 플랜'),
+                  '재물운 향상 액션 플랜',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
+              ],
+            ),
             const SizedBox(height: 20),
             ...items.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value as String;
-
               return Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: Container(
@@ -839,15 +956,16 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    ),
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 24),
-                  height: 24),
-                  decoration: BoxDecoration(
-                          color: Colors.teal.withValues(alpha: 0.1),
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: Colors.teal.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -855,24 +973,29 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
                             '${index + 1}',
                             style: TextStyle(
                               color: Colors.teal.shade700,
-                              fontWeight: FontWeight.bold),
-                  fontSize: 12)
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
                             ),
+                          ),
                         ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          item),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                          item,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
+                      ),
+                    ],
                   ),
-              ).animate()
-                  .fadeIn(delay: Duration(milliseconds: 100 * index),
-                  .slideX(begin: 0.1, end: 0);
-}).toList(),
-      
+                ).animate().fadeIn(delay: Duration(milliseconds: 100 * index)).slideX(begin: 0.1, end: 0),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
     );
-}
+  }
 
   String _getWealthIndexMessage(int score) {
     if (score >= 90) return '최고의 재물운! 큰 수익이 예상됩니다 💰';
@@ -880,20 +1003,20 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
     if (score >= 70) return '평균적인 재물운. 꾸준한 저축이 중요합니다';
     if (score >= 60) return '조금 부족한 재물운. 지출을 줄이고 절약하세요';
     return '재물운이 좋지 않습니다. 신중한 소비가 필요해요';
-}
+  }
 
   Color _getIncomeColor(int score) {
     if (score >= 80) return Colors.green.shade500;
     if (score >= 60) return Colors.blue.shade500;
     return Colors.orange.shade500;
-}
+  }
 
   Color _getInvestmentColor(int score) {
     if (score >= 80) return Colors.green.shade600;
     if (score >= 60) return Colors.amber.shade600;
     if (score >= 40) return Colors.orange.shade600;
     return Colors.red.shade600;
-}
+  }
 
   List<Color> _getSpendingColors(String status) {
     switch (status) {
@@ -905,7 +1028,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         return [Colors.amber.shade400, Colors.amber.shade600];
       default:
         return [Colors.red.shade400, Colors.red.shade600];
-}
+    }
   }
 
   Color _getStatusColor(String status) {
@@ -918,7 +1041,7 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         return Colors.amber.shade600;
       default:
         return Colors.red.shade600;
-}
+    }
   }
 
   IconData _getBoosterIcon(String type) {
