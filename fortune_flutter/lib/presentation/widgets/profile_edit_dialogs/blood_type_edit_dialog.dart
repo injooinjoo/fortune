@@ -9,12 +9,11 @@ class BloodTypeEditDialog extends StatefulWidget {
   final String? initialBloodType;
   final Function(String?) onSave;
 
-  const BloodTypeEditDialog(
-    {
+  const BloodTypeEditDialog({
     super.key,
     this.initialBloodType,
     required this.onSave,
-  )});
+  });
 
   @override
   State<BloodTypeEditDialog> createState() => _BloodTypeEditDialogState();

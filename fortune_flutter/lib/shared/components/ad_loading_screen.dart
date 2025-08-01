@@ -18,13 +18,12 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
   final String fortuneType;
   final bool canSkip;
 
-  const AdLoadingScreen(
-    {
+  const AdLoadingScreen({
     Key? key,
     required this.onComplete,
     required this.fortuneType,
     this.canSkip = false,
-  )}) : super(key: key);
+  }) : super(key: key);
 
   @override
   ConsumerState<AdLoadingScreen> createState() => _AdLoadingScreenState();

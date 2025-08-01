@@ -17,14 +17,13 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
   final Map<String, dynamic>? fortuneData;
   final VoidCallback? onFortuneButtonPressed;
-  
-  const FortuneExplanationBottomSheet(
-    {
+
+  const FortuneExplanationBottomSheet({
     super.key,
     required this.fortuneType,
     this.fortuneData,
     this.onFortuneButtonPressed,
-  )});
+  });
 
   static Future<void> show(
     BuildContext context, {

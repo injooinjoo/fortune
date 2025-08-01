@@ -10,12 +10,11 @@ class MbtiEditDialog extends StatefulWidget {
   final String? initialMbti;
   final Function(String?) onSave;
 
-  const MbtiEditDialog(
-    {
+  const MbtiEditDialog({
     super.key,
     this.initialMbti,
     required this.onSave,
-  )});
+  });
 
   @override
   State<MbtiEditDialog> createState() => _MbtiEditDialogState();
