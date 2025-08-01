@@ -113,7 +113,7 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
 
   String _getLuckyDirection(String animal) {
     final directions = {
-      'rat': '북쪽'
+      'rat': '북쪽',
       'ox': '북동쪽',
       'tiger': '동쪽',
       'rabbit': '동쪽',
@@ -124,13 +124,14 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
       'monkey': '서쪽',
       'rooster': '서쪽',
       'dog': '북서쪽',
-      'pig': '북쪽';
+      'pig': '북쪽',
+    };
     return directions[animal] ?? '중앙';
 }
 
   String _getLuckyColor(String animal) {
     final colors = {
-      'rat': '파란색'
+      'rat': '파란색',
       'ox': '노란색',
       'tiger': '주황색',
       'rabbit': '분홍색',
@@ -141,7 +142,8 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
       'monkey': '흰색',
       'rooster': '갈색',
       'dog': '검은색',
-      'pig': '회색';
+      'pig': '회색',
+    };
     return colors[animal] ?? '무지개색';
 }
 
@@ -158,17 +160,19 @@ class _ZodiacAnimalFortunePageState extends BaseFortunePageState<ZodiacAnimalFor
       'monkey': {'best': ['rat', 'dragon', 'snake'], 'worst': ['tiger', 'pig']},
       'rooster': {'best': ['ox', 'snake', 'dragon'], 'worst': ['rabbit', 'dog']},
       'dog': {'best': ['tiger', 'rabbit', 'horse'], 'worst': ['dragon', 'sheep']},
-      'pig': {'best': ['rabbit', 'sheep', 'tiger'], 'worst': ['snake', 'monkey']};
+      'pig': {'best': ['rabbit', 'sheep', 'tiger'], 'worst': ['snake', 'monkey']},
+    };
 
     final animalCompat = compatibility[animal] ?? {'best': [], 'worst': []};
     return {
-      'best': animalCompat['best']!.map((key) => 
-        _zodiacAnimals.firstWhere((a) => a['key'] == key,
-      ).toList(),
-      'worst': animalCompat['worst']!.map((key) => 
-        _zodiacAnimals.firstWhere((a) => a['key'] == key,
-      ).toList();
-}
+      'best': animalCompat['best']!
+          .map((key) => _zodiacAnimals.firstWhere((a) => a['key'] == key))
+          .toList(),
+      'worst': animalCompat['worst']!
+          .map((key) => _zodiacAnimals.firstWhere((a) => a['key'] == key))
+          .toList(),
+    };
+  }
 
   List<double> _getMonthlyTrend() {
     // Generate a trend for the current month

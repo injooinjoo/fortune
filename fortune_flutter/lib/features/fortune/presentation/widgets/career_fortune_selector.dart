@@ -1,4 +1,4 @@
-import 'package: flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -26,8 +26,8 @@ class CareerFortuneType {
     required this.gradientColors,
     required this.route,
     required this.targetAudience,
-    this.isNew = false),
-});
+    this.isNew = false,
+  });
 }
 
 class CareerFortuneSelector extends StatelessWidget {
@@ -60,7 +60,8 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.trending_up_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.career],
       route: '/fortune/career/future',
-      targetAudience: ['재직자', '승진 대상', '연봉 협상']),
+      targetAudience: ['재직자', '승진 대상', '연봉 협상'],
+    ),
     CareerFortuneType(
       id: 'freelance',
       title: '프리랜서운',
@@ -70,7 +71,8 @@ class CareerFortuneSelector extends StatelessWidget {
       gradientColors: [FortuneColors.wealth, FortuneColors.wealthDark],
       route: '/fortune/career/freelance',
       targetAudience: ['프리랜서', '1인 기업', 'N잡러'],
-      isNew: true),
+      isNew: true,
+    ),
     CareerFortuneType(
       id: 'startup',
       title: '창업운',
@@ -79,7 +81,8 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.rocket_launch_rounded,
       gradientColors: [AppColors.negative, AppColors.negativeDark],
       route: '/fortune/career/startup',
-      targetAudience: ['예비 창업자', '스타트업', '사업가']),
+      targetAudience: ['예비 창업자', '스타트업', '사업가'],
+    ),
     CareerFortuneType(
       id: 'crisis',
       title: '위기극복운',
@@ -89,8 +92,9 @@ class CareerFortuneSelector extends StatelessWidget {
       gradientColors: [FortuneColors.mystical, FortuneColors.mysticalLight],
       route: '/fortune/career/crisis',
       targetAudience: ['번아웃', '구조조정', '커리어 전환'],
-      isNew: true)
-    );
+      isNew: true,
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +180,7 @@ class _CareerTypeCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: AppSpacing.paddingAll12),
+                  padding: AppSpacing.paddingAll12,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: careerType.gradientColors),
@@ -184,9 +188,10 @@ class _CareerTypeCard extends StatelessWidget {
                   ),
                   child: Icon(
                     careerType.icon,
-                    color: Colors.white),
-                  size: 24)
+                    color: Colors.white,
+                    size: 24,
                   ),
+                ),
                 const Spacer(),
                 if (careerType.isNew), Container(
                     padding: const EdgeInsets.symmetric(
@@ -226,23 +231,27 @@ class _CareerTypeCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.spacing2),
             Wrap(
               spacing: 4,
-              runSpacing: 4),
-                  children: careerType.targetAudience.take(2).map((audience) {
+              runSpacing: 4,
+              children: careerType.targetAudience.take(2).map((audience) {
                 return Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.spacing2),
-                  vertical: AppSpacing.spacing0 * 0.5),
+                    horizontal: AppSpacing.spacing2,
+                    vertical: AppSpacing.spacing0 * 0.5,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
                   ),
                   child: Text(
-                    audience),
-                  style: theme.textTheme.bodySmall?.copyWith(
+                    audience,
+                    style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                     ),
+                  ),
                 );
-}).toList(),
-        ));
-}
+              }).toList(),
+            ),
+          ),
+        );
+  }
 }

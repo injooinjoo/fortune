@@ -152,14 +152,18 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
       // Extended properties with mock data for UI
       category: 'wealth',
       overallScore: fortune.overallScore ?? 85,
-      description: fortune.description ?? '전반적으로 좋은 재물운이 예상됩니다. 예상치 못한 수입과 함께 저축의 기회가 찾아올 것입니다.'
-      scoreBreakdown: fortune.scoreBreakdown ?? _wealthData!['incomeBreakdown'] as Map<String, dynamic>,
-      luckyItems: fortune.luckyItems ?? _wealthData!['wealthBoosters'] as Map<String, dynamic>,
+      description: fortune.description ??
+          '전반적으로 좋은 재물운이 예상됩니다. 예상치 못한 수입과 함께 저축의 기회가 찾아올 것입니다.',
+      scoreBreakdown: fortune.scoreBreakdown ??
+          _wealthData!['incomeBreakdown'] as Map<String, dynamic>,
+      luckyItems:
+          fortune.luckyItems ?? _wealthData!['wealthBoosters'] as Map<String, dynamic>,
       recommendations: fortune.recommendations ?? [
-        '계획적인 소비 습관을 유지하세요'
+        '계획적인 소비 습관을 유지하세요',
         '투자는 신중하게 접근하세요',
-        '비상금을 준비하는 것이 좋습니다'),
-]);
+        '비상금을 준비하는 것이 좋습니다',
+      ],
+    );
 }
 
   @override
@@ -929,6 +933,6 @@ class _WealthFortunePageState extends BaseFortunePageState<WealthFortunePage> {
         return Icons.access_time_rounded;
       default:
         return Icons.star_rounded;
-}
-  },
+    }
+  }
 }

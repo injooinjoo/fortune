@@ -118,10 +118,11 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       recommendations: fortune.recommendations,
       metadata: {
         ...?fortune.metadata,
-        'zodiacInfo': zodiacInfo
+        'zodiacInfo': zodiacInfo,
         'compatibility': _getCompatibility(_selectedZodiac!),
         'monthlyTrend': _getMonthlyTrend(),
-        'elementalBalance': _getElementalBalance(zodiacInfo['element'])
+        'elementalBalance': _getElementalBalance(zodiacInfo['element']),
+      },
     );
 
     return enrichedFortune;
@@ -156,17 +157,19 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       '사수자리': ['양자리', '사자자리', '천칭자리'],
       '염소자리': ['황소자리', '처녀자리', '전갈자리'],
       '물병자리': ['쌍둥이자리', '천칭자리', '사수자리'],
-      '물고기자리': ['게자리', '전갈자리', '염소자리'];
+      '물고기자리': ['게자리', '전갈자리', '염소자리'],
+    };
 
     return {
       'best': compatibleSigns[zodiac]![0],
       'good': compatibleSigns[zodiac]!.sublist(1),
       'challenging': _zodiacSigns
-          .where((z) => !compatibleSigns[zodiac]!.contains(z['name']) && z['name'] != zodiac,
+          .where((z) => !compatibleSigns[zodiac]!.contains(z['name']) && z['name'] != zodiac)
           .take(2)
-          .map((z) => z['name'],
-          .toList();
-}
+          .map((z) => z['name'])
+          .toList(),
+    };
+  }
 
   List<double> _getMonthlyTrend() {
     // Generate a trend for the current month
