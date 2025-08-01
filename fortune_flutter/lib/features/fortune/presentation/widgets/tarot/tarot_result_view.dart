@@ -6,9 +6,6 @@ import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../shared/components/loading_states.dart';
 import '../../../../../shared/components/app_header.dart' show FontSize;
 import 'tarot_card_widget.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 /// Simplified tarot reading result view
 class TarotResultView extends ConsumerStatefulWidget {
@@ -47,27 +44,29 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
   void initState() {
     super.initState();
     _entranceController = AnimationController(
-      duration: AppAnimations.durationXLong,
-      vsync: this);
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
     _entranceAnimation = CurvedAnimation(
       parent: _entranceController,
-      curve: Curves.easeOutCubic);
+      curve: Curves.easeOutCubic,
+    );
     _entranceController.forward();
-}
+  }
 
   @override
   void dispose() {
     _entranceController.dispose();
     super.dispose();
-}
+  }
 
   void _flipCard(int index) {
     print('[TarotResult] Flipping card at index: $index');
     print('[TarotResult] Current flipped state: ${_flippedCards[index] ?? false}');
     setState(() {
       _flippedCards[index] = !(_flippedCards[index] ?? false);
-});
-}
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,9 +83,9 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     if (widget.isLoading) {
       print('[TarotResult] Showing loading widget');
       return const LoadingStateWidget(
-        message: '타로 해석 중...'
+        message: '타로 해석 중...',
       );
-}
+    }
 
     return AnimatedBuilder(
       animation: _entranceAnimation,
@@ -96,33 +95,36 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         print('[TarotResult] Using opacity: $opacityValue');
         if (opacityValue < 0.0 || opacityValue > 1.0) {
           print('[TarotResult] WARNING: Invalid opacity detected! Value: $opacityValue');
-}
+        }
         return Opacity(
           opacity: opacityValue.clamp(0.0, 1.0),
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - _entranceAnimation.value),
+            offset: Offset(0, 20 * (1 - _entranceAnimation.value)),
             child: Column(
               children: [
                 // Header
                 _buildHeader(theme, fontScale),
-                const SizedBox(height: AppSpacing.spacing6),
+                const SizedBox(height: 24),
                 
                 // Selected cards display
                 _buildCardsDisplay(theme, fontScale),
-                const SizedBox(height: AppSpacing.spacing8),
+                const SizedBox(height: 32),
                 
                 // Reading result
-                if (widget.readingResult != null), Expanded(
+                if (widget.readingResult != null)
+                  Expanded(
                     child: _buildReadingResult(theme, fontScale),
+                  ),
                 
                 // Action buttons
                 _buildActionButtons(theme, fontScale),
               ],
             ),
+          ),
         );
-}
+      },
     );
-}
+  }
 
   Widget _buildHeader(ThemeData theme, double fontScale) {
     return Column(
@@ -131,26 +133,28 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           '타로 리딩 결과',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+            fontSize: 24 * fontScale,
           ),
+        ),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.spacing2),
+          const SizedBox(height: 8),
           Text(
             widget.question!,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: 16 * fontScale,
               fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,
           ),
         ],
-      ]
+      ],
     );
-}
+  }
 
   Widget _buildCardsDisplay(ThemeData theme, double fontScale) {
     return Container(
-      height: AppSpacing.spacing24 * 2.08,
+      height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: widget.selectedCards.length,
@@ -172,32 +176,35 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   height: 150,
                   showFront: isFlipped,
                   onTap: () => _flipCard(index),
-                const SizedBox(height: AppSpacing.spacing2),
+                ),
+                const SizedBox(height: 8),
                 Text(
                   _getPositionLabel(index),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+                    fontSize: 12 * fontScale,
                   ),
+                ),
               ],
-            ));
-},
-      
+            ),
+          );
+        },
+      ),
     );
-}
+  }
 
   Widget _buildReadingResult(ThemeData theme, double fontScale) {
     final result = widget.readingResult!;
     
     return SingleChildScrollView(
-      padding: AppSpacing.paddingHorizontal16,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Overall interpretation
           if (result['overallInterpretation'] != null) ...[
             GlassContainer(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -208,25 +215,28 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         color: theme.colorScheme.primary,
                         size: 24,
                       ),
-                      const SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: 8),
                       Text(
                         '전체 해석',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+                          fontSize: 18 * fontScale,
                         ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: 16),
                   Text(
                     result['overallInterpretation'],
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale),
+                      fontSize: 16 * fontScale,
                       height: 1.5,
                     ),
+                  ),
                 ],
               ),
-            const SizedBox(height: AppSpacing.spacing4),
+            ),
+            const SizedBox(height: 16),
           ],
           
           // Individual card interpretations
@@ -235,17 +245,18 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               '카드별 해석',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+                fontSize: 18 * fontScale,
               ),
-            const SizedBox(height: AppSpacing.spacing4),
+            ),
+            const SizedBox(height: 16),
             ...List.generate(widget.selectedCards.length, (index) {
               final interpretation = result['cardInterpretations'][index];
               if (interpretation == null) return const SizedBox.shrink();
               
               return Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.spacing4),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: GlassContainer(
-                  padding: AppSpacing.paddingAll16,
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -253,7 +264,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         children: [
                           Container(
                             width: 32,
-                            height: AppSpacing.spacing8,
+                            height: 32,
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primary.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
@@ -262,39 +273,44 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                               child: Text(
                                 '${index + 1}',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.primary,
                                 ),
+                              ),
                             ),
-                          const SizedBox(width: AppSpacing.spacing3),
+                          ),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               _getPositionLabel(index),
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+                                fontSize: 16 * fontScale,
                               ),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppSpacing.spacing3),
+                      const SizedBox(height: 12),
                       Text(
                         interpretation['meaning'] ?? '',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale),
+                          fontSize: 14 * fontScale,
                           height: 1.4,
                         ),
+                      ),
                     ],
                   ),
+                ),
               );
-}),
+            }),
           ],
           
           // Advice
           if (result['advice'] != null) ...[
-            const SizedBox(height: AppSpacing.spacing4),
+            const SizedBox(height: 16),
             GlassContainer(
-              padding: AppSpacing.paddingAll20,
+              padding: const EdgeInsets.all(20),
               gradient: LinearGradient(
                 colors: [
                   theme.colorScheme.secondary.withValues(alpha: 0.1),
@@ -311,69 +327,79 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                         color: theme.colorScheme.secondary,
                         size: 24,
                       ),
-                      const SizedBox(width: AppSpacing.spacing2),
+                      const SizedBox(width: 8),
                       Text(
                         '조언',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale,
+                          fontSize: 18 * fontScale,
                         ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.spacing4),
+                  const SizedBox(height: 16),
                   Text(
                     result['advice'],
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale),
+                      fontSize: 16 * fontScale,
                       height: 1.5,
                     ),
+                  ),
                 ],
               ),
+            ),
           ],
-          const SizedBox(height: AppSpacing.spacing6),
+          const SizedBox(height: 24),
         ],
-      
+      ),
     );
-}
+  }
 
   Widget _buildActionButtons(ThemeData theme, double fontScale) {
     return Padding(
-      padding: AppSpacing.paddingAll16,
+      padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          if (widget.onNewReading != null), Expanded(
+          if (widget.onNewReading != null)
+            Expanded(
               child: OutlinedButton.icon(
                 onPressed: widget.onNewReading,
                 icon: const Icon(Icons.refresh),
                 label: Text(
                   '새로운 리딩',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: TextStyle(fontSize: 16 * fontScale),
+                ),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: AppDimensions.borderRadiusMedium,
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                ),
               ),
+            ),
           if (widget.onShare != null) ...[
-            const SizedBox(width: AppSpacing.spacing4),
+            const SizedBox(width: 16),
             Expanded(
               child: FilledButton.icon(
                 onPressed: widget.onShare,
                 icon: const Icon(Icons.share),
                 label: Text(
                   '공유하기',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: TextStyle(fontSize: 16 * fontScale),
+                ),
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: AppDimensions.borderRadiusMedium,
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                ),
               ),
+            ),
           ],
         ],
-      
+      ),
     );
-}
+  }
 
   String _getPositionLabel(int index) {
     switch (widget.spreadType) {
@@ -390,10 +416,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           '당신의 접근',
           '외부 영향',
           '희망과 두려움',
-          '최종 결과',
-][index];
+          '최종 결과'
+        ][index];
       default:
         return '카드 ${index + 1}';
-}
-  },
+    }
+  }
 }

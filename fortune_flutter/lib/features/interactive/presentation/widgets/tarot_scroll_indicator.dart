@@ -45,13 +45,13 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-}
+  }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,18 +90,23 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                       color: Colors.white.withValues(alpha: 0.3),
                       width: 1,
                     ),
+                  ),
                   child: Text(
                     widget.text,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
+                  ),
+                ),
               ),
             ],
-          ));
-}
+          ),
+        );
+      },
     );
-}
+  }
 
   Widget _buildArrow(bool isLeft) {
     return Transform.translate(
@@ -128,6 +133,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                   ),
                 ],
               ),
+            ),
             
             // Arrow icon
             Transform.rotate(
@@ -138,10 +144,13 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                   color: Colors.white,
                   strokeWidth: 3,
                 ),
+              ),
             ),
           ],
-        ));
-}
+        ),
+      ),
+    );
+  }
 }
 
 class ArrowPainter extends CustomPainter {
@@ -155,13 +164,12 @@ class ArrowPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint(),
+    final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round
-      ..strokeJoin =,
-      StrokeJoin.round;
+      ..strokeJoin = StrokeJoin.round;
 
     final path = Path();
     
@@ -171,7 +179,7 @@ class ArrowPainter extends CustomPainter {
     path.lineTo(size.width * 0.8, size.height * 0.3);
     
     canvas.drawPath(path, paint);
-}
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
@@ -210,13 +218,13 @@ class _TarotScrollHintState extends State<TarotScrollHint>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-}
+  }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -246,9 +254,11 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                     ),
                   ],
                 ),
+              ),
             ),
+          ),
         );
-}
+      },
     );
-}
+  }
 }

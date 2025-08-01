@@ -39,14 +39,14 @@ final userProvider = StreamProvider<User?>((ref) {
     Logger.info('🔍 [userProvider] Next: ${next.value?.session?.user.id}');
     Logger.info('🔍 [userProvider] Session: ${next.value?.session != null}');
     Logger.info('🔍 [userProvider] Event type: ${next.value?.event}');
-});
+  });
 
   final user = client.auth.currentUser;
   if (user == null) {
     Logger.info('❌ [userProvider] No current user found');
-} else {
+  } else {
     Logger.info('✅ [userProvider] User found: ${user.id}');
-}
+  }
   
   return Stream.value(user);
 });
@@ -64,17 +64,17 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   if (user == null) {
     Logger.info('❌ [userProfileProvider] No user found, returning null');
     return null;
-}
+  }
   
   try {
     Logger.info('🔍 [userProfileProvider] Ensuring user profile exists...');
     // Use helper function to ensure profile exists
     final profileData = await SupabaseHelper.ensureUserProfile(
-      userId: user.id),
-                  email: user.email ?? 'unknown@example.com'),
-                  name: user.userMetadata?['name'] as String? ?? 
-            user.userMetadata?['full_name'] as String?),
-                  profileImageUrl: user.userMetadata?['avatar_url'] as String?
+      userId: user.id,
+      email: user.email ?? 'unknown@example.com',
+      name: user.userMetadata?['name'] as String? ?? 
+            user.userMetadata?['full_name'] as String?,
+      profileImageUrl: user.userMetadata?['avatar_url'] as String?,
     );
     
     Logger.info('🔍 [userProfileProvider] Profile data returned: ${profileData != null}');
@@ -83,15 +83,15 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
       final profile = UserProfile.fromJson(profileData);
       Logger.info('✅ [userProfileProvider] Profile created successfully');
       return profile;
-}
+    }
     
     Logger.info('❌ [userProfileProvider] Profile data is null');
     return null;
-} catch (e, stackTrace) {
+  } catch (e, stackTrace) {
     Logger.error('❌ [userProfileProvider] Failed to fetch or create user profile', e);
     Logger.error('❌ [userProfileProvider] Stack trace: $stackTrace');
     return null;
-}
+  }
 });
 
 // Auth service provider
@@ -115,34 +115,34 @@ class AuthService {
   Future<AuthResponse> signUp({
     required String email,
     required String password,
-    Map<String, dynamic>? metadata),
-}) async {
+    Map<String, dynamic>? metadata,
+  }) async {
     try {
       final response = await _client.auth.signUp(
-        email: email),
-                  password: password),
-                  data: metadata
+        email: email,
+        password: password,
+        data: metadata,
       );
       
       if (response.user != null) {
         Logger.securityCheckpoint('User signed up: ${response.user!.id}');
-}
+      }
       
       return response;
-} catch (e) {
+    } catch (e) {
       Logger.error('Sign up failed', e);
       rethrow;
-}
+    }
   }
   
   Future<AuthResponse> signIn({
     required String email,
-    required String password),
-}) async {
+    required String password,
+  }) async {
     try {
       final response = await _client.auth.signInWithPassword(
-        email: email),
-                  password: password
+        email: email,
+        password: password,
       );
       
       if (response.user != null) {
@@ -151,57 +151,59 @@ class AuthService {
         // Update consecutive days on sign in
         try {
           await _statisticsService.updateConsecutiveDays(response.user!.id);
-} catch (e) {
+        } catch (e) {
           Logger.error('Failed to update consecutive days', e);
-          // Don't throw - this is not critical for sign in,
-}
+          // Don't throw - this is not critical for sign in
+        }
       }
       
       return response;
-} catch (e) {
+    } catch (e) {
       Logger.error('Sign in failed', e);
       rethrow;
-}
+    }
   }
   
   Future<void> signOut() async {
     try {
       await _client.auth.signOut();
       Logger.securityCheckpoint('User signed out');
-} catch (e) {
+    } catch (e) {
       Logger.error('Sign out failed', e);
       rethrow;
-}
+    }
   }
   
   Future<void> resetPassword(String email) async {
     try {
       await _client.auth.resetPasswordForEmail(email);
       Logger.info('Password reset email sent to $email');
-} catch (e) {
+    } catch (e) {
       Logger.error('Password reset failed', e);
       rethrow;
-}
+    }
   }
   
   Future<UserResponse> updateUser({
     String? email,
     String? password,
-    Map<String, dynamic>? metadata),
-}) async {
+    Map<String, dynamic>? metadata,
+  }) async {
     try {
       final response = await _client.auth.updateUser(
         UserAttributes(
-          email: email),
-                  password: password),
-                  data: metadata);
+          email: email,
+          password: password,
+          data: metadata,
+        ),
+      );
       
       Logger.info('User updated');
       return response;
-} catch (e) {
+    } catch (e) {
       Logger.error('User update failed', e);
       rethrow;
-}
+    }
   }
   
   Future<UserProfile?> ensureUserProfile() async {
@@ -211,22 +213,22 @@ class AuthService {
     try {
       // Use helper function to ensure profile exists
       final profileData = await SupabaseHelper.ensureUserProfile(
-        userId: user.id),
-                  email: user.email ?? 'unknown@example.com'),
-                  name: user.userMetadata?['name'] as String? ?? 
-              user.userMetadata?['full_name'] as String?),
-                  profileImageUrl: user.userMetadata?['avatar_url'] as String?
+        userId: user.id,
+        email: user.email ?? 'unknown@example.com',
+        name: user.userMetadata?['name'] as String? ?? 
+              user.userMetadata?['full_name'] as String?,
+        profileImageUrl: user.userMetadata?['avatar_url'] as String?,
       );
       
       if (profileData != null) {
         return UserProfile.fromJson(profileData);
-}
+      }
       
       return null;
-} catch (e) {
+    } catch (e) {
       Logger.error('Failed to ensure user profile', e);
       return null;
-}
+    }
   }
 
   Future<bool> hasUserProfile() async {
@@ -243,9 +245,9 @@ class AuthService {
       if (response == null) return false;
       
       return response['onboarding_completed'] == true;
-} catch (e) {
+    } catch (e) {
       Logger.error('Error checking user profile', e);
       return false;
-}
-  },
+    }
+  }
 }

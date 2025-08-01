@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/zodiac_compatibility_service.dart';
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
-import 'package:fortune/core/theme/app_animations.dart';
 
 class ZodiacCompatibilityMatrix extends StatefulWidget {
   final String? selectedZodiac1;
@@ -35,8 +32,9 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppAnimations.durationSkeleton,
-      vsync: this);
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
     
     _fadeAnimation = Tween<double>(
       begin: 0,
@@ -48,29 +46,29 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     
     if (widget.showAnimation) {
       _animationController.forward();
-} else {
+    } else {
       _animationController.value = 1.0;
-}
+    }
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-}
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         _buildHeader(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildMatrix(),
-        const SizedBox(height: AppSpacing.spacing5),
+        const SizedBox(height: 20),
         _buildSelectedInfo(),
       ],
     );
-}
+  }
 
   Widget _buildHeader() {
     return Row(
@@ -81,26 +79,31 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
           color: Colors.purple,
           size: 24,
         ),
-        const SizedBox(width: AppSpacing.spacing2),
+        const SizedBox(width: 8),
         Text(
           '띠별 궁합 매트릭스',
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
-}
+  }
 
   Widget _buildMatrix() {
     return AnimatedBuilder(
       animation: _fadeAnimation,
       builder: (context, child) {
         return GlassContainer(
-          padding: AppSpacing.paddingAll20,
+          padding: const EdgeInsets.all(20),
           child: Column(
             children: [
               // 상단 띠 라벨
               Row(
                 children: [
-                  const SizedBox(width: AppDimensions.buttonHeightSmall), // 왼쪽 여백
+                  const SizedBox(width: 40), // 왼쪽 여백
                   ...List.generate(12, (col) {
                     final zodiac = ZodiacCompatibilityService.zodiacAnimals[col];
                     return Expanded(
@@ -109,12 +112,21 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                           quarterTurns: 3,
                           child: Text(
                             zodiac,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                        ));
-}),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: _hoveredCol == col
+                                  ? Colors.amber
+                                  : Colors.white.withValues(alpha: 0.8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
-              const SizedBox(height: AppSpacing.spacing2 * 1.25),
+              const SizedBox(height: 10),
               // 매트릭스 본체
               ...List.generate(12, (row) {
                 final zodiac1 = ZodiacCompatibilityService.zodiacAnimals[row];
@@ -125,14 +137,21 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       width: 40,
                       child: Text(
                         zodiac1,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _hoveredRow == row
+                              ? Colors.amber
+                              : Colors.white.withValues(alpha: 0.8),
+                        ),
+                      ),
                     ),
                     // 궁합 셀들
                     ...List.generate(12, (col) {
                       final zodiac2 = ZodiacCompatibilityService.zodiacAnimals[col];
                       final compatibility = ZodiacCompatibilityService.calculateCompatibility(
                         zodiac1,
-                        zodiac2
+                        zodiac2,
                       );
                       final isSelected = widget.selectedZodiac1 == zodiac1 &&
                           widget.selectedZodiac2 == zodiac2;
@@ -145,19 +164,19 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                             onEnter: (_) => setState(() {
                               _hoveredRow = row;
                               _hoveredCol = col;
-}),
+                            }),
                             onExit: (_) => setState(() {
                               _hoveredRow = null;
                               _hoveredCol = null;
-}),
+                            }),
                             child: AnimatedContainer(
-                              duration: AppAnimations.durationShort,
+                              duration: const Duration(milliseconds: 200),
                               height: 35,
                               margin: const EdgeInsets.all(1),
                               decoration: BoxDecoration(
-                                color: _getCompatibilityColor(compatibility,
+                                color: _getCompatibilityColor(compatibility)
                                     .withValues(alpha: _fadeAnimation.value * 0.8),
-                                borderRadius: AppDimensions.borderRadiusSmall,
+                                borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
                                   color: isSelected
                                       ? Colors.white
@@ -166,7 +185,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                 ),
                                 boxShadow: (isSelected || isHovered) ? [
                                   BoxShadow(
-                                    color: _getCompatibilityColor(compatibility,
+                                    color: _getCompatibilityColor(compatibility)
                                         .withValues(alpha: 0.5),
                                     blurRadius: 8,
                                     spreadRadius: 2,
@@ -177,48 +196,55 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                                 child: Text(
                                   '${(compatibility * 100).toInt()}',
                                   style: TextStyle(
-                                    fontSize: isHovered ? 12 : 10),
+                                    fontSize: isHovered ? 12 : 10,
                                     fontWeight: isHovered
                                         ? FontWeight.bold
                                         : FontWeight.normal,
                                     color: Colors.white,
                                   ),
+                                ),
                               ),
+                            ),
                           ),
+                        ),
                       );
-}),
+                    }),
                   ],
                 );
-}),
+              }),
             ],
-          ));
-},
+          ),
+        );
+      },
     );
-}
+  }
 
   Widget _buildSelectedInfo() {
     if (widget.selectedZodiac1 == null || widget.selectedZodiac2 == null) {
       return Container(
-        padding: AppSpacing.paddingAll20,
+        padding: const EdgeInsets.all(20),
         child: Text(
           '매트릭스에서 두 띠를 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.6),
-            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+            fontSize: 14,
           ),
           textAlign: TextAlign.center,
-        ));
-}
+        ),
+      );
+    }
 
     final compatibility = ZodiacCompatibilityService.calculateCompatibility(
       widget.selectedZodiac1!,
-      widget.selectedZodiac2!);
+      widget.selectedZodiac2!,
+    );
     final description = ZodiacCompatibilityService.getRelationshipDescription(
       widget.selectedZodiac1!,
-      widget.selectedZodiac2!);
+      widget.selectedZodiac2!,
+    );
 
     return GlassContainer(
-      padding: AppSpacing.paddingAll20,
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           Row(
@@ -226,7 +252,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
             children: [
               _buildZodiacInfo(widget.selectedZodiac1!),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
                     Icon(
@@ -234,35 +260,48 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
                       color: _getCompatibilityColor(compatibility),
                       size: 32,
                     ),
-                    const SizedBox(height: AppSpacing.spacing1),
+                    const SizedBox(height: 4),
                     Text(
                       '${(compatibility * 100).toInt()}%',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: _getCompatibilityColor(compatibility),
+                      ),
+                    ),
                   ],
                 ),
+              ),
               _buildZodiacInfo(widget.selectedZodiac2!),
             ],
           ),
-          const SizedBox(height: AppSpacing.spacing5),
+          const SizedBox(height: 20),
           Container(
-            padding: AppSpacing.paddingAll16,
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _getCompatibilityColor(compatibility).withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusMedium,
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
                 width: 1,
               ),
+            ),
             child: Text(
               description,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
-          const SizedBox(height: AppSpacing.spacing4),
+          ),
+          const SizedBox(height: 16),
           _buildDetailedAnalysis(),
         ],
-      ));
-}
+      ),
+    );
+  }
 
   Widget _buildZodiacInfo(String zodiac) {
     final info = ZodiacCompatibilityService.zodiacInfo[zodiac]!;
@@ -271,17 +310,27 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
       children: [
         Text(
           _getZodiacEmoji(zodiac),
-          style: Theme.of(context).textTheme.bodyMedium,
-        const SizedBox(height: AppSpacing.spacing2),
+          style: const TextStyle(fontSize: 48),
+        ),
+        const SizedBox(height: 8),
         Text(
           zodiac,
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         Text(
           '${info['hanja']} · ${info['element']}',
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withValues(alpha: 0.8),
+          ),
+        ),
+      ],
     );
-}
+  }
 
   Widget _buildDetailedAnalysis() {
     final info1 = ZodiacCompatibilityService.zodiacInfo[widget.selectedZodiac1!]!;
@@ -318,33 +367,42 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
             ),
           ],
         ),
-      ]
+      ],
     );
-}
+  }
 
   Widget _buildAnalysisItem(String title, String value, IconData icon) {
     return Column(
       children: [
         Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 24),
-        const SizedBox(height: AppSpacing.spacing1),
+        const SizedBox(height: 4),
         Text(
           title,
-          style: Theme.of(context).textTheme.bodyMedium,
-        const SizedBox(height: AppSpacing.spacing0 * 0.5),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.6),
+          ),
+        ),
+        const SizedBox(height: 2),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ],
     );
-}
+  }
 
   String _analyzeTraitCompatibility(List<String> traits1, List<String> traits2) {
     // 간단한 성격 궁합 분석
-    final commonTraits = traits1.toSet().intersection(traits2.toSet();
+    final commonTraits = traits1.toSet().intersection(traits2.toSet());
     if (commonTraits.length >= 2) return '매우 좋음';
     if (commonTraits.length == 1) return '좋음';
     return '보통';
-}
+  }
 
   String _analyzeElementCompatibility(String element1, String element2) {
     if (element1 == element2) return '같은 기운';
@@ -362,12 +420,12 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     if (generating[element2] == element1) return '상생 관계';
     
     return '상극 관계';
-}
+  }
 
   String _analyzeYinYangCompatibility(String yinYang1, String yinYang2) {
     if (yinYang1 != yinYang2) return '조화로움';
     return '같은 에너지';
-}
+  }
 
   Color _getCompatibilityColor(double compatibility) {
     if (compatibility >= 0.9) return Colors.green;
@@ -375,7 +433,7 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
     if (compatibility >= 0.6) return Colors.amber;
     if (compatibility >= 0.4) return Colors.orange;
     return Colors.red;
-}
+  }
 
   String _getZodiacEmoji(String zodiac) {
     const emojiMap = {
@@ -393,5 +451,5 @@ class _ZodiacCompatibilityMatrixState extends State<ZodiacCompatibilityMatrix>
       '돼지': '🐷',
     };
     return emojiMap[zodiac] ?? '🌟';
-}
+  }
 }

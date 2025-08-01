@@ -39,7 +39,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
     // Fan out animation
     _fanController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this
+      vsync: this,
     );
 
     // Floating animation for hovered card
@@ -61,15 +61,17 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
             delay * 0.5,
             0.5 + delay * 0.5,
             curve: Curves.easeOutBack,
-          ));
-});
+          ),
+        ),
+      );
+    });
 
     // Start fan animation
     _fanController.forward();
 
     // Listen to scroll changes
     _scrollController.addListener(_onScroll);
-}
+  }
 
   @override
   void dispose() {
@@ -77,9 +79,9 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
     _floatController.dispose();
     if (widget.scrollController == null) {
       _scrollController.dispose();
-}
+    }
     super.dispose();
-}
+  }
 
   void _onScroll() {
     final scrollOffset = _scrollController.offset;
@@ -89,8 +91,8 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
     if (centerIndex != _hoveredIndex && centerIndex >= 0 && centerIndex < widget.cardCount) {
       setState(() {
         _hoveredIndex = centerIndex;
-});
-}
+      });
+    }
   }
 
   @override
@@ -125,17 +127,18 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                   alignment: Alignment.center,
                   child: Transform(
                     alignment: Alignment.bottomCenter,
-                    transform: Matrix4.identity(,
-                      ..translate(0.0, -floatOffset + (1 - fanProgress) * 100,
-                      ..rotateZ(angle,
-                      ..scale(0.9 + scaleBoost + fanProgress * 0.1, 0.9 + scaleBoost + fanProgress * 0.1),
+                    transform: Matrix4.identity()
+                      ..translate(0.0, -floatOffset + (1 - fanProgress) * 100)
+                      ..rotateZ(angle)
+                      ..scale(0.9 + scaleBoost + fanProgress * 0.1),
                     child: Opacity(
                       opacity: 0.5 + fanProgress * 0.5,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
                           // Card shadow
-                          if (isHovered), Container(
+                          if (isHovered)
+                            Container(
                               width: widget.cardWidth,
                               height: widget.cardHeight,
                               decoration: BoxDecoration(
@@ -148,19 +151,22 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                                   ),
                                 ],
                               ),
+                            ),
                           
                           // Card back
                           _buildCardBack(context, index, isHovered, isSelected),
                         ],
                       ),
+                    ),
                   ),
+                ),
               );
-},
+            },
           );
-},
-      
+        },
+      ),
     );
-}
+  }
 
   Widget _buildCardBack(BuildContext context, int index, bool isHovered, bool isSelected) {
     return Container(
@@ -183,6 +189,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
               : Colors.white.withValues(alpha: 0.3),
           width: isHovered ? 3 : 2,
         ),
+      ),
       child: Stack(
         children: [
           // Mandala pattern
@@ -192,6 +199,7 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                 color: Colors.white.withValues(alpha: 0.1),
                 isAnimated: isHovered,
               ),
+            ),
           ),
           
           // Center symbol
@@ -200,11 +208,12 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
               Icons.auto_awesome,
               size: 40,
               color: Colors.white.withValues(alpha: isHovered ? 0.9 : 0.7),
+            ),
           ),
         ],
-      
+      ),
     );
-}
+  }
 }
 
 class MandalaPainter extends CustomPainter {
@@ -215,10 +224,9 @@ class MandalaPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint(),
+    final paint = Paint()
       ..color = color
-      ..style =,
-      PaintingStyle.stroke
+      ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
 
     final center = Offset(size.width / 2, size.height / 2);
@@ -227,19 +235,21 @@ class MandalaPainter extends CustomPainter {
     // Draw concentric circles
     for (int i = 1; i <= 3; i++) {
       canvas.drawCircle(center, radius * i / 3, paint);
-}
+    }
 
     // Draw radial lines
     for (int i = 0; i < 8; i++) {
       final angle = i * math.pi / 4;
       final start = Offset(
         center.dx + radius * 0.3 * math.cos(angle),
-        center.dy + radius * 0.3 * math.sin(angle));
+        center.dy + radius * 0.3 * math.sin(angle),
+      );
       final end = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle);
+        center.dy + radius * math.sin(angle),
+      );
       canvas.drawLine(start, end, paint);
-}
+    }
   }
 
   @override

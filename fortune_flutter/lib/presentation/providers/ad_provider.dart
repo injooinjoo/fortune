@@ -33,19 +33,20 @@ class AdLoadingState {
   const AdLoadingState({
     this.isBannerLoading = false,
     this.isInterstitialLoading = false,
-    this.isRewardedLoading = false),
-});
+    this.isRewardedLoading = false,
+  });
 
   AdLoadingState copyWith({
     bool? isBannerLoading,
     bool? isInterstitialLoading,
-    bool? isRewardedLoading),
-}) {
+    bool? isRewardedLoading,
+  }) {
     return AdLoadingState(
-      isBannerLoading: isBannerLoading ?? this.isBannerLoading
-      isInterstitialLoading: isInterstitialLoading ?? this.isInterstitialLoading),
-                  isRewardedLoading: isRewardedLoading ?? this.isRewardedLoading);
-}
+      isBannerLoading: isBannerLoading ?? this.isBannerLoading,
+      isInterstitialLoading: isInterstitialLoading ?? this.isInterstitialLoading,
+      isRewardedLoading: isRewardedLoading ?? this.isRewardedLoading,
+    );
+  }
 }
 
 final adLoadingStateProvider = StateNotifierProvider<AdLoadingStateNotifier, AdLoadingState>((ref) {
@@ -53,19 +54,19 @@ final adLoadingStateProvider = StateNotifierProvider<AdLoadingStateNotifier, AdL
 });
 
 class AdLoadingStateNotifier extends StateNotifier<AdLoadingState> {
-  AdLoadingStateNotifier() : super(const AdLoadingState();
+  AdLoadingStateNotifier() : super(const AdLoadingState());
 
   void setBannerLoading(bool loading) {
     state = state.copyWith(isBannerLoading: loading);
-}
+  }
 
   void setInterstitialLoading(bool loading) {
     state = state.copyWith(isInterstitialLoading: loading);
-}
+  }
 
   void setRewardedLoading(bool loading) {
     state = state.copyWith(isRewardedLoading: loading);
-}
+  }
 }
 
 /// Provider for ad revenue tracking
@@ -81,23 +82,24 @@ class AdRevenue {
     this.bannersShown = 0,
     this.interstitialsShown = 0,
     this.rewardedAdsShown = 0,
-    this.rewardsEarned = 0),
-});
+    this.rewardsEarned = 0,
+  });
 
   AdRevenue copyWith({
     double? totalRevenue,
     int? bannersShown,
     int? interstitialsShown,
     int? rewardedAdsShown,
-    int? rewardsEarned),
-}) {
+    int? rewardsEarned,
+  }) {
     return AdRevenue(
-      totalRevenue: totalRevenue ?? this.totalRevenue
+      totalRevenue: totalRevenue ?? this.totalRevenue,
       bannersShown: bannersShown ?? this.bannersShown,
-      interstitialsShown: interstitialsShown ?? this.interstitialsShown
-      rewardedAdsShown: rewardedAdsShown ?? this.rewardedAdsShown),
-                  rewardsEarned: rewardsEarned ?? this.rewardsEarned);
-}
+      interstitialsShown: interstitialsShown ?? this.interstitialsShown,
+      rewardedAdsShown: rewardedAdsShown ?? this.rewardedAdsShown,
+      rewardsEarned: rewardsEarned ?? this.rewardsEarned,
+    );
+  }
 }
 
 final adRevenueProvider = StateNotifierProvider<AdRevenueNotifier, AdRevenue>((ref) {
@@ -105,53 +107,59 @@ final adRevenueProvider = StateNotifierProvider<AdRevenueNotifier, AdRevenue>((r
 });
 
 class AdRevenueNotifier extends StateNotifier<AdRevenue> {
-  AdRevenueNotifier() : super(const AdRevenue();
+  AdRevenueNotifier() : super(const AdRevenue());
 
   void recordBannerImpression() {
     state = state.copyWith(
-      bannersShown: state.bannersShown + 1)
+      bannersShown: state.bannersShown + 1,
       // Estimated revenue per banner impression
-      totalRevenue: state.totalRevenue + 0.001);
+      totalRevenue: state.totalRevenue + 0.001,
+    );
     Logger.info('Banner impression recorded. Total: ${state.bannersShown}');
     
     // Track in analytics
     AnalyticsService.instance.logAdImpression(
-      adType: 'banner'),
-                  placement: 'general');
-}
+      adType: 'banner',
+      placement: 'general',
+    );
+  }
 
   void recordInterstitialImpression() {
     state = state.copyWith(
-      interstitialsShown: state.interstitialsShown + 1)
+      interstitialsShown: state.interstitialsShown + 1,
       // Estimated revenue per interstitial impression
-      totalRevenue: state.totalRevenue + 0.01);
+      totalRevenue: state.totalRevenue + 0.01,
+    );
     Logger.info('Interstitial impression recorded. Total: ${state.interstitialsShown}');
     
     // Track in analytics
     AnalyticsService.instance.logAdImpression(
-      adType: 'interstitial'),
-                  placement: 'fortune_generation');
-}
+      adType: 'interstitial',
+      placement: 'fortune_generation',
+    );
+  }
 
   void recordRewardedAdImpression() {
     state = state.copyWith(
-      rewardedAdsShown: state.rewardedAdsShown + 1),
-                  rewardsEarned: state.rewardsEarned + 1)
+      rewardedAdsShown: state.rewardedAdsShown + 1,
+      rewardsEarned: state.rewardsEarned + 1,
       // Estimated revenue per rewarded ad
-      totalRevenue: state.totalRevenue + 0.02);
+      totalRevenue: state.totalRevenue + 0.02,
+    );
     Logger.info('Rewarded ad impression recorded. Total: ${state.rewardedAdsShown}');
     
     // Track in analytics
     AnalyticsService.instance.logAdImpression(
-      adType: 'rewarded'),
-                  placement: 'token_earn');
+      adType: 'rewarded',
+      placement: 'token_earn',
+    );
     
     // Track reward earned
     AnalyticsService.instance.logAdReward(
-      adType: 'rewarded'),
-                  rewardAmount: 5, // Default token reward
+      adType: 'rewarded',
+      rewardAmount: 5, // Default token reward
     );
-}
+  }
 }
 
 /// Provider for ad frequency capping
@@ -165,8 +173,8 @@ class AdFrequencyCap {
     this.lastInterstitialShown,
     this.interstitialsShownToday = 0,
     this.lastRewardedAdShown,
-    this.rewardedAdsShownToday = 0),
-});
+    this.rewardedAdsShownToday = 0,
+  });
 
   bool canShowInterstitial() {
     // Max 5 interstitials per day
@@ -176,10 +184,10 @@ class AdFrequencyCap {
     if (lastInterstitialShown != null) {
       final timeSinceLastAd = DateTime.now().difference(lastInterstitialShown!);
       if (timeSinceLastAd.inMinutes < 3) return false;
-}
+    }
     
     return true;
-}
+  }
 
   bool canShowRewardedAd() {
     // Max 10 rewarded ads per day
@@ -189,23 +197,24 @@ class AdFrequencyCap {
     if (lastRewardedAdShown != null) {
       final timeSinceLastAd = DateTime.now().difference(lastRewardedAdShown!);
       if (timeSinceLastAd.inMinutes < 1) return false;
-}
+    }
     
     return true;
-}
+  }
 
   AdFrequencyCap copyWith({
     DateTime? lastInterstitialShown,
     int? interstitialsShownToday,
     DateTime? lastRewardedAdShown,
-    int? rewardedAdsShownToday),
-}) {
+    int? rewardedAdsShownToday,
+  }) {
     return AdFrequencyCap(
-      lastInterstitialShown: lastInterstitialShown ?? this.lastInterstitialShown
+      lastInterstitialShown: lastInterstitialShown ?? this.lastInterstitialShown,
       interstitialsShownToday: interstitialsShownToday ?? this.interstitialsShownToday,
-      lastRewardedAdShown: lastRewardedAdShown ?? this.lastRewardedAdShown),
-                  rewardedAdsShownToday: rewardedAdsShownToday ?? this.rewardedAdsShownToday);
-}
+      lastRewardedAdShown: lastRewardedAdShown ?? this.lastRewardedAdShown,
+      rewardedAdsShownToday: rewardedAdsShownToday ?? this.rewardedAdsShownToday,
+    );
+  }
 }
 
 final adFrequencyCapProvider = StateNotifierProvider<AdFrequencyCapNotifier, AdFrequencyCap>((ref) {
@@ -213,23 +222,26 @@ final adFrequencyCapProvider = StateNotifierProvider<AdFrequencyCapNotifier, AdF
 });
 
 class AdFrequencyCapNotifier extends StateNotifier<AdFrequencyCap> {
-  AdFrequencyCapNotifier() : super(const AdFrequencyCap();
+  AdFrequencyCapNotifier() : super(const AdFrequencyCap());
 
   void recordInterstitialShown() {
     state = state.copyWith(
       lastInterstitialShown: DateTime.now(),
-      interstitialsShownToday: state.interstitialsShownToday + 1));
-}
+      interstitialsShownToday: state.interstitialsShownToday + 1,
+    );
+  }
 
   void recordRewardedAdShown() {
     state = state.copyWith(
       lastRewardedAdShown: DateTime.now(),
-      rewardedAdsShownToday: state.rewardedAdsShownToday + 1));
-}
+      rewardedAdsShownToday: state.rewardedAdsShownToday + 1,
+    );
+  }
 
   void resetDailyCounters() {
     state = state.copyWith(
-      interstitialsShownToday: 0),
-                  rewardedAdsShownToday: 0);
-}
+      interstitialsShownToday: 0,
+      rewardedAdsShownToday: 0,
+    );
+  }
 }

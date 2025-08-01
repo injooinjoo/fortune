@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 class TermsOfServicePage extends ConsumerWidget {
   const TermsOfServicePage({super.key});
@@ -11,9 +10,9 @@ class TermsOfServicePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppColors.surface),
-                  body: Container(
-        decoration: BoxDecoration(color: AppColors.surface),
+      backgroundColor: AppTheme.backgroundColor,
+      body: Container(
+        decoration: BoxDecoration(color: AppTheme.backgroundColor),
         child: SafeArea(
           child: Column(
             children: [
@@ -26,11 +25,13 @@ class TermsOfServicePage extends ConsumerWidget {
                       colors: [
                         Colors.white.withValues(alpha: 0.1),
                         Colors.white.withValues(alpha: 0.05),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(20),
                     padding: const EdgeInsets.all(24),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         _buildSection(
                           '제1조 (목적)',
                           '이 약관은 Fortune(이하 "회사")이 제공하는 운세 서비스(이하 "서비스")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.',
@@ -93,34 +94,49 @@ class TermsOfServicePage extends ConsumerWidget {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          '시행일: 2025년 1월 1일'),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.6)),
+                          '시행일: 2025년 1월 1일',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
               ),
-        ));
-}
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildSection(String title, String content) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start),
-                  children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            title),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
+          ),
           const SizedBox(height: 12),
           Text(
-            content),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            content,
+            style: TextStyle(
+              fontSize: 14,
               color: Colors.white.withValues(alpha: 0.8),
               height: 1.6,
             ),
-      
+          ),
+        ],
+      ),
     );
-}
+  }
 }

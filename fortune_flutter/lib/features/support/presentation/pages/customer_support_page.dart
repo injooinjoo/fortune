@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
 import 'package:fortune/shared/components/app_header.dart';
 import 'package:fortune/core/theme/app_theme.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class CustomerSupportPage extends ConsumerWidget {
@@ -13,9 +12,9 @@ class CustomerSupportPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppTheme.backgroundColor,
       body: Container(
-        decoration: BoxDecoration(color: AppColors.surface),
+        decoration: BoxDecoration(color: AppTheme.backgroundColor),
         child: SafeArea(
           child: Column(
             children: [
@@ -32,12 +31,14 @@ class CustomerSupportPage extends ConsumerWidget {
                       _buildQuickActions(context),
                     ],
                   ),
+                ),
               ),
             ],
           ),
-      
+        ),
+      ),
     );
-}
+  }
 
   Widget _buildContactCard(BuildContext context) {
     return GlassContainer(
@@ -56,20 +57,25 @@ class CustomerSupportPage extends ConsumerWidget {
           Icon(
             Icons.support_agent_rounded,
             size: 60,
-            color: Colors.purple.withValues(alpha: 0.5)).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
+            color: Colors.purple.shade300,
+          ).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
           const SizedBox(height: 16),
           const Text(
             '도움이 필요하신가요?',
             style: TextStyle(
-              fontSize: 22),
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
+          ),
           const SizedBox(height: 8),
           Text(
             '평일 09:00 - 18:00 운영',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: TextStyle(
+              fontSize: 14,
               color: Colors.white.withValues(alpha: 0.8),
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -90,8 +96,9 @@ class CustomerSupportPage extends ConsumerWidget {
             ],
           ),
         ],
-      )).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
-}
+      ),
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
+  }
 
   Widget _buildContactButton({
     required IconData icon,
@@ -111,6 +118,7 @@ class CustomerSupportPage extends ConsumerWidget {
             color: color.withValues(alpha: 0.3),
             width: 1,
           ),
+        ),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
@@ -118,12 +126,15 @@ class CustomerSupportPage extends ConsumerWidget {
             Text(
               label,
               style: TextStyle(
-                color: color),
+                color: color,
                 fontWeight: FontWeight.w600,
               ),
+            ),
           ],
-        ));
-}
+        ),
+      ),
+    );
+  }
 
   Widget _buildFAQSection(BuildContext context) {
     final faqs = [
@@ -152,12 +163,14 @@ class CustomerSupportPage extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           '자주 묻는 질문',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
+        ),
         const SizedBox(height: 16),
         ...faqs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -169,10 +182,10 @@ class CustomerSupportPage extends ConsumerWidget {
             delay: Duration(milliseconds: 100 * index),
             duration: 500.ms,
           ).slideX(begin: 0.1, end: 0);
-}),
-      ]
+        }),
+      ],
     );
-}
+  }
 
   Widget _buildFAQItem({
     required String question,
@@ -196,7 +209,7 @@ class CustomerSupportPage extends ConsumerWidget {
             children: [
               Icon(
                 Icons.help_outline_rounded,
-                color: Colors.blue.withValues(alpha: 0.5),
+                color: Colors.blue.shade300,
                 size: 20,
               ),
               const SizedBox(width: 12),
@@ -204,12 +217,14 @@ class CustomerSupportPage extends ConsumerWidget {
                 child: Text(
                   question,
                   style: const TextStyle(
-                    color: Colors.white),
+                    color: Colors.white,
                     fontWeight: FontWeight.w500,
                   ),
+                ),
               ),
             ],
           ),
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -219,22 +234,25 @@ class CustomerSupportPage extends ConsumerWidget {
                 color: Colors.white.withValues(alpha: 0.8),
                 height: 1.5,
               ),
+            ),
           ),
         ],
-      
+      ),
     );
-}
+  }
 
   Widget _buildQuickActions(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           '빠른 도움말',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
+        ),
         const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 2,
@@ -250,29 +268,33 @@ class CustomerSupportPage extends ConsumerWidget {
               subtitle: '앱 사용법 알아보기',
               color: Colors.green,
               onTap: () => _showGuide(context),
+            ),
             _buildActionCard(
               icon: Icons.bug_report_rounded,
               title: '버그 신고',
               subtitle: '문제 발견 시 알려주세요',
               color: Colors.red,
               onTap: () => _reportBug(context),
+            ),
             _buildActionCard(
               icon: Icons.star_rounded,
               title: '평가하기',
               subtitle: '앱스토어 리뷰 남기기',
               color: Colors.orange,
               onTap: () => _rateApp(),
+            ),
             _buildActionCard(
               icon: Icons.share_rounded,
               title: '앱 공유',
               subtitle: '친구에게 추천하기',
               color: Colors.purple,
               onTap: () => _shareApp(context),
+            ),
           ],
         ),
-      ]
+      ],
     );
-}
+  }
 
   Widget _buildActionCard({
     required IconData icon,
@@ -303,19 +325,23 @@ class CustomerSupportPage extends ConsumerWidget {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white),
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
+            ),
             Text(
               subtitle,
-              style: Theme.of(context).textTheme.captionMedium?.copyWith(
+              style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.7),
+                fontSize: 12,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
         ),
+      ),
     );
-}
+  }
 
   Future<void> _launchEmail() async {
     final Uri emailUri = Uri(
@@ -323,12 +349,12 @@ class CustomerSupportPage extends ConsumerWidget {
       path: 'support@fortune-app.com',
       queryParameters: {
         'subject': '[Fortune 앱 문의]',
-      }
+      },
     );
     
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
-}
+    }
   }
 
   Future<void> _launchKakaoTalk() async {
@@ -337,7 +363,7 @@ class CustomerSupportPage extends ConsumerWidget {
     
     if (await canLaunchUrl(kakaoUri)) {
       await launchUrl(kakaoUri, mode: LaunchMode.externalApplication);
-}
+    }
   }
 
   void _showGuide(BuildContext context) {
@@ -347,37 +373,40 @@ class CustomerSupportPage extends ConsumerWidget {
         backgroundColor: Colors.grey[900],
         title: const Text(
           '사용 가이드',
-          style: TextStyle(color: Colors.white)),
+          style: TextStyle(color: Colors.white),
+        ),
         content: const Text(
           '1. 회원가입 후 프로필을 완성하세요\n'
           '2. 원하는 운세를 선택하여 조회하세요\n'
-          '3. 토큰이 부족하면 구매하거나 구독하세요\n'),
+          '3. 토큰이 부족하면 구매하거나 구독하세요\n'
           '4. 매일 무료 토큰을 받을 수 있습니다',
-          style: TextStyle(color: Colors.white70)),
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('확인'),
+          ),
         ],
-      
+      ),
     );
-}
+  }
 
   void _reportBug(BuildContext context) {
     // 버그 신고 페이지로 이동 또는 이메일 발송
     _launchEmail();
-}
+  }
 
   Future<void> _rateApp() async {
     // TODO: 실제 앱스토어 URL로 변경
     final Uri appStoreUri = Uri.parse('https://apps.apple.com/app/id123456789');
     final Uri playStoreUri = Uri.parse('https://play.google.com/store/apps/details?id=com.beyond.fortune_flutter');
     
-    // Platform check and launch appropriate store,
-}
+    // Platform check and launch appropriate store
+  }
 
   void _shareApp(BuildContext context) {
     // Share 기능 구현
-    // share_plus 패키지 사용,
-}
+    // share_plus 패키지 사용
+  }
 }

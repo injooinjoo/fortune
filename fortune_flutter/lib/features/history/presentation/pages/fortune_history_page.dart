@@ -24,12 +24,12 @@ final fortuneHistoryProvider = FutureProvider.autoDispose<List<FortuneHistory>>(
     if (response.data['success'] == true) {
       final historyList = response.data['data'] as List;
       return historyList.map((item) => FortuneHistory.fromJson(item)).toList();
-} else {
+    } else {
       throw Exception(response.data['error'] ?? '운세 기록을 불러올 수 없습니다');
-}
+    }
   } catch (e) {
     throw Exception('운세 기록 조회 실패: $e');
-}
+  }
 });
 
 // User statistics provider
@@ -39,9 +39,9 @@ final userStatisticsProvider = FutureProvider.autoDispose<UserStatistics>((ref) 
   
   if (userId == null) {
     throw Exception('사용자 정보를 찾을 수 없습니다');
-}
+  }
   
-  final statisticsService = UserStatisticsService(supabase, StorageService();
+  final statisticsService = UserStatisticsService(supabase, StorageService());
   return await statisticsService.getUserStatistics(userId);
 });
 
@@ -68,11 +68,11 @@ class FortuneHistory {
       id: json['id'] ?? '',
       fortuneType: json['fortune_type'] ?? '',
       title: json['title'] ?? '운세',
-      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String(),
+      createdAt: DateTime.parse(json['created_at'] ?? DateTime.now().toIso8601String()),
       summary: json['summary'] ?? {},
-      tokenUsed: json['token_used'] ?? 1
+      tokenUsed: json['token_used'] ?? 1,
     );
-}
+  }
 }
 
 class FortuneHistoryPage extends ConsumerStatefulWidget {
@@ -97,7 +97,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
       if (count > maxCount) {
         maxCount = count;
         mostUsedType = type;
-}
+      }
     });
     
     return Container(
@@ -108,9 +108,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
           Text(
             '나의 운세 통계',
             style: TextStyle(
-              fontSize: 20 * fontScale),
+              fontSize: 20 * fontScale,
               fontWeight: FontWeight.bold,
             ),
+          ),
           const SizedBox(height: 16),
           
           // Stats cards grid
@@ -173,6 +174,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              ),
             ),
             child: Row(
               children: [
@@ -186,15 +188,18 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   child: Text(
                     _getPersonalizedInsight(statistics),
                     style: TextStyle(
-                      fontSize: 14 * fontScale),
+                      fontSize: 14 * fontScale,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                    ),
                   ),
+                ),
               ],
             ),
+          ),
         ],
-      
+      ),
     );
-}
+  }
   
   Widget _buildStatCard({
     required BuildContext context,
@@ -231,42 +236,45 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 12 * fontScale),
+                    fontSize: 12 * fontScale,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
               ],
             ),
             Text(
               value,
               style: TextStyle(
-                fontSize: isText ? 16 * fontScale : 20 * fontScale),
+                fontSize: isText ? 16 * fontScale : 20 * fontScale,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onSurface,
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ],
-        ));
-}
+        ),
+      ),
+    );
+  }
   
   String _getPersonalizedInsight(UserStatistics statistics) {
     // Generate personalized insights based on user statistics
     if (statistics.consecutiveDays >= 7) {
       return '🎆 일주일 연속 접속하셨네요! 꾸준한 운세 확인이 행운을 불러옵니다.';
-}
+    }
     
     if (statistics.totalFortunes > 50) {
       return '✨ 이미 $statistics.totalFortunes번의 운세를 확인하셨네요! 당신은 진정한 운세 마스터입니다.';
-}
+    }
     
     String? favoriteType = statistics.favoriteFortuneType;
     if (favoriteType != null) {
       final typeName = FortuneTypeNames.getName(favoriteType);
       return '💕 $typeName을(를) 가장 많이 확인하셨네요. 오늘도 확인해보세요!';
-}
+    }
     
     return '🌟 다양한 운세를 확인하고 나만의 행운을 찾아보세요!';
-}
+  }
   
   // Group history by month for trend chart
   Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {
@@ -278,18 +286,18 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
       final month = DateTime(now.year, now.month - i, 1);
       final key = DateFormat('yyyy-MM').format(month);
       monthlyData[key] = 0;
-}
+    }
     
     // Count fortunes per month
     for (final item in history) {
       final key = DateFormat('yyyy-MM').format(item.createdAt);
       if (monthlyData.containsKey(key)) {
         monthlyData[key] = monthlyData[key]! + 1;
-}
+      }
     }
     
     return monthlyData;
-}
+  }
   
   // Group history by category for pie chart
   Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
@@ -298,10 +306,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     for (final item in history) {
       final category = FortuneTypeNames.getCategory(item.fortuneType);
       categoryData[category] = (categoryData[category] ?? 0) + 1;
-}
+    }
     
     return categoryData;
-}
+  }
   
   // Build category distribution pie chart
   Widget _buildCategoryPieChart(BuildContext context, List<FortuneHistory> history, double fontScale) {
@@ -337,8 +345,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
           fontSize: 12 * fontScale,
           fontWeight: FontWeight.bold,
           color: Colors.white,
-        ));
-}).toList();
+        ),
+      );
+    }).toList();
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -348,9 +357,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
           Text(
             '카테고리별 분포',
             style: TextStyle(
-              fontSize: 18 * fontScale),
+              fontSize: 18 * fontScale,
               fontWeight: FontWeight.bold,
             ),
+          ),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -364,7 +374,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                     centerSpaceRadius: 30,
                     sectionsSpace: 2,
                     pieTouchData: PieTouchData(enabled: false),
+                  ),
                 ),
+              ),
               const SizedBox(width: 24),
               // Legend
               Expanded(
@@ -384,26 +396,31 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                             decoration: BoxDecoration(
                               color: color,
                               borderRadius: BorderRadius.circular(2),
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               '${entry.key} (${entry.value}회)',
                               style: TextStyle(
-                                fontSize: 12 * fontScale),
+                                fontSize: 12 * fontScale,
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
+                          ),
                         ],
-                      ));
-}).toList(),
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           ),
         ],
-      
+      ),
     );
-}
+  }
   
   // Build monthly trend chart
   Widget _buildMonthlyTrendChart(BuildContext context, List<FortuneHistory> history, double fontScale) {
@@ -421,9 +438,10 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
           Text(
             '월별 운세 조회 트렌드',
             style: TextStyle(
-              fontSize: 18 * fontScale),
+              fontSize: 18 * fontScale,
               fontWeight: FontWeight.bold,
             ),
+          ),
           const SizedBox(height: 16),
           Container(
             height: 200,
@@ -433,6 +451,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: theme.colorScheme.outline.withValues(alpha: 0.1),
+              ),
             ),
             child: LineChart(
               LineChartData(
@@ -443,16 +462,18 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: theme.colorScheme.outline.withValues(alpha: 0.1),
-                      strokeWidth: 1
+                      strokeWidth: 1,
                     );
-},
+                  },
                 ),
                 titlesData: FlTitlesData(
                   show: true,
                   rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
+                  ),
                   topTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
+                  ),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -467,12 +488,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                             style: TextStyle(
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               fontSize: 12,
-                            
+                            ),
                           );
-}
+                        }
                         return const Text('');
-},
+                      },
                     ),
+                  ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -484,10 +506,11 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             fontSize: 12,
-                          
+                          ),
                         );
-},
+                      },
                     ),
+                  ),
                 ),
                 borderData: FlBorderData(
                   show: true,
@@ -500,6 +523,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                       color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       width: 1,
                     ),
+                  ),
                 ),
                 minX: 0,
                 maxX: months.length - 1,
@@ -508,8 +532,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                 lineBarsData: [
                   LineChartBarData(
                     spots: values.asMap().entries.map((entry) {
-                      return FlSpot(entry.key.toDouble(), entry.value.toDouble();
-}).toList(),
+                      return FlSpot(entry.key.toDouble(), entry.value.toDouble());
+                    }).toList(),
                     isCurved: true,
                     color: theme.colorScheme.primary,
                     barWidth: 3,
@@ -521,20 +545,23 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                           radius: 4,
                           color: theme.colorScheme.primary,
                           strokeWidth: 2,
-                          strokeColor: theme.colorScheme.surface);
-},
+                          strokeColor: theme.colorScheme.surface,
+                        );
+                      },
                     ),
                     belowBarData: BarAreaData(
                       show: true,
                       color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                    ),
                   ),
                 ],
               ),
+            ),
           ),
         ],
-      
+      ),
     );
-}
+  }
   
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
     var filtered = history;
@@ -544,8 +571,8 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
       filtered = filtered.where((item) {
         return item.createdAt.isAfter(_selectedDateRange!.start) &&
                item.createdAt.isBefore(_selectedDateRange!.end.add(const Duration(days: 1)));
-}).toList();
-}
+      }).toList();
+    }
     
     // Apply category filter
     if (_selectedFilter == 'all') return filtered;
@@ -573,9 +600,9 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                  item.fortuneType.contains('biorhythm');
         default:
           return true;
-}
+      }
     }).toList();
-}
+  }
 
   String _getFortuneIcon(String fortuneType) {
     if (fortuneType.contains('love') || fortuneType.contains('compatibility')) return '❤️';
@@ -586,7 +613,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     if (fortuneType.contains('mbti')) return '🧠';
     if (fortuneType.contains('zodiac')) return '✨';
     return '🔮';
-}
+  }
 
   Color _getFortuneColor(String fortuneType) {
     if (fortuneType.contains('love') || fortuneType.contains('compatibility')) return Colors.pink;
@@ -594,14 +621,14 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
     if (fortuneType.contains('career') || fortuneType.contains('job')) return Colors.blue;
     if (fortuneType.contains('health')) return Colors.orange;
     return Colors.purple;
-}
+  }
   
   Color _getScoreColor(int score) {
     if (score >= 80) return Colors.green;
     if (score >= 60) return Colors.blue;
     if (score >= 40) return Colors.orange;
     return Colors.red;
-}
+  }
   
   Widget _buildLuckyItem({
     required IconData icon,
@@ -619,6 +646,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: color.withValues(alpha: 0.2),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -636,13 +664,14 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   Text(
                     label,
                     style: TextStyle(
-                      fontSize: 10 * fontScale),
+                      fontSize: 10 * fontScale,
                       color: color.withValues(alpha: 0.8),
+                    ),
                   ),
                   Text(
                     value,
                     style: TextStyle(
-                      fontSize: 11 * fontScale),
+                      fontSize: 11 * fontScale,
                       color: color,
                       fontWeight: FontWeight.w600,
                     ),
@@ -650,9 +679,12 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage> {
                   ),
                 ],
               ),
+            ),
           ],
-        ));
-}
+        ),
+      ),
+    );
+  }
   
   Future<void> _shareFortuneDetail(FortuneHistory item) async {
     final score = item.summary['score'] as int? ?? 0;
@@ -672,9 +704,9 @@ https://fortune.app''';
     
     await Share.share(
       shareText,
-      subject: '${item.title} - Fortune 운세'
+      subject: '${item.title} - Fortune 운세',
     );
-}
+  }
   
   Widget _buildTimelineView(BuildContext context, List<FortuneHistory> history, double fontScale) {
     final theme = Theme.of(context);
@@ -684,15 +716,15 @@ https://fortune.app''';
     for (final item in history) {
       final monthKey = DateFormat('yyyy-MM').format(item.createdAt);
       groupedByMonth.putIfAbsent(monthKey, () => []).add(item);
-}
+    }
     
     // Sort months in descending order
-    final sortedMonths = groupedByMonth.keys.toList(,
-      ..sort((a, b) => b.compareTo(a);
+    final sortedMonths = groupedByMonth.keys.toList()
+      ..sort((a, b) => b.compareTo(a));
     
     if (sortedMonths.isEmpty) {
       return const SizedBox.shrink();
-}
+    }
     
     return Container(
       padding: const EdgeInsets.all(16),
@@ -702,21 +734,22 @@ https://fortune.app''';
           Text(
             '나의 운세 여정',
             style: TextStyle(
-              fontSize: 18 * fontScale),
+              fontSize: 18 * fontScale,
               fontWeight: FontWeight.bold,
             ),
+          ),
           const SizedBox(height: 16),
           
           // Timeline
           ...sortedMonths.take(3).map((month) {
             final monthData = groupedByMonth[month]!;
             final date = DateFormat('yyyy-MM').parse(month);
-            final isCurrentMonth = month == DateFormat('yyyy-MM').format(DateTime.now();
+            final isCurrentMonth = month == DateFormat('yyyy-MM').format(DateTime.now());
             
             // Calculate average score for the month
             final scores = monthData
-                .where((item) => item.summary['score'] != null,
-                .map((item) => item.summary['score'] as int,
+                .where((item) => item.summary['score'] != null)
+                .map((item) => item.summary['score'] as int)
                 .toList();
             final avgScore = scores.isEmpty 
                 ? 0 
@@ -727,7 +760,7 @@ https://fortune.app''';
             for (final item in monthData) {
               final type = FortuneTypeNames.getName(item.fortuneType);
               typeCount[type] = (typeCount[type] ?? 0) + 1;
-}
+            }
             
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -746,10 +779,13 @@ https://fortune.app''';
                               : theme.colorScheme.primary.withValues(alpha: 0.5),
                           shape: BoxShape.circle,
                         ),
-                      if (month != sortedMonths.last), Container(
+                      ),
+                      if (month != sortedMonths.last)
+                        Container(
                           width: 2,
                           height: 80,
                           color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        ),
                     ],
                   ),
                   const SizedBox(width: 16),
@@ -763,6 +799,7 @@ https://fortune.app''';
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: theme.colorScheme.outline.withValues(alpha: 0.1),
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -773,10 +810,12 @@ https://fortune.app''';
                               Text(
                                 DateFormat('yyyy년 M월').format(date),
                                 style: TextStyle(
-                                  fontSize: 16 * fontScale),
+                                  fontSize: 16 * fontScale,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              if (avgScore > 0), Container(
+                              ),
+                              if (avgScore > 0)
+                                Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
@@ -784,13 +823,16 @@ https://fortune.app''';
                                   decoration: BoxDecoration(
                                     color: _getScoreColor(avgScore).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
+                                  ),
                                   child: Text(
                                     '평균 ${avgScore}점',
                                     style: TextStyle(
-                                      fontSize: 12 * fontScale),
+                                      fontSize: 12 * fontScale,
                                       fontWeight: FontWeight.w600,
                                       color: _getScoreColor(avgScore),
+                                    ),
                                   ),
+                                ),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -808,14 +850,17 @@ https://fortune.app''';
                                 decoration: BoxDecoration(
                                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
+                                ),
                                 child: Text(
                                   '${entry.key} x${entry.value}',
                                   style: TextStyle(
-                                    fontSize: 11 * fontScale),
+                                    fontSize: 11 * fontScale,
                                     color: theme.colorScheme.primary,
                                   ),
+                                ),
                               );
-}).toList(),
+                            }).toList(),
+                          ),
                           
                           // Achievement badges
                           if (monthData.length >= 20) ...[
@@ -831,23 +876,26 @@ https://fortune.app''';
                                 Text(
                                   '이달의 운세 마스터!',
                                   style: TextStyle(
-                                    fontSize: 12 * fontScale),
+                                    fontSize: 12 * fontScale,
                                     color: Colors.amber[700],
                                     fontWeight: FontWeight.w600,
                                   ),
+                                ),
                               ],
                             ),
                           ],
                         ],
                       ),
+                    ),
                   ),
                 ],
-              ));
-}).toList(),
+              ),
+            );
+          }).toList(),
         ],
-      
+      ),
     );
-}
+  }
   
   void _showFortuneDetail(BuildContext context, FortuneHistory item) {
     showModalBottomSheet(
@@ -866,6 +914,7 @@ https://fortune.app''';
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
             child: Column(
               children: [
                 // Handle
@@ -876,6 +925,7 @@ https://fortune.app''';
                   decoration: BoxDecoration(
                     color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
                 
                 // Header
@@ -889,11 +939,14 @@ https://fortune.app''';
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Center(
                           child: Text(
                             _getFortuneIcon(item.fortuneType),
-                            style: const TextStyle(fontSize: 24)),
+                            style: const TextStyle(fontSize: 24),
+                          ),
                         ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -902,19 +955,25 @@ https://fortune.app''';
                             Text(
                               item.title,
                               style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               DateFormat('yyyy년 M월 d일 HH:mm').format(item.createdAt),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
                           ],
                         ),
+                      ),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.of(context).pop(),
+                      ),
                     ],
                   ),
+                ),
                 
                 const Divider(height: 1),
                 
@@ -938,6 +997,7 @@ https://fortune.app''';
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(12),
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -948,10 +1008,13 @@ https://fortune.app''';
                                 Text(
                                   '${item.summary['score']}점',
                                   style: theme.textTheme.headlineMedium?.copyWith(
-                                    color: _getScoreColor(item.summary['score'] as int, fontWeight: FontWeight.bold,
+                                    color: _getScoreColor(item.summary['score'] as int),
+                                    fontWeight: FontWeight.bold,
                                   ),
+                                ),
                               ],
                             ),
+                          ),
                           const SizedBox(height: 20),
                         ],
                         
@@ -960,13 +1023,15 @@ https://fortune.app''';
                           Text(
                             '운세 내용',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           Text(
                             item.summary['content'] ?? '',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              height: 1.6),
+                              height: 1.6,
+                            ),
                           ),
                           const SizedBox(height: 20),
                         ],
@@ -976,7 +1041,8 @@ https://fortune.app''';
                           Text(
                             '핵심 키워드',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           Wrap(
@@ -984,11 +1050,14 @@ https://fortune.app''';
                             runSpacing: 8,
                             children: (item.summary['keywords'] as List).map<Widget>((keyword) {
                               return Chip(
-                                label: Text(keyword.toString(),
+                                label: Text(keyword.toString()),
                                 backgroundColor: color.withValues(alpha: 0.1),
                                 side: BorderSide(
-                                  color: color.withValues(alpha: 0.3));
-}).toList(),
+                                  color: color.withValues(alpha: 0.3),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                           const SizedBox(height: 20),
                         ],
                         
@@ -997,7 +1066,8 @@ https://fortune.app''';
                           Text(
                             '행운 아이템',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           ...((item.summary['luckyItems'] as Map).entries.map<Widget>((entry) {
@@ -1019,7 +1089,7 @@ https://fortune.app''';
                               default:
                                 icon = Icons.star;
                                 label = entry.key;
-}
+                            }
                             
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 8),
@@ -1030,16 +1100,20 @@ https://fortune.app''';
                                   Text(
                                     label,
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                    ),
+                                  ),
                                   const Spacer(),
                                   Text(
                                     entry.value.toString(),
                                     style: theme.textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ],
-                              ));
-}).toList(),
+                              ),
+                            );
+                          }).toList()),
                         ],
                         
                         const SizedBox(height: 40),
@@ -1051,26 +1125,30 @@ https://fortune.app''';
                             onPressed: () async {
                               // Implement share functionality
                               await _shareFortuneDetail(item);
-},
+                            },
                             icon: const Icon(Icons.share),
                             label: const Text('운세 공유하기'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: color),
+                              backgroundColor: color,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
+                          ),
                         ),
                       ],
                     ),
+                  ),
                 ),
               ],
-            ));
-},
-      
+            ),
+          );
+        },
+      ),
     );
-}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1092,7 +1170,7 @@ https://fortune.app''';
             ),
             Expanded(
               child: historyAsync.when(
-                loading: () => const Center(child: LoadingIndicator(size: 60),
+                loading: () => const Center(child: LoadingIndicator(size: 60)),
                 error: (error, stack) => Center(
                   child: Padding(
                     padding: const EdgeInsets.all(24),
@@ -1115,6 +1193,7 @@ https://fortune.app''';
                           error.toString(),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
@@ -1123,9 +1202,11 @@ https://fortune.app''';
                           child: const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             child: Text('다시 시도'),
+                          ),
                         ),
                       ],
                     ),
+                  ),
                 ),
                 data: (history) {
                   final filteredHistory = _filterHistory(history);
@@ -1181,7 +1262,7 @@ https://fortune.app''';
                                       onTap: () async {
                                         final range = await showDateRangePicker(
                                           context: context,
-                                          firstDate: DateTime.now().subtract(const Duration(days: 365),
+                                          firstDate: DateTime.now().subtract(const Duration(days: 365)),
                                           lastDate: DateTime.now(),
                                           initialDateRange: _selectedDateRange,
                                           builder: (context, child) {
@@ -1190,16 +1271,17 @@ https://fortune.app''';
                                                 colorScheme: theme.colorScheme.copyWith(
                                                   primary: theme.colorScheme.primary,
                                                 ),
+                                              ),
                                               child: child!,
                                             );
-}
+                                          },
                                         );
                                         
                                         if (range != null) {
                                           setState(() {
                                             _selectedDateRange = range;
-});
-}
+                                          });
+                                        }
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1210,6 +1292,7 @@ https://fortune.app''';
                                             color: _selectedDateRange != null
                                                 ? theme.colorScheme.primary
                                                 : theme.colorScheme.outline.withValues(alpha: 0.3),
+                                          ),
                                         ),
                                         child: Row(
                                           children: [
@@ -1219,14 +1302,15 @@ https://fortune.app''';
                                               color: _selectedDateRange != null
                                                   ? theme.colorScheme.primary
                                                   : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                            ),
                                             const SizedBox(width: 8),
                                             Expanded(
                                               child: Text(
-                                                _selectedDateRange != null),
+                                                _selectedDateRange != null
                                                     ? '${DateFormat('M/d').format(_selectedDateRange!.start)} - ${DateFormat('M/d').format(_selectedDateRange!.end)}'
                                                     : '기간 선택',
                                                 style: TextStyle(
-                                                  fontSize: 14 * fontScale),
+                                                  fontSize: 14 * fontScale,
                                                   color: _selectedDateRange != null
                                                       ? theme.colorScheme.primary
                                                       : theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -1234,17 +1318,20 @@ https://fortune.app''';
                                                       ? FontWeight.w600
                                                       : FontWeight.normal,
                                                 ),
+                                              ),
                                             ),
-                                            if (_selectedDateRange != null), IconButton(
+                                            if (_selectedDateRange != null)
+                                              IconButton(
                                                 icon: Icon(
                                                   Icons.clear,
                                                   size: 18,
                                                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                                ),
                                                 onPressed: () {
                                                   setState(() {
                                                     _selectedDateRange = null;
-});
-},
+                                                  });
+                                                },
                                                 constraints: const BoxConstraints(
                                                   minWidth: 32,
                                                   minHeight: 32,
@@ -1253,9 +1340,12 @@ https://fortune.app''';
                                               ),
                                           ],
                                         ),
+                                      ),
                                     ),
+                                  ),
                                 ],
                               ),
+                            ),
                             
                             // Category filter chips
                             Container(
@@ -1282,22 +1372,25 @@ https://fortune.app''';
                               child: FilterChip(
                                 label: Text(
                                   filterLabels[filter] ?? filter,
-                                  style: TextStyle(fontSize: 14 * fontScale)),
+                                  style: TextStyle(fontSize: 14 * fontScale),
+                                ),
                                 selected: isSelected,
                                 onSelected: (selected) {
                                   setState(() {
                                     _selectedFilter = filter;
-});
-},
+                                  });
+                                },
                                 selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                                 backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.8),
                                 checkmarkColor: theme.colorScheme.primary,
-                              
+                              ),
                             );
-},
+                          },
+                        ),
                         ),
                           ],
                         ),
+                      ),
                       
                       // History list
                       filteredHistory.isEmpty
@@ -1310,16 +1403,19 @@ https://fortune.app''';
                                         Icons.history,
                                         size: 64,
                                         color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                      ),
                                       const SizedBox(height: 16),
                                       Text(
                                         '운세 기록이 없습니다',
                                         style: TextStyle(
-                                          fontSize: 18 * fontScale),
+                                          fontSize: 18 * fontScale,
                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                        ),
                                       ),
                                     ],
                                   ),
-                              ,
+                                ),
+                              )
                             : SliverPadding(
                                 padding: const EdgeInsets.all(16),
                                 sliver: SliverList(
@@ -1338,7 +1434,7 @@ https://fortune.app''';
                                     child: GestureDetector(
                                       onTap: () {
                                         _showFortuneDetail(context, item);
-},
+                                      },
                                       child: Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -1359,6 +1455,7 @@ https://fortune.app''';
                                               color: color.withValues(alpha: 0.1),
                                               blurRadius: 10,
                                               offset: const Offset(0, 4),
+                                            ),
                                           ],
                                         ),
                                         child: ClipRRect(
@@ -1376,6 +1473,7 @@ https://fortune.app''';
                                                       color.withValues(alpha: 0.15),
                                                     ],
                                                   ),
+                                                ),
                                                 child: Row(
                                                   children: [
                                                     // Icon and title
@@ -1390,13 +1488,16 @@ https://fortune.app''';
                                                             color: color.withValues(alpha: 0.3),
                                                             blurRadius: 8,
                                                             offset: const Offset(0, 2),
+                                                          ),
                                                         ],
                                                       ),
                                                       child: Center(
                                                         child: Text(
                                                           _getFortuneIcon(item.fortuneType),
-                                                          style: const TextStyle(fontSize: 24)),
+                                                          style: const TextStyle(fontSize: 24),
+                                                        ),
                                                       ),
+                                                    ),
                                                     const SizedBox(width: 12),
                                                     Expanded(
                                                       child: Column(
@@ -1405,22 +1506,25 @@ https://fortune.app''';
                                                           Text(
                                                             item.title,
                                                             style: TextStyle(
-                                                              fontSize: 16 * fontScale),
+                                                              fontSize: 16 * fontScale,
                                                               fontWeight: FontWeight.bold,
                                                               color: Colors.white,
                                                             ),
+                                                          ),
                                                           const SizedBox(height: 2),
                                                           Text(
-                                                            DateFormat('M월 d일 (E),
-                  HH:mm', 'ko').format(item.createdAt),
+                                                            DateFormat('M월 d일 (E) HH:mm', 'ko').format(item.createdAt),
                                                             style: TextStyle(
                                                               fontSize: 12 * fontScale,
                                                               color: Colors.white.withValues(alpha: 0.8),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
+                                                    ),
                                                     // Score gauge
-                                                    if (score > 0), Stack(
+                                                    if (score > 0)
+                                                      Stack(
                                                         alignment: Alignment.center,
                                                         children: [
                                                           SizedBox(
@@ -1432,18 +1536,22 @@ https://fortune.app''';
                                                               backgroundColor: Colors.white.withValues(alpha: 0.2),
                                                               valueColor: AlwaysStoppedAnimation<Color>(
                                                                 _getScoreColor(score),
+                                                              ),
                                                             ),
+                                                          ),
                                                           Text(
                                                             '$score',
                                                             style: TextStyle(
-                                                              fontSize: 18 * fontScale),
+                                                              fontSize: 18 * fontScale,
                                                               fontWeight: FontWeight.bold,
                                                               color: Colors.white,
                                                             ),
+                                                          ),
                                                         ],
                                                       ),
                                                   ],
                                                 ),
+                                              ),
                                               
                                               // Content
                                               Padding(
@@ -1467,22 +1575,25 @@ https://fortune.app''';
                                                               borderRadius: BorderRadius.circular(16),
                                                               border: Border.all(
                                                                 color: color.withValues(alpha: 0.3),
+                                                              ),
                                                             ),
                                                             child: Text(
                                                               keyword.toString(),
                                                               style: TextStyle(
-                                                                fontSize: 12 * fontScale),
+                                                                fontSize: 12 * fontScale,
                                                                 color: color,
                                                                 fontWeight: FontWeight.w600,
                                                               ),
+                                                            ),
                                                           );
-}).toList(),
+                                                        }).toList(),
+                                                      ),
                                                       const SizedBox(height: 12),
                                                     ] else if (item.summary['brief'] != null) ...[
                                                       Text(
                                                         item.summary['brief'] ?? '',
                                                         style: TextStyle(
-                                                          fontSize: 14 * fontScale),
+                                                          fontSize: 14 * fontScale,
                                                           color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                                                           height: 1.4,
                                                         ),
@@ -1493,16 +1604,19 @@ https://fortune.app''';
                                                     ],
                                                     
                                                     // Lucky items
-                                                    if (luckyItems != null && luckyItems.isNotEmpty), Row(
+                                                    if (luckyItems != null && luckyItems.isNotEmpty)
+                                                      Row(
                                                         children: [
-                                                          if (luckyItems['color'] != null), _buildLuckyItem(
+                                                          if (luckyItems['color'] != null)
+                                                            _buildLuckyItem(
                                                               icon: Icons.palette,
                                                               label: '색상',
                                                               value: luckyItems['color'],
                                                               color: color,
                                                               fontScale: fontScale,
                                                             ),
-                                                          if (luckyItems['number'] != null), _buildLuckyItem(
+                                                          if (luckyItems['number'] != null)
+                                                            _buildLuckyItem(
                                                               icon: Icons.looks_one,
                                                               label: '숫자',
                                                               value: luckyItems['number'].toString(),
@@ -1528,13 +1642,16 @@ https://fortune.app''';
                                                             borderRadius: BorderRadius.circular(12),
                                                             border: Border.all(
                                                               color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                                                            ),
                                                           ),
                                                           child: Text(
                                                             FortuneTypeNames.getCategory(item.fortuneType),
                                                             style: TextStyle(
-                                                              fontSize: 11 * fontScale),
+                                                              fontSize: 11 * fontScale,
                                                               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                                            ),
                                                           ),
+                                                        ),
                                                         // Token info
                                                         Row(
                                                           children: [
@@ -1547,29 +1664,37 @@ https://fortune.app''';
                                                             Text(
                                                               '${item.tokenUsed} 토큰',
                                                               style: TextStyle(
-                                                                fontSize: 12 * fontScale),
+                                                                fontSize: 12 * fontScale,
                                                                 color: theme.colorScheme.primary,
                                                                 fontWeight: FontWeight.w600,
                                                               ),
+                                                            ),
                                                           ],
                                                         ),
                                                       ],
                                                     ),
                                                   ],
                                                 ),
+                                              ),
                                             ],
                                           ),
+                                        ),
                                       ),
+                                    ),
                                   );
-},
+                                    },
                                     childCount: filteredHistory.length,
                                   ),
+                                ),
                               ),
                     ],
                   );
-},
+                },
               ),
+            ),
           ],
-        ));
-}
+        ),
+      ),
+    );
+  }
 }
