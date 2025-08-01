@@ -119,8 +119,8 @@ class _NameStepState extends State<NameStep> {
                       height: 1.2,
                       color: context.fortuneTheme.primaryText),
       textAlign: TextAlign.center)))))).animate().fadeIn(durati,
-      on: 600.ms).shimmer(,
-      duration: 1200.ms),
+      on: const Duration(milliseconds: 600)).shimmer(,
+      duration: const Duration(milliseconds: 1200)),
         color: AppColors.textPrimaryDark.withValues(alph,
       a: 0.3)
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
@@ -131,8 +131,8 @@ class _NameStepState extends State<NameStep> {
                           ),
                   height: 1.4),
       textAlign: TextAlign.center)).animate(del,
-      ay: 300.ms).fadeIn(duratio,
-      n: 600.ms),
+      ay: const Duration(milliseconds: 300)).fadeIn(duratio,
+      n: const Duration(milliseconds: 600)),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
               TextField(
                 controller: _nameController,
@@ -157,8 +157,8 @@ class _NameStepState extends State<NameStep> {
       borderSide: BorderSide(,
       color: Theme.of(context).primaryColor,
                       width: context.fortuneTheme.formStyles.focusBorderWidth)))),
-      textCapitalization: TextCapitalization.words)).animate(delay: 500.ms).fadeIn(durati,
-      on: 600.ms).slideY(,
+      textCapitalization: TextCapitalization.words)).animate(delay: const Duration(milliseconds: 500)).fadeIn(durati,
+      on: const Duration(milliseconds: 600)).slideY(,
       begin: 0.1),
         end: 0),
         curve: Curves.easeOutQuart)
@@ -178,8 +178,8 @@ class _NameStepState extends State<NameStep> {
                     '확인'),
         style: Theme.of(context).textTheme.titleMedium?.copyWith(,
       fontWeight: FontWeight.w600,
-                          ))).animate(delay: 700.ms).fadeIn(duratio,
-      n: 600.ms),
+                          ))).animate(delay: const Duration(milliseconds: 700)).fadeIn(duratio,
+      n: const Duration(milliseconds: 600)),
               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               if (widget.onShowSocialLogin != null)
                 GestureDetector(
@@ -188,8 +188,8 @@ class _NameStepState extends State<NameStep> {
                     '잠깐, 저 아이디 있어요'),
         style: Theme.of(context).textTheme.titleMedium?.copyWith(,
       color: AppColors.textPrimary,
-                          ))).animate(delay: 800.ms).fadeIn(duratio,
-      n: 600.ms),
+                          ))).animate(delay: const Duration(milliseconds: 800)).fadeIn(duratio,
+      n: const Duration(milliseconds: 600)),
               // Add padding to account for keyboard
               SizedBox(height: keyboardHeight > 0 ? 20 : 0),
             ]))))))

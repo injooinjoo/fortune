@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math' as math;
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+// Adjusted const usage for gradient button
 import '../../../../shared/components/app_header.dart';
 import '../../../../shared/components/loading_states.dart';
 import '../../../../shared/components/toast.dart';
@@ -334,7 +335,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                       mainAxisAlignment: MainAxisAlignment.center),
                   children: [
                         Icon(Icons.auto_awesome, size: 20 * widget.fontScale),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           '애니메이션 타로 (신규)',
                           style: TextStyle(

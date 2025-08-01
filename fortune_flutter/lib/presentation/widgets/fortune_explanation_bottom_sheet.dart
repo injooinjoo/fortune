@@ -155,7 +155,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                             // SizedBox(height: AppSpacing.spacing6),
                             // _buildRequiredInfoSection(theme),
                             SizedBox(height: AppSpacing.spacing24 * 1.04),
-                          ])).animate().fadeIn(duration: 400.ms, delay: 100.ms))))
+                          ])).animate().fadeIn(duration: const Duration(milliseconds: 400), delay: const Duration(milliseconds: 100)))))
                   ])))
               _buildBottomButton(context),
             ])))
@@ -1190,8 +1190,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         fontWeight: FontWeight.bold)
                 ))
             ])))).animate()
-          .fadeIn(duration: 300.ms)
-          .slideY(begin: 0.2, end: 0, duration: 300.ms),
+          .fadeIn(duration: const Duration(milliseconds: 300))
+          .slideY(begin: 0.2, end: 0, duration: const Duration(milliseconds: 300)),
       )
   }
 
