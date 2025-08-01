@@ -175,7 +175,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           iconColor: Colors.orange,
           subtitle: '사용자당',
         ),
-      ]
+      ],
     );
   }
 
@@ -198,7 +198,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             width: 8,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           ),
-        ]
+        ],
       );
     }).toList();
 
@@ -413,7 +413,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             iconColor: trend.weeklyGrowth > 0 ? Colors.green : Colors.red,
           ),
         ),
-      ]
+      ],
     );
   }
 
@@ -566,7 +566,7 @@ class _InfoCard extends StatelessWidget {
           Text(
             value,
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

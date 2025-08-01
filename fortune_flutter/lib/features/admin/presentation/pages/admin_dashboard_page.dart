@@ -593,6 +593,7 @@ class _UsageTrendTab extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10 * fontScale,
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
                           );
                         },
                       ),
@@ -725,14 +726,14 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10 * fontScale),
+            fontSize: 10 * fontScale,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: 12 * fontScale),
+            fontSize: 12 * fontScale,
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -855,7 +856,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                 Text(
                   '총 절감액',
                   style: TextStyle(
-                    fontSize: 16 * fontScale),
+                    fontSize: 16 * fontScale,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -913,7 +914,7 @@ class _PackageStat extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10 * fontScale),
+            fontSize: 10 * fontScale,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
@@ -921,7 +922,7 @@ class _PackageStat extends StatelessWidget {
         Text(
           value,
           style: TextStyle(
-            fontSize: 14 * fontScale),
+            fontSize: 14 * fontScale,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -967,7 +968,7 @@ class _TopUsersTab extends StatelessWidget {
           Text(
             '토큰 사용량 기준 상위 ${stats.topUsers.length}명',
             style: TextStyle(
-              fontSize: 14 * fontScale),
+              fontSize: 14 * fontScale,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
