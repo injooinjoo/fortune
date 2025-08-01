@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'base_fortune_page_v2.dart';
 import '../../domain/models/fortune_result.dart';
 import '../../../../shared/components/toast.dart';
+// Adjusted const usage for Flutter 3.5
 import '../../../../presentation/providers/font_size_provider.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/custom_calendar_date_picker.dart';
@@ -234,7 +235,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                       color: theme.colorScheme.primary)
                       size: 20)
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Text(
                       '같은 생일의 연예인 (${_sameBirthdayCelebrities.length}명)',
                       style: theme.textTheme.titleMedium?.copyWith(
@@ -243,7 +244,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                       ),
                     )$1,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8)
@@ -497,7 +498,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 )$1,
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           
           // Lucky Elements
           Row(

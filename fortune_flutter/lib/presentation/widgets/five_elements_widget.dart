@@ -3,6 +3,7 @@ import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// Adjusted const usage for elements layout
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
