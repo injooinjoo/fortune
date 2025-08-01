@@ -266,7 +266,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '운세별 사용량 TOP 10',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
@@ -329,7 +329,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '패키지 효율성',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
@@ -428,7 +428,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '상위 사용자',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
@@ -566,7 +566,7 @@ class _InfoCard extends StatelessWidget {
           Text(
             value,
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
