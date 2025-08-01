@@ -1,5 +1,3 @@
-import 'package:fortune/core/theme/app_spacing.dart';
-import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +6,6 @@ import '../../core/theme/app_colors.dart';
 import '../../services/phone_auth_service.dart';
 import '../onboarding/steps/phone_step.dart';
 import '../onboarding/steps/phone_verification_step.dart';
-import 'package:fortune/core/theme/app_typography.dart';
-import 'package:fortune/core/theme/app_colors.dart';
 
 class PhoneManagementScreen extends ConsumerStatefulWidget {
   const PhoneManagementScreen({super.key});
@@ -80,18 +76,18 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
     if (_showPhoneInput) {
       return PhoneStep(
         initialPhone: _phoneNumber,
-      initialCountryCode: _countryCode),
+        initialCountryCode: _countryCode,
         onPhoneChanged: (phone, countryCode) {
           setState(() {
             _phoneNumber = phone;
             _countryCode = countryCode;
           });
-        }
+        },
         onNext: () async {
           try {
             await _phoneAuthService.sendOTP(
-              phoneNumber: _phoneNumber),
-        countryCode: _countryCode
+              phoneNumber: _phoneNumber,
+              countryCode: _countryCode,
             );
             setState(() {
               _showPhoneInput = false;
@@ -100,34 +96,35 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.toString().replaceAll(
-        'Exceptio,
-      n: ', ''
-      ),
-      backgroundColor: AppColors.error
-              ))
+                content: Text(e.toString().replaceAll('Exception: ', '')),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
-        })
+        },
+      );
     }
     
     if (_showVerification) {
       return PhoneVerificationStep(
-        phoneNumber: _phoneNumber),
-        countryCode: _countryCode),
+        phoneNumber: _phoneNumber,
+        countryCode: _countryCode,
         onVerify: (otpCode) async {
           try {
             await _phoneAuthService.verifyOTP(
-              phoneNumber: _phoneNumber),
-        countryCode: _countryCode),
-        otpCode: otpCode)
+              phoneNumber: _phoneNumber,
+              countryCode: _countryCode,
+              otpCode: otpCode,
+            );
             
             // Update profile with new phone
             final user = supabase.auth.currentUser;
             if (user != null) {
               await _phoneAuthService.updateProfilePhone(
-                userId: user.id),
-        phoneNumber: _phoneNumber),
-        countryCode: _countryCode)
+                userId: user.id,
+                phoneNumber: _phoneNumber,
+                countryCode: _countryCode,
+              );
             }
             
             setState(() {
@@ -138,244 +135,302 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('전화번호가 성공적으로 변경되었습니다'),
-                  backgroundColor: AppColors.success
-                ))
+                  backgroundColor: Colors.green,
+                ),
+              );
               context.pop();
             }
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.toString().replaceAll(
-        'Exceptio,
-      n: ', ''
-      ),
-      backgroundColor: AppColors.error
-              ))
+                content: Text(e.toString().replaceAll('Exception: ', '')),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
-        }
+        },
         onResend: () async {
           try {
             await _phoneAuthService.sendOTP(
-              phoneNumber: _phoneNumber),
-        countryCode: _countryCode)
+              phoneNumber: _phoneNumber,
+              countryCode: _countryCode,
+            );
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('인증번호가 재발송되었습니다'),
-                backgroundColor: AppColors.success
-                ))
+                backgroundColor: Colors.green,
+              ),
+            );
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(e.toString().replaceAll(
-        'Exceptio,
-      n: ', ''
-      ),
-      backgroundColor: AppColors.error
-              ))
+                content: Text(e.toString().replaceAll('Exception: ', '')),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
-        }
+        },
         onBack: () {
           setState(() {
             _showVerification = false;
             _showPhoneInput = true;
           });
-        }
+        },
       );
     }
     
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(,
-      backgroundColor: AppColors.textPrimaryDark,
-      ),
-      elevation: 0),
-        leading: IconButton(,
-      icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
-      title: Text(
+        ),
+        title: const Text(
           '전화번호 관리',
-          style: Theme.of(context).textTheme.titleLarge
-        )
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-              children: [
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   // Info card
                   Container(
-                    margin: AppSpacing.paddingAll16),
-        padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(,
-      color: AppColors.primary.withValues(alp,
-      ha: 0.1),
-                      borderRadius: AppDimensions.borderRadiusMedium),
-      child: Row(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
-        ),
-        color: AppColors.primary),
-        size: AppDimensions.iconSizeMedium)
-                        SizedBox(width: AppSpacing.spacing3),
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            '전화번호는 계정 보안과 다른 소셜 계정 연동에 사용됩니다.'),
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
-      color: AppColors.textSecondary, height: 1.5,
-                          ))))))))
+                            '전화번호는 계정 보안과 다른 소셜 계정 연동에 사용됩니다.',
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 14,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   
                   // Current phone number
                   Container(
-                    margin: AppSpacing.paddingHorizontal16,
-                    padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(,
-      color: AppColors.textPrimaryDark,
-        ),
-        borderRadius: AppDimensions.borderRadiusMedium),
-        border: Border.all(col,
-      or: AppColors.divider),
-      child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-              children: [
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.divider),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Row(
                           children: [
                             Icon(
-                              Icons.phone_outlined),
-        color: AppColors.textSecondary),
-        size: AppDimensions.iconSizeMedium)
-                            SizedBox(width: AppSpacing.spacing3),
+                              Icons.phone_outlined,
+                              color: AppColors.textSecondary,
+                              size: 24,
+                            ),
+                            const SizedBox(width: 12),
                             Expanded(
-                              child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-              children: [
-                        Text(
-                          '등록된 전화번호',
-                          style: Theme.of(context).textTheme.titleMedium,
-                                  SizedBox(height: AppSpacing.spacing1),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    '등록된 전화번호',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
                                   Text(
                                     _formatDisplayPhone(userProfile?['phone']),
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
-      color: AppColors.textSecondary,
-                          )))))
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             if (userProfile?['phone_verified'] == true)
                               Container(
-                                padding: EdgeInsets.symmetric(,
-      horizontal: AppSpacing.spacing2),
-        vertical: AppSpacing.spacing1),
-      decoration: BoxDecoration(,
-      color: AppColors.success.withValues(alph,
-      a: 0.1),
-                                  borderRadius: AppDimensions.borderRadiusMedium),
-      child: Row(,
-      mainAxisSize: MainAxisSize.min,
-        ),
-        children: [
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Icon(
-                                      Icons.verified),
-        color: AppColors.success),
-        size: AppDimensions.iconSizeXSmall)
-                                    SizedBox(width: AppSpacing.spacing1),
+                                      Icons.verified,
+                                      color: Colors.green,
+                                      size: 16,
+                                    ),
+                                    SizedBox(width: 4),
                                     Text(
-                                      '인증됨'),
-        style: Theme.of(context).textTheme.labelSmall)))))
-                        SizedBox(height: AppSpacing.spacing4),
+                                      '인증됨',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                         SizedBox(
-                          width: double.infinity),
-              child: ElevatedButton(,
-      onPressed: () {
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
                               setState(() {
                                 _showPhoneInput = true;
                               });
-                            }
-                            style: ElevatedButton.styleFrom(,
-      backgroundColor: AppColors.primary),
-        foregroundColor: AppColors.textPrimaryDark),
-        padding: EdgeInsets.symmetric(vertica,
-      l: AppSpacing.spacing3),
-                              shape: RoundedRectangleBorder(,
-      borderRadius: AppDimensions.borderRadiusSmall)
-                              ))
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                             child: Text(
-                              hasPhone ? '전화번호 변경' : '전화번호 등록'),
-        style: Theme.of(context).textTheme.titleMedium)))))))
+                              hasPhone ? '전화번호 변경' : '전화번호 등록',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   
                   // Benefits
-                  SizedBox(height: AppSpacing.spacing8),
+                  const SizedBox(height: 32),
                   Padding(
-                    padding: AppSpacing.paddingHorizontal16,
-                    child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-              children: [
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
                           '전화번호 등록 혜택',
-                          style: theme.textTheme.titleMedium?.copyWith(,
-      fontWeight: FontWeight.bold)
-                        SizedBox(height: AppSpacing.spacing4,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        const SizedBox(height: 16),
                         _buildBenefitItem(
                           icon: Icons.security,
-                          title: '계정 보안 강화'),
-        subtitle: '2단계 인증으로 계정을 안전하게 보호')
+                          title: '계정 보안 강화',
+                          subtitle: '2단계 인증으로 계정을 안전하게 보호',
+                        ),
                         _buildBenefitItem(
                           icon: Icons.link,
-                          title: '쉬운 계정 연동'),
-        subtitle: '여러 소셜 계정을 하나로 통합 관리')
+                          title: '쉬운 계정 연동',
+                          subtitle: '여러 소셜 계정을 하나로 통합 관리',
+                        ),
                         _buildBenefitItem(
                           icon: Icons.restore,
-                          title: '계정 복구'),
-        subtitle: '비밀번호를 잊어도 쉽게 계정 복구')
+                          title: '계정 복구',
+                          subtitle: '비밀번호를 잊어도 쉽게 계정 복구',
+                        ),
                         _buildBenefitItem(
                           icon: Icons.notifications_active,
-                          title: '중요 알림'),
-        subtitle: '운세 알림과 이벤트 소식 받기')
-                        ))))
+                          title: '중요 알림',
+                          subtitle: '운세 알림과 이벤트 소식 받기',
+                        ),
+                      ],
+                    ),
+                  ),
                   
-                  SizedBox(height: AppSpacing.spacing8)))))))
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+    );
   }
   
   Widget _buildBenefitItem({
     required IconData icon,
-    required String title)
-    required String subtitle)
+    required String title,
+    required String subtitle,
   }) {
     return Padding(
-      padding: AppSpacing.paddingVertical8,
-      child: Row(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Container(
-            width: AppDimensions.buttonHeightSmall),
-              height: AppDimensions.buttonHeightSmall),
-        decoration: BoxDecoration(,
-      color: AppColors.primary.withValues(alp,
-      ha: 0.1),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-      child: Icon(
-                icon,
-        ),
-        color: AppColors.primary),
-        size: AppDimensions.iconSizeSmall)
-            ))
-          SizedBox(width: AppSpacing.spacing3),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              icon,
+              color: AppColors.primary,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
           Expanded(
-            child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                        Text(
-                          title,
-                          style: Theme.of(context).textTheme.titleSmall,
-                SizedBox(height: AppSpacing.xxxSmall),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 2),
                 Text(
                   subtitle,
-              ),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
-      color: AppColors.textSecondary, height: 1.4,
-                          )))))))
+                  style: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
