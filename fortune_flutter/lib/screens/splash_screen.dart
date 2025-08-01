@@ -23,41 +23,35 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthStatus() async {
-    await Future.delayed(Duration(milliseconds: 2000) // Keeping explicit 2s for splash timing
-    
+    await Future.delayed(Duration(milliseconds: 2000)); // Keeping explicit 2s for splash timing
+
     if (!mounted) return;
-    
+
     final supabase = Supabase.instance.client;
     final session = supabase.auth.currentSession;
-    
-    // Check if user is authenticated
+
     if (session != null) {
-      // Check if profile is complete
       try {
         final profileResponse = await supabase
             .from('user_profiles')
             .select()
             .eq('id', session.user.id)
             .maybeSingle();
-        
-        if (profileResponse == null || 
+
+        if (profileResponse == null ||
             profileResponse['onboarding_completed'] != true ||
-            profileResponse['name'] == null || 
+            profileResponse['name'] == null ||
             profileResponse['birth_date'] == null ||
             profileResponse['gender'] == null) {
-          // Profile incomplete, go to onboarding
           context.go('/onboarding');
         } else {
-          // Profile complete, go to home
           context.go('/home');
         }
       } catch (e) {
-        // Error checking profile, go to onboarding to be safe
         debugPrint('Error checking profile: $e');
         context.go('/onboarding');
       }
     } else {
-      // Not authenticated, go to landing page
       context.go('/');
     }
   }
@@ -66,19 +60,20 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final theme = context.fortuneTheme;
     final isDark = context.isDarkMode;
-    
+
     return Scaffold(
       backgroundColor: isDark ? theme.cardBackground : AppColors.textPrimary,
       body: Center(
         child: SvgPicture.asset(
           'assets/images/main_logo.svg',
-          width: theme.microInteractions.fabPressScale * 125, // ~120 with slight animation ready scale
-          height: theme.microInteractions.fabPressScale * 125),
-              colorFilter: ColorFilter.mode(
-            isDark ? theme.primaryText : AppColors.textPrimaryDark)
-            BlendMode.srcIn)
-          ))).animate()
-          .fadeIn(duration: theme.animationDurations.veryLong), // 800ms for splash animation
-      )
+          width: theme.microInteractions.fabPressScale * 125,
+          height: theme.microInteractions.fabPressScale * 125,
+          colorFilter: ColorFilter.mode(
+            isDark ? theme.primaryText : AppColors.textPrimaryDark,
+            BlendMode.srcIn,
+          ),
+        ).animate().fadeIn(duration: theme.animationDurations.veryLong),
+      ),
+    );
   }
 }
