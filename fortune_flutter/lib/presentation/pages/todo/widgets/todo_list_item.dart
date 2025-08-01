@@ -13,8 +13,8 @@ class TodoListItem extends StatelessWidget {
     required this.todo,
     required this.onToggle,
     required this.onDelete,
-    required this.onTap),
-});
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +27,14 @@ class TodoListItem extends StatelessWidget {
       key: ValueKey(todo.id),
       direction: DismissDirection.endToStart,
       background: Container(
-        alignment: Alignment.centerRight),
-                  padding: const EdgeInsets.only(right: 16),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
         color: colorScheme.error,
         child: const Icon(
           Icons.delete,
-          color: Colors.white)
-        )),
+          color: Colors.white,
+        ),
+      ),
       confirmDismiss: (direction) async {
         // Show confirmation dialog
         return await showDialog<bool>(
@@ -44,42 +45,51 @@ class TodoListItem extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('취소')),
+                child: const Text('취소'),
+              ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.error),
-                child: const Text('삭제')),
-            ]));
-}
+                  foregroundColor: colorScheme.error,
+                ),
+                child: const Text('삭제'),
+              ),
+            ],
+          ),
+        );
+      },
       onDismissed: (direction) => onDelete(),
       child: InkWell(
-        onTap: onTap),
-                  child: Container(
+        onTap: onTap,
+        child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
                 color: colorScheme.outlineVariant,
-                width: 0.5)
-              )))),
+                width: 0.5,
+              ),
+            ),
+          ),
           child: Row(
             children: [
               // Checkbox
               InkWell(
-                onTap: onToggle),
-                  borderRadius: BorderRadius.circular(20),
+                onTap: onToggle,
+                borderRadius: BorderRadius.circular(20),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Icon(
                     isCompleted
                         ? Icons.check_circle
-                        : Icons.radio_button_unchecked
+                        : Icons.radio_button_unchecked,
                     color: isCompleted
                         ? colorScheme.primary
-                        : colorScheme.onSurfaceVariant
-                    size: 24)
-                  )))),
+                        : colorScheme.onSurfaceVariant,
+                    size: 24,
+                  ),
+                ),
+              ),
               const SizedBox(width: 8),
 
               // Content
@@ -92,33 +102,41 @@ class TodoListItem extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            todo.title),
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                            todo.title,
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               decoration: isCompleted
                                   ? TextDecoration.lineThrough
-                                  : null),
-                  color: isCompleted
+                                  : null,
+                              color: isCompleted
                                   ? colorScheme.onSurfaceVariant
-                                  : null),
+                                  : null,
+                            ),
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis))),
-                        if (todo.priority == TodoPriority.high), _buildPriorityBadge(context, todo.priority),
-                      ]),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (todo.priority == TodoPriority.high)
+                          _buildPriorityBadge(context, todo.priority),
+                      ],
+                    ),
 
                     // Description
                     if (todo.description != null &&
                         todo.description!.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        todo.description!),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant),
-                  decoration: isCompleted
+                        todo.description!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                          decoration: isCompleted
                               ? TextDecoration.lineThrough
-                              : null),
+                              : null,
+                        ),
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                    ]
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+
                     // Tags and due date
                     const SizedBox(height: 8),
                     Row(
@@ -128,39 +146,54 @@ class TodoListItem extends StatelessWidget {
                           Icon(
                             Icons.label_outline,
                             size: 16,
-                            color: colorScheme.onSurfaceVariant),
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             todo.tags.take(2).join(', '),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant)
-                            )),
-                          if (todo.tags.length > 2), Text(
-                              ' +${todo.tags.length - 2}'),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant)))),
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          if (todo.tags.length > 2)
+                            Text(
+                              ' +${todo.tags.length - 2}',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           const SizedBox(width: 12),
-                        ]
+                        ],
+
                         // Due date
                         if (todo.dueDate != null) ...[
                           Icon(
                             Icons.calendar_today,
-                            size: 16),
-                  color: _getDueDateColor(context, todo)),
+                            size: 16,
+                            color: _getDueDateColor(context, todo),
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             _getDueDateText(todo, dateFormat),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: _getDueDateColor(context, todo),
-                  fontWeight: todo.isOverdue && !isCompleted
+                              fontWeight: todo.isOverdue && !isCompleted
                                   ? FontWeight.bold
-                                  : null)
-                            )),
+                                  : null,
+                            ),
+                          ),
                         ],
-]),
-                  ]))),
-            ]))))));
-}
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildPriorityBadge(BuildContext context, TodoPriority priority) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -180,57 +213,62 @@ class TodoListItem extends StatelessWidget {
         color = colorScheme.onSurfaceVariant;
         label = '낮음';
         break;
-}
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       margin: const EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12)),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Text(
-        label),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: color),
-          fontWeight: FontWeight.w500));
-}
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          color: color,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
 
   Color _getDueDateColor(BuildContext context, Todo todo) {
     final colorScheme = Theme.of(context).colorScheme;
     
     if (todo.status == TodoStatus.completed) {
       return colorScheme.onSurfaceVariant;
-}
+    }
 
     if (todo.isOverdue) {
       return colorScheme.error;
-}
+    }
 
     if (todo.isDueToday) {
       return colorScheme.primary;
-}
+    }
 
     if (todo.isDueTomorrow) {
       return colorScheme.tertiary;
-}
+    }
 
     return colorScheme.onSurfaceVariant;
-}
+  }
 
   String _getDueDateText(Todo todo, DateFormat dateFormat) {
     if (todo.isDueToday) {
       return '오늘';
-}
+    }
 
     if (todo.isDueTomorrow) {
       return '내일';
-}
+    }
 
     if (todo.isOverdue) {
       final daysOverdue = DateTime.now().difference(todo.dueDate!).inDays;
       return '${daysOverdue}일 지남';
-}
+    }
 
     return dateFormat.format(todo.dueDate!);
-}
+  }
 }
