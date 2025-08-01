@@ -40,13 +40,13 @@ class LuckyNumberDetailCard extends StatelessWidget {
           Text(
             '오늘의 행운 숫자')
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             '일상 속에서 만나는 숫자들이 오늘 당신에게 행운을 가져다줄 거예요')
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600]),))
+                  color: Colors.grey[600]))
                 ),
         ])
       )
@@ -85,7 +85,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                   child: Text(
                     mainLuckyNumber.toString())
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                          color: Colors.white),))
+                          color: Colors.white))
                           fontWeight: FontWeight.bold)
                         ))
               ))
@@ -160,7 +160,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     child: Text(
                       category.title)
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                           ))
                       maxLines: 1)
                       overflow: TextOverflow.ellipsis)
@@ -181,7 +181,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 Text(
                   items.first.reason)
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600]),))
+                        color: Colors.grey[600]))
                       ),
                   maxLines: 2)
                   overflow: TextOverflow.ellipsis)
@@ -190,7 +190,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                 Text(
                   category.description,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600]),))
+                        color: Colors.grey[600]))
                       ),
                   maxLines: 3)
                   overflow: TextOverflow.ellipsis)
@@ -327,7 +327,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
         Text(
           '추천 활용법')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ))
         const SizedBox(height: AppSpacing.spacing4))
         ...category.examples.map(
@@ -389,7 +389,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                         _getPriorityText(item.priority!))
                         style:
                             Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Colors.white),))
+                                  color: Colors.white))
                                   fontWeight: FontWeight.bold)
                                 ))
                 ])
@@ -411,7 +411,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                     Text(
                       item.timeRange!)
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600]),))
+                            color: Colors.grey[600]))
                           ),
                   ])
                 ),
@@ -430,7 +430,7 @@ class LuckyNumberDetailCard extends StatelessWidget {
                       child: Text(
                         item.situation!)
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600]),))
+                              color: Colors.grey[600]))
                             ),
                   ])
                 ),

@@ -89,7 +89,7 @@ class _LocationStepState extends State<LocationStep> {
                   '운세의 정확도를 높이기 위해\n지역 정보가 필요해요'),
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
       color: context.fortuneTheme.subtitleText,
-                          ),))
+                          ))
                   textAlign: TextAlign.center)).animate(del,
       ay: 300.ms).fadeIn(duratio,
       n: 600.ms),
@@ -146,7 +146,7 @@ class _LocationStepState extends State<LocationStep> {
                       '완료'),
         style: Theme.of(context).textTheme.titleMedium?.copyWith(,
       fontWeight: FontWeight.w600,
-                          ),))))).animate(delay: 700.ms).fadeIn(duratio,
+                          ))))).animate(delay: 700.ms).fadeIn(duratio,
       n: 600.ms),
               ])))
         ]

@@ -40,13 +40,13 @@ class LuckyFoodDetailCard extends StatelessWidget {
           Text(
             '오늘의 행운 음식')
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             '맛있는 음식으로 행운의 에너지를 충전하세요')
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600]),))
+                  color: Colors.grey[600]))
                 ),
         ])
       )
@@ -90,7 +90,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
               Text(
                 mainLuckyFood)
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                     ))
               const SizedBox(height: AppSpacing.spacing2))
               Container(
@@ -102,7 +102,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                 child: Text(
                   '오늘의 추천 메인 메뉴')
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.orange[700]),))
+                        color: Colors.orange[700]))
                         fontWeight: FontWeight.w500,
                       ))
             ])
@@ -242,7 +242,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                           Text(
                             category.title)
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold),))
+                                  fontWeight: FontWeight.bold))
                                 ))
                             maxLines: 1)
                             overflow: TextOverflow.ellipsis)
@@ -251,7 +251,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                             Text(
                               '지금 추천!')
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.orange),))
+                                    color: Colors.orange))
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                     fontWeight: FontWeight.bold)
                                   ))
@@ -273,7 +273,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         child: Text(
                           items.first.value)
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600),))
+                                fontWeight: FontWeight.w600))
                               ))
                           maxLines: 1)
                           overflow: TextOverflow.ellipsis)
@@ -285,7 +285,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   Text(
                     items.first.reason)
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600]),))
+                          color: Colors.grey[600]))
                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                         ))
                     maxLines: 2)
@@ -295,7 +295,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                   Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600]),))
+                          color: Colors.grey[600]))
                         ),
                     maxLines: 3)
                     overflow: TextOverflow.ellipsis)
@@ -307,7 +307,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                     Text(
                       '더보기')
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.orange),))
+                            color: Colors.orange))
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                           ))
                     ))
@@ -434,7 +434,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
         Text(
           '추천 메뉴 카테고리')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ))
         const SizedBox(height: AppSpacing.spacing4))
         ...category.examples.map(
@@ -508,7 +508,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                                 child: Text(
                                   '#$index')
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        fontWeight: FontWeight.bold),))
+                                        fontWeight: FontWeight.bold))
                                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                       ))
                                 ))
@@ -517,7 +517,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                               child: Text(
                                 item.value)
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold),))
+                                      fontWeight: FontWeight.bold))
                                     ))
                           ])
                         ),
@@ -535,7 +535,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                             child: Text(
                               _getPriorityText(item.priority!))
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.white),))
+                                    color: Colors.white))
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                   ))
                             ))
@@ -572,7 +572,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                       Text(
                         item.timeRange!)
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.blue[700]),))
+                              color: Colors.blue[700]))
                               fontWeight: FontWeight.w500,
                             ))
                     ])
@@ -599,7 +599,7 @@ class LuckyFoodDetailCard extends StatelessWidget {
                         child: Text(
                           item.situation!)
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.amber[900]),))
+                                color: Colors.amber[900]))
                               ),
                     ])
                   ),

@@ -78,7 +78,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                       Text(
                         '스크린샷 감지 기능')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -86,7 +86,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                   Text(
                     '스크린샷을 찍으면 자동으로 감지하여 더 예쁜 이미지로 공유할 수 있도록 도와드립니다.')
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.5),))
+                      height: 1.5))
                     ))
                 ])
               ),
@@ -121,7 +121,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                     Text(
                       '이런 기능이 제공됩니다')
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                     SizedBox(height: AppSpacing.spacing3))
                     _buildBenefitItem(
@@ -221,7 +221,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
               Text(
                 title)
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600),))
+                  fontWeight: FontWeight.w600))
                 ))
               Text(
                 description)

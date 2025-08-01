@@ -501,7 +501,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               Text(
                 service['title'] as String,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ),
               SizedBox(height: AppSpacing.spacing1))
               Text(
@@ -551,7 +551,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                         child: Text(
                           fortune['title'] as String,
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                           ),
                           overflow: TextOverflow.ellipsis)
                         ))
@@ -641,7 +641,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                             Text(
                               fortune['title'] as String,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold),))
+                                fontWeight: FontWeight.bold))
                               ),
                             SizedBox(width: AppSpacing.spacing2))
                             Container(
@@ -658,7 +658,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                               child: Text(
                                 fortune['badge'] as String,
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: fortune['color'] as Color),))
+                                  color: fortune['color'] as Color))
                                   fontWeight: FontWeight.bold,
                                 ))
                           ])

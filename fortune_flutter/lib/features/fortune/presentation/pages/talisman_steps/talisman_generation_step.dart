@@ -22,7 +22,7 @@ class TalismanGenerationStep extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TalismanGenerationStep> createState() => _TalismanGenerationStepState();,
+  ConsumerState<TalismanGenerationStep> createState() => _TalismanGenerationStepState();
 }
 
 class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
@@ -41,14 +41,14 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     
     // Start generation process
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _generateTalisman();,
-});,
+      _generateTalisman();
+});
 }
 
   @override
   void dispose() {
     _animationController.dispose();
-    super.dispose();,
+    super.dispose();
 }
 
   Future<void> _generateTalisman() async {
@@ -59,9 +59,9 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     if (state.selectedType == null) {
       setState(() {
         _isGenerating = false;
-        _statusMessage = '부적 유형이 선택되지 않았습니다.';,
-});
-      return;,
+        _statusMessage = '부적 유형이 선택되지 않았습니다.';
+      });
+      return;
 }
     
     // Simulate progress updates
@@ -135,16 +135,16 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
         
         // Complete after a short delay
         await Future.delayed(const Duration(milliseconds: 500));
-        widget.onComplete(result);,
+        widget.onComplete(result);
 } else {
-        throw Exception(response['error'] ?? '부적 생성에 실패했습니다');,
+        throw Exception(response['error'] ?? '부적 생성에 실패했습니다');
 }
     } catch (e) {
       setState(() {
         _isGenerating = false;
-        _statusMessage = '오류가 발생했습니다: ${e.toString()}';,
-});
-      HapticUtils.errorNotification();,
+        _statusMessage = '오류가 발생했습니다: ${e.toString()}';
+      });
+      HapticUtils.errorNotification();
 }
   }
 
@@ -152,7 +152,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     setState(() {
       _progress = progress;
       _statusMessage = message;,
-});,
+});
 }
 
   @override
@@ -212,7 +212,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                         progress: _progress,
                                         color: state.selectedType!.gradientColors[0],
                                       ),
-                                  ));,
+                                  ));
 },
                             ),
                             
@@ -310,7 +310,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                   child: const Text('다시 만들기'),
             ],
           ),
-      ));,
+      ));
 }
 }
 
@@ -359,7 +359,7 @@ class _MagicCirclePainter extends CustomPainter {
         Offset(x, y),
         4,
         paint..style = PaintingStyle.fill,
-      );,
+      );
 }
   }
 

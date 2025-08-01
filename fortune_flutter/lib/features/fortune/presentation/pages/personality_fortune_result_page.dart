@@ -141,7 +141,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Text(
                   '${widget.personalityData.mbtiType} 성격 분석',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                   ))
                 Text(
                   widget.personalityData.name ?? '')
@@ -224,7 +224,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                         Text(
                           '$overallScore')
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                           ))
                         ))
@@ -242,7 +242,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Text(
                   result?['summary'] ?? '',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6),))
+                    height: 1.6))
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                   ))
                   textAlign: TextAlign.center)
@@ -272,7 +272,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '핵심 성격 특성')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -332,13 +332,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                   Text(
                     '오늘의 메시지')
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                     ))
                   SizedBox(height: AppSpacing.spacing2))
                   Text(
                     (result!['recommendations'] as List<dynamic>).first,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.6),))
+                      height: 1.6))
                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                     ))
                     textAlign: TextAlign.center)
@@ -377,7 +377,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                     Text(
                       'MBTI 상세 분석')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                   ])
                 ),
@@ -438,7 +438,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '성격 특성 분포')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -500,7 +500,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                     Text(
                       '소통 스타일')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                   ])
                 ),
@@ -536,7 +536,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '궁합이 좋은 유형')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -607,7 +607,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '인간관계 조언')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -668,7 +668,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                     Text(
                       '업무 스타일')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                   ])
                 ),
@@ -704,7 +704,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '추천 직업')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -740,7 +740,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                                 Text(
                                   career['title'] ?? '',
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold),))
+                                    fontWeight: FontWeight.bold))
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                                   ))
                                 ))
@@ -790,7 +790,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '경력 개발 조언')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -853,7 +853,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Text(
                   '성장 잠재력')
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                   ))
                 SizedBox(height: AppSpacing.spacing2))
                 Row(
@@ -908,14 +908,14 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                                 Text(
                                   area['title'] ?? '',
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold),))
+                                    fontWeight: FontWeight.bold))
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                                   ))
                                 ))
                                 Text(
                                   area['priority'] ?? '',
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.primary),))
+                                    color: AppColors.primary))
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                                   ))
                                 ))
@@ -928,7 +928,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         area['description'] ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          height: 1.5),))
+                          height: 1.5))
                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)
                         ))
                       ))
@@ -990,7 +990,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       Text(
                         '추천 일일 습관')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                         ))
                     ])
                   ),
@@ -1154,7 +1154,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
               Text(
                 '강점')
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
             ])
           ),
@@ -1207,7 +1207,7 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
               Text(
                 '약점')
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
             ])
           ),

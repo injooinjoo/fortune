@@ -99,7 +99,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   Text(
                     '${fortune.score}')
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                       color: _getScoreColor(fortune.score),
                   ))
                   Text(
@@ -162,7 +162,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
               Text(
                 '오늘의 메시지')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                   color: Colors.purple.withValues(alpha: 0.9))
               ))
             ])
@@ -171,7 +171,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
           Text(
             fortune.summary)
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6),))
+              height: 1.6))
               color: Colors.purple.withValues(alpha: 0.92))
           ))
           const SizedBox(height: AppSpacing.spacing4))
@@ -202,7 +202,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
         Text(
           '운세 영역별 점수')
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold),))
+            fontWeight: FontWeight.bold))
           ))
         const SizedBox(height: AppSpacing.spacing4))
         _buildElementCard(
@@ -254,7 +254,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
           Text(
             '오늘의 행운 아이템')
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),))
+              fontWeight: FontWeight.bold))
             ))
           const SizedBox(height: AppSpacing.spacing4))
           Row(
@@ -286,7 +286,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   value: Text(
                     '${fortune.luckyNumber}')
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                       color: Theme.of(context).colorScheme.primary,
                     ))
                   ))
@@ -305,7 +305,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   value: Text(
                     fortune.bestTime)
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600),))
+                      fontWeight: FontWeight.w600))
                     ))
                 ))
               ))
@@ -318,7 +318,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                   value: Text(
                     fortune.compatibility)
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600),))
+                      fontWeight: FontWeight.w600))
                     ))
                 ))
               ))
@@ -368,7 +368,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                           Text(
                             '오늘의 조언')
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold),))
+                              fontWeight: FontWeight.bold))
                             ))
                           Text(
                             fortune.advice)
@@ -411,7 +411,7 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                           Text(
                             '주의사항')
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold),))
+                              fontWeight: FontWeight.bold))
                             ))
                           Text(
                             fortune.caution)
@@ -498,12 +498,12 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
                     Text(
                       title)
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600),))
+                        fontWeight: FontWeight.w600))
                       ))
                     Text(
                       '$score%')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                         color: color)
                       ))
                   ])

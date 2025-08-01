@@ -223,7 +223,7 @@ class _AnalysisOptionCardState extends State<_AnalysisOptionCard>
                         Text(
                           widget.title)
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                             color: widget.value ? widget.color : null)
                           ))
                         const SizedBox(height: AppSpacing.spacing0 * 0.5))

@@ -333,7 +333,7 @@ class _PersonalityFortuneOptimizedPageState
             Text(
               '성격 기반 운세')
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ))
             SizedBox(height: AppSpacing.spacing2))
             Text(
@@ -360,7 +360,7 @@ class _PersonalityFortuneOptimizedPageState
         Text(
           title)
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold),))
+            fontWeight: FontWeight.bold))
           ))
         SizedBox(height: AppSpacing.spacing3))
         child)
@@ -565,7 +565,7 @@ class _PersonalityFortuneOptimizedPageState
               child: Text(
                 '운세 확인하기')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textPrimaryDark),))
+                  color: AppColors.textPrimaryDark))
                   fontWeight: FontWeight.bold)
                 ))
           ))
