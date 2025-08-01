@@ -12,24 +12,22 @@ class TimePeriod {
   final String label;
   final String? description;
 
-  const TimePeriod(
-    {
+  const TimePeriod({
     required this.value,
     required this.label,
     this.description,
-  )});
+  });
 }
 
 class BirthTimeEditDialog extends StatefulWidget {
   final String? initialTime;
   final Function(String?) onSave;
 
-  const BirthTimeEditDialog(
-    {
+  const BirthTimeEditDialog({
     super.key,
     this.initialTime,
     required this.onSave,
-  )});
+  });
 
   @override
   State<BirthTimeEditDialog> createState() => _BirthTimeEditDialogState();

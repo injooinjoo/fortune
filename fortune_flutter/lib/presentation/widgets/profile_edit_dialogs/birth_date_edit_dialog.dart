@@ -11,12 +11,11 @@ class BirthDateEditDialog extends StatefulWidget {
   final DateTime? initialDate;
   final Function(DateTime) onSave;
 
-  const BirthDateEditDialog(
-    {
+  const BirthDateEditDialog({
     super.key,
     this.initialDate,
     required this.onSave,
-  )});
+  });
 
   @override
   State<BirthDateEditDialog> createState() => _BirthDateEditDialogState();

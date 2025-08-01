@@ -58,13 +58,12 @@ class _SoulEarnAnimationWidget extends StatefulWidget {
   final Offset endPosition;
   final VoidCallback onComplete;
 
-  const _SoulEarnAnimationWidget(
-    {
+  const _SoulEarnAnimationWidget({
     required this.soulAmount,
     required this.startPosition,
     required this.endPosition,
     required this.onComplete,
-  )});
+  });
 
   @override
   State<_SoulEarnAnimationWidget> createState() => _SoulEarnAnimationWidgetState();
@@ -277,12 +276,11 @@ class _Particle {
   final double distance;
   final Duration delay;
   final double size;
-  
-  _Particle(
-    {
+
+  _Particle({
     required this.angle,
     required this.distance,
     required this.delay,
     required this.size,
-  )});
+  });
 }
