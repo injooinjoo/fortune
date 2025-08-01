@@ -1,5 +1,9 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class ProfileFieldEditDialog extends StatelessWidget {
   final String title;
@@ -7,77 +11,62 @@ class ProfileFieldEditDialog extends StatelessWidget {
   final VoidCallback? onSave;
   final bool isLoading;
 
-  const ProfileFieldEditDialog({
+  const ProfileFieldEditDialog(
+    {
     super.key,
     required this.title,
     required this.content,
     this.onSave,
     this.isLoading = false,
-  });
+  )});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusLarge),
+      child: Padding(,
+      padding: AppSpacing.paddingAll24,
+        child: Column(,
+      mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                        Text(
+                          title,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
+              style: Theme.of(context).textTheme.headlineMedium,
+              textAlign: TextAlign.center)
+            SizedBox(height: AppSpacing.spacing6),
             content,
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.spacing6),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
+              mainAxisAlignment: MainAxisAlignment.end),
+        children: [
                 TextButton(
                   onPressed: isLoading ? null : () => Navigator.of(context).pop(),
                   child: const Text(
                     '취소',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                ),
-                const SizedBox(width: 12),
+                          style: AppTypography.button))))
+                SizedBox(width: AppSpacing.spacing3),
                 ElevatedButton(
-                  onPressed: isLoading ? null : onSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
+                  onPressed: isLoading ? null : onSave),
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: AppColors.primary),
+        shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusSmall),
+      padding: EdgeInsets.symmetric(,
+      horizontal: AppSpacing.spacing6),
+        vertical: AppSpacing.spacing3)
+                    ))
                   child: isLoading
                       ? const SizedBox(
                           width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : const Text('저장'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+      height: 20,
+                          child: CircularProgressIndicator(,
+      strokeWidth: 2),
+        valueColor: AlwaysStoppedAnimation<Color>(AppColors.textPrimaryDark)))))
+                      : const Text('저장'))
+              ])
+          ])))))
   }
 }

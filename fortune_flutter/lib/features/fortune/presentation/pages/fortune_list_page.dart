@@ -102,7 +102,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this,
+      vsync: this
     );
     
     // Ensure navigation is visible when this page loads
@@ -227,7 +227,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             );
           },
         );
-      },
+      }
     );
 
     Overlay.of(context).insert(_overlayEntry!);
@@ -639,7 +639,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // if (searchQuery.isNotEmpty) {
     //   filtered = filtered.where((category) {
     //     return category.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-    //            category.description.toLowerCase().contains(searchQuery.toLowerCase());
+    //            category.description.toLowerCase().contains(searchQuery.toLowerCase();
     //   }).toList();
     // }
     
@@ -680,7 +680,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                             ref.read(_selectedCategoryProvider.notifier).state = FortuneCategoryType.all;
                           },
                           child: const Text('전체 보기'),
-                        )
+                        ),
                       else
                         const SizedBox.shrink(),
                       _buildViewModeToggle(context, ref),
@@ -743,7 +743,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                   isPremium: category.isPremium,
                                   soulCost: category.soulCost,
                                   route: category.route,
-                                )
+                                ),
                               : FortuneListCard(
                                   category: category,
                                   thumbnailKey: _getThumbnailKey(category.route),
@@ -785,7 +785,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                     onDismiss: () {
                                       // Call the dismiss callback to remove the overlay
                                       _currentDismissCallback?.call();
-                                    },
+                                    }
                                   );
                                 });
                               } else {
@@ -816,7 +816,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                     // Record visit for recommendation system
                                     ref.read(fortuneRecommendationProvider.notifier).recordVisit(
                                       fortuneType,
-                                      category.category,
+                                      category.category
                                     );
                                     
                                     final isPremium = ref.read(hasUnlimitedAccessProvider);
@@ -852,7 +852,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                 );
                               }
                             },
-                          ))
+                          ),
                           : FortuneListTile(
                               category: category,
                               onTap: () {
@@ -896,7 +896,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                       // Record visit for recommendation system
                                       ref.read(fortuneRecommendationProvider.notifier).recordVisit(
                                         fortuneType,
-                                        category.category,
+                                        category.category
                                       );
                                       
                                       final isPremium = ref.read(hasUnlimitedAccessProvider);
@@ -1038,7 +1038,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                 gradient: isSelected
                     ? LinearGradient(
                         colors: [filter.color, filter.color.withValues(alpha: 0.8)],
-                      )
+                      ),
                     : null,
                 color: isSelected ? null : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(22),

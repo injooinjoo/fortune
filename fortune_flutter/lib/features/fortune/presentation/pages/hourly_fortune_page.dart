@@ -16,7 +16,7 @@ class HourlyFortunePage extends BaseFortunePage {
           title: '시간대별 운세',
           description: '24시간 시간대별 상세 운세를 확인하세요',
           fortuneType: 'hourly',
-          requiresUserInfo: false,
+          requiresUserInfo: false
         );
 
   @override
@@ -35,7 +35,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -257,7 +257,7 @@ class _HourlyFortunePageState extends BaseFortunePageState<HourlyFortunePage> {
                           if (value.toInt() % 3 == 0) {
                             return Text(
                               '${value.toInt()}',
-                              style: theme.textTheme.bodySmall,
+                              style: theme.textTheme.bodySmall
                             );
                           }
                           return const Text('');

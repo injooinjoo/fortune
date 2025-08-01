@@ -38,18 +38,18 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     {
       'id': 'meaning',
       'question': '이 꿈은 나에게 무엇을 말하려는 걸까?',
-      'hint': '꿈이 전달하려는 메시지나 의미를 생각해보세요',
-    },
+      'hint': '꿈이 전달하려는 메시지나 의미를 생각해보세요')
+    })
     {
       'id': 'reality',
       'question': '현실의 어떤 문제와 연관되어 있을까?',
-      'hint': '최근 고민이나 상황과의 연결점을 찾아보세요',
-    },
+      'hint': '최근 고민이나 상황과의 연결점을 찾아보세요')
+    })
     {
       'id': 'emotion',
       'question': '이 꿈이 암시하는 감정/사건/선택은 무엇일까?',
-      'hint': '꿈에서 느낀 감정이나 예상되는 변화를 떠올려보세요',
-    },
+      'hint': '꿈에서 느낀 감정이나 예상되는 변화를 떠올려보세요')
+    })
   ];
   
   final Map<String, TextEditingController> _questionControllers = {};
@@ -59,23 +59,23 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     {
       'title': '추락하는 꿈',
       'icon': Icons.trending_down,
-      'example': '높은 곳에서 떨어지는 꿈을 꿨어요. 떨어지면서 무서웠지만 다치지는 않았습니다.',
-    },
+      'example': '높은 곳에서 떨어지는 꿈을 꿨어요. 떨어지면서 무서웠지만 다치지는 않았습니다.')
+    })
     {
       'title': '날아다니는 꿈',
       'icon': Icons.flight,
-      'example': '하늘을 자유롭게 날아다니는 꿈을 꿨어요. 기분이 매우 좋았습니다.',
-    },
+      'example': '하늘을 자유롭게 날아다니는 꿈을 꿨어요. 기분이 매우 좋았습니다.')
+    })
     {
       'title': '쫓기는 꿈',
       'icon': Icons.directions_run,
-      'example': '무언가에 쫓기는 꿈을 꿨어요. 계속 도망쳤지만 잡히지는 않았습니다.',
-    },
+      'example': '무언가에 쫓기는 꿈을 꿨어요. 계속 도망쳤지만 잡히지는 않았습니다.')
+    })
     {
       'title': '물에 관한 꿈',
       'icon': Icons.water,
-      'example': '깨끗한 바다에서 수영하는 꿈을 꿨어요. 물이 맑고 따뜻했습니다.',
-    },
+      'example': '깨끗한 바다에서 수영하는 꿈을 꿨어요. 물이 맑고 따뜻했습니다.')
+    })
   ];
   
   @override
@@ -83,7 +83,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 2))
     );
     _animationController.repeat(reverse: true);
     
@@ -125,41 +125,41 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch)
         children: [
           // Title and description
-          _buildHeader(theme),
-          const SizedBox(height: 24),
+          _buildHeader(theme))
+          const SizedBox(height: 24))
           
           // Input type toggle
-          _buildInputTypeToggle(theme),
-          const SizedBox(height: 20),
+          _buildInputTypeToggle(theme))
+          const SizedBox(height: 20))
           
           // Dream input
           if (_inputType == 'text')
             _buildTextInput(theme)
           else
-            _buildVoiceInput(theme),
-          const SizedBox(height: 24),
+            _buildVoiceInput(theme))
+          const SizedBox(height: 24))
           
           // Feedback section
           if (_feedbackMessage.isNotEmpty)
-            _buildFeedbackSection(theme),
-          const SizedBox(height: 24),
+            _buildFeedbackSection(theme))
+          const SizedBox(height: 24))
           
           // Dream examples
-          _buildDreamExamples(theme),
-          const SizedBox(height: 32),
+          _buildDreamExamples(theme))
+          const SizedBox(height: 32))
           
           // Guiding questions
-          _buildGuidingQuestions(theme),
-          const SizedBox(height: 32),
+          _buildGuidingQuestions(theme))
+          const SizedBox(height: 32))
           
           // Next button
-          _buildNextButton(theme),
-          const SizedBox(height: 16),
-        ],
-      ),
+          _buildNextButton(theme))
+          const SizedBox(height: 16))
+        ])
+      )
     );
   }
   
@@ -168,20 +168,20 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '꿈의 내용을 자세히 기록해주세요',
+          '꿈의 내용을 자세히 기록해주세요')
           style: theme.textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ).animate().fadeIn().slideY(begin: -0.2, end: 0),
-        const SizedBox(height: 8),
+            color: Colors.white)
+            fontWeight: FontWeight.bold)
+          ))
+        ).animate().fadeIn().slideY(begin: -0.2, end: 0))
+        const SizedBox(height: 8))
         Text(
-          '꿈에서 본 주요 장면, 상징, 인물, 감정을 포함해 자세히 적어주세요',
+          '꿈에서 본 주요 장면, 상징, 인물, 감정을 포함해 자세히 적어주세요')
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white70,
-          ),
-        ).animate().fadeIn(delay: 200.ms),
-      ],
+            color: Colors.white70)
+          ))
+        ).animate().fadeIn(delay: 200.ms))
+      ]
     );
   }
   
@@ -189,16 +189,16 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     return Center(
       child: GlassContainer(
         padding: const EdgeInsets.all(4),
-        borderRadius: BorderRadius.circular(25),
-        blur: 10,
+        borderRadius: BorderRadius.circular(25))
+        blur: 10)
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min)
           children: [
-            _buildToggleButton(theme, 'text', Icons.keyboard, '텍스트'),
-            _buildToggleButton(theme, 'voice', Icons.mic, '음성'),
-          ],
+            _buildToggleButton(theme, 'text', Icons.keyboard, '텍스트'))
+            _buildToggleButton(theme, 'voice', Icons.mic, '음성'))
+          ])
         ),
-      ),
+      )
     );
   }
   
@@ -206,7 +206,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     ThemeData theme,
     String type,
     IconData icon,
-    String label,
+    String label)
   ) {
     final isSelected = _inputType == type;
     return GestureDetector(
@@ -220,59 +220,59 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         });
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        duration: const Duration(milliseconds: 200))
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10))
         decoration: BoxDecoration(
           color: isSelected
               ? theme.colorScheme.primary.withValues(alpha: 0.3)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
+              : Colors.transparent)
+          borderRadius: BorderRadius.circular(20))
+        ))
         child: Row(
           children: [
             Icon(
-              icon,
-              size: 20,
-              color: isSelected ? theme.colorScheme.primary : Colors.white60,
-            ),
-            const SizedBox(width: 8),
+              icon)
+              size: 20)
+              color: isSelected ? theme.colorScheme.primary : Colors.white60)
+            ))
+            const SizedBox(width: 8))
             Text(
-              label,
+              label)
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: isSelected ? theme.colorScheme.primary : Colors.white60,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
+                color: isSelected ? theme.colorScheme.primary : Colors.white60)
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)
+              ))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
   
   Widget _buildTextInput(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(16),
-      blur: 10,
+      borderRadius: BorderRadius.circular(16))
+      blur: 10)
       child: TextField(
-        controller: _dreamController,
-        focusNode: _focusNode,
-        maxLines: 8,
-        style: const TextStyle(color: Colors.white),
+        controller: _dreamController)
+        focusNode: _focusNode)
+        maxLines: 8)
+        style: const TextStyle(color: Colors.white))
         decoration: InputDecoration(
-          hintText: '예: "높은 곳에서 떨어졌지만 다치지 않았어요. 느낌은 무서웠어요."',
+          hintText: '예: "높은 곳에서 떨어졌지만 다치지 않았어요. 느낌은 무서웠어요."')
           hintStyle: TextStyle(
-            color: Colors.white.withValues(alpha: 0.4),
-          ),
-          border: InputBorder.none,
-          filled: false,
-        ),
+            color: Colors.white.withValues(alpha: 0.4))
+          ))
+          border: InputBorder.none)
+          filled: false)
+        ))
         onChanged: (value) {
           ref.read(dreamAnalysisProvider.notifier).updateDreamContent(value);
           _provideFeedback(value);
-        },
+        })
       ),
-    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
+    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95);
   }
   
   Widget _buildVoiceInput(ThemeData theme) {
@@ -280,105 +280,105 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
       children: [
         GlassContainer(
           padding: const EdgeInsets.all(20),
-          borderRadius: BorderRadius.circular(16),
-          blur: 10,
+          borderRadius: BorderRadius.circular(16))
+          blur: 10)
           child: Column(
             children: [
               if (_accumulatedText.isEmpty && _currentPartialText.isEmpty)
                 Text(
                   _isRecording
                       ? '듣고 있습니다... 꿈 내용을 말씀해주세요'
-                      : '마이크 버튼을 눌러 녹음을 시작하세요',
+                      : '마이크 버튼을 눌러 녹음을 시작하세요')
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white60,
-                  ),
-                  textAlign: TextAlign.center,
+                    color: Colors.white60)
+                  ))
+                  textAlign: TextAlign.center)
                 )
               else
                 Container(
-                  constraints: const BoxConstraints(maxHeight: 200),
+                  constraints: const BoxConstraints(maxHeight: 200))
                   child: SingleChildScrollView(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         if (_accumulatedText.isNotEmpty)
                           Text(
-                            _accumulatedText,
+                            _accumulatedText)
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
+                              color: Colors.white)
+                            ))
+                          ))
                         if (_currentPartialText.isNotEmpty)
                           Text(
-                            _currentPartialText,
+                            _currentPartialText)
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: Colors.white70,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                      ],
+                              color: Colors.white70)
+                              fontStyle: FontStyle.italic)
+                            ))
+                          ))
+                      ])
                     ),
-                  ),
-                ),
-            ],
+                  ))
+                ))
+            ])
           ),
-        ),
-        const SizedBox(height: 24),
-        _buildVoiceButton(theme),
+        ))
+        const SizedBox(height: 24))
+        _buildVoiceButton(theme))
         if (_accumulatedText.isNotEmpty || _currentPartialText.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          _buildVoiceControls(theme),
-        ],
+          const SizedBox(height: 16))
+          _buildVoiceControls(theme))
+        ])
       ],
-    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
+    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95);
   }
   
   Widget _buildVoiceButton(ThemeData theme) {
     final button = GestureDetector(
       onTap: _toggleRecording,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 100,
-        height: 100,
+        duration: const Duration(milliseconds: 200))
+        width: 100)
+        height: 100)
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          shape: BoxShape.circle)
           gradient: LinearGradient(
             colors: _isRecording
                 ? [Colors.red.shade400, Colors.red.shade600]
                 : [Colors.deepPurple.shade400, Colors.deepPurple.shade600],
-          ),
+          ))
           boxShadow: [
             BoxShadow(
               color: (_isRecording ? Colors.red : Colors.deepPurple)
-                  .withValues(alpha: 0.4),
-              blurRadius: 30,
-              offset: const Offset(0, 10),
-            ),
-          ],
+                  .withValues(alpha: 0.4))
+              blurRadius: 30)
+              offset: const Offset(0, 10))
+            ))
+          ])
         ),
         child: Icon(
-          _isRecording ? Icons.stop : Icons.mic,
-          size: 50,
-          color: Colors.white,
-        ),
-      ),
+          _isRecording ? Icons.stop : Icons.mic)
+          size: 50)
+          color: Colors.white)
+        ))
+      )
     );
     
     if (_isRecording) {
       return button
           .animate(onPlay: (controller) => controller.repeat())
           .scale(
-            begin: const Offset(1, 1),
-            end: const Offset(1.1, 1.1),
-            duration: 1.seconds,
-            curve: Curves.easeInOut,
+            begin: const Offset(1, 1))
+            end: const Offset(1.1, 1.1))
+            duration: 1.seconds)
+            curve: Curves.easeInOut)
           )
           .then()
           .scale(
-            begin: const Offset(1.1, 1.1),
-            end: const Offset(1, 1),
-            duration: 1.seconds,
-            curve: Curves.easeInOut,
+            begin: const Offset(1.1, 1.1))
+            end: const Offset(1, 1))
+            duration: 1.seconds)
+            curve: Curves.easeInOut)
           );
     }
     
@@ -419,7 +419,7 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
           setState(() {
             _currentPartialText = partialText;
           });
-        },
+        }
       );
     }
   }
@@ -450,13 +450,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     final keywords = <String>[];
     final dreamKeywords = {
       '추락': ['떨어지', '추락', '낙하', '떨어뜨리'],
-      '날기': ['날아', '날다', '비행', '하늘'],
+      '날기': ['날아', '날다', '비행', '하늘'])
       '물': ['물', '바다', '강', '호수', '수영'],
-      '추격': ['쫓기', '도망', '추격', '쫓아'],
+      '추격': ['쫓기', '도망', '추격', '쫓아'])
       '죽음': ['죽', '사망', '죽음'],
-      '동물': ['동물', '개', '고양이', '새', '뱀'],
+      '동물': ['동물', '개', '고양이', '새', '뱀'])
       '가족': ['엄마', '아빠', '부모', '형제', '자매', '가족'],
-      '집': ['집', '방', '건물', '아파트'],
+      '집': ['집', '방', '건물', '아파트'])
     };
     
     dreamKeywords.forEach((category, words) {
@@ -475,9 +475,9 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     final emotions = <String>[];
     final emotionKeywords = {
       '무서움': ['무서', '두려', '공포', '겁'],
-      '기쁨': ['기쁘', '행복', '즐거', '좋'],
+      '기쁨': ['기쁘', '행복', '즐거', '좋'])
       '슬픔': ['슬프', '우울', '눈물', '아프'],
-      '불안': ['불안', '걱정', '초조', '긴장'],
+      '불안': ['불안', '걱정', '초조', '긴장'])
       '평화': ['평화', '편안', '고요', '안정'],
     };
     
@@ -498,8 +498,8 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
       // 일반적인 격려 메시지
       final encouragements = [
         '좋아요! 꿈의 세부사항을 더 자세히 설명해주시면 더 정확한 해석이 가능해요.',
-        '잘 하고 계세요. 꿈에서 느낀 감정이나 색깔, 소리 등도 기억나시면 추가해주세요.',
-        '꿈 속의 인물이나 장소에 대해서도 자세히 적어주시면 좋아요.',
+        '잘 하고 계세요. 꿈에서 느낀 감정이나 색깔, 소리 등도 기억나시면 추가해주세요.')
+        '꿈 속의 인물이나 장소에 대해서도 자세히 적어주시면 좋아요.')
       ];
       return encouragements[DateTime.now().millisecondsSinceEpoch % encouragements.length];
     }
@@ -539,64 +539,64 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
   Widget _buildFeedbackSection(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(16),
-      blur: 10,
+      borderRadius: BorderRadius.circular(16))
+      blur: 10)
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Row(
             children: [
               Icon(
-                Icons.auto_awesome,
-                color: Colors.amber.shade300,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
+                Icons.auto_awesome)
+                color: Colors.amber.shade300)
+                size: 20)
+              ))
+              const SizedBox(width: 8))
               Text(
-                'AI 피드백',
+                'AI 피드백')
                 style: theme.textTheme.titleSmall?.copyWith(
-                  color: Colors.amber.shade300,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+                  color: Colors.amber.shade300)
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
+            ])
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 12))
           Text(
-            _feedbackMessage,
+            _feedbackMessage)
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white,
-              height: 1.5,
-            ),
-          ),
+              color: Colors.white)
+              height: 1.5)
+            ))
+          ))
           if (_detectedKeywords.isNotEmpty) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 12))
             Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 8)
+              runSpacing: 8)
               children: _detectedKeywords.map((keyword) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6))
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade300.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.deepPurple.shade300.withValues(alpha: 0.3))
+                    borderRadius: BorderRadius.circular(16))
                     border: Border.all(
-                      color: Colors.deepPurple.shade300.withValues(alpha: 0.5),
-                    ),
-                  ),
+                      color: Colors.deepPurple.shade300.withValues(alpha: 0.5))
+                    ))
+                  ))
                   child: Text(
-                    '#$keyword',
+                    '#$keyword')
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                      color: Colors.white)
+                      fontWeight: FontWeight.w500)
+                    ))
+                  )
                 );
-              }).toList(),
+              }).toList())
             ),
-          ],
+          ])
         ],
-      ),
+      ))
     ).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.1, end: 0, duration: 500.ms);
@@ -617,13 +617,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
               ref.read(dreamAnalysisProvider.notifier).updateDreamContent('');
             });
           },
-          icon: const Icon(Icons.clear, size: 16),
-          label: const Text('초기화'),
+          icon: const Icon(Icons.clear, size: 16))
+          label: const Text('초기화'))
           style: TextButton.styleFrom(
-            foregroundColor: Colors.white60,
-          ),
-        ),
-        const SizedBox(width: 16),
+            foregroundColor: Colors.white60)
+          ))
+        ))
+        const SizedBox(width: 16))
         // 완료 버튼
         TextButton.icon(
           onPressed: () {
@@ -637,13 +637,13 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
               _inputType = 'text'; // 텍스트 모드로 전환
             });
           },
-          icon: const Icon(Icons.check, size: 16),
-          label: const Text('완료'),
+          icon: const Icon(Icons.check, size: 16))
+          label: const Text('완료'))
           style: TextButton.styleFrom(
-            foregroundColor: Colors.green.shade300,
-          ),
-        ),
-      ],
+            foregroundColor: Colors.green.shade300)
+          ))
+        ))
+      ]
     );
   }
   
@@ -652,48 +652,48 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '자주 나오는 꿈 예시',
+          '자주 나오는 꿈 예시')
           style: theme.textTheme.titleMedium?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+            color: Colors.white)
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 12))
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 8)
+          runSpacing: 8)
           children: _dreamExamples.map((example) {
             return GestureDetector(
               onTap: () {
                 HapticUtils.lightImpact();
                 _showExampleDialog(example);
-              },
+              })
               child: GlassContainer(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                borderRadius: BorderRadius.circular(20),
-                blur: 10,
+                borderRadius: BorderRadius.circular(20))
+                blur: 10)
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min)
                   children: [
                     Icon(
-                      example['icon'],
+                      example['icon'])
                       size: 18,
-                      color: Colors.deepPurple.shade300,
-                    ),
-                    const SizedBox(width: 6),
+                      color: Colors.deepPurple.shade300)
+                    ))
+                    const SizedBox(width: 6))
                     Text(
-                      example['title'],
+                      example['title'])
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.white,
-                      ),
-                    ),
-                  ],
+                      ))
+                    ))
+                  ])
                 ),
-              ),
+              ))
             );
-          }).toList(),
+          }).toList())
         ),
-      ],
+      ]
     );
   }
   
@@ -701,60 +701,60 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey.shade900,
+        backgroundColor: Colors.grey.shade900)
         title: Row(
           children: [
             Icon(example['icon'], color: Colors.deepPurple.shade300),
-            const SizedBox(width: 8),
+            const SizedBox(width: 8))
             Text(
-              example['title'],
+              example['title'])
               style: const TextStyle(color: Colors.white),
-            ),
-          ],
+            ))
+          ])
         ),
         content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min)
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Text(
-              '예시:',
+              '예시:')
               style: TextStyle(
-                color: Colors.deepPurple.shade300,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
+                color: Colors.deepPurple.shade300)
+                fontWeight: FontWeight.bold)
+              ))
+            ))
+            const SizedBox(height: 8))
             Text(
-              example['example'],
+              example['example'])
               style: const TextStyle(color: Colors.white70),
-            ),
-            const SizedBox(height: 16),
+            ))
+            const SizedBox(height: 16))
             Text(
-              '이런 꿈을 꾸셨나요? 구체적인 내용을 입력해주세요.',
+              '이런 꿈을 꾸셨나요? 구체적인 내용을 입력해주세요.')
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 12,
-              ),
-            ),
-          ],
+                color: Colors.white.withValues(alpha: 0.6))
+                fontSize: 12)
+              ))
+            ))
+          ])
         ),
         actions: [
           TextButton(
             onPressed: () {
               // Use example as template
               _dreamController.text = example['example'];
-              ref.read(dreamAnalysisProvider.notifier)
+              ref.read(dreamAnalysisProvider.notifier,
                   .updateDreamContent(example['example']);
               Navigator.pop(context);
             },
-            child: const Text('예시 사용'),
-          ),
+            child: const Text('예시 사용'))
+          ))
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('닫기'),
-          ),
-        ],
-      ),
+            onPressed: () => Navigator.pop(context))
+            child: const Text('닫기'))
+          ))
+        ])
+      )
     );
   }
   
@@ -765,88 +765,88 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
         Row(
           children: [
             Icon(
-              Icons.help_outline,
-              color: Colors.deepPurple.shade300,
-              size: 20,
-            ),
-            const SizedBox(width: 8),
+              Icons.help_outline)
+              color: Colors.deepPurple.shade300)
+              size: 20)
+            ))
+            const SizedBox(width: 8))
             Text(
-              '꿈 해석을 위한 질문들',
+              '꿈 해석을 위한 질문들')
               style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+                color: Colors.white)
+                fontWeight: FontWeight.bold)
+              ))
+            ))
+          ])
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 16))
         ..._guidingQuestions.map((question) {
           final controller = _questionControllers[question['id']]!;
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: GlassContainer(
-              padding: const EdgeInsets.all(16),
-              borderRadius: BorderRadius.circular(12),
-              blur: 10,
+              padding: const EdgeInsets.all(16))
+              borderRadius: BorderRadius.circular(12))
+              blur: 10)
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Text(
-                    question['question']!,
+                    question['question']!)
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                      fontWeight: FontWeight.w500)
+                    ))
+                  ))
+                  const SizedBox(height: 8))
                   Text(
-                    question['hint']!,
+                    question['hint']!)
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: Colors.white60,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                    ))
+                  ))
+                  const SizedBox(height: 12))
                   TextField(
-                    controller: controller,
-                    style: const TextStyle(color: Colors.white),
-                    maxLines: 2,
+                    controller: controller)
+                    style: const TextStyle(color: Colors.white))
+                    maxLines: 2)
                     decoration: InputDecoration(
-                      hintText: '여기에 답변을 적어주세요 (선택사항)',
+                      hintText: '여기에 답변을 적어주세요 (선택사항)')
                       hintStyle: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        fontSize: 14,
-                      ),
+                        color: Colors.white.withValues(alpha: 0.3))
+                        fontSize: 14)
+                      ))
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8))
                         borderSide: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
-                      ),
+                          color: Colors.white.withValues(alpha: 0.2))
+                        ))
+                      ))
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8))
                         borderSide: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.2),
-                        ),
-                      ),
+                          color: Colors.white.withValues(alpha: 0.2))
+                        ))
+                      ))
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8))
                         borderSide: BorderSide(
-                          color: Colors.deepPurple.shade300,
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.all(12),
-                    ),
+                          color: Colors.deepPurple.shade300)
+                        ))
+                      ))
+                      contentPadding: const EdgeInsets.all(12))
+                    ))
                     onChanged: (value) {
                       ref.read(dreamAnalysisProvider.notifier)
                           .answerGuidingQuestion(question['question']!, value);
                     },
-                  ),
-                ],
+                  ))
+                ])
               ),
             ).animate().fadeIn(delay: Duration(milliseconds: 100 * 
-                _guidingQuestions.indexOf(question))),
+                _guidingQuestions.indexOf(question))))
           );
-        }).toList(),
+        }).toList())
       ],
     );
   }
@@ -858,26 +858,26 @@ class _DreamRecordingStepState extends ConsumerState<DreamRecordingStep>
     return GlassButton(
       onPressed: canProceed ? widget.onNext : null,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16))
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center)
           children: [
             Text(
-              '다음 단계로',
+              '다음 단계로')
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: canProceed ? Colors.white : Colors.white30,
-              ),
-            ),
-            const SizedBox(width: 8),
+                fontSize: 18)
+                fontWeight: FontWeight.bold)
+                color: canProceed ? Colors.white : Colors.white30)
+              ))
+            ))
+            const SizedBox(width: 8))
             Icon(
-              Icons.arrow_forward,
-              color: canProceed ? Colors.white : Colors.white30,
-            ),
-          ],
+              Icons.arrow_forward)
+              color: canProceed ? Colors.white : Colors.white30)
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 }

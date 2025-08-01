@@ -221,7 +221,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (occasion['color'] as Color).withValues(alpha: 0.1)
+                        ? (occasion['color'] as Color).withValues(alpha: 0.1,
                         : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -255,7 +255,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                       ),
                     ],
                   ),
-                ),
+                ,
               );
             },
           ),
@@ -329,7 +329,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                 selectedColor: Colors.pink,
                 labelStyle: TextStyle(
                   color: isSelected ? Colors.white : null,
-                ),
+                ,
               );
             }).toList(),
           ),
@@ -347,7 +347,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                         'occasion': _occasion,
                         'personal_style': _personalStyle,
                         'zodiac_sign': _zodiacSign,
-                      })
+                      },
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
@@ -381,7 +381,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365),
     );
     if (picked != null) {
       setState(() {
@@ -553,7 +553,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if (item['description'] != null)
+                            if (item['description'] != null,
                               Text(
                                 item['description'],
                                 style: const TextStyle(
@@ -703,7 +703,7 @@ class _LuckyOutfitFortunePageState extends ConsumerState<LuckyOutfitFortunePage>
             ),
           ),
         ],
-      ],
+      ]
     );
   }
   

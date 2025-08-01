@@ -54,7 +54,7 @@ class NavigationHelper {
       return true;
     }
 
-    // Profile sub-routes (except history which should show navigation)
+    // Profile sub-routes (except history which should show navigation,
     if (location.startsWith('/profile/')) {
       // History is accessible from profile but should show navigation
       if (location == '/profile/history') {

@@ -1,8 +1,13 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../core/utils/haptic_utils.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class SoulConsumeAnimation {
   static OverlayEntry? _currentOverlay;
@@ -81,14 +86,14 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
     
     // Main animation controller
     _mainController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: AppAnimations.durationShimmer,
       vsync: this,
     );
     
     // Particle animation controller
     _particleController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
+      duration: AppAnimations.durationXLong,
+      vsync: this
     );
     
     // Scale animation - starts normal, gets bigger then smaller
@@ -196,11 +201,11 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                     width: particle.size,
                     height: particle.size,
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.8),
+                      color: AppColors.warning.withValues(alpha: 0.8),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.orange.withValues(alpha: 0.4),
+                          color: AppColors.warning.withValues(alpha: 0.4),
                           blurRadius: 3,
                           spreadRadius: 1,
                         ),
@@ -222,9 +227,9 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                   scale: _scaleAnimation,
                   child: GlassContainer(
                     width: 120,
-                    height: 60,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    borderRadius: BorderRadius.circular(30),
+                    height: AppSpacing.spacing15,
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
                     blur: 20,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -232,15 +237,15 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                       children: [
                         Icon(
                           Icons.auto_awesome_rounded,
-                          color: Colors.orange,
-                          size: 24,
+                          color: AppColors.warning,
+                          size: AppDimensions.iconSizeMedium,
                         ).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 1500.ms, end: -2 * math.pi),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AppSpacing.spacing2),
                         Text(
                           '-${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.orange,
+                            color: AppColors.warning,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -252,7 +257,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
             ),
           ],
         );
-      },
+      }
     );
   }
 }

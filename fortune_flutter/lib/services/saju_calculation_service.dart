@@ -2,7 +2,7 @@
 /// 사주팔자 계산 서비스
 /// 실제 만세력 기반의 정확한 사주 계산을 수행합니다.
 class SajuCalculationService {
-  // 천간 (Heavenly Stems)
+  // 천간 (Heavenly Stems,
   static const List<String> heavenlyStems = [
     '갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'
   ];
@@ -11,7 +11,7 @@ class SajuCalculationService {
     '甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'
   ];
   
-  // 지지 (Earthly Branches)
+  // 지지 (Earthly Branches,
   static const List<String> earthlyBranches = [
     '자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'
   ];
@@ -20,7 +20,7 @@ class SajuCalculationService {
     '子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'
   ];
   
-  // 오행 (Five Elements)
+  // 오행 (Five Elements,
   static const Map<String, String> stemElements = {
     '갑': '목', '을': '목',
     '병': '화', '정': '화',
@@ -93,13 +93,13 @@ class SajuCalculationService {
     String? birthTime,
     bool isLunar = false,
   }) {
-    // 음력인 경우 양력으로 변환 (실제 구현시에는 정확한 음양력 변환 라이브러리 사용)
+    // 음력인 경우 양력으로 변환 (실제 구현시에는 정확한 음양력 변환 라이브러리 사용,
     DateTime solarDate = isLunar ? _convertLunarToSolar(birthDate) : birthDate;
     
     // 년주 계산
     final yearPillar = _calculateYearPillar(solarDate);
     
-    // 월주 계산 (절기 고려)
+    // 월주 계산 (절기 고려,
     final monthPillar = _calculateMonthPillar(solarDate, yearPillar['stemIndex']);
     
     // 일주 계산
@@ -174,7 +174,7 @@ class SajuCalculationService {
     };
   }
   
-  /// 월주 계산 (절기 기준)
+  /// 월주 계산 (절기 기준,
   static Map<String, dynamic> _calculateMonthPillar(DateTime date, int yearStemIndex) {
     // 절기에 따른 월 계산
     int monthIndex = _getMonthIndexBySolarTerm(date);
@@ -223,33 +223,33 @@ class SajuCalculationService {
   static int _getMonthIndexBySolarTerm(DateTime date) {
     // 간단한 구현: 절입 시각을 고려하지 않고 대략적인 날짜로 계산
     if (date.month == 1 || (date.month == 2 && date.day < 4)) {
-      return 11; // 축월 (12월)
+      return 11; // 축월 (12월,
     } else if (date.month == 2 || (date.month == 3 && date.day < 6)) {
-      return 0; // 인월 (1월)
+      return 0; // 인월 (1월,
     } else if (date.month == 3 || (date.month == 4 && date.day < 5)) {
-      return 1; // 묘월 (2월)
+      return 1; // 묘월 (2월,
     } else if (date.month == 4 || (date.month == 5 && date.day < 6)) {
-      return 2; // 진월 (3월)
+      return 2; // 진월 (3월,
     } else if (date.month == 5 || (date.month == 6 && date.day < 6)) {
-      return 3; // 사월 (4월)
+      return 3; // 사월 (4월,
     } else if (date.month == 6 || (date.month == 7 && date.day < 7)) {
-      return 4; // 오월 (5월)
+      return 4; // 오월 (5월,
     } else if (date.month == 7 || (date.month == 8 && date.day < 8)) {
-      return 5; // 미월 (6월)
+      return 5; // 미월 (6월,
     } else if (date.month == 8 || (date.month == 9 && date.day < 8)) {
-      return 6; // 신월 (7월)
+      return 6; // 신월 (7월,
     } else if (date.month == 9 || (date.month == 10 && date.day < 8)) {
-      return 7; // 유월 (8월)
+      return 7; // 유월 (8월,
     } else if (date.month == 10 || (date.month == 11 && date.day < 8)) {
-      return 8; // 술월 (9월)
+      return 8; // 술월 (9월,
     } else if (date.month == 11 || (date.month == 12 && date.day < 7)) {
-      return 9; // 해월 (10월)
+      return 9; // 해월 (10월,
     } else {
-      return 10; // 자월 (11월)
+      return 10; // 자월 (11월,
     }
   }
   
-  /// 일주 계산 (만세력 기준)
+  /// 일주 계산 (만세력 기준,
   static Map<String, dynamic> _calculateDayPillar(DateTime date) {
     // 기준일: 1900년 1월 1일은 갑진일
     final baseDate = DateTime(1900, 1, 1);
@@ -279,7 +279,7 @@ class SajuCalculationService {
     final hour = int.tryParse(parts[0]) ?? 0;
     final minute = int.tryParse(parts[1]) ?? 0;
     
-    // 시진 계산 (2시간 단위)
+    // 시진 계산 (2시간 단위,
     final hourIndex = _getHourIndex(hour, minute);
     
     // 시간 계산 공식: 일간에 따라 결정
@@ -398,7 +398,7 @@ class SajuCalculationService {
     
     if (dayIndex == targetIndex) return '비견';
     
-    // 간단한 십신 관계 계산 (실제로는 더 복잡함)
+    // 간단한 십신 관계 계산 (실제로는 더 복잡함,
     final diff = (targetIndex - dayIndex + 10) % 10;
     
     switch (diff) {
@@ -421,14 +421,14 @@ class SajuCalculationService {
     final now = DateTime.now();
     final age = now.year - birthDate.year;
     
-    // 대운 시작 나이 (간단한 계산)
+    // 대운 시작 나이 (간단한 계산,
     final daeunStartAge = 10; // 실제로는 성별과 년간의 음양에 따라 다름
     
     // 현재 대운 계산
     final currentDaeunIndex = ((age - daeunStartAge) ~/ 10);
     final currentDaeunAge = daeunStartAge + (currentDaeunIndex * 10);
     
-    // 대운 천간지지 계산 (월주 기준)
+    // 대운 천간지지 계산 (월주 기준,
     final stemIndex = (monthPillar['stemIndex'] + currentDaeunIndex + 1) % 10;
     final branchIndex = (monthPillar['branchIndex'] + currentDaeunIndex + 1) % 12;
     

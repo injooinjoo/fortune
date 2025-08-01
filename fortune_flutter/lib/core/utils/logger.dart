@@ -7,7 +7,7 @@ import '../../services/analytics_service.dart';
 class Logger {
   static const String _prefix = '[Fortune]';
   
-  // ANSI 색상 코드 (디버그 모드에서만 사용)
+  // ANSI 색상 코드 (디버그 모드에서만 사용,
   static const String _reset = '\x1B[0m';
   static const String _red = '\x1B[31m';
   static const String _green = '\x1B[32m';
@@ -130,7 +130,7 @@ class Logger {
         debugPrint('  └─ Data: $data');
       }
     } else {
-      // 프로덕션에서는 debugPrint 사용 (Flutter의 로그 제한 우회)
+      // 프로덕션에서는 debugPrint 사용 (Flutter의 로그 제한 우회,
       debugPrint('$timestamp $logMessage');
     }
   }

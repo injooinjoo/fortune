@@ -12,14 +12,15 @@ class RecommendedFortune {
   final String reason; // 추천 이유
   final double relevanceScore; // 관련성 점수
   
-  const RecommendedFortune({
+  const RecommendedFortune(
+    {
     required this.id,
     required this.title,
     required this.description,
     required this.route,
     required this.reason,
     required this.relevanceScore,
-  });
+  };
 }
 
 // 추천 운세 프로바이더
@@ -40,21 +41,21 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
     if (response != null) {
       userProfile = UserProfile(
         id: response['id'] ?? userId,
-        email: response['email'] ?? supabase.auth.currentUser?.email ?? '',
+      email: response['email'] ?? supabase.auth.currentUser?.email ?? '',
         name: response['name'] ?? '',
-        birthdate: response['birth_date'] != null 
-            ? DateTime.tryParse(response['birth_date']) 
+      birthdate: response['birth_date'] != null 
+            ? DateTime.tryParse(response['birth_date'])
             : null,
         birthTime: response['birth_time'],
-        isLunar: response['is_lunar'] ?? false,
+      isLunar: response['is_lunar'] ?? false,
         gender: response['gender'],
-        mbti: response['mbti'],
-        bloodType: response['blood_type'],
-        zodiacSign: response['zodiac_sign'],
-        zodiacAnimal: response['chinese_zodiac'],
-        onboardingCompleted: response['onboarding_completed'] ?? false,
+      mbti: response['mbti'],
+      bloodType: response['blood_type'],
+      zodiacSign: response['zodiac_sign'],
+      zodiacAnimal: response['chinese_zodiac'],
+      onboardingCompleted: response['onboarding_completed'] ?? false,
         isPremium: response['is_premium'] ?? false,
-        premiumExpiry: response['premium_expiry'] != null
+      premiumExpiry: response['premium_expiry'] != null
             ? DateTime.tryParse(response['premium_expiry'])
             : null,
         tokenBalance: response['token_balance'] ?? 0,
@@ -63,10 +64,9 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
             ? DateTime.parse(response['created_at'])
             : DateTime.now(),
         updatedAt: response['updated_at'] != null
-            ? DateTime.parse(response['updated_at']) 
+            ? DateTime.parse(response['updated_at'])
             : DateTime.now(),
       );
-    }
   }
   
   // 최근 방문한 운세 가져오기
@@ -134,8 +134,8 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       title: '케미 운세',
       description: '상대방과의 특별한 연결',
       route: '/fortune/chemistry',
-      reason: '연애 운세에 관심',
-      relevanceScore: 0.8,
+        reason: '연애 운세에 관심',
+        relevanceScore: 0.8,
     ));
   }
   
@@ -146,8 +146,8 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       title: '천직 운세',
       description: '나에게 맞는 직업 찾기',
       route: '/fortune/lucky-job',
-      reason: '직업 운세에 관심',
-      relevanceScore: 0.75,
+        reason: '직업 운세에 관심',
+        relevanceScore: 0.75,
     ));
   }
   
@@ -161,8 +161,8 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       title: '신년 운세',
       description: '새해의 전체적인 흐름',
       route: '/fortune/yearly',
-      reason: '새해 특별 운세',
-      relevanceScore: 0.7,
+        reason: '새해 특별 운세',
+        relevanceScore: 0.7,
     ));
   }
   

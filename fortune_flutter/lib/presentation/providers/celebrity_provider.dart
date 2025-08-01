@@ -34,26 +34,27 @@ class CelebritySearchNotifier extends StateNotifier<List<Celebrity>> {
   void search({
     String? query,
     CelebrityFilter? filter,
-  }) {
+}) {
     if ((query == null || query.isEmpty) && filter == null) {
       state = [];
       return;
-    }
+}
     
     state = _service.searchCelebrities(
       query: query,
       filter: filter,
     );
-  }
+}
   
   void clear() {
     state = [];
-  }
+}
 }
 
 // Selected celebrity provider
 final selectedCelebrityProvider = StateProvider<Celebrity?>((ref) => null);
 
+// Celebrity suggestions provider (for autocomplete,
 // Celebrity suggestions provider (for autocomplete)
 final celebritySuggestionsProvider = Provider.family<List<Celebrity>, String>((ref, query) {
   if (query.isEmpty) return [];
@@ -77,7 +78,7 @@ final celebritiesWithBirthdayProvider = Provider.family<List<Celebrity>, DateTim
 // Celebrity match score provider
 final celebrityMatchScoreProvider = Provider.family<double, (Celebrity, Celebrity)>((ref, pair) {
   final service = ref.watch(celebrityServiceProvider);
-  return service.calculateMatchScore(pair.$1, pair.$2);
+  return service.calculateMatchScore(pair., pair.);
 });
 
 // Celebrity statistics provider
@@ -104,7 +105,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac,
     );
-  }
+}
   
   void updateGender(Gender? gender) {
     state = CelebrityFilter(
@@ -116,7 +117,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac,
     );
-  }
+}
   
   void updateAgeRange(int? minAge, int? maxAge) {
     state = CelebrityFilter(
@@ -128,7 +129,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac,
     );
-  }
+}
   
   void updateSearchQuery(String? query) {
     state = CelebrityFilter(
@@ -140,9 +141,9 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       zodiacSign: state.zodiacSign,
       chineseZodiac: state.chineseZodiac,
     );
-  }
+}
   
   void reset() {
     state = CelebrityFilter();
-  }
+}
 }

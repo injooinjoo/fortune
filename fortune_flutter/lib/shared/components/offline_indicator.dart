@@ -1,8 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fortune/presentation/providers/offline_mode_provider.dart';
 import 'package:fortune/shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class OfflineIndicator extends ConsumerWidget {
   const OfflineIndicator({super.key});
@@ -17,66 +21,57 @@ class OfflineIndicator extends ConsumerWidget {
 
     return Positioned(
       top: MediaQuery.of(context).padding.top + 60,
-      left: 16,
-      right: 16,
+      left: 16)
+      right: 16)
       child: GlassContainer(
         gradient: LinearGradient(
           colors: [
-            Colors.orange.withValues(alpha: 0.3),
-            Colors.orange.withValues(alpha: 0.1),
-          ],
+            AppColors.warning.withValues(alpha: 0.3))
+            AppColors.warning.withValues(alpha: 0.1))
+          ])
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          end: Alignment.bottomRight)
+        ))
+        borderRadius: AppDimensions.borderRadiusMedium)
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3))
         child: Row(
           children: [
             Icon(
-              Icons.wifi_off_rounded,
-              color: Colors.orange.shade700,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
+              Icons.wifi_off_rounded)
+              color: AppColors.warning.withValues(alpha: 0.9))
+              size: AppDimensions.iconSizeSmall)
+            ))
+            SizedBox(width: AppSpacing.spacing3))
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start)
+                mainAxisSize: MainAxisSize.min)
                 children: [
                   Text(
-                    '오프라인 모드',
-                    style: TextStyle(
-                      color: Colors.orange.shade700,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  if (offlineState.cacheStats['totalCached'] != null)
+                    '오프라인 모드')
+                    style: Theme.of(context).textTheme.titleSmall)
+                  if (offlineState.cacheStats['totalCached'] != null,
                     Text(
                       '${offlineState.cacheStats['totalCached']}개의 운세가 저장되어 있습니다',
-                      style: TextStyle(
-                        color: Colors.orange.shade600,
-                        fontSize: 12,
-                      ),
-                    ),
-                ],
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withValues(alpha: 0.8)))
+                ])
               ),
-            ),
+            ))
             Icon(
-              Icons.cloud_off_rounded,
-              color: Colors.orange.shade600,
-              size: 24,
-            ),
-          ],
+              Icons.cloud_off_rounded)
+              color: AppColors.warning.withValues(alpha: 0.8))
+              size: AppDimensions.iconSizeMedium)
+            ))
+          ])
         ),
       ).animate(
-        onPlay: (controller) => controller.repeat(reverse: true),
+        onPlay: (controller) => controller.repeat(reverse: true))
       ).scale(
-        begin: const Offset(1.0, 1.0),
-        end: const Offset(1.02, 1.02),
-        duration: 2.seconds,
-        curve: Curves.easeInOut,
-      ),
+        begin: const Offset(1.0, 1.0))
+        end: const Offset(1.02, 1.02))
+        duration: 2.seconds)
+        curve: Curves.easeInOut)
+      )
     );
   }
 }
@@ -97,8 +92,8 @@ class OfflineBanner extends ConsumerWidget {
       children: [
         child,
         if (offlineState.isOffline && offlineState.isInitialized)
-          const OfflineIndicator(),
-      ],
+          const OfflineIndicator())
+      ]
     );
   }
 }

@@ -8,13 +8,13 @@ import '../../../../shared/components/toast.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
 class DailyFortunePage extends BaseFortunePage {
-  const DailyFortunePage({Key? key})
+  const DailyFortunePage({Key? key},
       : super(
-          key: key,
-          title: '오늘의 운세',
-          description: '오늘 하루의 전체적인 운세를 확인해보세요',
-          fortuneType: 'daily',
-          requiresUserInfo: false,
+          key: key)
+          title: '오늘의 운세')
+          description: '오늘 하루의 전체적인 운세를 확인해보세요')
+          fortuneType: 'daily')
+          requiresUserInfo: false
         );
 
   @override
@@ -34,7 +34,7 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
     // Use the fortune provider to generate daily fortune
     final fortune = await ref.read(fortuneServiceProvider).generateDailyFortune(
       userId: user.id,
-      date: _selectedDate,
+      date: _selectedDate
     );
 
     return fortune;
@@ -54,21 +54,21 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
     return GlassCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Text(
-            '날짜 선택',
-            style: theme.textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 16),
+            '날짜 선택')
+            style: theme.textTheme.headlineSmall)
+          ))
+          const SizedBox(height: 16))
           InkWell(
             onTap: () async {
               final date = await showDatePicker(
-                context: context,
-                initialDate: _selectedDate,
-                firstDate: DateTime.now().subtract(const Duration(days: 30)),
-                lastDate: DateTime.now().add(const Duration(days: 30)),
-                locale: const Locale('ko', 'KR'),
+                context: context)
+                initialDate: _selectedDate)
+                firstDate: DateTime.now().subtract(const Duration(days: 30)))
+                lastDate: DateTime.now().add(const Duration(days: 30)))
+                locale: const Locale('ko', 'KR'))
               );
               if (date != null) {
                 setState(() {
@@ -77,37 +77,37 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
               }
             },
             child: GlassContainer(
-              padding: const EdgeInsets.all(16),
-              borderRadius: BorderRadius.circular(12),
-              blur: 10,
+              padding: const EdgeInsets.all(16))
+              borderRadius: BorderRadius.circular(12))
+              blur: 10)
               child: Row(
                 children: [
                   Icon(
-                    Icons.calendar_today_rounded,
-                    color: theme.colorScheme.primary,
-                  ),
-                  const SizedBox(width: 12),
+                    Icons.calendar_today_rounded)
+                    color: theme.colorScheme.primary)
+                  ))
+                  const SizedBox(width: 12))
                   Text(
-                    _formatDate(_selectedDate),
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const Spacer(),
+                    _formatDate(_selectedDate))
+                    style: theme.textTheme.bodyLarge)
+                  ))
+                  const Spacer())
                   Icon(
-                    Icons.arrow_drop_down_rounded,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ],
+                    Icons.arrow_drop_down_rounded)
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                  ))
+                ])
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
+            ))
+          ))
+          const SizedBox(height: 8))
           Text(
-            '최대 30일 전후의 운세를 확인할 수 있습니다',
+            '최대 30일 전후의 운세를 확인할 수 있습니다')
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-        ],
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -118,9 +118,9 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
     return Column(
       children: [
         super.buildFortuneResult(),
-        _buildTimeBasedFortune(),
-        _buildDailyTips(),
-      ],
+        _buildTimeBasedFortune())
+        _buildDailyTips())
+      ]
     );
   }
 
@@ -129,136 +129,136 @@ class _DailyFortunePageState extends BaseFortunePageState<DailyFortunePage> {
       '아침 (06:00-12:00)': {
         'score': 85,
         'description': '활력이 넘치는 아침입니다. 중요한 결정은 이 시간에 하세요.',
-        'color': Colors.orange,
-      },
+        'color': Colors.orange)
+      })
       '오후 (12:00-18:00)': {
         'score': 70,
         'description': '평온한 오후가 될 것입니다. 협업에 좋은 시간입니다.',
-        'color': Colors.blue,
-      },
+        'color': Colors.blue)
+      })
       '저녁 (18:00-24:00)': {
         'score': 90,
         'description': '행운이 가득한 저녁입니다. 사교 활동에 적합합니다.',
-        'color': Colors.purple,
-      },
+        'color': Colors.purple)
+      })
     };
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Text(
-              '시간대별 운세',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 16),
+              '시간대별 운세')
+              style: Theme.of(context).textTheme.headlineSmall)
+            ))
+            const SizedBox(height: 16))
             ...timeBasedData.entries.map((entry) {
               final data = entry.value as Map<String, dynamic>;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.only(bottom: 16))
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Row(
                       children: [
                         Container(
-                          width: 12,
-                          height: 12,
+                          width: 12)
+                          height: 12)
                           decoration: BoxDecoration(
                             color: data['color'] as Color,
                             shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
+                          ))
+                        ))
+                        const SizedBox(width: 8))
                         Text(
-                          entry.key,
+                          entry.key)
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const Spacer(),
+                            fontWeight: FontWeight.bold)
+                          ))
+                        ))
+                        const Spacer())
                         Text(
-                          '${data['score']}점',
+                          '${data['score']}점')
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: data['color'] as Color,
                             fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                          ))
+                        ))
+                      ])
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 8))
                     Text(
                       data['description'] as String,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
+                      ))
+                    ))
+                  ])
                 ),
               );
-            }).toList(),
+            }).toList())
           ],
-        ),
-      ),
+        ))
+      ))
     );
   }
 
   Widget _buildDailyTips() {
     final tips = [
       '오늘은 새로운 시작에 좋은 날입니다',
-      '주변 사람들과의 소통을 늘려보세요',
-      '건강 관리에 신경 쓰는 것이 좋겠습니다',
-      '재정적인 결정은 신중하게 하세요',
+      '주변 사람들과의 소통을 늘려보세요')
+      '건강 관리에 신경 쓰는 것이 좋겠습니다')
+      '재정적인 결정은 신중하게 하세요')
     ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.lightbulb_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
+                  Icons.lightbulb_rounded)
+                  color: Theme.of(context).colorScheme.primary)
+                ))
+                const SizedBox(width: 8))
                 Text(
-                  '오늘의 행운 팁',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
+                  '오늘의 행운 팁')
+                  style: Theme.of(context).textTheme.headlineSmall)
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             ...tips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8))
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Text(
-                    '•',
+                    '•')
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                      color: Theme.of(context).colorScheme.primary)
+                    ))
+                  ))
+                  const SizedBox(width: 8))
                   Expanded(
                     child: Text(
-                      tip,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
+                      tip)
+                      style: Theme.of(context).textTheme.bodyMedium)
+                    ))
+                  ))
+                ])
               ),
-            )).toList(),
-          ],
+            )).toList())
+          ])
         ),
-      ),
+      )
     );
   }
 

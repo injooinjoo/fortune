@@ -23,8 +23,9 @@ class EdgeFunctionsEndpoints {
   static const String tokenHistory = '/token-history';
 
   // Payment endpoints
-  static const String verifyPurchase = '/payment-verify-purchase';
-  static const String verifySubscription = '/payment-verify-subscription';
+  static const String verifyPurchase = '/verify-purchase';
+  static const String subscriptionStatus = '/subscription-status';
+  static const String addTokens = '/add-tokens';
   static const String restorePurchases = '/payment-restore-purchases';
 
   // Batch and System endpoints
@@ -107,6 +108,7 @@ class EdgeFunctionsEndpoints {
   static const String movingFortune = '/fortune-moving';
   static const String movingDateFortune = '/fortune-moving-date';
   static const String movingEnhancedFortune = '/fortune-moving-enhanced';
+  static const String movingUnifiedFortune = '/fortune-moving-unified';
   static const String biorhythmFortune = '/fortune-biorhythm';
 
   // 행운의 아이템
@@ -249,6 +251,7 @@ class EdgeFunctionsEndpoints {
       'moving': movingFortune,
       'moving-date': movingDateFortune,
       'moving-enhanced': movingEnhancedFortune,
+      'moving-unified': movingUnifiedFortune,
       'biorhythm': biorhythmFortune,
       'lucky-color': luckyColorFortune,
       'lucky-number': luckyNumberFortune,

@@ -148,8 +148,7 @@ class UserProfile {
       isLunarBirthdate: isLunarBirthdate ?? this.isLunarBirthdate,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       linkedProviders: linkedProviders ?? this.linkedProviders,
-      primaryProvider: primaryProvider ?? this.primaryProvider,
-    );
+      primaryProvider: primaryProvider ?? this.primaryProvider);
   }
 
   // Helper getter to convert birthDate string to DateTime

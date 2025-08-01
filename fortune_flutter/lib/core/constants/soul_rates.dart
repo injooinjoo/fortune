@@ -1,6 +1,5 @@
 /// 영혼 시스템 비율 정의
 /// 무료 운세는 영혼을 획득하고, 프리미엄 운세는 영혼을 소비합니다.
-
 class SoulRates {
   // 영혼을 획득하는 무료 운세 (양수)
   static const Map<String, int> earnRates = {

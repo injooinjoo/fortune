@@ -25,7 +25,7 @@ class SajuPage extends BaseFortunePage {
           description: '당신의 사주팔자를 통해 타고난 운명을 확인해보세요',
           fortuneType: 'saju',
           requiresUserInfo: false,
-          initialParams: initialParams,
+          initialParams: initialParams
         );
 
   @override
@@ -45,7 +45,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this,
+      vsync: this
     );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -90,7 +90,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
     // Calculate detailed saju data
     _calculatedSaju = SajuCalculationService.calculateSaju(
       birthDate: birthDate,
-      birthTime: user.userMetadata?['birthTime'],
+      birthTime: user.userMetadata?['birthTime']
     );
     
     // Extract saju data from the fortune response
@@ -588,7 +588,7 @@ class _SajuPageState extends BaseFortunePageState<SajuPage> with TickerProviderS
                 ),
               ).animate()
                   .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
-                  .slideX(begin: 0.1, end: 0),
+                  .slideX(begin: 0.1, end: 0);
             );
           }).toList(),
         ],

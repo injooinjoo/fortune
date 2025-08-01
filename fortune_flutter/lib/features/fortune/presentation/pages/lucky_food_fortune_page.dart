@@ -6,13 +6,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
 class LuckyFoodFortunePage extends BaseFortunePage {
-  const LuckyFoodFortunePage({Key? key})
+  const LuckyFoodFortunePage({Key? key},
       : super(
           key: key,
           title: '오늘의 행운의 음식',
           description: '오늘 당신에게 행운을 가져다줄 음식을 확인해보세요',
           fortuneType: 'lucky-food',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -105,7 +105,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
         ),
         const SizedBox(height: 16),
         _buildMealTimeSelector(),
-      ],
+      ]
     );
   }
 
@@ -142,7 +142,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
           },
           selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -210,7 +210,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -378,7 +378,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
           _buildEatingTips(),
           const SizedBox(height: 32),
         ],
-      ),
+      ,
     );
   }
 
@@ -450,7 +450,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -555,7 +555,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -656,7 +656,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -792,7 +792,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             );
           }).toList(),
         ],
-      ),
+      ,
     );
   }
 }

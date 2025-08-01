@@ -14,7 +14,7 @@ class LuckyItemsUnifiedPage extends BaseFortunePage {
           title: '오늘의 행운 아이템',
           description: '행운의 색깔, 숫자, 음식, 아이템을 한 번에 확인하세요',
           fortuneType: 'lucky_items',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -33,7 +33,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
     
     final fortune = await fortuneService.getLuckyItemsFortune(
       userId: params['userId'],
-      params: params,
+      params: params
     );
     
     setState(() {
@@ -273,7 +273,7 @@ class _LuckyItemsUnifiedPageState extends BaseFortunePageState<LuckyItemsUnified
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        textAlign: TextAlign.center,
+        textAlign: TextAlign.center
       );
     }
 

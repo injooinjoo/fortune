@@ -8,7 +8,6 @@ class InAppProducts {
   
   // Subscription Products
   static const String monthlySubscription = 'com.beyond.fortune.subscription.monthly';
-  static const String yearlySubscription = 'com.beyond.fortune.subscription.yearly';
   
   // Product Details
   static const Map<String, ProductInfo> productDetails = {
@@ -46,17 +45,9 @@ class InAppProducts {
     ),
     monthlySubscription: ProductInfo(
       id: monthlySubscription,
-      title: '월간 무제한',
-      description: '한 달 동안 무제한 이용',
-      price: 9900,
-      tokens: -1, // Unlimited
-      isSubscription: true,
-    ),
-    yearlySubscription: ProductInfo(
-      id: yearlySubscription,
-      title: '연간 무제한',
-      description: '1년 동안 무제한 이용 (17% 할인)',
-      price: 99000,
+      title: '무제한 이용권',
+      description: '한 달 동안 모든 운세 무제한 이용',
+      price: 2500,
       tokens: -1, // Unlimited
       isSubscription: true,
     ),
@@ -73,7 +64,6 @@ class InAppProducts {
   // Get all subscription product IDs
   static List<String> get subscriptionIds => [
     monthlySubscription,
-    yearlySubscription,
   ];
   
   // Get all product IDs

@@ -23,11 +23,11 @@ class TarotStorytellingPage extends ConsumerStatefulWidget {
     required this.selectedCards,
     required this.spreadType,
     this.question,
-  }) : super(key: key);
+    }) : super(key: key);
 
   @override
   ConsumerState<TarotStorytellingPage> createState() => _TarotStorytellingPageState();
-}
+  }
 
 class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     with TickerProviderStateMixin {
@@ -51,7 +51,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     // Initialize revealed states
     for (int i = 0; i < widget.selectedCards.length; i++) {
       _cardRevealed.add(false);
-    }
+  }
 
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -60,7 +60,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
 
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
+      vsync: this
     );
 
     _fadeAnimation = Tween<double>(
@@ -82,8 +82,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     // Start with introduction
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showIntroduction();
-    });
-  }
+      });
+    }
 
   @override
   void dispose() {
@@ -91,13 +91,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     _slideController.dispose();
     _scrollController.dispose();
     super.dispose();
-  }
+    }
 
   void _showIntroduction() async {
     await Future.delayed(const Duration(milliseconds: 500));
     _fadeController.forward();
     _slideController.forward();
-  }
+    }
 
   void _revealNextCard() async {
     if (_currentCardIndex >= widget.selectedCards.length) return;
@@ -105,7 +105,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     setState(() {
       _isRevealing = true;
       _showInterpretation = false;
-    });
+  });
 
     // Haptic feedback
     HapticFeedback.mediumImpact();
@@ -113,7 +113,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     // Trigger card reveal
     setState(() {
       _cardRevealed[_currentCardIndex] = true;
-    });
+      });
 
     // Wait for card flip animation
     await Future.delayed(const Duration(milliseconds: 1000));
@@ -134,24 +134,24 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
       _interpretations.add(interpretation);
       _showInterpretation = true;
       _isRevealing = false;
-    });
+      });
 
     // Auto scroll to bottom
     _scrollToBottom();
-  }
+    }
 
   void _proceedToNext() {
     if (_currentCardIndex < widget.selectedCards.length - 1) {
       setState(() {
         _currentCardIndex++;
         _showInterpretation = false;
-      });
+        });
       _fadeController.forward();
-    } else {
+      } else {
       // Navigate to final summary
       _showFinalSummary();
+      }
     }
-  }
 
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -161,9 +161,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeOut,
         );
-      }
-    });
-  }
+        }
+      });
+    }
 
   void _showFinalSummary() {
     context.pushReplacementNamed(
@@ -173,9 +173,9 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         'interpretations': _interpretations,
         'spreadType': widget.spreadType,
         'question': widget.question,
-      },
+        },
     );
-  }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +194,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 title: '타로 리딩',
                 showBackButton: true,
                 backgroundColor: Colors.transparent,
-              ),
               
               // Progress indicator
               _buildProgressIndicator(),
@@ -207,8 +206,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   child: Column(
                     children: [
                       // Introduction or current card section
-                      if (_currentCardIndex == 0 && !_cardRevealed[0])
-                        _buildIntroduction(fontScale)
+                      if (_currentCardIndex == 0 && !_cardRevealed[0]) _buildIntroduction(fontScale)
                       else
                         _buildCurrentCardSection(fontScale),
                       
@@ -220,7 +218,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                       const SizedBox(height: 80), // Space for bottom button
                     ],
                   ),
-                ),
               ),
               
               // Action button
@@ -353,7 +350,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 fontSize: 24 * fontScale,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -363,7 +359,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 fontSize: 16 * fontScale,
                 color: Colors.white70,
                 fontStyle: FontStyle.italic,
-              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -373,8 +368,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                 colors: [
                   Colors.purple.withValues(alpha: 0.2),
                   Colors.indigo.withValues(alpha: 0.2),
-                ],
-              ),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.1),
@@ -385,29 +378,25 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
+                      shape: BoxShape.circle),
+                  gradient: RadialGradient(
                         colors: [
                           Colors.white.withValues(alpha: 0.1),
                           Colors.transparent,
-                        ],
                       ),
-                    ),
                     child: Icon(
-                      Icons.info_outline,
-                      color: Colors.white.withValues(alpha: 0.9),
+                      Icons.info_outline),
+                  color: Colors.white.withValues(alpha: 0.9),
                       size: 24,
                     ),
-                  ),
                   const SizedBox(height: 12),
                   Text(
-                    '${widget.selectedCards.length}장의 카드를 하나씩 공개하며\n각 카드가 전하는 메시지를 들려드리겠습니다.',
+                    '${widget.selectedCards.length  }장의 카드를 하나씩 공개하며\n각 카드가 전하는 메시지를 들려드리겠습니다.',
                     style: TextStyle(
                       fontSize: 14 * fontScale,
                       color: Colors.white,
-                      height: 1.5,
-                      letterSpacing: 0.5,
-                    ),
+                      height: 1.5),
+                  letterSpacing: 0.5),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -423,16 +412,16 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     if (_currentCardIndex >= widget.selectedCards.length) return const SizedBox();
 
     final positionName = TarotHelper.getPositionDescription(
-      widget.spreadType,
-      _currentCardIndex,
+      widget.spreadType)
+      _currentCardIndex
     );
 
     return Column(
       children: [
         // Position title
         FadeTransition(
-          opacity: _fadeAnimation,
-          child: Container(
+          opacity: _fadeAnimation),
+                  child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -466,15 +455,13 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                   ),
                   child: Center(
                     child: Text(
-                      '${_currentCardIndex + 1}',
+                      '${_currentCardIndex + 1  }',
                       style: TextStyle(
                         fontSize: 12 * fontScale,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                    ),
                   ),
-                ),
                 const SizedBox(width: 12),
                 Text(
                   positionName,
@@ -498,27 +485,23 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
             child: TarotCardRevealWidget(
               cardIndex: widget.selectedCards[_currentCardIndex],
               isRevealed: _cardRevealed[_currentCardIndex],
-              onTap: !_cardRevealed[_currentCardIndex] ? _revealNextCard : null,
+              onTap: !_cardRevealed[_currentCardIndex] ? _revealNextCard : null
               width: 180,
-              height: 280,
+              height: 280)
             ),
-          ),
         ),
         
         // Current interpretation
-        if (_showInterpretation && _currentCardIndex < _interpretations.length)
-          FadeTransition(
-            opacity: _fadeAnimation,
-            child: Padding(
+        if (_showInterpretation && _currentCardIndex < _interpretations.length), FadeTransition(
+            opacity: _fadeAnimation),
+                  child: Padding(
               padding: const EdgeInsets.only(top: 24),
               child: TarotInterpretationBubble(
                 interpretation: _interpretations[_currentCardIndex],
                 isCurrentCard: true,
-                fontScale: fontScale,
+                fontScale: fontScale)
               ),
-            ),
-          ),
-      ],
+          )
     );
   }
 
@@ -534,8 +517,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
                 // Card summary header
                 GlassContainer(
                   padding: const EdgeInsets.all(12),
@@ -543,19 +526,17 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     colors: [
                       Colors.purple.withValues(alpha: 0.1),
                       Colors.indigo.withValues(alpha: 0.1),
-                    ],
-                  ),
                   child: Row(
                     children: [
                       // Mini card image
                       Container(
-                        width: 40,
-                        height: 60,
-                        decoration: BoxDecoration(
+                        width: 40),
+                  height: 60),
+                  decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/tarot/${_getCardImagePath(widget.selectedCards[i])}',
+                              'assets/images/tarot/${_getCardImagePath(widget.selectedCards[i])  }',
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -565,8 +546,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
-                          ],
-                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -574,35 +553,27 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${i + 1}. $positionName',
-                              style: TextStyle(
-                                fontSize: 12 * fontScale,
-                                color: Colors.white70,
+                              '${i + 1  }. $positionName'),
+                  style: TextStyle(
+                                fontSize: 12 * fontScale),
+                  color: Colors.white70)
                               ),
-                            ),
                             Text(
                               cardInfo?.name ?? 'Unknown Card',
                               style: TextStyle(
-                                fontSize: 14 * fontScale,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                fontSize: 14 * fontScale
+                                fontWeight: FontWeight.bold),
+                  color: Colors.white)
                               ),
-                            ),
-                          ],
                         ),
-                      ),
-                    ],
                   ),
-                ),
                 const SizedBox(height: 8),
                 // Interpretation
                 TarotInterpretationBubble(
                   interpretation: _interpretations[i],
                   isCurrentCard: false,
-                  fontScale: fontScale,
+                  fontScale: fontScale)
                 ),
-              ],
-            ),
           ),
         );
       }
@@ -618,24 +589,24 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
     if (_currentCardIndex == 0 && !_cardRevealed[0]) {
       buttonText = '첫 번째 카드 공개하기';
       onPressed = _revealNextCard;
-    } else if (_isRevealing) {
+  } else if (_isRevealing) {
       buttonText = '해석 중...';
       onPressed = null;
-    } else if (!_cardRevealed[_currentCardIndex]) {
+  } else if (!_cardRevealed[_currentCardIndex]) {
       buttonText = '카드 뒤집기';
       onPressed = _revealNextCard;
-    } else if (_showInterpretation) {
+  } else if (_showInterpretation) {
       if (_currentCardIndex < widget.selectedCards.length - 1) {
         buttonText = '다음 카드 보기';
         onPressed = _proceedToNext;
-      } else {
+  } else {
         buttonText = '전체 해석 보기';
         onPressed = _showFinalSummary;
-      }
-    } else {
+  }
+      } else {
       buttonText = '잠시만 기다려주세요...';
       onPressed = null;
-    }
+  }
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -644,10 +615,8 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.transparent,
+            Colors.transparent)
             Colors.black.withValues(alpha: 0.8),
-          ],
-        ),
       ),
       child: SafeArea(
         top: false,
@@ -656,40 +625,35 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
           child: ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: Colors.purple),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (_isRevealing)
-                  Container(
-                    width: 20,
-                    height: 20,
-                    margin: const EdgeInsets.only(right: 8),
+              mainAxisAlignment: MainAxisAlignment.center),
+                  children: [
+                if (_isRevealing), Container(
+                    width: 20),
+                  height: 20),
+                  margin: const EdgeInsets.only(right: 8),
                     child: const CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                else if (onPressed != null)
-                  Icon(
+                      strokeWidth: 2),
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ,
+                else if (onPressed != null), Icon(
                     _currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                         ? Icons.auto_awesome
-                        : Icons.arrow_forward,
-                    size: 20,
-                  ),
+                        : Icons.arrow_forward
+                    size: 20),
                 const SizedBox(width: 8),
                 Text(
                   buttonText,
                   style: TextStyle(
-                    fontSize: 16 * fontScale,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 16 * fontScale),
+                  fontWeight: FontWeight.bold)
                   ),
-                ),
               ],
             ),
           ),
@@ -708,31 +672,31 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
         'fool', 'magician', 'high_priestess', 'empress', 'emperor',
         'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
         'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
-      ];
-      return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
-    } else if (cardIndex < 36) {
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world',
+];
+      return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')  }_${cardNames[cardIndex]  }.jpg';
+  } else if (cardIndex < 36) {
       // Wands
       final wandsIndex = cardIndex - 21;
       final cardName = wandsIndex <= 10 ? 'of_wands' : _getCourtCardName(wandsIndex, 'wands');
-      return '$deckPath/wands/${wandsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-    } else if (cardIndex < 50) {
+      return '$deckPath/wands/${wandsIndex.toString().padLeft(2, '0')  }_$cardName.jpg';
+  } else if (cardIndex < 50) {
       // Cups
       final cupsIndex = cardIndex - 35;
       final cardName = cupsIndex <= 10 ? 'of_cups' : _getCourtCardName(cupsIndex, 'cups');
-      return '$deckPath/cups/${cupsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-    } else if (cardIndex < 64) {
+      return '$deckPath/cups/${cupsIndex.toString().padLeft(2, '0')  }_$cardName.jpg';
+  } else if (cardIndex < 64) {
       // Swords
       final swordsIndex = cardIndex - 49;
       final cardName = swordsIndex <= 10 ? 'of_swords' : _getCourtCardName(swordsIndex, 'swords');
-      return '$deckPath/swords/${swordsIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-    } else {
+      return '$deckPath/swords/${swordsIndex.toString().padLeft(2, '0')  }_$cardName.jpg';
+  } else {
       // Pentacles
       final pentaclesIndex = cardIndex - 63;
       final cardName = pentaclesIndex <= 10 ? 'of_pentacles' : _getCourtCardName(pentaclesIndex, 'pentacles');
-      return '$deckPath/pentacles/${pentaclesIndex.toString().padLeft(2, '0')}_$cardName.jpg';
-    }
+      return '$deckPath/pentacles/${pentaclesIndex.toString().padLeft(2, '0')  }_$cardName.jpg';
   }
+    }
 
   String _getCourtCardName(int index, String suit) {
     switch (index) {
@@ -741,6 +705,6 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
       case 13: return 'queen_of_$suit';
       case 14: return 'king_of_$suit';
       default: return 'of_$suit';
-    }
+  }
   }
 }

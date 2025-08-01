@@ -59,7 +59,7 @@ class _HealthInputForm extends StatelessWidget {
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.favorite),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(

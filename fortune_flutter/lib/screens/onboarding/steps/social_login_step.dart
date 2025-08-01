@@ -1,16 +1,22 @@
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_theme_extensions.dart';
 import '../../../presentation/providers/social_auth_provider.dart';
 import '../../../presentation/providers/auth_provider.dart';
 import '../../../core/utils/logger.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 enum SocialProvider {
   google,
-  apple,
-  facebook,
-  kakao,
-  naver,
+  apple)
+  facebook)
+  kakao)
+  naver)
 }
 
 class SocialLoginStep extends ConsumerStatefulWidget {
@@ -68,7 +74,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
       }
       
       // Wait a moment for auth state to update
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(AppAnimations.durationLong);
       
       // 로그인 성공 후 사용자 정보 확인
       final authService = ref.read(authServiceProvider);
@@ -102,42 +108,40 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
     required Widget icon,
     required VoidCallback onPressed,
     Color? backgroundColor,
-    Color? textColor,
+    Color? textColor)
   }) {
     return Container(
       width: double.infinity,
-      height: 56,
-      margin: const EdgeInsets.only(bottom: 12),
+      height: context.fortuneTheme.formStyles.inputHeight)
+      margin: EdgeInsets.only())
       child: ElevatedButton(
-        onPressed: _isLoading ? null : onPressed,
+        onPressed: _isLoading ? null : onPressed)
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Colors.white,
-          foregroundColor: textColor ?? Colors.black87,
+          backgroundColor: backgroundColor ?? context.fortuneTheme.cardSurface)
+          foregroundColor: textColor ?? context.fortuneTheme.primaryText)
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius))
             side: BorderSide(
-              color: Colors.grey.shade300,
-              width: 1,
-            ),
-          ),
-          elevation: 0,
-        ),
+              color: context.fortuneTheme.dividerColor)
+              width: context.fortuneTheme.formStyles.inputBorderWidth)
+            ))
+          ))
+          elevation: 0)
+        ))
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center)
           children: [
-            icon,
-            const SizedBox(width: 12),
+            icon)
+            SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical))
             Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: textColor ?? Colors.black87,
-              ),
-            ),
-          ],
+              label)
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w600),))
+                color: textColor ?? context.fortuneTheme.primaryText)
+              ))
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -146,153 +150,148 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 40),
+        SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5))
         Text(
-          '거의 다 왔습니다!',
+          '거의 다 왔습니다!')
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
+                fontWeight: FontWeight.bold),))
+              ))
+          textAlign: TextAlign.center)
+        ))
+        SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
         Text(
-          '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다',
+          '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다')
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.grey[600],
-              ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 40),
+                color: context.fortuneTheme.subtitleText),))
+              ))
+          textAlign: TextAlign.center)
+        ))
+        SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5))
         
         if (_errorMessage != null) ...[
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.vertical))
             decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.red.shade200),
-            ),
+              color: context.fortuneTheme.errorColor.withValues(alpha: 0.1))
+              borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius * 0.67))
+              border: Border.all(color: context.fortuneTheme.errorColor.withValues(alpha: 0.5)))
+            ))
             child: Row(
               children: [
-                Icon(Icons.error_outline, color: Colors.red.shade700),
-                const SizedBox(width: 8),
+                Icon(Icons.error_outline, color: context.fortuneTheme.errorColor))
+                SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
                 Expanded(
                   child: Text(
-                    _errorMessage!,
-                    style: TextStyle(color: Colors.red.shade700),
-                  ),
-                ),
-              ],
+                    _errorMessage!)
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: context.fortuneTheme.errorColor),))
+                    ))
+              ])
             ),
-          ),
-          const SizedBox(height: 16),
-        ],
+          ))
+          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
+        ])
 
         _buildSocialButton(
           label: '구글로 계속하기',
           icon: Image.network(
-            'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg',
-            height: 24,
-            width: 24,
+            'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg')
+            height: context.fortuneTheme.socialSharing.shareIconSize)
+            width: context.fortuneTheme.socialSharing.shareIconSize)
             errorBuilder: (context, error, stackTrace) => 
-                Icon(Icons.g_mobiledata, size: 24, color: Colors.blue),
-          ),
-          onPressed: () => _handleSocialLogin(SocialProvider.google),
-        ),
+                Icon(Icons.g_mobiledata, size: AppDimensions.iconSizeMedium, color: AppColors.primary))
+          ))
+          onPressed: () => _handleSocialLogin(SocialProvider.google))
+        ))
 
         _buildSocialButton(
-          label: 'Apple로 계속하기',
-          icon: Icon(Icons.apple, size: 24, color: Colors.white),
-          onPressed: () => _handleSocialLogin(SocialProvider.apple),
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-        ),
+          label: 'Apple로 계속하기')
+          icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: AppColors.textPrimaryDark))
+          onPressed: () => _handleSocialLogin(SocialProvider.apple))
+          backgroundColor: context.fortuneTheme.primaryText)
+          textColor: AppColors.textPrimaryDark)
+        ))
 
         _buildSocialButton(
-          label: 'Facebook으로 계속하기',
-          icon: Icon(Icons.facebook, size: 24, color: Colors.white),
-          onPressed: () => _handleSocialLogin(SocialProvider.facebook),
-          backgroundColor: const Color(0xFF1877F2),
-          textColor: Colors.white,
-        ),
+          label: 'Facebook으로 계속하기')
+          icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: AppColors.textPrimaryDark))
+          onPressed: () => _handleSocialLogin(SocialProvider.facebook))
+          backgroundColor: const Color(0xFF1877F2), // Facebook brand color
+          textColor: AppColors.textPrimaryDark)
+        ))
 
         _buildSocialButton(
-          label: '카카오로 계속하기',
+          label: '카카오로 계속하기')
           icon: Image.network(
-            'https://developers.kakao.com/static/images/pc/product/icon/kakaoTalk.png',
-            height: 24,
-            width: 24,
+            'https://developers.kakao.com/static/images/pc/product/icon/kakaoTalk.png')
+            height: context.fortuneTheme.socialSharing.shareIconSize)
+            width: context.fortuneTheme.socialSharing.shareIconSize)
             errorBuilder: (context, error, stackTrace) => 
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: context.fortuneTheme.socialSharing.shareIconSize)
+                  height: context.fortuneTheme.socialSharing.shareIconSize)
                   decoration: BoxDecoration(
-                    color: Colors.black87,
-                    shape: BoxShape.circle,
-                  ),
+                    color: context.fortuneTheme.primaryText)
+                    shape: BoxShape.circle)
+                  ))
                   child: Center(
                     child: Text(
-                      'K',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFFEE500),
-                      ),
-                    ),
-                  ),
-                ),
-          ),
-          onPressed: () => _handleSocialLogin(SocialProvider.kakao),
-          backgroundColor: const Color(0xFFFEE500),
-          textColor: Colors.black87,
-        ),
+                      'K')
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold),))
+                        color: const Color(0xFFFEE500), // Kakao brand color
+                      ))
+                    ))
+                  ))
+                ))
+          ))
+          onPressed: () => _handleSocialLogin(SocialProvider.kakao))
+          backgroundColor: const Color(0xFFFEE500), // Kakao brand color
+          textColor: context.fortuneTheme.primaryText)
+        ))
 
         _buildSocialButton(
-          label: '네이버로 계속하기',
+          label: '네이버로 계속하기')
           icon: Container(
-            width: 24,
-            height: 24,
+            width: context.fortuneTheme.socialSharing.shareIconSize)
+            height: context.fortuneTheme.socialSharing.shareIconSize)
             decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
+              color: context.fortuneTheme.cardSurface)
+              shape: BoxShape.circle)
+            ))
             child: Center(
               child: Text(
-                'N',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF03C75A),
-                ),
-              ),
-            ),
-          ),
-          onPressed: () => _handleSocialLogin(SocialProvider.naver),
-          backgroundColor: const Color(0xFF03C75A),
-          textColor: Colors.white,
-        ),
+                'N')
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold),))
+                  color: const Color(0xFF03C75A), // Naver brand color
+                ))
+              ))
+            ))
+          ))
+          onPressed: () => _handleSocialLogin(SocialProvider.naver))
+          backgroundColor: const Color(0xFF03C75A), // Naver brand color
+          textColor: AppColors.textPrimaryDark)
+        ))
 
-        const SizedBox(height: 24),
+        SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
 
         if (widget.onSkip != null)
           TextButton(
-            onPressed: _isLoading ? null : widget.onSkip,
+            onPressed: _isLoading ? null : widget.onSkip)
             child: Text(
-              '나중에 하기',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 16,
-              ),
-            ),
-          ),
+              '나중에 하기')
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: context.fortuneTheme.subtitleText),))
+              ))
 
         if (_isLoading) ...[
-          const SizedBox(height: 24),
+          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
           const Center(
-            child: CircularProgressIndicator(),
-          ),
-        ],
-      ],
+            child: CircularProgressIndicator())
+          ))
+        ])
+      ]
     );
   }
 }

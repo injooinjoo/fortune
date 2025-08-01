@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../core/utils/logger.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Lightweight callback handler for native auth flows (Google Sign-In SDK, etc)
 /// This doesn't need complex session recovery since the SDK handles auth directly
@@ -34,9 +36,9 @@ class NativeAuthCallbackHandler {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('로그인 실패: $error'),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
+          backgroundColor: AppColors.error)
+          duration: const Duration(seconds: 3))
+        )
       );
     }
   }

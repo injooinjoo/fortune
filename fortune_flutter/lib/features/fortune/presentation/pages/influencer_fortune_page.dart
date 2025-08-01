@@ -165,88 +165,88 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: isSelected
                     ? [const Color(0xFFE91E63), const Color(0xFFF06292)]
                     : [AppColors.surface, AppColors.surface],
-              ),
-              borderRadius: BorderRadius.circular(16),
+              ))
+              borderRadius: BorderRadius.circular(16))
               border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFE91E63) 
-                    : AppColors.divider,
-                width: isSelected ? 2 : 1,
-              ),
+                    : AppColors.divider)
+                width: isSelected ? 2 : 1)
+              ))
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFE91E63).withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
-                      ),
+                        color: const Color(0xFFE91E63).withValues(alpha: 0.3))
+                        blurRadius: 20)
+                        offset: const Offset(0, 4))
+                      ))
                     ]
                   : [],
-            ),
+            ))
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12))
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center)
                 children: [
                   CircleAvatar(
-                    radius: 30,
+                    radius: 30)
                     backgroundColor: isSelected 
                         ? Colors.white.withValues(alpha: 0.2)
-                        : const Color(0xFFE91E63).withValues(alpha: 0.1),
+                        : const Color(0xFFE91E63).withValues(alpha: 0.1))
                     child: Text(
-                      influencer['name']![0],
+                      influencer['name']![0])
                       style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold)
                         color: isSelected 
                             ? Colors.white 
-                            : const Color(0xFFE91E63),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                            : const Color(0xFFE91E63))
+                      ))
+                    ))
+                  ))
+                  const SizedBox(height: 8))
                   Text(
-                    influencer['name']!,
+                    influencer['name']!)
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold)
                       color: isSelected 
                           ? Colors.white 
-                          : AppColors.textPrimary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                          : AppColors.textPrimary)
+                    ))
+                    textAlign: TextAlign.center)
+                  ))
                   Text(
-                    influencer['category']!,
+                    influencer['category']!)
                     style: TextStyle(
                       fontSize: 12,
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.8)
-                          : AppColors.textSecondary,
-                    ),
-                  ),
+                          : AppColors.textSecondary)
+                    ))
+                  ))
                   Text(
                     influencer['followers'] ?? influencer['subscribers']!,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11)
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.7)
-                          : AppColors.textTertiary,
-                    ),
-                  ),
-                ],
+                          : AppColors.textTertiary)
+                    ))
+                  ))
+                ])
               ),
-            ),
+            ))
           ).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)))
         );
-      },
+      })
     );
   }
 
@@ -261,13 +261,13 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
       'name': userProfile?.name ?? '사용자',
       'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
       'platform': selectedPlatform,
-      'influencer': selectedInfluencer,
+      'influencer': selectedInfluencer)
     };
 
     try {
       final result = await fortuneProvider.generateFortune(
         fortuneType: 'influencer',
-        requestData: requestData,
+        requestData: requestData
       );
 
       if (result != null && mounted) {
@@ -276,7 +276,7 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('운세 생성 중 오류가 발생했습니다: $e')),
+          SnackBar(content: Text('운세 생성 중 오류가 발생했습니다: $e'),
         );
       }
     }
@@ -285,52 +285,52 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
   void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      isScrollControlled: true)
+      backgroundColor: Colors.transparent)
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
+        initialChildSize: 0.9)
+        minChildSize: 0.5)
+        maxChildSize: 0.95)
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
+            color: AppColors.background)
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)))
+          ))
           child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.all(20),
+            controller: scrollController)
+            padding: const EdgeInsets.all(20))
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
+                  width: 40)
+                  height: 4)
                   decoration: BoxDecoration(
-                    color: AppColors.divider,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+                    color: AppColors.divider)
+                    borderRadius: BorderRadius.circular(2))
+                  ))
+                ))
+              ))
+              const SizedBox(height: 20))
               Text(
-                '$selectedInfluencer님처럼 성공하는 인플루언서 운세',
+                '$selectedInfluencer님처럼 성공하는 인플루언서 운세')
                 style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              _buildResultSection('콘텐츠 성공 예측', result['contentSuccess']),
+                  fontSize: 24)
+                  fontWeight: FontWeight.bold)
+                ))
+                textAlign: TextAlign.center)
+              ))
+              const SizedBox(height: 20))
+              _buildResultSection('콘텐츠 성공 예측', result['contentSuccess']))
               _buildResultSection('구독자 증가 예측', result['subscriberGrowth']),
-              _buildResultSection('추천 콘텐츠', result['recommendedContent']),
+              _buildResultSection('추천 콘텐츠', result['recommendedContent']))
               _buildResultSection('최적 업로드 시간', result['bestUploadTime']),
-              _buildResultSection('협업 운', result['collaborationLuck']),
+              _buildResultSection('협업 운', result['collaborationLuck']))
               _buildResultSection('수익화 전망', result['monetizationOutlook']),
               if (result['tips'] != null) _buildTipsSection(result['tips']),
-            ],
+            ])
           ),
-        ),
-      ),
+        ))
+      )
     );
   }
 
@@ -339,50 +339,50 @@ class _InfluencerFortunePageState extends State<InfluencerFortunePage> {
     
     return FortuneContentCard(
       title: title,
-      content: content.toString(),
-      gradientColors: const [Color(0xFFE91E63), Color(0xFFF06292)],
-      delay: 0,
+      content: content.toString())
+      gradientColors: const [Color(0xFFE91E63), Color(0xFFF06292)])
+      delay: 0
     );
   }
 
   Widget _buildTipsSection(List<dynamic> tips) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16))
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE91E63).withValues(alpha: 0.3)),
-      ),
+        color: AppColors.surface)
+        borderRadius: BorderRadius.circular(16))
+        border: Border.all(color: const Color(0xFFE91E63).withValues(alpha: 0.3)))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           const Text(
-            '성공 팁 💡',
+            '성공 팁 💡')
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFE91E63),
-            ),
-          ),
-          const SizedBox(height: 8),
+              fontSize: 18)
+              fontWeight: FontWeight.bold)
+              color: Color(0xFFE91E63))
+            ))
+          ))
+          const SizedBox(height: 8))
           ...tips.map((tip) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 4))
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
-                const Text('• ', style: TextStyle(color: Color(0xFFE91E63))),
+                const Text('• ', style: TextStyle(color: Color(0xFFE91E63))))
                 Expanded(
                   child: Text(
-                    tip.toString(),
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
+                    tip.toString())
+                    style: const TextStyle(fontSize: 14))
+                  ))
+                ))
+              ])
             ),
-          )),
-        ],
-      ),
+          )))
+        ])
+      )
     );
   }
 }

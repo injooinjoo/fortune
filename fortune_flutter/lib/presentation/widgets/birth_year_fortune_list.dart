@@ -1,18 +1,22 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../domain/entities/fortune.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_colors.dart';
 
 class BirthYearFortuneList extends StatelessWidget {
   final List<BirthYearFortune> fortunes;
   final String? title;
   final String? currentUserZodiac;
 
-  const BirthYearFortuneList({
+  const BirthYearFortuneList(
+    {
     Key? key,
     required this.fortunes,
     this.title,
     this.currentUserZodiac,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,36 +24,29 @@ class BirthYearFortuneList extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                children: [
         if (title != null) ...[
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing1, vertical: AppSpacing.spacing2),
             child: Text(
-              title!,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+              title!),
+        style: Theme.of(context).textTheme.bodyMedium,
+        ]
         Container(
-          height: 120,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: fortunes.length,
-            itemBuilder: (context, index) {
+          height: AppSpacing.spacing24 * 1.25),
+              child: ListView.builder(,
+      scrollDirection: Axis.horizontal),
+        itemCount: fortunes.length),
+        itemBuilder: (context, index) {
               final fortune = fortunes[index];
               final isCurrentUser = fortune.zodiacAnimal == currentUserZodiac;
               
               return BirthYearFortuneCard(
-                fortune: fortune,
+    fortune: fortune,
                 isHighlighted: isCurrentUser,
-              );
-            },
-          ),
-        ),
-      ],
+  )})))
+      ]
     );
   }
 }
@@ -58,123 +55,96 @@ class BirthYearFortuneCard extends StatelessWidget {
   final BirthYearFortune fortune;
   final bool isHighlighted;
 
-  const BirthYearFortuneCard({
+  const BirthYearFortuneCard(
+    {
     Key? key,
     required this.fortune,
     this.isHighlighted = false,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: 12),
-      child: Card(
-        elevation: isHighlighted ? 4 : 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+      width: AppSpacing.spacing1 * 70.0),
+              margin: const EdgeInsets.only(righ,
+      t: AppSpacing.spacing3),
+      child: Card(,
+      elevation: isHighlighted ? 4 : 2,
+      shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusLarge,
           side: isHighlighted
-              ? BorderSide(color: AppTheme.primaryColor, width: 2)
-              : BorderSide.none,
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+              ? BorderSide(color: AppTheme.primaryColor, width: 2,
+              : BorderSide.none)
+        child: Container(,
+      padding: AppSpacing.paddingAll16,
+          decoration: BoxDecoration(,
+      borderRadius: AppDimensions.borderRadiusLarge,
             gradient: isHighlighted
                 ? LinearGradient(
                     begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
+      end: Alignment.bottomRight,
+        ),
+        colors: [
                       AppTheme.primaryColor.withValues(alpha: 0.1),
                       AppTheme.primaryColor.withValues(alpha: 0.05),
-                    ],
-                  )
-                : null,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+                    ]
+                  ,
+                : null)
+          child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
               Row(
                 children: [
                   _buildZodiacIcon(fortune.zodiacAnimal),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${fortune.birthYear}년생 ${fortune.zodiacAnimal}띠',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isHighlighted ? AppTheme.primaryColor : null,
-                          ),
-                        ),
+                          '${fortune.birthYear}년생 ${fortune.zodiacAnimal}띠'),
+        style: Theme.of(context).textTheme.bodyMedium,
                         if (isHighlighted)
                           Text(
-                            '나의 띠',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
+                            '나의 띠'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                      ])))
+                ])
+              SizedBox(height: AppSpacing.spacing3),
               Expanded(
                 child: Text(
-                  fortune.description,
-                  style: TextStyle(
-                    fontSize: 13,
-                    height: 1.4,
-                    color: AppTheme.textColor,
-                  ),
+                  fortune.description),
+        style: Theme.of(context).textTheme.bodyMedium,
                   maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+                  overflow: TextOverflow.ellipsis)))
               if (fortune.advice != null) ...[
-                const SizedBox(height: 8),
+                SizedBox(height: AppSpacing.spacing2),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+                  decoration: BoxDecoration(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.2),
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
+      child: Row(,
+      mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
                         Icons.tips_and_updates,
                         size: 14,
-                        color: Colors.amber,
-                      ),
-                      const SizedBox(width: 4),
+                        color: Colors.amber)
+                      SizedBox(width: AppSpacing.spacing1),
                       Expanded(
                         child: Text(
                           fortune.advice!,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.amber,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
         ),
-      ),
-    );
+        style: Theme.of(context).textTheme.bodyMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis)))
+                    ])))
+              ]
+            ])))))))
   }
 
   Widget _buildZodiacIcon(String zodiac) {
@@ -194,18 +164,17 @@ class BirthYearFortuneCard extends StatelessWidget {
     };
 
     return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
+      width: AppDimensions.buttonHeightMedium,
+      height: AppDimensions.buttonHeightMedium),
+              decoration: BoxDecoration(,
+      color: AppTheme.primaryColor.withValues(alp,
+      ha: 0.1),
+        shape: BoxShape.circle),
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: const TextStyle(fontSize: 24),
         ),
-      ),
+        style: Theme.of(context).textTheme.bodyMedium
     );
   }
 }
@@ -214,111 +183,81 @@ class BirthYearFortuneCard extends StatelessWidget {
 class BirthYearFortuneDetailCard extends StatelessWidget {
   final BirthYearFortune fortune;
 
-  const BirthYearFortuneDetailCard({
+  const BirthYearFortuneDetailCard(
+    {
     Key? key,
     required this.fortune,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusLarge),
+      child: Padding(,
+      padding: AppSpacing.paddingAll20,
+        child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
             Row(
               children: [
                 _buildZodiacIcon(fortune.zodiacAnimal),
-                const SizedBox(width: 16),
+                SizedBox(width: AppSpacing.spacing4),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${fortune.birthYear}년생 ${fortune.zodiacAnimal}띠',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                        '${fortune.birthYear}년생 ${fortune.zodiacAnimal}띠'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        '특별 운세',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
+                        '특별 운세'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                    ])))
+              ])
+            SizedBox(height: AppSpacing.spacing5),
             Text(
-              fortune.description,
-              style: TextStyle(
-                fontSize: 16,
-                height: 1.6,
-                color: AppTheme.textColor,
-              ),
-            ),
+              fortune.description),
+        style: Theme.of(context).textTheme.bodyMedium,
             if (fortune.advice != null) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.spacing4),
               Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.amber.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.amber.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusMedium,
+                  border: Border.all(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.3))),
+      child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(
                       Icons.tips_and_updates,
                       color: Colors.amber,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
+                      size: AppDimensions.iconSizeSmall)
+                    SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
                             '특별 조언',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
+        ),
+        style: Theme.of(context).textTheme.bodyMedium,
+                          SizedBox(height: AppSpacing.spacing1),
                           Text(
                             fortune.advice!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppTheme.textColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            ],
-          ],
-        ),
-      ),
-    );
+              style: Theme.of(context).textTheme.bodyMedium,
+                        ])))
+                  ])))
+            ]
+          ])))))
   }
 
   Widget _buildZodiacIcon(String zodiac) {
@@ -338,18 +277,17 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
     };
 
     return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
+      width: AppDimensions.buttonHeightLarge,
+      height: AppDimensions.buttonHeightLarge),
+              decoration: BoxDecoration(,
+      color: AppTheme.primaryColor.withValues(alp,
+      ha: 0.1),
+        shape: BoxShape.circle),
       child: Center(
         child: Text(
           zodiacEmojis[zodiac] ?? '🔮',
-          style: const TextStyle(fontSize: 28),
         ),
-      ),
+        style: Theme.of(context).textTheme.bodyMedium
     );
   }
 }

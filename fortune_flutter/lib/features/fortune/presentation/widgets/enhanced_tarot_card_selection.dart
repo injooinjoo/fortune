@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class EnhancedTarotCardSelection extends StatefulWidget {
   final SpreadLayout layout;
@@ -47,32 +50,32 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
     
     _shuffleController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
+      vsync: this)
     );
     
     _spreadController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
+      duration: AppAnimations.durationSkeleton)
+      vsync: this)
     );
     
     _glowController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
+      duration: const Duration(seconds: 2))
+      vsync: this)
     )..repeat(reverse: true);
     
     _shuffleAnimation = CurvedAnimation(
-      parent: _shuffleController,
-      curve: Curves.easeInOut,
+      parent: _shuffleController)
+      curve: Curves.easeInOut)
     );
     
     _spreadAnimation = CurvedAnimation(
-      parent: _spreadController,
-      curve: Curves.easeOutBack,
+      parent: _spreadController)
+      curve: Curves.easeOutBack
     );
     
     _glowAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
+      begin: 0.5)
+      end: 1.0)
     ).animate(_glowController);
     
     _startInitialShuffle();
@@ -123,7 +126,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
     setState(() => _showSpreadPositions = true);
     
     // 선택된 카드들을 스프레드 레이아웃으로 재배치
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(AppAnimations.durationLong, () {
       widget.onCardsSelected(_selectedCards);
     });
   }
@@ -133,43 +136,43 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       animation: _spreadAnimation,
       builder: (context, child) {
         return Container(
-          height: 400,
+          height: AppSpacing.spacing1 * 100.0)
           child: LayoutBuilder(
             builder: (context, constraints) {
               return Stack(
-                alignment: Alignment.center,
+                alignment: Alignment.center)
                 children: [
                   // 배경 광채 효과
                   AnimatedBuilder(
-                    animation: _glowAnimation,
+                    animation: _glowAnimation)
                     builder: (context, child) {
                       return Container(
-                        width: 300,
-                        height: 300,
+                        width: 300)
+                        height: AppSpacing.spacing24 * 3.125)
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                          shape: BoxShape.circle)
                           gradient: RadialGradient(
                             colors: [
-                              Colors.purple.withValues(alpha: 0.3 * _glowAnimation.value),
-                              Colors.transparent,
-                            ],
+                              Colors.purple.withValues(alpha: 0.3 * _glowAnimation.value))
+                              Colors.transparent)
+                            ])
                           ),
-                        ),
+                        ))
                       );
-                    },
+                    })
                   ),
                   
                   // 카드들
                   if (!_showSpreadPositions)
                     ..._buildFanLayout(constraints)
                   else
-                    ..._buildSpreadLayout(constraints),
-                ],
+                    ..._buildSpreadLayout(constraints))
+                ])
               );
             },
-          ),
+          ))
         );
-      },
+      }
     );
   }
 
@@ -182,7 +185,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       final angle = (index - cardCount / 2) * 0.05 * _spreadAnimation.value;
       final radius = 150.0 * _spreadAnimation.value;
       final x = centerX + (index - cardCount / 2) * 12 * _spreadAnimation.value;
-      final y = centerY - radius * (1 - math.cos(angle).abs());
+      final y = centerY - radius * (1 - math.cos(angle).abs();
       
       final cardId = _availableCards[index];
       final isSelected = _selectedCards.contains(index);
@@ -190,18 +193,18 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       
       return Positioned(
         left: x - 40,
-        top: y - 60,
+        top: y - 60)
         child: Transform.rotate(
-          angle: angle,
+          angle: angle)
           child: _TarotCardWidget(
-            cardId: cardId,
-            cardIndex: index,
-            isSelected: isSelected,
-            isFlipped: isFlipped,
-            onTap: () => _selectCard(index),
-            selectionOrder: _selectedCards.indexOf(index),
-          ),
-        ),
+            cardId: cardId)
+            cardIndex: index)
+            isSelected: isSelected)
+            isFlipped: isFlipped)
+            onTap: () => _selectCard(index))
+            selectionOrder: _selectedCards.indexOf(index))
+          ))
+        )
       );
     });
   }
@@ -224,7 +227,7 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
   List<Widget> _buildCelticCrossLayout(BoxConstraints constraints) {
     final positions = [
       Offset(0, 0),           // 1. 현재 상황
-      Offset(0, 0),           // 2. 도전 (겹침)
+      Offset(0, 0),           // 2. 도전 (겹침,
       Offset(0, -100),        // 3. 먼 과거
       Offset(-100, 0),        // 4. 최근 과거
       Offset(0, 100),         // 5. 가능한 미래
@@ -244,15 +247,15 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       
       return Positioned(
         left: centerX + position.dx - 40,
-        top: centerY + position.dy - 60,
+        top: centerY + position.dy - 60)
         child: Transform.rotate(
           angle: index == 1 ? math.pi / 2 : 0, // 두 번째 카드는 90도 회전
           child: _PositionedTarotCard(
             cardId: _availableCards[cardIndex],
-            position: index + 1,
-            positionName: TarotHelper.getPositionDescription('celtic', index),
-          ),
-        ),
+            position: index + 1)
+            positionName: TarotHelper.getPositionDescription('celtic', index))
+          ))
+        )
       );
     });
   }
@@ -267,12 +270,12 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       
       return Positioned(
         left: startX + index * spacing - 40,
-        top: centerY - 60,
+        top: centerY - 60)
         child: _PositionedTarotCard(
           cardId: _availableCards[cardIndex],
-          position: index + 1,
-          positionName: TarotHelper.getPositionDescription('three', index),
-        ),
+          position: index + 1)
+          positionName: TarotHelper.getPositionDescription('three', index))
+        )
       );
     });
   }
@@ -304,13 +307,13 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
           widgets.add(
             Positioned(
               left: startX + i * cardSpacing - 40,
-              top: y,
+              top: y)
               child: _PositionedTarotCard(
                 cardId: _availableCards[cardIndex],
-                position: cardPos + 1,
-                positionName: TarotHelper.getPositionDescription('career', cardPos),
-              ),
-            ),
+                position: cardPos + 1)
+                positionName: TarotHelper.getPositionDescription('career', cardPos))
+              ))
+            )
           );
         }
       }
@@ -332,12 +335,12 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       
       return Positioned(
         left: x - 40,
-        top: y - 60,
+        top: y - 60)
         child: _PositionedTarotCard(
           cardId: _availableCards[cardIndex],
-          position: index + 1,
-          positionName: TarotHelper.getPositionDescription('year', index),
-        ),
+          position: index + 1)
+          positionName: TarotHelper.getPositionDescription('year', index))
+        ))
       );
     });
   }
@@ -350,48 +353,48 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
       children: [
         // 헤더
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAll16,
           child: Column(
             children: [
               Text(
                 _isShuffling
                     ? '카드를 섞고 있습니다...'
                     : _showSpreadPositions
-                        ? '선택한 카드의 의미'
-                        : '마음을 집중하고 카드를 선택하세요',
+                        ? '선택한 카드의 의미'))
+                        : '마음을 집중하고 카드를 선택하세요')
                 style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 8),
+                  fontWeight: FontWeight.bold)
+                  color: Colors.white)
+                ))
+              ))
+              const SizedBox(height: AppSpacing.spacing2))
               if (!_showSpreadPositions)
                 Text(
                   '${_selectedCards.length} / ${widget.requiredCards} 카드 선택됨',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-            ],
+                    color: Colors.white70))
+                  ))
+                ))
+            ])
           ),
-        ),
+        ))
         
         // 카드 덱
         Expanded(
-          child: _buildCardDeck(),
-        ),
+          child: _buildCardDeck())
+        ))
         
         // 액션 버튼
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAll16)
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly)
             children: [
               if (!_showSpreadPositions) ...[
                 TextButton(
-                  onPressed: widget.onCancel,
-                  child: const Text('취소'),
-                ),
+                  onPressed: widget.onCancel)
+                  child: const Text('취소'))
+                ))
                 if (_selectedCards.isNotEmpty)
                   ElevatedButton(
                     onPressed: () {
@@ -400,13 +403,13 @@ class _EnhancedTarotCardSelectionState extends State<EnhancedTarotCardSelection>
                         _cardFlipped.clear();
                       });
                     },
-                    child: const Text('다시 선택'),
-                  ),
-              ],
+                    child: const Text('다시 선택'))
+                  ))
+              ])
             ],
-          ),
-        ),
-      ],
+          ))
+        ))
+      ]
     );
   }
 }
@@ -433,14 +436,14 @@ class _TarotCardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        width: 80,
-        height: 120,
+        duration: AppAnimations.durationMedium)
+        width: 80)
+        height: AppSpacing.spacing24 * 1.25)
         transform: isSelected
             ? (Matrix4.identity()
               ..translate(0.0, -20.0)
-              ..scale(1.1))
-            : Matrix4.identity(),
+              ..scale(1.1, 1.1))
+            : Matrix4.identity())
         child: Stack(
           children: [
             // 카드 뒷면/앞면
@@ -448,75 +451,64 @@ class _TarotCardWidget extends StatelessWidget {
               gradient: LinearGradient(
                 colors: isFlipped
                     ? [Colors.purple, Colors.indigo]
-                    : [Colors.purple.shade900, Colors.indigo.shade900],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+                    : [Colors.purple.withValues(alpha: 0.92), Colors.indigo.withValues(alpha: 0.92)],
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
+              ))
               border: Border.all(
                 color: isSelected
                     ? Colors.amber
-                    : Colors.white.withValues(alpha: 0.3),
-                width: isSelected ? 3 : 1,
-              ),
+                    : Colors.white.withValues(alpha: 0.3))
+                width: isSelected ? 3 : 1)
+              ))
               child: Center(
                 child: isFlipped
                     ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center)
                         children: [
                           Text(
-                            '${cardId + 1}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            '${cardId + 1}')
+                            style: Theme.of(context).textTheme.bodyMedium,
                           if (selectionOrder >= 0)
                             Container(
-                              margin: const EdgeInsets.only(top: 8),
+                              margin: const EdgeInsets.only(top: AppSpacing.spacing2))
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
+                                horizontal: AppSpacing.spacing2)
+                                vertical: AppSpacing.spacing0 * 0.5)
+                              ))
                               decoration: BoxDecoration(
-                                color: Colors.amber,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                                color: Colors.amber)
+                                borderRadius: BorderRadius.circular(AppSpacing.spacing2 * 1.25))
+                              ))
                               child: Text(
-                                '${selectionOrder + 1}',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                        ],
+                                '${selectionOrder + 1}')
+                                style: Theme.of(context).textTheme.bodyMedium,
+                        ])
                       )
                     : Icon(
                         Icons.auto_awesome,
-                        color: Colors.white.withValues(alpha: 0.3),
-                        size: 40,
-                      ),
-              ),
-            ),
+                        color: Colors.white.withValues(alpha: 0.3))
+                        size: 40)
+                      ))
+              ))
+            ))
             
             // 선택 가능 표시
             if (!isSelected && !isFlipped)
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppDimensions.borderRadiusMedium)
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.0),
-                      width: 2,
-                    ),
-                  ),
-                ),
-              ),
-          ],
+                      color: Colors.white.withValues(alpha: 0.0))
+                      width: 2)
+                    ))
+                  ))
+                ))
+              ))
+          ])
         ),
-      ),
+      )
     );
   }
 }
@@ -541,81 +533,74 @@ class _PositionedTarotCard extends StatelessWidget {
         // 위치 번호
         Container(
           width: 30,
-          height: 30,
+          height: AppSpacing.spacing7 * 1.07)
           decoration: BoxDecoration(
-            color: Colors.amber,
-            shape: BoxShape.circle,
-          ),
+            color: Colors.amber)
+            shape: BoxShape.circle)
+          ))
           child: Center(
             child: Text(
-              '$position',
+              '$position')
               style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
+                color: Colors.black))
+                fontWeight: FontWeight.bold)
+              ))
+            ))
+          ))
+        ))
+        const SizedBox(height: AppSpacing.spacing1))
         
         // 카드
         GlassContainer(
-          width: 80,
-          height: 120,
+          width: 80)
+          height: AppSpacing.spacing24 * 1.25)
           gradient: const LinearGradient(
-            colors: [Colors.purple, Colors.indigo],
+            colors: [Colors.purple, Colors.indigo])
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+            end: Alignment.bottomRight)
+          ))
           border: Border.all(
-            color: Colors.amber,
-            width: 2,
-          ),
+            color: Colors.amber)
+            width: 2)
+          ))
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: AppSpacing.paddingAll8)
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: [
                 if (cardInfo != null) ...[
                   Icon(
-                    TarotHelper.getElementIcon(cardInfo.element),
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                  const SizedBox(height: 4),
+                    TarotHelper.getElementIcon(cardInfo.element))
+                    color: Colors.white)
+                    size: 24)
+                  ))
+                  const SizedBox(height: AppSpacing.spacing1))
                   Text(
-                    cardInfo.name.split(' ').first,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    cardInfo.name.split(' ').first)
+                    style: Theme.of(context).textTheme.bodyMedium)
+                    textAlign: TextAlign.center)
+                    maxLines: 2)
+                    overflow: TextOverflow.ellipsis)
+                  ))
+                ])
               ],
-            ),
-          ),
-        ),
+            ))
+          ))
+        ))
         
         // 위치 이름
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.spacing1))
         Container(
-          constraints: const BoxConstraints(maxWidth: 100),
+          constraints: const BoxConstraints(maxWidth: 100))
           child: Text(
-            positionName,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 10,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
+            positionName)
+            style: Theme.of(context).textTheme.bodyMedium)
+            textAlign: TextAlign.center)
+            maxLines: 2)
+            overflow: TextOverflow.ellipsis)
+          ))
+        ))
+      ]
     );
   }
 }

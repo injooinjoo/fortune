@@ -9,8 +9,8 @@ import 'package:fl_chart/fl_chart.dart';
 
 enum LifestyleType {
   health('건강운', 'health', '신체와 정신의 건강 상태를 알아봅니다'),
-  biorhythm('바이오리듬', 'biorhythm', '신체, 감성, 지성 리듬을 분석합니다'),
-  moving('이사운', 'moving', '이사나 이전에 좋은 시기를 알려드립니다'),
+  biorhythm('바이오리듬', 'biorhythm', '신체, 감성, 지성 리듬을 분석합니다'))
+  moving('이사운', 'moving', '이사나 이전에 좋은 시기를 알려드립니다'))
   movingDate('이사 날짜', 'moving_date', '구체적인 이사 길일을 찾아드립니다');
 
   final String label;
@@ -27,10 +27,10 @@ class LifestyleFortunePage extends BaseFortunePage {
     this.initialType = LifestyleType.health,
   }) : super(
           key: key,
-          title: '생활 & 건강 운세',
-          description: '건강하고 행복한 일상을 위한 운세를 확인하세요',
-          fortuneType: 'lifestyle',
-          requiresUserInfo: true,
+          title: '생활 & 건강 운세')
+          description: '건강하고 행복한 일상을 위한 운세를 확인하세요')
+          fortuneType: 'lifestyle')
+          requiresUserInfo: true
         );
 
   @override
@@ -102,8 +102,8 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
     
     final fortune = await fortuneService.getLifestyleFortune(
       userId: params['userId'],
-      fortuneType: _selectedType.value,
-      params: params,
+      fortuneType: _selectedType.value)
+      params: params
     );
     
     return fortune;
@@ -114,134 +114,134 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           // Type Selector
           Text(
-            '운세 유형',
+            '운세 유형')
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+              fontWeight: FontWeight.bold)
+            ))
+          ))
+          const SizedBox(height: 16))
           ...LifestyleType.values.map((type) {
             final isSelected = _selectedType == type;
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 8))
               child: InkWell(
                 onTap: () {
                   setState(() {
                     _selectedType = type;
                   });
                 },
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12))
                 child: Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16))
                   decoration: BoxDecoration(
                     gradient: isSelected
                         ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                            begin: Alignment.topLeft)
+                            end: Alignment.bottomRight)
                             colors: [
-                              AppColors.primary.withValues(alpha: 0.1),
-                              AppColors.secondary.withValues(alpha: 0.1),
-                            ],
+                              AppColors.primary.withValues(alpha: 0.1))
+                              AppColors.secondary.withValues(alpha: 0.1))
+                            ])
                           )
                         : null,
-                    color: isSelected ? null : AppColors.surface,
-                    borderRadius: BorderRadius.circular(12),
+                    color: isSelected ? null : AppColors.surface)
+                    borderRadius: BorderRadius.circular(12))
                     border: Border.all(
                       color: isSelected 
                           ? AppColors.primary
-                          : AppColors.border,
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
+                          : AppColors.border)
+                      width: isSelected ? 2 : 1)
+                    ))
+                  ))
                   child: Row(
                     children: [
                       Container(
-                        width: 48,
-                        height: 48,
+                        width: 48)
+                        height: 48)
                         decoration: BoxDecoration(
                           color: isSelected
                               ? AppColors.primary.withValues(alpha: 0.2)
-                              : AppColors.surface,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                              : AppColors.surface)
+                          borderRadius: BorderRadius.circular(12))
+                        ))
                         child: Icon(
-                          _getIconForType(type),
+                          _getIconForType(type))
                           color: isSelected 
                               ? AppColors.primary
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
+                              : AppColors.textSecondary)
+                        ))
+                      ))
+                      const SizedBox(width: 16))
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start)
                           children: [
                             Text(
-                              type.label,
+                              type.label)
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontWeight: FontWeight.bold)
+                                fontSize: 16)
                                 color: isSelected 
                                     ? AppColors.primary
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
+                                    : AppColors.textPrimary)
+                              ))
+                            ))
+                            const SizedBox(height: 4))
                             Text(
-                              type.description,
+                              type.description)
                               style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
+                                fontSize: 12)
+                                color: AppColors.textSecondary)
+                              ))
+                            ))
+                          ])
                         ),
-                      ),
+                      ))
                       if (isSelected)
                         Icon(
-                          Icons.check_circle,
-                          color: AppColors.primary,
-                        ),
-                    ],
+                          Icons.check_circle)
+                          color: AppColors.primary)
+                        ))
+                    ])
                   ),
-                ),
-              ),
+                ))
+              ))
             ).animate()
               .fadeIn(duration: 300.ms, delay: (type.index * 50).ms)
               .slideX(begin: 0.1, end: 0);
-          }).toList(),
+          }).toList())
           const SizedBox(height: 24),
 
           // Type-specific inputs
-          _buildTypeSpecificInputs(context),
+          _buildTypeSpecificInputs(context))
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 24))
 
           // Generate Button
           SizedBox(
-            width: double.infinity,
+            width: double.infinity)
             child: ElevatedButton(
-              onPressed: _canGenerate() ? _onGenerateFortune : null,
+              onPressed: _canGenerate() ? _onGenerateFortune : null)
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16))
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))
+                ))
+              ))
               child: const Text(
-                '운세 보기',
+                '운세 보기')
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
+                  fontSize: 16)
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -263,20 +263,20 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '건강 관심사 (최대 3개)',
+          '건강 관심사 (최대 3개)')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 16))
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 8)
+          runSpacing: 8)
           children: _healthOptions.map((concern) {
             final isSelected = _healthConcerns.contains(concern);
             return FilterChip(
-              label: Text(concern),
-              selected: isSelected,
+              label: Text(concern))
+              selected: isSelected)
               onSelected: (selected) {
                 setState(() {
                   if (selected && _healthConcerns.length < 3) {
@@ -286,37 +286,37 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   }
                 });
               },
-              selectedColor: AppColors.primary.withValues(alpha: 0.2),
-              checkmarkColor: AppColors.primary,
+              selectedColor: AppColors.primary.withValues(alpha: 0.2))
+              checkmarkColor: AppColors.primary)
             );
-          }).toList(),
+          }).toList())
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 24))
         Text(
-          '활동 수준',
+          '활동 수준')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 16))
         SegmentedButton<String>(
           segments: _activityLevels.map((level) {
             return ButtonSegment(
-              value: level,
+              value: level)
               label: Text(
-                level,
-                style: const TextStyle(fontSize: 12),
-              ),
+                level)
+                style: const TextStyle(fontSize: 12))
+              ))
             );
-          }).toList(),
+          }).toList())
           selected: _activityLevel != null ? {_activityLevel!} : {},
           onSelectionChanged: (Set<String> newSelection) {
             setState(() {
               _activityLevel = newSelection.first;
             });
           },
-        ),
-      ],
+        ))
+      ])
     );
   }
 
@@ -325,19 +325,19 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '확인할 날짜',
+          '확인할 날짜')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 16))
         InkWell(
           onTap: () async {
             final picked = await showDatePicker(
-              context: context,
-              initialDate: _checkDate ?? DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
+              context: context)
+              initialDate: _checkDate ?? DateTime.now())
+              firstDate: DateTime.now())
+              lastDate: DateTime.now().add(const Duration(days: 365))
             );
             if (picked != null) {
               setState(() {
@@ -346,15 +346,15 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16))
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(12),
-            ),
+              border: Border.all(color: AppColors.border))
+              borderRadius: BorderRadius.circular(12))
+            ))
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: AppColors.primary),
-                const SizedBox(width: 12),
+                Icon(Icons.calendar_today, color: AppColors.primary))
+                const SizedBox(width: 12))
                 Text(
                   _checkDate != null
                       ? '${_checkDate!.year}년 ${_checkDate!.month}월 ${_checkDate!.day}일'
@@ -362,52 +362,52 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   style: TextStyle(
                     color: _checkDate != null
                         ? AppColors.textPrimary
-                        : AppColors.textSecondary,
-                  ),
-                ),
-              ],
+                        : AppColors.textSecondary)
+                  ))
+                ))
+              ])
             ),
-          ),
-        ),
-        const SizedBox(height: 16),
+          ))
+        ))
+        const SizedBox(height: 16))
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16))
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
-          ),
+            color: AppColors.surface)
+            borderRadius: BorderRadius.circular(12))
+            border: Border.all(color: AppColors.border))
+          ))
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Row(
                 children: [
-                  Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                  const SizedBox(width: 8),
+                  Icon(Icons.info_outline, color: AppColors.primary, size: 20))
+                  const SizedBox(width: 8))
                   Text(
-                    '바이오리듬이란?',
+                    '바이오리듬이란?')
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ],
+                      fontWeight: FontWeight.bold)
+                      color: AppColors.primary)
+                    ))
+                  ))
+                ])
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 8))
               Text(
                 '• 신체리듬 (23일 주기): 체력, 건강 상태\n'
                 '• 감성리듬 (28일 주기): 감정, 기분 상태\n'
-                '• 지성리듬 (33일 주기): 사고력, 판단력',
+                '• 지성리듬 (33일 주기): 사고력, 판단력')
                 style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                  height: 1.5,
-                ),
-              ),
-            ],
+                  fontSize: 12)
+                  color: AppColors.textSecondary)
+                  height: 1.5)
+                ))
+              ))
+            ])
           ),
-        ),
-      ],
+        ))
+      ])
     );
   }
 
@@ -416,115 +416,115 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '현재 거주지',
+          '현재 거주지')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 12))
         TextField(
-          onChanged: (value) => _currentAddress = value,
+          onChanged: (value) => _currentAddress = value)
           decoration: InputDecoration(
-            hintText: '예: 서울시 강남구',
-            prefixIcon: const Icon(Icons.home),
+            hintText: '예: 서울시 강남구')
+            prefixIcon: const Icon(Icons.home))
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
+              borderRadius: BorderRadius.circular(12))
+            ))
+          ))
+        ))
+        const SizedBox(height: 20))
         Text(
-          '이사 희망 지역',
+          '이사 희망 지역')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 12))
         TextField(
-          onChanged: (value) => _destinationArea = value,
+          onChanged: (value) => _destinationArea = value)
           decoration: InputDecoration(
-            hintText: '예: 경기도 성남시',
-            prefixIcon: const Icon(Icons.location_on),
+            hintText: '예: 경기도 성남시')
+            prefixIcon: const Icon(Icons.location_on))
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
+              borderRadius: BorderRadius.circular(12))
+            ))
+          ))
+        ))
+        const SizedBox(height: 20))
         Text(
-          '이사 목적',
+          '이사 목적')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 12))
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 8)
+          runSpacing: 8)
           children: _movingPurposes.map((purpose) {
             final isSelected = _movingPurpose == purpose;
             return ChoiceChip(
-              label: Text(purpose),
-              selected: isSelected,
+              label: Text(purpose))
+              selected: isSelected)
               onSelected: (selected) {
                 setState(() {
                   _movingPurpose = selected ? purpose : null;
                 });
               },
-              selectedColor: AppColors.primary,
+              selectedColor: AppColors.primary)
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
-              ),
+                color: isSelected ? Colors.white : AppColors.textPrimary)
+              )
             );
-          }).toList(),
+          }).toList())
         ),
         if (_selectedType == LifestyleType.movingDate) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 20))
           Text(
-            '후보 날짜 (최대 3개)',
+            '후보 날짜 (최대 3개)')
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
+              fontWeight: FontWeight.bold)
+            ))
+          ))
+          const SizedBox(height: 12))
           ..._candidateDates.map((date) {
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              margin: const EdgeInsets.only(bottom: 8))
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12))
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.border),
-              ),
+                color: AppColors.surface)
+                borderRadius: BorderRadius.circular(8))
+                border: Border.all(color: AppColors.border))
+              ))
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, size: 16, color: AppColors.primary),
-                  const SizedBox(width: 8),
+                  Icon(Icons.calendar_today, size: 16, color: AppColors.primary))
+                  const SizedBox(width: 8))
                   Text(
                     '${date.year}년 ${date.month}월 ${date.day}일',
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  const Spacer(),
+                    style: const TextStyle(fontWeight: FontWeight.w500))
+                  ))
+                  const Spacer())
                   IconButton(
-                    icon: const Icon(Icons.close, size: 18),
+                    icon: const Icon(Icons.close, size: 18))
                     onPressed: () {
                       setState(() {
                         _candidateDates.remove(date);
                       });
                     },
-                  ),
-                ],
+                  ))
+                ])
               ),
             );
-          }).toList(),
-          if (_candidateDates.length < 3)
+          }).toList())
+          if (_candidateDates.length < 3,
             TextButton.icon(
               onPressed: () async {
                 final picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now().add(const Duration(days: 30)),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                  context: context)
+                  initialDate: DateTime.now().add(const Duration(days: 30)))
+                  firstDate: DateTime.now())
+                  lastDate: DateTime.now().add(const Duration(days: 365)))
                 );
                 if (picked != null && !_candidateDates.contains(picked)) {
                   setState(() {
@@ -532,11 +532,11 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   });
                 }
               },
-              icon: const Icon(Icons.add),
-              label: const Text('날짜 추가'),
-            ),
-        ],
-      ],
+              icon: const Icon(Icons.add))
+              label: const Text('날짜 추가'))
+            ))
+        ])
+      ]
     );
   }
 
@@ -568,7 +568,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': profile.gender,
+        'gender': profile.gender)
       };
       onGenerateFortune(params);
     }
@@ -597,127 +597,127 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         children: [
           // Health Score Card
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20))
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
-                  _getHealthColor(healthScore).withValues(alpha: 0.1),
-                  _getHealthColor(healthScore).withValues(alpha: 0.05),
-                ],
+                  _getHealthColor(healthScore).withValues(alpha: 0.1))
+                  _getHealthColor(healthScore).withValues(alpha: 0.05))
+                ])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))
               border: Border.all(
-                color: _getHealthColor(healthScore).withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
+                color: _getHealthColor(healthScore).withValues(alpha: 0.3))
+                width: 1)
+              ))
+            ))
             child: Column(
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center)
                   children: [
                     Icon(
-                      Icons.favorite,
-                      color: _getHealthColor(healthScore),
-                      size: 32,
-                    ),
-                    const SizedBox(width: 12),
+                      Icons.favorite)
+                      color: _getHealthColor(healthScore))
+                      size: 32)
+                    ))
+                    const SizedBox(width: 12))
                     Text(
-                      '건강 점수',
+                      '건강 점수')
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                  ])
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 16))
                 Text(
-                  '$healthScore점',
+                  '$healthScore점')
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: _getHealthColor(healthScore),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                    color: _getHealthColor(healthScore))
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+                const SizedBox(height: 8))
                 Text(
-                  _getHealthStatus(healthScore),
+                  _getHealthStatus(healthScore))
                   style: TextStyle(
-                    color: _getHealthColor(healthScore),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 20),
+                    color: _getHealthColor(healthScore))
+                    fontWeight: FontWeight.w500)
+                  ))
+                ))
+                const SizedBox(height: 20))
                 Text(
-                  fortune.content,
+                  fortune.content)
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                    height: 1.6)
+                  ))
+                  textAlign: TextAlign.center)
+                ))
+              ])
             ),
           ).animate()
             .fadeIn(duration: 500.ms)
-            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
-          const SizedBox(height: 20),
+            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)))
+          const SizedBox(height: 20))
 
           // Health Tips
           if (recommendations.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20))
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
-              ),
+                color: AppColors.surface)
+                borderRadius: BorderRadius.circular(16))
+                border: Border.all(color: AppColors.border))
+              ))
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.health_and_safety,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
+                        Icons.health_and_safety)
+                        color: AppColors.primary)
+                        size: 24)
+                      ))
+                      const SizedBox(width: 8))
                       Text(
-                        '건강 관리 팁',
+                        '건강 관리 팁')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                          fontWeight: FontWeight.bold)
+                        ))
+                      ))
+                    ])
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16))
                   ...recommendations.map((tip) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: 12))
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         Icon(
-                          Icons.check_circle,
-                          color: AppColors.success,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
+                          Icons.check_circle)
+                          color: AppColors.success)
+                          size: 20)
+                        ))
+                        const SizedBox(width: 8))
                         Expanded(
                           child: Text(
-                            tip,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
+                            tip)
+                            style: Theme.of(context).textTheme.bodyMedium)
+                          ))
+                        ))
+                      ])
                     ),
-                  )).toList(),
-                ],
+                  )).toList())
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ],
-      ),
+      ))
     );
   }
 
@@ -733,135 +733,135 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         children: [
           // Biorhythm Chart
           Container(
-            height: 300,
-            padding: const EdgeInsets.all(20),
+            height: 300)
+            padding: const EdgeInsets.all(20))
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
-            ),
+              color: AppColors.surface)
+              borderRadius: BorderRadius.circular(16))
+              border: Border.all(color: AppColors.border))
+            ))
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: true,
+                  show: true)
+                  drawVerticalLine: true)
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: AppColors.border,
-                      strokeWidth: 1,
+                      color: AppColors.border)
+                      strokeWidth: 1)
                     );
-                  },
+                  })
                   getDrawingVerticalLine: (value) {
                     return FlLine(
                       color: AppColors.border,
-                      strokeWidth: 1,
+                      strokeWidth: 1
                     );
-                  },
+                  })
                 ),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 40,
+                      showTitles: true)
+                      reservedSize: 40)
                       getTitlesWidget: (value, meta) {
                         return Text(
-                          '${value.toInt()}%',
-                          style: const TextStyle(fontSize: 10),
+                          '${value.toInt()}%')
+                          style: const TextStyle(fontSize: 10,
                         );
-                      },
+                      })
                     ),
-                  ),
+                  ))
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
-                      showTitles: false,
-                    ),
-                  ),
+                      showTitles: false)
+                    ))
+                  ))
                   rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
+                    sideTitles: SideTitles(showTitles: false))
+                  ))
                   topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                ),
+                    sideTitles: SideTitles(showTitles: false))
+                  ))
+                ))
                 borderData: FlBorderData(
-                  show: true,
-                  border: Border.all(color: AppColors.border),
-                ),
-                minX: 0,
-                maxX: 30,
-                minY: -100,
-                maxY: 100,
+                  show: true)
+                  border: Border.all(color: AppColors.border))
+                ))
+                minX: 0)
+                maxX: 30)
+                minY: -100)
+                maxY: 100)
                 lineBarsData: [
                   // Physical rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(23, physical),
-                    isCurved: true,
-                    color: Colors.red,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                  ),
+                    spots: _generateBiorhythmPoints(23, physical))
+                    isCurved: true)
+                    color: Colors.red)
+                    barWidth: 3)
+                    isStrokeCapRound: true)
+                    dotData: FlDotData(show: false))
+                  ))
                   // Emotional rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(28, emotional),
-                    isCurved: true,
-                    color: Colors.blue,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                  ),
+                    spots: _generateBiorhythmPoints(28, emotional))
+                    isCurved: true)
+                    color: Colors.blue)
+                    barWidth: 3)
+                    isStrokeCapRound: true)
+                    dotData: FlDotData(show: false))
+                  ))
                   // Intellectual rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(33, intellectual),
-                    isCurved: true,
-                    color: Colors.green,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                  ),
-                ],
+                    spots: _generateBiorhythmPoints(33, intellectual))
+                    isCurved: true)
+                    color: Colors.green)
+                    barWidth: 3)
+                    isStrokeCapRound: true)
+                    dotData: FlDotData(show: false))
+                  ))
+                ])
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
+            ))
+          ))
+          const SizedBox(height: 16))
 
           // Legend
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly)
             children: [
-              _buildBiorhythmLegend('신체', Colors.red, physical),
-              _buildBiorhythmLegend('감성', Colors.blue, emotional),
-              _buildBiorhythmLegend('지성', Colors.green, intellectual),
-            ],
+              _buildBiorhythmLegend('신체', Colors.red, physical))
+              _buildBiorhythmLegend('감성', Colors.blue, emotional))
+              _buildBiorhythmLegend('지성', Colors.green, intellectual))
+            ])
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 20))
 
           // Fortune Content
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20))
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ],
+                  AppColors.primary.withValues(alpha: 0.1))
+                  AppColors.secondary.withValues(alpha: 0.1))
+                ])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
+                color: AppColors.primary.withValues(alpha: 0.3))
+                width: 1)
+              ))
+            ))
             child: Text(
-              fortune.content,
+              fortune.content)
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                height: 1.6,
-              ),
-            ),
-          ),
-        ],
+                height: 1.6)
+              ))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -876,178 +876,178 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         children: [
           // Moving Fortune Content
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20))
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ],
+                  AppColors.primary.withValues(alpha: 0.1))
+                  AppColors.secondary.withValues(alpha: 0.1))
+                ])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(16))
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
+                color: AppColors.primary.withValues(alpha: 0.3))
+                width: 1)
+              ))
+            ))
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Row(
                   children: [
                     Icon(
-                      Icons.home_work,
-                      color: AppColors.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
+                      Icons.home_work)
+                      color: AppColors.primary)
+                      size: 28)
+                    ))
+                    const SizedBox(width: 12))
                     Text(
-                      '이사 운세 결과',
+                      '이사 운세 결과')
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
+                        fontWeight: FontWeight.bold)
+                        color: AppColors.primary)
+                      ))
+                    ))
+                  ])
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 20))
                 Text(
-                  fortune.content,
+                  fortune.content)
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
+                    height: 1.6)
+                  ))
+                ))
+              ])
             ),
-          ),
-          const SizedBox(height: 20),
+          ))
+          const SizedBox(height: 20))
 
           // Lucky Directions
           if (luckyDirections.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20))
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
-              ),
+                color: AppColors.surface)
+                borderRadius: BorderRadius.circular(16))
+                border: Border.all(color: AppColors.border))
+              ))
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.explore,
-                        color: AppColors.secondary,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
+                        Icons.explore)
+                        color: AppColors.secondary)
+                        size: 24)
+                      ))
+                      const SizedBox(width: 8))
                       Text(
-                        '길한 방향',
+                        '길한 방향')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                          fontWeight: FontWeight.bold)
+                        ))
+                      ))
+                    ])
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16))
                   Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: 12)
+                    runSpacing: 12)
                     children: luckyDirections.map((direction) {
                       return Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
+                          horizontal: 16)
+                          vertical: 8)
+                        ))
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          color: AppColors.secondary.withValues(alpha: 0.1))
+                          borderRadius: BorderRadius.circular(20))
                           border: Border.all(
-                            color: AppColors.secondary.withValues(alpha: 0.3),
-                          ),
-                        ),
+                            color: AppColors.secondary.withValues(alpha: 0.3))
+                          ))
+                        ))
                         child: Text(
-                          direction,
+                          direction)
                           style: TextStyle(
-                            color: AppColors.secondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                            color: AppColors.secondary)
+                            fontWeight: FontWeight.w500)
+                          ))
+                        ))
                       );
-                    }).toList(),
+                    }).toList())
                   ),
-                ],
+                ])
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+            ))
+            const SizedBox(height: 20))
+          ])
 
           // Good Dates
           if (goodDates.isNotEmpty) ...[
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
-              ),
+                color: AppColors.surface)
+                borderRadius: BorderRadius.circular(16))
+                border: Border.all(color: AppColors.border))
+              ))
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.calendar_month,
-                        color: AppColors.success,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 8),
+                        Icons.calendar_month)
+                        color: AppColors.success)
+                        size: 24)
+                      ))
+                      const SizedBox(width: 8))
                       Text(
-                        '길일 추천',
+                        '길일 추천')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                          fontWeight: FontWeight.bold)
+                        ))
+                      ))
+                    ])
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16))
                   ...goodDates.map((date) => Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 8))
+                    padding: const EdgeInsets.all(12))
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppColors.success.withValues(alpha: 0.1))
+                      borderRadius: BorderRadius.circular(8))
                       border: Border.all(
-                        color: AppColors.success.withValues(alpha: 0.3),
-                      ),
-                    ),
+                        color: AppColors.success.withValues(alpha: 0.3))
+                      ))
+                    ))
                     child: Row(
                       children: [
                         Icon(
-                          Icons.check,
-                          color: AppColors.success,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
+                          Icons.check)
+                          color: AppColors.success)
+                          size: 20)
+                        ))
+                        const SizedBox(width: 8))
                         Text(
-                          date,
+                          date)
                           style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+                            color: AppColors.textPrimary)
+                            fontWeight: FontWeight.w500)
+                          ))
+                        ))
+                      ])
                     ),
-                  )).toList(),
-                ],
+                  )).toList())
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ],
-      ),
+      )
     );
   }
 
@@ -1065,18 +1065,18 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
       children: [
         Container(
           width: 20,
-          height: 3,
-          color: color,
-        ),
-        const SizedBox(width: 8),
+          height: 3)
+          color: color)
+        ))
+        const SizedBox(width: 8))
         Text(
           '$label: ${value.toStringAsFixed(0)}%',
           style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
+            fontSize: 12)
+            fontWeight: FontWeight.w500)
+          ))
+        ))
+      ]
     );
   }
 

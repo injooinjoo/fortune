@@ -8,10 +8,10 @@ class DailyFortuneScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('오늘의 운세'),
-      ),
+      ))
       body: const Center(
-        child: Text('일일 운세 화면'),
-      ),
+        child: Text('일일 운세 화면'))
+      )
     );
   }
 }

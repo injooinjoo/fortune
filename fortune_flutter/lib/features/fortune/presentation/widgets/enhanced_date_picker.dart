@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class EnhancedDatePicker extends StatefulWidget {
   final DateTime initialDate;
@@ -37,48 +39,47 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
   Color _getDayColor(DateTime day) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
     
-    // Check if it's an auspicious day (손없는날)
+    // Check if it's an auspicious day (손없는날,
     if (widget.auspiciousDays?.any((d) => 
         d.year == normalizedDay.year && 
         d.month == normalizedDay.month && 
         d.day == normalizedDay.day) ?? false) {
-      return Colors.amber.shade400;
+      return Colors.amber.withValues(alpha: 0.6);
     }
     
     // Check lucky score
     final score = widget.luckyScores?[normalizedDay];
     if (score != null) {
-      if (score >= 0.8) return Colors.green.shade400;
-      if (score >= 0.6) return Colors.blue.shade400;
-      if (score >= 0.4) return Colors.orange.shade400;
-      return Colors.red.shade400;
+      if (score >= 0.8) return Colors.green.withValues(alpha: 0.6);
+      if (score >= 0.6) return Colors.blue.withValues(alpha: 0.6);
+      if (score >= 0.4) return Colors.orange.withValues(alpha: 0.6);
+      return Colors.red.withValues(alpha: 0.6);
     }
     
-    return Colors.grey.shade300;
+    return Colors.grey.withValues(alpha: 0.5);
   }
 
   Widget _buildLegend() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '날짜 길흉 안내',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           Wrap(
             spacing: 16,
             runSpacing: 8,
             children: [
-              _buildLegendItem(Colors.amber.shade400, '손없는날'),
-              _buildLegendItem(Colors.green.shade400, '매우 길한 날'),
-              _buildLegendItem(Colors.blue.shade400, '길한 날'),
-              _buildLegendItem(Colors.orange.shade400, '보통'),
-              _buildLegendItem(Colors.red.shade400, '피해야 할 날'),
+              _buildLegendItem(Colors.amber.withValues(alpha: 0.6), '손없는날'),
+              _buildLegendItem(Colors.green.withValues(alpha: 0.6), '매우 길한 날'),
+              _buildLegendItem(Colors.blue.withValues(alpha: 0.6), '길한 날'),
+              _buildLegendItem(Colors.orange.withValues(alpha: 0.6), '보통'),
+              _buildLegendItem(Colors.red.withValues(alpha: 0.6), '피해야 할 날'),
             ],
           ),
         ],
@@ -92,14 +93,14 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
       children: [
         Container(
           width: 20,
-          height: 20,
+          height: AppSpacing.spacing5,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.grey.shade400, width: 0.5),
+            borderRadius: AppDimensions.borderRadiusSmall,
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.6), width: 0.5),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: AppSpacing.spacing1 * 1.5),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall,
@@ -122,12 +123,12 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
     }
     
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(top: AppSpacing.spacing4),
+      padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        color: Colors.grey.withValues(alpha: 0.9),
+        borderRadius: AppDimensions.borderRadiusSmall,
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,22 +136,21 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
           Text(
             DateFormat('yyyy년 MM월 dd일').format(day),
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.spacing2),
           if (isAuspicious) ...[
             Row(
               children: [
-                Icon(Icons.star, color: Colors.amber.shade600, size: 16),
-                const SizedBox(width: 4),
+                Icon(Icons.star, color: Colors.amber.withValues(alpha: 0.8), size: 16),
+                const SizedBox(width: AppSpacing.spacing1),
                 const Text(
                   '손없는날 - 이사하기 매우 좋은 날',
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.spacing1),
           ],
           if (luckyScore != null) ...[
             Row(
@@ -160,7 +160,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                   color: _getDayColor(day),
                   size: 16,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   '길흉점수: ${(luckyScore * 100).toInt()}점',
                   style: TextStyle(
@@ -170,13 +170,13 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.spacing1),
           ],
           if (holiday != null) ...[
             Row(
               children: [
                 const Icon(Icons.calendar_today, size: 16, color: Colors.red),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.spacing1),
                 Text(
                   holiday,
                   style: const TextStyle(color: Colors.red),
@@ -196,7 +196,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
         Card(
           elevation: 2,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.paddingAll16,
             child: TableCalendar(
               firstDay: DateTime.now(),
               lastDay: DateTime.now().add(const Duration(days: 365)),
@@ -257,7 +257,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                                    day.weekday == DateTime.sunday;
                   
                   return Container(
-                    margin: const EdgeInsets.all(4),
+                    margin: AppSpacing.paddingAll4,
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
@@ -284,7 +284,7 @@ class _EnhancedDatePickerState extends State<EnhancedDatePicker> {
                 formatButtonShowsNext: false,
                 formatButtonDecoration: BoxDecoration(
                   color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppDimensions.borderRadiusSmall,
                 ),
                 formatButtonTextStyle: TextStyle(
                   color: Theme.of(context).primaryColor,

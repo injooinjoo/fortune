@@ -79,11 +79,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: isPlannedDate 
-          ? (_plannedDate ?? DateTime.now().add(const Duration(days: 30)))
+          ? (_plannedDate ?? DateTime.now().add(const Duration(days: 30)),
           : (_birthDate ?? DateTime(1990, 1, 1)),
       firstDate: isPlannedDate ? DateTime.now() : DateTime(1900),
       lastDate: isPlannedDate 
-          ? DateTime.now().add(const Duration(days: 365))
+          ? DateTime.now().add(const Duration(days: 365),
           : DateTime.now(),
       builder: (context, child) {
         return Theme(
@@ -94,7 +94,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null) {
       setState(() {
@@ -354,7 +354,7 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -677,7 +677,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Text(
                       avoidDirection['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                         fontSize: 12 + fontSize,
                       ),
                     ),
@@ -703,7 +703,7 @@ class _MovingFortuneResult extends ConsumerWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
   

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../domain/models/talisman_models.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class TalismanDesignCanvas extends StatefulWidget {
   final TalismanResult result;
@@ -26,15 +28,14 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
-    )..repeat();
-  }
+      duration: const Duration(seconds: 20))..repeat();
+}
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -43,17 +44,16 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
       height: widget.size * 1.2, // Slightly taller for traditional talisman shape
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         boxShadow: [
           BoxShadow(
             color: widget.result.design.primaryColor.withValues(alpha: 0.3),
             blurRadius: 30,
             offset: const Offset(0, 10),
-          ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         child: Stack(
           children: [
             // Background gradient
@@ -67,18 +67,15 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                     widget.result.design.secondaryColor.withValues(alpha: 0.6),
                   ],
                 ),
-              ),
             ),
             
             // Traditional paper texture overlay
             Container(
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.4),
-              ),
               child: CustomPaint(
                 painter: _TalismanPaperTexturePainter(),
                 size: Size(widget.size, widget.size * 1.2),
-              ),
             ),
             
             // Main content
@@ -99,13 +96,12 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                   // User info and wish
                   _buildUserInfo(),
                   
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.spacing5),
                   
                   // Date and seal
                   _buildBottomSeal(),
                 ],
               ),
-            ),
             
             // Mystical overlay effects
             AnimatedBuilder(
@@ -116,15 +112,13 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                     progress: _animationController.value,
                     color: widget.result.design.primaryColor,
                   ),
-                  size: Size(widget.size, widget.size * 1.2),
-                );
-              },
+                  size: Size(widget.size, widget.size * 1.2));
+},
             ),
           ],
         ),
-      ),
     );
-  }
+}
   
   Widget _buildTopDecoration() {
     return Column(
@@ -132,21 +126,19 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         Text(
           '護身符',
           style: TextStyle(
-            fontSize: widget.size * 0.08,
+            fontSize: widget.size * 0.08),
             fontWeight: FontWeight.bold,
             color: Colors.white,
             letterSpacing: 4,
           ),
-        ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.spacing1),
         Container(
           width: widget.size * 0.5,
-          height: 2,
+          height: AppSpacing.spacing0 * 0.5,
           color: Colors.white.withValues(alpha: 0.6),
-        ),
-      ],
+      ]
     );
-  }
+}
   
   Widget _buildCentralSymbol() {
     return Container(
@@ -173,7 +165,6 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
               secondaryColor: widget.result.design.secondaryColor,
             ),
             size: Size(widget.size * 0.5, widget.size * 0.5),
-          ),
           
           // Center icon
           Container(
@@ -187,33 +178,29 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
                   widget.result.design.secondaryColor,
                 ],
               ),
-            ),
             child: Icon(
               widget.result.type.icon,
               size: widget.size * 0.15,
               color: Colors.white,
             ),
-          ),
         ],
-      ),
-    ).animate(onPlay: (controller) => controller.repeat())
+      )).animate(onPlay: (controller) => controller.repeat(),
       .rotate(duration: 20000.ms);
-  }
+}
   
   Widget _buildUserInfo() {
     return Column(
       children: [
         if (widget.result.design.personalText?.isNotEmpty ?? false) ...[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20),
-            ),
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
             child: Text(
               widget.result.design.personalText!,
               style: TextStyle(
-                fontSize: widget.size * 0.045,
+                fontSize: widget.size * 0.045),
                 fontWeight: FontWeight.w600,
                 color: widget.result.design.primaryColor,
               ),
@@ -221,33 +208,30 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.spacing2),
         ],
         
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(AppSpacing.spacing6 * 1.04),
             border: Border.all(
               color: widget.result.design.primaryColor.withValues(alpha: 0.5),
               width: 2,
             ),
-          ),
           child: Text(
             widget.result.design.userName ?? '소유자',
             style: TextStyle(
-              fontSize: widget.size * 0.06,
+              fontSize: widget.size * 0.06),
               fontWeight: FontWeight.bold,
               color: widget.result.design.primaryColor,
               letterSpacing: 2,
             ),
-          ),
         ),
       ],
     );
-  }
+}
   
   Widget _buildBottomSeal() {
     final date = widget.result.design.createdDate;
@@ -260,12 +244,11 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
         Text(
           dateText,
           style: TextStyle(
-            fontSize: widget.size * 0.04,
+            fontSize: widget.size * 0.04),
             color: Colors.white.withValues(alpha: 0.8),
             letterSpacing: 1,
           ),
-        ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.spacing4),
         // Seal
         Container(
           width: widget.size * 0.1,
@@ -278,16 +261,14 @@ class _TalismanDesignCanvasState extends State<TalismanDesignCanvas>
             child: Text(
               '符',
               style: TextStyle(
-                fontSize: widget.size * 0.05,
+                fontSize: widget.size * 0.05),
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
-            ),
           ),
-        ),
-      ],
+      ]
     );
-  }
+}
 }
 
 class _TalismanPaperTexturePainter extends CustomPainter {
@@ -296,25 +277,26 @@ class _TalismanPaperTexturePainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.brown.withValues(alpha: 0.05)
       ..strokeWidth = 0.5
-      ..style = PaintingStyle.stroke;
+      ..style =,
+      PaintingStyle.stroke;
 
     // Draw vertical lines for paper texture
     for (double x = 0; x < size.width; x += 5) {
       canvas.drawLine(
         Offset(x, 0),
         Offset(x, size.height),
-        paint,
+        paint
       );
-    }
+}
     
     // Draw horizontal lines
     for (double y = 0; y < size.height; y += 5) {
       canvas.drawLine(
         Offset(0, y),
         Offset(size.width, y),
-        paint,
+        paint
       );
-    }
+}
   }
 
   @override
@@ -346,8 +328,7 @@ class _TalismanSymbolPainter extends CustomPainter {
     // Draw inner patterns
     final symbols = ['☰', '☷', '☵', '☲', '☳', '☴', '☶', '☱'];
     final symbolPaint = TextPainter(
-      textDirection: TextDirection.ltr,
-    );
+      textDirection: TextDirection.ltr);
     
     for (int i = 0; i < 8; i++) {
       final angle = i * 3.14159 * 2 / 8;
@@ -356,17 +337,13 @@ class _TalismanSymbolPainter extends CustomPainter {
       
       symbolPaint.text = TextSpan(
         text: symbols[i],
-        style: TextStyle(
-          fontSize: 16,
-          color: primaryColor.withValues(alpha: 0.6),
-        ),
+        style: Theme.of(context).textTheme.bodyMedium
       );
       symbolPaint.layout();
       symbolPaint.paint(
         canvas,
-        Offset(x - symbolPaint.width / 2, y - symbolPaint.height / 2),
-      );
-    }
+        Offset(x - symbolPaint.width / 2, y - symbolPaint.height / 2);
+}
   }
 
   @override
@@ -385,7 +362,8 @@ class _MysticalEffectsPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = color.withValues(alpha: 0.1 * (1 - progress))
+      ..color = color.withValues(alpha: 0.1 * (1 -,
+      progress),
       ..style = PaintingStyle.fill;
 
     // Draw expanding circles for mystical effect
@@ -395,9 +373,9 @@ class _MysticalEffectsPainter extends CustomPainter {
     canvas.drawCircle(
       center,
       maxRadius * progress,
-      paint,
+      paint
     );
-  }
+}
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;

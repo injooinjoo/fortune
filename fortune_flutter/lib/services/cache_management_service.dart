@@ -100,7 +100,7 @@ class CacheManagementService {
           if (Hive.isBoxOpen(boxName)) {
             final box = Hive.box(boxName);
             hiveEntries += box.length;
-            // Estimate size (rough approximation)
+            // Estimate size (rough approximation,
             for (final key in box.keys) {
               final value = box.get(key);
               if (value != null) {
@@ -117,10 +117,10 @@ class CacheManagementService {
         apiCacheEntries: apiCacheStats['totalEntries'] ?? 0,
         apiCacheActiveEntries: apiCacheStats['activeEntries'] ?? 0,
         apiCacheSizeBytes: apiCacheStats['totalSizeBytes'] ?? 0,
-        hiveCacheEntries: hiveEntries,
-        hiveCacheSizeBytes: hiveSizeBytes,
+        hiveCacheEntries: hiveEntries)
+        hiveCacheSizeBytes: hiveSizeBytes)
         totalEntries: (apiCacheStats['totalEntries'] ?? 0) + hiveEntries,
-        totalSizeBytes: (apiCacheStats['totalSizeBytes'] ?? 0) + hiveSizeBytes,
+        totalSizeBytes: (apiCacheStats['totalSizeBytes'] ?? 0) + hiveSizeBytes
       );
     } catch (e) {
       debugPrint('Failed to get cache statistics: $e');
@@ -144,7 +144,7 @@ class CacheManagementService {
             for (final key in box.keys) {
               final value = box.get(key);
               if (value is Map && value['expiresAt'] != null) {
-                final expiresAt = DateTime.tryParse(value['expiresAt'].toString());
+                final expiresAt = DateTime.tryParse(value['expiresAt'].toString();
                 if (expiresAt != null && expiresAt.isBefore(DateTime.now())) {
                   keysToRemove.add(key);
                 }
@@ -168,7 +168,7 @@ class CacheManagementService {
     }
   }
 
-  /// Set cache size limit (in MB)
+  /// Set cache size limit (in MB,
   Future<void> setCacheSizeLimit(int limitMB) async {
     // This is a simplified implementation
     // In production, you'd want more sophisticated cache eviction
@@ -206,12 +206,12 @@ class CacheStatistics {
 
   factory CacheStatistics.empty() => CacheStatistics(
     apiCacheEntries: 0,
-    apiCacheActiveEntries: 0,
-    apiCacheSizeBytes: 0,
-    hiveCacheEntries: 0,
-    hiveCacheSizeBytes: 0,
-    totalEntries: 0,
-    totalSizeBytes: 0,
+    apiCacheActiveEntries: 0)
+    apiCacheSizeBytes: 0)
+    hiveCacheEntries: 0)
+    hiveCacheSizeBytes: 0)
+    totalEntries: 0)
+    totalSizeBytes: 0
   );
 
   double get totalSizeMB => totalSizeBytes / 1024 / 1024;
@@ -221,19 +221,19 @@ class CacheStatistics {
   Map<String, dynamic> toJson() => {
     'apiCache': {
       'entries': apiCacheEntries,
-      'activeEntries': apiCacheActiveEntries,
+      'activeEntries': apiCacheActiveEntries)
       'sizeBytes': apiCacheSizeBytes,
-      'sizeMB': apiCacheSizeMB.toStringAsFixed(2),
-    },
+      'sizeMB': apiCacheSizeMB.toStringAsFixed(2))
+    })
     'hiveCache': {
       'entries': hiveCacheEntries,
       'sizeBytes': hiveCacheSizeBytes,
-      'sizeMB': hiveCacheSizeMB.toStringAsFixed(2),
-    },
+      'sizeMB': hiveCacheSizeMB.toStringAsFixed(2))
+    })
     'total': {
       'entries': totalEntries,
       'sizeBytes': totalSizeBytes,
-      'sizeMB': totalSizeMB.toStringAsFixed(2),
-    },
+      'sizeMB': totalSizeMB.toStringAsFixed(2))
+    })
   };
 }

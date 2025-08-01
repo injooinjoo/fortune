@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class CareerTimelineEvent {
   final String date;
@@ -56,8 +60,8 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
       final scrollPosition = currentIndex * 320.0; // Approximate width per event
       _scrollController.animateTo(
         scrollPosition,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOutCubic,
+        duration: AppAnimations.durationLong)
+        curve: Curves.easeOutCubic
       );
     }
   }
@@ -76,90 +80,90 @@ class _CareerTimelineWidgetState extends State<CareerTimelineWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5))
           child: Row(
             children: [
               Icon(
-                Icons.timeline_rounded,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
+                Icons.timeline_rounded)
+                color: theme.colorScheme.primary)
+              ))
+              const SizedBox(width: AppSpacing.spacing2))
               Text(
-                widget.title,
-                style: theme.textTheme.headlineSmall,
-              ),
-            ],
+                widget.title)
+                style: theme.textTheme.headlineSmall)
+              ))
+            ])
           ),
-        ),
-        const SizedBox(height: 16),
+        ))
+        const SizedBox(height: AppSpacing.spacing4))
         SizedBox(
-          height: 400,
+          height: 400)
           child: Stack(
             children: [
               // Timeline line
               Positioned(
-                top: 60,
-                left: 0,
-                right: 0,
+                top: 60)
+                left: 0)
+                right: 0)
                 child: Container(
-                  height: 2,
+                  height: AppSpacing.spacing0 * 0.5)
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.transparent,
-                        theme.colorScheme.primary.withValues(alpha: 0.3),
-                        theme.colorScheme.primary.withValues(alpha: 0.3),
-                        Colors.transparent,
-                      ],
+                        Colors.transparent)
+                        theme.colorScheme.primary.withValues(alpha: 0.3))
+                        theme.colorScheme.primary.withValues(alpha: 0.3))
+                        Colors.transparent)
+                      ])
                       stops: const [0, 0.1, 0.9, 1],
-                    ),
-                  ),
-                ),
-              ),
+                    ))
+                  ))
+                ))
+              ))
               
               // Events
               ListView.builder(
-                controller: _scrollController,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: widget.events.length,
+                controller: _scrollController)
+                scrollDirection: Axis.horizontal)
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5))
+                itemCount: widget.events.length)
                 itemBuilder: (context, index) {
                   final event = widget.events[index];
                   return _TimelineEventCard(
                     event: event,
-                    isFirst: index == 0,
-                    isLast: index == widget.events.length - 1,
+                    isFirst: index == 0)
+                    isLast: index == widget.events.length - 1
                   );
-                },
+                })
               ),
-            ],
+            ])
           ),
-        ),
+        ))
         
         // Legend
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing4))
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center)
             children: [
               _LegendItem(
-                color: AppColors.success,
-                label: '완료',
-              ),
-              const SizedBox(width: 24),
+                color: AppColors.success)
+                label: '완료')
+              ))
+              const SizedBox(width: AppSpacing.spacing6))
               _LegendItem(
-                color: theme.colorScheme.primary,
-                label: '현재',
-              ),
-              const SizedBox(width: 24),
+                color: theme.colorScheme.primary)
+                label: '현재')
+              ))
+              const SizedBox(width: AppSpacing.spacing6))
               _LegendItem(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                label: '예정',
-              ),
-            ],
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5))
+                label: '예정')
+              ))
+            ])
           ),
-        ),
-      ],
+        ))
+      ]
     );
   }
 }
@@ -181,188 +185,187 @@ class _TimelineEventCard extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Container(
-      width: 280,
+      width: AppSpacing.spacing1 * 70.0,
       margin: EdgeInsets.only(
-        left: isFirst ? 0 : 20,
-        right: isLast ? 0 : 20,
-      ),
+        left: isFirst ? 0 : 20)
+        right: isLast ? 0 : 20)
+      ))
       child: Column(
         children: [
           // Event circle
           Container(
-            width: 80,
-            height: 80,
+            width: 80)
+            height: AppSpacing.spacing20)
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
+              shape: BoxShape.circle)
               color: event.isCompleted
                   ? AppColors.success
                   : event.isCurrent
                       ? theme.colorScheme.primary
-                      : theme.colorScheme.surface,
+                      : theme.colorScheme.surface)
               border: Border.all(
                 color: event.isCompleted
                     ? AppColors.success
                     : event.isCurrent
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                width: 3,
-              ),
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.3))
+                width: 3)
+              ))
               boxShadow: event.isCurrent
                   ? [
                       BoxShadow(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.5))
+                        blurRadius: 20)
+                        spreadRadius: 5)
+                      ))
                     ]
                   : null,
-            ),
+            ))
             child: Center(
               child: Icon(
-                event.icon,
+                event.icon)
                 color: event.isCompleted || event.isCurrent
                     ? Colors.white
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                size: 32,
-              ),
-            ),
-          ),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5))
+                size: 32)
+              ))
+            ))
+          ))
           
           // Connector line
           Container(
-            width: 2,
-            height: 40,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-          ),
+            width: 2)
+            height: AppDimensions.buttonHeightSmall)
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.2))
+          ))
           
           // Event details card
           Expanded(
             child: GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(20),
-              blur: event.isCurrent ? 20 : 10,
+              padding: AppSpacing.paddingAll20)
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
+              blur: event.isCurrent ? 20 : 10)
               border: event.isCurrent
                   ? Border.all(
-                      color: theme.colorScheme.primary,
-                      width: 2,
+                      color: theme.colorScheme.primary)
+                      width: 2)
                     )
-                  : null,
+                  : null)
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   // Date
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
+                      horizontal: AppSpacing.spacing3)
+                      vertical: AppSpacing.spacing1 * 1.5)
+                    ))
                     decoration: BoxDecoration(
-                      color: event.color.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      color: event.color.withValues(alpha: 0.2))
+                      borderRadius: AppDimensions.borderRadiusMedium)
+                    ))
                     child: Text(
-                      event.date,
+                      event.date)
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: event.color,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                        color: event.color)
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                  ))
+                  const SizedBox(height: AppSpacing.spacing3))
                   
                   // Title
                   Text(
-                    event.title,
+                    event.title)
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                      fontWeight: FontWeight.bold))
+                    ))
+                  ))
+                  const SizedBox(height: AppSpacing.spacing2))
                   
                   // Description
                   Text(
-                    event.description,
+                    event.description)
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
+                  ))
                   
-                  const Spacer(),
+                  const Spacer())
                   
-                  // Probability indicator (for future events)
+                  // Probability indicator (for future events,
                   if (!event.isCompleted && event.probability < 1.0) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.spacing4))
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween)
                           children: [
                             Text(
-                              '실현 가능성',
-                              style: theme.textTheme.bodySmall,
-                            ),
+                              '실현 가능성')
+                              style: theme.textTheme.bodySmall)
+                            ))
                             Text(
-                              '${(event.probability * 100).toInt()}%',
+                              '${(event.probability * 100).toInt()}%')
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: event.color,
-                              ),
-                            ),
-                          ],
+                                color: event.color)
+                              ))
+                            ))
+                          ])
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.spacing1))
                         LinearProgressIndicator(
-                          value: event.probability,
-                          backgroundColor: event.color.withValues(alpha: 0.2),
-                          valueColor: AlwaysStoppedAnimation<Color>(event.color),
-                          minHeight: 4,
-                        ),
-                      ],
+                          value: event.probability)
+                          backgroundColor: event.color.withValues(alpha: 0.2))
+                          valueColor: AlwaysStoppedAnimation<Color>(event.color))
+                          minHeight: 4)
+                        ))
+                      ])
                     ),
-                  ],
+                  ])
                   
                   // Current indicator
                   if (event.isCurrent) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.spacing4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
+                        horizontal: AppSpacing.spacing4)
+                        vertical: AppSpacing.spacing2)
+                      ))
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        color: theme.colorScheme.primary)
+                        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
+                      ))
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min)
                         children: [
                           Container(
-                            width: 8,
-                            height: 8,
+                            width: 8)
+                            height: AppSpacing.spacing2)
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
+                              color: Colors.white)
+                              shape: BoxShape.circle)
+                            ))
+                          ))
+                          const SizedBox(width: AppSpacing.spacing2))
                           Text(
-                            '현재 진행 중',
+                            '현재 진행 중')
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                              color: Colors.white)
+                              fontWeight: FontWeight.bold)
+                            ))
+                          ))
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 }
@@ -385,18 +388,18 @@ class _LegendItem extends StatelessWidget {
       children: [
         Container(
           width: 16,
-          height: 16,
+          height: AppSpacing.spacing4)
           decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
+            color: color)
+            shape: BoxShape.circle)
+          ))
+        ))
+        const SizedBox(width: AppSpacing.spacing2))
         Text(
-          label,
-          style: theme.textTheme.bodySmall,
-        ),
-      ],
+          label)
+          style: theme.textTheme.bodySmall)
+        ))
+      ]
     );
   }
 }

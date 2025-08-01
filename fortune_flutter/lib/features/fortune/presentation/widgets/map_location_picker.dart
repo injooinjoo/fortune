@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class MapLocationPicker extends StatefulWidget {
   final Function(LatLng, String) onLocationSelected;
@@ -42,7 +44,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
     
     if (widget.initialAddress != null) {
       _searchController.text = widget.initialAddress!;
-    }
+}
   }
 
   Future<void> _getCurrentLocation() async {
@@ -54,7 +56,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         _showSnackBar('위치 서비스를 활성화해주세요');
         setState(() => _isLoading = false);
         return;
-      }
+}
 
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -63,26 +65,26 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
           _showSnackBar('위치 권한이 거부되었습니다');
           setState(() => _isLoading = false);
           return;
-        }
+}
       }
 
       if (permission == LocationPermission.deniedForever) {
         _showSnackBar('위치 권한이 영구적으로 거부되었습니다. 설정에서 변경해주세요.');
         setState(() => _isLoading = false);
         return;
-      }
+}
 
       Position position = await Geolocator.getCurrentPosition();
       LatLng currentLocation = LatLng(position.latitude, position.longitude);
       
       _mapController.move(currentLocation, 15);
       await _updateLocationAndAddress(currentLocation);
-    } catch (e) {
+} catch (e) {
       _showSnackBar('현재 위치를 가져올 수 없습니다');
-    }
+}
     
     setState(() => _isLoading = false);
-  }
+}
 
   Future<void> _searchLocation(String query) async {
     if (query.isEmpty) return;
@@ -95,25 +97,25 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         LatLng newLocation = LatLng(locations.first.latitude, locations.first.longitude);
         _mapController.move(newLocation, 15);
         await _updateLocationAndAddress(newLocation);
-      } else {
+} else {
         _showSnackBar('주소를 찾을 수 없습니다');
-      }
+}
     } catch (e) {
       _showSnackBar('주소 검색 중 오류가 발생했습니다');
-    }
+}
     
     setState(() => _isLoading = false);
-  }
+}
 
   Future<void> _updateLocationAndAddress(LatLng location) async {
     setState(() {
       _selectedLocation = location;
-    });
+});
     
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         location.latitude,
-        location.longitude,
+        location.longitude
       );
       
       if (placemarks.isNotEmpty) {
@@ -129,25 +131,24 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
         setState(() {
           _selectedAddress = address.trim();
           _searchController.text = _selectedAddress;
-        });
+});
         
         widget.onLocationSelected(location, _selectedAddress);
-      }
+}
     } catch (e) {
       print('주소 변환 오류: $e');
-    }
+}
   }
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+      SnackBar(content: Text(message));
+}
 
   Widget _buildDirectionOverlay() {
     if (!widget.showDirectionOverlay || widget.auspiciousDirections == null) {
       return const SizedBox.shrink();
-    }
+}
     
     final directions = {
       '동쪽': {'angle': 0.0, 'color': Colors.blue},
@@ -163,10 +164,9 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
             auspiciousDirections: widget.auspiciousDirections!,
             directions: directions,
           ),
-        ),
-      ),
+      
     );
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +174,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
       children: [
         // 검색 바
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAll16,
           child: Row(
             children: [
               Expanded(
@@ -187,29 +187,25 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         _searchController.clear();
-                      },
+},
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppDimensions.borderRadiusMedium,
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
-                  ),
+                    fillColor: Colors.grey.withValues(alpha: 0.9),
                   onSubmitted: _searchLocation,
                 ),
-              ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.spacing2),
               IconButton(
-                icon: const Icon(Icons.my_location),
+                icon: Icon(Icons.my_location),
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                 ),
-              ),
             ],
           ),
-        ),
         
         // 지도
         Expanded(
@@ -221,7 +217,6 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   initialCenter: _selectedLocation!,
                   initialZoom: 13.0,
                   onTap: (tapPosition, point) => _updateLocationAndAddress(point),
-                ),
                 children: [
                   TileLayer(
                     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -229,8 +224,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   ),
                   MarkerLayer(
                     markers: [
-                      if (_selectedLocation != null)
-                        Marker(
+                      if (_selectedLocation != null), Marker(
                           point: _selectedLocation!,
                           width: 80,
                           height: 80,
@@ -239,33 +233,27 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                             color: Theme.of(context).primaryColor,
                             size: 40,
                           ),
-                        ),
                     ],
                   ),
                 ],
               ),
               _buildDirectionOverlay(),
-              if (_isLoading)
-                Container(
+              if (_isLoading), Container(
                   color: Colors.black26,
-                  child: const Center(
+                  child: Center(
                     child: CircularProgressIndicator(),
-                  ),
                 ),
             ],
           ),
-        ),
         
         // 선택된 주소 표시
-        if (_selectedAddress.isNotEmpty)
-          Container(
+        if (_selectedAddress.isNotEmpty), Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.grey.withValues(alpha: 0.9),
               border: Border(
-                top: BorderSide(color: Colors.grey.shade300),
-              ),
+                top: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,19 +262,17 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                   '선택된 주소',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   _selectedAddress,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
-                ),
               ],
             ),
-          ),
       ],
     );
-  }
+}
 }
 
 class DirectionOverlayPainter extends CustomPainter {
@@ -312,8 +298,9 @@ class DirectionOverlayPainter extends CustomPainter {
       
       final paint = Paint()
         ..color = isAuspicious 
-            ? color.withValues(alpha: 0.4) 
-            : Colors.grey.withValues(alpha: 0.2)
+            ?,
+      color.withValues(alpha: 0.4) 
+            : Colors.grey.withValues(alpha: 0.2),
         ..style = PaintingStyle.fill;
       
       // 방향별 섹터 그리기
@@ -323,7 +310,7 @@ class DirectionOverlayPainter extends CustomPainter {
         Rect.fromCircle(center: center, radius: radius),
         (angle - 45) * (3.14159 / 180),
         90 * (3.14159 / 180),
-        false,
+        false
       );
       path.close();
       
@@ -333,12 +320,7 @@ class DirectionOverlayPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: direction,
-          style: TextStyle(
-            color: isAuspicious ? color : Colors.grey,
-            fontSize: 16,
-            fontWeight: isAuspicious ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
+          style: Theme.of(context).textTheme.bodyMedium,
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
@@ -346,11 +328,11 @@ class DirectionOverlayPainter extends CustomPainter {
       final textAngle = angle * (3.14159 / 180);
       final textOffset = Offset(
         center.dx + radius * 0.7 * math.cos(textAngle),
-        center.dy + radius * 0.7 * math.sin(textAngle) - textPainter.height / 2,
+        center.dy + radius * 0.7 * math.sin(textAngle) - textPainter.height / 2
       );
       
       textPainter.paint(canvas, textOffset);
-    }
+}
   }
   
   @override

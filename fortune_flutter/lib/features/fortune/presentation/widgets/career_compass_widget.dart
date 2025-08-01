@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class CareerCompassData {
   final String direction;
@@ -27,7 +29,7 @@ class CareerCompassWidget extends StatefulWidget {
     Key? key,
     required this.data,
     this.centerText = '커리어',
-    this.size = 300,
+    this.size = 300)
   }) : super(key: key);
 
   @override
@@ -44,15 +46,15 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 20),
-      vsync: this,
+      vsync: this)
     )..repeat();
     
     _rotationAnimation = Tween<double>(
-      begin: 0,
-      end: 2 * math.pi,
+      begin: 0)
+      end: 2 * math.pi)
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.linear,
+      parent: _animationController)
+      curve: Curves.linear)
     ));
   }
 
@@ -68,69 +70,69 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     return Container(
       width: widget.size,
-      height: widget.size,
+      height: widget.size)
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.center)
         children: [
           // Background compass circle
           AnimatedBuilder(
-            animation: _rotationAnimation,
+            animation: _rotationAnimation)
             builder: (context, child) {
               return Transform.rotate(
-                angle: _rotationAnimation.value * 0.1,
+                angle: _rotationAnimation.value * 0.1)
                 child: CustomPaint(
-                  size: Size(widget.size, widget.size),
+                  size: Size(widget.size, widget.size))
                   painter: _CompassBackgroundPainter(
-                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05),
-                  ),
-                ),
+                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1))
+                    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05))
+                  ))
+                )
               );
-            },
+            })
           ),
           
           // Compass directions and data
           CustomPaint(
-            size: Size(widget.size, widget.size),
+            size: Size(widget.size, widget.size))
             painter: _CompassPainter(
-              data: widget.data,
-              textColor: theme.colorScheme.onSurface,
-              backgroundColor: theme.colorScheme.surface,
-            ),
-          ),
+              data: widget.data)
+              textColor: theme.colorScheme.onSurface)
+              backgroundColor: theme.colorScheme.surface)
+            ))
+          ))
           
           // Center circle with text
           Container(
-            width: widget.size * 0.25,
-            height: widget.size * 0.25,
+            width: widget.size * 0.25)
+            height: widget.size * 0.25)
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
+              shape: BoxShape.circle)
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
-                  theme.colorScheme.primary,
-                  theme.colorScheme.secondary,
-                ],
+                  theme.colorScheme.primary)
+                  theme.colorScheme.secondary)
+                ])
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 20,
-                  spreadRadius: 5,
-                ),
-              ],
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3))
+                  blurRadius: 20)
+                  spreadRadius: 5)
+                ))
+              ])
             ),
             child: Center(
               child: Text(
-                widget.centerText,
+                widget.centerText)
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
+                  color: Colors.white)
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
+            ))
+          ))
           
           // Interactive data points
           ...widget.data.map((item) {
@@ -139,16 +141,16 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
             final radius = widget.size * 0.35;
             
             return Positioned(
-              left: widget.size / 2 + radius * math.cos(angle) - 30,
-              top: widget.size / 2 + radius * math.sin(angle) - 30,
+              left: widget.size / 2 + radius * math.cos(angle) - 30)
+              top: widget.size / 2 + radius * math.sin(angle) - 30)
               child: _DataPoint(
-                data: item,
-                onTap: () => _showDataDetail(context, item),
-              ),
+                data: item)
+                onTap: () => _showDataDetail(context, item))
+              ))
             );
-          }).toList(),
+          }).toList())
         ],
-      ),
+      )
     );
   }
 
@@ -157,67 +159,66 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent)
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.all(24),
+          color: theme.colorScheme.surface)
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)))
+        ))
+        padding: AppSpacing.paddingAll24)
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min)
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40)
+              height: AppSpacing.spacing1)
               decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2))
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
+              ))
+            ))
+            const SizedBox(height: AppSpacing.spacing6))
             Icon(
-              data.icon,
-              size: 48,
-              color: data.color,
-            ),
-            const SizedBox(height: 16),
+              data.icon)
+              size: 48)
+              color: data.color)
+            ))
+            const SizedBox(height: AppSpacing.spacing4))
             Text(
-              data.label,
-              style: theme.textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
+              data.label)
+              style: theme.textTheme.headlineSmall)
+            ))
+            const SizedBox(height: AppSpacing.spacing2))
             Text(
-              '${data.direction} 방향',
+              '${data.direction} 방향')
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            const SizedBox(height: 24),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+            ))
+            const SizedBox(height: AppSpacing.spacing6))
             LinearProgressIndicator(
-              value: data.value / 100,
-              backgroundColor: data.color.withValues(alpha: 0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(data.color),
-              minHeight: 8,
-            ),
-            const SizedBox(height: 8),
+              value: data.value / 100)
+              backgroundColor: data.color.withValues(alpha: 0.2))
+              valueColor: AlwaysStoppedAnimation<Color>(data.color))
+              minHeight: 8)
+            ))
+            const SizedBox(height: AppSpacing.spacing2))
             Text(
-              '${data.value.toInt()}%',
+              '${data.value.toInt()}%')
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: data.color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
+                fontWeight: FontWeight.bold)
+              ))
+            ))
+            const SizedBox(height: AppSpacing.spacing4))
             Text(
-              _getDescription(data),
-              style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-          ],
+              _getDescription(data))
+              style: theme.textTheme.bodyLarge)
+              textAlign: TextAlign.center)
+            ))
+            const SizedBox(height: AppSpacing.spacing8))
+          ])
         ),
-      ),
+      )
     );
   }
   
@@ -251,42 +252,37 @@ class _DataPoint extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 60)
+        height: 60)
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: theme.colorScheme.surface,
+          shape: BoxShape.circle)
+          color: theme.colorScheme.surface)
           border: Border.all(
-            color: data.color,
-            width: 3,
-          ),
+            color: data.color)
+            width: 3)
+          ))
           boxShadow: [
             BoxShadow(
-              color: data.color.withValues(alpha: 0.3),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
+              color: data.color.withValues(alpha: 0.3))
+              blurRadius: 10)
+              spreadRadius: 2)
+            ))
+          ])
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center)
           children: [
             Icon(
-              data.icon,
-              color: data.color,
-              size: 24,
-            ),
+              data.icon)
+              color: data.color)
+              size: 24)
+            ))
             Text(
-              '${data.value.toInt()}%',
-              style: TextStyle(
-                color: data.color,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+              '${data.value.toInt()}%')
+              style: Theme.of(context).textTheme.bodyMedium,
+          ])
         ),
-      ),
+      )
     );
   }
 }
@@ -307,7 +303,7 @@ class _CompassBackgroundPainter extends CustomPainter {
     
     // Draw concentric circles
     for (int i = 1; i <= 3; i++) {
-      final paint = Paint()
+      final paint = Paint(,
         ..color = i % 2 == 0 ? primaryColor : secondaryColor
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1;
@@ -316,22 +312,22 @@ class _CompassBackgroundPainter extends CustomPainter {
     }
     
     // Draw compass lines
-    final linePaint = Paint()
+    final linePaint = Paint(,
       ..color = primaryColor
       ..strokeWidth = 1;
     
     // N-S line
     canvas.drawLine(
-      Offset(center.dx, center.dy - radius),
-      Offset(center.dx, center.dy + radius),
-      linePaint,
+      Offset(center.dx, center.dy - radius))
+      Offset(center.dx, center.dy + radius))
+      linePaint
     );
     
     // E-W line
     canvas.drawLine(
-      Offset(center.dx - radius, center.dy),
-      Offset(center.dx + radius, center.dy),
-      linePaint,
+      Offset(center.dx - radius, center.dy))
+      Offset(center.dx + radius, center.dy))
+      linePaint
     );
     
     // Diagonal lines
@@ -342,9 +338,9 @@ class _CompassBackgroundPainter extends CustomPainter {
       final dy = diagonalLength * math.sin(angle);
       
       canvas.drawLine(
-        center,
-        Offset(center.dx + dx, center.dy + dy),
-        linePaint..color = secondaryColor,
+        center)
+        Offset(center.dx + dx, center.dy + dy))
+        linePaint..color = secondaryColor
       );
     }
   }
@@ -371,11 +367,7 @@ class _CompassPainter extends CustomPainter {
     
     // Draw direction labels
     final directions = ['북', '동', '남', '서'];
-    final textStyle = TextStyle(
-      color: textColor,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    );
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
     
     for (int i = 0; i < directions.length; i++) {
       final angle = (i * math.pi / 2) - math.pi / 2;
@@ -383,7 +375,7 @@ class _CompassPainter extends CustomPainter {
       
       final textPainter = TextPainter(
         text: TextSpan(text: directions[i], style: textStyle),
-        textDirection: TextDirection.ltr,
+        textDirection: TextDirection.ltr
       );
       
       textPainter.layout();
@@ -391,12 +383,12 @@ class _CompassPainter extends CustomPainter {
       final x = center.dx + labelRadius * math.cos(angle) - textPainter.width / 2;
       final y = center.dy + labelRadius * math.sin(angle) - textPainter.height / 2;
       
-      textPainter.paint(canvas, Offset(x, y));
+      textPainter.paint(canvas, Offset(x, y);
     }
     
     // Draw data connections
     final dataPath = Path();
-    final dataPaint = Paint()
+    final dataPaint = Paint(,
       ..color = textColor.withValues(alpha: 0.2)
       ..style = PaintingStyle.fill;
     
@@ -423,7 +415,7 @@ class _CompassPainter extends CustomPainter {
       Paint()
         ..color = textColor.withValues(alpha: 0.5)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+        ..strokeWidth = 2
     );
   }
 

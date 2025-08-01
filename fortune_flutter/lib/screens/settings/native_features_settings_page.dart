@@ -1,8 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fortune/core/utils/logger.dart';
 import 'package:fortune/services/native_features_initializer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Settings page for native platform features (widgets, notifications)
 class NativeFeaturesSettingsPage extends ConsumerStatefulWidget {
@@ -55,20 +59,20 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
       // Apply notification settings
       await NativeFeaturesInitializer.scheduleDailyNotification(
         hour: _notificationTime.hour,
-        minute: _notificationTime.minute,
-        enabled: _notificationsEnabled,
+        minute: _notificationTime.minute)
+        enabled: _notificationsEnabled)
       );
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('설정이 저장되었습니다')),
+          const SnackBar(content: Text('설정이 저장되었습니다'))
         );
       }
     } catch (e) {
       FLogger.error('Failed to save settings', error: e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('설정 저장에 실패했습니다')),
+          const SnackBar(content: Text('설정 저장에 실패했습니다'),
         );
       }
     }
@@ -77,17 +81,17 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
   Future<void> _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: _notificationTime,
+      initialTime: _notificationTime)
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-            ),
-          ),
-          child: child!,
+              backgroundColor: Theme.of(context).colorScheme.surface)
+            ))
+          ))
+          child: child!)
         );
-      },
+      })
     );
     
     if (picked != null && picked != _notificationTime) {
@@ -102,28 +106,28 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(),
       );
     }
     
     return Scaffold(
       appBar: AppBar(
         title: const Text('위젯 & 알림 설정'),
-        elevation: 0,
-      ),
+        elevation: 0)
+      ))
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16)
         children: [
           // Notifications Section
-          _buildSectionHeader('알림 설정', Icons.notifications_outlined),
+          _buildSectionHeader('알림 설정', Icons.notifications_outlined))
           Card(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: AppSpacing.medium))
             child: Column(
               children: [
                 SwitchListTile(
-                  title: const Text('일일 운세 알림'),
-                  subtitle: const Text('매일 지정된 시간에 운세 알림을 받습니다'),
-                  value: _notificationsEnabled,
+                  title: const Text('일일 운세 알림'))
+                  subtitle: const Text('매일 지정된 시간에 운세 알림을 받습니다'))
+                  value: _notificationsEnabled)
                   onChanged: (value) async {
                     // Request permission first if enabling
                     if (value) {
@@ -131,7 +135,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                       if (!granted) {
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('알림 권한이 필요합니다')),
+                            const SnackBar(content: Text('알림 권한이 필요합니다'))
                           );
                         }
                         return;
@@ -143,70 +147,70 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                     });
                     await _saveSettings();
                   },
-                ),
+                ))
                 if (_notificationsEnabled) ...[
-                  const Divider(height: 1),
+                  const Divider(height: 1))
                   ListTile(
-                    title: const Text('알림 시간'),
-                    subtitle: Text(_notificationTime.format(context)),
-                    trailing: const Icon(Icons.access_time),
-                    onTap: _selectTime,
-                  ),
-                ],
+                    title: const Text('알림 시간'))
+                    subtitle: Text(_notificationTime.format(context)))
+                    trailing: const Icon(Icons.access_time))
+                    onTap: _selectTime)
+                  ))
+                ])
               ],
-            ),
-          ),
+            ))
+          ))
           
           // Widget Settings Section
-          _buildSectionHeader('위젯 설정', Icons.widgets_outlined),
+          _buildSectionHeader('위젯 설정', Icons.widgets_outlined))
           Card(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: AppSpacing.medium))
             child: Column(
               children: [
                 SwitchListTile(
-                  title: const Text('위젯 자동 업데이트'),
-                  subtitle: const Text('홈 화면 위젯을 자동으로 업데이트합니다'),
-                  value: _widgetAutoUpdate,
+                  title: const Text('위젯 자동 업데이트'))
+                  subtitle: const Text('홈 화면 위젯을 자동으로 업데이트합니다'))
+                  value: _widgetAutoUpdate)
                   onChanged: (value) {
                     setState(() {
                       _widgetAutoUpdate = value;
                     });
                     _saveSettings();
                   },
-                ),
-                const Divider(height: 1),
+                ))
+                const Divider(height: 1))
                 ListTile(
-                  title: const Text('위젯 가이드'),
-                  subtitle: const Text('홈 화면에 위젯을 추가하는 방법'),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                  onTap: () => _showWidgetGuide(),
-                ),
-              ],
+                  title: Text('위젯 가이드'))
+                  subtitle: const Text('홈 화면에 위젯을 추가하는 방법'))
+                  trailing: const Icon(Icons.arrow_forward_ios, size: AppDimensions.iconSizeXSmall))
+                  onTap: () => _showWidgetGuide())
+                ))
+              ])
             ),
-          ),
+          ))
           
           // iOS Specific Settings
           if (Theme.of(context).platform == TargetPlatform.iOS) ...[
-            _buildSectionHeader('iOS 전용 기능', Icons.phone_iphone),
+            _buildSectionHeader('iOS 전용 기능', Icons.phone_iphone))
             Card(
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(bottom: AppSpacing.medium))
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: const Text('Dynamic Island'),
-                    subtitle: const Text('실시간 운세 업데이트를 Dynamic Island에 표시'),
-                    value: _dynamicIslandEnabled,
+                    title: const Text('Dynamic Island'))
+                    subtitle: const Text('실시간 운세 업데이트를 Dynamic Island에 표시'))
+                    value: _dynamicIslandEnabled)
                     onChanged: (value) {
                       setState(() {
                         _dynamicIslandEnabled = value;
                       });
                       _saveSettings();
                     },
-                  ),
-                ],
+                  ))
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
           
           // Test Section
           _buildSectionHeader('테스트', Icons.bug_report_outlined),
@@ -214,133 +218,121 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
             child: Column(
               children: [
                 ListTile(
-                  title: const Text('테스트 알림 보내기'),
-                  subtitle: const Text('알림이 정상적으로 작동하는지 확인합니다'),
-                  trailing: const Icon(Icons.send),
+                  title: const Text('테스트 알림 보내기'))
+                  subtitle: const Text('알림이 정상적으로 작동하는지 확인합니다'))
+                  trailing: const Icon(Icons.send))
                   onTap: () async {
                     await NativeFeaturesInitializer.showTestNotification();
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('테스트 알림을 전송했습니다')),
+                        const SnackBar(content: Text('테스트 알림을 전송했습니다')))
                       );
                     }
                   },
-                ),
-              ],
+                ))
+              ])
             ),
-          ),
-        ],
-      ),
+          ))
+        ])
+      )
     );
   }
   
   Widget _buildSectionHeader(String title, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8, top: 8),
+      padding: const EdgeInsets.only(top: AppSpacing.xSmall, bottom: AppSpacing.xSmall),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 8),
+          Icon(icon, size: AppDimensions.iconSizeSmall, color: Theme.of(context).colorScheme.primary))
+          SizedBox(width: AppSpacing.spacing2))
           Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ],
-      ),
+            title)
+            style: Theme.of(context).textTheme.titleMedium.colorScheme.primary))
+            ))
+          ))
+        ])
+      )
     );
   }
   
   void _showWidgetGuide() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
+      isScrollControlled: true)
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)))
+      ))
       builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAll24)
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min)
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween)
               children: [
-                const Text(
-                  '위젯 추가 방법',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+                Text(
+                  '위젯 추가 방법')
+                  style: Theme.of(context).textTheme.headlineMedium)
                 IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+                  icon: const Icon(Icons.close))
+                  onPressed: () => Navigator.pop(context))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4))
             if (Theme.of(context).platform == TargetPlatform.iOS) ...[
-              _buildGuideStep('1', '홈 화면에서 빈 공간을 길게 누르세요'),
-              _buildGuideStep('2', '왼쪽 상단의 + 버튼을 탭하세요'),
-              _buildGuideStep('3', 'Fortune 앱을 검색하세요'),
-              _buildGuideStep('4', '원하는 위젯 크기를 선택하세요'),
-              _buildGuideStep('5', '위젯 추가를 탭하세요'),
+              _buildGuideStep('1', '홈 화면에서 빈 공간을 길게 누르세요'))
+              _buildGuideStep('2', '왼쪽 상단의 + 버튼을 탭하세요'))
+              _buildGuideStep('3', 'Fortune 앱을 검색하세요'))
+              _buildGuideStep('4', '원하는 위젯 크기를 선택하세요'))
+              _buildGuideStep('5', '위젯 추가를 탭하세요'))
             ] else ...[
               _buildGuideStep('1', '홈 화면에서 빈 공간을 길게 누르세요'),
-              _buildGuideStep('2', '위젯 버튼을 탭하세요'),
-              _buildGuideStep('3', 'Fortune 앱을 찾아 선택하세요'),
-              _buildGuideStep('4', '원하는 위젯을 선택하세요'),
-              _buildGuideStep('5', '홈 화면으로 드래그하여 추가하세요'),
-            ],
-            const SizedBox(height: 24),
+              _buildGuideStep('2', '위젯 버튼을 탭하세요'))
+              _buildGuideStep('3', 'Fortune 앱을 찾아 선택하세요'))
+              _buildGuideStep('4', '원하는 위젯을 선택하세요'))
+              _buildGuideStep('5', '홈 화면으로 드래그하여 추가하세요'))
+            ])
+            SizedBox(height: AppSpacing.spacing6),
             SizedBox(
-              width: double.infinity,
+              width: double.infinity)
               child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('확인'),
-              ),
-            ),
-          ],
+                onPressed: () => Navigator.pop(context))
+                child: const Text('확인'))
+              ))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
   
   Widget _buildGuideStep(String number, String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVertical8,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Container(
-            width: 24,
-            height: 24,
+            width: 24)
+            height: AppSpacing.spacing6)
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
+              color: Theme.of(context).colorScheme.primary)
+              shape: BoxShape.circle)
+            ))
             child: Center(
               child: Text(
-                number,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
+                number)
+                style: Theme.of(context).textTheme.labelSmall)
+          ))
+          SizedBox(width: AppSpacing.spacing3))
           Expanded(
             child: Text(
-              text,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-      ),
+              text)
+              style: Theme.of(context).textTheme.titleMedium)
+        ])
+      )
     );
   }
 }

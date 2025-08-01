@@ -92,10 +92,9 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             imageData: imageData,
             platform: platform,
             talismanType: widget.result.type.displayName,
-            userName: widget.result.design.userName ?? '',
-          );
+            userName: widget.result.design.userName ?? '');
         },
-      ),
+      
     );
   }
 
@@ -117,7 +116,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                  ,
                 : const Icon(Icons.share),
             onPressed: _isCapturing ? null : _captureTalisman,
           ),
@@ -138,7 +137,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 ),
               ),
             ).animate()
-              .fadeIn(duration: 800.ms)
+                  .fadeIn(duration: 800.ms,
               .scale(
                 begin: const Offset(0.8, 0.8),
                 end: const Offset(1, 1),
@@ -154,7 +153,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
               icon: Icons.auto_awesome,
               content: widget.result.meaning,
             ).animate()
-              .fadeIn(duration: 600.ms, delay: 400.ms)
+                  .fadeIn(duration: 600.ms, delay: 400.ms,
               .slideY(begin: 0.2, end: 0),
             
             const SizedBox(height: 16),
@@ -165,7 +164,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
               icon: Icons.info_outline,
               content: widget.result.usage,
             ).animate()
-              .fadeIn(duration: 600.ms, delay: 600.ms)
+                  .fadeIn(duration: 600.ms, delay: 600.ms,
               .slideY(begin: 0.2, end: 0),
             
             const SizedBox(height: 16),
@@ -176,7 +175,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
               icon: Icons.star_outline,
               content: widget.result.effectiveness,
             ).animate()
-              .fadeIn(duration: 600.ms, delay: 800.ms)
+                  .fadeIn(duration: 600.ms, delay: 800.ms,
               .slideY(begin: 0.2, end: 0),
             
             const SizedBox(height: 16),
@@ -184,19 +183,19 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             // Precautions section
             if (widget.result.precautions.isNotEmpty)
               _buildPrecautionsCard().animate()
-                .fadeIn(duration: 600.ms, delay: 1000.ms)
+                  .fadeIn(duration: 600.ms, delay: 1000.ms,
                 .slideY(begin: 0.2, end: 0),
             
             const SizedBox(height: 32),
             
             // Action buttons
             _buildActionButtons().animate()
-              .fadeIn(duration: 600.ms, delay: 1200.ms),
+                  .fadeIn(duration: 600.ms, delay: 1200.ms),
             
             const SizedBox(height: 40),
           ],
         ),
-      ),
+      
     );
   }
   
@@ -375,7 +374,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
         ),
-      ],
+      ]
     );
   }
 }

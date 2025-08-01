@@ -11,13 +11,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class PalmistryFortunePage extends BaseFortunePage {
-  const PalmistryFortunePage({Key? key})
+  const PalmistryFortunePage({Key? key},
       : super(
           key: key,
           title: '손금 운세',
           description: '손금으로 보는 당신의 운명과 미래',
           fortuneType: 'palmistry',
-          requiresUserInfo: false,
+          requiresUserInfo: false
         );
 
   @override
@@ -59,7 +59,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -240,7 +240,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
               ),
               const SizedBox(height: 16),
               
-              // Fate Line (Optional)
+              // Fate Line (Optional,
               _buildLineAnalysis(
                 '운명선',
                 _fateLine,
@@ -281,7 +281,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -321,7 +321,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -335,7 +335,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         _buildLegendItem('감정선', Colors.pink),
         _buildLegendItem('두뇌선', Colors.blue),
         _buildLegendItem('운명선', Colors.purple),
-      ],
+      ]
     );
   }
 
@@ -354,7 +354,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
           label,
           style: theme.textTheme.bodySmall,
         ),
-      ],
+      ]
     );
   }
 
@@ -419,7 +419,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
           ],
           onChanged: onChanged,
         ),
-      ],
+      ]
     );
   }
 
@@ -453,7 +453,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
         _buildLineInterpretation(),
         _buildPersonalityTraits(),
         _buildLifePathGuidance(),
-      ],
+      ]
     );
   }
 
@@ -500,7 +500,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -543,7 +543,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -654,7 +654,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             )).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -728,7 +728,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             }).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -828,7 +828,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             )).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 }
@@ -841,7 +841,7 @@ class PalmGuidePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
@@ -851,51 +851,51 @@ class PalmGuidePainter extends CustomPainter {
     palmPath.moveTo(size.width * 0.3, size.height * 0.9);
     palmPath.quadraticBezierTo(
       size.width * 0.1, size.height * 0.6,
-      size.width * 0.2, size.height * 0.3,
+      size.width * 0.2, size.height * 0.3
     );
     palmPath.quadraticBezierTo(
       size.width * 0.3, size.height * 0.1,
-      size.width * 0.5, size.height * 0.05,
+      size.width * 0.5, size.height * 0.05
     );
     palmPath.quadraticBezierTo(
       size.width * 0.7, size.height * 0.1,
-      size.width * 0.8, size.height * 0.3,
+      size.width * 0.8, size.height * 0.3
     );
     palmPath.quadraticBezierTo(
       size.width * 0.9, size.height * 0.6,
-      size.width * 0.7, size.height * 0.9,
+      size.width * 0.7, size.height * 0.9
     );
     palmPath.close();
     canvas.drawPath(palmPath, paint);
 
-    // Draw life line (red)
+    // Draw life line (red,
     paint.color = Colors.red;
     final lifeLine = Path();
     lifeLine.moveTo(size.width * 0.3, size.height * 0.2);
     lifeLine.quadraticBezierTo(
       size.width * 0.5, size.height * 0.5,
-      size.width * 0.4, size.height * 0.8,
+      size.width * 0.4, size.height * 0.8
     );
     canvas.drawPath(lifeLine, paint);
 
-    // Draw heart line (pink)
+    // Draw heart line (pink,
     paint.color = Colors.pink;
     final heartLine = Path();
     heartLine.moveTo(size.width * 0.2, size.height * 0.3);
     heartLine.quadraticBezierTo(
       size.width * 0.5, size.height * 0.25,
-      size.width * 0.8, size.height * 0.3,
+      size.width * 0.8, size.height * 0.3
     );
     canvas.drawPath(heartLine, paint);
 
-    // Draw head line (blue)
+    // Draw head line (blue,
     paint.color = Colors.blue;
     final headLine = Path();
     headLine.moveTo(size.width * 0.25, size.height * 0.4);
     headLine.lineTo(size.width * 0.7, size.height * 0.45);
     canvas.drawPath(headLine, paint);
 
-    // Draw fate line (purple)
+    // Draw fate line (purple,
     paint.color = Colors.purple;
     paint.strokeWidth = 1.5;
     // Note: Dashed lines not directly supported in Flutter Canvas
@@ -1098,7 +1098,7 @@ extension on _PalmistryFortunePageState {
       Toast.show(
         context,
         message: '갤러리에서 이미지를 선택할 수 없습니다: $e',
-        type: ToastType.error,
+        type: ToastType.error
       );
     }
   }

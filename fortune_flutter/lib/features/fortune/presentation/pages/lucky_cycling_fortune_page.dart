@@ -22,7 +22,7 @@ class LuckyCyclingFortunePage extends ConsumerWidget {
         colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
       ),
       inputBuilder: (context, onSubmit) => _CyclingInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, regenerate) => _CyclingFortuneResult(result: result),
+      resultBuilder: (context, result, regenerate) => _CyclingFortuneResult(result: result,
     );
   }
 }
@@ -132,7 +132,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -170,7 +170,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -200,7 +200,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -231,7 +231,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -252,7 +252,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -283,7 +283,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -304,7 +304,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -342,7 +342,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -372,7 +372,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 }
@@ -504,7 +504,7 @@ class _CyclingFortuneResult extends StatelessWidget {
             content: result.details!['gear'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -554,7 +554,7 @@ class _CyclingFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

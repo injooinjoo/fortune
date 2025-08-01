@@ -54,30 +54,29 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
     // Create fan animation controller
     final fanController = _animationManager.createController(
       'fan',
-      TarotAnimations.fanSpreadDuration,
-    );
+      TarotAnimations.fanSpreadDuration);
     
     // Create staggered fan animations
     _fanAnimations = TarotAnimations.createFanAnimations(
       controller: fanController,
-      cardCount: widget.cardCount,
+      cardCount: widget.cardCount
     );
     
     // Start fan animation
     fanController.forward();
-  }
+}
 
   @override
   void dispose() {
     _animationManager.dispose();
     super.dispose();
-  }
+}
 
   void _handleCardTap(int index) {
     if (widget.enableSelection) {
       HapticUtils.lightImpact();
       widget.onCardSelected(index);
-    }
+}
   }
 
   @override
@@ -91,36 +90,35 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
         return _buildGridSpread();
       case SpreadType.stack:
         return _buildStackSpread();
-    }
+}
   }
 
   Widget _buildFanSpread(double screenWidth) {
     return GestureDetector(
       onHorizontalDragStart: (details) {
         _dragStartX = details.globalPosition.dx;
-      },
+},
       onHorizontalDragUpdate: (details) {
         setState(() {
           final dragDistance = details.globalPosition.dx - _dragStartX;
           _currentRotation = (dragDistance / screenWidth) * math.pi * 0.5;
-        });
-      },
+});
+},
       onHorizontalDragEnd: (details) {
         setState(() {
           _currentRotation = 0;
-        });
-      },
+});
+},
       child: Container(
         height: widget.cardHeight * 1.5,
         child: Stack(
           alignment: Alignment.center,
           children: List.generate(widget.cardCount, (index) {
             return _buildFanCard(index, screenWidth);
-          }),
-        ),
-      ),
+}),
+      
     );
-  }
+}
 
   Widget _buildFanCard(int index, double screenWidth) {
     print('[TarotFan] === Card $index Build Start ===');
@@ -138,21 +136,21 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           totalCards: widget.cardCount,
           fanAngle: widget.fanAngle,
           radius: screenWidth * 0.6,
-          baseRotation: _currentRotation,
+          baseRotation: _currentRotation
         );
         print('[TarotFan] Card $index - position.x: ${position.x}, position.y: ${position.y}');
         print('[TarotFan] Card $index - position.scale: ${position.scale}, rotation: ${position.rotation}');
         
         return Transform(
           alignment: Alignment.center,
-          transform: Matrix4.identity()
+          transform: Matrix4.identity(,
             ..translate(
               position.x * fanProgress,
               position.y * fanProgress + (1 - fanProgress) * 100,
               (widget.cardCount - index).toDouble(),
-            )
-            ..rotateZ(position.rotation * fanProgress)
-            ..scale(position.scale * fanProgress),
+            ,
+            ..rotateZ(position.rotation * fanProgress,
+            ..scale(position.scale * fanProgress, position.scale * fanProgress),
           child: Opacity(
             opacity: (() {
               final calculatedOpacity = 0.3 + fanProgress * 0.7;
@@ -160,9 +158,9 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
               print('[TarotFan] Card $index - Is valid? ${calculatedOpacity >= 0.0 && calculatedOpacity <= 1.0}');
               if (calculatedOpacity < 0.0 || calculatedOpacity > 1.0) {
                 print('[TarotFan] WARNING: Invalid opacity detected! Clamping...');
-              }
+}
               return calculatedOpacity.clamp(0.0, 1.0);
-            })(),
+})(),
             child: MouseRegion(
               onEnter: widget.enableHover ? (_) => setState(() => _hoveredIndex = index) : null,
               onExit: widget.enableHover ? (_) => setState(() => _hoveredIndex = -1) : null,
@@ -176,12 +174,10 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                 onTap: () => _handleCardTap(index),
                 enableFlipAnimation: false,
               ),
-            ),
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
 
   Widget _buildGridSpread() {
     final crossAxisCount = (MediaQuery.of(context).size.width / (widget.cardWidth + 16)).floor();
@@ -209,11 +205,10 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
             height: widget.cardHeight,
             isSelected: isSelected,
             onTap: () => _handleCardTap(index),
-          ),
         );
-      },
+}
     );
-  }
+}
 
   Widget _buildStackSpread() {
     return Container(
@@ -231,9 +226,9 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
               
               return Transform(
                 alignment: Alignment.center,
-                transform: Matrix4.identity()
-                  ..translate(offset * progress, offset * progress, index.toDouble())
-                  ..scale(1.0 - (index * 0.02)),
+                transform: Matrix4.identity(,
+                  ..translate(offset * progress, offset * progress, index.toDouble(),
+                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02),
                 child: Opacity(
                   opacity: (() {
                     final calculatedOpacity = isTop ? 1.0 : 0.8 * progress;
@@ -241,9 +236,9 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                     print('[TarotStack] Card $index - Calculated opacity: $calculatedOpacity');
                     if (calculatedOpacity < 0.0 || calculatedOpacity > 1.0) {
                       print('[TarotStack] WARNING: Invalid opacity! Value: $calculatedOpacity');
-                    }
+}
                     return calculatedOpacity.clamp(0.0, 1.0);
-                  })(),
+})(),
                   child: TarotCardWidget(
                     cardIndex: index,
                     deck: widget.selectedDeck,
@@ -251,19 +246,16 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                     height: widget.cardHeight,
                     onTap: isTop ? () => _handleCardTap(index) : null,
                   ),
-                ),
               );
-            },
+},
           );
-        }).reversed.toList(),
-      ),
-    );
-  }
+}).reversed.toList());
+}
 }
 
 /// Different spread types for tarot cards
 enum SpreadType {
   fan,   // Cards spread in a fan/arc
   grid,  // Cards in a grid layout
-  stack, // Cards stacked on top of each other
+  stack, // Cards stacked on top of each other,
 }

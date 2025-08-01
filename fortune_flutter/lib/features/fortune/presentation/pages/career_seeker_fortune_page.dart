@@ -18,7 +18,7 @@ class CareerSeekerFortunePage extends BaseFortunePage {
           description: '새로운 직장을 찾고 있는 분들을 위한 맞춤 운세',
           fortuneType: 'career_seeker',
           requiresUserInfo: false,
-          initialParams: initialParams,
+          initialParams: initialParams
         );
 
   @override
@@ -82,7 +82,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -192,7 +192,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
                 items: _fields.map((field) {
                   return DropdownMenuItem(
                     value: field,
-                    child: Text(field),
+                    child: Text(field)
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -397,7 +397,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -411,7 +411,7 @@ class _CareerSeekerFortunePageState extends BaseFortunePageState<CareerSeekerFor
         _buildIndustryCompatibility(),
         _buildLuckyCompanies(),
         _buildActionPlan(),
-      ],
+      ]
     );
   }
 

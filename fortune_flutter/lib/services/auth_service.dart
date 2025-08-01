@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final _supabase = Supabase.instance.client;
 
-  @Deprecated('Use SocialAuthService.signInWithGoogle() instead for better performance')
+  @Deprecated('Use SocialAuthService.signInWithGoogle() instead for better performance',
   Future<void> signInWithGoogle() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(
@@ -18,7 +18,7 @@ class AuthService {
     throw UnimplementedError('Kakao login is not implemented yet');
   }
 
-  @Deprecated('Use SocialAuthService.signInWithApple() instead for better performance')
+  @Deprecated('Use SocialAuthService.signInWithApple() instead for better performance',
   Future<void> signInWithApple() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(
@@ -27,7 +27,7 @@ class AuthService {
     );
   }
 
-  @Deprecated('Use SocialAuthService.signInWithNaver() instead for better performance')
+  @Deprecated('Use SocialAuthService.signInWithNaver() instead for better performance',
   Future<void> signInWithNaver() async {
     // This method is deprecated. Use SocialAuthService for OAuth login
     throw UnimplementedError(

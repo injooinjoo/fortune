@@ -17,7 +17,6 @@ final tokenBalancePositionProvider = Provider<Offset?>((ref) {
         position.dx + size.width / 2,
         position.dy + size.height / 2,
       );
-    }
   }
   return null;
 });
@@ -49,7 +48,6 @@ class SoulAnimationState {
       endPosition: endPosition ?? this.endPosition,
     );
   }
-}
 
 // Soul animation notifier
 class SoulAnimationNotifier extends StateNotifier<SoulAnimationState> {

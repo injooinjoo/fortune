@@ -1,0 +1,25 @@
+=== Flutter Build Error Summary ===
+
+Total files with errors:      400
+
+=== Error Types ===
+52203 Error: Expected ';' after this.
+39607 Error: Unexpected token ';'.
+34595 Error: Expected an identifier, but got ')'.
+5386 Error: Expected a declaration, but got ')'.
+5031 Error: Expected ',' before this.
+4331 Error: Expected '{' before this.
+3653 Error: Expected an identifier, but got ','.
+3447 Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+3186 Error: Expected a class member, but got ')'.
+2875 Error: Can't find ']' to match '['.
+2290 Error: Expected an identifier, but got ']'.
+2105 Error: Expected ')' before this.
+1924 Error: Non-optional parameters can't have a default value.
+1477 Error: Expected a declaration, but got ':'.
+1398 Error: Expected ']' before this.
+1238 Error: Unexpected token ')'.
+1144 Error: Couldn't find constructor 'SizedBox'.
+1132 Error: Expected a declaration, but got '.'.
+ 978 Error: Expected a class member, but got ':'.
+ 892 Error: A function declaration needs an explicit list of parameters.

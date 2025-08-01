@@ -18,15 +18,12 @@ class FortuneCookiePage extends ConsumerWidget {
       headerGradient: LinearGradient(
         colors: [AppTheme.warningColor, AppTheme.tertiaryColor],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        end: Alignment.bottomRight),
       inputBuilder: (context, onSubmit) => _FortuneCookieInput(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _FortuneCookieResult(
-        result: result,
-        onShare: onShare,
-      ),
-    );
-  }
+        result: result),
+                  onShare: onShare);
+}
 }
 
 class _FortuneCookieInput extends StatefulWidget {
@@ -49,79 +46,76 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 100),
-      vsync: this,
+      vsync: this
     );
     _shakeAnimation = Tween<double>(
       begin: -5,
       end: 5,
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
+      parent: _animationController),
+                  curve: Curves.easeInOut)
     ));
-  }
+}
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
+}
 
   Future<void> _onCookieTap() async {
     setState(() {
       _isShaking = true;
-    });
+});
 
     // Shake animation
     for (int i = 0; i < 3; i++) {
       await _animationController.forward();
       await _animationController.reverse();
-    }
+}
 
     setState(() {
       _isShaking = false;
-    });
+});
 
     // Submit with empty params as fortune cookie doesn't need user input
     widget.onSubmit({});
-  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        mainAxisAlignment: MainAxisAlignment.center),
+                  children: [
           Text(
-            '포춘 쿠키를 터치하세요!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
+            '포춘 쿠키를 터치하세요!'),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold),
             ),
-          ),
           const SizedBox(height: 8),
           Text(
-            '오늘의 행운 메시지가 담겨있습니다',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.fortuneTheme.subtitleText,
+            '오늘의 행운 메시지가 담겨있습니다'),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: context.fortuneTheme.subtitleText),
             ),
-          ),
           const SizedBox(height: 48),
           GestureDetector(
             onTap: _onCookieTap,
             child: AnimatedBuilder(
-              animation: _shakeAnimation,
-              builder: (context, child) {
+              animation: _shakeAnimation),
+                  builder: (context, child) {
                 return Transform.translate(
-                  offset: _isShaking ? Offset(_shakeAnimation.value, 0) : Offset.zero,
+                  offset: _isShaking ? Offset(_shakeAnimation.value, 0) : Offset.zero
                   child: Container(
                     width: 200,
                     height: 200,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
+                      shape: BoxShape.circle),
+                  gradient: LinearGradient(
                         colors: [
-                          AppTheme.warningColor,
+                          AppTheme.warningColor)
                           AppTheme.warningColor.withValues(alpha: 0.8),
-                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -131,29 +125,20 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
-                      ],
-                    ),
                     child: Icon(
                       Icons.cookie,
-                      size: 80,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              },
+                      size: 80),
+                  color: Colors.white)
+                    ));
+},
             ),
-          ),
           const SizedBox(height: 48),
           Text(
-            '탭하여 열기',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: context.fortuneTheme.subtitleText,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+            '탭하여 열기'),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: context.fortuneTheme.subtitleText),
+            ));
+}
 }
 
 class _FortuneCookieResult extends StatelessWidget {
@@ -162,8 +147,8 @@ class _FortuneCookieResult extends StatelessWidget {
 
   const _FortuneCookieResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare),
+});
 
   @override
   Widget build(BuildContext context) {
@@ -192,20 +177,18 @@ class _FortuneCookieResult extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
                         colors: [
-                          AppTheme.warningColor,
-                          AppTheme.tertiaryColor,
-                        ],
+                          AppTheme.warningColor)
+                          AppTheme.tertiaryColor),
+])
                       ),
-                    ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.card_giftcard,
-                      size: 60,
-                      color: Colors.white,
+                      size: 60),
+                  color: Colors.white)
                     ),
-                  ),
-                ),
+                
               );
-            },
+},
           ),
           const SizedBox(height: 32),
 
@@ -216,20 +199,17 @@ class _FortuneCookieResult extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  '오늘의 메시지',
+                  '오늘의 메시지'),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: AppTheme.primaryColor,
+                    color: AppTheme.primaryColor),
                     fontWeight: FontWeight.bold,
                   ),
-                ),
                 const SizedBox(height: 16),
                 Text(
-                  fortuneMessage,
+                  fortuneMessage),
                   style: Theme.of(context).textTheme.bodyLarge,
                   textAlign: TextAlign.center,
                 ),
-              ],
-            ),
           ),
           const SizedBox(height: 20),
 
@@ -243,29 +223,23 @@ class _FortuneCookieResult extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.looks_one,
-                        color: AppTheme.primaryColor,
-                        size: 32,
-                      ),
+                        Icons.looks_one),
+                  color: AppTheme.primaryColor),
+                  size: 32),
                       const SizedBox(height: 8),
                       Text(
-                        '행운의 숫자',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: context.fortuneTheme.subtitleText,
+                        '행운의 숫자'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: context.fortuneTheme.subtitleText),
                         ),
-                      ),
                       const SizedBox(height: 4),
                       Text(
                         luckyNumbers.join(', '),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryColor,
+                          fontWeight: FontWeight.bold),
+                  color: AppTheme.primaryColor)
                         ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
               const SizedBox(width: 12),
               Expanded(
                 child: GlassContainer(
@@ -274,30 +248,23 @@ class _FortuneCookieResult extends StatelessWidget {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.palette,
-                        color: AppTheme.primaryColor,
-                        size: 32,
-                      ),
+                        Icons.palette),
+                  color: AppTheme.primaryColor),
+                  size: 32),
                       const SizedBox(height: 8),
                       Text(
-                        '행운의 색',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: context.fortuneTheme.subtitleText,
+                        '행운의 색'),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: context.fortuneTheme.subtitleText),
                         ),
-                      ),
                       const SizedBox(height: 4),
                       Text(
-                        luckyColor,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        luckyColor),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold),
                           color: AppTheme.primaryColor,
                         ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-            ],
           ),
           const SizedBox(height: 20),
 
@@ -311,45 +278,36 @@ class _FortuneCookieResult extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.lightbulb_outline,
-                      color: AppTheme.warningColor,
-                      size: 24,
-                    ),
+                      Icons.lightbulb_outline),
+                  color: AppTheme.warningColor),
+                  size: 24),
                     const SizedBox(width: 8),
                     Text(
-                      '조언',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      '조언'),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold),
                       ),
-                    ),
-                  ],
-                ),
                 const SizedBox(height: 12),
                 Text(
-                  advice,
+                  advice),
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
-              ],
-            ),
           ),
           const SizedBox(height: 24),
 
           // Share button
           ElevatedButton.icon(
-            onPressed: onShare,
-            icon: const Icon(Icons.share),
+            onPressed: onShare),
+                  icon: const Icon(Icons.share),
             label: const Text('공유하기'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryColor,
+              backgroundColor: AppTheme.primaryColor),
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
-              ),
             ),
-          ),
-        ],
-      ),
+      
     );
-  }
+}
 }

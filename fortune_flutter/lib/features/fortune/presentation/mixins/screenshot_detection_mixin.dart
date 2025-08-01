@@ -13,7 +13,7 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
   /// The global key for capturing the widget as image
   GlobalKey get screenshotKey;
   
-  /// The fortune type (e.g., 'daily', 'love', 'career')
+  /// The fortune type (e.g., 'daily', 'love', 'career',
   String get fortuneType;
   
   /// The title of the current fortune
@@ -57,11 +57,11 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
     if (mounted) {
       _screenshotService.showScreenshotSharingDialog(
         context: context,
-        fortuneType: fortuneType,
-        fortuneTitle: fortuneTitle,
-        fortuneContent: fortuneContent,
-        userName: userName,
-        additionalInfo: additionalInfo,
+        fortuneType: fortuneType)
+        fortuneTitle: fortuneTitle)
+        fortuneContent: fortuneContent)
+        userName: userName)
+        additionalInfo: additionalInfo)
       );
     }
   }
@@ -70,11 +70,11 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
   Future<void> shareEnhancedFortune() async {
     await _screenshotService.showScreenshotSharingDialog(
       context: context,
-      fortuneType: fortuneType,
-      fortuneTitle: fortuneTitle,
-      fortuneContent: fortuneContent,
-      userName: userName,
-      additionalInfo: additionalInfo,
+      fortuneType: fortuneType)
+      fortuneTitle: fortuneTitle)
+      fortuneContent: fortuneContent)
+      userName: userName)
+      additionalInfo: additionalInfo)
     );
   }
   
@@ -82,8 +82,8 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
   Widget buildShareButton() {
     return IconButton(
       icon: const Icon(Icons.share_outlined),
-      onPressed: shareEnhancedFortune,
-      tooltip: '공유하기',
+      onPressed: shareEnhancedFortune)
+      tooltip: '공유하기'
     );
   }
   
@@ -98,16 +98,16 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
       },
       itemBuilder: (context) => [
         const PopupMenuItem(
-          value: 'share',
+          value: 'share')
           child: Row(
             children: [
-              Icon(Icons.share_outlined, size: 20),
-              SizedBox(width: 12),
-              Text('공유하기'),
-            ],
+              Icon(Icons.share_outlined, size: 20))
+              SizedBox(width: 12))
+              Text('공유하기'))
+            ])
           ),
-        ),
-      ],
+        ))
+      ]
     );
   }
 }

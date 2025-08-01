@@ -52,7 +52,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
         Text(
           '오늘의 수영 운세를 확인하고\n물 속에서 행운을 만나보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
             height: 1.5,
           ),
         ),
@@ -132,7 +132,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -170,7 +170,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -200,7 +200,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -238,7 +238,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -259,7 +259,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -290,7 +290,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -311,7 +311,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -349,7 +349,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -379,7 +379,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 }
@@ -511,7 +511,7 @@ class _SwimFortuneResult extends StatelessWidget {
             content: result.details!['etiquette'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -561,7 +561,7 @@ class _SwimFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

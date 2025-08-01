@@ -22,7 +22,7 @@ class TalismanGenerationStep extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TalismanGenerationStep> createState() => _TalismanGenerationStepState();
+  ConsumerState<TalismanGenerationStep> createState() => _TalismanGenerationStepState();,
 }
 
 class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
@@ -37,20 +37,19 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
+      duration: const Duration(seconds: 2))..repeat();
     
     // Start generation process
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _generateTalisman();
-    });
-  }
+      _generateTalisman();,
+});,
+}
 
   @override
   void dispose() {
     _animationController.dispose();
-    super.dispose();
-  }
+    super.dispose();,
+}
 
   Future<void> _generateTalisman() async {
     final state = ref.read(talismanCreationProvider);
@@ -60,10 +59,10 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
     if (state.selectedType == null) {
       setState(() {
         _isGenerating = false;
-        _statusMessage = '부적 유형이 선택되지 않았습니다.';
-      });
-      return;
-    }
+        _statusMessage = '부적 유형이 선택되지 않았습니다.';,
+});
+      return;,
+}
     
     // Simulate progress updates
     _updateProgress(0.2, '사용자 정보를 분석하고 있습니다...');
@@ -94,7 +93,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
               'personalText': state.personalText,
             },
           },
-        },
+        }
       );
       
       if (response['success'] == true) {
@@ -123,40 +122,38 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
             '부적을 타인에게 보여주지 마세요',
             '항상 깨끗하게 보관하세요',
             '부정적인 생각을 품지 마세요',
-          ]),
-        );
+          ]);
         
         await Future.delayed(const Duration(seconds: 1));
         
         setState(() {
-          _isGenerating = false;
-        });
+          _isGenerating = false;,
+});
         
         // Haptic feedback for completion
         HapticUtils.successNotification();
         
         // Complete after a short delay
         await Future.delayed(const Duration(milliseconds: 500));
-        widget.onComplete(result);
-        
-      } else {
-        throw Exception(response['error'] ?? '부적 생성에 실패했습니다');
-      }
+        widget.onComplete(result);,
+} else {
+        throw Exception(response['error'] ?? '부적 생성에 실패했습니다');,
+}
     } catch (e) {
       setState(() {
         _isGenerating = false;
-        _statusMessage = '오류가 발생했습니다: ${e.toString()}';
-      });
-      HapticUtils.errorNotification();
-    }
+        _statusMessage = '오류가 발생했습니다: ${e.toString()}';,
+});
+      HapticUtils.errorNotification();,
+}
   }
 
   void _updateProgress(double progress, String message) {
     setState(() {
       _progress = progress;
-      _statusMessage = message;
-    });
-  }
+      _statusMessage = message;,
+});,
+}
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +188,6 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                             ],
                             stops: const [0.3, 0.7, 1.0],
                           ),
-                        ),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -211,16 +207,13 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                             .withValues(alpha: 0.5),
                                         width: 2,
                                       ),
-                                    ),
                                     child: CustomPaint(
                                       painter: _MagicCirclePainter(
                                         progress: _progress,
                                         color: state.selectedType!.gradientColors[0],
                                       ),
-                                    ),
-                                  ),
-                                );
-                              },
+                                  ));,
+},
                             ),
                             
                             // Center icon
@@ -247,8 +240,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                 state.selectedType!.icon,
                                 color: Colors.white,
                                 size: 50,
-                              ),
-                            ).animate(onPlay: (controller) => controller.repeat())
+                              )).animate(onPlay: (controller) => controller.repeat())
                               .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.3))
                               .scale(
                                 begin: const Offset(0.9, 0.9),
@@ -258,7 +250,6 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                               ),
                           ],
                         ),
-                      ),
                       
                       const SizedBox(height: 40),
                       
@@ -283,7 +274,6 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(3),
-                        ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(3),
                           child: LinearProgressIndicator(
@@ -292,9 +282,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                             valueColor: AlwaysStoppedAnimation<Color>(
                               state.selectedType!.gradientColors[0],
                             ),
-                          ),
                         ),
-                      ),
                       
                       const SizedBox(height: 12),
                       
@@ -304,15 +292,12 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: AppColors.textSecondary,
                         ),
-                      ),
                     ],
                   ),
-                ),
               ),
               
               // Bottom actions
-              if (!_isGenerating)
-                OutlinedButton(
+              if (!_isGenerating), OutlinedButton(
                   onPressed: widget.onBack,
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -321,16 +306,12 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: const Text('다시 만들기'),
-                ),
             ],
           ),
-        ),
-      ),
-    );
-  }
+      ));,
+}
 }
 
 class _MagicCirclePainter extends CustomPainter {
@@ -364,7 +345,7 @@ class _MagicCirclePainter extends CustomPainter {
       -3.14159 / 2,
       2 * 3.14159 * progress,
       false,
-      progressPaint,
+      progressPaint
     );
 
     // Draw decorative elements
@@ -378,10 +359,10 @@ class _MagicCirclePainter extends CustomPainter {
         Offset(x, y),
         4,
         paint..style = PaintingStyle.fill,
-      );
-    }
+      );,
+}
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;,
 }

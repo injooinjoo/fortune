@@ -28,7 +28,7 @@ class ProfileCache {
   void set(String userId, Map<String, dynamic> profile) {
     _cache[userId] = _CachedProfile(
       data: Map.from(profile),
-      timestamp: DateTime.now(),
+      timestamp: DateTime.now()
     );
   }
   

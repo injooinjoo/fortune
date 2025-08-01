@@ -35,22 +35,22 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     try {
       // TODO: 실제 구독 정보 로드
       // 임시 데이터
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1);
       setState(() {
         _subscriptionInfo = SubscriptionInfo(
           id: 'sub_test123',
-          status: 'active',
-          planName: '프리미엄 월간 구독',
-          price: 9900,
-          currentPeriodEnd: DateTime.now().add(const Duration(days: 15)),
-          cancelAtPeriodEnd: false,
+          status: 'active')
+          planName: '무제한 이용권')
+          price: 2500)
+          currentPeriodEnd: DateTime.now().add(const Duration(days: 15)))
+          cancelAtPeriodEnd: false)
           features: [
-            '모든 운세 무제한 이용',
-            '광고 제거',
-            '프리미엄 전용 운세',
-            '우선 지원',
-            '토큰 사용량 분석',
-          ],
+            '모든 운세 무제한 이용')
+            '광고 제거')
+            '프리미엄 전용 운세')
+            '우선 지원')
+            '토큰 사용량 분석')
+          ]
         );
       });
     } catch (e) {
@@ -67,15 +67,15 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '구독 관리'),
+            const AppHeader(title: '구독 관리'))
             Expanded(
               child: _isLoading 
                   ? const Center(child: CircularProgressIndicator())
-                  : _buildContent(),
-            ),
-          ],
+                  : _buildContent())
+            ))
+          ])
         ),
-      ),
+      ))
     );
   }
 
@@ -87,19 +87,19 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildSubscriptionStatus(),
-          const SizedBox(height: 24),
-          _buildBillingInfo(),
-          const SizedBox(height: 24),
-          _buildFeatures(),
-          const SizedBox(height: 24),
-          _buildActions(),
-          const SizedBox(height: 16),
-          _buildPaymentHistory(),
-        ],
-      ),
+          _buildSubscriptionStatus())
+          const SizedBox(height: 24))
+          _buildBillingInfo())
+          const SizedBox(height: 24))
+          _buildFeatures())
+          const SizedBox(height: 24))
+          _buildActions())
+          const SizedBox(height: 16))
+          _buildPaymentHistory())
+        ])
+      )
     );
   }
 
@@ -107,36 +107,36 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center)
         children: [
           Icon(
-            Icons.card_membership_outlined,
-            size: 80,
-            color: AppColors.textSecondary,
-          ),
-          const SizedBox(height: 24),
+            Icons.card_membership_outlined)
+            size: 80)
+            color: AppColors.textSecondary)
+          ))
+          const SizedBox(height: 24))
           Text(
-            '활성화된 구독이 없습니다',
-            style: AppTextStyles.headlineMedium,
-          ),
-          const SizedBox(height: 8),
+            '활성화된 구독이 없습니다')
+            style: AppTextStyles.headlineMedium))
+          ))
+          const SizedBox(height: 8))
           Text(
-            '프리미엄 구독으로 모든 운세를\n무제한으로 이용하세요!',
+            '프리미엄 구독으로 모든 운세를\n무제한으로 이용하세요!')
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
+              color: AppColors.textSecondary))
+            ))
+            textAlign: TextAlign.center)
+          ))
+          const SizedBox(height: 32))
           CustomButton(
-            onPressed: _navigateToSubscriptionOptions,
-            text: '구독 시작하기',
+            onPressed: _navigateToSubscriptionOptions)
+            text: '구독 시작하기')
             gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [AppColors.primary, AppColors.secondary])
             ),
-          ),
-        ],
-      ),
+          ))
+        ])
+      )
     );
   }
 
@@ -145,74 +145,74 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       gradient: _subscriptionInfo!.status == 'active'
           ? LinearGradient(
               colors: [AppColors.primary, AppColors.secondary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topLeft)
+              end: Alignment.bottomRight)
             )
-          : null,
+          : null)
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween)
               children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Text(
-                      _subscriptionInfo!.planName,
+                      _subscriptionInfo!.planName)
                       style: AppTextStyles.headlineSmall.copyWith(
                         color: _subscriptionInfo!.status == 'active' 
                             ? Colors.white 
-                            : AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    _buildStatusChip(),
-                  ],
+                            : AppColors.textPrimary)
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                    const SizedBox(height: 4))
+                    _buildStatusChip())
+                  ])
                 ),
                 Icon(
-                  Icons.star,
-                  size: 48,
+                  Icons.star)
+                  size: 48)
                   color: _subscriptionInfo!.status == 'active'
                       ? Colors.white.withValues(alpha: 0.5)
-                      : AppColors.textSecondary,
-                ),
-              ],
+                      : AppColors.textSecondary)
+                ))
+              ])
             ),
             if (_subscriptionInfo!.cancelAtPeriodEnd) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 16))
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12))
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  color: Colors.white.withValues(alpha: 0.2))
+                  borderRadius: BorderRadius.circular(8))
+                ))
                 child: Row(
                   children: [
                     const Icon(
-                      Icons.info_outline,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
+                      Icons.info_outline)
+                      color: Colors.white)
+                      size: 20)
+                    ))
+                    const SizedBox(width: 8))
                     Expanded(
                       child: Text(
                         '${DateFormat('yyyy년 MM월 dd일').format(_subscriptionInfo!.currentPeriodEnd)}에 구독이 종료됩니다.',
                         style: AppTextStyles.caption.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
+                          color: Colors.white))
+                        ))
+                      ))
+                    ))
+                  ])
                 ),
-              ),
-            ],
+              ))
+            ])
           ],
-        ),
-      ),
+        ))
+      ))
     ).animate().fadeIn().scale();
   }
 
@@ -241,16 +241,16 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        color: statusColor.withValues(alpha: 0.2))
+        borderRadius: BorderRadius.circular(12))
+      ))
       child: Text(
-        statusText,
+        statusText)
         style: AppTextStyles.caption.copyWith(
-          color: _subscriptionInfo!.status == 'active' ? Colors.white : statusColor,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+          color: _subscriptionInfo!.status == 'active' ? Colors.white : statusColor)
+          fontWeight: FontWeight.bold)
+        ))
+      )
     );
   }
 
@@ -259,39 +259,39 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Text(
-              '결제 정보',
+              '결제 정보')
               style: AppTextStyles.bodyLarge.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
+                fontWeight: FontWeight.bold))
+              ))
+            ))
+            const SizedBox(height: 16))
             _buildInfoRow(
-              '월 구독료',
-              '₩${NumberFormat('#,###').format(_subscriptionInfo!.price)}',
+              '월 구독료')
+              '₩${NumberFormat('#,###').format(_subscriptionInfo!.price)}')
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 12))
             _buildInfoRow(
-              '다음 결제일',
-              DateFormat('yyyy년 MM월 dd일').format(_subscriptionInfo!.currentPeriodEnd),
-            ),
-            const SizedBox(height: 12),
+              '다음 결제일')
+              DateFormat('yyyy년 MM월 dd일').format(_subscriptionInfo!.currentPeriodEnd))
+            ))
+            const SizedBox(height: 12))
             _buildInfoRow(
-              '결제 수단',
-              '•••• 1234',
+              '결제 수단')
+              '•••• 1234')
               trailing: TextButton(
-                onPressed: _changePaymentMethod,
+                onPressed: _changePaymentMethod)
                 child: Text(
-                  '변경',
-                  style: TextStyle(color: AppColors.primary),
-                ),
-              ),
-            ),
-          ],
+                  '변경')
+                  style: TextStyle(color: AppColors.primary)))
+                ))
+              ))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -300,28 +300,28 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
+          label)
           style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
+            color: AppColors.textSecondary))
+          ))
+        ))
         if (trailing != null) ...[
           Expanded(
             child: Text(
-              value,
-              style: AppTextStyles.bodyMedium,
-              textAlign: TextAlign.end,
-            ),
-          ),
-          trailing,
+              value)
+              style: AppTextStyles.bodyMedium))
+              textAlign: TextAlign.end)
+            ))
+          ))
+          trailing)
         ] else
           Text(
             value,
             style: AppTextStyles.bodyMedium.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-      ],
+              fontWeight: FontWeight.bold))
+            ))
+          ))
+      ])
     );
   }
 
@@ -330,40 +330,40 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '구독 혜택',
+          '구독 혜택')
           style: AppTextStyles.headlineSmall.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold))
+          ))
+        ))
+        const SizedBox(height: 16))
         ..._subscriptionInfo!.features.map((feature) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 12))
           child: Row(
             children: [
               Container(
-                width: 24,
-                height: 24,
+                width: 24)
+                height: 24)
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
+                  color: AppColors.primary.withValues(alpha: 0.1))
+                  shape: BoxShape.circle)
+                ))
                 child: Icon(
-                  Icons.check,
-                  size: 16,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
+                  Icons.check)
+                  size: 16)
+                  color: AppColors.primary)
+                ))
+              ))
+              const SizedBox(width: 12))
               Expanded(
                 child: Text(
-                  feature,
-                  style: AppTextStyles.bodyMedium,
-                ),
-              ),
-            ],
+                  feature)
+                  style: AppTextStyles.bodyMedium))
+                ))
+              ))
+            ])
           ),
-        )).toList(),
-      ],
+        )).toList())
+      ]
     );
   }
 
@@ -371,9 +371,9 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     if (_subscriptionInfo!.cancelAtPeriodEnd) {
       return CustomButton(
         onPressed: _reactivateSubscription,
-        text: '구독 재활성화',
+        text: '구독 재활성화')
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary],
+          colors: [AppColors.primary, AppColors.secondary])
         ),
       );
     }
@@ -382,18 +382,18 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       children: [
         CustomButton(
           onPressed: _upgradeSubscription,
-          text: '연간 구독으로 업그레이드',
-          backgroundColor: AppColors.surface,
-          textColor: AppColors.primary,
-        ),
-        const SizedBox(height: 12),
+          text: '연간 구독으로 업그레이드')
+          backgroundColor: AppColors.surface)
+          textColor: AppColors.primary)
+        ))
+        const SizedBox(height: 12))
         CustomButton(
-          onPressed: _cancelSubscription,
-          text: '구독 취소',
-          backgroundColor: Colors.transparent,
-          textColor: AppColors.error,
-        ),
-      ],
+          onPressed: _cancelSubscription)
+          text: '구독 취소')
+          backgroundColor: Colors.transparent)
+          textColor: AppColors.error)
+        ))
+      ]
     );
   }
 
@@ -402,34 +402,34 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween)
           children: [
             Text(
-              '결제 내역',
+              '결제 내역')
               style: AppTextStyles.bodyLarge.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold))
+              ))
+            ))
             TextButton(
-              onPressed: _viewAllPayments,
+              onPressed: _viewAllPayments)
               child: Text(
-                '전체 보기',
-                style: TextStyle(color: AppColors.primary),
-              ),
-            ),
-          ],
+                '전체 보기')
+                style: TextStyle(color: AppColors.primary)))
+              ))
+            ))
+          ])
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 12))
         // 최근 결제 내역 3개만 표시
         ...[1, 2, 3].map((index) => Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: _buildPaymentHistoryItem(
-            date: DateTime.now().subtract(Duration(days: 30 * index)),
-            amount: 9900,
-            status: 'succeeded',
-          ),
-        )).toList(),
-      ],
+            date: DateTime.now().subtract(Duration(days: 30 * index)))
+            amount: 2500)
+            status: 'succeeded')
+          ))
+        )).toList())
+      ]
     );
   }
 
@@ -441,37 +441,37 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
-      ),
+        color: AppColors.surface)
+        borderRadius: BorderRadius.circular(8))
+      ))
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween)
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Text(
-                DateFormat('yyyy.MM.dd').format(date),
+                DateFormat('yyyy.MM.dd').format(date))
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 2),
+                  color: AppColors.textSecondary))
+                ))
+              ))
+              const SizedBox(height: 2))
               Text(
-                '월간 구독',
-                style: AppTextStyles.bodyMedium,
-              ),
-            ],
+                '월간 구독')
+                style: AppTextStyles.bodyMedium))
+              ))
+            ])
           ),
           Text(
-            '₩${NumberFormat('#,###').format(amount)}',
+            '₩${NumberFormat('#,###').format(amount)}')
             style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: status == 'succeeded' ? AppColors.textPrimary : AppColors.error,
-            ),
-          ),
-        ],
-      ),
+              color: status == 'succeeded' ? AppColors.textPrimary : AppColors.error)
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -494,26 +494,26 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('구독 취소'),
+        title: const Text('구독 취소'))
         content: const Text(
-          '정말로 구독을 취소하시겠습니까?\n현재 결제 기간이 끝날 때까지는 서비스를 이용하실 수 있습니다.',
-        ),
+          '정말로 구독을 취소하시겠습니까?\n현재 결제 기간이 끝날 때까지는 서비스를 이용하실 수 있습니다.')
+        ))
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
+            onPressed: () => Navigator.pop(context))
+            child: const Text('취소'))
+          ))
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
               await _processCancellation();
-            },
+            })
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
-            ),
-            child: const Text('구독 취소'),
-          ),
-        ],
+            ))
+            child: const Text('구독 취소'))
+          ))
+        ])
       ),
     );
   }
@@ -530,7 +530,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
         
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('구독이 취소되었습니다.')),
+            const SnackBar(content: Text('구독이 취소되었습니다.'),
           );
         }
       } else {
@@ -542,7 +542,7 @@ class _SubscriptionManagementPageState extends ConsumerState<SubscriptionManagem
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구독 취소 중 오류가 발생했습니다.')),
+          const SnackBar(content: Text('구독 취소 중 오류가 발생했습니다.'),
         );
       }
     } finally {

@@ -196,7 +196,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                         Text(
                           error.toString(),
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -405,7 +405,7 @@ class _OverviewTab extends StatelessWidget {
                           '${_formatNumber(stat.requests)}개 요청',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -425,7 +425,7 @@ class _OverviewTab extends StatelessWidget {
                           _formatCurrency(stat.cost),
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -475,7 +475,7 @@ class _SummaryCard extends StatelessWidget {
                 title,
                 style: TextStyle(
                   fontSize: 12 * fontScale,
-                  color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               Icon(icon, size: 20, color: color),
@@ -493,7 +493,7 @@ class _SummaryCard extends StatelessWidget {
             subtitle,
             style: TextStyle(
               fontSize: 10 * fontScale,
-              color: theme.colorScheme.onSurface.withValues(alpha:  0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ],
@@ -549,7 +549,7 @@ class _UsageTrendTab extends StatelessWidget {
                     horizontalInterval: maxY / 5,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: theme.colorScheme.onSurface.withValues(alpha:  0.1),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1,
                       );
                     },
@@ -574,7 +574,7 @@ class _UsageTrendTab extends StatelessWidget {
                               DateFormat('MM/dd').format(date),
                               style: TextStyle(
                                 fontSize: 10 * fontScale,
-                                color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                             );
                           }
@@ -592,8 +592,8 @@ class _UsageTrendTab extends StatelessWidget {
                             NumberFormat.compact().format(value),
                             style: TextStyle(
                               fontSize: 10 * fontScale,
-                              color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
-                            ),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            ,
                           );
                         },
                       ),
@@ -621,8 +621,8 @@ class _UsageTrendTab extends StatelessWidget {
                         show: true,
                         gradient: LinearGradient(
                           colors: [
-                            theme.colorScheme.primary.withValues(alpha:  0.1),
-                            theme.colorScheme.secondary.withValues(alpha:  0.1),
+                            theme.colorScheme.primary.withValues(alpha: 0.1),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -726,14 +726,14 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10 * fontScale,
-            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+            fontSize: 10 * fontScale),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: 12 * fontScale,
+            fontSize: 12 * fontScale),
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -794,7 +794,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.green.withValues(alpha:  0.2),
+                            color: Colors.green.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -831,7 +831,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
+              ,
             );
           }).toList(),
           
@@ -841,8 +841,8 @@ class _PackageAnalysisTab extends StatelessWidget {
           GlassContainer(
             gradient: LinearGradient(
               colors: [
-                Colors.green.withValues(alpha:  0.1),
-                Colors.green.withValues(alpha:  0.05),
+                Colors.green.withValues(alpha: 0.1),
+                Colors.green.withValues(alpha: 0.05),
               ],
             ),
             padding: const EdgeInsets.all(20),
@@ -857,7 +857,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                 Text(
                   '총 절감액',
                   style: TextStyle(
-                    fontSize: 16 * fontScale,
+                    fontSize: 16 * fontScale),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -882,7 +882,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                   '배치 처리로 절약한 비용',
                   style: TextStyle(
                     fontSize: 12 * fontScale,
-                    color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -915,15 +915,15 @@ class _PackageStat extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10 * fontScale,
-            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+            fontSize: 10 * fontScale),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
           style: TextStyle(
-            fontSize: 14 * fontScale,
+            fontSize: 14 * fontScale),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -969,8 +969,8 @@ class _TopUsersTab extends StatelessWidget {
           Text(
             '토큰 사용량 기준 상위 ${stats.topUsers.length}명',
             style: TextStyle(
-              fontSize: 14 * fontScale,
-              color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+              fontSize: 14 * fontScale),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 16),
@@ -990,7 +990,7 @@ class _TopUsersTab extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: color.withValues(alpha:  0.2),
+                        color: color.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -1021,7 +1021,7 @@ class _TopUsersTab extends StatelessWidget {
                             '${NumberFormat('#,###').format(user.requestCount)}회 요청',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
-                              color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -1043,7 +1043,7 @@ class _TopUsersTab extends StatelessWidget {
                           NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(user.totalCost),
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: theme.colorScheme.onSurface.withValues(alpha:  0.7),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ],

@@ -39,7 +39,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
     
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
+      vsync: this
     );
     
     _fadeAnimation = Tween<double>(
@@ -259,9 +259,9 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 200.ms)
-      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
+    ).animate(,
+      .fadeIn(duration: 600.ms, delay: 200.ms,
+      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0);
   }
 
   Widget _buildOverallAnalysis(Map<String, dynamic> fortuneData) {
@@ -340,8 +340,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 500.ms)
+    ).animate(,
+      .fadeIn(duration: 500.ms,
       .slideX(begin: 0.1, end: 0);
   }
 
@@ -388,7 +388,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -471,7 +471,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
         final sectorFortune = sectorFortuneData[sector.name] as Map<String, dynamic>? ?? {};
         
         return _buildSectorCard(sector, sectorFortune, index);
-      },
+      }
     );
   }
 
@@ -573,8 +573,8 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
           ),
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 500.ms, delay: (100 * index).ms)
+    ).animate(,
+      .fadeIn(duration: 500.ms, delay: (100 * index).ms,
       .slideY(begin: 0.1, end: 0);
   }
 
@@ -709,7 +709,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -844,7 +844,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -892,7 +892,7 @@ class _InvestmentFortuneResultPageState extends ConsumerState<InvestmentFortuneR
             );
           }).toList(),
         ),
-      ],
+      ]
     );
   }
 
@@ -1065,11 +1065,11 @@ class InvestmentPatternPainter extends CustomPainter {
     path.moveTo(0, size.height * 0.6);
     path.quadraticBezierTo(
       size.width * 0.3, size.height * 0.4,
-      size.width * 0.6, size.height * 0.5,
+      size.width * 0.6, size.height * 0.5
     );
     path.quadraticBezierTo(
       size.width * 0.8, size.height * 0.6,
-      size.width, size.height * 0.3,
+      size.width, size.height * 0.3
     );
     canvas.drawPath(path, paint);
   }
@@ -1094,7 +1094,7 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Theme.of(context).colorScheme.surface,
-      child: tabBar,
+      child: tabBar
     );
   }
 

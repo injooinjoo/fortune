@@ -1,8 +1,11 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../core/constants/fortune_card_images.dart';
 import '../../core/constants/fortune_type_names.dart';
-// import 'package:qr_flutter/qr_flutter.dart'; // TODO: Add qr_flutter package
+// import 'package: qr_flutter/qr_flutter.dart'; // TOD,
+      O: Add qr_flutter package
 
 class EnhancedShareableFortuneCard extends StatelessWidget {
   final String fortuneType;
@@ -13,7 +16,8 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
   final Map<String, dynamic>? additionalInfo;
   final ShareCardTemplate template;
 
-  const EnhancedShareableFortuneCard({
+  const EnhancedShareableFortuneCard(
+    {
     super.key,
     required this.fortuneType,
     required this.title,
@@ -22,7 +26,7 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
     this.date,
     this.additionalInfo,
     this.template = ShareCardTemplate.modern,
-  });
+  )});
 
   @override
   Widget build(BuildContext context) {
@@ -40,383 +44,288 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
 
   Widget _buildModernTemplate() {
     return Container(
-      width: 400,
-      decoration: BoxDecoration(
-        gradient: _getGradientForFortuneType(fortuneType),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      width: AppSpacing.spacing1 * 100.0),
+              decoration: BoxDecoration(,
+      gradient: _getGradientForFortuneType(fortuneType),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
       child: Stack(
         children: [
           // Background Pattern
           Positioned.fill(
-            child: CustomPaint(
-              painter: _PatternPainter(
-                color: Colors.white.withValues(alpha: 0.1),
-              ),
-            ),
-          ),
+            child: CustomPaint(,
+      painter: _PatternPainter(,
+      color: Colors.white.withValues(alph,
+      a: 0.1))))))
           // Content
           Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+            padding: AppSpacing.paddingAll24,
+            child: Column(,
+      mainAxisSize: MainAxisSize.min,
+        ),
+        children: [
                 _buildHeader(),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.spacing6),
                 _buildFortuneContent(),
-                const SizedBox(height: 24),
+                SizedBox(height: AppSpacing.spacing6),
                 _buildFooter(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ])))
+        ])))
   }
 
   Widget _buildTraditionalTemplate() {
     return Container(
-      width: 400,
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF8D6E63),
-          width: 3,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      width: AppSpacing.spacing1 * 100.0),
+              decoration: BoxDecoration(,
+      color: const Color(0xFFFFF8E1),
+        borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: const Color(0xFF8D6E63),
+          width: 3)),
+      child: Column(,
+      mainAxisSize: MainAxisSize.min,
         children: [
           // Traditional Header
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            decoration: const BoxDecoration(
-              color: Color(0xFF8D6E63),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(13)),
-            ),
-            child: Center(
+            padding: AppSpacing.paddingVertical16),
+        decoration: const BoxDecoration(,
+      color: Color(0xFF8D6E63),
+              borderRadius: BorderRadius.vertical(t,
+      op: Radius.circular(13),
+      child: Center(
               child: Text(
                 '⊹ 오늘의 운세 ⊹',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
-            ),
-          ),
+        ),
+        style: Theme.of(context).textTheme.bodyMedium)
           // Content
           Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
+            padding: AppSpacing.paddingAll24),
+        child: Column(,
+      children: [
                 if (userName != null) ...[
                   Text(
                     userName!,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF5D4037),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                  SizedBox(height: AppSpacing.spacing2),
+                ]
                 Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFBCAAA4),
-                      width: 1,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF5D4037),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
+                  padding: AppSpacing.paddingAll20,
+                  decoration: BoxDecoration(,
+      color: Colors.white,
+                    borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(,
+      color: const Color(0xFFBCAAA4),
+                      width: 1)),
+      child: Column(
+                children: [
+                        Text(
+                          title,
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center)
+                      SizedBox(height: AppSpacing.spacing4),
                       Text(
                         content,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.8,
-                          color: Colors.black87,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center)
+                    ])))
+                SizedBox(height: AppSpacing.spacing5),
                 _buildTraditionalFooter(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ])))
+        ]
+      )
   }
 
   Widget _buildMinimalTemplate() {
     return Container(
-      width: 400,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+      width: AppSpacing.spacing1 * 100.0),
+              padding: EdgeInsets.all(AppSpacing.spacing8),
+      decoration: BoxDecoration(,
+      color: Colors.white,
+        borderRadius: AppDimensions.borderRadiusLarge,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alph,
+      a: 0.05),
             blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+            offset: const Offset(0, 10))
+        ])
+      child: Column(,
+      mainAxisSize: MainAxisSize.min,
         children: [
           // Fortune Type Icon
           Container(
             width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: _getColorForFortuneType(fortuneType).withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              _getIconForFortuneType(fortuneType),
+            height: AppSpacing.spacing15,
+              ),
+              decoration: BoxDecoration(,
+      color: _getColorForFortuneType(fortuneType).withValues(alp,
+      ha: 0.1),
+              shape: BoxShape.circle),
+      child: Icon(
+                _getIconForFortuneType(fortuneType),
               color: _getColorForFortuneType(fortuneType),
-              size: 32,
-            ),
-          ),
-          const SizedBox(height: 20),
+              size: AppDimensions.iconSizeXLarge)))
+          SizedBox(height: AppSpacing.spacing5),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[900],
-            ),
-            textAlign: TextAlign.center,
-          ),
+        ),
+        style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center)
           if (userName != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.spacing2),
             Text(
               userName!,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
               ),
-            ),
-          ],
-          const SizedBox(height: 24),
+              style: Theme.of(context).textTheme.bodyMedium,
+          ]
+          SizedBox(height: AppSpacing.spacing6),
           Text(
-            content,
-            style: TextStyle(
-              fontSize: 16,
-              height: 1.6,
-              color: Colors.grey[800],
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
+            content),
+        style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center)
+          SizedBox(height: AppSpacing.spacing8),
           // Minimal Footer
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
+                width: AppDimensions.buttonHeightSmall,
+                height: AppDimensions.buttonHeightSmall,
+                decoration: BoxDecoration(,
+      color: Colors.grey[100],
+      borderRadius: AppDimensions.borderRadiusSmall),
+      child: const Icon(
                   Icons.auto_awesome,
                   color: Colors.purple,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
+                  size: AppDimensions.iconSizeSmall)
+                ))
+              SizedBox(width: AppSpacing.spacing3),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Fortune AI',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
+        ),
+        style: Theme.of(context).textTheme.bodyMedium,
                   Text(
                     date != null 
-                        ? '${date!.year}.${date!.month}.${date!.day}'
-                        : 'AI가 알려주는 나만의 운세',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                        ? '${date!.year}.${date!.month}.${date!.day}'),
+                        : 'AI가 알려주는 나만의 운세'
+                    style: Theme.of(context).textTheme.bodyMedium,
+                ])
+            ])
+        ]
+      )
   }
 
   Widget _buildInstagramTemplate() {
     return AspectRatio(
-      aspectRatio: 9 / 16,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: _getInstagramGradient(),
-        ),
-        child: Stack(
+      aspectRatio: 9 / 16),
+        child: Container(,
+      decoration: BoxDecoration(,
+      gradient: _getInstagramGradient(),
+      child: Stack(
           children: [
             // Background Effects
             Positioned(
               top: -100,
               right: -100,
-              child: Container(
-                width: 300,
-                height: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
+              child: Container(,
+      width: 300,
+                height: AppSpacing.spacing24 * 3.125,
+                decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+        ),
+        gradient: RadialGradient(,
+      colors: [
                       Colors.white.withValues(alpha: 0.3),
                       Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    ])))))))
             // Content
             SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  children: [
+              child: Padding(,
+      padding: EdgeInsets.all(AppSpacing.spacing8),
+                child: Column(,
+      children: [
                     const Spacer(),
                     // Main Content Card
                     Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.95),
-                        borderRadius: BorderRadius.circular(24),
+                      padding: AppSpacing.paddingAll24),
+        decoration: BoxDecoration(,
+      color: Colors.white.withValues(alp,
+      ha: 0.95),
+                        borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: Colors.black.withValues(alph,
+      a: 0.1),
                             blurRadius: 30,
-                            offset: const Offset(0, 15),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                            offset: const Offset(0, 15))
+                        ])
+                      child: Column(,
+      mainAxisSize: MainAxisSize.min,
                         children: [
                           // Fortune Icon
                           Container(
                             width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              gradient: _getGradientForFortuneType(fortuneType),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              _getIconForFortuneType(fortuneType),
+                            height: AppSpacing.spacing20,
+        ),
+        decoration: BoxDecoration(,
+      gradient: _getGradientForFortuneType(fortuneType),
+                              shape: BoxShape.circle),
+      child: Icon(
+                _getIconForFortuneType(fortuneType),
                               color: Colors.white,
-                              size: 40,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                              size: 40)))
+                          SizedBox(height: AppSpacing.spacing5),
                           Text(
                             title,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center)
                           if (userName != null) ...[
-                            const SizedBox(height: 8),
+                            SizedBox(height: AppSpacing.spacing2),
                             Text(
                               '@$userName',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                          const SizedBox(height: 24),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                          ]
+                          SizedBox(height: AppSpacing.spacing6),
                           Text(
-                            content,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              height: 1.6,
-                              color: Colors.black87,
-                            ),
+                            content),
+        style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.center,
                             maxLines: 8,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
+                            overflow: TextOverflow.ellipsis)
+                        ])))
                     const Spacer(),
                     // Instagram Footer
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      padding: EdgeInsets.symmetric(,
+      horizontal: AppSpacing.spacing5),
+        vertical: AppSpacing.spacing3),
+      decoration: BoxDecoration(,
+      color: Colors.white.withValues(alph,
+      a: 0.2),
+                        borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07),
+                      child: Row(,
+      mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(
                             Icons.auto_awesome,
                             color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
+                            size: AppDimensions.iconSizeSmall)
+                          SizedBox(width: AppSpacing.spacing2),
                           const Text(
                             'Fortune AI',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
         ),
-      ),
-    );
+        style: Theme.of(context).textTheme.bodyMedium,
+                        ])))
+                  ])))))
+          ])))))
   }
 
   Widget _buildHeader() {
@@ -424,124 +333,96 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
       children: [
         Container(
           width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          height: AppSpacing.spacing12 * 1.04),
+              decoration: BoxDecoration(,
+      color: Colors.white.withValues(alp,
+      ha: 0.2),
+            borderRadius: AppDimensions.borderRadiusMedium,
           child: Icon(
             _getIconForFortuneType(fortuneType),
             color: Colors.white,
-            size: 28,
-          ),
-        ),
-        const SizedBox(width: 16),
+            size: AppDimensions.iconSizeLarge)))
+        SizedBox(width: AppSpacing.spacing4),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        children: [
               Text(
                 FortuneTypeNames.getName(fortuneType),
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
+                style: TextStyle(,
+      color: Colors.white.withValues(alp,
+      ha: 0.9),
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                  fontWeight: FontWeight.w500)))
+              SizedBox(height: AppSpacing.spacing1),
               Text(
                 title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
-            ],
-          ),
-        ),
-      ],
+              style: Theme.of(context).textTheme.bodyMedium,
+            ])))
+      ]
     );
   }
 
   Widget _buildFortuneContent() {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16),
+      padding: AppSpacing.paddingAll20),
+        decoration: BoxDecoration(,
+      color: Colors.white.withValues(alp,
+      ha: 0.95),
+        borderRadius: AppDimensions.borderRadiusLarge,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alph,
+      a: 0.1),
             blurRadius: 20,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
+            offset: const Offset(0, 5))
+        ])
+      child: Column(,
+      children: [
           if (userName != null) ...[
             Text(
               userName!,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: _getColorForFortuneType(fortuneType),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
+        ),
+        style: Theme.of(context).textTheme.bodyMedium,
+            SizedBox(height: AppSpacing.spacing3),
+          ]
           Text(
             content,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.6,
-              color: Colors.black87,
-            ),
-            textAlign: TextAlign.center,
-          ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center)
           if (additionalInfo != null) ...[
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
             _buildAdditionalInfo(),
-          ],
-        ],
-      ),
-    );
+          ]
+        ])))
   }
 
   Widget _buildAdditionalInfo() {
     return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _getColorForFortuneType(fortuneType).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      padding: AppSpacing.paddingAll12),
+        decoration: BoxDecoration(,
+      color: _getColorForFortuneType(fortuneType).withValues(alp,
+      ha: 0.1),
+        borderRadius: AppDimensions.borderRadiusMedium,
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        ),
         children: additionalInfo!.entries.map((entry) {
           return Column(
             children: [
-              Text(
-                entry.key,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 4),
+                        Text(
+                          entry.key,
+                          style: Theme.of(context).textTheme.bodyMedium,
+              SizedBox(height: AppSpacing.spacing1),
               Text(
                 entry.value.toString(),
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: _getColorForFortuneType(fortuneType),
-                ),
-              ),
-            ],
-          );
+                style: Theme.of(context).textTheme.bodyMedium,
+            ])
         }).toList(),
-      ),
-    );
+      )
   }
 
   Widget _buildFooter() {
@@ -552,50 +433,44 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           children: [
             Container(
               width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
+              height: AppSpacing.spacing12 * 1.04),
+              decoration: BoxDecoration(,
+      color: Colors.white.withValues(alp,
+      ha: 0.2),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing2 * 1.25),
               child: const Icon(
                 Icons.qr_code_2,
                 color: Colors.white,
-                size: 30,
-              ),
-            ),
-            const SizedBox(width: 12),
+                size: 30)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Fortune AI',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'AI가 알려주는 나만의 운세',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
+        style: Theme.of(context).textTheme.bodyMedium,
+                Text(
+                  'AI가 알려주는 나만의 운세'),
+        style: TextStyle(,
+      color: Colors.white.withValues(alp,
+      ha: 0.8),
+                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+              ])
+          ])
         if (date != null)
           Text(
-            '${date!.year}.${date!.month.toString().padLeft(2, '0')}.${date!.day.toString().padLeft(2, '0')}',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 14,
-            ),
-          ),
-      ],
-    );
+            '${date!.year}.${date!.month.toString().padLeft(
+    2, '0',
+  )}.${date!.day.toString().padLeft(
+    2, '0',
+  )}',
+            style: TextStyle(,
+      color: Colors.white.withValues(alp,
+      ha: 0.8),
+              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+      ])
   }
 
   Widget _buildTraditionalFooter() {
@@ -606,60 +481,47 @@ class EnhancedShareableFortuneCard extends StatelessWidget {
           children: [
             Container(
               width: 30,
-              height: 1,
-              color: const Color(0xFFBCAAA4),
-            ),
-            const SizedBox(width: 12),
+              height: 1),
+              color: const Color(0xFFBCAAA4))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
-              '福',
-              style: TextStyle(
-                fontSize: 24,
-                color: const Color(0xFF8D6E63),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 12),
+              '福'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                fontWeight: FontWeight.bold)))
+            SizedBox(width: AppSpacing.spacing3),
             Container(
               width: 30,
-              height: 1,
-              color: const Color(0xFFBCAAA4),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
+              height: 1),
+              color: const Color(0xFFBCAAA4))
+          ])
+        SizedBox(height: AppSpacing.spacing3),
         Text(
-          'Fortune AI · 행운이 가득하길',
-          style: TextStyle(
-            fontSize: 14,
-            color: const Color(0xFF8D6E63),
-          ),
-        ),
-      ],
-    );
+          'Fortune AI · 행운이 가득하길'),
+        style: Theme.of(context).textTheme.bodyMedium,
+      ])
   }
 
   LinearGradient _getGradientForFortuneType(String type) {
     final baseColor = _getColorForFortuneType(type);
     return LinearGradient(
       begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
+      end: Alignment.bottomRight),
+        colors: [
         baseColor.withValues(alpha: 0.9),
         baseColor,
         baseColor.withValues(alpha: 0.8),
-      ],
-    );
+      ])
   }
 
   LinearGradient _getInstagramGradient() {
     return const LinearGradient(
       begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
+      end: Alignment.bottomRight),
+        colors: [
         Color(0xFF833AB4),
         Color(0xFFF56040),
         Color(0xFFFCAF45),
-      ],
+      ]
     );
   }
 
@@ -724,7 +586,7 @@ class _PatternPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(),
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
@@ -733,9 +595,9 @@ class _PatternPainter extends CustomPainter {
     for (var i = 0; i < size.width; i += spacing.toInt()) {
       for (var j = 0; j < size.height; j += spacing.toInt()) {
         canvas.drawCircle(
-          Offset(i.toDouble(), j.toDouble()),
+          Offset(i.toDouble(), j.toDouble()
           4,
-          paint,
+          paint
         );
       }
     }

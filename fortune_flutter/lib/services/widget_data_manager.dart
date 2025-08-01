@@ -27,7 +27,7 @@ class WidgetDataManager {
   /// Update daily fortune widget with new data
   static Future<void> updateDailyFortune(FortuneResponseModel fortune) async {
     try {
-      // Calculate fortune score (0-100)
+      // Calculate fortune score (0-100,
       final score = _calculateFortuneScore(fortune);
       
       // Get lucky items
@@ -39,13 +39,12 @@ class WidgetDataManager {
         score: score.toString(),
         message: fortune.data?.content ?? '',
         detailedFortune: fortune.data?.summary ?? '',
-        additionalData: {
+      additionalData: {
           'luckyColor': luckyColor,
           'luckyNumber': luckyNumber,
           'fortuneType': fortune.data?.type ?? 'daily',
           'createdAt': fortune.data?.createdAt?.toIso8601String() ?? DateTime.now().toIso8601String(),
-        },
-      );
+        })
       
       // Update live activity if iOS
       if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -53,8 +52,7 @@ class WidgetDataManager {
           score: score.toString(),
           message: fortune.data?.content ?? '',
           luckyColor: luckyColor,
-          luckyNumber: luckyNumber.toString(),
-        );
+      luckyNumber: luckyNumber.toString())
       }
       
       // Save to local storage
@@ -67,29 +65,29 @@ class WidgetDataManager {
   }
   
   /// Update love fortune widget with compatibility data
-  static Future<void> updateLoveFortune({
+  static Future<void> updateLoveFortune(
+    {
     required String partnerName,
     required int compatibilityScore,
     required String message,
     Map<String, dynamic>? additionalData,
-  }) async {
+  )}) async {
     try {
       await WidgetService.updateLoveFortuneWidget(
         compatibilityScore: compatibilityScore.toString(),
         partnerName: partnerName,
         message: message,
-        additionalData: additionalData,
-      );
+        additionalData: additionalData)
       
       // Save to local storage
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_loveFortuneKey, jsonEncode({
         'partnerName': partnerName,
-        'compatibilityScore': compatibilityScore,
-        'message': message,
-        'additionalData': additionalData,
+        'compatibilityScore': compatibilityScore)
+        'message': message)
+        'additionalData': additionalData)
         'updatedAt': DateTime.now().toIso8601String(),
-      }));
+      })
       
       Logger.info('Love fortune widget updated');
     } catch (e) {
@@ -152,15 +150,14 @@ class WidgetDataManager {
       if (loveFortuneString != null) {
         final loveData = jsonDecode(loveFortuneString);
         await updateLoveFortune(
-          partnerName: loveData['partnerName'],
-          compatibilityScore: loveData['compatibilityScore'],
-          message: loveData['message'],
-          additionalData: loveData['additionalData'],
-        );
-      }
+    partnerName: loveData['partnerName'],
+      compatibilityScore: loveData['compatibilityScore'],
+      message: loveData['message'],
+      additionalData: loveData['additionalData'],
+  )}
       
       // Update last update time
-      await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
+      await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String();
     } catch (e) {
       Logger.error('Failed to load and update widgets', e);
     }
@@ -172,17 +169,17 @@ class WidgetDataManager {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(key, jsonEncode({
         'success': fortune.success,
-        'message': fortune.message,
+        'message': fortune.message)
         'data': fortune.data != null ? {
-          'type': fortune.data!.type,
-          'content': fortune.data!.content,
+          'type': fortune.data!.type)
+          'content': fortune.data!.content)
           'createdAt': fortune.data!.createdAt?.toIso8601String(),
-          'luckyColor': fortune.data!.luckyColor,
+          'luckyColor': fortune.data!.luckyColor
           'luckyNumber': fortune.data!.luckyNumber,
           'summary': fortune.data!.summary,
         } : null,
-      }));
-      await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
+      })
+      await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String();
     } catch (e) {
       Logger.error('Failed to save fortune data', e);
     }

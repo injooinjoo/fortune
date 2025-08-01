@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class BottomSheetDatePicker extends StatefulWidget {
   final DateTime? initialDate;
@@ -15,14 +20,14 @@ class BottomSheetDatePicker extends StatefulWidget {
   static Future<DateTime?> show(BuildContext context, {DateTime? initialDate}) {
     return showModalBottomSheet<DateTime>(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+      backgroundColor: Colors.transparent, // Keep transparent for overlay
+      isScrollControlled: true)
       builder: (context) => BottomSheetDatePicker(
-        initialDate: initialDate,
+        initialDate: initialDate)
         onDateSelected: (date) {
           Navigator.of(context).pop(date);
-        },
-      ),
+        })
+      )
     );
   }
 
@@ -47,74 +52,65 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.grey[900] : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor)
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+          topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))
+          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))
+        ))
+      ))
       child: Column(
         children: [
           // Handle bar
           Container(
-            margin: EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
+            margin: EdgeInsets.only())
+            width: context.fortuneTheme.bottomSheetStyles.handleWidth)
+            height: context.fortuneTheme.bottomSheetStyles.handleHeight)
             decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+              color: context.fortuneTheme.dividerColor)
+              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))
+            ))
+          ))
           
           // Header
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal))
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween)
               children: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () => Navigator.of(context).pop())
                   child: Text(
-                    '취소',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
+                    '취소')
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: context.fortuneTheme.subtitleText),))
+                    ))
                 Column(
                   children: [
                     Text(
-                      '생년월일',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 4),
+                      '생년월일')
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600),))
+                      ))
+                    SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.25))
                     Text(
-                      DateFormat('yyyy년 M월 d일').format(_selectedDate),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                      DateFormat('yyyy년 M월 d일').format(_selectedDate))
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(context).primaryColor))
+                        fontWeight: FontWeight.w500)
+                      ))
+                    ))
+                  ])
                 ),
                 TextButton(
-                  onPressed: () => widget.onDateSelected(_selectedDate),
+                  onPressed: () => widget.onDateSelected(_selectedDate))
                   child: Text(
-                    '확인',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+                    '확인')
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600),))
+                    ))
+              ])
             ),
-          ),
+          ))
           
           // Date picker with Korean locale
           Expanded(
@@ -122,26 +118,26 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
               data: CupertinoThemeData(
                 textTheme: CupertinoTextThemeData(
                   dateTimePickerTextStyle: TextStyle(
-                    fontSize: 20,
-                    color: isDarkMode ? Colors.white : Colors.black,
-                  ),
-                ),
-              ),
+                    fontSize: context.fortuneTheme.formStyles.inputHeight * 0.4)
+                    color: context.fortuneTheme.primaryText)
+                  ))
+                ))
+              ))
               child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: _selectedDate,
-                maximumDate: DateTime.now(),
-                minimumDate: DateTime(1900),
+                mode: CupertinoDatePickerMode.date)
+                initialDateTime: _selectedDate)
+                maximumDate: DateTime.now())
+                minimumDate: DateTime(1900))
                 onDateTimeChanged: (DateTime newDate) {
                   setState(() {
                     _selectedDate = newDate;
                   });
                 },
-              ),
-            ),
-          ),
-        ],
-      ),
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 }

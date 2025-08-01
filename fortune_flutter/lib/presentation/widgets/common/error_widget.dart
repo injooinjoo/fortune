@@ -1,4 +1,7 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class CustomErrorWidget extends StatelessWidget {
   final String message;
@@ -12,7 +15,7 @@ class CustomErrorWidget extends StatelessWidget {
     this.details,
     this.onRetry,
     this.icon = Icons.error_outline,
-  });
+  }));
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +24,12 @@ class CustomErrorWidget extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
                 color: colorScheme.errorContainer.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
@@ -37,7 +40,7 @@ class CustomErrorWidget extends StatelessWidget {
                 color: colorScheme.error,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.spacing6),
             Text(
               message,
               style: theme.textTheme.titleMedium?.copyWith(
@@ -47,7 +50,7 @@ class CustomErrorWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (details != null) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: AppSpacing.spacing2),
               Text(
                 details!,
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -57,9 +60,9 @@ class CustomErrorWidget extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-            ],
+            ]
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.spacing6),
               FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),

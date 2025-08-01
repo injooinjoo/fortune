@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../../presentation/providers/navigation_visibility_provider.dart';
 import '../../routes/navigation_helper.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 /// Main shell widget that provides persistent navigation
 /// This widget wraps around all main pages and maintains the bottom navigation bar
@@ -35,7 +37,7 @@ class _MainShellState extends ConsumerState<MainShell>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
-      vsync: this,
+      vsync: this
     );
     _slideAnimation = Tween<Offset>(
       begin: Offset.zero,
@@ -138,10 +140,8 @@ class _MainShellState extends ConsumerState<MainShell>
               builder: (context, child) {
                 final totalNavHeight = _navBarHeight + bottomPadding;
                 return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: totalNavHeight * _paddingAnimation.value,
-                  ),
-                  child: widget.child,
+                  padding: EdgeInsets.only(bottom: 0),
+                  child: widget.child
                 );
               },
             ),

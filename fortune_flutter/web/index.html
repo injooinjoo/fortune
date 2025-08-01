@@ -61,6 +61,15 @@
   <title>Fortune - AI 운세 서비스</title>
   <link rel="manifest" href="manifest.json">
   
+  <!-- Toss Product Sans Font -->
+  <link rel="stylesheet" href="https://static.toss.im/tps/main.css">
+  <link rel="stylesheet" href="https://static.toss.im/tps/others.css">
+  <style>
+    * {
+      font-family: 'Toss Product Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+  </style>
+  
   <!-- Google AdSense -->
   <script async="" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_CLIENT_ID" crossorigin="anonymous"></script>
   <style id="splash-screen-style">
@@ -149,6 +158,19 @@
     window.addEventListener('flutter-first-frame', function() {
       document.getElementById('loading').classList.add('hidden');
     });
+    
+    // Register service worker for offline support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service_worker.js')
+          .then((registration) => {
+            console.log('Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
   </script>
 
 

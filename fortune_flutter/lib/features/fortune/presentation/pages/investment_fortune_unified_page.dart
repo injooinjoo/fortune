@@ -31,7 +31,7 @@ class InvestmentFortuneUnifiedPage extends BaseFortunePage {
           title: '투자 운세',
           description: '재물, 부동산, 주식, 암호화폐, 로또 운세를 확인해보세요',
           fortuneType: 'investment',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -52,7 +52,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
     final fortune = await fortuneService.getInvestmentFortune(
       userId: params['userId'],
       fortuneType: _selectedType.value,
-      params: params,
+      params: params
     );
     
     // Cache the fortune
@@ -75,22 +75,22 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           const SizedBox(height: 24),
           
           // Description Card
-          _buildDescriptionCard()
-              .animate()
-              .fadeIn(duration: 600.ms)
+          _buildDescriptionCard(,
+              .animate(,
+              .fadeIn(duration: 600.ms,
               .slideY(begin: 0.1, end: 0),
           const SizedBox(height: 24),
           
           // Generate Button
           _buildGenerateButton(),
           
-          // Fortune Result (if available)
+          // Fortune Result (if available,
           if (_fortuneCache[_selectedType] != null) ...[
             const SizedBox(height: 24),
             _buildFortuneResult(_fortuneCache[_selectedType]!),
           ],
         ],
-      ),
+      ,
     );
   }
 
@@ -170,8 +170,8 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                     ),
                   ),
                 ),
-              ).animate(delay: (50 * index).ms)
-                .fadeIn(duration: 300.ms)
+              ).animate(delay: (50 * index).ms,
+                .fadeIn(duration: 300.ms,
                 .slideX(begin: 0.2, end: 0);
             },
           ),
@@ -264,7 +264,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -393,8 +393,8 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 500.ms)
+    ).animate(,
+      .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
 
@@ -436,7 +436,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             );
           }).toList(),
         ),
-      ],
+      ]
     );
   }
 
@@ -482,7 +482,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             ),
           );
         }).toList(),
-      ],
+      ]
     );
   }
 

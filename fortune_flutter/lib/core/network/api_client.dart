@@ -42,7 +42,7 @@ class ApiClient {
           Logger.apiRequest(
             options.method,
             options.uri.toString(),
-            options.data,
+            options.data
           );
           
           // Log fortune-specific requests
@@ -69,7 +69,7 @@ class ApiClient {
             response.requestOptions.method,
             response.requestOptions.uri.toString(),
             response.statusCode ?? 0,
-            response.data,
+            response.data
           );
           
           // Log fortune-specific responses
@@ -97,7 +97,7 @@ class ApiClient {
             error.requestOptions.method,
             error.requestOptions.uri.toString(),
             error.response?.statusCode ?? 0,
-            error.response?.data,
+            error.response?.data
           );
           
           // Log fortune-specific errors
@@ -135,7 +135,7 @@ class ApiClient {
       final response = await _dio.get<T>(
         path,
         queryParameters: queryParameters,
-        options: options,
+        options: options
       );
       return response.data!;
     } catch (e) {
@@ -155,7 +155,7 @@ class ApiClient {
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: options
       );
       return response.data!;
     } catch (e) {
@@ -175,7 +175,7 @@ class ApiClient {
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: options
       );
       return response.data!;
     } catch (e) {
@@ -195,7 +195,7 @@ class ApiClient {
         path,
         data: data,
         queryParameters: queryParameters,
-        options: options,
+        options: options
       );
       return response.data!;
     } catch (e) {
@@ -203,7 +203,7 @@ class ApiClient {
     }
   }
 
-  // 스트리밍 응답 처리 (운세 생성용)
+  // 스트리밍 응답 처리 (운세 생성용,
   Stream<String> getStream(
     String path, {
     Map<String, dynamic>? queryParameters,
@@ -221,7 +221,7 @@ class ApiClient {
             'Accept': 'text/event-stream',
           },
         ),
-        cancelToken: cancelToken,
+        cancelToken: cancelToken
       );
 
       final stream = response.data.stream as Stream<List<int>>;

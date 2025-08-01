@@ -21,7 +21,7 @@ class PastLifeFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _PastLifeFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -70,7 +70,7 @@ class _PastLifeInputForm extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -276,7 +276,7 @@ class _PastLifeFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ),
+      ,
     );
   }
 

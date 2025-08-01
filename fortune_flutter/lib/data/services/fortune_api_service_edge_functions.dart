@@ -385,7 +385,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         }
 
         final response = await edgeFunctionsDio.get(
-          EdgeFunctionsEndpoints.tokenBalance,
+          EdgeFunctionsEndpoints.tokenBalance
         );
 
         return response.data;
@@ -876,7 +876,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
         endpoint: EdgeFunctionsEndpoints.wishFortune,
         userId: userId,
         fortuneType: 'wish',
-        data: {'wish': wish},
+        data: {'wish': wish}
       );
     }
     return super.getWishFortune(userId: userId, wish: wish);
@@ -986,7 +986,7 @@ class FortuneApiServiceWithEdgeFunctions extends FortuneApiService {
       return _getFortuneFromEdgeFunction(
         endpoint: EdgeFunctionsEndpoints.luckyFishingFortune,
         userId: userId,
-        fortuneType: 'lucky-fishing',
+        fortuneType: 'lucky-fishing'
       );
     }
     return super.getLuckyFishingFortune(userId: userId);

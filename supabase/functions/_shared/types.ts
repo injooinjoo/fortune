@@ -10,6 +10,17 @@ export interface FortuneRequest {
   bloodType?: string
   zodiacSign?: string
   additionalInfo?: Record<string, any>
+  // Moving fortune specific fields
+  currentAddress?: string
+  targetAddress?: string
+  currentLocation?: { lat: number, lng: number }
+  targetLocation?: { lat: number, lng: number }
+  plannedDate?: string
+  isAuspiciousDay?: boolean
+  lunarDate?: any
+  solarTerm?: string
+  luckyScore?: number
+  requestAreaAnalysis?: boolean
 }
 
 export interface FortuneResponse {
@@ -51,6 +62,7 @@ export const FORTUNE_TOKEN_COSTS = {
   mbti: 2,
   personality: 2,
   'blood-type': 2,
+  'personality-unified': 3,
   love: 3,
   marriage: 4,
   compatibility: 4,
@@ -107,6 +119,8 @@ export const FORTUNE_TOKEN_COSTS = {
   'lucky-exam': 3,
   moving: 3,
   'moving-date': 3,
+  'moving-enhanced': 30,
+  'moving-unified': 3, // Base cost, can go up to 30 with all features
   'new-year': 4,
   'face-reading': 4,
   celebrity: 3,

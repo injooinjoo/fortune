@@ -22,7 +22,7 @@ class LuckyInvestmentFortunePage extends ConsumerWidget {
         colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
       ),
       inputBuilder: (context, onSubmit) => _InvestmentInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _InvestmentFortuneResult(result: result),
+      resultBuilder: (context, result, onShare) => _InvestmentFortuneResult(result: result,
     );
   }
 }
@@ -132,7 +132,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -170,7 +170,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -200,7 +200,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -231,7 +231,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -252,7 +252,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -290,7 +290,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -320,7 +320,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -351,7 +351,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -374,7 +374,7 @@ class _InvestmentInputFormState extends State<_InvestmentInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 }
@@ -506,7 +506,7 @@ class _InvestmentFortuneResult extends StatelessWidget {
             content: result.details!['strategy'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -556,7 +556,7 @@ class _InvestmentFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

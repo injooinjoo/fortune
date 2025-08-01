@@ -1,6 +1,9 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../shared/components/app_header.dart';
 import '../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
@@ -11,135 +14,115 @@ class PremiumScreen extends StatelessWidget {
     
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      body: CustomScrollView(
-        slivers: [
+      body: CustomScrollView(,
+      slivers: [
           SliverToBoxAdapter(
-            child: AppHeader(
-              title: '프리미엄 사주',
-              backgroundColor: theme.colorScheme.surface,
-            ),
-          ),
+            child: AppHeader(,
+      title: '프리미엄 사주'),
+        backgroundColor: theme.colorScheme.surface)
+            ))
           SliverPadding(
-            padding: const EdgeInsets.all(16),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
+            padding: AppSpacing.paddingAll16,
+            sliver: SliverList(,
+      delegate: SliverChildListDelegate([
                 GlassContainer(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
+                  padding: AppSpacing.paddingAll24),
+        child: Column(,
+      children: [
                       Icon(
                         Icons.auto_stories_rounded,
-                        size: 64,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(height: 16),
+              ),
+              size: 64),
+        color: theme.colorScheme.primary)
+                      )
+                      SizedBox(height: AppSpacing.spacing4),
                       Text(
-                        '프리미엄 사주',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                        '프리미엄 사주'),
+        style: theme.textTheme.headlineMedium?.copyWith(,
+      fontWeight: FontWeight.bold)
+                      SizedBox(height: AppSpacing.spacing2,
+                          ),
                       Text(
-                        '만화로 보는 재미있는 사주 풀이',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
+                        '만화로 보는 재미있는 사주 풀이'),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          ),
+        textAlign: TextAlign.center)
+                      SizedBox(height: AppSpacing.spacing6),
                       // Feature list
                       _buildFeatureItem(
                         context,
                         icon: Icons.brush,
-                        title: '아름다운 일러스트',
-                        description: '전문 작가의 손길로 그려진 당신만의 이야기',
-                      ),
-                      const SizedBox(height: 16),
+                        title: '아름다운 일러스트'),
+        description: '전문 작가의 손길로 그려진 당신만의 이야기')
+                      SizedBox(height: AppSpacing.spacing4),
                       _buildFeatureItem(
                         context,
                         icon: Icons.book,
-                        title: '스토리텔링',
-                        description: '지루하지 않은 재미있는 사주 해석',
-                      ),
-                      const SizedBox(height: 16),
+                        title: '스토리텔링'),
+        description: '지루하지 않은 재미있는 사주 해석')
+                      SizedBox(height: AppSpacing.spacing4),
                       _buildFeatureItem(
                         context,
                         icon: Icons.insights,
-                        title: '심층 분석',
-                        description: '더 깊이 있는 운세 분석 제공',
-                      ),
-                      const SizedBox(height: 24),
+                        title: '심층 분석'),
+        description: '더 깊이 있는 운세 분석 제공')
+                      SizedBox(height: AppSpacing.spacing6),
                       SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
+                        width: double.infinity),
+              child: ElevatedButton(,
+      onPressed: () {
                             // TODO: Navigate to premium purchase
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            backgroundColor: theme.colorScheme.primary,
-                          ),
-                          child: const Text(
-                            '프리미엄 시작하기',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        ],
-      ),
-    );
+                          }
+                          style: ElevatedButton.styleFrom(,
+      padding: AppSpacing.paddingVertical16),
+        backgroundColor: theme.colorScheme.primary),
+      child: Text(
+                            '프리미엄 시작하기'),
+        style: Theme.of(context).textTheme.titleMedium)))))))))))))
+      )
   }
 
   Widget _buildFeatureItem(
     BuildContext context, {
     required IconData icon,
-    required String title,
-    required String description,
+    required String title)
+    required String description)
   }) {
     final theme = Theme.of(context);
     
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: theme.colorScheme.primary,
-          ),
+          padding: AppSpacing.paddingAll12),
+        decoration: BoxDecoration(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.1,
         ),
-        const SizedBox(width: 16),
+        borderRadius: AppDimensions.borderRadiusMedium),
+      child: Icon(
+                icon,
+              ),
+              color: theme.colorScheme.primary)
+          ))
+        SizedBox(width: AppSpacing.spacing4),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+          child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
               ),
-              const SizedBox(height: 2),
+              children: [
+                        Text(
+                          title,
+                          style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold)
+              SizedBox(height: AppSpacing.xxxSmall,
+                          ),
               Text(
-                description,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                description),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          ))))))
   }
 }

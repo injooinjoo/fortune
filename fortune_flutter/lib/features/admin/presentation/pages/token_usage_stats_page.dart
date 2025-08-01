@@ -19,11 +19,15 @@ class TokenUsageStatsPage extends ConsumerWidget {
     
     return AdminGuard(
       child: Scaffold(
-        appBar: const AppHeader(
-          title: '토큰 사용량 통계',
-          showBackButton: true,
-        ),
-        body: RefreshIndicator(
+        body: SafeArea(
+          child: Column(
+            children: [
+              const AppHeader(
+                title: '토큰 사용량 통계',
+                showBackButton: true,
+              ),
+              Expanded(
+                child: RefreshIndicator(
           onRefresh: () => ref.read(tokenUsageProvider.notifier).fetchTokenUsageStats(),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -131,7 +135,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d'),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -172,7 +176,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           iconColor: Colors.orange,
           subtitle: '사용자당',
         ),
-      ],
+      ]
     );
   }
 
@@ -195,7 +199,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             width: 8,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
           ),
-        ],
+        ]
       );
     }).toList();
 
@@ -248,7 +252,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           ),
           borderData: FlBorderData(show: false),
         ),
-      ),
+      ,
     );
   }
 
@@ -264,7 +268,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '운세별 사용량 TOP 10',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 16),
@@ -283,8 +287,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       Text(
                         type.fortuneCategory,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                        ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                       ),
                     ],
                   ),
@@ -314,7 +317,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             ),
           )).toList(),
         ],
-      ),
+      ,
     );
   }
 
@@ -329,7 +332,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '패키지 효율성',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 16),
@@ -388,7 +391,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             );
           }).toList(),
         ],
-      ),
+      ,
     );
   }
 
@@ -414,7 +417,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             iconColor: trend.weeklyGrowth > 0 ? Colors.green : Colors.red,
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -429,7 +432,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '상위 사용자',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(height: 16),
@@ -457,8 +460,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                         Text(
                           user.email,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                         ),
                       ],
                     ),
@@ -476,7 +478,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       child: Text(
                         user.isUnlimited ? '무제한' : '일반',
                         style: TextStyle(
-                          color: user.isUnlimited ? Colors.purple : Colors.blue,
+                          color: user.isUnlimited ? Colors.purple : Colors.blue),
                           fontSize: 12,
                         ),
                       ),
@@ -487,7 +489,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }
@@ -521,11 +523,11 @@ class _PeriodButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+            color: isSelected ? Colors.white : theme.colorScheme.onSurface),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
-      ),
+      ,
     );
   }
 }
@@ -569,11 +571,11 @@ class _InfoCard extends StatelessWidget {
           Text(
             value,
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

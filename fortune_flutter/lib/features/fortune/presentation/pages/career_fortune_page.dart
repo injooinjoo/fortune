@@ -17,7 +17,7 @@ class CareerFortunePage extends BaseFortunePage {
           description: '커리어 발전과 직장에서의 성공을 위한 운세',
           fortuneType: 'career',
           requiresUserInfo: false,
-          initialParams: initialParams,
+          initialParams: initialParams
         );
 
   @override
@@ -58,7 +58,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -253,7 +253,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
         _buildTimingAnalysis(),
         _buildSkillsRecommendation(),
         _buildNetworkingAdvice(),
-      ],
+      ]
     );
   }
 
@@ -310,7 +310,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                     getDrawingVerticalLine: (value) {
                       return FlLine(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                        strokeWidth: 1,
+                        strokeWidth: 1
                       );
                     },
                   ),
@@ -332,7 +332,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                           if (value.toInt() >= 0 && value.toInt() < months.length) {
                             return Text(
                               months[value.toInt()],
-                              style: theme.textTheme.bodySmall,
+                              style: theme.textTheme.bodySmall
                             );
                           }
                           return const Text('');
@@ -347,7 +347,7 @@ class _CareerFortunePageState extends BaseFortunePageState<CareerFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}%',
-                            style: theme.textTheme.bodySmall,
+                            style: theme.textTheme.bodySmall
                           );
                         },
                       ),

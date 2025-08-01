@@ -37,9 +37,9 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
     // 햅틱 피드백
     if (widget.isSuccess) {
       HapticUtils.success();
-    } else {
+} else {
       HapticUtils.error();
-    }
+}
   }
 
   @override
@@ -73,10 +73,8 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
+      ));
+}
 
   Widget _buildIcon() {
     if (widget.isSuccess) {
@@ -92,11 +90,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           Icons.check_circle,
           size: 80,
           color: AppColors.success,
-        ),
-      ).animate()
-        .scale(duration: const Duration(milliseconds: 500))
+        )).animate()
+                  .scale(duration: const Duration(milliseconds: 500),
         .fadeIn();
-    } else {
+} else {
       // 실패 아이콘
       return Container(
         width: 120,
@@ -109,11 +106,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           Icons.error_outline,
           size: 80,
           color: AppColors.error,
-        ),
-      ).animate()
-        .shake(duration: const Duration(milliseconds: 500))
+        )).animate()
+                  .shake(duration: const Duration(milliseconds: 500),
         .fadeIn();
-    }
+}
   }
 
   Widget _buildTitle() {
@@ -122,30 +118,28 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       style: AppTextStyles.headlineLarge.copyWith(
         fontWeight: FontWeight.bold,
         color: widget.isSuccess ? AppColors.success : AppColors.error,
-      ),
-    );
-  }
+      ));
+}
 
   Widget _buildMessage() {
     String displayMessage;
     if (widget.message != null) {
       displayMessage = widget.message!;
-    } else if (widget.isSuccess) {
+} else if (widget.isSuccess) {
       displayMessage = widget.productName != null 
         ? '${widget.productName} 구매가 완료되었습니다.'
         : '결제가 성공적으로 완료되었습니다.';
-    } else {
+} else {
       displayMessage = '결제 처리 중 오류가 발생했습니다.';
-    }
+}
     
     return Text(
       displayMessage,
       style: AppTextStyles.bodyLarge.copyWith(
-        color: AppColors.textSecondary,
-      ),
-      textAlign: TextAlign.center,
+        color: AppColors.textSecondary),
+      textAlign: TextAlign.center
     );
-  }
+}
 
   Widget _buildTokenInfo() {
     return Container(
@@ -155,7 +149,6 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.3),
-        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -172,8 +165,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               Text(
                 '충전된 토큰',
                 style: AppTextStyles.caption.copyWith(
-                  color: AppColors.primary,
-                ),
+                  color: AppColors.primary),
               ),
               Text(
                 '${widget.tokenAmount}개',
@@ -181,15 +173,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
                 ),
-              ),
             ],
           ),
         ],
-      ),
-    ).animate()
-      .fadeIn(delay: const Duration(milliseconds: 300))
+      )).animate()
+                  .fadeIn(delay: const Duration(milliseconds: 300),
       .slideY(begin: 0.2, end: 0);
-  }
+}
 
   Widget _buildTransactionId() {
     return Container(
@@ -197,21 +187,18 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(8),
-      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             '거래번호: ',
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary,
-            ),
+              color: AppColors.textSecondary),
           ),
           Text(
             widget.transactionId!,
             style: AppTextStyles.caption.copyWith(
-              fontFamily: 'monospace',
-            ),
+              fontFamily: 'monospace'),
           ),
           const SizedBox(width: 8),
           GestureDetector(
@@ -221,11 +208,10 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
               size: 16,
               color: AppColors.textSecondary,
             ),
-          ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildActions() {
     if (widget.isSuccess) {
@@ -237,7 +223,6 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             gradient: LinearGradient(
               colors: [AppColors.primary, AppColors.secondary],
             ),
-          ),
           const SizedBox(height: 12),
           CustomButton(
             onPressed: _navigateToFortuneList,
@@ -245,9 +230,9 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             backgroundColor: Colors.transparent,
             textColor: AppColors.primary,
           ),
-        ],
+        ]
       );
-    } else {
+} else {
       return Column(
         children: [
           CustomButton(
@@ -256,7 +241,6 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             gradient: LinearGradient(
               colors: [AppColors.primary, AppColors.secondary],
             ),
-          ),
           const SizedBox(height: 12),
           CustomButton(
             onPressed: _navigateToHome,
@@ -266,7 +250,7 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
           ),
         ],
       );
-    }
+}
   }
 
   Widget _buildRetryInfo() {
@@ -287,14 +271,13 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
         break;
       default:
         helpText = '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
-    }
+}
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.info.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-      ),
       child: Row(
         children: [
           Icon(
@@ -307,38 +290,34 @@ class _PaymentResultPageState extends State<PaymentResultPage> {
             child: Text(
               helpText,
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.info,
-              ),
+                color: AppColors.info),
             ),
-          ),
         ],
-      ),
-    );
-  }
+      ));
+}
 
   void _copyTransactionId() {
     // TODO: 클립보드에 복사
     HapticUtils.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('거래번호가 복사되었습니다.')),
-    );
-  }
+      const SnackBar(content: Text('거래번호가 복사되었습니다.')));
+}
 
   void _navigateToHome() {
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/home',
       (route) => false,
     );
-  }
+}
 
   void _navigateToFortuneList() {
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/fortune',
-      (route) => false,
+      (route) => false
     );
-  }
+}
 
   void _retry() {
     Navigator.of(context).pop();
-  }
+}
 }

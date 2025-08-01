@@ -1,8 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -50,7 +54,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('회원가입이 완료되었습니다!'),
-              backgroundColor: Colors.green,
+              backgroundColor: AppColors.success,
             ),
           );
           
@@ -61,7 +65,7 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.message),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       } catch (error) {
@@ -69,7 +73,7 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('회원가입 중 오류가 발생했습니다.'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
           ),
         );
       } finally {
@@ -85,30 +89,28 @@ class _SignupScreenState extends State<SignupScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: AppSpacing.paddingAll24,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 '회원가입',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold),
                     ),
-              ),
-              const SizedBox(height: 8),
+              SizedBox(height: AppSpacing.spacing2),
               Text(
                 'Fortune과 함께 운명을 만나보세요',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
+                      color: AppColors.textSecondary),
                     ),
-              ),
-              const SizedBox(height: 32),
+              SizedBox(height: AppSpacing.spacing8),
               FormBuilder(
                 key: _formKey,
                 child: Column(
@@ -129,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ]),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'email',
                       decoration: const InputDecoration(
@@ -146,7 +148,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ]),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'password',
                       decoration: InputDecoration(
@@ -176,7 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ]),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'confirmPassword',
                       decoration: InputDecoration(
@@ -206,9 +208,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: AppSpacing.spacing6),
                     SizedBox(
-                      height: 48,
+                      height: AppDimensions.buttonHeightMedium,
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleSignup,
                         child: _isLoading
@@ -218,14 +220,14 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    AppColors.textPrimaryDark,
                                   ),
                                 ),
                               )
                             : const Text('회원가입'),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: AppSpacing.spacing4),
                     TextButton(
                       onPressed: () => context.go('/'),
                       child: const Text('이미 계정이 있으신가요? 처음으로'),

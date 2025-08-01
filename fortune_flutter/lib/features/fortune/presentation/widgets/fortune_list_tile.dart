@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/fortune_card_images.dart';
 import '../pages/fortune_list_page.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class FortuneListTile extends ConsumerWidget {
   final FortuneCategory category;
@@ -21,18 +24,18 @@ class FortuneListTile extends ConsumerWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
         child: Row(
           children: [
             // Small thumbnail
             Container(
               width: 48,
-              height: 48,
+              height: AppDimensions.buttonHeightMedium,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium,
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium,
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
@@ -44,21 +47,18 @@ class FortuneListTile extends ConsumerWidget {
                           end: Alignment.bottomRight,
                           colors: category.gradientColors,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: AppDimensions.borderRadiusMedium,
                       ),
                       child: Center(
                         child: Icon(
                           category.icon,
                           size: 24,
                           color: Colors.white,
-                        ),
-                      ),
-                    );
-                  },
+                        ));
+},
                 ),
-              ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppSpacing.spacing4),
             // Title and description
             Expanded(
               child: Column(
@@ -70,66 +70,51 @@ class FortuneListTile extends ConsumerWidget {
                         child: Text(
                           category.title,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                            fontWeight: FontWeight.w600),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      if (category.isNew)
-                        Container(
-                          margin: const EdgeInsets.only(left: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      if (category.isNew), Container(
+                          margin: const EdgeInsets.only(left: AppSpacing.spacing2),
+                          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0 * 0.5),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEF4444),
-                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.error,
+                            borderRadius: AppDimensions.borderRadiusSmall,
                           ),
                           child: const Text(
                             'NEW',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      if (category.isPremium)
-                        Container(
-                          margin: const EdgeInsets.only(left: 8),
-                          padding: const EdgeInsets.all(4),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                      if (category.isPremium), Container(
+                          margin: const EdgeInsets.only(left: AppSpacing.spacing2),
+                          padding: AppSpacing.paddingAll4,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF59E0B),
-                            borderRadius: BorderRadius.circular(12),
+                            color: AppColors.warning,
+                            borderRadius: AppDimensions.borderRadiusMedium,
                           ),
                           child: const Icon(
                             Icons.star_rounded,
                             size: 12,
                             color: Colors.white,
                           ),
-                        ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     category.description,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-            ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.spacing2),
             Icon(
               Icons.chevron_right,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
               size: 24,
             ),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 }

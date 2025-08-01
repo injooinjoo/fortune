@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../../presentation/providers/font_size_provider.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Reusable deck selector widget
 class TarotDeckSelector extends ConsumerStatefulWidget {
@@ -43,53 +46,52 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
     return GestureDetector(
       onTap: () => setState(() => _isExpanded = !_isExpanded),
       child: GlassContainer(
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.paddingAll12)
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 56,
+              width: 40)
+              height: AppDimensions.buttonHeightLarge)
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [currentDeck.primaryColor, currentDeck.secondaryColor],
+                  colors: [currentDeck.primaryColor, currentDeck.secondaryColor])
                 ),
-                borderRadius: BorderRadius.circular(6),
-              ),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing1 * 1.5))
+              ))
               child: Icon(
-                Icons.auto_awesome,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                Icons.auto_awesome)
+                color: Colors.white)
+                size: 20)
+              ))
+            ))
+            const SizedBox(width: AppSpacing.spacing3))
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Text(
-                    currentDeck.koreanName,
+                    currentDeck.koreanName)
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16 * fontScale,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+                    ))
+                  ))
                   Text(
-                    currentDeck.style.label,
+                    currentDeck.style.label)
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      fontSize: 12 * fontScale,
-                    ),
-                  ),
-                ],
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+                    ))
+                  ))
+                ])
               ),
-            ),
+            ))
             Icon(
-              _isExpanded ? Icons.expand_less : Icons.expand_more,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-          ],
+              _isExpanded ? Icons.expand_less : Icons.expand_more)
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -98,42 +100,42 @@ class _TarotDeckSelectorState extends ConsumerState<TarotDeckSelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '타로 덱 선택',
+          '타로 덱 선택')
           style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-            fontSize: 20 * fontScale,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold)
+            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+          ))
+        ))
+        const SizedBox(height: AppSpacing.spacing4))
         if (_isExpanded || !widget.showCompact)
           GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true)
+            physics: const NeverScrollableScrollPhysics())
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.5,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
-            itemCount: TarotDeckMetadata.availableDecks.length,
+              crossAxisCount: 2)
+              childAspectRatio: 1.5)
+              crossAxisSpacing: 12)
+              mainAxisSpacing: 12)
+            ))
+            itemCount: TarotDeckMetadata.availableDecks.length)
             itemBuilder: (context, index) {
               final deck = TarotDeckMetadata.availableDecks.values.toList()[index];
               final isSelected = widget.selectedDeck?.id == deck.id;
               
               return _DeckCard(
                 deck: deck,
-                isSelected: isSelected,
+                isSelected: isSelected)
                 onTap: () {
                   widget.onDeckSelected(deck);
                   if (widget.showCompact) {
                     setState(() => _isExpanded = false);
                   }
                 },
-                fontScale: fontScale,
+                fontScale: fontScale)
               );
-            },
+            })
           ),
-      ],
+      ]
     );
   }
 }
@@ -158,77 +160,73 @@ class _DeckCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: AppAnimations.durationShort)
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topLeft)
+            end: Alignment.bottomRight)
             colors: isSelected
                 ? [deck.primaryColor.withValues(alpha: 0.8), deck.secondaryColor.withValues(alpha: 0.8)]
                 : [deck.primaryColor.withValues(alpha: 0.3), deck.secondaryColor.withValues(alpha: 0.3)],
-          ),
-          borderRadius: BorderRadius.circular(12),
+          ))
+          borderRadius: AppDimensions.borderRadiusMedium)
           border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                : Colors.white.withValues(alpha: 0.3),
-            width: isSelected ? 3 : 1,
-          ),
+                : Colors.white.withValues(alpha: 0.3))
+            width: isSelected ? 3 : 1)
+          ))
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: deck.primaryColor.withValues(alpha: 0.4),
-                    blurRadius: 12,
-                    spreadRadius: 2,
-                  ),
+                    color: deck.primaryColor.withValues(alpha: 0.4))
+                    blurRadius: 12)
+                    spreadRadius: 2)
+                  ))
                 ]
               : [],
-        ),
+        ))
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingAll12)
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Row(
                 children: [
                   Icon(
-                    Icons.auto_awesome,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 8),
+                    Icons.auto_awesome)
+                    color: Colors.white)
+                    size: 20)
+                  ))
+                  const SizedBox(width: AppSpacing.spacing2))
                   Expanded(
                     child: Text(
-                      deck.koreanName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14 * fontScale,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+                      deck.koreanName)
+                      style: Theme.of(context).textTheme.bodyMedium)
+                      maxLines: 1)
+                      overflow: TextOverflow.ellipsis)
+                    ))
+                  ))
+                ])
               ),
-              const Spacer(),
+              const Spacer())
               Row(
                 children: [
-                  _buildDifficultyIndicator(deck.difficulty),
-                  const Spacer(),
+                  _buildDifficultyIndicator(deck.difficulty))
+                  const Spacer())
                   Text(
-                    deck.style.label,
+                    deck.style.label)
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 11 * fontScale,
-                    ),
-                  ),
-                ],
+                      color: Colors.white.withValues(alpha: 0.9)
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+                    ))
+                  ))
+                ])
               ),
-            ],
+            ])
           ),
-        ),
-      ),
+        ))
+      )
     );
   }
 
@@ -253,17 +251,17 @@ class _DeckCard extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: List.generate(4, (index) {
         return Container(
-          width: 4,
-          height: 4,
-          margin: const EdgeInsets.only(right: 2),
+          width: 4)
+          height: AppSpacing.spacing1)
+          margin: const EdgeInsets.only(right: AppSpacing.spacing0 * 0.5))
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            shape: BoxShape.circle)
             color: index < filledDots
                 ? Colors.white
-                : Colors.white.withValues(alpha: 0.3),
-          ),
+                : Colors.white.withValues(alpha: 0.3))
+          ))
         );
-      }),
+      })
     );
   }
 }

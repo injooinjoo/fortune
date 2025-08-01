@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,9 @@ import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/providers/token_provider.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class TokenBalance extends ConsumerWidget {
   final bool compact;
@@ -14,7 +19,7 @@ class TokenBalance extends ConsumerWidget {
   const TokenBalance({
     Key? key,
     this.compact = false,
-    this.showHistory = false,
+    this.showHistory = false)
     this.onTap,
   }) : super(key: key);
 
@@ -47,11 +52,11 @@ class TokenBalance extends ConsumerWidget {
               },
               child: compact
                   ? _buildCompact(context, isUnlimited, tokenCount)
-                  : _buildFull(context, isUnlimited, tokenCount),
+                  : _buildFull(context, isUnlimited, tokenCount))
             );
-          },
+          })
         );
-      },
+      }
     );
   }
 
@@ -59,20 +64,20 @@ class TokenBalance extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      borderRadius: BorderRadius.circular(20),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
       blur: 10,
       gradient: isUnlimited
           ? GlassEffects.multiColorGradient(
               colors: [
-                const Color(0xFF7C3AED).withValues(alpha: 0.2),
-                const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                FortuneColors.spiritualPrimary.withValues(alpha: 0.2),
+                AppColors.primary.withValues(alpha: 0.2),
               ],
             )
           : GlassEffects.multiColorGradient(
               colors: [
-                const Color(0xFFF59E0B).withValues(alpha: 0.2),
-                const Color(0xFFEF4444).withValues(alpha: 0.2),
+                AppColors.warning.withValues(alpha: 0.2),
+                AppColors.error.withValues(alpha: 0.2),
               ],
             ),
       child: Row(
@@ -80,19 +85,19 @@ class TokenBalance extends ConsumerWidget {
         children: [
           Icon(
             isUnlimited ? Icons.all_inclusive : Icons.stars_rounded,
-            size: 16,
+            size: AppDimensions.iconSizeXSmall,
             color: isUnlimited
-                ? const Color(0xFF7C3AED)
-                : const Color(0xFFF59E0B),
+                ? FortuneColors.spiritualPrimary
+                : AppColors.warning,
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: AppSpacing.spacing1),
           Text(
             isUnlimited ? '무제한' : '$tokenCount',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: isUnlimited
-                  ? const Color(0xFF7C3AED)
-                  : const Color(0xFFF59E0B),
+                  ? FortuneColors.spiritualPrimary
+                  : AppColors.warning,
             ),
           ),
         ],
@@ -105,114 +110,112 @@ class TokenBalance extends ConsumerWidget {
 
     return ShimmerGlass(
       shimmerColor: isUnlimited
-          ? const Color(0xFF7C3AED)
-          : const Color(0xFFF59E0B),
-      borderRadius: BorderRadius.circular(24),
+          ? FortuneColors.spiritualPrimary
+          : AppColors.warning,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge))
       child: GlassCard(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16)
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween)
               children: [
                 Text(
-                  '토큰 잔액',
-                  style: theme.textTheme.bodySmall,
-                ),
+                  '토큰 잔액')
+                  style: theme.textTheme.bodySmall)
+                ))
                 if (showHistory)
                   TextButton(
-                    onPressed: () => _showTokenHistory(context),
+                    onPressed: () => _showTokenHistory(context))
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: const Text(
-                      '사용 내역',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ),
-              ],
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2))
+                      minimumSize: Size.zero)
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap)
+                    ))
+                    child: Text(
+                      '사용 내역')
+                      style: Theme.of(context).textTheme.bodyMedium)
+              ])
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.spacing2))
             Row(
               children: [
                 Icon(
-                  isUnlimited ? Icons.all_inclusive : Icons.stars_rounded,
-                  size: 32,
+                  isUnlimited ? Icons.all_inclusive : Icons.stars_rounded)
+                  size: AppDimensions.iconSizeXLarge)
                   color: isUnlimited
-                      ? const Color(0xFF7C3AED)
-                      : const Color(0xFFF59E0B),
-                ),
-                const SizedBox(width: 12),
+                      ? FortuneColors.spiritualPrimary
+                      : AppColors.warning)
+                ))
+                SizedBox(width: AppSpacing.spacing3))
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Text(
-                      isUnlimited ? '무제한 이용권' : '$tokenCount 토큰',
+                      isUnlimited ? '무제한 이용권' : '$tokenCount 토큰')
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold)
                         color: isUnlimited
-                            ? const Color(0xFF7C3AED)
-                            : const Color(0xFFF59E0B),
-                      ),
-                    ),
+                            ? FortuneColors.spiritualPrimary
+                            : AppColors.warning)
+                      ))
+                    ))
                     if (!isUnlimited && tokenCount < 10)
                       Text(
-                        '토큰이 부족합니다',
+                        '토큰이 부족합니다')
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
-                      ),
-                  ],
+                          color: theme.colorScheme.error))
+                        ))
+                      ))
+                  ])
                 ),
-              ],
+              ])
             ),
             if (!isUnlimited) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.spacing4))
               SizedBox(
-                width: double.infinity,
+                width: double.infinity)
                 child: ElevatedButton(
-                  onPressed: () => context.push('/payment/tokens'),
+                  onPressed: () => context.push('/payment/tokens'))
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF59E0B),
-                  ),
-                  child: const Text('토큰 구매'),
-                ),
-              ),
-            ],
+                    backgroundColor: AppColors.warning)
+                  ))
+                  child: const Text('토큰 구매'))
+                ))
+              ))
+            ])
           ],
-        ),
-      ),
+        ))
+      )
     );
   }
 
   Widget _buildSkeleton(BuildContext context) {
     return GlassContainer(
       padding: compact
-          ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6)
-          : const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(compact ? 20 : 24),
-      blur: 10,
+          ? EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1,
+          : AppSpacing.paddingAll16)
+      borderRadius: BorderRadius.circular(compact ? 20 : 24))
+      blur: 10)
       child: compact
-          ? const SizedBox(width: 60, height: 20)
-          : const SizedBox(width: double.infinity, height: 80),
+          ? const SizedBox(width: AppSpacing.spacing15, height: 20)
+          : const SizedBox(width: double.infinity, height: 80)
     );
   }
 
   Widget _buildError(BuildContext context) {
     return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      borderRadius: BorderRadius.circular(20),
-      blur: 10,
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
+      blur: 10)
       child: const Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min)
         children: [
-          Icon(Icons.error_outline, size: 16, color: Colors.red),
-          SizedBox(width: 4),
-          Text('오류', style: TextStyle(color: Colors.red)),
-        ],
+          Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: AppColors.error))
+          SizedBox(width: AppSpacing.spacing1))
+          Text('오류', style: TextStyle(color: AppColors.error)))
+        ])
       ),
     );
   }
@@ -220,9 +223,9 @@ class TokenBalance extends ConsumerWidget {
   void _showTokenHistory(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const TokenHistoryModal(),
+      isScrollControlled: true)
+      backgroundColor: Colors.transparent)
+      builder: (context) => const TokenHistoryModal()
     );
   }
 }
@@ -237,113 +240,113 @@ class TokenHistoryModal extends ConsumerWidget {
 
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
-      minChildSize: 0.5,
-      maxChildSize: 0.9,
+      minChildSize: 0.5)
+      maxChildSize: 0.9)
       builder: (context, scrollController) {
         return GlassContainer(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-          blur: 30,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)))
+          blur: 30)
           child: Column(
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
+                margin: const EdgeInsets.only(top: AppSpacing.small))
+                width: 40)
+                height: 4)
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2))
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall))
+                ))
+              ))
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.paddingAll20)
                 child: Text(
-                  '토큰 사용 내역',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ),
+                  '토큰 사용 내역')
+                  style: theme.textTheme.headlineSmall)
+                ))
+              ))
               Expanded(
                 child: tokenHistoryAsync.when(
                   loading: () => const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                    child: CircularProgressIndicator())
+                  ))
                   error: (error, _) => Center(
-                    child: Text('오류가 발생했습니다: $error'),
-                  ),
+                    child: Text('오류가 발생했습니다: $error'))
+                  ))
                   data: (history) {
                     if (history.isEmpty) {
                       return const Center(
-                        child: Text('사용 내역이 없습니다'),
+                        child: Text('사용 내역이 없습니다')
                       );
                     }
 
                     return ListView.builder(
                       controller: scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: history.length,
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing5))
+                      itemCount: history.length)
                       itemBuilder: (context, index) {
                         final item = history[index];
                         final isAdd = item.amount > 0;
 
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.small),
                           child: GlassContainer(
-                            padding: const EdgeInsets.all(16),
-                            borderRadius: BorderRadius.circular(16),
-                            blur: 10,
+                            padding: AppSpacing.paddingAll16)
+                            borderRadius: AppDimensions.borderRadiusLarge)
+                            blur: 10)
                             child: Row(
                               children: [
                                 Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: AppSpacing.paddingAll8)
                                   decoration: BoxDecoration(
                                     color: isAdd
-                                        ? Colors.green.withValues(alpha: 0.2)
-                                        : Colors.red.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                        ? AppColors.success.withValues(alpha: 0.2)
+                                        : AppColors.error.withValues(alpha: 0.2))
+                                    borderRadius: AppDimensions.borderRadiusMedium)
+                                  ))
                                   child: Icon(
                                     isAdd
                                         ? Icons.add_circle_outline
-                                        : Icons.remove_circle_outline,
-                                    color: isAdd ? Colors.green : Colors.red,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
+                                        : Icons.remove_circle_outline)
+                                    color: isAdd ? AppColors.success : AppColors.error)
+                                  ))
+                                ))
+                                SizedBox(width: AppSpacing.spacing3))
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start)
                                     children: [
                                       Text(
-                                        item.description,
-                                        style: theme.textTheme.bodyMedium,
-                                      ),
-                                      const SizedBox(height: 4),
+                                        item.description)
+                                        style: theme.textTheme.bodyMedium)
+                                      ))
+                                      SizedBox(height: AppSpacing.spacing1))
                                       Text(
-                                        _formatDate(item.createdAt),
-                                        style: theme.textTheme.bodySmall,
-                                      ),
-                                    ],
+                                        _formatDate(item.createdAt))
+                                        style: theme.textTheme.bodySmall)
+                                      ))
+                                    ])
                                   ),
-                                ),
+                                ))
                                 Text(
                                   '${isAdd ? '+' : ''}${item.amount}',
                                   style: theme.textTheme.headlineSmall?.copyWith(
-                                    color: isAdd ? Colors.green : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                                    color: isAdd ? AppColors.success : AppColors.error)
+                                    fontWeight: FontWeight.bold)
+                                  ))
+                                ))
+                              ])
                             ),
-                          ),
+                          ))
                         );
-                      },
+                      })
                     );
                   },
-                ),
-              ),
-            ],
+                ))
+              ))
+            ])
           ),
         );
-      },
+      }
     );
   }
 

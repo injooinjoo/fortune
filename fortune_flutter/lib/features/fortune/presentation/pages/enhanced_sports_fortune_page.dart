@@ -48,7 +48,7 @@ class EnhancedSportsFortunePage extends BaseFortunePage {
           title: '스포츠 운세',
           description: '오늘의 스포츠 운세를 확인하고 최고의 경기력을 발휘하세요',
           fortuneType: 'sports',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -290,7 +290,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
     final fortune = await fortuneService.getSportsFortune(
       userId: params['userId'],
       fortuneType: _selectedSport?.id ?? 'general',
-      params: params,
+      params: params
     );
     
     // Cache the fortune
@@ -330,7 +330,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 tabs: SportCategory.values.map((category) {
                   return Tab(
                     icon: Icon(category.icon),
-                    text: category.label,
+                    text: category.label
                   );
                 }).toList(),
               ),
@@ -452,7 +452,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       itemBuilder: (context, index) {
         final sport = filteredSports[index];
         return _buildSportCard(sport, index);
-      },
+      }
     );
   }
 
@@ -659,7 +659,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         _buildTeamChip('개인', isPersonal: true),
         // Team options
         ..._selectedSport!.teams!.map((team) => _buildTeamChip(team)),
-      ],
+      ]
     );
   }
 
@@ -861,7 +861,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             Icons.psychology,
             Colors.purple,
           ),
-      ],
+      ]
     );
   }
 
@@ -929,7 +929,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             ),
           )).toList(),
         ],
-      ],
+      ]
     );
   }
 

@@ -59,7 +59,7 @@ class _DestinyInputForm extends StatelessWidget {
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.explore),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(

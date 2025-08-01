@@ -23,8 +23,8 @@ class BiorhythmFortunePage extends ConsumerWidget {
       inputBuilder: (context, onSubmit) => _BiorhythmInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _BiorhythmFortuneResult(
         result: result,
-        onShare: onShare,
-      ),
+        onShare: onShare
+      )
     );
   }
 }
@@ -73,7 +73,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               initialDate: _birthDate ?? DateTime(1990),
               firstDate: DateTime(1900),
               lastDate: DateTime.now(),
-              locale: const Locale('ko', 'KR'),
+              locale: const Locale('ko', 'KR')
             );
             if (date != null) {
               setState(() {
@@ -131,7 +131,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
               initialDate: _targetDate,
               firstDate: DateTime.now().subtract(const Duration(days: 365)),
               lastDate: DateTime.now().add(const Duration(days: 365)),
-              locale: const Locale('ko', 'KR'),
+              locale: const Locale('ko', 'KR')
             );
             if (date != null) {
               setState(() {
@@ -253,7 +253,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -282,7 +282,7 @@ class _BiorhythmInputFormState extends State<_BiorhythmInputForm> {
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -486,7 +486,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                       getDrawingVerticalLine: (value) {
                         return FlLine(
                           color: theme.colorScheme.outline.withValues(alpha: 0.2),
-                          strokeWidth: 1,
+                          strokeWidth: 1
                         );
                       },
                     ),
@@ -504,8 +504,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                               padding: const EdgeInsets.only(top: 8),
                               child: Text(
                                 '${date.month}/${date.day}',
-                                style: theme.textTheme.bodySmall,
-                              ),
+                                style: theme.textTheme.bodySmall
+                              )
                             );
                           },
                         ),
@@ -517,7 +517,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                           getTitlesWidget: (value, meta) {
                             return Text(
                               '${(value * 100).toInt()}%',
-                              style: theme.textTheme.bodySmall,
+                              style: theme.textTheme.bodySmall
                             );
                           },
                         ),
@@ -548,7 +548,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                               radius: 4,
                               color: Colors.red,
                               strokeWidth: 2,
-                              strokeColor: Colors.white,
+                              strokeColor: Colors.white
                             );
                           },
                         ),
@@ -571,7 +571,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                               radius: 4,
                               color: Colors.blue,
                               strokeWidth: 2,
-                              strokeColor: Colors.white,
+                              strokeColor: Colors.white
                             );
                           },
                         ),
@@ -594,7 +594,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
                               radius: 4,
                               color: Colors.green,
                               strokeWidth: 2,
-                              strokeColor: Colors.white,
+                              strokeColor: Colors.white
                             );
                           },
                         ),
@@ -705,7 +705,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -755,7 +755,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
             minHeight: 8,
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -775,7 +775,7 @@ class _BiorhythmFortuneResult extends StatelessWidget {
           label,
           style: const TextStyle(fontSize: 13),
         ),
-      ],
+      ]
     );
   }
 
@@ -870,8 +870,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -936,8 +936,8 @@ class _BiorhythmFortuneResult extends StatelessWidget {
               color: color.withValues(alpha: 0.8),
             ),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 

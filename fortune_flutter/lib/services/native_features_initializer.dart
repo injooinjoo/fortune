@@ -53,7 +53,7 @@ class NativeFeaturesInitializer {
       // Initialize WorkManager for Android background tasks
       await Workmanager().initialize(
         callbackDispatcher,
-        isInDebugMode: false,
+        isInDebugMode: false
       );
       
       // Register periodic widget update task
@@ -102,9 +102,10 @@ class NativeFeaturesInitializer {
       await Workmanager().registerPeriodicTask(
         'widget_update_task',
         'widget_update',
-        frequency: const Duration(hours: 1),
-        constraints: Constraints(
-          networkType: NetworkType.connected,
+        frequency: const Duration(hour,
+      s: 1),
+        constraints: Constraints(,
+      networkType: NetworkType.connected,
         ),
       );
       
@@ -112,10 +113,11 @@ class NativeFeaturesInitializer {
       await Workmanager().registerPeriodicTask(
         'daily_fortune_task',
         'daily_fortune_fetch',
-        frequency: const Duration(days: 1),
-        initialDelay: _calculateInitialDelay(6, 0), // 6:00 AM
-        constraints: Constraints(
-          networkType: NetworkType.connected,
+        frequency: const Duration(day,
+      s: 1),
+        initialDelay: _calculateInitialDelay(6, 0), // 6: 00 AM,
+      constraints: Constraints(,
+      networkType: NetworkType.connected,
         ),
       );
       
@@ -131,8 +133,9 @@ class NativeFeaturesInitializer {
     var scheduledTime = DateTime(now.year, now.month, now.day, hour, minute);
     
     if (scheduledTime.isBefore(now)) {
-      scheduledTime = scheduledTime.add(const Duration(days: 1));
-    }
+      scheduledTime = scheduledTime.add(
+    const Duration(days: 1,
+  )}
     
     return scheduledTime.difference(now);
   }
@@ -144,7 +147,8 @@ class NativeFeaturesInitializer {
     bool enabled = true,
   }) async {
     await NotificationService.scheduleDailyFortuneReminder(
-      time: TimeOfDay(hour: hour, minute: minute),
+      time: TimeOfDay(hou,
+      r: hour, minute: minute),
       enabled: enabled,
     );
   }
@@ -159,12 +163,12 @@ class NativeFeaturesInitializer {
     );
   }
   
-  /// Update daily fortune widget (convenience method)
+  /// Update daily fortune widget (convenience method,
   static Future<void> updateDailyFortuneWidget(dynamic fortune) async {
     await WidgetDataManager.updateDailyFortune(fortune);
   }
   
-  /// Update love fortune widget (convenience method)
+  /// Update love fortune widget (convenience method,
   static Future<void> updateLoveFortuneWidget({
     required String partnerName,
     required int compatibilityScore,

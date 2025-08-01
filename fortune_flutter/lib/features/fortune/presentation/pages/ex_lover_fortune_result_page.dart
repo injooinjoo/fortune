@@ -152,7 +152,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
                           Icon(
                             Icons.lightbulb,
                             color: Colors.amber,
-                            size: 20,
+                            size: 20
                           ),
                           const SizedBox(width: 8),
                           Text(
@@ -951,7 +951,7 @@ class _ExLoverFortuneResultPageState extends ConsumerState<ExLoverFortuneResultP
             ],
           ),
         );
-      },
+      }
     );
   }
   

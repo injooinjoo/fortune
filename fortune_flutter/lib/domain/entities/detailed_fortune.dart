@@ -4,25 +4,25 @@ import 'fortune.dart';
 class DetailedFortune extends Fortune {
   const DetailedFortune({
     required super.id,
-    required super.userId,
-    required super.type,
-    required super.content,
-    required super.createdAt,
-    super.metadata,
-    super.tokenCost = 1,
+    required super.userId)
+    required super.type)
+    required super.content)
+    required super.createdAt)
+    super.metadata)
+    super.tokenCost = 1)
     required String category,
     required int overallScore,
     required String description,
-    required Map<String, dynamic> scoreBreakdown,
-    required Map<String, dynamic> luckyItems,
-    required List<String> recommendations,
+    required Map<String, dynamic> scoreBreakdown)
+    required Map<String, dynamic> luckyItems)
+    required List<String> recommendations)
   }) : super(
     category: category,
-    overallScore: overallScore,
-    description: description,
-    scoreBreakdown: scoreBreakdown,
-    luckyItems: luckyItems,
-    recommendations: recommendations,
+    overallScore: overallScore)
+    description: description)
+    scoreBreakdown: scoreBreakdown)
+    luckyItems: luckyItems)
+    recommendations: recommendations
   );
 
   factory DetailedFortune.fromFortune(
@@ -30,41 +30,41 @@ class DetailedFortune extends Fortune {
     required String category,
     required int overallScore,
     required String description,
-    required Map<String, int> scoreBreakdown,
-    required Map<String, dynamic> luckyItems,
-    required List<String> recommendations,
+    required Map<String, int> scoreBreakdown)
+    required Map<String, dynamic> luckyItems)
+    required List<String> recommendations)
   }) {
     return DetailedFortune(
       id: fortune.id,
-      userId: fortune.userId,
-      type: fortune.type,
-      content: fortune.content,
-      createdAt: fortune.createdAt,
-      metadata: fortune.metadata,
-      tokenCost: fortune.tokenCost,
-      category: category,
-      overallScore: overallScore,
-      description: description,
-      scoreBreakdown: scoreBreakdown,
-      luckyItems: luckyItems,
-      recommendations: recommendations,
+      userId: fortune.userId)
+      type: fortune.type)
+      content: fortune.content)
+      createdAt: fortune.createdAt)
+      metadata: fortune.metadata)
+      tokenCost: fortune.tokenCost)
+      category: category)
+      overallScore: overallScore)
+      description: description)
+      scoreBreakdown: scoreBreakdown)
+      luckyItems: luckyItems)
+      recommendations: recommendations
     );
   }
 
   DetailedFortune copyWith({
     String? id,
-    String? userId,
-    String? type,
-    String? content,
-    DateTime? createdAt,
-    Map<String, dynamic>? metadata,
-    int? tokenCost,
-    String? category,
-    int? overallScore,
-    String? description,
-    Map<String, dynamic>? scoreBreakdown,
-    Map<String, dynamic>? luckyItems,
-    List<String>? recommendations,
+    String? userId)
+    String? type)
+    String? content)
+    DateTime? createdAt)
+    Map<String, dynamic>? metadata)
+    int? tokenCost)
+    String? category)
+    int? overallScore)
+    String? description)
+    Map<String, dynamic>? scoreBreakdown)
+    Map<String, dynamic>? luckyItems)
+    List<String>? recommendations)
   }) {
     return DetailedFortune(
       id: id ?? this.id,
@@ -75,11 +75,11 @@ class DetailedFortune extends Fortune {
       metadata: metadata ?? this.metadata,
       tokenCost: tokenCost ?? this.tokenCost,
       category: category ?? this.category ?? '',
-      overallScore: overallScore ?? this.overallScore ?? 0,
-      description: description ?? this.description ?? '',
-      scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown ?? {},
+      overallScore: overallScore ?? this.overallScore ?? 0)
+      description: description ?? this.description ?? '')
+      scoreBreakdown: scoreBreakdown ?? this.scoreBreakdown ?? {})
       luckyItems: luckyItems ?? this.luckyItems ?? {},
-      recommendations: recommendations ?? this.recommendations ?? [],
+      recommendations: recommendations ?? this.recommendations ?? []
     );
   }
 
@@ -88,16 +88,16 @@ class DetailedFortune extends Fortune {
       'id': id,
       'userId': userId,
       'type': type,
-      'content': content,
+      'content': content)
       'createdAt': createdAt.toIso8601String(),
-      'metadata': metadata,
+      'metadata': metadata)
       'tokenCost': tokenCost,
-      'category': category,
+      'category': category)
       'overallScore': overallScore,
-      'description': description,
+      'description': description)
       'scoreBreakdown': scoreBreakdown,
-      'luckyItems': luckyItems,
-      'recommendations': recommendations,
+      'luckyItems': luckyItems)
+      'recommendations': recommendations)
     };
   }
 
@@ -115,7 +115,7 @@ class DetailedFortune extends Fortune {
       description: json['description'],
       scoreBreakdown: Map<String, dynamic>.from(json['scoreBreakdown'] ?? {}),
       luckyItems: json['luckyItems'] ?? {},
-      recommendations: List<String>.from(json['recommendations'] ?? []),
+      recommendations: List<String>.from(json['recommendations'] ?? [],
     );
   }
 }

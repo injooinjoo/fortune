@@ -75,13 +75,10 @@ class _TrendPageState extends State<TrendPage> {
           ).createShader(bounds),
           child: Text(
             '트렌드 & 테스트',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w700),
               color: Colors.white,
             ),
-          ),
-        ),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_outlined, color: Colors.black87),
@@ -91,21 +88,19 @@ class _TrendPageState extends State<TrendPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await Future.delayed(Duration(seconds: 1));
-        },
+          await Future.delayed(Duration(seconds: 1);
+},
         child: ListView.builder(
           padding: EdgeInsets.symmetric(vertical: 8),
           itemCount: trendItems.length,
           itemBuilder: (context, index) {
             final item = trendItems[index];
             return _buildTrendCard(item).animate()
-              .fadeIn(delay: Duration(milliseconds: 100 * index))
+                  .fadeIn(delay: Duration(milliseconds: 100 * index),
               .slideY(begin: 0.1, end: 0);
-          },
-        ),
-      ),
-    );
-  }
+},
+        ));
+}
 
   Widget _buildTrendCard(Map<String, dynamic> item) {
     final bool isTrend = item['type'] == 'trend';
@@ -116,10 +111,10 @@ class _TrendPageState extends State<TrendPage> {
         onTap: () {
           // Navigate to detail page
           if (isTrend) {
-            // Go to trend detail
-          } else {
-            // Go to test page
-          }
+            // Go to trend detail,
+} else {
+            // Go to test page,
+}
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
@@ -135,11 +130,10 @@ class _TrendPageState extends State<TrendPage> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: (isTrend ? Color(0xFFF58529) : Color(0xFF8134AF))
+                color: (isTrend ? Color(0xFFF58529) : Color(0xFF8134AF),
                     .withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: Offset(0, 6),
-              ),
             ],
           ),
           child: Stack(
@@ -156,24 +150,21 @@ class _TrendPageState extends State<TrendPage> {
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
-                      ),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white),
                           fontWeight: FontWeight.w600,
                         ),
-                      ),
-                    ),
                     SizedBox(height: 12),
                     // Emoji and title
                     Row(
                       children: [
                         Text(
                           item['emoji'],
-                          style: TextStyle(fontSize: 32),
-                        ),
+                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                            fontSize: 32),
+                          ),
                         SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -181,25 +172,20 @@ class _TrendPageState extends State<TrendPage> {
                             children: [
                               Text(
                                 item['title'],
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  color: Colors.white),
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5,
                                 ),
-                              ),
                               SizedBox(height: 4),
                               Text(
                                 item['subtitle'],
-                                style: TextStyle(
+                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
-                              ),
                             ],
                           ),
-                        ),
                       ],
                     ),
                     Spacer(),
@@ -214,12 +200,10 @@ class _TrendPageState extends State<TrendPage> {
                         SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white),
                             fontWeight: FontWeight.w500,
                           ),
-                        ),
                         SizedBox(width: 16),
                         Icon(
                           Icons.visibility,
@@ -229,17 +213,14 @@ class _TrendPageState extends State<TrendPage> {
                         SizedBox(width: 4),
                         Text(
                           '${item['views']}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.white),
                             fontWeight: FontWeight.w500,
                           ),
-                        ),
                       ],
                     ),
                   ],
                 ),
-              ),
               // Decorative elements
               Positioned(
                 right: -20,
@@ -250,9 +231,7 @@ class _TrendPageState extends State<TrendPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white.withValues(alpha: 0.1),
-                  ),
                 ),
-              ),
               Positioned(
                 right: 20,
                 bottom: 20,
@@ -262,13 +241,10 @@ class _TrendPageState extends State<TrendPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white.withValues(alpha: 0.15),
-                  ),
                 ),
-              ),
             ],
           ),
-        ),
-      ),
+      
     );
-  }
+}
 }

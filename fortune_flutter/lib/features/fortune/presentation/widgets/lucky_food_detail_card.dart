@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fortune/core/constants/fortune_detailed_metadata.dart';
 import 'package:fortune/presentation/widgets/glass_card.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class LuckyFoodDetailCard extends StatelessWidget {
   final String mainLuckyFood;
@@ -20,36 +22,34 @@ class LuckyFoodDetailCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeader(context),
-        const SizedBox(height: 24),
-        _buildMainFoodDisplay(context),
-        const SizedBox(height: 32),
-        _buildCategoryGrid(context, categories),
-      ],
+        _buildHeader(context))
+        const SizedBox(height: AppSpacing.spacing6))
+        _buildMainFoodDisplay(context))
+        const SizedBox(height: AppSpacing.spacing8))
+        _buildCategoryGrid(context, categories))
+      ]
     );
   }
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: AppSpacing.paddingHorizontal16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Text(
-            '오늘의 행운 음식',
+            '오늘의 행운 음식')
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
+                  fontWeight: FontWeight.bold),))
+                ))
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            '맛있는 음식으로 행운의 에너지를 충전하세요',
+            '맛있는 음식으로 행운의 에너지를 충전하세요')
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600],
+                  color: Colors.grey[600]),))
                 ),
-          ),
-        ],
-      ),
+        ])
+      )
     );
   }
 
@@ -57,63 +57,58 @@ class LuckyFoodDetailCard extends StatelessWidget {
     return Center(
       child: GlassCard(
         child: Container(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AppSpacing.spacing8),
           child: Column(
             children: [
               Container(
-                width: 120,
-                height: 120,
+                width: 120)
+                height: AppSpacing.spacing24 * 1.25)
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: BoxShape.circle)
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topLeft)
+                    end: Alignment.bottomRight)
                     colors: [
-                      Colors.orange.withValues(alpha: 0.8),
-                      Colors.deepOrange,
-                    ],
+                      Colors.orange.withValues(alpha: 0.8))
+                      Colors.deepOrange)
+                    ])
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
+                      color: Colors.orange.withValues(alpha: 0.3))
+                      blurRadius: 20)
+                      offset: const Offset(0, 10))
+                    ))
+                  ])
                 ),
                 child: Center(
                   child: Text(
-                    _getFoodEmoji(mainLuckyFood),
-                    style: const TextStyle(fontSize: 60),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                    _getFoodEmoji(mainLuckyFood))
+                    style: Theme.of(context).textTheme.bodyMedium)
+              ))
+              const SizedBox(height: AppSpacing.spacing4))
               Text(
-                mainLuckyFood,
+                mainLuckyFood)
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 8),
+                      fontWeight: FontWeight.bold),))
+                    ))
+              const SizedBox(height: AppSpacing.spacing2))
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2))
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                  color: Colors.orange.withValues(alpha: 0.1))
+                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
+                ))
                 child: Text(
-                  '오늘의 추천 메인 메뉴',
+                  '오늘의 추천 메인 메뉴')
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.orange[700],
+                        color: Colors.orange[700]),))
                         fontWeight: FontWeight.w500,
-                      ),
-                ),
-              ),
-            ],
+                      ))
+            ])
           ),
-        ),
-      ),
+        ))
+      )
     );
   }
 
@@ -125,29 +120,29 @@ class LuckyFoodDetailCard extends StatelessWidget {
     final sortedCategories = _sortCategoriesByTime(categories, currentHour);
 
     return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      shrinkWrap: true)
+      physics: const NeverScrollableScrollPhysics())
+      padding: AppSpacing.paddingHorizontal16)
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1.2,
-      ),
-      itemCount: sortedCategories.length,
+        crossAxisCount: 2)
+        crossAxisSpacing: 12)
+        mainAxisSpacing: 12)
+        childAspectRatio: 1.2)
+      ))
+      itemCount: sortedCategories.length)
       itemBuilder: (context, index) {
         final categoryEntry = sortedCategories[index];
         final categoryItems = detailedItems
-            .where((item) => item.category == categoryEntry.key)
+            .where((item) => item.category == categoryEntry.key,
             .toList();
 
         return _buildCategoryCard(
-          context,
-          categoryEntry.value,
-          categoryItems,
-          isHighlighted: _isCurrentMealTime(categoryEntry.key, currentHour),
+          context)
+          categoryEntry.value)
+          categoryItems)
+          isHighlighted: _isCurrentMealTime(categoryEntry.key, currentHour))
         );
-      },
+      }
     );
   }
 
@@ -203,230 +198,229 @@ class LuckyFoodDetailCard extends StatelessWidget {
   Widget _buildCategoryCard(
     BuildContext context,
     LuckyFoodCategory category,
-    List<DetailedLuckyItem> items,
+    List<DetailedLuckyItem> items)
     {bool isHighlighted = false}
   ) {
     return GlassCard(
       child: InkWell(
         onTap: () => _showCategoryDetail(context, category, items),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusLarge)
         child: Container(
           decoration: isHighlighted
               ? BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppDimensions.borderRadiusLarge)
                   border: Border.all(
-                    color: Colors.orange,
-                    width: 2,
-                  ),
+                    color: Colors.orange)
+                    width: AppSpacing.spacing0 * 0.5)
+                  ))
                 )
-              : null,
+              : null)
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.paddingAll16)
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: AppSpacing.paddingAll8)
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                        color: Colors.orange.withValues(alpha: 0.1))
+                        borderRadius: AppDimensions.borderRadiusSmall)
+                      ))
                       child: Icon(
-                        category.icon,
-                        size: 24,
-                        color: Colors.orange,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                        category.icon)
+                        size: 24)
+                        color: Colors.orange)
+                      ))
+                    ))
+                    const SizedBox(width: AppSpacing.spacing3))
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start)
                         children: [
                           Text(
-                            category.title,
+                            category.title)
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                                  fontWeight: FontWeight.bold),))
+                                ))
+                            maxLines: 1)
+                            overflow: TextOverflow.ellipsis)
+                          ))
                           if (isHighlighted)
                             Text(
-                              '지금 추천!',
+                              '지금 추천!')
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.orange,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                        ],
+                                    color: Colors.orange),))
+                                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                                    fontWeight: FontWeight.bold)
+                                  ))
+                            ))
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.spacing3))
                 if (items.isNotEmpty) ...[
                   Row(
                     children: [
                       Text(
-                        _getFoodEmoji(items.first.value),
-                        style: const TextStyle(fontSize: 24),
-                      ),
-                      const SizedBox(width: 8),
+                        _getFoodEmoji(items.first.value))
+                        style: Theme.of(context).textTheme.bodyMedium)
+                      const SizedBox(width: AppSpacing.spacing2))
                       Expanded(
                         child: Text(
-                          items.first.value,
+                          items.first.value)
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                                fontWeight: FontWeight.w600),))
+                              ))
+                          maxLines: 1)
+                          overflow: TextOverflow.ellipsis)
+                        ))
+                      ))
+                    ])
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.spacing1))
                   Text(
-                    items.first.reason,
+                    items.first.reason)
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontSize: 11,
-                        ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                          color: Colors.grey[600]),))
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                        ))
+                    maxLines: 2)
+                    overflow: TextOverflow.ellipsis)
+                  ))
                 ] else
                   Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
+                          color: Colors.grey[600]),))
                         ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                const Spacer(),
+                    maxLines: 3)
+                    overflow: TextOverflow.ellipsis)
+                  ))
+                const Spacer())
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end)
                   children: [
                     Text(
-                      '더보기',
+                      '더보기')
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.orange,
-                            fontSize: 11,
-                          ),
-                    ),
-                    const SizedBox(width: 4),
+                            color: Colors.orange),))
+                            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                          ))
+                    ))
+                    const SizedBox(width: AppSpacing.spacing1))
                     Icon(
-                      Icons.arrow_forward_ios,
-                      size: 12,
-                      color: Colors.orange,
-                    ),
-                  ],
+                      Icons.arrow_forward_ios)
+                      size: 12)
+                      color: Colors.orange)
+                    ))
+                  ])
                 ),
-              ],
+              ])
             ),
-          ),
-        ),
-      ),
+          ))
+        ))
+      )
     );
   }
 
   void _showCategoryDetail(
     BuildContext context,
     LuckyFoodCategory category,
-    List<DetailedLuckyItem> items,
+    List<DetailedLuckyItem> items)
   ) {
     showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      context: context)
+      isScrollControlled: true)
+      backgroundColor: Colors.transparent)
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
+        initialChildSize: 0.7)
+        minChildSize: 0.5)
+        maxChildSize: 0.95)
         builder: (context, scrollController) => Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme.of(context).scaffoldBackgroundColor)
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(24),
-            ),
-          ),
+              top: Radius.circular(24))
+            ))
+          ))
           child: Column(
             children: [
               Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.symmetric(vertical: 12),
+                width: 40)
+                height: AppSpacing.spacing1)
+                margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3))
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+                  color: Colors.grey.withValues(alpha: 0.3))
+                  borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
+                ))
+              ))
               Expanded(
                 child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(24),
+                  controller: scrollController)
+                  padding: AppSpacing.paddingAll24)
                   children: [
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: AppSpacing.paddingAll12)
                           decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                            color: Colors.orange.withValues(alpha: 0.1))
+                            borderRadius: AppDimensions.borderRadiusMedium)
+                          ))
                           child: Icon(
-                            category.icon,
-                            size: 32,
-                            color: Colors.orange,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
+                            category.icon)
+                            size: 32)
+                            color: Colors.orange)
+                          ))
+                        ))
+                        const SizedBox(width: AppSpacing.spacing4))
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start)
                             children: [
                               Text(
-                                category.title,
+                                category.title)
                                 style: Theme.of(context)
                                     .textTheme
                                     .headlineSmall
                                     ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
+                                      fontWeight: FontWeight.bold))
+                                    ))
+                              ))
+                              const SizedBox(height: AppSpacing.spacing1))
                               Text(
-                                category.description,
+                                category.description)
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
                                     ?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
-                              ),
-                            ],
+                                      color: Colors.grey[600]),
+                                    ))
+                              ))
+                            ])
                           ),
-                        ),
-                      ],
+                        ))
+                      ])
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.spacing6))
                     if (items.isEmpty) ...[
-                      _buildExampleItems(context, category),
+                      _buildExampleItems(context, category))
                     ] else ...[
                       ...items.asMap().entries.map((entry) => 
-                        _buildDetailItem(context, entry.value, index: entry.key + 1)
-                      ),
-                    ],
+                        _buildDetailItem(context, entry.value, index: entry.key + 1,
+                      ))
+                    ])
                   ],
-                ),
-              ),
-            ],
+                ))
+              ))
+            ])
           ),
-        ),
-      ),
+        ))
+      )
     );
   }
 
@@ -435,197 +429,186 @@ class LuckyFoodDetailCard extends StatelessWidget {
     LuckyFoodCategory category,
   ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start)
       children: [
         Text(
-          '추천 메뉴 카테고리',
+          '추천 메뉴 카테고리')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 16),
+                fontWeight: FontWeight.bold),))
+              ))
+        const SizedBox(height: AppSpacing.spacing4))
         ...category.examples.map(
           (example) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing3))
             child: Row(
               children: [
                 Container(
-                  width: 8,
-                  height: 8,
+                  width: 8)
+                  height: AppSpacing.spacing2)
                   decoration: BoxDecoration(
-                    color: Colors.orange,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
+                    color: Colors.orange)
+                    shape: BoxShape.circle)
+                  ))
+                ))
+                const SizedBox(width: AppSpacing.spacing3))
                 Expanded(
                   child: Text(
-                    example,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-              ],
+                    example)
+                    style: Theme.of(context).textTheme.bodyMedium)
+              ])
             ),
-          ),
-        ),
-      ],
+          ))
+        ))
+      ]
     );
   }
 
   Widget _buildDetailItem(BuildContext context, DetailedLuckyItem item, {int? index}) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AppSpacing.spacing4),
       child: GlassCard(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAll16)
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 48)
+                    height: AppDimensions.buttonHeightMedium)
                     decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                      color: Colors.orange.withValues(alpha: 0.1))
+                      borderRadius: AppDimensions.borderRadiusSmall)
+                    ))
                     child: Center(
                       child: Text(
-                        _getFoodEmoji(item.value),
-                        style: const TextStyle(fontSize: 28),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
+                        _getFoodEmoji(item.value))
+                        style: Theme.of(context).textTheme.bodyMedium)
+                  ))
+                  const SizedBox(width: AppSpacing.spacing4))
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         Row(
                           children: [
                             if (index != null)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                margin: const EdgeInsets.only(right: 8),
+                                  horizontal: AppSpacing.spacing2)
+                                  vertical: AppSpacing.spacing0 * 0.5)
+                                ))
+                                margin: const EdgeInsets.only(right: AppSpacing.spacing2))
                                 decoration: BoxDecoration(
                                   color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                  borderRadius: AppDimensions.borderRadiusMedium)
+                                ))
                                 child: Text(
-                                  '#$index',
+                                  '#$index')
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
-                                      ),
-                                ),
-                              ),
+                                        fontWeight: FontWeight.bold),))
+                                        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                                      ))
+                                ))
+                              ))
                             Expanded(
                               child: Text(
-                                item.value,
+                                item.value)
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                            ),
-                          ],
+                                      fontWeight: FontWeight.bold),))
+                                    ))
+                          ])
                         ),
                         if (item.priority != null)
                           Container(
-                            margin: const EdgeInsets.only(top: 4),
+                            margin: const EdgeInsets.only(top: AppSpacing.spacing1))
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
+                              horizontal: AppSpacing.spacing2)
+                              vertical: AppSpacing.spacing0 * 0.5)
+                            ))
                             decoration: BoxDecoration(
-                              color: _getPriorityColor(item.priority!),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                              color: _getPriorityColor(item.priority!))
+                              borderRadius: AppDimensions.borderRadiusMedium)
+                            ))
                             child: Text(
-                              _getPriorityText(item.priority!),
+                              _getPriorityText(item.priority!))
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                            ),
-                          ),
-                      ],
+                                    color: Colors.white),))
+                                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                                  ))
+                            ))
+                          ))
+                      ])
                     ),
-                  ),
-                ],
+                  ))
+                ])
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.spacing3))
               Text(
-                item.reason,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+                item.reason)
+                style: Theme.of(context).textTheme.bodyMedium)
               if (item.timeRange != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.spacing2))
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                    horizontal: AppSpacing.spacing3)
+                    vertical: AppSpacing.spacing1 * 1.5)
+                  ))
                   decoration: BoxDecoration(
-                    color: Colors.blue.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                    color: Colors.blue.withValues(alpha: 0.1))
+                    borderRadius: AppDimensions.borderRadiusLarge)
+                  ))
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.min)
                     children: [
                       Icon(
-                        Icons.access_time,
-                        size: 16,
+                        Icons.access_time)
+                        size: 16)
                         color: Colors.blue[700],
-                      ),
-                      const SizedBox(width: 4),
+                      ))
+                      const SizedBox(width: AppSpacing.spacing1))
                       Text(
-                        item.timeRange!,
+                        item.timeRange!)
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.blue[700],
+                              color: Colors.blue[700]),))
                               fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
+                            ))
+                    ])
                   ),
-                ),
-              ],
+                ))
+              ])
               if (item.situation != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.spacing2),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: AppSpacing.paddingAll8)
                   decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                    color: Colors.amber.withValues(alpha: 0.1))
+                    borderRadius: AppDimensions.borderRadiusSmall)
+                  ))
                   child: Row(
                     children: [
                       Icon(
-                        Icons.restaurant,
-                        size: 16,
+                        Icons.restaurant)
+                        size: 16)
                         color: Colors.amber[700],
-                      ),
-                      const SizedBox(width: 8),
+                      ))
+                      const SizedBox(width: AppSpacing.spacing2))
                       Expanded(
                         child: Text(
-                          item.situation!,
+                          item.situation!)
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.amber[900],
+                                color: Colors.amber[900]),))
                               ),
-                        ),
-                      ),
-                    ],
+                    ])
                   ),
-                ),
-              ],
+                ))
+              ])
             ],
-          ),
-        ),
-      ),
+          ))
+        ))
+      )
     );
   }
 
@@ -634,33 +617,33 @@ class LuckyFoodDetailCard extends StatelessWidget {
       '김치찌개': '🍲',
       '된장찌개': '🍲',
       '삼겹살': '🥓',
-      '치킨': '🍗',
+      '치킨': '🍗')
       '피자': '🍕',
-      '햄버거': '🍔',
+      '햄버거': '🍔')
       '파스타': '🍝',
-      '스테이크': '🥩',
+      '스테이크': '🥩')
       '초밥': '🍣',
-      '라면': '🍜',
+      '라면': '🍜')
       '김밥': '🍙',
-      '떡볶이': '🌶️',
+      '떡볶이': '🌶️')
       '커피': '☕',
-      '차': '🍵',
+      '차': '🍵')
       '케이크': '🍰',
-      '아이스크림': '🍦',
+      '아이스크림': '🍦')
       '과일': '🍎',
-      '샐러드': '🥗',
+      '샐러드': '🥗')
       '빵': '🍞',
-      '도넛': '🍩',
+      '도넛': '🍩')
       '맥주': '🍺',
-      '와인': '🍷',
+      '와인': '🍷')
       '짜장면': '🥟',
-      '짬뽕': '🍜',
+      '짬뽕': '🍜')
       '비빔밥': '🍚',
-      '불고기': '🥘',
+      '불고기': '🥘')
       '갈비': '🍖',
-      '샌드위치': '🥪',
+      '샌드위치': '🥪')
       '타코': '🌮',
-      '쌀국수': '🍜',
+      '쌀국수': '🍜')
     };
     
     for (final entry in foodEmojiMap.entries) {

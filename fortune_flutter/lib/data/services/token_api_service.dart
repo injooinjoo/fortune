@@ -77,7 +77,7 @@ class TokenApiService {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
         throw InsufficientTokensException(
-          e.response?.data['message'] ?? '영혼이 부족합니다',
+          e.response?.data['message'] ?? '영혼이 부족합니다'
         );
       }
       throw _handleDioError(e);
@@ -238,7 +238,7 @@ class TokenApiService {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
         throw AlreadyClaimedException(
-          e.response?.data['message'] ?? '이미 오늘의 무료 영혼을 받으셨습니다',
+          e.response?.data['message'] ?? '이미 오늘의 무료 영혼을 받으셨습니다'
         );
       }
       throw _handleDioError(e);
@@ -318,11 +318,11 @@ final tokenApiServiceProvider = Provider<TokenApiService>((ref) {
 
 // Custom Exceptions
 class InsufficientTokensException extends AppException {
-  const InsufficientTokensException([String message = '영혼이 부족합니다']) 
+  const InsufficientTokensException([String message = '영혼이 부족합니다'])
       : super(message: message, code: 'INSUFFICIENT_TOKENS');
 }
 
 class AlreadyClaimedException extends AppException {
-  const AlreadyClaimedException([String message = '이미 받으셨습니다']) 
+  const AlreadyClaimedException([String message = '이미 받으셨습니다'])
       : super(message: message, code: 'ALREADY_CLAIMED');
 }

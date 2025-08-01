@@ -1,3 +1,4 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,6 +8,10 @@ import '../../services/storage_service.dart';
 import '../../core/utils/url_cleaner_stub.dart'
     if (dart.library.html) '../../core/utils/url_cleaner_web.dart';
 import '../../core/utils/profile_validation.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class CallbackPage extends StatefulWidget {
   const CallbackPage({super.key});
@@ -93,7 +98,7 @@ class _CallbackPageState extends State<CallbackPage> {
         // Continue even if sync fails - will check local storage
       }
       
-      // Now check if user needs onboarding (will use synced data if available)
+      // Now check if user needs onboarding (will use synced data if available,
       final needsOnboarding = await ProfileValidation.needsOnboarding();
       debugPrint('User needs onboarding: $needsOnboarding');
       
@@ -143,7 +148,7 @@ class _CallbackPageState extends State<CallbackPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('로그인 실패: ${errorDescription ?? error}'),
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               duration: const Duration(seconds: 5),
             ),
           );
@@ -152,7 +157,7 @@ class _CallbackPageState extends State<CallbackPage> {
         }
       }
       
-      // Clean up the URL by removing the code parameter (web only)
+      // Clean up the URL by removing the code parameter (web only,
       if (code != null && kIsWeb) {
         final cleanUrl = uri.toString().split('?')[0];
         cleanUrlInBrowser(cleanUrl);
@@ -184,7 +189,7 @@ class _CallbackPageState extends State<CallbackPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
-                backgroundColor: Colors.red,
+                backgroundColor: AppColors.error,
                 duration: Duration(seconds: 5),
               ),
             );
@@ -210,7 +215,7 @@ class _CallbackPageState extends State<CallbackPage> {
       
       // Give auth state a moment to propagate
       debugPrint('Checking auth state...');
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(AppAnimations.durationLong);
       
       // Final check
       final finalSession = Supabase.instance.client.auth.currentSession;
@@ -243,7 +248,7 @@ class _CallbackPageState extends State<CallbackPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.grey[100]!, Colors.white, Colors.grey[50]!],
+            colors: [AppColors.surface!, AppColors.textPrimaryDark, AppColors.surface!],
           ),
         ),
         child: Center(
@@ -252,17 +257,14 @@ class _CallbackPageState extends State<CallbackPage> {
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: Colors.black87,
+                color: AppColors.textPrimary.withValues(alpha: 0.87),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[600],
-                ),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),

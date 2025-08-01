@@ -187,10 +187,12 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         if (returnUrl != null && mounted) {
           // Clean URL before navigation
           if (kIsWeb) {
-            cleanUrlInBrowser(Uri.decodeComponent(returnUrl));
-          }
-          context.go(Uri.decodeComponent(returnUrl));
-        } else if (mounted) {
+            cleanUrlInBrowser(
+    Uri.decodeComponent(returnUrl,
+  )}
+          context.go(
+    Uri.decodeComponent(returnUrl,
+  )} else if (mounted) {
           context.go('/home');
         }
       }
@@ -366,43 +368,45 @@ class _LandingPageState extends ConsumerState<LandingPage> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
+      builder: (context) => DraggableScrollableSheet(,
+      initialChildSize: 0.7,
         minChildSize: 0.5,
         maxChildSize: 0.9,
         builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
+          decoration: BoxDecoration(,
+      color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(,
+      topLeft: Radius.circular(25),
               topRight: Radius.circular(25),
             ),
           ),
-          child: Column(
-            children: [
+          child: Column(,
+      children: [
               // Drag handle
               Container(
-                margin: EdgeInsets.only(top: 12),
+                margin: EdgeInsets.only(to,
+      p: 12),
                 width: 40,
                 height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                decoration: BoxDecoration(,
+      color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               
               // Content
               Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                  child: Column(
-                    children: [
+                child: SingleChildScrollView(,
+      controller: scrollController,
+                  padding: EdgeInsets.symmetric(horizonta,
+      l: 40, vertical: 20),
+                  child: Column(,
+      children: [
                       // Title
                       Text(
                         '시작하기',
-                        style: TextStyle(
-                          fontSize: 28,
+                        style: TextStyle(,
+      fontSize: 28,
                           fontWeight: FontWeight.w700,
                           color: Theme.of(context).colorScheme.onSurface,
                           letterSpacing: -0.5,
@@ -411,8 +415,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                       const SizedBox(height: 12),
                       Text(
                         '소셜 계정으로 간편하게 시작해보세요',
-                        style: TextStyle(
-                          fontSize: 16,
+                        style: TextStyle(,
+      fontSize: 16,
                           color: Colors.grey[600],
                         ),
                       ),
@@ -492,8 +496,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                       // Terms text
                       Text(
                         '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                        style: TextStyle(
-                          fontSize: 12,
+                        style: TextStyle(,
+      fontSize: 12,
                           color: Colors.grey[600],
                           height: 1.5,
                         ),
@@ -523,13 +527,13 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Row(
-                children: [
+              content: Row(,
+      children: [
                   SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                    child: CircularProgressIndicator(,
+      strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   ),
@@ -537,7 +541,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                   Text('Google 로그인 진행 중...'),
                 ],
               ),
-              duration: Duration(seconds: 10), // Auth timeout과 동일
+              duration: Duration(second,
+      s: 10), // Auth timeout과 동일
             ),
           );
         }
@@ -622,9 +627,9 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     if (_isCheckingAuth) {
       return Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        body: Center(,
+      child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
                 'assets/images/main_logo.svg',
@@ -639,8 +644,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               const SizedBox(height: 16),
               Text(
                 '로그인 상태를 확인하고 있습니다...',
-                style: TextStyle(
-                  fontSize: 16,
+                style: TextStyle(,
+      fontSize: 16,
                   color: Colors.grey[600],
                 ),
               ),
@@ -652,8 +657,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Stack(
-        children: [
+      body: Stack(,
+      children: [
           // 몽환적인 배경 효과
           // 떠다니는 원형 보케 효과
           ...List.generate(15, (index) {
@@ -665,13 +670,13 @@ class _LandingPageState extends ConsumerState<LandingPage> {
             return Positioned(
               left: random.nextDouble() * MediaQuery.of(context).size.width,
               top: random.nextDouble() * MediaQuery.of(context).size.height,
-              child: Container(
-                width: size,
+              child: Container(,
+      width: size,
                 height: size,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
+                decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+                  gradient: RadialGradient(,
+      colors: [
                       Theme.of(context).brightness == Brightness.dark
                           ? Colors.purple.withOpacity(opacity)
                           : Colors.blue.withOpacity(opacity),
@@ -684,17 +689,20 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                   ),
                 ),
               )
-                .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .animate(onPlay: (controller) => controller.repeat(revers,
+      e: true))
                 .moveX(
                   begin: -30,
                   end: 30,
-                  duration: Duration(seconds: duration),
+                  duration: Duration(second,
+      s: duration),
                   curve: Curves.easeInOut,
                 )
                 .moveY(
                   begin: -20,
                   end: 20,
-                  duration: Duration(seconds: duration + 2),
+                  duration: Duration(second,
+      s: duration + 2),
                   curve: Curves.easeInOut,
                 )
                 .fadeIn(duration: 2000.ms),
@@ -709,11 +717,11 @@ class _LandingPageState extends ConsumerState<LandingPage> {
             return Positioned(
               left: random.nextDouble() * MediaQuery.of(context).size.width,
               top: random.nextDouble() * MediaQuery.of(context).size.height,
-              child: Container(
-                width: 3,
+              child: Container(,
+      width: 3,
                 height: 3,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                decoration: BoxDecoration(,
+      shape: BoxShape.circle,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? Colors.white.withOpacity(0.3)
                       : Colors.black.withOpacity(0.2),
@@ -730,27 +738,30 @@ class _LandingPageState extends ConsumerState<LandingPage> {
               )
                 .animate(onPlay: (controller) => controller.repeat())
                 .fadeIn(duration: 1000.ms)
-                .then(delay: Duration(seconds: random.nextInt(3)))
+                .then(delay: Duration(second,
+      s: random.nextInt(3)))
                 .fadeOut(duration: 1000.ms)
-                .then(delay: Duration(seconds: random.nextInt(2)))
+                .then(delay: Duration(second,
+      s: random.nextInt(2)))
                 .moveY(
                   begin: 0,
                   end: -50,
-                  duration: Duration(seconds: duration),
+                  duration: Duration(second,
+      s: duration),
                   curve: Curves.linear,
                 ),
             );
           }),
           
           SafeArea(
-            child: Column(
-              children: [
+            child: Column(,
+      children: [
                 // Header with dark mode toggle
                 Container(
                   padding: EdgeInsets.all(16),
                   alignment: Alignment.topRight,
-                  child: InkWell(
-                    onTap: () {
+                  child: InkWell(,
+      onTap: () {
                       ref.read(themeModeProvider.notifier).toggleTheme();
                       
                       final themeNotifier = ref.read(themeModeProvider.notifier);
@@ -759,18 +770,19 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(isDark ? '다크 모드로 전환되었습니다' : '라이트 모드로 전환되었습니다'),
-                          duration: Duration(seconds: 1),
+                          duration: Duration(second,
+      s: 1),
                         ),
                       );
                     },
                     borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: 40,
+                    child: Container(,
+      width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).brightness == Brightness.dark 
+                      decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+                        border: Border.all(,
+      color: Theme.of(context).brightness == Brightness.dark 
                               ? Colors.grey[700]! 
                               : Colors.grey[300]!,
                           width: 1,
@@ -791,10 +803,11 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                 
                 // Main content
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  child: Padding(,
+      padding: const EdgeInsets.symmetric(horizont,
+      al: 40),
+                    child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // App Logo
                         SvgPicture.asset(
@@ -819,8 +832,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                         // App Name
                         Text(
                           'Fortune',
-                          style: TextStyle(
-                            fontSize: 36,
+                          style: TextStyle(,
+      fontSize: 36,
                             fontWeight: FontWeight.w700,
                             color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: -1,
@@ -833,8 +846,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                         // Subtitle
                         Text(
                           '매일 새로운 운세를 만나보세요',
-                          style: TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(,
+      fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey[600],
                           ),
@@ -846,25 +859,25 @@ class _LandingPageState extends ConsumerState<LandingPage> {
                         // Start Button with Hero Animation
                         Hero(
                           tag: 'start-button-hero',
-                          child: Material(
-                            color: Colors.transparent,
-                            child: SizedBox(
-                              width: double.infinity,
+                          child: Material(,
+      color: Colors.transparent,
+                            child: SizedBox(,
+      width: double.infinity,
                               height: 56,
-                              child: ElevatedButton(
-                                onPressed: _startOnboarding,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
+                              child: ElevatedButton(,
+      onPressed: _startOnboarding,
+                                style: ElevatedButton.styleFrom(,
+      backgroundColor: Colors.black,
                                   foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(28),
+                                  shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(28),
                                   ),
                                   elevation: 0,
                                 ),
                                 child: Text(
                                   '시작하기',
-                                  style: TextStyle(
-                                    fontSize: 18,
+                                  style: TextStyle(,
+      fontSize: 18,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -924,15 +937,15 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFFFEE500),
+          decoration: BoxDecoration(,
+      color: Color(0xFFFEE500),
             shape: BoxShape.circle,
           ),
-          child: Center(
-            child: Text(
+          child: Center(,
+      child: Text(
               'K',
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -947,15 +960,15 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFF03C75A),
+          decoration: BoxDecoration(,
+      color: Color(0xFF03C75A),
             shape: BoxShape.circle,
           ),
-          child: Center(
-            child: Text(
+          child: Center(,
+      child: Text(
               'N',
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -976,29 +989,29 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
+      child: ElevatedButton(,
+      onPressed: onPressed,
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-            side: type == 'google' ? BorderSide(
-              color: Colors.grey[300]!,
+          shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(26),
+            side: type == 'google' ? BorderSide(,
+      color: Colors.grey[300]!,
               width: 1,
             ) : BorderSide.none,
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
             const SizedBox(width: 12),
             Text(
               text,
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1006,7 +1019,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         ),
       ),
     ).animate()
-      .fadeIn(delay: Duration(milliseconds: delay), duration: 600.ms)
+      .fadeIn(delay: Duration(millisecond,
+      s: delay), duration: 600.ms)
       .slideY(begin: 0.2, end: 0);
   }
   
@@ -1082,29 +1096,29 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
+      child: ElevatedButton(,
+      onPressed: onPressed,
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(26),
-            side: BorderSide(
-              color: borderColor ?? Colors.transparent,
+          shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(26),
+            side: BorderSide(,
+      color: borderColor ?? Colors.transparent,
               width: 1,
             ),
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon,
             const SizedBox(width: 12),
             Text(
               text,
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1140,15 +1154,15 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFFFEE500),
+          decoration: BoxDecoration(,
+      color: Color(0xFFFEE500),
             shape: BoxShape.circle,
           ),
-          child: Center(
-            child: Text(
+          child: Center(,
+      child: Text(
               'K',
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
@@ -1161,15 +1175,15 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            color: Color(0xFF03C75A),
+          decoration: BoxDecoration(,
+      color: Color(0xFF03C75A),
             shape: BoxShape.circle,
           ),
-          child: Center(
-            child: Text(
+          child: Center(,
+      child: Text(
               'N',
-              style: TextStyle(
-                fontSize: 16,
+              style: TextStyle(,
+      fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -1182,8 +1196,8 @@ class _LandingPageState extends ConsumerState<LandingPage> {
         icon = Container(
           width: 24,
           height: 24,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
+          decoration: BoxDecoration(,
+      gradient: LinearGradient(
               colors: [
                 Color(0xFF000000),
                 Color(0xFF333333),
@@ -1208,34 +1222,34 @@ class _LandingPageState extends ConsumerState<LandingPage> {
     return SizedBox(
       width: double.infinity,
       height: 54,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).brightness == Brightness.dark 
+      child: ElevatedButton(,
+      onPressed: onPressed,
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark 
               ? Colors.white 
               : Colors.black,
           foregroundColor: Theme.of(context).brightness == Brightness.dark 
               ? Colors.black 
               : Colors.white,
           elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(27),
-            side: BorderSide(
-              color: Theme.of(context).brightness == Brightness.dark 
+          shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(27),
+            side: BorderSide(,
+      color: Theme.of(context).brightness == Brightness.dark 
                   ? Colors.grey[300]! 
                   : Colors.grey[800]!,
               width: 1,
             ),
           ),
         ),
-        child: Row(
-          children: [
+        child: Row(,
+      children: [
             icon,
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(
-                  fontSize: 16,
+                style: TextStyle(,
+      fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Theme.of(context).brightness == Brightness.dark 
                       ? Colors.black 

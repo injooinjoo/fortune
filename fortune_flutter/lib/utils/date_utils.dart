@@ -34,7 +34,7 @@ class FortuneDateUtils {
     final currentYear = DateTime.now().year;
     return List<int>.generate(
       currentYear - 1899, 
-      (i) => currentYear - i,
+      (i) => currentYear - i
     );
   }
 

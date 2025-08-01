@@ -28,7 +28,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name': '손흥민', 'category': '스포츠', 'birth': '1992.07.08'},
       {'name': '김연아', 'category': '스포츠', 'birth': '1990.09.05'},
       {'name': '이재용', 'category': '기업인', 'birth': '1968.06.23'},
-    ],
+    ])
     'singer': [
       {'name': '아이유', 'category': '솔로', 'birth': '1993.05.16'},
       {'name': 'BTS 정국', 'category': '아이돌', 'birth': '1997.09.01'},
@@ -38,7 +38,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name': '이지은(아이유)', 'category': '솔로', 'birth': '1993.05.16'},
       {'name': 'NCT 재현', 'category': '아이돌', 'birth': '1997.02.14'},
       {'name': '태연', 'category': '솔로', 'birth': '1989.03.09'},
-    ],
+    ])
     'actor': [
       {'name': '송혜교', 'category': '여배우', 'birth': '1981.11.22'},
       {'name': '이병헌', 'category': '남배우', 'birth': '1970.07.12'},
@@ -48,7 +48,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name': '전지현', 'category': '여배우', 'birth': '1981.10.30'},
       {'name': '박서준', 'category': '남배우', 'birth': '1988.12.16'},
       {'name': '김태리', 'category': '여배우', 'birth': '1990.04.24'},
-    ],
+    ])
     'sports': [
       {'name': '손흥민', 'category': '축구', 'birth': '1992.07.08'},
       {'name': '김연아', 'category': '피겨', 'birth': '1990.09.05'},
@@ -58,7 +58,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name': '안산', 'category': '양궁', 'birth': '2001.02.27'},
       {'name': '황희찬', 'category': '축구', 'birth': '1996.01.26'},
       {'name': '이대호', 'category': '야구', 'birth': '1982.06.21'},
-    ],
+    ])
     'entertainer': [
       {'name': '유재석', 'category': '방송인', 'birth': '1972.08.14'},
       {'name': '강호동', 'category': '방송인', 'birth': '1970.06.11'},
@@ -68,7 +68,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       {'name': '김종국', 'category': '방송인/가수', 'birth': '1976.04.25'},
       {'name': '전현무', 'category': '방송인', 'birth': '1977.11.07'},
       {'name': '안영미', 'category': '개그우먼', 'birth': '1983.11.05'},
-    ],
+    ])
   };
 
   @override
@@ -77,19 +77,19 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
 
     return BaseFortunePage(
       title: '연예인 궁합',
-      fortuneType: 'celebrity-match',
-      headerColor: const Color(0xFFFF4081),
+      fortuneType: 'celebrity-match')
+      headerColor: const Color(0xFFFF4081))
       onGenerateFortune: selectedCelebrity != null 
           ? () => _generateFortune(context)
-          : null,
+          : null)
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildCategorySelector(),
-          const SizedBox(height: 20),
-          _buildCelebrityGrid(),
-        ],
-      ),
+          _buildCategorySelector())
+          const SizedBox(height: 20))
+          _buildCelebrityGrid())
+        ])
+      )
     );
   }
 
@@ -97,24 +97,24 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(25),
+        color: AppColors.surface)
+        borderRadius: BorderRadius.circular(25))
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+            color: Colors.black.withValues(alpha: 0.05))
+            blurRadius: 10)
+            offset: const Offset(0, 2))
+          ))
+        ])
       ),
       child: Row(
         children: [
-          _buildCategoryTab('all', '전체', Icons.star),
-          _buildCategoryTab('singer', '가수', Icons.music_note),
-          _buildCategoryTab('actor', '배우', Icons.movie),
-          _buildCategoryTab('sports', '스포츠', Icons.sports),
-          _buildCategoryTab('entertainer', '방송인', Icons.tv),
-        ],
+          _buildCategoryTab('all', '전체', Icons.star))
+          _buildCategoryTab('singer', '가수', Icons.music_note))
+          _buildCategoryTab('actor', '배우', Icons.movie))
+          _buildCategoryTab('sports', '스포츠', Icons.sports))
+          _buildCategoryTab('entertainer', '방송인', Icons.tv))
+        ])
       ),
     ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
   }
@@ -132,32 +132,32 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
         },
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFF4081) : Colors.transparent,
-            borderRadius: BorderRadius.circular(25),
-          ),
+            color: isSelected ? const Color(0xFFFF4081) : Colors.transparent)
+            borderRadius: BorderRadius.circular(25))
+          ))
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center)
             children: [
               Icon(
-                icon,
-                size: 16,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
-              ),
+                icon)
+                size: 16)
+                color: isSelected ? Colors.white : AppColors.textSecondary)
+              ))
               if (MediaQuery.of(context).size.width > 360) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: 4))
                 Text(
-                  label,
+                  label)
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
-                  ),
-                ),
-              ],
+                    fontSize: 12)
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)
+                    color: isSelected ? Colors.white : AppColors.textSecondary)
+                  ))
+                ))
+              ])
             ],
-          ),
-        ),
-      ),
+          ))
+        ))
+      )
     );
   }
 
@@ -166,14 +166,14 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics())
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: celebrities.length,
+        crossAxisCount: 2)
+        childAspectRatio: 1.2)
+        crossAxisSpacing: 12)
+        mainAxisSpacing: 12)
+      ))
+      itemCount: celebrities.length)
       itemBuilder: (context, index) {
         final celebrity = celebrities[index];
         final isSelected = selectedCelebrity == celebrity['name'];
@@ -187,85 +187,85 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: isSelected
                     ? [const Color(0xFFFF4081), const Color(0xFFFF80AB)]
                     : [AppColors.surface, AppColors.surface],
-              ),
-              borderRadius: BorderRadius.circular(16),
+              ))
+              borderRadius: BorderRadius.circular(16))
               border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFFF4081) 
-                    : AppColors.divider,
-                width: isSelected ? 2 : 1,
-              ),
+                    : AppColors.divider)
+                width: isSelected ? 2 : 1)
+              ))
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFFF4081).withValues(alpha: 0.3),
-                        blurRadius: 20,
-                        offset: const Offset(0, 4),
-                      ),
+                        color: const Color(0xFFFF4081).withValues(alpha: 0.3))
+                        blurRadius: 20)
+                        offset: const Offset(0, 4))
+                      ))
                     ]
                   : [],
-            ),
+            ))
             child: Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12))
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center)
                 children: [
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 50)
+                    height: 50)
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
+                      shape: BoxShape.circle)
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.2)
-                          : const Color(0xFFFF4081).withValues(alpha: 0.1),
-                    ),
+                          : const Color(0xFFFF4081).withValues(alpha: 0.1))
+                    ))
                     child: Icon(
-                      _getCategoryIcon(celebrity['category']!),
+                      _getCategoryIcon(celebrity['category']!))
                       size: 24,
-                      color: isSelected ? Colors.white : const Color(0xFFFF4081),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                      color: isSelected ? Colors.white : const Color(0xFFFF4081))
+                    ))
+                  ))
+                  const SizedBox(height: 8))
                   Text(
-                    celebrity['name']!,
+                    celebrity['name']!)
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                      fontWeight: FontWeight.bold)
+                      color: isSelected ? Colors.white : AppColors.textPrimary)
+                    ))
+                    textAlign: TextAlign.center)
+                  ))
                   Text(
-                    celebrity['category']!,
+                    celebrity['category']!)
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.8)
-                          : AppColors.textSecondary,
-                    ),
-                  ),
+                          : AppColors.textSecondary)
+                    ))
+                  ))
                   Text(
-                    celebrity['birth']!,
+                    celebrity['birth']!)
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.7)
-                          : AppColors.textTertiary,
-                    ),
-                  ),
-                ],
+                          : AppColors.textTertiary)
+                    ))
+                  ))
+                ])
               ),
-            ),
+            ))
           ).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)))
         );
-      },
+      })
     );
   }
 
@@ -305,7 +305,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     try {
       final result = await fortuneProvider.generateFortune(
         fortuneType: 'celebrity-match',
-        requestData: requestData,
+        requestData: requestData
       );
 
       if (result != null && mounted) {
@@ -314,7 +314,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('운세 생성 중 오류가 발생했습니다: $e')),
+          SnackBar(content: Text('운세 생성 중 오류가 발생했습니다: $e'),
         );
       }
     }
@@ -323,55 +323,55 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   void _showFortuneResult(BuildContext context, Map<String, dynamic> result) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      isScrollControlled: true)
+      backgroundColor: Colors.transparent)
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
+        initialChildSize: 0.9)
+        minChildSize: 0.5)
+        maxChildSize: 0.95)
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
+            color: AppColors.background)
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)))
+          ))
           child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.all(20),
+            controller: scrollController)
+            padding: const EdgeInsets.all(20))
             children: [
               Center(
                 child: Container(
-                  width: 40,
-                  height: 4,
+                  width: 40)
+                  height: 4)
                   decoration: BoxDecoration(
-                    color: AppColors.divider,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
+                    color: AppColors.divider)
+                    borderRadius: BorderRadius.circular(2))
+                  ))
+                ))
+              ))
+              const SizedBox(height: 20))
               Text(
-                '$selectedCelebrity님과의 궁합',
+                '$selectedCelebrity님과의 궁합')
                 style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
+                  fontSize: 24)
+                  fontWeight: FontWeight.bold)
+                ))
+                textAlign: TextAlign.center)
+              ))
+              const SizedBox(height: 20))
+              _buildCompatibilityScore(result['compatibilityScore']))
               const SizedBox(height: 20),
-              _buildCompatibilityScore(result['compatibilityScore']),
-              const SizedBox(height: 20),
-              _buildResultSection('종합 궁합', result['overallCompatibility']),
+              _buildResultSection('종합 궁합', result['overallCompatibility']))
               _buildResultSection('성격 궁합', result['personalityMatch']),
-              _buildResultSection('취향 궁합', result['tasteMatch']),
+              _buildResultSection('취향 궁합', result['tasteMatch']))
               _buildResultSection('대화 궁합', result['conversationMatch']),
-              _buildResultSection('활동 궁합', result['activityMatch']),
-              if (result['relationship'] != null)
-                _buildRelationshipSection(result['relationship']),
+              _buildResultSection('활동 궁합', result['activityMatch']))
+              if (result['relationship'] != null,
+                _buildRelationshipSection(result['relationship']))
               if (result['advice'] != null) _buildAdviceSection(result['advice']),
-            ],
+            ])
           ),
-        ),
-      ),
+        ))
+      ))
     );
   }
 
@@ -382,52 +382,52 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
           colors: [
-            const Color(0xFFFF4081).withValues(alpha: 0.1),
-            const Color(0xFFFF80AB).withValues(alpha: 0.1),
-          ],
+            const Color(0xFFFF4081).withValues(alpha: 0.1))
+            const Color(0xFFFF80AB).withValues(alpha: 0.1))
+          ])
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
+        borderRadius: BorderRadius.circular(20))
+      ))
       child: Column(
         children: [
           Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.center)
             children: [
               SizedBox(
-                width: 120,
-                height: 120,
+                width: 120)
+                height: 120)
                 child: CircularProgressIndicator(
-                  value: scoreValue / 100,
-                  strokeWidth: 12,
-                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                  value: scoreValue / 100)
+                  strokeWidth: 12)
+                  backgroundColor: Colors.grey.withValues(alpha: 0.2))
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    _getScoreColor(scoreValue),
-                  ),
-                ),
-              ),
+                    _getScoreColor(scoreValue))
+                  ))
+                ))
+              ))
               Text(
-                '$scoreValue%',
+                '$scoreValue%')
                 style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: _getScoreColor(scoreValue),
-                ),
-              ),
-            ],
+                  fontSize: 36)
+                  fontWeight: FontWeight.bold)
+                  color: _getScoreColor(scoreValue))
+                ))
+              ))
+            ])
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 16))
           Text(
-            _getScoreMessage(scoreValue),
+            _getScoreMessage(scoreValue))
             style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+              fontSize: 16)
+              fontWeight: FontWeight.w500)
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -450,41 +450,41 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     
     return FortuneContentCard(
       title: title,
-      content: content.toString(),
-      gradientColors: const [Color(0xFFFF4081), Color(0xFFFF80AB)],
-      delay: 0,
+      content: content.toString())
+      gradientColors: const [Color(0xFFFF4081), Color(0xFFFF80AB)])
+      delay: 0
     );
   }
 
   Widget _buildRelationshipSection(Map<String, dynamic> relationship) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16))
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFF4081).withValues(alpha: 0.3)),
-      ),
+        color: AppColors.surface)
+        borderRadius: BorderRadius.circular(16))
+        border: Border.all(color: const Color(0xFFFF4081).withValues(alpha: 0.3)))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           const Text(
-            '관계 발전 가능성 💑',
+            '관계 발전 가능성 💑')
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF4081),
-            ),
-          ),
-          const SizedBox(height: 12),
-          if (relationship['friendship'] != null)
-            _buildRelationshipItem('친구', relationship['friendship']),
-          if (relationship['romance'] != null)
-            _buildRelationshipItem('연인', relationship['romance']),
-          if (relationship['business'] != null)
-            _buildRelationshipItem('비즈니스', relationship['business']),
+              fontSize: 18)
+              fontWeight: FontWeight.bold)
+              color: Color(0xFFFF4081))
+            ))
+          ))
+          const SizedBox(height: 12))
+          if (relationship['friendship'] != null,
+            _buildRelationshipItem('친구', relationship['friendship']))
+          if (relationship['romance'] != null,
+            _buildRelationshipItem('연인', relationship['romance']))
+          if (relationship['business'] != null,
+            _buildRelationshipItem('비즈니스', relationship['business']))
         ],
-      ),
+      )
     );
   }
 
@@ -492,22 +492,22 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Text(
-            '$type: ',
+            '$type: ')
             style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF4081),
-            ),
-          ),
+              fontWeight: FontWeight.bold)
+              color: Color(0xFFFF4081))
+            ))
+          ))
           Expanded(
             child: Text(
-              description,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-        ],
+              description)
+              style: const TextStyle(fontSize: 14))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -515,45 +515,45 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   Widget _buildAdviceSection(List<dynamic> advice) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16))
       decoration: BoxDecoration(
-        color: const Color(0xFFFF4081).withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-      ),
+        color: const Color(0xFFFF4081).withValues(alpha: 0.05))
+        borderRadius: BorderRadius.circular(16))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           const Text(
-            '관계 개선 팁 💡',
+            '관계 개선 팁 💡')
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFFF4081),
-            ),
-          ),
-          const SizedBox(height: 8),
+              fontSize: 18)
+              fontWeight: FontWeight.bold)
+              color: Color(0xFFFF4081))
+            ))
+          ))
+          const SizedBox(height: 8))
           ...advice.map((tip) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(vertical: 4))
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 const Icon(
-                  Icons.favorite,
-                  size: 16,
-                  color: Color(0xFFFF4081),
-                ),
-                const SizedBox(width: 8),
+                  Icons.favorite)
+                  size: 16)
+                  color: Color(0xFFFF4081))
+                ))
+                const SizedBox(width: 8))
                 Expanded(
                   child: Text(
-                    tip.toString(),
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
+                    tip.toString())
+                    style: const TextStyle(fontSize: 14))
+                  ))
+                ))
+              ])
             ),
-          )),
-        ],
-      ),
+          )))
+        ])
+      )
     );
   }
 }

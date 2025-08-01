@@ -4,6 +4,8 @@ import 'package:flutter/material.dart' as material;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../core/config/environment.dart';
 import '../core/utils/logger.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Service for managing Google AdMob ads
 class AdService {
@@ -290,23 +292,23 @@ class AdService {
             mainBackgroundColor: const material.Color(0xFFF5F5F5),
             cornerRadius: 8.0,
             callToActionTextStyle: NativeTemplateTextStyle(
-              textColor: material.Colors.white,
+              textColor: AppColors.textPrimaryDark,
               backgroundColor: const material.Color(0xFF4285F4),
               style: NativeTemplateFontStyle.bold,
               size: 16.0,
             ),
             primaryTextStyle: NativeTemplateTextStyle(
-              textColor: material.Colors.black87,
+              textColor: AppColors.textPrimary.withValues(alpha: 0.87),
               style: NativeTemplateFontStyle.normal,
               size: 16.0,
             ),
             secondaryTextStyle: NativeTemplateTextStyle(
-              textColor: material.Colors.black54,
+              textColor: AppColors.textPrimary.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 14.0,
             ),
             tertiaryTextStyle: NativeTemplateTextStyle(
-              textColor: material.Colors.black54,
+              textColor: AppColors.textPrimary.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
               size: 12.0,
             ),

@@ -39,7 +39,7 @@ class CacheException implements Exception {
 }
 
 class NetworkException extends AppException {
-  const NetworkException(String message, {String? code}) 
+  const NetworkException(String message, {String? code})
     : super(message: message, code: code ?? 'NETWORK_ERROR');
 
   @override
@@ -87,24 +87,24 @@ class ValidationException extends AppException {
 
 // Unauthorized Exception (401)
 class UnauthorizedException extends AppException {
-  const UnauthorizedException([String message = '인증이 필요합니다']) 
+  const UnauthorizedException([String message = '인증이 필요합니다'])
     : super(message: message, code: 'UNAUTHORIZED');
 }
 
 // Forbidden Exception (403)
 class ForbiddenException extends AppException {
-  const ForbiddenException([String message = '접근 권한이 없습니다']) 
+  const ForbiddenException([String message = '접근 권한이 없습니다'])
     : super(message: message, code: 'FORBIDDEN');
 }
 
 // Not Found Exception (404)
 class NotFoundException extends AppException {
-  const NotFoundException([String message = '요청한 리소스를 찾을 수 없습니다']) 
+  const NotFoundException([String message = '요청한 리소스를 찾을 수 없습니다'])
     : super(message: message, code: 'NOT_FOUND');
 }
 
 // Unknown Exception
 class UnknownException extends AppException {
-  const UnknownException([String message = '알 수 없는 오류가 발생했습니다']) 
+  const UnknownException([String message = '알 수 없는 오류가 발생했습니다'])
     : super(message: message, code: 'UNKNOWN');
 }

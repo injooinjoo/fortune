@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/ad_provider.dart';
 import '../../../services/ad_service.dart';
 import '../../../core/utils/logger.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Helper class for showing interstitial ads with frequency capping
 class InterstitialAdHelper {
@@ -41,7 +42,7 @@ class InterstitialAdHelper {
   /// Show interstitial ad after fortune generation
   static Future<void> showAfterFortuneGeneration(WidgetRef ref) async {
     // Add a small delay to ensure smooth transition
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(AppAnimations.durationLong);
     await showInterstitialAd(ref);
   }
   

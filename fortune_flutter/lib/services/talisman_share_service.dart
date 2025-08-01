@@ -9,6 +9,8 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class TalismanShareService {
   // Add watermark to the talisman image
@@ -28,19 +30,12 @@ class TalismanShareService {
       
       // Add watermark text
       final textPainter = TextPainter(
-        text: const TextSpan(
+        text: TextSpan(
           text: 'Fortune App',
           style: TextStyle(
-            color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            shadows: [
-              Shadow(
-                color: Colors.black54,
-                blurRadius: 4,
-                offset: Offset(1, 1),
-              ),
-            ],
+            color: Colors.white.withOpacity(0.8),
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -50,7 +45,7 @@ class TalismanShareService {
       // Position watermark at bottom right
       final watermarkPosition = Offset(
         image.width - textPainter.width - 20,
-        image.height - textPainter.height - 20,
+        image.height - textPainter.height - 20
       );
       textPainter.paint(canvas, watermarkPosition);
       
@@ -58,16 +53,9 @@ class TalismanShareService {
       final datePainter = TextPainter(
         text: TextSpan(
           text: DateTime.now().toString().split(' ')[0],
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-            shadows: [
-              Shadow(
-                color: Colors.black54,
-                blurRadius: 4,
-                offset: Offset(1, 1),
-              ),
-            ],
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withOpacity(0.6),
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -76,7 +64,7 @@ class TalismanShareService {
       
       final datePosition = Offset(
         20,
-        image.height - datePainter.height - 20,
+        image.height - datePainter.height - 20
       );
       datePainter.paint(canvas, datePosition);
       
@@ -145,7 +133,7 @@ class TalismanShareService {
       final result = await ImageGallerySaver.saveImage(
         imageData,
         quality: 100,
-        name: 'talisman_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'talisman_${DateTime.now().millisecondsSinceEpoch}'
       );
       
       if (result['isSuccess'] != true) {
@@ -165,7 +153,7 @@ class TalismanShareService {
     // Share using share_plus
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #운세 #FortuneApp',
+      text: '$userName님의 $type이 완성되었습니다! 🎯\n\n#부적 #운세 #FortuneApp'
     );
     
     // Clean up
@@ -189,7 +177,7 @@ class TalismanShareService {
       // Android can share directly
       await Share.shareXFiles(
         [XFile(tempFile.path)],
-        text: '오늘의 $type 🎯\n\n#부적 #운세 #행운 #FortuneApp',
+        text: '오늘의 $type 🎯\n\n#부적 #운세 #행운 #FortuneApp'
       );
     }
     
@@ -202,7 +190,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #운세 #FortuneApp',
+      text: '나만의 $type을 만들었어요! 🎯\n\n#부적 #운세 #FortuneApp'
     );
     
     await tempFile.delete();
@@ -214,7 +202,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '나만의 $type 완성! 🎯\n\n#부적 #운세 #FortuneApp #행운',
+      text: '나만의 $type 완성! 🎯\n\n#부적 #운세 #FortuneApp #행운'
     );
     
     await tempFile.delete();
@@ -226,7 +214,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '오늘의 $type입니다 🎯',
+      text: '오늘의 $type입니다 🎯'
     );
     
     await tempFile.delete();
@@ -247,7 +235,7 @@ class TalismanShareService {
     
     await Share.shareXFiles(
       [XFile(tempFile.path)],
-      text: '나만의 $type을 만들었어요! 🎯\n\nFortune App에서 당신만의 부적을 만들어보세요!',
+      text: '나만의 $type을 만들었어요! 🎯\n\nFortune App에서 당신만의 부적을 만들어보세요!'
     );
     
     await tempFile.delete();

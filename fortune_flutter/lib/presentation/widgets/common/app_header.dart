@@ -17,7 +17,7 @@ class AppHeader extends StatelessWidget {
     return AppBar(
       title: Text(title ?? 'Fortune'),
       automaticallyImplyLeading: showBackButton,
-      actions: actions,
+      actions: actions
     );
   }
 }

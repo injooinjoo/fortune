@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune_flutter/main.dart' as app;
-import 'package:fortune_flutter/screens/auth/login_page.dart';
-import 'package:fortune_flutter/screens/auth/signup_screen.dart';
-import 'package:fortune_flutter/screens/home/home_screen_updated.dart';
+import 'package:fortune/main.dart' as app;
+import 'package:fortune/screens/landing_page.dart';
+import 'package:fortune/screens/auth/signup_screen.dart';
+import 'package:fortune/screens/home/home_screen_updated.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -120,7 +120,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify back at login screen
-      expect(find.byType(LoginPage), findsOneWidget);
+      expect(find.byType(LandingPage), findsOneWidget);
     });
 
     testWidgets('Password validation', (WidgetTester tester) async {

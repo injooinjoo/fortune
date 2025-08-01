@@ -179,7 +179,15 @@
       "Bash(awk:*)",
       "WebFetch(domain:github.com)",
       "Bash(./run_web_debug.sh:*)",
-      "Bash(./run_ios.sh:*)"
+      "Bash(./run_ios.sh:*)",
+      "Bash(bash:*)",
+      "Bash(./scripts/run_final_typography_migration.sh:*)",
+      "Bash(if [ -f \"$file\" ])",
+      "Bash(/dev/null)",
+      "Bash(if [ -s lib/screens/landing_page_exports.dart ])",
+      "Bash(then echo \"Found landing_page_exports.dart\")",
+      "Bash(xxd:*)",
+      "Bash(python:*)"
     ],
     "deny": []
   },

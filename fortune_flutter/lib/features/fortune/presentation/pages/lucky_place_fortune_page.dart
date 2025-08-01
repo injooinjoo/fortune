@@ -13,7 +13,7 @@ class LuckyPlaceFortunePage extends BaseFortunePage {
           title: '오늘의 행운의 장소',
           description: '오늘 당신에게 행운을 가져다줄 장소를 확인해보세요',
           fortuneType: 'lucky-place',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -138,7 +138,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
         ),
         const SizedBox(height: 16),
         _buildActivitySelector(),
-      ],
+      ]
     );
   }
 
@@ -172,7 +172,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
           },
           selectedColor: (info['color'] as Color).withValues(alpha: 0.8),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -206,7 +206,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
           },
           selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -351,7 +351,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
           _buildPlaceVisitTips(),
           const SizedBox(height: 32),
         ],
-      ),
+      ,
     );
   }
 
@@ -424,7 +424,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -532,7 +532,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -580,7 +580,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
                   borderColor: isPrimary 
-                      ? (info['color'] as Color).withValues(alpha: 0.5)
+                      ? (info['color'] as Color).withValues(alpha: 0.5,
                       : Colors.transparent,
                   borderWidth: isPrimary ? 2 : 0,
                   gradient: LinearGradient(
@@ -610,7 +610,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      if (isPrimary)
+                      if (isPrimary,
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -634,7 +634,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -697,7 +697,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -756,7 +756,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -868,7 +868,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
             );
           }).toList(),
         ],
-      ),
+      ,
     );
   }
 }
@@ -885,7 +885,7 @@ class CompassPainter extends CustomPainter {
     final radius = size.width / 2;
     
     // Draw compass needle
-    final paint = Paint()
+    final paint = Paint(,
       ..color = color
       ..style = PaintingStyle.fill;
 
@@ -940,7 +940,7 @@ class CompassPainter extends CustomPainter {
     );
     needlePath.lineTo(
       center.dx - math.sin(angle + math.pi / 2) * needleWidth,
-      center.dy + math.cos(angle + math.pi / 2) * needleWidth,
+      center.dy + math.cos(angle + math.pi / 2) * needleWidth
     );
     needlePath.close();
     

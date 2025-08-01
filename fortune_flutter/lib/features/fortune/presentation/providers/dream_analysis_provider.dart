@@ -47,32 +47,32 @@ class DreamAnalysisState {
     this.dreamRealityConnections = const {},
     this.mainMessage,
     this.psychologicalInsight,
-    this.jungianInterpretation,
+    this.jungianInterpretation)
     this.advice = const [],
     this.suggestedRituals = const [],
     this.currentStep = 0,
-    this.isLoading = false,
+    this.isLoading = false)
     this.error,
   });
 
   DreamAnalysisState copyWith({
     String? dreamContent,
-    String? inputType,
-    Map<String, String>? guidingQuestions,
-    Map<String, List<DreamSymbol>>? extractedSymbols,
-    List<DreamSymbol>? userSelectedSymbols,
-    List<DreamEmotion>? emotions,
-    Map<String, double>? emotionIntensities,
-    List<RecentLifeEvent>? recentEvents,
-    Map<String, String>? dreamRealityConnections,
-    String? mainMessage,
-    String? psychologicalInsight,
-    String? jungianInterpretation,
-    List<String>? advice,
-    List<DreamRitual>? suggestedRituals,
-    int? currentStep,
-    bool? isLoading,
-    String? error,
+    String? inputType)
+    Map<String, String>? guidingQuestions)
+    Map<String, List<DreamSymbol>>? extractedSymbols)
+    List<DreamSymbol>? userSelectedSymbols)
+    List<DreamEmotion>? emotions)
+    Map<String, double>? emotionIntensities)
+    List<RecentLifeEvent>? recentEvents)
+    Map<String, String>? dreamRealityConnections)
+    String? mainMessage)
+    String? psychologicalInsight)
+    String? jungianInterpretation)
+    List<String>? advice)
+    List<DreamRitual>? suggestedRituals)
+    int? currentStep)
+    bool? isLoading)
+    String? error)
   }) {
     return DreamAnalysisState(
       dreamContent: dreamContent ?? this.dreamContent,
@@ -176,7 +176,7 @@ class DreamRitual {
 
 // Dream analysis provider
 class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
-  DreamAnalysisNotifier() : super(const DreamAnalysisState());
+  DreamAnalysisNotifier() : super(const DreamAnalysisState();
 
   // Step navigation
   void nextStep() {
@@ -281,19 +281,19 @@ class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
   }) {
     state = state.copyWith(
       mainMessage: mainMessage,
-      psychologicalInsight: psychologicalInsight,
-      jungianInterpretation: jungianInterpretation,
+      psychologicalInsight: psychologicalInsight)
+      jungianInterpretation: jungianInterpretation)
     );
   }
 
   // Step 6: Advice and rituals
   void setAdviceAndRituals({
     required List<String> advice,
-    required List<DreamRitual> rituals,
+    required List<DreamRitual> rituals)
   }) {
     state = state.copyWith(
       advice: advice,
-      suggestedRituals: rituals,
+      suggestedRituals: rituals
     );
   }
 
@@ -335,4 +335,4 @@ class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
 // Provider
 final dreamAnalysisProvider = StateNotifierProvider<DreamAnalysisNotifier, DreamAnalysisState>((ref) {
   return DreamAnalysisNotifier();
-});
+};

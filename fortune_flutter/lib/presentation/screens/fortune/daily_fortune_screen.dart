@@ -5,14 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../domain/entities/fortune.dart';
 import '../../providers/providers.dart';
 import 'base_fortune_screen.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class DailyFortuneScreen extends BaseFortuneScreen {
-  const DailyFortuneScreen({super.key})
+  const DailyFortuneScreen({super.key},
       : super(
-          fortuneType: 'daily',
-          title: '오늘의 운세',
-          description: '매일 달라지는 운의 흐름',
-          tokenCost: 1,
+          fortuneType: 'daily')
+          title: '오늘의 운세')
+          description: '매일 달라지는 운의 흐름')
+          tokenCost: 1
         );
 
   @override
@@ -40,161 +42,156 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       children: [
         // 점수와 기분
         _buildScoreSection(fortune),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.spacing6))
         
         // 운세 요약
-        _buildSummarySection(fortune),
-        const SizedBox(height: 24),
+        _buildSummarySection(fortune))
+        const SizedBox(height: AppSpacing.spacing6))
         
         // 운세 요소
-        _buildElementsSection(fortune),
-        const SizedBox(height: 24),
+        _buildElementsSection(fortune))
+        const SizedBox(height: AppSpacing.spacing6))
         
         // 행운 아이템
-        _buildLuckyItemsSection(fortune),
-        const SizedBox(height: 24),
+        _buildLuckyItemsSection(fortune))
+        const SizedBox(height: AppSpacing.spacing6))
         
         // 조언
-        _buildAdviceSection(fortune),
-      ],
+        _buildAdviceSection(fortune))
+      ]
     );
   }
 
   Widget _buildScoreSection(DailyFortune fortune) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const AppSpacing.paddingAll24,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white)
+        borderRadius: AppDimensions.borderRadiusLarge)
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+            color: Colors.black.withValues(alpha: 0.05))
+            blurRadius: 10)
+            offset: const Offset(0, 2))
+          ))
+        ])
       ),
       child: Column(
         children: [
           // 점수 게이지
           Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.center)
             children: [
               SizedBox(
-                width: 150,
-                height: 150,
+                width: 150)
+                height: 150)
                 child: CircularProgressIndicator(
-                  value: fortune.score / 100,
-                  strokeWidth: 12,
-                  backgroundColor: Colors.grey.shade200,
+                  value: fortune.score / 100)
+                  strokeWidth: 12)
+                  backgroundColor: Colors.grey.withValues(alpha: 0.3))
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    _getScoreColor(fortune.score),
-                  ),
-                ),
-              ),
+                    _getScoreColor(fortune.score))
+                  ))
+                ))
+              ))
               Column(
                 children: [
                   Text(
-                    '${fortune.score}',
+                    '${fortune.score}')
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold),))
                       color: _getScoreColor(fortune.score),
-                    ),
-                  ),
+                  ))
                   Text(
-                    '점',
+                    '점')
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                ],
+                      color: Colors.grey.withValues(alpha: 0.8)))
+                ])
               ),
-            ],
-          ).animate()
+            ])
+          ).animate(,
             .scale(
-              duration: 1.seconds,
-              curve: Curves.elasticOut,
-              begin: const Offset(0.5, 0.5),
-              end: const Offset(1, 1),
-            ),
-          const SizedBox(height: 24),
+              duration: 1.seconds)
+              curve: Curves.elasticOut)
+              begin: const Offset(0.5, 0.5))
+              end: const Offset(1, 1))
+            ))
+          const SizedBox(height: AppSpacing.spacing6))
           
           // 기분과 에너지
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly)
             children: [
               _buildInfoChip(
-                icon: Icons.mood,
-                label: '기분',
-                value: fortune.mood,
-                color: Colors.orange,
-              ),
+                icon: Icons.mood)
+                label: '기분')
+                value: fortune.mood)
+                color: Colors.orange)
+              ))
               _buildInfoChip(
-                icon: Icons.bolt,
-                label: '에너지',
+                icon: Icons.bolt)
+                label: '에너지')
                 value: '${fortune.energy}%',
-                color: Colors.blue,
-              ),
-            ],
+                color: Colors.blue)
+              ))
+            ])
           ),
-        ],
-      ),
+        ])
+      )
     );
   }
 
   Widget _buildSummarySection(DailyFortune fortune) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: Colors.purple.shade50,
-        borderRadius: BorderRadius.circular(16),
-      ),
+        color: Colors.purple.withValues(alpha: 0.08))
+        borderRadius: AppDimensions.borderRadiusLarge)
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Row(
             children: [
               Icon(
-                Icons.auto_awesome,
-                color: Colors.purple.shade700,
-                size: 20,
-              ),
-              const SizedBox(width: 8),
+                Icons.auto_awesome)
+                color: Colors.purple.withValues(alpha: 0.9))
+                size: 20)
+              ))
+              const SizedBox(width: AppSpacing.spacing2))
               Text(
-                '오늘의 메시지',
+                '오늘의 메시지')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.purple.shade700,
-                ),
-              ),
-            ],
+                  fontWeight: FontWeight.bold),))
+                  color: Colors.purple.withValues(alpha: 0.9))
+              ))
+            ])
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3))
           Text(
-            fortune.summary,
+            fortune.summary)
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              height: 1.6,
-              color: Colors.purple.shade900,
-            ),
-          ),
-          const SizedBox(height: 16),
+              height: 1.6),))
+              color: Colors.purple.withValues(alpha: 0.92))
+          ))
+          const SizedBox(height: AppSpacing.spacing4))
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8)
+            runSpacing: 8)
             children: fortune.keywords.map((keyword) => Chip(
               label: Text(
-                '#$keyword',
+                '#$keyword')
                 style: TextStyle(
-                  color: Colors.purple.shade700,
-                  fontSize: 12,
-                ),
-              ),
-              backgroundColor: Colors.purple.shade100,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-            )).toList(),
-          ),
-        ],
-      ),
+                  color: Colors.purple.withValues(alpha: 0.9)
+                  fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize,
+                ))
+              ))
+              backgroundColor: Colors.purple.withValues(alpha: 0.9))
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2))
+            )).toList())
+          ))
+        ])
+      )
     );
   }
 
@@ -203,136 +200,132 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '운세 영역별 점수',
+          '운세 영역별 점수')
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold),))
+          ))
+        const SizedBox(height: AppSpacing.spacing4))
         _buildElementCard(
-          context,
-          icon: Icons.favorite,
-          title: '연애운',
-          score: fortune.elements.love,
-          color: Colors.pink,
-        ),
-        const SizedBox(height: 12),
+          context)
+          icon: Icons.favorite)
+          title: '연애운')
+          score: fortune.elements.love)
+          color: Colors.pink)
+        ))
+        const SizedBox(height: AppSpacing.spacing3))
         _buildElementCard(
-          context,
-          icon: Icons.work,
-          title: '직업운',
-          score: fortune.elements.career,
-          color: Colors.blue,
-        ),
-        const SizedBox(height: 12),
+          context)
+          icon: Icons.work)
+          title: '직업운')
+          score: fortune.elements.career)
+          color: Colors.blue)
+        ))
+        const SizedBox(height: AppSpacing.spacing3))
         _buildElementCard(
-          context,
-          icon: Icons.attach_money,
-          title: '금전운',
-          score: fortune.elements.money,
-          color: Colors.green,
-        ),
-        const SizedBox(height: 12),
+          context)
+          icon: Icons.attach_money)
+          title: '금전운')
+          score: fortune.elements.money)
+          color: Colors.green)
+        ))
+        const SizedBox(height: AppSpacing.spacing3))
         _buildElementCard(
-          context,
-          icon: Icons.favorite_border,
-          title: '건강운',
-          score: fortune.elements.health,
-          color: Colors.orange,
-        ),
-      ],
+          context)
+          icon: Icons.favorite_border)
+          title: '건강운')
+          score: fortune.elements.health)
+          color: Colors.orange)
+        ))
+      ]
     );
   }
 
   Widget _buildLuckyItemsSection(DailyFortune fortune) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const AppSpacing.paddingAll20,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
+        color: Colors.white)
+        borderRadius: AppDimensions.borderRadiusLarge)
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Text(
-            '오늘의 행운 아이템',
+            '오늘의 행운 아이템')
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+              fontWeight: FontWeight.bold),))
+            ))
+          const SizedBox(height: AppSpacing.spacing4))
           Row(
             children: [
               Expanded(
                 child: _buildLuckyItem(
-                  context,
-                  icon: Icons.palette,
-                  label: '행운의 색',
+                  context)
+                  icon: Icons.palette)
+                  label: '행운의 색')
                   value: Container(
-                    width: 24,
-                    height: 24,
+                    width: 24)
+                    height: AppSpacing.spacing6)
                     decoration: BoxDecoration(
                       color: Color(int.parse(
-                        fortune.luckyColor.replaceAll('#', '0xFF'),
-                      )),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
+                        fortune.luckyColor.replaceAll('#', '0xFF'))
+                      )))
+                      shape: BoxShape.circle)
+                      border: Border.all(color: Colors.grey.withValues(alpha: 0.5)))
+                    ))
+                  ))
+                ))
+              ))
+              const SizedBox(width: AppSpacing.spacing4))
               Expanded(
                 child: _buildLuckyItem(
-                  context,
-                  icon: Icons.looks_one,
-                  label: '행운의 숫자',
+                  context)
+                  icon: Icons.looks_one)
+                  label: '행운의 숫자')
                   value: Text(
-                    '${fortune.luckyNumber}',
+                    '${fortune.luckyNumber}')
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold),))
                       color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                    ))
+                  ))
+                ))
+              ))
+            ])
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.spacing4))
           Row(
             children: [
               Expanded(
                 child: _buildLuckyItem(
-                  context,
-                  icon: Icons.access_time,
-                  label: '최적 시간',
+                  context)
+                  icon: Icons.access_time)
+                  label: '최적 시간')
                   value: Text(
-                    fortune.bestTime,
+                    fortune.bestTime)
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
+                      fontWeight: FontWeight.w600),))
+                    ))
+                ))
+              ))
+              const SizedBox(width: AppSpacing.spacing4))
               Expanded(
                 child: _buildLuckyItem(
-                  context,
-                  icon: Icons.people,
-                  label: '좋은 만남',
+                  context)
+                  icon: Icons.people)
+                  label: '좋은 만남')
                   value: Text(
-                    fortune.compatibility,
+                    fortune.compatibility)
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                      fontWeight: FontWeight.w600),))
+                    ))
+                ))
+              ))
+            ])
           ),
-        ],
-      ),
+        ])
+      )
     );
   }
 
@@ -341,102 +334,98 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.blue.shade50,
-            Colors.purple.shade50,
-          ],
+            Colors.blue.withValues(alpha: 0.08),
+            Colors.purple.withValues(alpha: 0.08))
+          ])
         ),
-        borderRadius: BorderRadius.circular(16),
-      ),
+        borderRadius: AppDimensions.borderRadiusLarge)
+      ))
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const AppSpacing.paddingAll20)
             child: Column(
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const AppSpacing.paddingAll8)
                       decoration: BoxDecoration(
-                        color: Colors.green.shade100,
-                        shape: BoxShape.circle,
-                      ),
+                        color: Colors.green.withValues(alpha: 0.9))
+                        shape: BoxShape.circle)
+                      ))
                       child: Icon(
-                        Icons.lightbulb_outline,
-                        color: Colors.green.shade700,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                        Icons.lightbulb_outline)
+                        color: Colors.green.withValues(alpha: 0.9))
+                        size: 20)
+                      ))
+                    ))
+                    const SizedBox(width: AppSpacing.spacing3))
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start)
                         children: [
                           Text(
-                            '오늘의 조언',
+                            '오늘의 조언')
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold),))
+                            ))
                           Text(
-                            fortune.advice,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
+                            fortune.advice)
+                            style: Theme.of(context).textTheme.bodyMedium)
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ),
-              ],
+              ])
             ),
-          ),
+          ))
           Container(
-            height: 1,
-            color: Colors.grey.shade200,
-          ),
+            height: 1)
+            color: Colors.grey.withValues(alpha: 0.3))
+          ))
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: const AppSpacing.paddingAll20)
             child: Column(
               children: [
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const AppSpacing.paddingAll8)
                       decoration: BoxDecoration(
-                        color: Colors.orange.shade100,
-                        shape: BoxShape.circle,
-                      ),
+                        color: Colors.orange.withValues(alpha: 0.9))
+                        shape: BoxShape.circle)
+                      ))
                       child: Icon(
-                        Icons.warning_amber_outlined,
-                        color: Colors.orange.shade700,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                        Icons.warning_amber_outlined)
+                        color: Colors.orange.withValues(alpha: 0.9))
+                        size: 20)
+                      ))
+                    ))
+                    const SizedBox(width: AppSpacing.spacing3))
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start)
                         children: [
                           Text(
-                            '주의사항',
+                            '주의사항')
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold),))
+                            ))
                           Text(
-                            fortune.caution,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
+                            fortune.caution)
+                            style: Theme.of(context).textTheme.bodyMedium)
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ),
-              ],
+              ])
             ),
-          ),
-        ],
-      ),
+          ))
+        ])
+      )
     );
   }
 
@@ -447,38 +436,30 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        color: color.withValues(alpha: 0.1))
+        borderRadius: AppDimensions.borderRadiusMedium)
+      ))
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min)
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
+          Icon(icon, color: color, size: 20))
+          const SizedBox(width: AppSpacing.spacing2))
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
-              ),
+                label)
+                style: Theme.of(context).textTheme.bodyMedium)
+              ))
               Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
+                value)
+                style: Theme.of(context).textTheme.bodyMedium)
+            ])
           ),
-        ],
-      ),
+        ])
+      )
     );
   }
 
@@ -490,59 +471,57 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
+        color: Colors.white)
+        borderRadius: AppDimensions.borderRadiusMedium)
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+      ))
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const AppSpacing.paddingAll8)
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(width: 16),
+              color: color.withValues(alpha: 0.1))
+              shape: BoxShape.circle)
+            ))
+            child: Icon(icon, color: color, size: 24))
+          ))
+          const SizedBox(width: AppSpacing.spacing4))
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween)
                   children: [
                     Text(
-                      title,
+                      title)
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                        fontWeight: FontWeight.w600),))
+                      ))
                     Text(
-                      '$score%',
+                      '$score%')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                  ],
+                        fontWeight: FontWeight.bold),))
+                        color: color)
+                      ))
+                  ])
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.spacing2))
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: AppDimensions.borderRadiusSmall)
                   child: LinearProgressIndicator(
-                    value: score / 100,
-                    minHeight: 8,
-                    backgroundColor: Colors.grey.shade200,
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
-                  ),
-                ),
-              ],
+                    value: score / 100)
+                    minHeight: 8)
+                    backgroundColor: Colors.grey.withValues(alpha: 0.3))
+                    valueColor: AlwaysStoppedAnimation<Color>(color))
+                  ))
+                ))
+              ])
             ),
-          ),
-        ],
+          ))
+        ])
       ),
     ).animate()
       .fadeIn(delay: Duration(milliseconds: 100 * title.length))
@@ -556,26 +535,23 @@ class _DailyFortuneScreenState extends BaseFortuneScreenState<DailyFortuneScreen
     required Widget value,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-      ),
+        color: Colors.grey.withValues(alpha: 0.08))
+        borderRadius: AppDimensions.borderRadiusMedium)
+      ))
       child: Column(
         children: [
-          Icon(icon, color: Colors.grey.shade700),
-          const SizedBox(height: 8),
+          Icon(icon, color: Colors.grey.withValues(alpha: 0.9)))
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          value,
-        ],
-      ),
+            label)
+            style: Theme.of(context).textTheme.bodyMedium)
+          ))
+          const SizedBox(height: AppSpacing.spacing1))
+          value)
+        ])
+      )
     );
   }
 

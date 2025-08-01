@@ -107,8 +107,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
                             ),
                           ),
                         ],
-                      ),
-                    )
+                      )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -385,7 +384,7 @@ class _FaceReadingFortunePageState extends ConsumerState<FaceReadingFortunePage>
             ),
           ),
         );
-      },
+      }
     );
   }
   

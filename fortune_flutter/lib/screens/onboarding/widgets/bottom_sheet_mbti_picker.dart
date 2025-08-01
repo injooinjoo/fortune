@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class BottomSheetMbtiPicker extends StatelessWidget {
   final String dimension;
@@ -21,21 +26,21 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     required String dimension,
     required String option1,
     required String option2,
-    String? selectedOption,
+    String? selectedOption)
   }) {
     return showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
+      backgroundColor: Colors.transparent, // Keep transparent for overlay
+      isScrollControlled: true)
       builder: (context) => BottomSheetMbtiPicker(
-        dimension: dimension,
-        option1: option1,
-        option2: option2,
-        selectedOption: selectedOption,
+        dimension: dimension)
+        option1: option1)
+        option2: option2)
+        selectedOption: selectedOption)
         onOptionSelected: (option) {
           Navigator.of(context).pop(option);
-        },
-      ),
+        })
+      )
     );
   }
 
@@ -67,53 +72,50 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.4,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor)
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+          topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))
+          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))
+        ))
+      ))
       child: Column(
         children: [
           // Handle bar
           Container(
-            margin: EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
+            margin: EdgeInsets.only())
+            width: context.fortuneTheme.bottomSheetStyles.handleWidth)
+            height: context.fortuneTheme.bottomSheetStyles.handleHeight)
             decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
+              color: context.fortuneTheme.dividerColor)
+              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))
+            ))
+          ))
           
           // Header
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal))
             child: Text(
-              dimension,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+              dimension)
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600),))
+              ))
           
           // Options
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center)
                 children: [
-                  _buildOption(context, option1),
-                  const SizedBox(height: 16),
-                  _buildOption(context, option2),
-                ],
+                  _buildOption(context, option1))
+                  SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
+                  _buildOption(context, option2))
+                ])
               ),
-            ),
-          ),
-        ],
-      ),
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -122,40 +124,37 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     
     return InkWell(
       onTap: () => onOptionSelected(option),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4))
       child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(20),
+        width: double.infinity)
+        padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25))
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : Colors.grey[50],
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? Theme.of(context).primaryColor.withValues(alpha: 0.1) : context.fortuneTheme.cardBackground)
+          borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4))
           border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
-            width: 2,
-          ),
-        ),
+            color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor)
+            width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth)
+          ))
+        ))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Text(
-              option,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: isSelected ? Theme.of(context).primaryColor : Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
+              option)
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold),))
+                color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText)
+              ))
+            ))
+            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.3))
             Text(
-              _getDescription(option),
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
+              _getDescription(option))
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: context.fortuneTheme.subtitleText),))
+              ))
+          ])
         ),
-      ),
+      )
     );
   }
 }

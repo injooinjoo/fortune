@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../data/models/fortune_card_score.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 /// Badge widget to display recommendation type on fortune cards
 class FortuneRecommendationBadge extends StatelessWidget {
@@ -11,7 +15,7 @@ class FortuneRecommendationBadge extends StatelessWidget {
     super.key,
     required this.type,
     this.score,
-    this.showScore = false,
+    this.showScore = false)
   });
 
   @override
@@ -22,50 +26,49 @@ class FortuneRecommendationBadge extends StatelessWidget {
     final badgeData = _getBadgeData(type);
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: badgeData.gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
+          colors: badgeData.gradientColors)
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
+        ))
+        borderRadius: AppDimensions.borderRadiusMedium)
         boxShadow: [
           BoxShadow(
-            color: badgeData.gradientColors.first.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+            color: badgeData.gradientColors.first.withValues(alpha: 0.3))
+            blurRadius: 4)
+            offset: const Offset(0, 2))
+          ))
+        ])
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min)
         children: [
           Icon(
-            badgeData.icon,
-            size: 14,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 4),
+            badgeData.icon)
+            size: 14)
+            color: Colors.white)
+          ))
+          const SizedBox(width: AppSpacing.spacing1))
           Text(
-            type.displayName,
+            type.displayName)
             style: theme.textTheme.labelSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              color: Colors.white)
+              fontWeight: FontWeight.bold)
+            ))
+          ))
           if (showScore && score != null) ...[
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.spacing1))
             Text(
-              '${(score! * 100).toInt()}%',
+              '${(score! * 100).toInt()}%')
               style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 10,
-              ),
-            ),
-          ],
+                color: Colors.white.withValues(alpha: 0.9, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+              ))
+            ))
+          ])
         ],
-      ),
+      ))
     );
   }
 
@@ -75,58 +78,58 @@ class FortuneRecommendationBadge extends StatelessWidget {
         return _BadgeData(
           icon: Icons.person_rounded,
           gradientColors: [
-            const Color(0xFF9333EA),
-            const Color(0xFF7C3AED),
-          ],
+            FortuneColors.spiritualPrimary)
+            FortuneColors.spiritualPrimary)
+          ])
         );
       case RecommendationType.popular:
         return _BadgeData(
           icon: Icons.trending_up_rounded,
           gradientColors: [
-            const Color(0xFFEF4444),
-            const Color(0xFFDC2626),
-          ],
+            AppColors.error)
+            AppColors.error)
+          ])
         );
       case RecommendationType.trending:
         return _BadgeData(
           icon: Icons.local_fire_department_rounded,
           gradientColors: [
-            const Color(0xFFF59E0B),
-            const Color(0xFFD97706),
-          ],
+            AppColors.warning)
+            AppColors.warning)
+          ])
         );
       case RecommendationType.newFortune:
         return _BadgeData(
           icon: Icons.new_releases_rounded,
           gradientColors: [
-            const Color(0xFF10B981),
-            const Color(0xFF059669),
-          ],
+            AppColors.success)
+            AppColors.success)
+          ])
         );
       case RecommendationType.seasonal:
         return _BadgeData(
           icon: Icons.calendar_today_rounded,
           gradientColors: [
-            const Color(0xFF3B82F6),
-            const Color(0xFF2563EB),
-          ],
+            AppColors.primary)
+            AppColors.primary)
+          ])
         );
       case RecommendationType.collaborative:
         return _BadgeData(
           icon: Icons.group_rounded,
           gradientColors: [
-            const Color(0xFFEC4899),
-            const Color(0xFFDB2777),
-          ],
+            FortuneColors.love)
+            FortuneColors.love)
+          ])
         );
       case RecommendationType.general:
       default:
         return _BadgeData(
           icon: Icons.star_rounded,
           gradientColors: [
-            const Color(0xFF6B7280),
-            const Color(0xFF4B5563),
-          ],
+            AppColors.textTertiary)
+            AppColors.textSecondary)
+          ]
         );
     }
   }
@@ -163,43 +166,43 @@ class FortuneRecommendationChip extends StatelessWidget {
     final color = _getChipColor(type);
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1 * 1.5, vertical: AppSpacing.spacing0 * 0.5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(4),
+        color: color.withValues(alpha: 0.2))
+        borderRadius: AppDimensions.borderRadiusSmall)
         border: Border.all(
-          color: color.withValues(alpha: 0.5),
-          width: 0.5,
-        ),
-      ),
+          color: color.withValues(alpha: 0.5))
+          width: 0.5)
+        ))
+      ))
       child: Text(
-        type.displayName,
+        type.displayName)
         style: theme.textTheme.labelSmall?.copyWith(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+          color: color)
+          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+          fontWeight: FontWeight.w600)
+        ))
+      )
     );
   }
   
   Color _getChipColor(RecommendationType type) {
     switch (type) {
       case RecommendationType.personalized:
-        return const Color(0xFF9333EA);
+        return FortuneColors.spiritualPrimary;
       case RecommendationType.popular:
-        return const Color(0xFFEF4444);
+        return AppColors.error;
       case RecommendationType.trending:
-        return const Color(0xFFF59E0B);
+        return AppColors.warning;
       case RecommendationType.newFortune:
-        return const Color(0xFF10B981);
+        return AppColors.success;
       case RecommendationType.seasonal:
-        return const Color(0xFF3B82F6);
+        return AppColors.primary;
       case RecommendationType.collaborative:
-        return const Color(0xFFEC4899);
+        return FortuneColors.love;
       case RecommendationType.general:
       default:
-        return const Color(0xFF6B7280);
+        return AppColors.textTertiary;
     }
   }
 }

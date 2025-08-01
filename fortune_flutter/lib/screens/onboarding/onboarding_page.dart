@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +10,9 @@ import '../../utils/date_utils.dart';
 import 'widgets/onboarding_step_one.dart';
 import 'widgets/onboarding_step_two.dart';
 import 'widgets/onboarding_step_three.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -72,8 +77,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
           _mbti = existingProfile['mbti'];
           if (existingProfile['gender'] != null) {
             _gender = Gender.values.firstWhere(
-              (g) => g.value == existingProfile['gender'],
-              orElse: () => Gender.other,
+              (g) => g.value == existingProfile['gender']
+              orElse: () => Gender.other
             );
           }
         });
@@ -98,9 +103,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _currentStep++;
       });
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+        duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut)
     }
   }
 
@@ -110,9 +114,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         _currentStep--;
       });
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+        duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut)
     }
   }
 
@@ -122,20 +125,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
     try {
       // 한국식 날짜를 ISO 형식으로 변환
       final isoDate = FortuneDateUtils.koreanToIsoDate(
-        _birthYear,
-        _birthMonth,
-        _birthDay,
-      );
+        _birthYear)
+        _birthMonth)
+        _birthDay)
       
       // 프로필 데이터 준비
       final profile = UserProfile(
         id: _currentUser?.id ?? '',
         name: _nameController.text,
-        email: _currentUser?.email ?? '',
-        birthDate: isoDate,
-        birthTime: _birthTimePeriod,
-        mbti: _mbti,
-        gender: _gender ?? Gender.other,
+      email: _currentUser?.email ?? '',
+      birthDate: isoDate,
+      birthTime: _birthTimePeriod,
+        mbti: _mbti),
+        gender: _gender ?? Gender.other),
         zodiacSign: FortuneDateUtils.getZodiacSign(isoDate),
         chineseZodiac: FortuneDateUtils.getChineseZodiac(isoDate),
         onboardingCompleted: true,
@@ -143,11 +145,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
         fortuneCount: 0,
         premiumFortunesCount: 0,
         createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+        updatedAt: DateTime.now())
 
       // 로컬 스토리지에 저장
-      await _storageService.saveUserProfile(profile.toJson());
+      await _storageService.saveUserProfile(profile.toJson();
 
       // 인증된 사용자의 경우 Supabase에도 저장 시도
       if (_currentUser != null) {
@@ -158,13 +159,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'name': _nameController.text,
             'birth_date': isoDate,
             'birth_time': _birthTimePeriod,
-            'mbti': _mbti,
-            'gender': _gender?.value,
-            'onboarding_completed': true,
-            'zodiac_sign': profile.zodiacSign,
-            'chinese_zodiac': profile.chineseZodiac,
-            'updated_at': DateTime.now().toIso8601String(),
-          });
+            'mbti': _mbti)
+            'gender': _gender?.value)
+            'onboarding_completed': true)
+            'zodiac_sign': profile.zodiacSign)
+            'chinese_zodiac': profile.chineseZodiac)
+            'updated_at': DateTime.now().toIso8601String()
           debugPrint('Supabase에 프로필 동기화 완료');
         } catch (e) {
           debugPrint('Supabase 동기화 실패: $e');
@@ -181,9 +181,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: AppColors.error)))
       }
     } finally {
       if (mounted) {
@@ -194,15 +192,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
   
   Future<void> _skipOnboarding() async {
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('프로필 설정 건너뛰기'),
+      context: context),
+        builder: (context) => AlertDialog(,
+      title: const Text('프로필 설정 건너뛰기'),
         content: const Text('나중에 프로필을 완성하면 더 정확한 운세를 받을 수 있습니다. 지금 건너뛰시겠습니까?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
+            child: const Text('취소'))
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -210,143 +207,121 @@ class _OnboardingPageState extends State<OnboardingPage> {
               // Save minimal profile data with onboarding marked as skipped
               final minimalProfile = {
                 'id': _currentUser?.id ?? '',
-                'email': _currentUser?.email ?? '',
-                'name': _nameController.text.isNotEmpty ? _nameController.text : '사용자',
-                'onboarding_completed': false,
+                'email': _currentUser?.email ?? ''
+                'name': _nameController.text.isNotEmpty ? _nameController.text : '사용자'
+                'onboarding_completed': false
                 'onboarding_skipped': true,
                 'created_at': DateTime.now().toIso8601String(),
-                'updated_at': DateTime.now().toIso8601String(),
-              };
+                'updated_at': DateTime.now().toIso8601String();
               
               await _storageService.saveUserProfile(minimalProfile);
               
               if (mounted) {
                 context.go('/home');
               }
-            },
-            child: const Text('건너뛰기'),
-          ),
-        ],
-      ),
-    );
+            }
+            child: const Text('건너뛰기')))
+      )
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.grey.shade50,
-              Colors.grey.shade100,
-            ],
-          ),
+      body: Container(,
+      decoration: BoxDecoration(,
+      gradient: LinearGradient(,
+      begin: Alignment.topLeft,
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
+        end: Alignment.bottomRight),
+        colors: [
+              AppColors.textSecondary.withValues(alpha: 0.1),
+              AppColors.textSecondary.withValues(alpha: 0.2))),
+      child: SafeArea(,
+      child: Column(,
+      children: [
               // 상단 진행률 표시 및 Skip 버튼
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
+                padding: AppSpacing.paddingAll16),
+        child: Column(,
+      children: [
                     Row(
                       children: [
                         Expanded(
-                          child: LinearProgressIndicator(
-                            value: _currentStep / 3,
-                            backgroundColor: Colors.grey[300],
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        TextButton(
-                          onPressed: _skipOnboarding,
-                          child: Text(
-                            '건너뛰기',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '$_currentStep / 3 단계',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
+                          child: LinearProgressIndicator(,
+      value: _currentStep / 3,
               ),
+              backgroundColor: AppColors.textSecondary),
+        valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).primaryColor)))))
+                        SizedBox(width: AppSpacing.spacing4),
+                        TextButton(
+                          onPressed: _skipOnboarding),
+        child: Text(
+                            '건너뛰기'),
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(,
+      color: Theme.of(context).primaryColor,
+                          )))))))
+                    SizedBox(height: AppSpacing.spacing2),
+                    Text(
+                      '$_currentStep / 3 단계'),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))))
               
               // 메인 콘텐츠
               Expanded(
-                child: Container(
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                child: Container(,
+      margin: AppSpacing.paddingAll16,
+                  padding: AppSpacing.paddingAll24),
+        decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        ),
+        borderRadius: AppDimensions.borderRadiusLarge),
+        boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: AppColors.textPrimary.withValues(alph,
+      a: 0.1),
                         blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
+                        offset: const Offset(0, 4))))
+                  child: Column(,
+      children: [
                       // 뒤로가기 버튼
                       if (_currentStep > 1)
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: IconButton(
-                            onPressed: _previousStep,
-                            icon: const Icon(Icons.arrow_back),
-                          ),
-                        ),
+              ),
+              child: IconButton(,
+      onPressed: _previousStep),
+        icon: const Icon(Icons.arrow_back))))
                       
                       // 페이지 뷰
                       Expanded(
-                        child: PageView(
-                          controller: _pageController,
-                          physics: const NeverScrollableScrollPhysics(),
+                        child: PageView(,
+      controller: _pageController),
+        physics: const NeverScrollableScrollPhysics(),
                           children: [
                             // Step 1: 기본 정보
                             OnboardingStepOne(
                               nameController: _nameController,
                               birthYear: _birthYear,
                               birthMonth: _birthMonth,
-                              birthDay: _birthDay,
-                              birthTimePeriod: _birthTimePeriod,
-                              onNameChanged: (value) {},
-                              onBirthYearChanged: (value) {
+                              birthDay: _birthDay),
+        birthTimePeriod: _birthTimePeriod),
+        onNameChanged: (value) {},
+      onBirthYearChanged: (value) {
                                 setState(() {
                                   _birthYear = value;
                                   // 년도가 변경되면 일 선택을 초기화
                                   if (_birthDay.isNotEmpty) {
                                     final maxDays = FortuneDateUtils.getDayOptions(
                                       int.parse(value),
-                                      _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                                    ).length;
+                                      _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null)).length;
                                     if (int.parse(_birthDay) > maxDays) {
                                       _birthDay = '';
                                     }
                                   }
                                 });
-                              },
+                              }
                               onBirthMonthChanged: (value) {
                                 setState(() {
                                   _birthMonth = value;
@@ -354,53 +329,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   if (_birthDay.isNotEmpty && _birthYear.isNotEmpty) {
                                     final maxDays = FortuneDateUtils.getDayOptions(
                                       int.parse(_birthYear),
-                                      int.parse(value),
-                                    ).length;
+                                      int.parse(value))).length;
                                     if (int.parse(_birthDay) > maxDays) {
                                       _birthDay = '';
                                     }
                                   }
                                 });
-                              },
+                              }
                               onBirthDayChanged: (value) {
                                 setState(() => _birthDay = value);
-                              },
+                              }
                               onBirthTimePeriodChanged: (value) {
                                 setState(() => _birthTimePeriod = value);
-                              },
-                              onNext: _nextStep,
-                            ),
+                              }
+                              onNext: _nextStep)
                             
                             // Step 2: MBTI
                             OnboardingStepTwo(
-                              mbti: _mbti,
-                              onMbtiChanged: (value) {
+                              mbti: _mbti),
+        onMbtiChanged: (value) {
                                 setState(() => _mbti = value);
-                              },
-                              onNext: _nextStep,
-                            ),
+                              }
+                              onNext: _nextStep)
                             
                             // Step 3: 성별
                             OnboardingStepThree(
-                              gender: _gender,
-                              onGenderChanged: (value) {
+                              gender: _gender),
+        onGenderChanged: (value) {
                                 setState(() => _gender = value);
-                              },
+                              }
                               onSubmit: _handleSubmit,
-                              isLoading: _isLoading,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                              isLoading: _isLoading)))))))))))))))
+      )
   }
   
   @override

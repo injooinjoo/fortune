@@ -1,29 +1,35 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class TimePeriod {
   final String value;
   final String label;
   final String? description;
 
-  const TimePeriod({
+  const TimePeriod(
+    {
     required this.value,
     required this.label,
     this.description,
-  });
+  )});
 }
 
 class BirthTimeEditDialog extends StatefulWidget {
   final String? initialTime;
   final Function(String?) onSave;
 
-  const BirthTimeEditDialog({
+  const BirthTimeEditDialog(
+    {
     super.key,
     this.initialTime,
     required this.onSave,
-  });
+  )});
 
   @override
   State<BirthTimeEditDialog> createState() => _BirthTimeEditDialogState();
@@ -65,11 +71,11 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('저장 중 오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+    SnackBar(
+            content: Text('저장 중 오류가 발생했습니다: ${e.toString(,
+  )}'),
+            backgroundColor: AppColors.error,
+          )
       }
     } finally {
       if (mounted) {
@@ -84,122 +90,104 @@ class _BirthTimeEditDialogState extends State<BirthTimeEditDialog> {
       title: '출생시간 수정',
       isLoading: _isLoading,
       onSave: _handleSave,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      content: Column(,
+      mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
+                        Text(
+                          '정확한 시간을 모르시면 선택하지 않으셔도 됩니다',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
+      color: AppColors.textSecondary, textAlign: TextAlign.center)
+          SizedBox(height: AppSpacing.spacing4,
+                          ),
           Container(
-            constraints: const BoxConstraints(maxHeight: 400),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: timePeriods.length + 1,
-              itemBuilder: (context, index) {
+            constraints: const BoxConstraints(maxHeigh,
+      t: 400),
+            child: ListView.builder(,
+      shrinkWrap: true),
+        itemCount: timePeriods.length + 1),
+        itemBuilder: (context, index) {
                 if (index == 0) {
                   return _buildTimeOption(null, '선택 안함');
                 }
                 
                 final period = timePeriods[index - 1];
                 return _buildTimeOption(
-                  period.value,
+    period.value,
                   period.label,
                   description: period.description,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+  )})))
+        ]
+      )
   }
 
   Widget _buildTimeOption(String? value, String label, {String? description}) {
     final isSelected = _selectedTime == value;
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
+      margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+      child: Material(,
+      color: Colors.transparent),
+        child: InkWell(,
+      onTap: () {
             setState(() {
               _selectedTime = value;
             });
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: isSelected ? AppColors.primary : AppColors.divider,
-                width: isSelected ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(8),
-              color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : null,
-            ),
-            child: Row(
+          }
+          borderRadius: AppDimensions.borderRadiusSmall,
+          child: Container(,
+      padding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+            decoration: BoxDecoration(,
+      border: Border.all(,
+      color: isSelected ? AppColors.primary : AppColors.divider,
+        ),
+        width: isSelected ? 2 : 1),
+      borderRadius: AppDimensions.borderRadiusSmall,
+              color: isSelected ? AppColors.primary.withValues(alp,
+      ha: 0.1) : null),
+      child: Row(
               children: [
                 Container(
                   width: 20,
                   height: 20,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                      width: 2,
-                    ),
-                  ),
+                  decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+        ),
+        border: Border.all(,
+      color: isSelected ? AppColors.primary : AppColors.textSecondary),
+        width: AppSpacing.spacing0 * 0.5)
+                    ))
                   child: isSelected
                       ? Center(
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primary,
+                          child: Container(,
+      width: 12,
+      height: AppSpacing.spacing3,
+                            decoration: const BoxDecoration(,
+      shape: BoxShape.circle,
+                              color: AppColors.primary)
                             ),
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 12),
+                      : null)
+                SizedBox(width: AppSpacing.spacing3),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                          color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                        ),
-                      ),
+                        Text(
+                          label,
+              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(,
+      color: isSelected ? AppColors.primary : AppColors.textPrimary)
                       if (description != null) ...[
-                        const SizedBox(height: 2),
+                        SizedBox(height: AppSpacing.xxxSmall,
+                          ),
                         Text(
                           description,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: AppColors.textSecondary)
+                      ]
                     ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                          )))
+              ])))))))))
   }
 }

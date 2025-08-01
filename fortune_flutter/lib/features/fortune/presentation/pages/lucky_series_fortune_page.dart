@@ -23,7 +23,7 @@ class LuckySeriesFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckySeriesFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -88,7 +88,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null && picked != _birthDate) {
       setState(() {
@@ -107,7 +107,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
         Text(
           '오늘 당신에게 행운을 가져다줄\n시리즈를 찾아보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
             height: 1.5,
           ),
         ),
@@ -275,7 +275,7 @@ class _LuckySeriesInputFormState extends State<_LuckySeriesInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -536,7 +536,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
                     Text(
                       avoidSeries['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                         fontSize: 12 + fontSize,
                       ),
                     ),
@@ -562,7 +562,7 @@ class _LuckySeriesFortuneResult extends ConsumerWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/profile_validation.dart';
 import '../../services/storage_service.dart';
 import '../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class ProfileCompletionBanner extends StatefulWidget {
   const ProfileCompletionBanner({super.key});
@@ -91,10 +96,10 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
     // Save dismissal state
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_dismissalKey, true);
-    await prefs.setString(_dismissalDateKey, DateTime.now().toIso8601String());
+    await prefs.setString(_dismissalDateKey, DateTime.now().toIso8601String();
     
     // Wait for animation to complete
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(AppAnimations.durationMedium);
     
     if (mounted) {
       setState(() {
@@ -110,104 +115,82 @@ class _ProfileCompletionBannerState extends State<ProfileCompletionBanner>
     }
     
     return AnimatedSlide(
-      offset: _isDismissed ? const Offset(1, 0) : Offset.zero,
-      duration: const Duration(milliseconds: 300),
+      offset: _isDismissed ? const Offset(1, 0) : Offset.zero
+      duration: AppAnimations.durationMedium,
       curve: Curves.easeOutCubic,
-      child: Dismissible(
-        key: const Key('profile_completion_banner'),
+      child: Dismissible(,
+      key: const Key('profile_completion_banner'),
         direction: DismissDirection.endToStart,
         onDismissed: (_) => _dismissBanner(),
-        background: Container(
-          color: Colors.transparent,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 16),
+        background: Container(,
+      color: Colors.transparent,
+          alignment: Alignment.centerRight),
+        padding: const EdgeInsets.only(righ,
+      t: AppSpacing.medium),
           child: const Icon(
-            Icons.close,
-            color: Colors.black54,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: GestureDetector(
-            onTap: () => context.push('/profile/edit'),
-            child: GlassContainer(
-              padding: const EdgeInsets.all(16),
-              borderColor: Colors.black12,
-              child: Row(
-                children: [
+            Icons.close),
+        color: AppColors.textPrimary.withValues(alp,
+      ha: 0.54))),
+      child: Padding(,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: GestureDetector(,
+      onTap: () => context.push('/profile/edit'),
+            child: GlassContainer(,
+      padding: AppSpacing.paddingAll16,
+              borderColor: AppColors.textPrimary12,
+              child: Row(,
+      children: [
                   // Progress Indicator
                   SizedBox(
                     width: 60,
-                    height: 60,
-                    child: Stack(
-                      alignment: Alignment.center,
+                    height: AppSpacing.spacing15,
+                    child: Stack(,
+      alignment: Alignment.center,
                       children: [
                         CircularProgressIndicator(
                           value: _completionPercentage,
                           strokeWidth: 4,
-                          backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(
+                          backgroundColor: AppColors.textSecondary),
+        valueColor: AlwaysStoppedAnimation<Color>(
                             _completionPercentage < 0.5 
-                                ? Colors.black54 
-                                : Colors.black87,
-                          ),
-                        ),
+                                ? AppColors.textPrimary.withValues(alpha: 0.54) 
+                                : AppColors.textPrimary.withValues(alpha: 0.87))))
                         Text(
                           '${(_completionPercentage * 100).toInt()}%',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
+                          style: Theme.of(context).textTheme.titleMedium,
+                      ])))
+                  SizedBox(width: AppSpacing.spacing4),
                   
                   // Text Content
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '프로필을 완성해주세요',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
+              ),
+              style: Theme.of(context).textTheme.titleMedium,
+                        SizedBox(height: AppSpacing.spacing1),
                         Text(
                           _missingFields.isEmpty 
-                              ? '더 정확한 운세를 위해 프로필을 확인해주세요'
-                              : '필요한 정보: ${_missingFields.take(2).join(', ')}${_missingFields.length > 2 ? ' 외 ${_missingFields.length - 2}개' : ''}',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[700],
+                              ? '더 정확한 운세를 위해 프로필을 확인해주세요'),
+                              : '필요한 정보: ${_missingFields.take(2).join(
+    ', ',
+  )}${_missingFields.length > 2 ? ' 외 ${_missingFields.length - 2}개' : ''}'
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: AppColors.textPrimary,
                           ),
                           maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
+                          overflow: TextOverflow.ellipsis)
+                      ])))
                   
                   // Arrow Icon
                   Icon(
                     Icons.arrow_forward_ios,
-                    size: 16,
-                    color: Colors.grey[600],
-                  ),
-                ],
-              ),
-            ).animate()
+                    size: AppDimensions.iconSizeXSmall,
+                    color: AppColors.textSecondary)
+                ])))).animate()
               .fadeIn(duration: 400.ms)
-              .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic),
-          ),
-        ),
-      ),
-    );
+              .slideX(begin: 0.1, end: 0, duration: 400.ms, curve: Curves.easeOutCubic))))))))
   }
 }

@@ -10,13 +10,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class LuckyBaseballFortunePage extends BaseFortunePage {
-  const LuckyBaseballFortunePage({Key? key})
+  const LuckyBaseballFortunePage({Key? key},
       : super(
           key: key,
           title: '야구 운세',
           description: '오늘의 경기를 위한 행운의 가이드',
           fortuneType: 'lucky-baseball',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -116,7 +116,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -256,7 +256,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ],
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -321,7 +321,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 items: _playLevels.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
+                    child: Text(entry.value,
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _playLevel = value),
@@ -396,7 +396,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                 items: _pitchingStyles.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
+                    child: Text(entry.value,
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _pitchingStyle = value),
@@ -547,7 +547,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -583,7 +583,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
         _buildPitchingGuide(),
         _buildTeamChemistry(),
         _buildGameMVPPrediction(),
-      ],
+      ]
     );
   }
 
@@ -651,9 +651,9 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   ],
                 ),
               ],
-            ).animate()
-                .scale(duration: 600.ms)
-                .then()
+            ).animate(,
+                .scale(duration: 600.ms,
+                .then(,
                 .shimmer(duration: 1000.ms),
             
             const SizedBox(height: 16),
@@ -667,7 +667,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -690,7 +690,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -736,8 +736,8 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                       ),
                     ),
                   ),
-                ).animate()
-                    .fadeIn(delay: (luckyInnings.indexOf(inning) * 100).ms)
+                ).animate(,
+                    .fadeIn(delay: (luckyInnings.indexOf(inning) * 100).ms,
                     .scale();
               }).toList(),
             ),
@@ -749,7 +749,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -816,7 +816,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -873,7 +873,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -911,7 +911,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -971,7 +971,7 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -1025,12 +1025,12 @@ class _LuckyBaseballFortunePageState extends BaseFortunePageState<LuckyBaseballF
                   ),
                 ],
               ),
-            ).animate()
-                .fadeIn()
+            ).animate(,
+                .fadeIn(,
                 .shimmer(delay: 500.ms, duration: 1500.ms),
           ],
         ),
-      ),
+      ,
     );
   }
 

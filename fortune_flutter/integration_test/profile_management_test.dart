@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune_flutter/main.dart' as app;
-import 'package:fortune_flutter/screens/profile/profile_screen.dart';
+import 'package:fortune/main.dart' as app;
+import 'package:fortune/screens/profile/profile_screen.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -91,7 +91,7 @@ void main() {
           // Update birth date
           final birthDateField = find.byWidgetPredicate(
             (widget) => widget is TextFormField && 
-              widget.decoration?.labelText?.contains('생년월일') == true
+              ((widget.decoration as InputDecoration?)?.labelText?.contains('생년월일') == true)
           );
           
           if (birthDateField.evaluate().isNotEmpty) {

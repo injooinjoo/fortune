@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -11,14 +12,14 @@ class OnboardingScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('온보딩 화면'),
+            const Text('온보딩 화면'))
             ElevatedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('시작하기'),
-            ),
-          ],
+              onPressed: () => context.go('/home'))
+              child: const Text('시작하기'))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 }

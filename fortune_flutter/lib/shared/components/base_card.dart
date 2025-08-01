@@ -1,7 +1,11 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../core/utils/theme_utils.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Base card widget that enforces consistent design guidelines
 /// Light mode: Background #f6f6f6, Card #ffffff
@@ -19,7 +23,8 @@ class BaseCard extends StatelessWidget {
   final Border? border;
   final Gradient? gradient;
 
-  const BaseCard({
+  const BaseCard(
+    {
     super.key,
     required this.child,
     this.padding,
@@ -32,7 +37,7 @@ class BaseCard extends StatelessWidget {
     this.backgroundColor,
     this.border,
     this.gradient,
-  });
+  )});
 
   @override
   Widget build(BuildContext context) {
@@ -44,35 +49,31 @@ class BaseCard extends StatelessWidget {
     final content = Container(
       width: width,
       height: height,
-      padding: padding ?? const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: gradient == null ? cardColor : null,
-        gradient: gradient,
-        borderRadius: borderRadius ?? BorderRadius.circular(16),
+      padding: padding ?? AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: gradient == null ? cardColor : null,
+      gradient: gradient,
+        borderRadius: borderRadius ?? AppDimensions.borderRadiusLarge,
         border: border,
-        boxShadow: boxShadow ?? defaultShadow,
-      ),
-      child: child,
-    );
+      boxShadow: boxShadow ?? defaultShadow)
+      child: child)
 
     if (onTap != null) {
       return Container(
         margin: margin,
-        child: Material(
-          color: Colors.transparent,
-          borderRadius: borderRadius ?? BorderRadius.circular(16),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: borderRadius ?? BorderRadius.circular(16),
-            child: content,
-          ),
-        ),
-      );
+        child: Material(,
+      color: Colors.transparent,
+          borderRadius: borderRadius ?? AppDimensions.borderRadiusLarge,
+          child: InkWell(,
+      onTap: onTap,
+      borderRadius: borderRadius ?? AppDimensions.borderRadiusLarge,
+            child: content)
+          ))))
     }
 
     return Container(
-      margin: margin,
-      child: content,
+      margin: margin),
+        child: content
     );
   }
 }
@@ -87,7 +88,8 @@ class SectionCard extends StatelessWidget {
   final Color? headerColor;
   final Widget? trailing;
 
-  const SectionCard({
+  const SectionCard(
+    {
     super.key,
     this.title,
     this.subtitle,
@@ -96,7 +98,7 @@ class SectionCard extends StatelessWidget {
     this.margin,
     this.headerColor,
     this.trailing,
-  });
+  )});
 
   @override
   Widget build(BuildContext context) {
@@ -105,56 +107,47 @@ class SectionCard extends StatelessWidget {
     return BaseCard(
       margin: margin,
       padding: EdgeInsets.zero,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (title != null)
+          if (title != null,
             Container(
-              padding: padding ?? const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: headerColor ?? (ThemeUtils.isDarkMode(context) 
+              padding: padding ?? AppSpacing.paddingAll20),
+        decoration: BoxDecoration(,
+      color: headerColor ?? (ThemeUtils.isDarkMode(context) 
                   ? AppColors.primaryDarkMode.withValues(alpha: 0.1)
-                  : AppColors.primary.withValues(alpha: 0.05)),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  : AppColors.primary.withValues(alpha: 0.05),
+      borderRadius: const BorderRadius.only(,
+      topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16))),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title!,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
-                        ),
-                      ),
+                        Text(
+                          title!,
+        ),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.w700,
+                          ),
+              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
                       if (subtitle != null) ...[
-                        const SizedBox(height: 4),
+                        SizedBox(height: AppSpacing.spacing1),
                         Text(
                           subtitle!,
-                          style: TextStyle(
-                            color: context.fortuneTheme.subtitleText,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
+      color: context.fortuneTheme.subtitleText)
+                      ]
+                    ])
                   if (trailing != null) trailing!,
                 ],
-              ),
-            ),
+                          )))
           Padding(
-            padding: padding ?? const EdgeInsets.all(16),
-            child: child,
-          ),
-        ],
-      ),
-    );
+            padding: padding ?? AppSpacing.paddingAll16,
+            child: child)
+        ]
+      )
   }
 }

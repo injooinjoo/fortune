@@ -31,7 +31,7 @@ class SimpleFortunePage extends BaseFortunePage {
           fortuneType: fortuneType,
           requiresUserInfo: requiresUserInfo,
           showShareButton: showShareButton,
-          showFontSizeSelector: showFontSizeSelector,
+          showFontSizeSelector: showFontSizeSelector
         );
 
   @override
@@ -55,7 +55,7 @@ class _SimpleFortunePageState extends BaseFortunePageState<SimpleFortunePage> {
     return await apiService.getFortune(
       fortuneType: widget.fortuneType,
       userId: user.id,
-      params: params,
+      params: params
     );
   }
 
@@ -79,7 +79,7 @@ class _SimpleFortunePageState extends BaseFortunePageState<SimpleFortunePage> {
         scoreBreakdown: fortune!.scoreBreakdown?.map((key, value) => 
           MapEntry(key, value is int ? value : (value as num).toInt())),
         luckyItems: {},
-        recommendations: fortune!.recommendations ?? [],
+        recommendations: fortune!.recommendations ?? []
       );
     }
     return widget.resultBuilder(context, _fortuneResult!, _regenerateFortune);
@@ -99,7 +99,7 @@ class _SimpleFortunePageState extends BaseFortunePageState<SimpleFortunePage> {
           overallScore: null,
           scoreBreakdown: {},
           luckyItems: {},
-          recommendations: [],
+          recommendations: []
         );
       });
     }

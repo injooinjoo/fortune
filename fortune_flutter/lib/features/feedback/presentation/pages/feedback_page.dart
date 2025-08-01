@@ -34,7 +34,7 @@ class FeedbackSubmissionNotifier extends StateNotifier<AsyncValue<void>> {
           'message': message,
           'rating': rating,
           'email': email,
-        },
+        }
       );
       
       if (response.data['success'] == true) {
@@ -100,7 +100,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
       Toast.show(
         context,
         message: '소중한 의견 감사합니다!',
-        type: ToastType.success,
+        type: ToastType.success
       );
       
       // Reset form
@@ -230,7 +230,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   ),
                                 ],
                               ),
-                            ),
+                            )
                           );
                         }).toList(),
                       ),
@@ -265,7 +265,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     color: starValue <= _rating 
                                         ? Colors.amber 
                                         : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                  ),
+                                  )
                                 );
                               }),
                             ),

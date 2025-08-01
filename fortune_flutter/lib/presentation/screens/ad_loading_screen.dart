@@ -7,6 +7,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/utils/logger.dart';
 import '../widgets/ads/cross_platform_ad_widget.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class AdLoadingScreen extends ConsumerStatefulWidget {
   final String fortuneType;
@@ -19,7 +22,8 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
   final String? fortuneRoute; // Add route parameter for navigation
   final Map<String, dynamic>? fortuneParams; // Parameters for fortune generation
 
-  const AdLoadingScreen({
+  const AdLoadingScreen(
+    {
     super.key,
     required this.fortuneType,
     required this.fortuneTitle,
@@ -30,7 +34,7 @@ class AdLoadingScreen extends ConsumerStatefulWidget {
     this.onAdComplete,
     this.fortuneRoute,
     this.fortuneParams,
-  });
+  )});
 
   @override
   ConsumerState<AdLoadingScreen> createState() => _AdLoadingScreenState();
@@ -113,25 +117,23 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(_errorMessage!),
-          action: SnackBarAction(
-            label: '다시 시도',
-            onPressed: () {
+          action: SnackBarAction(,
+      label: '다시 시도'),
+        onPressed: () {
               setState(() {
                 _errorMessage = null;
                 _isLoading = true;
                 _remainingSeconds = 5;
               });
               _startLoading();
-            },
-          ),
-        ),
-      );
+            })
+        )
       return;
     }
 
     // 데이터가 아직 로딩 중이면 잠시 대기
     if (_isLoading && widget.fetchData != null) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Future.delayed(AppAnimations.durationLong, () {
         if (mounted) {
           _completeLoading();
         }
@@ -143,9 +145,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
     if (!widget.isPremium && widget.onAdComplete != null) {
       try {
         await widget.onAdComplete!();
-        Logger.analytics('token_reward_for_ad', {
+        Logger.analytics(
+    'token_reward_for_ad', {
           'fortune_type': widget.fortuneType,
-        });
+  )});
       } catch (e) {
         Logger.error('Failed to reward tokens for ad', e);
         // 토큰 보상 실패해도 운세는 보여줌
@@ -153,8 +156,8 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
     }
 
     Logger.analytics('ad_loading_complete', {
-      'fortune_type': widget.fortuneType,
-      'is_premium': widget.isPremium,
+      'fortune_type': widget.fortuneType)
+      'is_premium': widget.isPremium)
     });
 
     // If fortune route is provided, navigate to it
@@ -168,11 +171,10 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
         context.pushReplacement(
           widget.fortuneRoute!,
           extra: {
-            'fortuneData': _fetchedData,
-            'fortuneParams': widget.fortuneParams,
+            'fortuneData': _fetchedData)
+            'fortuneParams': widget.fortuneParams)
             'autoGenerate': true, // Flag to auto-generate fortune
-          },
-        );
+          })
         print('[AdLoadingScreen] Navigation successful');
       } catch (e) {
         print('[AdLoadingScreen] Navigation error: $e');
@@ -182,8 +184,7 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
             SnackBar(
               content: Text('페이지 이동 중 오류가 발생했습니다: $e'),
               backgroundColor: Colors.red,
-            ),
-          );
+            )
           // Navigate back using go_router
           context.pop();
         }
@@ -204,242 +205,192 @@ class _AdLoadingScreenState extends ConsumerState<AdLoadingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Stack(
-          children: [
+      body: SafeArea(,
+      child: Stack(,
+      children: [
             // 메인 컨텐츠 - 광고를 중앙에 배치
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // 광고 영역 (무료 사용자만)
                   if (!widget.isPremium) ...[
                     // 광고 컨테이너
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          width: 1,
-                        ),
-                      ),
-                      child: Column(
+                      margin: const AppSpacing.paddingHorizontal16,
+                      padding: const AppSpacing.paddingAll16,
+                      decoration: BoxDecoration(,
+      color: Colors.grey[100],
+      borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(,
+      color: Colors.grey.withValues(alp,
+      ha: 0.3),
+                          width: 1)),
+      child: Column(
                         children: [
                           // 광고 라벨
                           Text(
                             '광고',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                          const SizedBox(height: AppSpacing.spacing2),
                           // 광고 위젯
                           CommonAdPlacements.largeAd(
-                            padding: EdgeInsets.zero,
-                            backgroundColor: Colors.white,
-                          ),
-                        ],
-                      ),
-                    ),
+                            padding: EdgeInsets.zero),
+        backgroundColor: Colors.white)
+                        ])))
                     
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.spacing8),
                     
                     // 남은 시간 또는 버튼
                     if (_remainingSeconds > 0) ...[
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(24),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing6, vertical: AppSpacing.spacing3),
+                        decoration: BoxDecoration(,
+      color: Colors.grey[100],
+        ),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxLarge),
                         child: Text(
                           '광고가 ${_remainingSeconds}초 후에 닫힙니다',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[700],
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     ] else if (_canProceed) ...[
                       // 운세 확인 버튼
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: ElevatedButton(
-                          onPressed: _completeLoading,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing8),
+                        child: ElevatedButton(,
+      onPressed: _completeLoading),
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            elevation: 4,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.arrow_forward, size: 20),
-                              const SizedBox(width: 8),
+                            padding: const EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing12, vertical: AppSpacing.spacing4),
+                            shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07),
+      elevation: 4),
+      child: Row(,
+      mainAxisSize: MainAxisSize.min),
+        children: [
+                              Icon(Icons.arrow_forward, size: 20),
+                              const SizedBox(width: AppSpacing.spacing2),
                               const Text(
-                                '운세 확인하기',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ).animate()
+                                '운세 확인하기'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                            ])))).animate()
                           .fadeIn(duration: 300.ms)
                           .scale(
                             begin: const Offset(0.8, 0.8),
                             end: const Offset(1.0, 1.0),
                             duration: 300.ms,
-                            curve: Curves.easeOut,
-                          ),
-                      ),
-                    ],
+                            curve: Curves.easeOut)))
+                    ]
                   ] else ...[
                     // 프리미엄 사용자는 로딩 표시
                     CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(height: 16),
+                      color: Theme.of(context).colorScheme.primary)
+                    const SizedBox(height: AppSpacing.spacing4),
                     Text(
-                      '운세를 준비하고 있습니다...',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+                      '운세를 준비하고 있습니다...'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                  ]
+                ])))
             
             // 헤더 영역
             Positioned(
               top: 0,
               left: 0,
-              right: 0,
-              height: 80, // Add explicit height
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
+              right: 0),
+        height: 80, // Add explicit height
+              child: Container(,
+      padding: const EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing4, vertical: AppSpacing.spacing4),
+                decoration: BoxDecoration(,
+      color: Colors.white,
+        ),
+        boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withValues(alph,
+      a: 0.05),
                       blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
+                      offset: const Offset(0, 2))
+                  ])
+                child: Row(,
+      children: [
                     // 뒤로가기 버튼
                     IconButton(
                       icon: const Icon(
                         Icons.close,
                         color: Colors.black87,
-                        size: 24,
-                      ),
-                      onPressed: () {
+                        size: 24),
+      onPressed: () {
                         Navigator.of(context).pop();
-                      },
-                    ),
-                    const SizedBox(width: 8),
+                      })
+                    const SizedBox(width: AppSpacing.spacing2),
                     // 제목 - Remove Expanded widget
                     Text(
-                      widget.fortuneTitle,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                      widget.fortuneTitle),
+        style: Theme.of(context).textTheme.bodyMedium,
+                  ])))))
             
-            // 하단 프리미엄 업그레이드 영역 (무료 사용자만)
+            // 하단 프리미엄 업그레이드 영역 (무료 사용자만,
             if (!widget.isPremium)
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
                 height: 200, // Add explicit height
-                child: Container(
-                  padding: EdgeInsets.only(
-                    left: 24,
-                    right: 24,
-                    top: 24,
-                    bottom: MediaQuery.of(context).padding.bottom + 24,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
+                child: Container(,
+      padding: EdgeInsets.only(,
+      left: AppSpacing.spacing6),
+        right: AppSpacing.spacing6),
+        top: AppSpacing.spacing6),
+        bottom: MediaQuery.of(context).padding.bottom + 24),
+      decoration: BoxDecoration(,
+      color: Colors.white,
+        ),
+        boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: Colors.black.withValues(alph,
+      a: 0.05),
                         blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                        offset: const Offset(0, -2))
+                    ])
+                  child: Column(,
+      mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        '광고 없이 바로 운세를 확인하고 싶으신가요?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[700],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
+                        Text(
+                          '광고 없이 바로 운세를 확인하고 싶으신가요?',
+              ),
+              style: Theme.of(context).textTheme.bodyMedium,
+                        textAlign: TextAlign.center)
+                      const SizedBox(height: AppSpacing.spacing3),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: widget.onSkip,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black87,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                        child: ElevatedButton(,
+      onPressed: widget.onSkip,
+                          style: ElevatedButton.styleFrom(,
+      backgroundColor: Colors.black87),
+        foregroundColor: Colors.white),
+        padding: const EdgeInsets.symmetric(vertica,
+      l: AppSpacing.spacing3 * 1.17),
+                            shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusMedium)
+                            ))
+                          child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center),
+        children: [
                               const Icon(Icons.rocket_launch, size: 18),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: AppSpacing.spacing2),
                               const Text(
-                                '프리미엄으로 업그레이드',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
+                                '프리미엄으로 업그레이드'),
+        style: Theme.of(context).textTheme.bodyMedium,
+                            ])))))
+                    ])))))
+          ])
+      )
   }
 }

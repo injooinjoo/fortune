@@ -68,7 +68,7 @@ class ExternalApiService {
   static const Duration _scheduleCacheDuration = Duration(hours: 24);
   static const Duration _golfCourseCacheDuration = Duration(days: 7);
   
-  // Weather API (delegated to WeatherService)
+  // Weather API (delegated to WeatherService,
   static Future<WeatherData> getWeatherData(String location) async {
     return WeatherService.getWeatherForLocation(location);
   }
@@ -149,7 +149,7 @@ class ExternalApiService {
   static Future<Map<String, dynamic>> getCryptoMarketData() async {
     final cacheKey = 'crypto_market';
     
-    // Check cache (shorter duration for crypto)
+    // Check cache (shorter duration for crypto,
     if (_isCacheValid(cacheKey, Duration(minutes: 5))) {
       return _cache[cacheKey] as Map<String, dynamic>;
     }

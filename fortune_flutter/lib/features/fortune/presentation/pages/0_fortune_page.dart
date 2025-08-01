@@ -39,7 +39,7 @@ class _FortuneInputForm extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '당신의 �� 확인해보세요',
+          '당신의 운세를 확인해보세요',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,

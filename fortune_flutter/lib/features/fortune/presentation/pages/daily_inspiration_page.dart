@@ -21,7 +21,7 @@ final dailyInspirationProvider = FutureProvider.autoDispose<DailyInspiration>((r
   userProfileAsync.when(
     data: (data) => profile = data?.toJson(),
     error: (_, __) => profile = null,
-    loading: () => profile = null,
+    loading: () => profile = null
   );
   
   // If no profile, try local storage

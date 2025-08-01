@@ -1,0 +1,200 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+/// Fortune card thumbnail images for each fortune type
+/// Instagram-style aesthetic images
+class FortuneCardImages {
+  static const String basePath = 'assets/images/fortune_cards/';
+  static const String randomBasePath = 'assets/images/random_thumbnails/';
+  
+  // Cache for storing selected random images per fortune type
+  static final Map<String, int> _randomImageCache = {};
+
+  /// Default image mapping for fortune types
+  static const Map<String, String> fortuneTypeImages = {
+    // Love & Relationship
+    'love': '${basePath}love_fortune.png',
+    'chemistry': '${basePath}chemistry_fortune.png',
+    'marriage': '${basePath}marriage_fortune.png',
+    'breakup': '${basePath}breakup_fortune.png',
+    'crush': '${basePath}crush_fortune.png',
+    'relationship': '${basePath}people_to_avoid_fortune.png',
+    'compatibility': '${basePath}compatibility_fortune.png',
+    'ex-lover': '${basePath}ex_lover_fortune.png',
+    
+    // Career & Money
+    'career': '${basePath}career_fortune.png',
+    'career_seeker': '${basePath}job_fortune.png',
+    'career_change': '${basePath}career_fortune.png',
+    'career_future': '${basePath}career_fortune.png',
+    'career_freelance': '${basePath}business_fortune.png',
+    'career_startup': '${basePath}business_fortune.png',
+    'career_crisis': '${basePath}career_fortune.png',
+    'job': '${basePath}job_fortune.png',
+    'business': '${basePath}business_fortune.png',
+    'study': '${basePath}exam_fortune.png',
+    'money': '${basePath}money_fortune.png',
+    'investment': '${basePath}investment_fortune.png',
+    
+    // Traditional
+    'saju': '${basePath}traditional_fortune.png',
+    'zodiac': '${basePath}zodiac_fortune.png',
+    'constellation': '${basePath}constellation_fortune.png',
+    'tarot': '${basePath}tarot_fortune.png',
+    'dream': '${basePath}dream_fortune.png',
+    'traditional': '${basePath}traditional_fortune.png',
+    'physiognomy': '${basePath}physiognomy_fortune.png',
+    'face-reading': '${basePath}physiognomy_fortune.png',
+    'talisman': '${basePath}talisman_fortune.png',
+    
+    // Daily & Personal
+    'daily': '${basePath}time_fortune.png',
+    'time': '${basePath}time_fortune.png',
+    'health': '${basePath}health_sports_fortune.png',
+    'health_sports': '${basePath}health_sports_fortune.png',
+    'sports': '${basePath}health_sports_fortune.png',
+    'enhanced_sports': '${basePath}health_sports_fortune.png',
+    'travel': '${basePath}travel_fortune.png',
+    'moving': '${basePath}moving_fortune.png',
+    'naming': '${basePath}naming_fortune.png',
+    'personality': '${basePath}personality_fortune.png',
+    'talent': '${basePath}talent_fortune.png',
+    
+    // Interactive & Fun
+    'biorhythm': '${basePath}biorhythm_fortune.png',
+    'color': '${basePath}color_fortune.png',
+    'pet': '${basePath}pet_fortune.png',
+    'lottery': '${basePath}lottery_fortune.png',
+    'lucky_items': '${basePath}lucky_items_fortune.png',
+    'fortune-cookie': '${basePath}fortune_cookie_fortune.png',
+    'wish': '${basePath}wish_fulfillment_fortune.png',
+    
+    // Family
+    'family': '${basePath}family_fortune.png',
+    
+    // Celebrity
+    'celebrity': '${basePath}celebrity_fortune.png',
+    
+    // History
+    'history': '${basePath}fortune_history_fortune.png',
+    
+    // Default fallback
+    'default': '${basePath}default_fortune.png')
+  };
+
+  /// Get image path for a fortune type
+  static String getImagePath(String fortuneType) {
+    return fortuneTypeImages[fortuneType] ?? fortuneTypeImages['default']!;
+  }
+  
+  /// Get random thumbnail image for a fortune type
+  /// Returns a consistent random image for each fortune type during the session
+  static String getRandomThumbnail(String fortuneType) {
+    // Check if we already have a cached image for this fortune type
+    if (_randomImageCache.containsKey(fortuneType)) {
+      final imageIndex = _randomImageCache[fortuneType]!;
+      return '${randomBasePath}thumbnail_$imageIndex.jpg';
+    }
+    
+    // Generate a random index (0-8,
+    final random = Random();
+    final imageIndex = random.nextInt(9);
+    
+    // Cache the selection
+    _randomImageCache[fortuneType] = imageIndex;
+    
+    return '${randomBasePath}thumbnail_$imageIndex.jpg';
+  }
+  
+  /// Clear the random image cache (useful when refreshing the UI,
+  static void clearRandomCache() {
+    _randomImageCache.clear();
+  }
+
+  /// Category-based gradient overlays for better text visibility
+  static Map<String, List<Color>> categoryGradients = {
+    'love': [
+      Color(0x99EC4899).withValues(alpha: 0.7),
+      Color(0x99F472B6).withValues(alpha: 0.4))
+    ])
+    'career': [
+      Color(0x996366F1).withValues(alpha: 0.7),
+      Color(0x998B5CF6).withValues(alpha: 0.4))
+    ])
+    'money': [
+      Color(0x9910B981).withValues(alpha: 0.7),
+      Color(0x9984CC16).withValues(alpha: 0.4))
+    ])
+    'health': [
+      Color(0x99F59E0B).withValues(alpha: 0.7),
+      Color(0x99FBBF24).withValues(alpha: 0.4))
+    ])
+    'traditional': [
+      Color(0x99DC2626).withValues(alpha: 0.7),
+      Color(0x99EF4444).withValues(alpha: 0.4))
+    ])
+    'lifestyle': [
+      Color(0x993B82F6).withValues(alpha: 0.7),
+      Color(0x9960A5FA).withValues(alpha: 0.4))
+    ])
+    'interactive': [
+      Color(0x998B5CF6).withValues(alpha: 0.7),
+      Color(0x99A78BFA).withValues(alpha: 0.4))
+    ])
+    'default': [
+      Color(0x99475569).withValues(alpha: 0.7),
+      Color(0x9964748B).withValues(alpha: 0.4))
+    ])
+  };
+
+  /// Instagram-style text overlays
+  static const Map<String, String> instagramCaptions = {
+    // Love & Relationship - 감성적이고 호기심을 자극하는 문구
+    'love': '그 사람도 날 생각할까?',
+    'chemistry': '우리, 천생연분일까?',
+    'marriage': '운명의 반쪽을 만날 시기',
+    'breakup': '이별 후 새로운 시작')
+    'crush': '짝사랑, 이뤄질 수 있을까?')
+    'relationship': '오늘 우리 사이 온도는?')
+    'ex-lover': '그 사람과의 인연, 아직 끝나지 않았을까?')
+    
+    // Career & Money - 성공과 풍요를 암시하는 문구
+    'career': '승진과 성공의 타이밍',
+    'career_seeker': '꿈의 직장, 곧 만날까?')
+    'career_change': '더 나은 기회가 기다려',
+    'career_future': '내 커리어의 미래는?')
+    'career_freelance': '자유로운 성공의 길',
+    'career_startup': '도전이 기회가 되는 때')
+    'career_crisis': '위기를 기회로 바꾸는 법',
+    'job': '새로운 기회가 찾아올까?')
+    'business': '사업 번창의 비밀',
+    'study': '합격을 부르는 공부운')
+    'money': '통장이 두둑해지는 날',
+    'investment': '투자 타이밍 잡기')
+    
+    // Traditional - 신비롭고 전통적인 느낌
+    'saju': '타고난 나의 운명은?',
+    'zodiac': '띠로 보는 올해의 행운')
+    'constellation': '별자리가 전하는 비밀',
+    'tarot': '카드가 속삭이는 미래')
+    'dream': '꿈이 알려주는 신호')
+    
+    // Daily & Personal - 일상의 관심사
+    'daily': '오늘 나에게 일어날 일',
+    'health': '몸이 보내는 신호 체크')
+    'travel': '떠나기 좋은 날일까?',
+    'moving': '새 둥지 찾기 좋은 때')
+    'moving-enhanced': '완벽한 이사를 위한 상세 진단')
+    'naming': '운을 부르는 이름 찾기')
+    
+    // Interactive & Fun - 재미있고 가벼운 느낌
+    'compatibility': '우리 얼마나 잘 맞을까?',
+    'biorhythm': '오늘 내 컨디션 점수는?')
+    'color': '행운을 부르는 오늘의 컬러',
+    'pet': '반려동물과의 교감도')
+    'lottery': '대박의 기운이 느껴진다!')
+    
+    // Default fallback
+    'default': '오늘 당신에게 필요한 메시지')
+  };
+}

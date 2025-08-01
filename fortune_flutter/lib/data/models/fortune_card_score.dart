@@ -278,7 +278,7 @@ enum RecommendationType {
   static RecommendationType fromString(String value) {
     return RecommendationType.values.firstWhere(
       (type) => type.value == value,
-      orElse: () => RecommendationType.general,
+      orElse: () => RecommendationType.general
     );
   }
 }

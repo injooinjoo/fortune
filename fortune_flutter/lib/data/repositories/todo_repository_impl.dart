@@ -411,7 +411,7 @@ class TodoRepositoryImpl implements TodoRepository {
             (failure) => Left(failure),
             (_) => const Right(null),
           );
-        },
+        }
       );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -463,7 +463,7 @@ class TodoRepositoryImpl implements TodoRepository {
   // Helper methods
   bool _isValidUuid(String value) {
     final uuidRegex = RegExp(
-      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+      r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
     );
     return uuidRegex.hasMatch(value);
   }

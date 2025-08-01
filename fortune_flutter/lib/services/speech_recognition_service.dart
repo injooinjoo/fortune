@@ -100,7 +100,7 @@ class SpeechRecognitionService {
         pauseFor: const Duration(seconds: 3),
         partialResults: true,
         onDevice: false,
-        listenMode: stt.ListenMode.confirmation,
+        listenMode: stt.ListenMode.confirmation
       );
       
       _isListening = true;

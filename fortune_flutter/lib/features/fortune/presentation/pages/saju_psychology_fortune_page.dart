@@ -102,7 +102,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null && picked != _birthDate) {
       setState(() {
@@ -124,7 +124,7 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null && picked != _birthTime) {
       setState(() {
@@ -456,6 +456,14 @@ class _SajuPsychologyInputFormState extends State<_SajuPsychologyInputForm> {
 }
 
 class _SajuPsychologyFortuneResult extends ConsumerWidget {
+  final FortuneResult result;
+  final VoidCallback onShare;
+
+  const _SajuPsychologyFortuneResult({
+    required this.result,
+    required this.onShare,
+  });
+
   double _getFontSizeOffset(FontSize fontSize) {
     switch (fontSize) {
       case FontSize.small:
@@ -466,13 +474,6 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
         return 2.0;
     }
   }
-  final FortuneResult result;
-  final VoidCallback onShare;
-
-  const _SajuPsychologyFortuneResult({
-    required this.result,
-    required this.onShare,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1047,7 +1048,7 @@ class _SajuPsychologyFortuneResult extends ConsumerWidget {
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: theme.colorScheme.outline.withValues(alpha: 0.1),
-              strokeWidth: 1,
+              strokeWidth: 1
             );
           },
         ),

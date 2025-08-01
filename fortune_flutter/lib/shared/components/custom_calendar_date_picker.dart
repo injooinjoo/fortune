@@ -1,5 +1,10 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class CustomCalendarDatePicker extends StatefulWidget {
   final DateTime initialDate;
@@ -8,14 +13,15 @@ class CustomCalendarDatePicker extends StatefulWidget {
   final Function(DateTime) onDateChanged;
   final Function()? onConfirm;
 
-  const CustomCalendarDatePicker({
+  const CustomCalendarDatePicker(
+    {
     Key? key,
     required this.initialDate,
     required this.firstDate,
     required this.lastDate,
     required this.onDateChanged,
     this.onConfirm,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   State<CustomCalendarDatePicker> createState() => _CustomCalendarDatePickerState();
@@ -80,145 +86,110 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
       children: [
         // Month/Year selector header
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+          padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+          child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween),
+        children: [
               IconButton(
-                icon: Icon(Icons.chevron_left, size: 28),
+                icon: Icon(Icons.chevron_left, size: AppDimensions.iconSizeLarge),
                 onPressed: () {
                   _pageController.previousPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                    duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut
                   );
-                },
-              ),
+                })
               GestureDetector(
-                onTap: _showMonthYearPicker,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: Colors.grey[100],
-                  ),
-                  child: Row(
+                onTap: _showMonthYearPicker),
+      child: Container(,
+      padding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+                  decoration: BoxDecoration(,
+      borderRadius: AppDimensions.borderRadiusSmall,
+        ),
+        color: AppColors.textSecondary.withValues(alp,
+      ha: 0.4),
+      child: Row(
                     children: [
                       Text(
-                        '${_viewingDate.year}년 ${_koreanMonths[_viewingDate.month - 1]}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      Icon(Icons.arrow_drop_down, size: 20),
-                    ],
-                  ),
-                ),
-              ),
+                        '${_viewingDate.year}년 ${_koreanMonths[_viewingDate.month - 1]}'),
+        style: Theme.of(context).textTheme.titleLarge),
+                      SizedBox(width: AppSpacing.spacing1),
+                      Icon(Icons.arrow_drop_down, size: AppDimensions.iconSizeSmall),
+                    ])))))
               IconButton(
-                icon: Icon(Icons.chevron_right, size: 28),
+                icon: Icon(Icons.chevron_right, size: AppDimensions.iconSizeLarge),
                 onPressed: () {
                   _pageController.nextPage(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                    duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut
                   );
-                },
-              ),
-            ],
-          ),
-        ),
+                })
+            ])))
         
         // Week days header
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _weekDays.map((day) => Container(
-              width: 40,
+          padding: AppSpacing.paddingHorizontal16,
+          child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceAround),
+        children: _weekDays.map((day) => Container(,
+      width: AppDimensions.buttonHeightSmall,
               alignment: Alignment.center,
               child: Text(
-                day,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
-                ),
-              ),
-            )).toList(),
-          ),
-        ),
+                day),
+        style: Theme.of(context).textTheme.titleSmall)))).toList())))
         
-        SizedBox(height: 8),
+        SizedBox(height: AppSpacing.spacing2),
         
         // Calendar grid
         Expanded(
-          child: PageView.builder(
-            controller: _pageController,
-            onPageChanged: (index) {
+          child: PageView.builder(,
+      controller: _pageController),
+        onPageChanged: (index) {
               setState(() {
                 _viewingDate = _getDateFromPageIndex(index);
               });
-            },
+            }
             itemBuilder: (context, index) {
               DateTime monthDate = _getDateFromPageIndex(index);
               return _buildMonthView(monthDate);
-            },
-          ),
-        ),
+            })))
         
         // Bottom date display with confirm button
         Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
+          padding: AppSpacing.paddingAll16,
+          decoration: BoxDecoration(,
+      color: AppColors.textPrimary,
+        ),
+        borderRadius: BorderRadius.only(,
+      topLeft: Radius.circular(16),
+              topRight: Radius.circular(16))),
+      child: SafeArea(,
+      top: false,
+            child: Column(,
+      children: [
                 Text(
-                  '${_selectedDate.year}년 ${_selectedDate.month}월 ${_selectedDate.day}일',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+                  '${_selectedDate.year}년 ${_selectedDate.month}월 ${_selectedDate.day}일'),
+        style: Theme.of(context).textTheme.headlineMedium),
                 if (widget.onConfirm != null) ...[
-                  SizedBox(height: 12),
+                  SizedBox(height: AppSpacing.spacing3),
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: widget.onConfirm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        '확인',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
+                    height: AppDimensions.buttonHeightMedium,
+                    child: ElevatedButton(,
+      onPressed: widget.onConfirm),
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: AppColors.textPrimaryDark),
+        foregroundColor: AppColors.textPrimary),
+        shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
+      elevation: 0),
+      child: Text(
+                        '확인'),
+        style: Theme.of(context).textTheme.titleMedium))))
+                ]
+              ])))))
+      ]
     );
   }
 
@@ -226,7 +197,7 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
     // Calculate first day of month and days in month
     DateTime firstDay = DateTime(monthDate.year, monthDate.month, 1);
     int daysInMonth = DateTime(monthDate.year, monthDate.month + 1, 0).day;
-    int startingWeekday = firstDay.weekday % 7; // Convert to 0-6 (Sun-Sat)
+    int startingWeekday = firstDay.weekday % 7; // Convert to 0-6 (Sun-Sat,
     
     // Calculate previous month's days
     DateTime prevMonth = DateTime(monthDate.year, monthDate.month - 1);
@@ -238,50 +209,47 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
     for (int i = startingWeekday - 1; i >= 0; i--) {
       int day = daysInPrevMonth - i;
       dayWidgets.add(_buildDayCell(
-        day: day,
-        isCurrentMonth: false,
-        date: DateTime(prevMonth.year, prevMonth.month, day),
-      ));
+        day: day),
+        isCurrentMonth: false),
+        date: DateTime(prevMonth.year, prevMonth.month, day)))
     }
     
     // Add current month's days
     for (int day = 1; day <= daysInMonth; day++) {
       DateTime date = DateTime(monthDate.year, monthDate.month, day);
       dayWidgets.add(_buildDayCell(
-        day: day,
-        isCurrentMonth: true,
-        date: date,
-      ));
+        day: day),
+        isCurrentMonth: true),
+        date: date)
+      )
     }
     
     // Add next month's leading days
     int remainingCells = 42 - dayWidgets.length; // 6 weeks * 7 days
     for (int day = 1; day <= remainingCells; day++) {
       dayWidgets.add(_buildDayCell(
-        day: day,
-        isCurrentMonth: false,
-        date: DateTime(monthDate.year, monthDate.month + 1, day),
-      ));
+        day: day),
+        isCurrentMonth: false),
+        date: DateTime(monthDate.year, monthDate.month + 1, day)))
     }
     
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.count(
-        crossAxisCount: 7,
-        shrinkWrap: true,
+      padding: AppSpacing.paddingHorizontal16),
+        child: GridView.count(,
+      crossAxisCount: 7),
+        shrinkWrap: true),
         physics: NeverScrollableScrollPhysics(),
-        children: dayWidgets,
-      ),
-    );
+        children: dayWidgets)))
   }
 
-  Widget _buildDayCell({
+  Widget _buildDayCell(
+    {
     required int day,
     required bool isCurrentMonth,
     required DateTime date,
-  }) {
+  )}) {
     bool isSelected = _isSameDay(date, _selectedDate);
-    bool isToday = _isSameDay(date, DateTime.now());
+    bool isToday = _isSameDay(date, DateTime.now();
     bool isDisabled = date.isAfter(widget.lastDate) || date.isBefore(widget.firstDate);
     
     return GestureDetector(
@@ -291,36 +259,31 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
           _viewingDate = date;
         });
         widget.onDateChanged(date);
-      },
-      child: Container(
-        margin: EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isSelected ? Colors.black : Colors.transparent,
-          border: isSelected 
-            ? Border.all(color: Colors.black, width: 2)
+      }
+      child: Container(,
+      margin: EdgeInsets.all(AppSpacing.spacing1),
+        decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+          color: isSelected ? AppColors.textPrimary : Colors.transparent,
+        ),
+        border: isSelected 
+            ? Border.all(color: AppColors.textPrimary, width: AppSpacing.spacing0 * 0.5)
             : isToday 
-              ? Border.all(color: Colors.grey[400]!, width: 1)
-              : null,
-        ),
-        child: Center(
-          child: Text(
-            '$day',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: isSelected || isToday ? FontWeight.w600 : FontWeight.normal,
-              color: isDisabled 
-                ? Colors.grey[300]
+              ? Border.all(color: AppColors.textSecondary.withValues(alph,
+      a: 0.4)!, width: 1)
+              : null)
+        child: Center(,
+      child: Text(
+            '$day'),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(,
+      color: isDisabled 
+                ? AppColors.textSecondary.withValues(alpha: 0.3)
                 : !isCurrentMonth 
-                  ? Colors.grey[400]
+                  ? AppColors.textSecondary.withValues(alpha: 0.4)
                   : isSelected 
-                    ? Colors.white
-                    : Colors.black,
-            ),
-          ),
-        ),
-      ),
-    );
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimary,
+                          )))))))))
   }
 
   bool _isSameDay(DateTime date1, DateTime date2) {
@@ -343,36 +306,32 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (BuildContext context, StateSetter setModalState) => Container(
+      backgroundColor: Colors.transparent),
+        builder: (context) => StatefulBuilder(,
+      builder: (BuildContext context, StateSetter setModalState) => Container(
         height: MediaQuery.of(context).size.height * 0.5,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
+        decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
         ),
-        child: Column(
-          children: [
+        borderRadius: BorderRadius.only(,
+      topLeft: Radius.circular(25),
+            topRight: Radius.circular(25))),
+      child: Column(
+                children: [
             // Header
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+              child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('취소', style: TextStyle(fontSize: 16)),
-                  ),
+                    child: Text('취소', style: Theme.of(context).textTheme.titleMedium)
                   Text(
-                    '날짜 선택',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                    '날짜 선택'),
+        style: Theme.of(context).textTheme.titleLarge,
                   TextButton(
                     onPressed: () {
                       // Update viewing date with selected year and month
@@ -386,63 +345,52 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
                       Navigator.pop(context);
                       
                       // Then animate to the selected page after a brief delay to ensure modal is closed
-                      Future.delayed(Duration(milliseconds: 100), () {
+                      Future.delayed(AppAnimations.durationMicro, () {
                         int pageIndex = _calculatePageIndex(newViewingDate);
                         _pageController.animateToPage(
-                          pageIndex,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
+                          pageIndex),
+        duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut
                         );
                       });
-                    },
+                    }
                     child: Text(
-                      '확인',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      '확인'),
+        style: Theme.of(context).textTheme.titleMedium))))
+                ])))
             
             Divider(height: 1),
             
             // Year and Month pickers
             Expanded(
-              child: Stack(
-                children: [
+              child: Stack(,
+      children: [
                   // Center highlight overlay
                   Positioned.fill(
-                    child: Center(
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: Colors.grey[300]!,
-                              width: 1,
-                            ),
-                            bottom: BorderSide(
-                              color: Colors.grey[300]!,
-                              width: 1,
-                            ),
-                          ),
-                          color: Colors.grey[50],
-                        ),
-                      ),
-                    ),
-                  ),
+                    child: Center(,
+      child: Container(,
+      height: AppSpacing.spacing12 * 1.04),
+              decoration: BoxDecoration(,
+      border: Border(,
+      top: BorderSide(,
+      color: AppColors.textSecondary.withValues(alp,
+      ha: 0.3)!,
+                              width: 1),
+      bottom: BorderSide(,
+      color: AppColors.textSecondary.withValues(alph,
+      a: 0.3)!,
+                              width: 1)),
+      color: AppColors.textSecondary.withValues(alpha: 0.2))))))))
                   // Pickers row
                   Row(
                     children: [
                       // Year picker
                       Expanded(
-                        child: ListWheelScrollView.useDelegate(
-                          controller: _yearScrollController,
-                          itemExtent: 50,
-                          physics: FixedExtentScrollPhysics(),
+                        child: ListWheelScrollView.useDelegate(,
+      controller: _yearScrollController,
+        ),
+        itemExtent: 50),
+        physics: FixedExtentScrollPhysics(),
                           useMagnifier: true,
                           magnification: 1.2,
                           diameterRatio: 1.5,
@@ -450,9 +398,9 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
                             setModalState(() {
                               tempSelectedYear = widget.firstDate.year + index;
                             });
-                          },
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            builder: (context, index) {
+                          }
+                          childDelegate: ListWheelChildBuilderDelegate(,
+      builder: (context, index) {
                               if (index < 0) return null;
                               int year = widget.firstDate.year + index;
                               if (year > widget.lastDate.year) return null;
@@ -467,25 +415,20 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
                               
                               return Center(
                                 child: Text(
-                                  '${year}년',
-                                  style: TextStyle(
-                                    fontSize: isSelected ? 20 : 16,
+                                  '${year}년'),
+        style: TextStyle(,
+      fontSize: isSelected ? 20 : 16),
                                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                    color: isSelected ? Colors.black : Colors.grey[600],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+      color: isSelected ? AppColors.textPrimary : AppColors.textSecondary.withValues(alpha: 0.6))
+                                )
+                            })))))
                       
                       // Month picker
                       Expanded(
-                        child: ListWheelScrollView.useDelegate(
-                          controller: _monthScrollController,
-                          itemExtent: 50,
-                          physics: FixedExtentScrollPhysics(),
+                        child: ListWheelScrollView.useDelegate(,
+      controller: _monthScrollController),
+        itemExtent: 50),
+        physics: FixedExtentScrollPhysics(),
                           useMagnifier: true,
                           magnification: 1.2,
                           diameterRatio: 1.5,
@@ -493,9 +436,9 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
                             setModalState(() {
                               tempSelectedMonth = index + 1;
                             });
-                          },
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            builder: (context, index) {
+                          }
+                          childDelegate: ListWheelChildBuilderDelegate(,
+      builder: (context, index) {
                               if (index < 0 || index >= 12) return null;
                               
                               int? selectedIndex;
@@ -508,27 +451,17 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
                               
                               return Center(
                                 child: Text(
-                                  _koreanMonths[index],
-                                  style: TextStyle(
-                                    fontSize: isSelected ? 20 : 16,
-                                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                    color: isSelected ? Colors.black : Colors.grey[600],
-                                  ),
-                                ),
-                              );
-                            },
-                            childCount: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
+                                  _koreanMonths[index]
+                                  style: TextStyle(,
+      fontSize: isSelected ? 20 : 16,
+      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal),
+        color: isSelected ? AppColors.textPrimary : AppColors.textSecondary.withValues(alph,
+      a: 0.6))
+                                )
+                            }
+                            childCount: 12)))))
+                    ])
+                ])))
+          ]))))))
   }
 }

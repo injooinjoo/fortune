@@ -21,9 +21,8 @@ class TimelineFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _TimelineFortuneResult(
         result: result,
         onShare: onShare,
-      ),
-    );
-  }
+      ));
+}
 }
 
 class _TimelineInputForm extends StatelessWidget {
@@ -36,43 +35,38 @@ class _TimelineInputForm extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
         Text(
-          '인생의 중요한 시점들을 확인해보세요!\n과거, 현재, 미래의 주요 사건을 알려드립니다.',
-          style: theme.textTheme.bodyLarge?.copyWith(
+          '인생의 중요한 시점들을 확인해보세요!\n과거, 현재, 미래의 주요 사건을 알려드립니다.'),
+                  style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
-        ),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
-            Icons.timeline,
-            size: 120,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
+            Icons.timeline),
+                  size: 120),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
         ),
         
         const SizedBox(height: 32),
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.timeline),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
-              ),
             ),
-          ),
-        ),
-      ],
+        )
     );
-  }
+}
 }
 
 class _TimelineFortuneResult extends StatelessWidget {
@@ -81,8 +75,8 @@ class _TimelineFortuneResult extends StatelessWidget {
 
   const _TimelineFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare),
+});
 
   @override
   Widget build(BuildContext context) {
@@ -92,40 +86,34 @@ class _TimelineFortuneResult extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        crossAxisAlignment: CrossAxisAlignment.stretch),
+                  children: [
           // Main Fortune Content
           GlassContainer(
             padding: const EdgeInsets.all(20),
             borderRadius: BorderRadius.circular(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
                 Row(
                   children: [
                     Icon(
-                      Icons.timeline,
-                      color: theme.colorScheme.primary,
-                    ),
+                      Icons.timeline),
+                  color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
-                      '인생 타임라인',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      '인생 타임라인'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold)
                       ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  fortune.content,
+                  fortune.content),
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
+                    height: 1.6)
                   ),
-                ),
-              ],
             ),
-          ),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -134,22 +122,19 @@ class _TimelineFortuneResult extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               borderRadius: BorderRadius.circular(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.analytics,
-                        color: theme.colorScheme.primary,
-                      ),
+                        Icons.analytics),
+                  color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '상세 분석',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        '상세 분석'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold)
                         ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
@@ -158,34 +143,26 @@ class _TimelineFortuneResult extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            entry.key,
-                            style: theme.textTheme.bodyLarge,
+                            entry.key),
+                  style: theme.textTheme.bodyLarge)
                           ),
-                        ),
                         Container(
-                          width: 60,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          width: 60),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
-                          ),
                           child: Text(
-                            '${entry.value}점',
-                            style: theme.textTheme.bodyLarge?.copyWith(
+                            '${entry.value}점'),
+                  style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
+                    ))).toList(),
             ),
             const SizedBox(height: 16),
-          ],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
@@ -193,39 +170,32 @@ class _TimelineFortuneResult extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               borderRadius: BorderRadius.circular(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.stars,
-                        color: theme.colorScheme.primary,
-                      ),
+                        Icons.stars),
+                  color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '행운 아이템',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        '행운 아이템'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold)
                         ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
-                    runSpacing: 8,
-                    children: fortune.luckyItems!.entries.map((entry) {
+                    runSpacing: 8),
+                  children: fortune.luckyItems!.entries.map((entry) {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
                         backgroundColor: theme.colorScheme.primaryContainer,
                       );
-                    }).toList(),
-                  ),
-                ],
+}).toList(),
               ),
-            ),
             const SizedBox(height: 16),
-          ],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
@@ -233,22 +203,19 @@ class _TimelineFortuneResult extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               borderRadius: BorderRadius.circular(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
                   Row(
                     children: [
                       Icon(
-                        Icons.tips_and_updates,
-                        color: theme.colorScheme.primary,
-                      ),
+                        Icons.tips_and_updates),
+                  color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        '조언',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                        '조언'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold)
                         ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
@@ -257,33 +224,23 @@ class _TimelineFortuneResult extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Icon(
-                          Icons.check_circle,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
+                          Icons.check_circle),
+                  size: 20),
+                  color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            rec,
-                            style: theme.textTheme.bodyMedium,
+                            rec),
+                  style: theme.textTheme.bodyMedium)
                           ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
+                    ))).toList(),
+            ));
+}
 
   Color _getScoreColor(int score) {
     if (score >= 80) return Colors.green;
     if (score >= 60) return Colors.blue;
     if (score >= 40) return Colors.orange;
     return Colors.red;
-  }
+}
 }

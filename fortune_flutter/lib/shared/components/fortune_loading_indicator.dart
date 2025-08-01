@@ -1,5 +1,8 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class FortuneLoadingIndicator extends StatelessWidget {
   final double size;
@@ -10,9 +13,9 @@ class FortuneLoadingIndicator extends StatelessWidget {
   const FortuneLoadingIndicator({
     Key? key,
     this.size = 40,
-    this.color,
+    this.color)
     this.message,
-    this.strokeWidth = 3,
+    this.strokeWidth = 3)
   }) : super(key: key);
 
   @override
@@ -24,71 +27,70 @@ class FortuneLoadingIndicator extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          width: size,
-          height: size,
+          width: size)
+          height: size)
           child: Stack(
-            alignment: Alignment.center,
+            alignment: Alignment.center)
             children: [
               // Outer rotating ring
               Container(
-                width: size,
-                height: size,
+                width: size)
+                height: size)
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: BoxShape.circle)
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topLeft)
+                    end: Alignment.bottomRight)
                     colors: [
-                      indicatorColor.withValues(alpha: 0.3),
-                      indicatorColor.withValues(alpha: 0.1),
-                    ],
+                      indicatorColor.withValues(alpha: 0.3))
+                      indicatorColor.withValues(alpha: 0.1))
+                    ])
                   ),
-                ),
+                ))
               )
                   .animate(onPlay: (controller) => controller.repeat())
-                  .rotate(duration: 3.seconds, curve: Curves.linear),
+                  .rotate(duration: 3.seconds, curve: Curves.linear))
 
               // Inner pulsating circle
               Container(
-                width: size * 0.6,
-                height: size * 0.6,
+                width: size * 0.6)
+                height: size * 0.6)
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: indicatorColor.withValues(alpha: 0.2),
-                ),
+                  shape: BoxShape.circle)
+                  color: indicatorColor.withValues(alpha: 0.2))
+                ))
               )
                   .animate(onPlay: (controller) => controller.repeat())
                   .scale(
-                    begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.2, 1.2),
-                    duration: 1.5.seconds,
-                    curve: Curves.easeInOut,
-                  ),
+                    begin: const Offset(0.8, 0.8))
+                    end: const Offset(1.2, 1.2))
+                    duration: 1.5.seconds)
+                    curve: Curves.easeInOut)
+                  ))
 
               // Center rotating arc
               CustomPaint(
-                size: Size(size * 0.8, size * 0.8),
+                size: Size(size * 0.8, size * 0.8))
                 painter: _ArcPainter(
-                  color: indicatorColor,
-                  strokeWidth: strokeWidth,
-                ),
+                  color: indicatorColor)
+                  strokeWidth: strokeWidth)
+                ))
               )
                   .animate(onPlay: (controller) => controller.repeat())
-                  .rotate(duration: 1.seconds, curve: Curves.easeInOut),
-            ],
+                  .rotate(duration: 1.seconds, curve: Curves.easeInOut))
+            ])
           ),
-        ),
+        ))
         if (message != null) ...[
-          const SizedBox(height: 16),
+          SizedBox(height: AppSpacing.spacing4))
           Text(
-            message!,
+            message!)
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w500,
-            ),
-          ).animate().fadeIn(duration: 600.ms),
-        ],
-      ],
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontWeight: FontWeight.w500)
+            ))
+          ).animate().fadeIn(duration: 600.ms))
+        ])
+      ]
     );
   }
 }
@@ -104,7 +106,7 @@ class _ArcPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..color = color
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke

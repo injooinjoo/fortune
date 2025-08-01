@@ -26,7 +26,7 @@ class DreamElementsAnalysisService {
     '뱀': {
       'category': '동물',
       'meaning': '변화, 재생, 지혜',
-      'positive': '변화와 성장의 기회, 지혜의 획득',
+      'positive': '변화와 성장의 기회, 지혜의 획듍',
       'negative': '위험이나 배신에 대한 경고',
       'psychological': '무의식적 에너지, 성적 욕구',
     },
@@ -174,7 +174,7 @@ class DreamElementsAnalysisService {
       elements[category] = [];
     }
     
-    // 심플한 키워드 매칭 (실제로는 더 정교한 NLP 필요)
+    // 심플한 키워드 매칭 (실제로는 더 정교한 NLP 필요,
     for (final symbol in symbolDatabase.keys) {
       if (dreamText.contains(symbol)) {
         final category = symbolDatabase[symbol]!['category'] as String;
@@ -237,7 +237,7 @@ class DreamElementsAnalysisService {
       '외향': 0.5,
     };
     
-    // 요소별 심리 상태 계산 (간단한 버전)
+    // 요소별 심리 상태 계산 (간단한 버전,
     for (final entry in elements.entries) {
       for (final element in entry.value) {
         final symbol = symbolDatabase[element];
@@ -351,7 +351,7 @@ class DreamElementsAnalysisService {
     }
     
     return insights.isNotEmpty 
-        ? insights.join('. ') 
+        ? insights.join('. ', 
         : '무의식이 의식에 전달하려는 중요한 메시지가 담겨 있습니다';
   }
 
@@ -379,7 +379,7 @@ class DreamElementsAnalysisService {
     }
     
     return advices.isNotEmpty
-        ? advices.join('. ')
+        ? advices.join('. ',
         : '꿈이 전하는 메시지에 귀 기울이고 내면의 지혜를 신뢰하세요';
   }
 
@@ -412,7 +412,7 @@ class DreamElementsAnalysisService {
 
   // 꿈의 감정 흐름 분석
   static List<double> analyzeEmotionalFlow(String dreamText) {
-    // 간단한 감정 변화 시뮬레이션 (실제로는 더 정교한 분석 필요)
+    // 간단한 감정 변화 시뮬레이션 (실제로는 더 정교한 분석 필요,
     final flow = <double>[];
     final sentences = dreamText.split('.');
     

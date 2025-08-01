@@ -14,7 +14,7 @@ class FortuneState {
   const FortuneState({
     this.isLoading = false,
     this.fortune,
-    this.error,
+    this.error
   });
 
   FortuneState copyWith({
@@ -226,7 +226,8 @@ class SajuFortuneNotifier extends BaseFortuneNotifier {
       });
       
       if (user?.userMetadata?['birthDate'] == null) {
-        Logger.warning('⚠️ [SajuFortuneNotifier] Missing birth date', {
+        Logger.warning(
+          '⚠️ [SajuFortuneNotifier] Missing birth date', {
           'userId': userId,
         });
         throw const ValidationException(message: '생년월일 정보가 필요합니다');
@@ -273,7 +274,7 @@ class CompatibilityFortuneNotifier extends BaseFortuneNotifier {
 
   void setPersonData({
     required Map<String, dynamic> person1,
-    required Map<String, dynamic> person2,
+    required Map<String, dynamic> person2
   }) {
     Logger.debug('👥 [CompatibilityFortuneNotifier] Setting person data', {
       'person1Keys': person1.keys.toList(),
@@ -380,7 +381,7 @@ class MbtiFortuneNotifier extends BaseFortuneNotifier {
 
   void setMbtiData({
     required String mbtiType,
-    required List<String> categories,
+    required List<String> categories
   }) {
     Logger.debug('🧠 [MbtiFortuneNotifier] Setting MBTI data', {
       'previousType': _mbtiType,
@@ -572,7 +573,7 @@ final fortuneServiceProvider = Provider<FortuneApiService>((ref) {
   return ref.watch(fortuneApiServiceProvider);
 });
 
-// Validation Exception (removed - already defined in exceptions.dart)
+// Validation Exception (removed - already defined in exceptions.dart,
 
 // Fortune Generation Params
 class FortuneGenerationParams {
@@ -581,7 +582,7 @@ class FortuneGenerationParams {
 
   FortuneGenerationParams({
     required this.fortuneType,
-    required this.userInfo,
+    required this.userInfo
   });
 }
 
@@ -640,4 +641,4 @@ final fortuneGenerationProvider = FutureProvider.family<Fortune, FortuneGenerati
     });
     rethrow;
   }
-});
+};

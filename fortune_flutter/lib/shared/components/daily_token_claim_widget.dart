@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
@@ -6,6 +8,9 @@ import '../../presentation/providers/token_provider.dart';
 import 'toast.dart';
 import '../../core/utils/haptic_utils.dart';
 import '../../core/utils/secure_storage.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   final bool showCompact;
@@ -34,21 +39,21 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 600)
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 1.2,
+      begin: 1.0)
+      end: 1.2)
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
+      parent: _animationController)
+      curve: Curves.easeInOut)
     ));
     _rotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2 * 3.14159,
+      begin: 0.0)
+      end: 2 * 3.14159)
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
+      parent: _animationController)
+      curve: Curves.easeInOut)
     ));
     
     _checkClaimStatus();
@@ -112,7 +117,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
           Toast.success(context, '일일 무료 토큰을 받았습니다! 🎉');
           
           // Store claim date
-          ref.read(lastDailyClaimDateProvider.notifier).setDate(DateTime.now());
+          ref.read(lastDailyClaimDateProvider.notifier).setDate(DateTime.now();
           
           // Show celebration animation
           _showCelebrationDialog();
@@ -141,8 +146,8 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
   void _showCelebrationDialog() {
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (context) => _CelebrationDialog(),
+      barrierDismissible: true)
+      builder: (context) => _CelebrationDialog()
     );
   }
 
@@ -167,128 +172,127 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
 
   Widget _buildCompactVersion(ThemeData theme) {
     return GlassContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      borderRadius: BorderRadius.circular(20),
-      blur: 10,
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
+      blur: 10)
       child: InkWell(
         onTap: _hasClaimed ? null : () {
           HapticUtils.selection();
           _claimDailyTokens();
-        },
-        borderRadius: BorderRadius.circular(20),
+        })
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min)
           children: [
             AnimatedBuilder(
-              animation: _animationController,
+              animation: _animationController)
               builder: (context, child) {
                 return Transform.rotate(
-                  angle: _rotationAnimation.value,
+                  angle: _rotationAnimation.value)
                   child: Transform.scale(
-                    scale: _scaleAnimation.value,
+                    scale: _scaleAnimation.value)
                     child: Icon(
-                      Icons.card_giftcard_rounded,
-                      size: 20,
-                      color: _hasClaimed ? Colors.grey : Colors.green,
-                    ),
-                  ),
+                      Icons.card_giftcard_rounded)
+                      size: AppDimensions.iconSizeSmall)
+                      color: _hasClaimed ? AppColors.textSecondary : AppColors.success)
+                    ))
+                  ))
                 );
-              },
+              })
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AppSpacing.spacing2))
             Text(
-              _hasClaimed ? _formatCountdown() : '무료 토큰',
+              _hasClaimed ? _formatCountdown() : '무료 토큰')
               style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: _hasClaimed ? Colors.grey : Colors.green,
-              ),
-            ),
-          ],
+                fontWeight: FontWeight.bold)
+                color: _hasClaimed ? AppColors.textSecondary : AppColors.success)
+              ))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
   Widget _buildFullVersion(ThemeData theme) {
     return GlassContainer(
-      padding: const EdgeInsets.all(20),
-      borderRadius: BorderRadius.circular(16),
-      blur: 20,
+      padding: AppSpacing.paddingAll20,
+      borderRadius: AppDimensions.borderRadiusLarge)
+      blur: 20)
       child: Column(
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: AppSpacing.paddingAll12)
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
+                  color: AppColors.success.withValues(alpha: 0.2))
+                  shape: BoxShape.circle)
+                ))
                 child: AnimatedBuilder(
-                  animation: _animationController,
+                  animation: _animationController)
                   builder: (context, child) {
                     return Transform.rotate(
-                      angle: _rotationAnimation.value,
+                      angle: _rotationAnimation.value)
                       child: Transform.scale(
-                        scale: _scaleAnimation.value,
+                        scale: _scaleAnimation.value)
                         child: const Icon(
-                          Icons.card_giftcard_rounded,
-                          size: 32,
-                          color: Colors.green,
-                        ),
-                      ),
+                          Icons.card_giftcard_rounded)
+                          size: AppDimensions.iconSizeXLarge)
+                          color: AppColors.success)
+                        ))
+                      ))
                     );
-                  },
+                  })
                 ),
-              ),
-              const SizedBox(width: 16),
+              ))
+              SizedBox(width: AppSpacing.spacing4))
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Text(
-                      '일일 무료 토큰',
+                      '일일 무료 토큰')
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+                        fontWeight: FontWeight.bold))
+                      ))
+                    ))
+                    SizedBox(height: AppSpacing.spacing1))
                     Text(
-                      _hasClaimed
+                      _hasClaimed))
                           ? '다음 무료 토큰까지: ${_formatCountdown()}'
                           : '매일 3개의 무료 토큰을 받을 수 있어요!',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
+                    ))
+                  ])
                 ),
-              ),
-            ],
+              ))
+            ])
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppSpacing.spacing4))
           SizedBox(
-            width: double.infinity,
+            width: double.infinity)
             child: ElevatedButton.icon(
-              onPressed: _hasClaimed || _isClaiming ? null : _claimDailyTokens,
+              onPressed: _hasClaimed || _isClaiming ? null : _claimDailyTokens)
               icon: Icon(
-                _hasClaimed ? Icons.check_circle : Icons.card_giftcard_rounded,
-              ),
+                _hasClaimed ? Icons.check_circle : Icons.card_giftcard_rounded)
+              ))
               label: Text(
                 _hasClaimed
                     ? '오늘은 이미 받으셨습니다'
                     : _isClaiming
-                        ? '받는 중...'
-                        : '무료 토큰 받기',
-              ),
+                        ? '받는 중...'))
+                        : '무료 토큰 받기')
+              ))
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                backgroundColor: Colors.green,
-                disabledBackgroundColor: Colors.grey.shade300,
-              ),
-            ),
-          ),
-        ],
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3))
+                backgroundColor: AppColors.success)
+                disabledBackgroundColor: AppColors.textSecondary.withValues(alpha: 0.5))
+              ))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -310,21 +314,21 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: AppAnimations.durationXLong
     );
     _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
+      begin: 0.5)
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
+      parent: _controller)
+      curve: Curves.elasticOut)
     ));
     _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0.0)
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeIn,
+      parent: _controller)
+      curve: Curves.easeIn)
     ));
     
     _controller.forward();
@@ -351,72 +355,72 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
       animation: _controller,
       builder: (context, child) {
         return Opacity(
-          opacity: _opacityAnimation.value,
+          opacity: _opacityAnimation.value)
           child: Dialog(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.transparent)
             child: Transform.scale(
-              scale: _scaleAnimation.value,
+              scale: _scaleAnimation.value)
               child: Container(
-                padding: const EdgeInsets.all(32),
+                padding: AppSpacing.paddingAll24)
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(24),
+                  color: theme.colorScheme.surface)
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge))
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.green.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
+                      color: AppColors.success.withValues(alpha: 0.3))
+                      blurRadius: 20)
+                      spreadRadius: 5)
+                    ))
+                  ])
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min)
                   children: [
                     Container(
-                      width: 80,
-                      height: 80,
+                      width: 80)
+                      height: AppSpacing.spacing20)
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                        shape: BoxShape.circle)
                         gradient: LinearGradient(
-                          colors: [Colors.green.shade400, Colors.green.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
+                          colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)],
+                          begin: Alignment.topLeft)
+                          end: Alignment.bottomRight)
+                        ))
+                      ))
                       child: const Icon(
-                        Icons.card_giftcard_rounded,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                        Icons.card_giftcard_rounded)
+                        size: 40)
+                        color: AppColors.textPrimaryDark)
+                      ))
+                    ))
+                    SizedBox(height: AppSpacing.spacing4))
                     Text(
-                      '토큰 획득!',
+                      '토큰 획득!')
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                        fontWeight: FontWeight.bold))
+                      ))
+                    ))
+                    SizedBox(height: AppSpacing.spacing2))
                     Text(
-                      '+3 토큰',
+                      '+3 토큰')
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                        color: AppColors.success)
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                    SizedBox(height: AppSpacing.spacing4))
                     Text(
-                      '매일 방문해서 무료 토큰을 받아보세요!',
-                      style: theme.textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                      '매일 방문해서 무료 토큰을 받아보세요!')
+                      style: theme.textTheme.bodyMedium)
+                      textAlign: TextAlign.center)
+                    ))
+                  ])
                 ),
-              ),
-            ),
-          ),
+              ))
+            ))
+          ))
         );
-      },
+      }
     );
   }
 }
@@ -446,7 +450,7 @@ class LastDailyClaimDateNotifier extends StateNotifier<DateTime?> {
   void setDate(DateTime date) {
     state = date;
     // Save to secure storage asynchronously
-    SecureStorage.setString('last_token_claim_date', date.toIso8601String())
+    SecureStorage.setString('last_token_claim_date', date.toIso8601String(),
         .catchError((e) {
       debugPrint('Error saving last claim date: $e');
     });

@@ -1,4 +1,8 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 enum ButtonVariant {
   primary,
@@ -30,7 +34,7 @@ class CustomButton extends StatelessWidget {
     this.padding,
     this.variant = ButtonVariant.primary,
     this.gradient,
-  }) : super(key: key);
+  })) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +48,7 @@ class CustomButton extends StatelessWidget {
     switch (variant) {
       case ButtonVariant.primary:
         bgColor = backgroundColor ?? theme.primaryColor;
-        fgColor = textColor ?? Colors.white;
+        fgColor = textColor ?? AppColors.textPrimaryDark;
         break;
       case ButtonVariant.secondary:
         bgColor = backgroundColor ?? theme.primaryColor.withValues(alpha: 0.1);
@@ -61,7 +65,10 @@ class CustomButton extends StatelessWidget {
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: gradient != null ? Colors.transparent : bgColor,
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: padding ?? EdgeInsets.symmetric(
+          horizontal: AppSpacing.spacing6,
+          vertical: AppSpacing.spacing3,
+        ),
         side: borderSide,
         shadowColor: Colors.transparent,
       ),
@@ -72,17 +79,13 @@ class CustomButton extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  variant == ButtonVariant.primary ? Colors.white : theme.primaryColor,
+                  variant == ButtonVariant.primary ? AppColors.textPrimaryDark : theme.primaryColor,
                 ),
               ),
             )
           : Text(
               text,
-              style: TextStyle(
-                color: fgColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
     );
     
@@ -93,7 +96,7 @@ class CustomButton extends StatelessWidget {
           ? Container(
               decoration: BoxDecoration(
                 gradient: gradient,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppDimensions.borderRadiusSmall,
               ),
               child: button,
             )

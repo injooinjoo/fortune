@@ -117,7 +117,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       final targetMonth = DateTime(now.year, now.month + month, 1);
       final auspiciousDaysInMonth = AuspiciousDaysCalculator.getAuspiciousDays(
         targetMonth.year,
-        targetMonth.month,
+        targetMonth.month
       );
       _auspiciousDays.addAll(auspiciousDaysInMonth);
       
@@ -217,7 +217,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -547,7 +547,7 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
       fortuneData: enhancedData,
       selectedDate: result.additionalInfo?['plannedDate'],
       fromAddress: result.additionalInfo?['currentAddress'],
-      toAddress: result.additionalInfo?['targetAddress'],
+      toAddress: result.additionalInfo?['targetAddress']
     );
   }
 

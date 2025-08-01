@@ -14,7 +14,7 @@ class BlindDateFortunePage extends BaseFortunePage {
           title: '소개팅 운세',
           description: '성공적인 만남을 위한 운세',
           fortuneType: 'blind-date',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -147,7 +147,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -263,7 +263,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
           ),
           const SizedBox(height: 16),
           
-          // MBTI Selection (Optional)
+          // MBTI Selection (Optional,
           DropdownButtonFormField<String>(
             value: _mbti,
             decoration: InputDecoration(
@@ -784,7 +784,7 @@ class _BlindDateFortunePageState extends BaseFortunePageState<BlindDateFortunePa
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 

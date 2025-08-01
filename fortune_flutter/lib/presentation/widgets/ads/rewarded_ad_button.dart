@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -6,6 +8,7 @@ import '../../providers/token_provider.dart';
 import '../../../services/ad_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/theme/app_theme.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 /// Button widget for watching rewarded ads to earn tokens
 class RewardedAdButton extends ConsumerStatefulWidget {
@@ -17,9 +20,9 @@ class RewardedAdButton extends ConsumerStatefulWidget {
   const RewardedAdButton({
     super.key,
     this.label = '광고 보고 토큰 받기',
-    this.tokenReward = 5,
+    this.tokenReward = 5)
     this.onRewardEarned,
-    this.showTokenAmount = true,
+    this.showTokenAmount = true)
   });
 
   @override
@@ -50,7 +53,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
         await adService.loadRewardedAd();
         
         // Wait a bit for ad to load
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2);
         
         if (!adService.isRewardedAdReady) {
           _showSnackBar('광고를 불러올 수 없습니다');
@@ -75,7 +78,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
           
           // Show success message
           _showSnackBar('${widget.tokenReward} 토큰을 받았습니다!');
-        },
+        }
       );
     } catch (e) {
       Logger.error('Failed to show rewarded ad', e);
@@ -95,11 +98,11 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        behavior: SnackBarBehavior.floating,
+        behavior: SnackBarBehavior.floating)
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
+          borderRadius: AppDimensions.borderRadiusSmall)
+        ))
+      )
     );
   }
 
@@ -112,58 +115,48 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
       onPressed: _isLoading ? null : _showRewardedAd,
       icon: _isLoading
           ? SizedBox(
-              width: 20,
-              height: 20,
+              width: 20)
+              height: 20)
               child: CircularProgressIndicator(
-                strokeWidth: 2,
+                strokeWidth: 2)
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.colorScheme.onPrimary,
-                ),
-              ),
+                  theme.colorScheme.onPrimary)
+                ))
+              ))
             )
           : Icon(
-              Icons.play_circle_outline,
-              color: theme.colorScheme.onPrimary,
-            ),
+              Icons.play_circle_outline)
+              color: theme.colorScheme.onPrimary)
+            ))
       label: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min)
         children: [
           Text(
-            widget.label,
-            style: TextStyle(
-              color: theme.colorScheme.onPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+            widget.label)
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: theme.colorScheme.onPrimary)))
           if (widget.showTokenAmount) ...[
-            const SizedBox(width: 8),
+            SizedBox(width: AppSpacing.spacing2))
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0))
               decoration: BoxDecoration(
-                color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.2))
+                borderRadius: AppDimensions.borderRadiusMedium)
+              ))
               child: Text(
-                '+${widget.tokenReward}',
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
+                '+${widget.tokenReward}')
+                style: Theme.of(context).textTheme.labelSmall,
+          ])
         ],
-      ),
+      ))
       style: ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        backgroundColor: theme.colorScheme.primary)
+        foregroundColor: theme.colorScheme.onPrimary)
+        padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3))
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        elevation: 2,
-      ),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge))
+        ))
+        elevation: 2)
+      )
     );
   }
 }

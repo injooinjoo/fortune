@@ -150,7 +150,7 @@ class FortuneResponseModel {
           : null,
       fiveElements: data!.fiveElements,
       specialTip: data!.specialTip,
-      period: data!.period,
+      period: data!.period
     );
   }
 }
@@ -448,7 +448,7 @@ class FortuneData {
       longTermPotential: longTermPotential ?? '',
       strengths: strengthsList ?? [],
       challenges: challenges ?? [],
-      advice: advice ?? '',
+      advice: advice ?? ''
     );
   }
 

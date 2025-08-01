@@ -1,7 +1,11 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../core/theme/app_theme.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class KoreanDatePicker extends StatefulWidget {
   final DateTime? initialDate;
@@ -41,7 +45,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
 
   final List<int> years = List.generate(
     100,
-    (index) => DateTime.now().year - 99 + index,
+    (index) => DateTime.now().year - 99 + index
   );
 
   List<int> get months => List.generate(12, (index) => index + 1);
@@ -96,7 +100,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
       children: [
         if (widget.label != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
             child: Text(
               widget.label!,
               style: theme.textTheme.bodyLarge?.copyWith(
@@ -112,8 +116,8 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             });
           },
           child: GlassContainer(
-            padding: const EdgeInsets.all(16),
-            borderRadius: BorderRadius.circular(16),
+            padding: AppSpacing.paddingAll16,
+            borderRadius: AppDimensions.borderRadiusLarge,
             blur: 10,
             child: Row(
               children: [
@@ -121,7 +125,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                   Icons.calendar_today_rounded,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +148,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                 ),
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 200),
+                  duration: AppAnimations.durationShort,
                   child: Icon(
                     Icons.expand_more_rounded,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -156,16 +160,16 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         ),
 
         AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
+          duration: AppAnimations.durationMedium,
           height: isExpanded ? null : 0,
           child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 200),
+            duration: AppAnimations.durationShort,
             opacity: isExpanded ? 1 : 0,
             child: Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(top: AppSpacing.small),
               child: GlassContainer(
-                padding: const EdgeInsets.all(16),
-                borderRadius: BorderRadius.circular(16),
+                padding: AppSpacing.paddingAll16,
+                borderRadius: AppDimensions.borderRadiusLarge,
                 blur: 10,
                 child: Column(
                   children: [
@@ -185,7 +189,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                             suffix: '년',
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
                             label: '월',
@@ -200,7 +204,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                             suffix: '월',
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: _buildDropdown(
                             label: '일',
@@ -218,22 +222,22 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
                       ],
                     ),
                     if (widget.showAge && age >= 0) ...[
-                      const SizedBox(height: 16),
+                      SizedBox(height: AppSpacing.spacing4),
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppDimensions.borderRadiusMedium,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.cake_rounded,
-                              size: 20,
+                              size: AppDimensions.iconSizeSmall,
                               color: theme.colorScheme.primary,
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '현재 만 나이: $age세',
                               style: theme.textTheme.bodyMedium?.copyWith(
@@ -254,7 +258,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -273,15 +277,14 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: AppSpacing.spacing1),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppDimensions.borderRadiusSmall,
             border: Border.all(
               color: theme.colorScheme.outline.withValues(alpha: 0.2),
             ),
@@ -303,7 +306,7 @@ class _KoreanDatePickerState extends State<KoreanDatePicker> {
             onChanged: onChanged,
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -338,8 +341,8 @@ class BirthDatePreview extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: GlassContainer(
-        padding: const EdgeInsets.all(20),
-        borderRadius: BorderRadius.circular(20),
+        padding: AppSpacing.paddingAll20,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
         blur: 15,
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -356,19 +359,19 @@ class BirthDatePreview extends StatelessWidget {
               size: 48,
               color: theme.colorScheme.primary,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
             Text(
               '${birthDate.year}년 ${birthDate.month}월 ${birthDate.day}일',
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.spacing2),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
               ),
               child: Text(
                 '만 $age세',
@@ -379,7 +382,7 @@ class BirthDatePreview extends StatelessWidget {
               ),
             ),
             if (onTap != null) ...[
-              const SizedBox(height: 12),
+              SizedBox(height: AppSpacing.spacing3),
               Text(
                 '탭하여 변경',
                 style: theme.textTheme.bodySmall?.copyWith(

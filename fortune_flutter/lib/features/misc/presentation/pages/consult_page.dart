@@ -95,32 +95,32 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
     _messageController.dispose();
     _pageController.dispose();
     super.dispose();
-  }
+}
 
   void _nextStep() {
     if (_currentStep < 3) {
       setState(() {
         _currentStep++;
-      });
+});
       _pageController.animateToPage(
         _currentStep,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    }
+}
   }
 
   void _previousStep() {
     if (_currentStep > 0) {
       setState(() {
         _currentStep--;
-      });
+});
       _pageController.animateToPage(
         _currentStep,
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        curve: Curves.easeInOut
       );
-    }
+}
   }
 
   void _submitBooking() {
@@ -131,12 +131,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
     if (expert == null || date == null || time == null) {
       Toast.show(context, message: '모든 정보를 입력해주세요', type: ToastType.warning);
       return;
-    }
+}
 
     // TODO: Implement actual booking logic
     Toast.show(context, message: '상담 예약이 완료되었습니다', type: ToastType.success);
     context.pop();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -165,14 +165,13 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                 _buildConfirmation(theme, fontSize.value),
               ],
             ),
-          ),
           
           // Navigation Buttons
           _buildNavigationButtons(theme),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildProgressIndicator(ThemeData theme) {
     return Container(
@@ -202,35 +201,29 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                               Icons.check_rounded,
                               color: Colors.white,
                               size: 20,
-                            )
+                            ,
                           : Text(
                               '${index + 1}',
                               style: TextStyle(
                                 color: isActive
                                     ? Colors.white
-                                    : theme.colorScheme.onSurfaceVariant,
+                                    : theme.colorScheme.onSurfaceVariant),
                                 fontWeight: FontWeight.bold,
                               ),
-                            ),
                     ),
-                  ),
                   const SizedBox(height: 4),
                   Text(
                     _getStepTitle(index),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isActive
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
-                    ),
+                          : theme.colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
-            ),
           );
-        }),
-      ),
-    );
-  }
+}));
+}
 
   String _getStepTitle(int index) {
     switch (index) {
@@ -244,7 +237,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
         return '확인';
       default:
         return '';
-    }
+}
   }
 
   Widget _buildExpertSelection(ThemeData theme, double fontSize) {
@@ -259,21 +252,19 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               fontSize: fontSize + 4,
               fontWeight: FontWeight.bold,
             ),
-          ),
           const SizedBox(height: 8),
           Text(
             '원하시는 상담 분야의 전문가를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
           ),
           const SizedBox(height: 24),
-          ...mockExperts.map((expert) => _buildExpertCard(theme, fontSize, expert)),
+          ...mockExperts.map((expert) => _buildExpertCard(theme, fontSize, expert),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildExpertCard(ThemeData theme, double fontSize, Expert expert) {
     final isSelected = ref.watch(selectedExpertProvider) == expert;
@@ -282,7 +273,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
       onTap: expert.isAvailable
           ? () {
               ref.read(selectedExpertProvider.notifier).state = expert;
-            }
+}
           : null,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -292,7 +283,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             padding: const EdgeInsets.all(16),
             borderRadius: BorderRadius.circular(16),
             border: isSelected
-                ? Border.all(color: theme.colorScheme.primary, width: 2)
+                ? Border.all(color: theme.colorScheme.primary, width: 2,
                 : null,
             child: Row(
               children: [
@@ -308,7 +299,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                   Icons.person,
                   size: 32,
                 ),
-              ),
               const SizedBox(width: 16),
               
               // Info
@@ -324,23 +314,19 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                             fontSize: fontSize + 2,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
                         const SizedBox(width: 8),
-                        if (!expert.isAvailable)
-                          Container(
+                        if (!expert.isAvailable), Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.error.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
-                            ),
                             child: Text(
                               '예약 불가',
                               style: TextStyle(
-                                color: theme.colorScheme.error,
+                                color: theme.colorScheme.error),
                                 fontSize: fontSize - 4,
                                 fontWeight: FontWeight.bold,
                               ),
-                            ),
                           ),
                       ],
                     ),
@@ -350,7 +336,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: fontSize - 2,
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -370,7 +355,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                                 fontSize: fontSize - 2,
                                 fontWeight: FontWeight.bold,
                               ),
-                            ),
                           ],
                         ),
                         const SizedBox(width: 16),
@@ -386,7 +370,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                             fontWeight: FontWeight.bold,
                             color: theme.colorScheme.primary,
                           ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -399,27 +382,20 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(8),
-                          ),
                           child: Text(
                             specialty,
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: fontSize - 4,
                               color: theme.colorScheme.onPrimaryContainer,
                             ),
-                          ),
                         );
-                      }).toList(),
-                    ),
+}).toList(),
                   ],
                 ),
-              ),
             ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   Widget _buildDateSelection(ThemeData theme, double fontSize) {
     final selectedDate = ref.watch(selectedDateProvider);
@@ -435,14 +411,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               fontSize: fontSize + 4,
               fontWeight: FontWeight.bold,
             ),
-          ),
           const SizedBox(height: 8),
           Text(
             '예약 가능한 날짜를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
           ),
           const SizedBox(height: 24),
           
@@ -453,12 +427,11 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             child: CalendarDatePicker(
               initialDate: selectedDate ?? DateTime.now(),
               firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 30)),
+              lastDate: DateTime.now().add(const Duration(days: 30),
               onDateChanged: (date) {
                 ref.read(selectedDateProvider.notifier).state = date;
-              },
+},
             ),
-          ),
           
           if (selectedDate != null) ...[
             const SizedBox(height: 16),
@@ -486,15 +459,13 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                       fontSize: fontSize + 2,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
                 ],
               ),
-            ),
           ],
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildTimeSelection(ThemeData theme, double fontSize) {
     final selectedTime = ref.watch(selectedTimeProvider);
@@ -518,14 +489,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               fontSize: fontSize + 4,
               fontWeight: FontWeight.bold,
             ),
-          ),
           const SizedBox(height: 8),
           Text(
             '예약 가능한 시간대를 선택하세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
           ),
           const SizedBox(height: 24),
           
@@ -543,12 +512,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               return GestureDetector(
                 onTap: () {
                   ref.read(selectedTimeProvider.notifier).state = time;
-                },
+},
                 child: GlassContainer(
                   padding: const EdgeInsets.all(12),
                   borderRadius: BorderRadius.circular(12),
                   border: isSelected
-                      ? Border.all(color: theme.colorScheme.primary, width: 2)
+                      ? Border.all(color: theme.colorScheme.primary, width: 2,
                       : null,
                   gradient: isSelected
                       ? LinearGradient(
@@ -556,7 +525,7 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                             theme.colorScheme.primary.withValues(alpha: 0.2),
                             theme.colorScheme.secondary.withValues(alpha: 0.2),
                           ],
-                        )
+                        ,
                       : null,
                   child: Center(
                     child: Text(
@@ -566,12 +535,9 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         color: isSelected ? theme.colorScheme.primary : null,
                       ),
-                    ),
                   ),
-                ),
               );
-            }).toList(),
-          ),
+}).toList(),
           
           const SizedBox(height: 24),
           
@@ -582,23 +548,20 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               fontSize: fontSize + 2,
               fontWeight: FontWeight.bold,
             ),
-          ),
           const SizedBox(height: 8),
           TextField(
             controller: _messageController,
             maxLines: 4,
-            style: theme.textTheme.bodyLarge?.copyWith(fontSize: fontSize),
+            style: theme.textTheme.bodyLarge?.copyWith(fontSize: fontSize,
             decoration: InputDecoration(
               hintText: '상담하고 싶은 내용을 간단히 적어주세요',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-              ),
             ),
-          ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildConfirmation(ThemeData theme, double fontSize) {
     final expert = ref.watch(selectedExpertProvider);
@@ -616,14 +579,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               fontSize: fontSize + 4,
               fontWeight: FontWeight.bold,
             ),
-          ),
           const SizedBox(height: 8),
           Text(
             '예약 정보를 확인하고 확정해주세요',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
           ),
           const SizedBox(height: 24),
           
@@ -692,19 +653,16 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                       fontSize: fontSize,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
                   const SizedBox(height: 8),
                   Text(
                     _messageController.text,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: fontSize - 1,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
                   ),
                 ],
               ],
             ),
-          ),
           
           const SizedBox(height: 24),
           
@@ -716,7 +674,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
-              ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -731,17 +688,14 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                   child: Text(
                     '예약 확정 후 24시간 전까지 취소 가능합니다.',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: fontSize - 2,
-                    ),
+                      fontSize: fontSize - 2),
                   ),
-                ),
               ],
             ),
-          ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildConfirmationRow(
     ThemeData theme,
@@ -767,7 +721,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: fontSize - 2,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
               ),
               const SizedBox(height: 2),
               Text(
@@ -776,13 +729,11 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                   fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
             ],
           ),
-        ),
-      ],
+      ]
     );
-  }
+}
 
   Widget _buildNavigationButtons(ThemeData theme) {
     final canProceed = _canProceed();
@@ -796,17 +747,14 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
             color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
-          ),
         ],
       ),
       child: Row(
         children: [
-          if (_currentStep > 0)
-            Expanded(
+          if (_currentStep > 0), Expanded(
               child: OutlinedButton(
                 onPressed: _previousStep,
                 child: const Text('이전'),
-              ),
             ),
           if (_currentStep > 0) const SizedBox(width: 16),
           Expanded(
@@ -815,18 +763,17 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
                   ? () {
                       if (_currentStep < 3) {
                         _nextStep();
-                      } else {
+} else {
                         _submitBooking();
-                      }
+}
                     }
                   : null,
               child: Text(_currentStep < 3 ? '다음' : '예약 확정'),
-            ),
           ),
         ],
-      ),
+      
     );
-  }
+}
 
   bool _canProceed() {
     switch (_currentStep) {
@@ -840,6 +787,6 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
         return true;
       default:
         return false;
-    }
-  }
+}
+  },
 }

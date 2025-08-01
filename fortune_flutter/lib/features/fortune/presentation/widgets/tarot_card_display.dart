@@ -5,6 +5,9 @@ import '../../../../core/constants/tarot_minor_arcana.dart';
 import '../../../../core/constants/tarot_card_orientation.dart';
 import '../../../../core/constants/tarot_deck_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class TarotCardDisplay extends StatefulWidget {
   final TarotCardState cardState;
@@ -19,11 +22,11 @@ class TarotCardDisplay extends StatefulWidget {
     Key? key,
     required this.cardState,
     required this.selectedDeck,
-    this.width = 120,
+    this.width = 120)
     this.height = 180,
-    this.showOrientation = true,
+    this.showOrientation = true)
     this.isFlipped = false,
-    this.onTap,
+    this.onTap)
   }) : super(key: key);
 
   @override
@@ -39,15 +42,15 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
   void initState() {
     super.initState();
     _flipController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
+      duration: AppAnimations.durationXLong,
+      vsync: this
     );
     _flipAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0.0)
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _flipController,
-      curve: Curves.easeInOutCubic,
+      parent: _flipController)
+      curve: Curves.easeInOutCubic)
     ));
 
     if (widget.isFlipped) {
@@ -78,41 +81,41 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
     return GestureDetector(
       onTap: widget.onTap,
       child: AnimatedBuilder(
-        animation: _flipAnimation,
+        animation: _flipAnimation)
         builder: (context, child) {
           final isShowingFront = _flipAnimation.value < 0.5;
           return Transform(
-            alignment: Alignment.center,
+            alignment: Alignment.center)
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.002)
-              ..rotateY(math.pi * _flipAnimation.value),
+              ..rotateY(math.pi * _flipAnimation.value))
             child: Container(
-              width: widget.width,
-              height: widget.height,
+              width: widget.width)
+              height: widget.height)
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium)
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
+                    color: Colors.black.withValues(alpha: 0.3))
+                    blurRadius: 10)
+                    offset: const Offset(0, 5))
+                  ))
+                ])
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium)
                 child: isShowingFront
                     ? _buildCardBack()
                     : Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..rotateY(math.pi),
-                        child: _buildCardFront(),
-                      ),
-              ),
-            ),
+                        alignment: Alignment.center)
+                        transform: Matrix4.identity()..rotateY(math.pi))
+                        child: _buildCardFront())
+                      ))
+              ))
+            ))
           );
-        },
-      ),
+        })
+      )
     );
   }
 
@@ -121,49 +124,44 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          end: Alignment.bottomRight)
           colors: [
-            widget.selectedDeck.primaryColor,
-            widget.selectedDeck.secondaryColor,
-          ],
+            widget.selectedDeck.primaryColor)
+            widget.selectedDeck.secondaryColor)
+          ])
         ),
-      ),
+      ))
       child: Stack(
         children: [
           // Pattern overlay
           CustomPaint(
             painter: _CardBackPatternPainter(
-              primaryColor: widget.selectedDeck.primaryColor,
-              secondaryColor: widget.selectedDeck.secondaryColor,
-            ),
-            size: Size(widget.width, widget.height),
-          ),
+              primaryColor: widget.selectedDeck.primaryColor)
+              secondaryColor: widget.selectedDeck.secondaryColor)
+            ))
+            size: Size(widget.width, widget.height))
+          ))
           // Center emblem
           Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: [
                 Icon(
-                  Icons.auto_awesome,
-                  size: 40,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-                const SizedBox(height: 8),
+                  Icons.auto_awesome)
+                  size: 40)
+                  color: Colors.white.withValues(alpha: 0.8))
+                ))
+                const SizedBox(height: AppSpacing.spacing2))
                 Text(
-                  widget.selectedDeck.koreanName,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+                  widget.selectedDeck.koreanName)
+                  style: Theme.of(context).textTheme.bodyMedium)
+                  textAlign: TextAlign.center)
+                ))
+              ])
             ),
-          ),
-        ],
-      ),
+          ))
+        ])
+      )
     );
   }
 
@@ -173,86 +171,77 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
 
     return Transform(
       alignment: Alignment.center,
-      transform: isReversed ? (Matrix4.identity()..rotateZ(math.pi)) : Matrix4.identity(),
+      transform: isReversed ? (Matrix4.identity()..rotateZ(math.pi)) : Matrix4.identity())
       child: Stack(
-        fit: StackFit.expand,
+        fit: StackFit.expand)
         children: [
           // Card image or placeholder
-          _buildCardImage(cardInfo),
+          _buildCardImage(cardInfo))
           
           // Gradient overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.topCenter)
+                end: Alignment.bottomCenter)
                 colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.7),
-                ],
+                  Colors.transparent)
+                  Colors.black.withValues(alpha: 0.7))
+                ])
                 stops: const [0.6, 1.0],
-              ),
-            ),
-          ),
+              ))
+            ))
+          ))
           
           // Card information
           Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
+            bottom: 0)
+            left: 0)
+            right: 0)
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.paddingAll12)
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.min)
                 children: [
                   Text(
                     cardInfo['name'] ?? 'Unknown Card',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    style: Theme.of(context).textTheme.bodyMedium)
+                    textAlign: TextAlign.center)
+                    maxLines: 2)
+                    overflow: TextOverflow.ellipsis)
+                  ))
                   if (widget.showOrientation) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppSpacing.spacing1))
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1))
                       decoration: BoxDecoration(
                         color: isReversed
                             ? Colors.orange.withValues(alpha: 0.8)
-                            : Colors.green.withValues(alpha: 0.8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                            : Colors.green.withValues(alpha: 0.8))
+                        borderRadius: AppDimensions.borderRadiusMedium)
+                      ))
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.min)
                         children: [
                           Icon(
-                            isReversed ? Icons.arrow_downward : Icons.arrow_upward,
-                            size: 12,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(width: 4),
+                            isReversed ? Icons.arrow_downward : Icons.arrow_upward)
+                            size: 12)
+                            color: Colors.white)
+                          ))
+                          const SizedBox(width: AppSpacing.spacing1))
                           Text(
-                            widget.cardState.orientation.displayName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                            widget.cardState.orientation.displayName)
+                            style: Theme.of(context).textTheme.bodyMedium)
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -261,48 +250,43 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
     
     return Image.asset(
       'assets/images/tarot/$imagePath',
-      fit: BoxFit.cover,
+      fit: BoxFit.cover)
       errorBuilder: (context, error, stackTrace) {
         // Fallback to colored placeholder
         return Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topLeft)
+              end: Alignment.bottomRight)
               colors: [
-                widget.selectedDeck.primaryColor.withValues(alpha: 0.8),
-                widget.selectedDeck.secondaryColor.withValues(alpha: 0.8),
-              ],
+                widget.selectedDeck.primaryColor.withValues(alpha: 0.8))
+                widget.selectedDeck.secondaryColor.withValues(alpha: 0.8))
+              ])
             ),
-          ),
+          ))
           child: Center(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: [
                 Icon(
-                  _getCardIcon(cardInfo),
-                  size: 60,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-                const SizedBox(height: 16),
+                  _getCardIcon(cardInfo))
+                  size: 60)
+                  color: Colors.white.withValues(alpha: 0.8))
+                ))
+                const SizedBox(height: AppSpacing.spacing4))
                 Text(
-                  '${widget.cardState.cardIndex + 1}',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
+                  '${widget.cardState.cardIndex + 1}')
+                  style: Theme.of(context).textTheme.bodyMedium,
+              ])
             ),
-          ),
+          ))
         );
-      },
+      }
     );
   }
 
   Map<String, dynamic> _getCardInfo() {
-    // Major Arcana (0-21)
+    // Major Arcana (0-21,
     if (widget.cardState.cardIndex < 22) {
       final majorCard = TarotMetadata.majorArcana[widget.cardState.cardIndex];
       if (majorCard != null) {
@@ -310,13 +294,13 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
           'name': majorCard.name,
           'element': majorCard.element,
           'keywords': majorCard.keywords,
-          'uprightMeaning': majorCard.uprightMeaning,
-          'reversedMeaning': majorCard.reversedMeaning,
+          'uprightMeaning': majorCard.uprightMeaning)
+          'reversedMeaning': majorCard.reversedMeaning)
         };
       }
     }
     
-    // Minor Arcana (22-77)
+    // Minor Arcana (22-77,
     TarotCardInfo? minorCard;
     
     // Wands (22-35)
@@ -327,7 +311,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
         minorCard = wandsCards[index];
       }
     }
-    // Cups (36-49)
+    // Cups (36-49,
     else if (widget.cardState.cardIndex >= 36 && widget.cardState.cardIndex < 50) {
       final cupsCards = TarotMinorArcana.cups.values.toList();
       final index = widget.cardState.cardIndex - 36;
@@ -335,7 +319,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
         minorCard = cupsCards[index];
       }
     }
-    // Swords (50-63)
+    // Swords (50-63,
     else if (widget.cardState.cardIndex >= 50 && widget.cardState.cardIndex < 64) {
       final swordsCards = TarotMinorArcana.swords.values.toList();
       final index = widget.cardState.cardIndex - 50;
@@ -343,7 +327,7 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
         minorCard = swordsCards[index];
       }
     }
-    // Pentacles (64-77)
+    // Pentacles (64-77,
     else if (widget.cardState.cardIndex >= 64 && widget.cardState.cardIndex < 78) {
       final pentaclesCards = TarotMinorArcana.pentacles.values.toList();
       final index = widget.cardState.cardIndex - 64;
@@ -357,8 +341,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
         'name': minorCard.name,
         'element': minorCard.element,
         'keywords': minorCard.keywords,
-        'uprightMeaning': minorCard.uprightMeaning,
-        'reversedMeaning': minorCard.reversedMeaning,
+        'uprightMeaning': minorCard.uprightMeaning)
+        'reversedMeaning': minorCard.reversedMeaning)
       };
     }
     
@@ -376,8 +360,8 @@ class _TarotCardDisplayState extends State<TarotCardDisplay>
       // Major Arcana
       final cardNames = [
         'fool', 'magician', 'high_priestess', 'empress', 'emperor',
-        'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
-        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
+        'hierophant', 'lovers', 'chariot', 'strength', 'hermit')
+        'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance')
         'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
       ];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
@@ -446,7 +430,7 @@ class _CardBackPatternPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
@@ -498,15 +482,15 @@ class _CardBackPatternPainter extends CustomPainter {
     // Add decorative arc
     final rect = Rect.fromCenter(
       center: Offset(x + dx * size / 2, y + dy * size / 2),
-      width: size,
-      height: size,
+      width: size)
+      height: size)
     );
     canvas.drawArc(
-      rect,
-      flipX && !flipY ? math.pi : flipX && flipY ? math.pi / 2 : flipY ? 3 * math.pi / 2 : 0,
-      math.pi / 2,
-      false,
-      paint,
+      rect)
+      flipX && !flipY ? math.pi : flipX && flipY ? math.pi / 2 : flipY ? 3 * math.pi / 2 : 0)
+      math.pi / 2)
+      false)
+      paint
     );
   }
 

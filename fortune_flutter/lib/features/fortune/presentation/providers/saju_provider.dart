@@ -25,16 +25,15 @@ class SajuState {
       isLoading: isLoading ?? this.isLoading,
       sajuData: sajuData ?? this.sajuData,
       error: error,
-      isCached: isCached ?? this.isCached,
-    );
-  }
+      isCached: isCached ?? this.isCached,\n    );
+}
 }
 
 // Saju Provider
 class SajuNotifier extends StateNotifier<SajuState> {
   final SupabaseClient _supabase;
 
-  SajuNotifier(this._supabase) : super(SajuState());
+  SajuNotifier(this._supabase) : super(SajuState();
 
   // Fetch user's Saju data
   Future<void> fetchUserSaju() async {
@@ -45,16 +44,16 @@ class SajuNotifier extends StateNotifier<SajuState> {
       if (user == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '로그인이 필요합니다.',
+          error: '로그인이 필요합니다.'
         );
         return;
-      }
+}
 
       // First, try to get from database
       final response = await _supabase
-          .from('user_saju')
-          .select('*')
-          .eq('user_id', user.id)
+          .from('user_saju',
+          .select('*',
+          .eq('user_id', user.id,
           .maybeSingle();
 
       if (response != null) {
@@ -63,22 +62,21 @@ class SajuNotifier extends StateNotifier<SajuState> {
         state = state.copyWith(
           isLoading: false,
           sajuData: formattedData,
-          isCached: true,
+          isCached: true
         );
-      } else {
+} else {
         // No data exists, need to calculate
         state = state.copyWith(
           isLoading: false,
           sajuData: null,
-          isCached: false,
-        );
-      }
+          isCached: false);
+}
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: '사주 정보를 불러오는데 실패했습니다: $e',
+        error: '사주 정보를 불러오는데 실패했습니다: $e'
       );
-    }
+}
   }
 
   // Calculate and save user's Saju
@@ -94,10 +92,9 @@ class SajuNotifier extends StateNotifier<SajuState> {
       if (user == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '로그인이 필요합니다.',
-        );
+          error: '로그인이 필요합니다.');
         return;
-      }
+}
 
       // Call Edge Function to calculate and save Saju
       print('Calling calculate-saju with:');
@@ -118,7 +115,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
         onTimeout: () {
           print('Edge Function timeout after 30 seconds');
           throw Exception('사주 계산 시간 초과 (30초)');
-        },
+}
       );
       
       print('=== SAJU API RESPONSE ===');
@@ -130,7 +127,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       // Log all available properties
       if (response.data is Map) {
         print('Response data keys: ${(response.data as Map).keys.toList()}');
-      }
+}
 
       if (response.status != 200) {
         print('=== EDGE FUNCTION ERROR RESPONSE ===');
@@ -148,23 +145,23 @@ class SajuNotifier extends StateNotifier<SajuState> {
           if (errorData['details'] != null) {
             errorDetails = errorData['details'].toString();
             errorMessage += '\n상세: $errorDetails';
-          }
+}
           
           // Log additional error info if available
           if (errorData['timestamp'] != null) {
             print('Error timestamp: ${errorData['timestamp']}');
-          }
+}
           if (errorData['reasonPhrase'] != null) {
             print('Reason phrase: ${errorData['reasonPhrase']}');
-          }
+}
         } else {
           print('Error data type: ${errorData.runtimeType}');
           print('Error data: $errorData');
-        }
+}
         
         print('Final error message: $errorMessage');
         throw Exception(errorMessage);
-      }
+}
 
       final data = response.data;
       if (data is Map && data['success'] == true && data['data'] != null) {
@@ -172,13 +169,13 @@ class SajuNotifier extends StateNotifier<SajuState> {
         state = state.copyWith(
           isLoading: false,
           sajuData: formattedData,
-          isCached: data['cached'] ?? false,
+          isCached: data['cached'] ?? false
         );
-      } else if (data is Map && data['error'] != null) {
+} else if (data is Map && data['error'] != null) {
         throw Exception(data['error']);
-      } else {
+} else {
         throw Exception('사주 계산에 실패했습니다. 응답 형식이 올바르지 않습니다.');
-      }
+}
     } catch (e, stackTrace) {
       print('=== SAJU CALCULATION EXCEPTION ===');
       print('Exception type: ${e.runtimeType}');
@@ -190,15 +187,15 @@ class SajuNotifier extends StateNotifier<SajuState> {
       String errorMessage = '사주 계산 중 오류가 발생했습니다';
       if (e.toString().contains('Exception: ')) {
         errorMessage = e.toString().replaceAll('Exception: ', '');
-      } else {
+} else {
         errorMessage += ': $e';
-      }
+}
       
       state = state.copyWith(
         isLoading: false,
-        error: errorMessage,
+        error: errorMessage
       );
-    }
+}
   }
 
   // Format Saju data for display
@@ -269,7 +266,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       'lackingElement': rawData['lacking_element'] ?? '',
       'calculatedAt': rawData['calculated_at'],
     };
-  }
+}
 
   String _getElementForStem(String stem) {
     const stemElements = {
@@ -280,7 +277,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       '임': '수', '계': '수',
     };
     return stemElements[stem] ?? '';
-  }
+}
 
   String _getElementForBranch(String branch) {
     const branchElements = {
@@ -289,7 +286,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       '신': '금', '유': '금', '술': '토', '해': '수',
     };
     return branchElements[branch] ?? '';
-  }
+}
 
   String _getDaeunHanja(String? daeun) {
     if (daeun == null || daeun.length < 2) return '';
@@ -306,14 +303,14 @@ class SajuNotifier extends StateNotifier<SajuState> {
     final stem = daeun[0];
     final branch = daeun[1];
     return '${stemHanja[stem] ?? stem}${branchHanja[branch] ?? branch}';
-  }
+}
 
   // Clear Saju data
   void clearSaju() {
     state = SajuState();
-  }
+}
 
-  // Refresh Saju data (force recalculation)
+  // Refresh Saju data (force recalculation,
   Future<void> refreshSaju() async {
     state = state.copyWith(isLoading: true, error: null);
 
@@ -322,25 +319,25 @@ class SajuNotifier extends StateNotifier<SajuState> {
       if (user == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '로그인이 필요합니다.',
+          error: '로그인이 필요합니다.'
         );
         return;
-      }
+}
 
       // Get user profile to get birth info
       final profile = await _supabase
-          .from('user_profiles')
-          .select('birth_date, birth_time')
-          .eq('id', user.id)
+          .from('user_profiles',
+          .select('birth_date, birth_time',
+          .eq('id', user.id,
           .single();
 
       if (profile['birth_date'] == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '생년월일 정보가 없습니다.',
+          error: '생년월일 정보가 없습니다.'
         );
         return;
-      }
+}
 
       // Recalculate Saju
       await calculateAndSaveSaju(
@@ -348,13 +345,13 @@ class SajuNotifier extends StateNotifier<SajuState> {
         birthTime: profile['birth_time'],
         isLunar: false, // TODO: Get from user profile
       );
-    } catch (e) {
+} catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: '사주 새로고침 중 오류가 발생했습니다: $e',
+        error: '사주 새로고침 중 오류가 발생했습니다: $e'
       );
-    }
-  }
+}
+  },
 }
 
 // Provider definitions
@@ -370,7 +367,7 @@ final userSajuProvider = FutureProvider<void>((ref) async {
   
   if (user != null) {
     await ref.read(sajuProvider.notifier).fetchUserSaju();
-  }
+}
 });
 
 // Computed provider for Saju display data
@@ -396,4 +393,4 @@ final daeunInfoProvider = Provider<Map<String, dynamic>>((ref) {
   if (sajuData == null) return {};
   
   return sajuData['daeun'] as Map<String, dynamic>? ?? {};
-});
+};

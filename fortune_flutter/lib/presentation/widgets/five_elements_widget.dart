@@ -1,17 +1,23 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/fortune/presentation/providers/saju_provider.dart';
 import 'five_elements_explanation_bottom_sheet.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsWidget extends ConsumerWidget {
   final Map<String, dynamic>? userProfile;
   
-  const FiveElementsWidget({
+  const FiveElementsWidget(
+    {
     super.key,
     required this.userProfile,
-  });
+  )});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,77 +46,73 @@ class FiveElementsWidget extends ConsumerWidget {
     final lackingElement = sajuDisplayData?['lackingElement'] as String?;
     
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
+      padding: AppSpacing.paddingAll20,
+      decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        borderRadius: AppDimensions.borderRadiusMedium,
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        border: Border.all(,
+      color: theme.colorScheme.outline.withValues(alp,
+      ha: 0.1),
+          width: 1)),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Text(
-                    '나의 오행 분석',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                        Text(
+                          '나의 오행 분석',
+              ),
+              style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+                  SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '五行分析',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
+                          style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          )))
+                ])
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+                decoration: BoxDecoration(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusMedium),
+      child: Row(,
+      mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.touch_app,
                       size: 14,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
+                      color: theme.colorScheme.primary)
+                    SizedBox(width: AppSpacing.spacing1),
                     Text(
                       '탭하여 상세보기',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
+        ),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: theme.colorScheme.primary,
+                          ))))
+                  ])))
+            ])
+          SizedBox(height: AppSpacing.spacing2),
           Text(
-            '오행의 균형으로 보는 나의 기운',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-          const SizedBox(height: 20),
+            '오행의 균형으로 보는 나의 기운'),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.7,
+                          )))
+          SizedBox(height: AppSpacing.spacing5),
           
           // Five Elements Grid
           _buildFiveElementsGrid(context, theme, elementMap, total, dominantElement, lackingElement),
           
-          const SizedBox(height: 24),
+          SizedBox(height: AppSpacing.spacing6),
           
           // Element balance bars
           _buildElementBars(context, theme, elementMap, total, dominantElement, lackingElement),
@@ -118,45 +120,41 @@ class FiveElementsWidget extends ConsumerWidget {
           // Balance advice
           if (dominantElement != null || lackingElement != null)
             _buildBalanceAdvice(theme, dominantElement, lackingElement),
-        ],
-      ),
-    );
+        ]
+      )
   }
   
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
+      padding: AppSpacing.paddingAll20,
+      decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        borderRadius: AppDimensions.borderRadiusMedium,
         ),
-      ),
+        border: Border.all(,
+      color: theme.colorScheme.outline.withValues(alp,
+      ha: 0.1),
+          width: 1)),
       child: Column(
-        children: [
+                children: [
           Icon(
             Icons.bubble_chart,
             color: theme.colorScheme.primary,
-            size: 48,
-          ),
-          const SizedBox(height: 16),
+            size: 48)
+          SizedBox(height: AppSpacing.spacing4),
           Text(
             '오행 정보가 없습니다',
-            style: theme.textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
+            style: theme.textTheme.titleMedium)
+          SizedBox(height: AppSpacing.spacing2),
           Text(
             '사주 정보를 입력하면 오행 분석을 확인할 수 있습니다.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.7),
+      textAlign: TextAlign.center)
+        ]
+      )
   }
   
   Widget _buildFiveElementsGrid(
@@ -165,72 +163,64 @@ class FiveElementsWidget extends ConsumerWidget {
     Map<String, int> elementMap,
     int total,
     String? dominantElement,
-    String? lackingElement,
+    String? lackingElement)
   ) {
     final elements = ['목', '화', '토', '금', '수'];
     
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-      ),
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium),
       child: Column(
         children: [
           IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: elements.take(3).map((element) {
+            child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ),
+        children: elements.take(3).map((element) {
                 final count = elementMap[element] ?? 0;
                 final percentage = total > 0 ? (count / total * 100).round() : 0;
                 return Flexible(
-                  child: Center(
-                    child: _buildElementCircle(
-                      context,
+                  child: Center(,
+      child: _buildElementCircle(
+                      context
                       theme,
                       element,
                       count,
                       percentage,
                       total,
                       dominantElement == element,
-                      lackingElement == element,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 12),
+                      lackingElement == element)
+                    ))))
+              }).toList())))
+          SizedBox(height: AppSpacing.spacing3),
           IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(width: 20),
+            child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center),
+        children: [
+                SizedBox(width: AppSpacing.spacing5),
                 ...elements.skip(3).map((element) {
                   final count = elementMap[element] ?? 0;
                   final percentage = total > 0 ? (count / total * 100).round() : 0;
                   return Row(
                     children: [
                       _buildElementCircle(
-                        context,
+                        context
                         theme,
                         element,
                         count,
                         percentage,
                         total,
                         dominantElement == element,
-                        lackingElement == element,
-                      ),
-                      const SizedBox(width: 20),
-                    ],
-                  );
+                        lackingElement == element)
+                      SizedBox(width: AppSpacing.spacing5),
+                    ])
                 }).toList(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ])))
+        ]
+      )
   }
   
   Widget _buildElementCircle(
@@ -241,115 +231,95 @@ class FiveElementsWidget extends ConsumerWidget {
     int percentage,
     int total,
     bool isDominant,
-    bool isLacking,
+    bool isLacking)
   ) {
     final color = _getElementColor(element);
     // Constrain size to prevent overflow
-    final size = min(75.0, 60.0 + (percentage / 10));
+    final size = min(75.0, 60.0 + (percentage / 10);
     
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
         FiveElementsExplanationBottomSheet.show(
-          context,
-          element: element,
-          elementCount: count,
-          totalCount: total,
+          context),
+        element: element),
+        elementCount: count),
+        totalCount: total
         );
-      },
-      child: SizedBox(
-        width: 85,
+      }
+      child: SizedBox(,
+      width: 85,
         height: 95, // Fixed height for all elements
-        child: Stack(
-          alignment: Alignment.topCenter,
+        child: Stack(,
+      alignment: Alignment.topCenter,
           children: [
             // Circle positioned at top
             Container(
               width: size,
-              height: size,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.2),
+              height: size),
+              decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.2),
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDominant ? theme.colorScheme.primary : 
+                border: Border.all(,
+      color: isDominant ? theme.colorScheme.primary : 
                          isLacking ? theme.colorScheme.error : 
                          color,
-                  width: isDominant || isLacking ? 3 : 2,
-                ),
-                boxShadow: [
+        ),
+        width: isDominant || isLacking ? 3 : 2),
+      boxShadow: [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.3),
+                    color: color.withValues(alph,
+      a: 0.3),
                     blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(6.0),
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    offset: const Offset(0, 2))
+                ])
+              child: Center(,
+      child: Padding(,
+      padding: AppSpacing.xSmallall,
+                  child: FittedBox(,
+      fit: BoxFit.contain,
+                    child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
-                      children: [
+              ),
+              children: [
                         Text(
                           _getElementHanja(element),
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
+                          style: Theme.of(context).textTheme.headlineMedium,
                         Text(
                           element,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: color,
-                          ),
-                        ),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: color)
                         Text(
-                          '$percentage%',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            // Label positioned at bottom (outside circle alignment)
+                          '$percentage%'),
+        style: context.captionMedium,
+                          ))
+                      ])))))))))
+            // Label positioned at bottom (outside circle alignment,
             if (isDominant || isLacking)
               Positioned(
-                bottom: 0,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: isDominant ? 
+                bottom: 0),
+                child: Container(,
+      padding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                  decoration: BoxDecoration(,
+      color: isDominant ? 
                            theme.colorScheme.primary.withValues(alpha: 0.2) :
                            theme.colorScheme.error.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
+                    borderRadius: AppDimensions.borderRadiusSmall),
+      child: Text(
                     isDominant ? '강함' : '부족',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: isDominant ? 
-                             theme.colorScheme.primary :
-                             theme.colorScheme.error,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10,
-                    ),
-                  ),
-                ),
-              ),
-          ],
         ),
-      ),
-    );
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: isDominant ? 
+                             theme.colorScheme.primary :
+                             theme.colorScheme.error),
+        fontWeight: FontWeight.bold),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                          )))))))
+          ])
+      )
   }
   
   Widget _buildElementBars(
@@ -358,7 +328,7 @@ class FiveElementsWidget extends ConsumerWidget {
     Map<String, int> elementMap,
     int total,
     String? dominantElement,
-    String? lackingElement,
+    String? lackingElement)
   ) {
     return Column(
       children: elementMap.entries.map((entry) {
@@ -371,239 +341,220 @@ class FiveElementsWidget extends ConsumerWidget {
           onTap: () {
             HapticFeedback.lightImpact();
             FiveElementsExplanationBottomSheet.show(
-              context,
-              element: entry.key,
-              elementCount: entry.value,
-              totalCount: total,
+              context),
+        element: entry.key),
+        elementCount: entry.value),
+        totalCount: total
             );
-          },
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isDominant ? theme.colorScheme.primary.withValues(alpha: 0.3) :
+          }
+          child: Container(,
+      margin: const EdgeInsets.only(bott,
+      om: AppSpacing.small),
+            padding: AppSpacing.paddingAll12,
+            decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.05),
+              borderRadius: AppDimensions.borderRadiusSmall,
+              border: Border.all(,
+      color: isDominant ? theme.colorScheme.primary.withValues(alpha: 0.3) :
                        isLacking ? theme.colorScheme.error.withValues(alpha: 0.3) :
-                       color.withValues(alpha: 0.2),
-              ),
-            ),
-            child: Column(
-              children: [
+                       color.withValues(alpha: 0.2))),
+      child: Column(
+                children: [
                 Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
+                      width: AppDimensions.buttonHeightSmall,
+                      height: AppDimensions.buttonHeightSmall,
+        ),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.2),
+                        shape: BoxShape.circle),
+      child: Center(
                         child: Text(
                           _getElementHanja(entry.key),
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                          style: Theme.of(context).textTheme.titleLarge)
+                    SizedBox(width: AppSpacing.spacing3),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
                           Row(
-                            children: [
+    children: [
                               Text(
-                                '${_getElementName(entry.key)} (${entry.key})',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                                '${_getElementName(entry.key,
+  )} (${entry.key})',
+                                style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.w600,
+                          ))))
                               if (isDominant) ...[
-                                const SizedBox(width: 8),
+                                SizedBox(width: AppSpacing.spacing2),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
+                                  padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                                  decoration: BoxDecoration(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.2),
+                                    borderRadius: AppDimensions.radiusMedium),
+      child: Text(
                                     '강함',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              if (isLacking) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.error.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    '부족',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: theme.colorScheme.error,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
+        ),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: theme.colorScheme.primary,
                           ),
-                          const SizedBox(height: 8),
+        fontWeight: FontWeight.bold)
+                                    ))))
+                              ]
+                              if (isLacking) ...[
+                                SizedBox(width: AppSpacing.spacing2),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                                  decoration: BoxDecoration(,
+      color: theme.colorScheme.error.withValues(alp,
+      ha: 0.2),
+                                    borderRadius: AppDimensions.radiusMedium),
+      child: Text(
+                                    '부족',
+        ),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: theme.colorScheme.error,
+                          ),
+        fontWeight: FontWeight.bold)
+                                    ))))
+                              ]
+                            ])
+                          SizedBox(height: AppSpacing.spacing2),
                           Row(
                             children: [
                               Expanded(
-                                child: LinearProgressIndicator(
-                                  value: percentage / 100,
-                                  backgroundColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+                                child: LinearProgressIndicator(,
+      value: percentage / 100),
+        backgroundColor: theme.colorScheme.outline.withValues(alph,
+      a: 0.1),
                                   valueColor: AlwaysStoppedAnimation(color),
-                                  minHeight: 8,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
+                                  minHeight: 8)))
+                              SizedBox(width: AppSpacing.spacing3),
                               Text(
-                                '$percentage%',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                                '$percentage%'),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: color,
+                          )))
+                            ])
+                        ])))
                     Icon(
                       Icons.arrow_forward_ios,
-                      size: 16,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                      size: AppDimensions.iconSizeXSmall),
+        color: theme.colorScheme.onSurface.withValues(alph,
+      a: 0.3))
+                  ])
+              ])))))
+      }).toList()
   }
   
-  Widget _buildBalanceAdvice(ThemeData theme, String? dominantElement, String? lackingElement) {
+  Widget _buildBalanceAdvice(ThemeData theme, String? dominantElement, String? lackingElement
+  }) {
     return Container(
-      margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.outline.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.only(to,
+      p: AppSpacing.medium),
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: theme.colorScheme.outline.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(,
+      color: theme.colorScheme.outline.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.tips_and_updates,
-                size: 20,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeSmall,
+                color: theme.colorScheme.primary)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '오행 균형 조언',
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+        ),
+        style: theme.textTheme.titleSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing3),
           if (dominantElement != null)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+              child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 6,
-                    height: 6,
-                    margin: const EdgeInsets.only(top: 6),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '${_getElementName(dominantElement)}($dominantElement)의 기운이 강합니다. 과도한 기운을 조절하여 균형을 맞추세요.',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ),
-                ],
+                    height: AppSpacing.spacing1 * 1.5,
               ),
-            ),
+              margin: const EdgeInsets.only(to,
+      p: AppSpacing.xSmall),
+                    decoration: BoxDecoration(,
+      color: theme.colorScheme.primary,
+                      shape: BoxShape.circle)
+                    ))
+                  SizedBox(width: AppSpacing.spacing2),
+                  Expanded(
+    child: Text(
+                      '${_getElementName(dominantElement,
+  )}($dominantElement)의 기운이 강합니다. 과도한 기운을 조절하여 균형을 맞추세요.',
+                      style: theme.textTheme.bodySmall)))
+                ])))
           if (lackingElement != null)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 6,
-                  height: 6,
-                  margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.error,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
+                  height: AppSpacing.spacing1 * 1.5),
+              margin: const EdgeInsets.only(to,
+      p: AppSpacing.xSmall),
+                  decoration: BoxDecoration(,
+      color: theme.colorScheme.error,
+                    shape: BoxShape.circle)
+                  ))
+                SizedBox(width: AppSpacing.spacing2),
                 Expanded(
-                  child: Text(
-                    '${_getElementName(lackingElement)}($lackingElement)의 기운이 부족합니다. 부족한 기운을 보충하여 조화를 이루세요.',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ),
-              ],
-            ),
-          const SizedBox(height: 8),
+    child: Text(
+                    '${_getElementName(lackingElement,
+  )}($lackingElement)의 기운이 부족합니다. 부족한 기운을 보충하여 조화를 이루세요.',
+                    style: theme.textTheme.bodySmall)))
+              ])
+          SizedBox(height: AppSpacing.spacing2),
           Text(
-            '자세한 조언을 보려면 각 오행을 탭하세요.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-        ],
-      ),
-    );
+            '자세한 조언을 보려면 각 오행을 탭하세요.'),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6, fontStyle: FontStyle.italic,
+                          ))))
+        ]
+      )
   }
   
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return const Color(0xFF4CAF50);
+        return AppColors.success;
       case '화':
-        return const Color(0xFFFF5722);
+        return AppColors.warning;
       case '토':
-        return const Color(0xFFFFB300);
+        return FortuneColors.goldLight;
       case '금':
-        return const Color(0xFF9E9E9E);
+        return AppColors.textTertiary;
       case '수':
-        return const Color(0xFF2196F3);
+        return AppColors.primary;
       default:
-        return Colors.grey;
+        return AppColors.textSecondary;
     }
   }
   

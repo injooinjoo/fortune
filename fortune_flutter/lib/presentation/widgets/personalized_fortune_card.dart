@@ -1,9 +1,13 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme_extensions.dart';
 import '../../services/user_statistics_service.dart';
 import '../../core/constants/fortune_type_names.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class PersonalizedFortuneCard extends StatelessWidget {
   final UserStatistics userStats;
@@ -35,112 +39,110 @@ class PersonalizedFortuneCard extends StatelessWidget {
 
   Widget _buildLoadingState(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: AppSpacing.medium),
+      padding: AppSpacing.paddingAll20)
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
           colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
-          ],
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
+          ])
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusLarge)
         border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-        ),
-      ),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
+        ))
+      ))
       child: Column(
         children: [
           Container(
-            height: 20,
+            height: AppSpacing.spacing5)
             decoration: BoxDecoration(
-              color: context.fortuneTheme.dividerColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
+              color: context.fortuneTheme.dividerColor)
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))
+            ))
           ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1.seconds),
-          const SizedBox(height: 12),
+              .shimmer(duration: 1.seconds))
+          SizedBox(height: AppSpacing.spacing3))
           Container(
-            height: 40,
+            height: AppDimensions.buttonHeightSmall)
             decoration: BoxDecoration(
-              color: context.fortuneTheme.dividerColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
+              color: context.fortuneTheme.dividerColor)
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))
+            ))
           ).animate(onPlay: (controller) => controller.repeat())
-              .shimmer(duration: 1.seconds),
-        ],
-      ),
+              .shimmer(duration: 1.seconds))
+        ])
+      )
     );
   }
 
   Widget _buildWelcomeState(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AppSpacing.medium),
       child: InkWell(
-        onTap: () => context.push('/fortune'),
-        borderRadius: BorderRadius.circular(16),
+        onTap: () => context.push('/fortune'))
+        borderRadius: AppDimensions.borderRadiusLarge)
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.paddingAll20)
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topLeft)
+              end: Alignment.bottomRight)
               colors: [
-                Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
-              ],
+                Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
+              ])
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppDimensions.borderRadiusLarge)
             border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-            ),
-          ),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
+            ))
+          ))
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: AppSpacing.paddingAll12)
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
+                  borderRadius: AppDimensions.borderRadiusMedium)
+                ))
                 child: Icon(
-                  Icons.auto_awesome,
-                  size: 24,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              const SizedBox(width: 16),
+                  Icons.auto_awesome)
+                  size: AppDimensions.iconSizeMedium)
+                  color: Theme.of(context).colorScheme.primary)
+                ))
+              ))
+              SizedBox(width: AppSpacing.spacing4))
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Text(
-                      '환영합니다! 🎉',
+                      '환영합니다! 🎉')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+                        fontWeight: FontWeight.bold),))
+                      ))
+                    SizedBox(height: AppSpacing.spacing1))
                     Text(
-                      '다양한 운세를 확인하고 나만의 운세를 찾아보세요',
+                      '다양한 운세를 확인하고 나만의 운세를 찾아보세요')
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: context.fortuneTheme.subtitleText,
-                      ),
-                    ),
-                  ],
+                        color: context.fortuneTheme.subtitleText),))
+                      ))
+                  ])
                 ),
-              ),
+              ))
               Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: context.fortuneTheme.subtitleText,
-              ),
-            ],
+                Icons.arrow_forward_ios)
+                size: AppDimensions.iconSizeXSmall)
+                color: context.fortuneTheme.subtitleText)
+              ))
+            ])
           ),
-        ),
-      ),
+        ))
+      ))
     ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.1, end: 0);
   }
 
@@ -151,237 +153,231 @@ class PersonalizedFortuneCard extends StatelessWidget {
     final percentage = totalCount > 0 ? (accessCount / totalCount * 100).round() : 0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: AppSpacing.medium),
       child: InkWell(
-        onTap: () => _navigateToFortune(context, favoriteType),
-        borderRadius: BorderRadius.circular(16),
+        onTap: () => _navigateToFortune(context, favoriteType))
+        borderRadius: AppDimensions.borderRadiusLarge)
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topLeft)
+              end: Alignment.bottomRight)
               colors: [
                 fortuneTypeInfo['color'].withValues(alpha: 0.15),
                 fortuneTypeInfo['color'].withValues(alpha: 0.05),
-              ],
+              ])
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppDimensions.borderRadiusLarge)
             border: Border.all(
               color: fortuneTypeInfo['color'].withValues(alpha: 0.3),
-            ),
+            ))
             boxShadow: [
               BoxShadow(
                 color: fortuneTypeInfo['color'].withValues(alpha: 0.1),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
+                blurRadius: 12)
+                offset: const Offset(0, 4))
+              ))
+            ])
           ),
           child: Column(
             children: [
               // 상단 헤더
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.paddingAll20)
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    begin: Alignment.topLeft)
+                    end: Alignment.bottomRight)
                     colors: [
                       fortuneTypeInfo['color'].withValues(alpha: 0.2),
                       fortuneTypeInfo['color'].withValues(alpha: 0.1),
-                    ],
+                    ])
                   ),
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                ),
+                    topLeft: Radius.circular(16))
+                    topRight: Radius.circular(16))
+                  ))
+                ))
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: AppSpacing.paddingAll12)
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.9),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.textPrimaryDark.withValues(alpha: 0.9))
+                        borderRadius: AppDimensions.borderRadiusMedium)
                         boxShadow: [
                           BoxShadow(
                             color: fortuneTypeInfo['color'].withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                            blurRadius: 8)
+                            offset: const Offset(0, 2))
+                          ))
+                        ])
                       ),
                       child: Icon(
-                        fortuneTypeInfo['icon'],
-                        size: 28,
+                        fortuneTypeInfo['icon'])
+                        size: AppDimensions.iconSizeLarge,
                         color: fortuneTypeInfo['color'],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
+                      ))
+                    ))
+                    SizedBox(width: AppSpacing.spacing4))
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start)
                         children: [
                           Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0))
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                  color: Theme.of(context).colorScheme.primary)
+                                  borderRadius: AppDimensions.borderRadiusMedium)
+                                ))
                                 child: Text(
-                                  '나의 관심 운세',
+                                  '나의 관심 운세')
                                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
+                                    color: AppColors.textPrimaryDark),))
+                                    fontWeight: FontWeight.bold)
+                                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                                  ))
+                                ))
+                              ))
+                              SizedBox(width: AppSpacing.spacing2))
                               if (percentage > 50)
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0))
                                   decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                    color: AppColors.warning)
+                                    borderRadius: AppDimensions.borderRadiusMedium)
+                                  ))
                                   child: Text(
-                                    '자주 봄',
+                                    '자주 봄')
                                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                                      color: AppColors.textPrimaryDark),))
+                                      fontWeight: FontWeight.bold)
+                                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                                    ))
+                                  ))
+                                ))
+                            ])
                           ),
-                          const SizedBox(height: 6),
+                          AppSpacing.xSmallVertical)
                           Text(
-                            fortuneTypeInfo['name'],
+                            fortuneTypeInfo['name'])
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold),))
+                              color: AppColors.textPrimaryDark,
+                            ))
                           Text(
                             '${accessCount}회 조회 • 관심도 ${percentage}%',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ],
+                              color: AppColors.textPrimaryDark.withValues(alpha: 0.8)))
+                        ])
                       ),
-                    ),
+                    ))
                     IconButton(
-                      onPressed: onRefresh,
-                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      onPressed: onRefresh)
+                      icon: Icon(Icons.refresh, color: AppColors.textPrimaryDark))
                       style: IconButton.styleFrom(
-                        backgroundColor: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                  ],
+                        backgroundColor: AppColors.textPrimaryDark.withValues(alpha: 0.2))
+                      ))
+                    ))
+                  ])
                 ),
-              ),
+              ))
               
               // 하단 콘텐츠
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.paddingAll20)
                 child: Column(
                   children: [
                     if (recentFortune != null) ...[
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: AppSpacing.paddingAll16)
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(12),
+                          color: Theme.of(context).colorScheme.surface)
+                          borderRadius: AppDimensions.borderRadiusMedium)
                           border: Border.all(
-                            color: context.fortuneTheme.dividerColor,
-                          ),
-                        ),
+                            color: context.fortuneTheme.dividerColor)
+                          ))
+                        ))
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start)
                           children: [
                             Row(
                               children: [
                                 Icon(
-                                  Icons.history,
-                                  size: 16,
-                                  color: context.fortuneTheme.subtitleText,
-                                ),
-                                const SizedBox(width: 4),
+                                  Icons.history)
+                                  size: AppDimensions.iconSizeXSmall)
+                                  color: context.fortuneTheme.subtitleText)
+                                ))
+                                SizedBox(width: AppSpacing.spacing1))
                                 Text(
-                                  '최근 운세 결과',
+                                  '최근 운세 결과')
                                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: context.fortuneTheme.subtitleText,
-                                  ),
-                                ),
-                              ],
+                                    color: context.fortuneTheme.subtitleText),))
+                                  ))
+                              ])
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: AppSpacing.spacing2))
                             Text(
                               recentFortune!['summary'] ?? '최근 ${fortuneTypeInfo['name']} 운세가 좋습니다!',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                              style: Theme.of(context).textTheme.bodyMedium)
+                              maxLines: 2)
+                              overflow: TextOverflow.ellipsis)
+                            ))
                             if (recentFortune!['score'] != null) ...[
-                              const SizedBox(height: 8),
+                              SizedBox(height: AppSpacing.spacing2),
                               Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1))
                                     decoration: BoxDecoration(
                                       color: fortuneTypeInfo['color'].withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
+                                      borderRadius: AppDimensions.borderRadiusSmall)
+                                    ))
                                     child: Text(
-                                      '${recentFortune!['score']}점',
+                                      '${recentFortune!['score']}점')
                                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                        color: fortuneTypeInfo['color'],
+                                        color: fortuneTypeInfo['color']),))
                                         fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                      ))
+                                ])
                               ),
-                            ],
+                            ])
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                    ],
+                        ))
+                      ))
+                      SizedBox(height: AppSpacing.spacing3))
+                    ])
                     
                     // 액션 버튼
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => _navigateToFortune(context, favoriteType),
-                        icon: Icon(fortuneTypeInfo['icon'], size: 20),
+                        onPressed: () => _navigateToFortune(context, favoriteType))
+                        icon: Icon(fortuneTypeInfo['icon'], size: AppDimensions.iconSizeSmall),
                         label: Text('${fortuneTypeInfo['name']} 보러가기'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: fortuneTypeInfo['color'],
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          backgroundColor: fortuneTypeInfo['color']),
+                          foregroundColor: AppColors.textPrimaryDark)
+                          padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3))
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                            borderRadius: AppDimensions.borderRadiusMedium)
+                          ))
+                        ))
+                      ))
+                    ))
+                  ])
                 ),
-              ),
-            ],
+              ))
+            ])
           ),
-        ),
-      ),
+        ))
+      ))
     ).animate()
         .fadeIn(duration: 300.ms)
         .slideY(begin: -0.1, end: 0)
-        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
+        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1);
   }
 
   void _navigateToFortune(BuildContext context, String fortuneType) {

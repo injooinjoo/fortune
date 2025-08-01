@@ -1,32 +1,36 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class UserInfoVisualization extends StatelessWidget {
   final Map<String, dynamic> userInfo;
   final String fortuneType;
   final List<Color>? gradientColors;
   
-  const UserInfoVisualization({
+  const UserInfoVisualization(
+    {
     super.key,
     required this.userInfo,
     required this.fortuneType,
     this.gradientColors,
-  });
+  )});
   
   @override
   Widget build(BuildContext context) {
     return GlassCard(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      padding: AppSpacing.paddingAll20,
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
           _buildHeader(context),
-          const SizedBox(height: 20),
+          SizedBox(height: AppSpacing.spacing5),
           _buildInfoGrid(context),
-        ],
-      ),
-    ).animate()
+        ])))).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -37,30 +41,26 @@ class UserInfoVisualization extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
+          padding: AppSpacing.paddingAll8,
+          decoration: BoxDecoration(,
+      gradient: LinearGradient(
               colors: gradientColors ?? [
-                theme.colorScheme.primary,
+                theme.colorScheme.primary)
                 theme.colorScheme.primary.withValues(alpha: 0.7),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
+              ])
+            borderRadius: AppDimensions.borderRadiusMedium),
+      child: Icon(
             _getIconForFortuneType(),
-            color: Colors.white,
-            size: 24,
-          ),
-        ),
-        const SizedBox(width: 12),
+            color: AppColors.textPrimaryDark,
+            size: AppDimensions.iconSizeMedium)))
+        SizedBox(width: AppSpacing.spacing3),
         Text(
           '입력된 정보',
-          style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
         ),
-      ],
+        style: theme.textTheme.headlineSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+      ]
     );
   }
   
@@ -71,88 +71,86 @@ class UserInfoVisualization extends StatelessWidget {
     if (userInfo['name'] != null) {
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.person,
-        label: '이름',
-        value: userInfo['name'],
-      ));
+        icon: Icons.person),
+        label: '이름'),
+        value: userInfo['name'])
+      )
     }
     
     // Birth date and derived info
     if (userInfo['birthDate'] != null) {
       final birthDate = DateTime.parse(userInfo['birthDate']);
       infoItems.add(_buildInfoItem(
-        context,
-        icon: Icons.cake,
-        label: '생년월일',
-        value: _formatDate(birthDate),
-      ));
+        context),
+        icon: Icons.cake),
+        label: '생년월일'),
+        value: _formatDate(birthDate)))
       
       // Age
       final age = _calculateAge(birthDate);
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.calendar_today,
-        label: '나이',
-        value: '$age세',
-      ));
+        icon: Icons.calendar_today),
+        label: '나이'),
+        value: '$age세')
+      )
       
       // Zodiac animal
       final zodiacAnimal = _getZodiacAnimal(birthDate.year);
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.pets,
-        label: '띠',
-        value: zodiacAnimal,
-      ));
+        icon: Icons.pets),
+        label: '띠'),
+        value: zodiacAnimal)
+      )
       
       // Zodiac sign
       final zodiacSign = _getZodiacSign(birthDate);
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.stars,
-        label: '별자리',
-        value: zodiacSign,
-      ));
+        icon: Icons.stars),
+        label: '별자리'),
+        value: zodiacSign)
+      )
     }
     
     // Blood type
     if (userInfo['bloodType'] != null) {
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.water_drop,
-        label: '혈액형',
-        value: '${userInfo['bloodType']}형',
-      ));
+        icon: Icons.water_drop),
+        label: '혈액형'),
+        value: '${userInfo['bloodType']}형')
+      )
     }
     
     // MBTI
     if (userInfo['mbti'] != null) {
       infoItems.add(_buildInfoItem(
-        context,
-        icon: Icons.psychology,
-        label: 'MBTI',
-        value: userInfo['mbti'].toUpperCase(),
-      ));
+        context),
+        icon: Icons.psychology),
+        label: 'MBTI'),
+        value: userInfo['mbti'].toUpperCase()))
     }
     
     // Birth time
     if (userInfo['birthTime'] != null) {
       infoItems.add(_buildInfoItem(
         context,
-        icon: Icons.access_time,
-        label: '출생시간',
-        value: userInfo['birthTime'],
-      ));
+        icon: Icons.access_time),
+        label: '출생시간'),
+        value: userInfo['birthTime'])
+      )
     }
     
     // Gender
     if (userInfo['gender'] != null) {
       infoItems.add(_buildInfoItem(
         context,
-        icon: userInfo['gender'] == 'male' ? Icons.male : Icons.female,
-        label: '성별',
-        value: userInfo['gender'] == 'male' ? '남성' : '여성',
-      ));
+        icon: userInfo['gender'] == 'male' ? Icons.male : Icons.female),
+        label: '성별'),
+        value: userInfo['gender'] == 'male' ? '남성' : '여성')
+      )
     }
     
     // For compatibility - show both people
@@ -160,18 +158,17 @@ class UserInfoVisualization extends StatelessWidget {
       return Column(
         children: [
           _buildPersonSection(context, '첫 번째 사람', userInfo['person1'], Colors.pink),
-          const SizedBox(height: 16),
+          SizedBox(height: AppSpacing.spacing4),
           _buildConnectionIndicator(context),
-          const SizedBox(height: 16),
-          _buildPersonSection(context, '두 번째 사람', userInfo['person2'], Colors.blue),
-        ],
-      );
+          SizedBox(height: AppSpacing.spacing4),
+          _buildPersonSection(context, '두 번째 사람', userInfo['person2'], AppColors.primary),
+        ])
     }
     
     return Wrap(
       spacing: 12,
-      runSpacing: 12,
-      children: infoItems,
+      runSpacing: 12),
+        children: infoItems
     );
   }
   
@@ -179,89 +176,81 @@ class UserInfoVisualization extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: accentColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: accentColor.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: accentColor.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(,
+      color: accentColor.withValues(alp,
+      ha: 0.2),
+          width: 1)),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: accentColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      color: accentColor,
+                          ),
+        fontWeight: FontWeight.bold)
+            ))
+          SizedBox(height: AppSpacing.spacing3),
           Wrap(
             spacing: 12,
             runSpacing: 12,
-            children: [
+              ),
+              children: [
               if (person['name'] != null)
                 _buildInfoItem(
                   context,
                   icon: Icons.person,
                   label: '이름',
                   value: person['name'],
-                  color: accentColor,
-                ),
+      color: accentColor)
               if (person['birthDate'] != null) ...[
                 _buildInfoItem(
                   context,
                   icon: Icons.cake,
-                  label: '생일',
-                  value: _formatDate(DateTime.parse(person['birthDate'])),
-                  color: accentColor,
-                ),
+                  label: '생일'),
+        value: _formatDate(DateTime.parse(person['birthDate']),
+      color: accentColor)
                 _buildInfoItem(
                   context,
                   icon: Icons.pets,
-                  label: '띠',
-                  value: _getZodiacAnimal(DateTime.parse(person['birthDate']).year),
-                  color: accentColor,
-                ),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
+                  label: '띠'),
+        value: _getZodiacAnimal(DateTime.parse(person['birthDate']).year),
+                  color: accentColor)
+              ]
+            ])
+        ])))
   }
   
   Widget _buildConnectionIndicator(BuildContext context) {
     return Center(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [Colors.pink.shade300, Colors.blue.shade300],
-          ),
+      child: Container(,
+      padding: AppSpacing.paddingAll12,
+        decoration: BoxDecoration(,
+      shape: BoxShape.circle,
         ),
-        child: const Icon(
+        gradient: LinearGradient(,
+      colors: [Colors.pink.withValues(alp,
+      ha: 0.5), AppColors.primary.withValues(alpha: 0.5)])),
+      child: const Icon(
           Icons.favorite,
-          color: Colors.white,
-          size: 24,
-        ),
-      ).animate(onPlay: (controller) => controller.repeat())
+          color: AppColors.textPrimaryDark,
+          size: AppDimensions.iconSizeMedium)
+        ))).animate(onPlay: (controller) => controller.repeat())
         .scale(
           begin: const Offset(1, 1),
           end: const Offset(1.2, 1.2),
-          duration: 1.seconds,
-        )
+          duration: 1.seconds))
         .then()
         .scale(
           begin: const Offset(1.2, 1.2),
           end: const Offset(1, 1),
-          duration: 1.seconds,
-        ),
-    );
+          duration: 1.seconds))
   }
   
   Widget _buildInfoItem(
@@ -270,44 +259,44 @@ class UserInfoVisualization extends StatelessWidget {
     required String label,
     required String value,
     Color? color,
-  }) {
+  )}) {
     final theme = Theme.of(context);
     final itemColor = color ?? theme.colorScheme.primary;
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: itemColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: itemColor.withValues(alpha: 0.3),
-          width: 1,
+      padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+      decoration: BoxDecoration(,
+      color: itemColor.withValues(alp,
+      ha: 0.1),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+        border: Border.all(,
+      color: itemColor.withValues(alp,
+      ha: 0.3),
+          width: 1)),
+      child: Row(,
+      mainAxisSize: MainAxisSize.min,
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: itemColor),
-          const SizedBox(width: 6),
+          Icon(icon, size: AppDimensions.iconSizeXSmall, color: itemColor),
+          SizedBox(width: AppSpacing.xSmall),
           Text(
-            '$label: ',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
+            '$label: '),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          )))
           Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: itemColor,
-            ),
-          ),
-        ],
-      ),
-    ).animate()
+            value),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: itemColor,
+                          )))
+        ])))).animate()
       .fadeIn(delay: 100.ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
-  }
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(
+    1, 1,
+  )}
   
   IconData _getIconForFortuneType() {
     switch (fortuneType) {

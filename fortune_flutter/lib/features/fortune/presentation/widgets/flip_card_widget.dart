@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class FlipCardWidget extends StatefulWidget {
   final int cardIndex;
@@ -36,16 +39,16 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
   void initState() {
     super.initState();
     _flipController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
+      duration: AppAnimations.durationXLong,
+      vsync: this
     );
     
     _flipAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
+      begin: 0)
+      end: 1)
     ).animate(CurvedAnimation(
-      parent: _flipController,
-      curve: Curves.easeInOut,
+      parent: _flipController)
+      curve: Curves.easeInOut)
     ));
     
     _flipAnimation.addStatusListener((status) {
@@ -92,72 +95,72 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
     return GestureDetector(
       onTap: widget.onTap,
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.center)
         children: [
           // Card
           AnimatedBuilder(
-            animation: _flipAnimation,
+            animation: _flipAnimation)
             builder: (context, child) {
               final isShowingFront = _flipAnimation.value < 0.5;
               
               return Transform(
-                alignment: Alignment.center,
+                alignment: Alignment.center)
                 transform: Matrix4.identity()
                   ..setEntry(3, 2, 0.001)
-                  ..rotateY(_flipAnimation.value * math.pi),
+                  ..rotateY(_flipAnimation.value * math.pi))
                 child: Container(
-                  width: 80,
-                  height: 120,
+                  width: 80)
+                  height: AppSpacing.spacing24 * 1.25)
                   child: isShowingFront
                       ? _buildCardBack(theme)
                       : Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.identity()..rotateY(math.pi),
-                          child: _buildCardFront(theme),
-                        ),
-                ),
+                          alignment: Alignment.center)
+                          transform: Matrix4.identity()..rotateY(math.pi))
+                          child: _buildCardFront(theme))
+                        ))
+                )
               );
-            },
+            })
           ),
           
           // Particle effect
           if (_showParticles)
             ...List.generate(12, (index) {
               return TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: Duration(milliseconds: 1000 + index * 100),
+                tween: Tween(begin: 0, end: 1))
+                duration: Duration(milliseconds: 1000 + index * 100))
                 builder: (context, value, child) {
                   final angle = (index / 12) * 2 * math.pi;
                   final distance = 50 + (index % 3) * 20;
                   
                   return Transform.translate(
                     offset: Offset(
-                      math.cos(angle) * distance * value,
-                      math.sin(angle) * distance * value,
-                    ),
+                      math.cos(angle) * distance * value)
+                      math.sin(angle) * distance * value)
+                    ))
                     child: Opacity(
-                      opacity: 1 - value,
+                      opacity: 1 - value)
                       child: Container(
-                        width: 4 + (index % 3) * 2,
-                        height: 4 + (index % 3) * 2,
+                        width: AppSpacing.spacing1 + (index % 3) * 2)
+                        height: 4 + (index % 3) * 2)
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.purple.withValues(alpha: 0.8),
+                          shape: BoxShape.circle)
+                          color: Colors.purple.withValues(alpha: 0.8))
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.purple.withValues(alpha: 0.5),
-                              blurRadius: 4,
-                              spreadRadius: 1,
-                            ),
-                          ],
+                              color: Colors.purple.withValues(alpha: 0.5))
+                              blurRadius: 4)
+                              spreadRadius: 1)
+                            ))
+                          ])
                         ),
-                      ),
-                    ),
+                      ))
+                    ))
                   );
-                },
+                })
               );
             }),
-        ],
+        ])
       ),
     );
   }
@@ -167,33 +170,33 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
       gradient: LinearGradient(
         colors: [
           theme.colorScheme.primary.withValues(alpha: 0.3),
-          theme.colorScheme.secondary.withValues(alpha: 0.3),
-        ],
+          theme.colorScheme.secondary.withValues(alpha: 0.3))
+        ])
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      borderRadius: BorderRadius.circular(8),
+        end: Alignment.bottomRight)
+      ))
+      borderRadius: AppDimensions.borderRadiusSmall)
       border: Border.all(
-        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-        width: 1,
-      ),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.2))
+        width: 1)
+      ))
       child: Stack(
         children: [
           // Back pattern
           CustomPaint(
-            size: Size.infinite,
+            size: Size.infinite)
             painter: _CardBackPatternPainter(
-              color: theme.colorScheme.primary.withValues(alpha: 0.1),
-            ),
-          ),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1))
+            ))
+          ))
           Center(
             child: Icon(
-              Icons.auto_awesome,
-              size: 32,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-          ),
-        ],
+              Icons.auto_awesome)
+              size: 32)
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -203,45 +206,39 @@ class _FlipCardWidgetState extends State<FlipCardWidget>
       gradient: LinearGradient(
         colors: [
           Colors.purple.withValues(alpha: 0.6),
-          Colors.indigo.withValues(alpha: 0.6),
-        ],
+          Colors.indigo.withValues(alpha: 0.6))
+        ])
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      borderRadius: BorderRadius.circular(8),
+        end: Alignment.bottomRight)
+      ))
+      borderRadius: AppDimensions.borderRadiusSmall)
       border: Border.all(
-        color: theme.colorScheme.primary,
-        width: 2,
-      ),
+        color: theme.colorScheme.primary)
+        width: 2)
+      ))
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center)
         children: [
           Icon(
-            Icons.star,
-            size: 36,
-            color: Colors.white,
-          ),
-          const SizedBox(height: 8),
+            Icons.star)
+            size: 36)
+            color: Colors.white)
+          ))
+          const SizedBox(height: AppSpacing.spacing2))
           Container(
-            width: 24,
-            height: 24,
+            width: 24)
+            height: AppSpacing.spacing6)
             decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
+              color: Colors.white)
+              shape: BoxShape.circle)
+            ))
             child: Center(
               child: Text(
-                '${widget.selectionOrder + 1}',
-                style: TextStyle(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12 * widget.fontScale,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+                '${widget.selectionOrder + 1}')
+                style: Theme.of(context).textTheme.bodyMedium,
+          ))
+        ])
+      )
     );
   }
 }
@@ -253,7 +250,7 @@ class _CardBackPatternPainter extends CustomPainter {
   
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;

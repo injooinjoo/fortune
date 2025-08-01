@@ -54,8 +54,7 @@ class FortuneModel extends HiveObject {
     content: content,
     createdAt: createdAt,
     metadata: metadata,
-    tokenCost: tokenCost,
-  );
+    tokenCost: tokenCost);
 
   factory FortuneModel.fromEntity(Fortune fortune) => FortuneModel(
     id: fortune.id,
@@ -64,8 +63,7 @@ class FortuneModel extends HiveObject {
     content: fortune.content,
     createdAt: fortune.createdAt,
     metadata: fortune.metadata,
-    tokenCost: fortune.tokenCost,
-  );
+    tokenCost: fortune.tokenCost);
 }
 
 @HiveType(typeId: 2)
@@ -174,6 +172,5 @@ class FortuneElementsModel extends HiveObject {
     love: love,
     career: career,
     money: money,
-    health: health,
-  );
+    health: health);
 }

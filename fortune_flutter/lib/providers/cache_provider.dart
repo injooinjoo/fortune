@@ -15,9 +15,9 @@ final cachedFortuneProvider = FutureProvider.family<dynamic, CachedFortuneParams
     final cacheService = ref.watch(cacheServiceProvider);
     return await cacheService.getCachedFortune(
       params.fortuneType,
-      params.parameters,
+      params.parameters)
     );
-  },
+  }
 );
 
 class CachedFortuneParams {

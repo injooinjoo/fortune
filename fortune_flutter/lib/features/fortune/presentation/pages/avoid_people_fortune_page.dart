@@ -129,7 +129,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -197,7 +197,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -258,7 +258,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList()
     );
   }
 
@@ -309,7 +309,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList()
     );
   }
 
@@ -361,7 +361,7 @@ class _AvoidPeopleInputFormState extends State<_AvoidPeopleInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList()
     );
   }
 }
@@ -507,7 +507,7 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             content: result.details!['positiveEncounters'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -557,7 +557,7 @@ class _AvoidPeopleFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 }

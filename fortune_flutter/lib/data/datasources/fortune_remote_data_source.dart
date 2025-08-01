@@ -47,7 +47,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getDailyFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.dailyFortune,
+        ApiEndpoints.dailyFortune
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -59,7 +59,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getTodayFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.today,
+        ApiEndpoints.today
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -71,7 +71,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getTomorrowFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.tomorrow,
+        ApiEndpoints.tomorrow
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -83,7 +83,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getHourlyFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.hourly,
+        ApiEndpoints.hourly
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -95,7 +95,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getWeeklyFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.weekly,
+        ApiEndpoints.weekly
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -107,7 +107,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getMonthlyFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.monthly,
+        ApiEndpoints.monthly
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -119,7 +119,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getYearlyFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.yearly,
+        ApiEndpoints.yearly
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -131,7 +131,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getTraditionalSajuFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.traditionalSaju,
+        ApiEndpoints.traditionalSaju
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -143,7 +143,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getTojeongFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.tojeong,
+        ApiEndpoints.tojeong
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -155,7 +155,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getPalmistryFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.palmistry,
+        ApiEndpoints.palmistry
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -167,7 +167,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getMBTIFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.mbtiFortune,
+        ApiEndpoints.mbtiFortune
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -179,7 +179,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getZodiacFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.zodiac,
+        ApiEndpoints.zodiac
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -191,7 +191,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getZodiacAnimalFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.zodiacAnimal,
+        ApiEndpoints.zodiacAnimal
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -203,7 +203,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getLoveFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.loveFortune,
+        ApiEndpoints.loveFortune
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -215,7 +215,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getMarriageFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.marriage,
+        ApiEndpoints.marriage
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -228,7 +228,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
     try {
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiEndpoints.compatibilityFortune,
-        data: {'partnerId': partnerId},
+        data: {'partnerId': partnerId}
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -240,7 +240,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getCareerFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.career,
+        ApiEndpoints.career
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -252,7 +252,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getWealthFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.wealthFortune,
+        ApiEndpoints.wealthFortune
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -264,7 +264,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
   Future<FortuneResponseModel> getBusinessFortune() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.business,
+        ApiEndpoints.business
       );
       return FortuneResponseModel.fromJson(response);
     } catch (e) {
@@ -277,7 +277,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
     try {
       final response = await _apiClient.post<Map<String, dynamic>>(
         ApiEndpoints.batchFortune,
-        data: {'fortuneTypes': types},
+        data: {'fortuneTypes': types}
       );
       
       final Map<String, FortuneResponseModel> result = {};
@@ -300,7 +300,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
       data: {
         'type': type,
         ...params,
-      },
+      }
     );
   }
 
@@ -315,7 +315,7 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
         queryParameters: {
           if (limit != null) 'limit': limit,
           if (type != null) 'type': type,
-        },
+        }
       );
       
       final List<dynamic> data = response['data'] ?? [];

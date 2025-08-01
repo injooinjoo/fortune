@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Shared animation utilities for tarot card interactions
 class TarotAnimations {
@@ -7,10 +8,10 @@ class TarotAnimations {
   TarotAnimations._();
 
   /// Standard durations
-  static const Duration cardFlipDuration = Duration(milliseconds: 800);
-  static const Duration fanSpreadDuration = Duration(milliseconds: 1500);
+  static const Duration cardFlipDuration = AppAnimations.durationXLong;
+  static const Duration fanSpreadDuration = AppAnimations.durationSkeleton;
   static const Duration cardSelectionDuration = Duration(milliseconds: 600);
-  static const Duration hoverDuration = Duration(milliseconds: 200);
+  static const Duration hoverDuration = AppAnimations.durationShort;
   static const Duration shuffleDuration = Duration(milliseconds: 2000);
 
   /// Standard curves
@@ -28,7 +29,7 @@ class TarotAnimations {
       parent: controller,
       curve: cardFlipCurve,
     ));
-  }
+}
 
   /// Create staggered fan animations for multiple cards
   static List<Animation<double>> createFanAnimations({
@@ -51,11 +52,9 @@ class TarotAnimations {
             delay * delayFactor,
             delayFactor + delay * (1 - delayFactor),
             curve: fanSpreadCurve,
-          ),
-        ),
-      );
-    });
-  }
+          ));
+});
+}
 
   /// Calculate card position in a fan spread
   static FanSpreadPosition calculateFanPosition({
@@ -77,9 +76,9 @@ class TarotAnimations {
       x: radius * math.sin(angle),
       y: -radius * math.cos(angle) + radius * 0.8,
       rotation: angle * 0.3,
-      scale: scale,
+      scale: scale
     );
-  }
+}
 
   /// Create a hovering float animation
   static Animation<double> createFloatAnimation(AnimationController controller) {
@@ -90,7 +89,7 @@ class TarotAnimations {
       parent: controller,
       curve: Curves.easeInOut,
     ));
-  }
+}
 
   /// Create a pulse animation for selected cards
   static Animation<double> createPulseAnimation(AnimationController controller) {
@@ -101,28 +100,28 @@ class TarotAnimations {
       parent: controller,
       curve: Curves.easeInOut,
     ));
-  }
+}
 
   /// Create a shuffle animation sequence
   static Animation<double> createShuffleAnimation(AnimationController controller) {
     return TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 0.0, end: -0.1)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(begin: 0.0, end: -0.1,
+            .chain(CurveTween(curve: Curves.easeOut),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: -0.1, end: 0.1)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween<double>(begin: -0.1, end: 0.1,
+            .chain(CurveTween(curve: Curves.easeInOut),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 0.1, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween<double>(begin: 0.1, end: 0.0,
+            .chain(CurveTween(curve: Curves.easeIn),
         weight: 25,
       ),
     ]).animate(controller);
-  }
+}
 
   /// Create entrance animation for cards
   static Animation<double> createEntranceAnimation({
@@ -141,10 +140,8 @@ class TarotAnimations {
           delay,
           0.6 + delay,
           curve: Curves.easeOutCubic,
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   /// Calculate transform matrix for card animations
   static Matrix4 calculateCardTransform({
@@ -154,13 +151,13 @@ class TarotAnimations {
     double translateX = 0,
     double translateY = 0,
   }) {
-    return Matrix4.identity()
+    return Matrix4.identity(,
       ..setEntry(3, 2, 0.002) // Perspective
-      ..translate(translateX, translateY)
-      ..rotateY(math.pi * flipProgress)
-      ..rotateZ(rotationZ)
-      ..scale(scale);
-  }
+      ..translate(translateX, translateY,
+      ..rotateY(math.pi * flipProgress,
+      ..rotateZ(rotationZ,
+      ..scale(scale, scale);
+}
 }
 
 /// Position data for fan spread layout
@@ -190,11 +187,11 @@ class TarotAnimationController {
   AnimationController createController(String key, Duration duration) {
     final controller = AnimationController(
       duration: duration,
-      vsync: vsync,
+      vsync: vsync
     );
     _controllers[key] = controller;
     return controller;
-  }
+}
 
   /// Get a registered controller
   AnimationController? getController(String key) => _controllers[key];
@@ -203,7 +200,7 @@ class TarotAnimationController {
   Animation<T> createAnimation<T>(String key, Animation<T> animation) {
     _animations[key] = animation;
     return animation;
-  }
+}
 
   /// Get a registered animation
   Animation<T>? getAnimation<T>(String key) => _animations[key] as Animation<T>?;
@@ -212,10 +209,10 @@ class TarotAnimationController {
   void dispose() {
     for (final controller in _controllers.values) {
       controller.dispose();
-    }
+}
     _controllers.clear();
     _animations.clear();
-  }
+}
 }
 
 /// Animated widget for card entrance effects
@@ -242,22 +239,21 @@ class TarotCardEntrance extends StatelessWidget {
         print('[TarotEntrance] Scale: $progress');
         return Transform(
           alignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..translate(0.0, 50 * (1 - progress))
-            ..scale(progress),
+          transform: Matrix4.identity(,
+            ..translate(0.0, 50 * (1 - progress),
+            ..scale(progress, progress),
           child: Opacity(
             opacity: (() {
               print('[TarotEntrance] Opacity value: $progress');
               if (progress < 0.0 || progress > 1.0) {
                 print('[TarotEntrance] WARNING: Invalid opacity! Value: $progress');
-              }
+}
               return progress.clamp(0.0, 1.0);
-            })(),
+})(),
             child: child,
-          ),
-        );
-      },
-      child: child,
+          ));
+},
+      child: child
     );
-  }
+}
 }

@@ -102,8 +102,7 @@ final favoriteFortuneTypeProvider = Provider<String?>((ref) {
   return statsAsync.when(
     data: (stats) => stats?.favoriteFortuneType,
     loading: () => null,
-    error: (_, __) => null,
-  );
+    error: (_, __) => null);
 });
 
 // Helper provider to get fortune access counts

@@ -115,7 +115,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
     
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 300),
-      vsync: this,
+      vsync: this
     );
     
     _fadeAnimation = Tween<double>(
@@ -212,7 +212,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 ref.read(investmentStepProvider.notifier).previousStep();
                 _pageController.previousPage(
                   duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
+                  curve: Curves.easeOut
                 );
               } else {
                 context.pop();
@@ -354,7 +354,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         ref.read(investmentStepProvider.notifier).nextStep();
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
+                          curve: Curves.easeOut
                         );
                       } else {
                         _generateFortune();
@@ -530,7 +530,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
   
@@ -567,7 +567,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             }
           },
         );
-      }).toList(),
+      }).toList(,
     );
   }
   
@@ -605,7 +605,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                         Theme.of(context).colorScheme.primary,
                         Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                       ],
-                    )
+                    ),
                   : null,
               border: Border.all(
                 color: isSelected
@@ -638,7 +638,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
   
@@ -668,7 +668,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
             }
           },
         );
-      }).toList(),
+      }).toList(,
     );
   }
   
@@ -755,7 +755,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: sector.gradientColors,
-                )
+                ),
               : null,
           color: !isSelected
               ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -846,9 +846,9 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           ],
         ),
       ),
-    ).animate()
-      .fadeIn(duration: 300.ms, delay: (InvestmentSector.values.indexOf(sector) * 50).ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
+    ).animate(,
+      .fadeIn(duration: 300.ms, delay: (InvestmentSector.values.indexOf(sector) * 50).ms,
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0);
   }
   
   Widget _buildPrioritySlider(InvestmentSector sector, InvestmentFortuneData data) {
@@ -1034,7 +1034,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
           ),
           borderRadius: BorderRadius.circular(12),
           color: value
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1,
               : null,
         ),
         child: Row(
@@ -1151,8 +1151,8 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
                 color: Colors.white,
               ),
             ),
-          ).animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.5))
+          ).animate(onPlay: (controller) => controller.repeat(),
+            .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.5),
             .rotate(duration: 20000.ms),
         ],
       ),
@@ -1334,7 +1334,7 @@ class _InvestmentFortuneEnhancedPageState extends ConsumerState<InvestmentFortun
         Toast.show(
           context,
           message: '운세 생성 중 오류가 발생했습니다: $e',
-          type: ToastType.error,
+          type: ToastType.error
         );
       }
     }

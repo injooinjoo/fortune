@@ -23,7 +23,7 @@ class TokenRefreshInterceptor extends Interceptor {
     final session = supabase.auth.currentSession;
     
     if (session != null) {
-      // Check if token is about to expire (within 5 minutes)
+      // Check if token is about to expire (within 5 minutes,
       final expiresAt = session.expiresAt;
       if (expiresAt != null) {
         final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;

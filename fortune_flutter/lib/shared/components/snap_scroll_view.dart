@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// A scrollable widget that snaps children to the top of the viewport
 /// Creates a magnetic scroll effect where each child aligns to the screen top
@@ -16,11 +19,11 @@ class SnapScrollView extends StatefulWidget {
     Key? key,
     required this.children,
     required this.itemHeight,
-    this.animationDuration = const Duration(milliseconds: 300),
+    this.animationDuration = AppAnimations.durationMedium)
     this.animationCurve = Curves.easeOutCubic,
-    this.snapThreshold = 0.3,
+    this.snapThreshold = 0.3)
     this.padding,
-    this.enableHapticFeedback = true,
+    this.enableHapticFeedback = true)
   }) : super(key: key);
 
   @override
@@ -106,8 +109,8 @@ class _SnapScrollViewState extends State<SnapScrollView> {
 
     _scrollController.animateTo(
       targetOffset,
-      duration: widget.animationDuration,
-      curve: widget.animationCurve,
+      duration: widget.animationDuration)
+      curve: widget.animationCurve)
     ).then((_) {
       setState(() {
         _isAnimating = false;
@@ -126,21 +129,21 @@ class _SnapScrollViewState extends State<SnapScrollView> {
         return false;
       },
       child: ListView.builder(
-        controller: _scrollController,
+        controller: _scrollController)
         physics: SnapScrollPhysics(
-          parent: const AlwaysScrollableScrollPhysics(),
-          itemHeight: widget.itemHeight,
-          snapThreshold: widget.snapThreshold,
-        ),
-        padding: widget.padding,
-        itemCount: widget.children.length,
+          parent: const AlwaysScrollableScrollPhysics())
+          itemHeight: widget.itemHeight)
+          snapThreshold: widget.snapThreshold)
+        ))
+        padding: widget.padding)
+        itemCount: widget.children.length)
         itemBuilder: (context, index) {
           return SizedBox(
-            height: widget.itemHeight,
+            height: widget.itemHeight)
             child: widget.children[index],
           );
-        },
-      ),
+        })
+      )
     );
   }
 }
@@ -160,8 +163,8 @@ class SnapScrollPhysics extends ScrollPhysics {
   SnapScrollPhysics applyTo(ScrollPhysics? ancestor) {
     return SnapScrollPhysics(
       parent: buildParent(ancestor),
-      itemHeight: itemHeight,
-      snapThreshold: snapThreshold,
+      itemHeight: itemHeight)
+      snapThreshold: snapThreshold
     );
   }
 
@@ -210,12 +213,12 @@ class SnapScrollPhysics extends ScrollPhysics {
     return SpringSimulation(
       SpringDescription(
         mass: 1,
-        stiffness: 100,
-        damping: 20,
-      ),
-      currentOffset,
-      targetOffset,
-      velocity,
+        stiffness: 100)
+        damping: 20)
+      ))
+      currentOffset)
+      targetOffset)
+      velocity
     );
   }
 
@@ -235,23 +238,23 @@ class SnapPageScrollView extends StatelessWidget {
     Key? key,
     required this.children,
     this.viewportFraction = 1.0,
-    this.controller,
+    this.controller)
     this.onPageChanged,
-    this.padding,
+    this.padding)
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
       controller: controller ?? PageController(viewportFraction: viewportFraction),
-      onPageChanged: onPageChanged,
-      itemCount: children.length,
+      onPageChanged: onPageChanged)
+      itemCount: children.length)
       itemBuilder: (context, index) {
         return Padding(
-          padding: padding ?? EdgeInsets.zero,
+          padding: padding ?? EdgeInsets.zero)
           child: children[index],
         );
-      },
+      }
     );
   }
 }

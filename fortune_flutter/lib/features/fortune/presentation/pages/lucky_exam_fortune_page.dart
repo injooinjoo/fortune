@@ -19,7 +19,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
         end: Alignment.bottomRight,
       ),
       inputBuilder: (context, onSubmit) => _buildInputSection(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare),
+      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare,
     );
   }
 
@@ -97,7 +97,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
                       const SnackBar(
                         content: Text('모든 정보를 입력해주세요'),
                         backgroundColor: Colors.orange,
-                      ),
+                      ,
                     );
                   }
                 },
@@ -116,7 +116,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -173,7 +173,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
         ],
-      ),
+      ,
     );
   }
 
@@ -212,7 +212,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -259,7 +259,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -301,7 +301,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -343,7 +343,7 @@ class LuckyExamFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 }

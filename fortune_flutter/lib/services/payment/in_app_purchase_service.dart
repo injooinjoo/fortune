@@ -14,7 +14,7 @@ import '../../shared/components/toast.dart';
 
 // 상품 ID 정의
 class ProductIds {
-  // 소모성 상품 (토큰 패키지)
+  // 소모성 상품 (토큰 패키지,
   static const String tokens10 = 'com.fortune.tokens.10';
   static const String tokens50 = 'com.fortune.tokens.50';
   static const String tokens100 = 'com.fortune.tokens.100';
@@ -22,7 +22,6 @@ class ProductIds {
   
   // 구독 상품
   static const String monthlySubscription = 'com.fortune.subscription.monthly';
-  static const String yearlySubscription = 'com.fortune.subscription.yearly';
   
   // 모든 상품 ID 리스트
   static const List<String> allProductIds = [
@@ -31,7 +30,6 @@ class ProductIds {
     tokens100,
     tokens200,
     monthlySubscription,
-    yearlySubscription,
   ];
   
   // 토큰 수량 매핑
@@ -105,12 +103,12 @@ class InAppPurchaseService {
       if (!kIsWeb && Platform.isIOS) {
         final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
             _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-        await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate());
+        await iosPlatformAddition.setDelegate(InAppPurchaseStoreKitDelegate();
       }
       
       Logger.info('인앱 결제 서비스 초기화 완료');
     } catch (e) {
-      Logger.error('인앱 결제 초기화 실패', error: e);
+      Logger.error('인앱 결제 초기화 실패', e);
     }
   }
   
@@ -134,7 +132,7 @@ class InAppPurchaseService {
         Logger.info('상품: ${product.id} - ${product.title} (${product.price})');
       }
     } catch (e) {
-      Logger.error('상품 정보 로드 실패', error: e);
+      Logger.error('상품 정보 로드 실패', e);
     }
   }
   
@@ -178,7 +176,7 @@ class InAppPurchaseService {
       }
     } catch (e) {
       _purchasePending = false;
-      Logger.error('구매 시작 실패', error: e);
+      Logger.error('구매 시작 실패', e);
       throw Exception('구매를 시작할 수 없습니다.');
     }
   }
@@ -250,7 +248,7 @@ class InAppPurchaseService {
       _showSuccessNotification(purchaseDetails.productID);
       
     } catch (e) {
-      Logger.error('상품 전달 실패', error: e);
+      Logger.error('상품 전달 실패', e);
       _purchasePending = false;
     }
   }
@@ -285,7 +283,7 @@ class InAppPurchaseService {
       return response['valid'] ?? false;
       
     } catch (e) {
-      Logger.error('구매 검증 오류', error: e);
+      Logger.error('구매 검증 오류', e);
       return false;
     }
   }
@@ -304,7 +302,7 @@ class InAppPurchaseService {
       
       Logger.info('구독이 활성화되었습니다: ${purchaseDetails.productID}');
     } catch (e) {
-      Logger.error('구독 활성화 실패', error: e);
+      Logger.error('구독 활성화 실패', e);
     }
   }
   
@@ -314,7 +312,7 @@ class InAppPurchaseService {
       await _inAppPurchase.restorePurchases();
       Logger.info('구매 복원 시작');
     } catch (e) {
-      Logger.error('구매 복원 실패', error: e);
+      Logger.error('구매 복원 실패', e);
       throw Exception('구매 복원에 실패했습니다.');
     }
   }
@@ -328,7 +326,7 @@ class InAppPurchaseService {
       
       return response['active'] ?? false;
     } catch (e) {
-      Logger.error('구독 상태 확인 실패', error: e);
+      Logger.error('구독 상태 확인 실패', e);
       return false;
     }
   }
@@ -354,8 +352,7 @@ class InAppPurchaseService {
   
   // 구독 상품인지 확인
   bool _isSubscription(String productId) {
-    return productId == ProductIds.monthlySubscription || 
-           productId == ProductIds.yearlySubscription;
+    return productId == ProductIds.monthlySubscription;
   }
   
   // UI 알림 메서드들
@@ -442,9 +439,7 @@ class InAppPurchaseService {
       case ProductIds.tokens200:
         return '토큰 200개';
       case ProductIds.monthlySubscription:
-        return '월간 구독';
-      case ProductIds.yearlySubscription:
-        return '연간 구독';
+        return '무제한 이용권';
       default:
         return '상품';
     }
@@ -455,7 +450,7 @@ class InAppPurchaseService {
   }
   
   void _onPurchaseError(dynamic error) {
-    Logger.error('구매 스트림 오류', error: error);
+    Logger.error('구매 스트림 오류', error);
   }
   
   // 리소스 정리

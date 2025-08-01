@@ -19,7 +19,7 @@ class CompatibilityPage extends BaseFortunePage {
           description: '두 사람의 궁합을 확인해보세요',
           fortuneType: 'compatibility',
           requiresUserInfo: true,
-          initialParams: initialParams,
+          initialParams: initialParams
         );
 
   @override
@@ -84,7 +84,7 @@ class _CompatibilityPageState extends BaseFortunePageState<CompatibilityPage> {
     final fortuneService = ref.read(fortuneServiceProvider);
     final fortune = await fortuneService.getCompatibilityFortune(
       person1: params['person1'] as Map<String, dynamic>,
-      person2: params['person2'] as Map<String, dynamic>,
+      person2: params['person2'] as Map<String, dynamic>
     );
 
     // Extract compatibility data from the fortune response

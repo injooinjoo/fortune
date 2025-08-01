@@ -32,7 +32,7 @@ class InvestmentFortunePage extends BaseFortunePage {
           title: '투자/재테크 운세',
           description: '오늘의 투자 운세를 확인하고 현명한 결정을 내리세요',
           fortuneType: 'investment',
-          requiresUserInfo: false,
+          requiresUserInfo: false
         );
 
   @override
@@ -60,7 +60,7 @@ class _InvestmentFortunePageState extends BaseFortunePageState<InvestmentFortune
       fortuneType: _selectedType.value,
       params: {
         'investmentType': _selectedType.value,
-      },
+      }
     );
 
     // Extract investment-specific data

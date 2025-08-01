@@ -122,7 +122,7 @@ class Environment {
     } catch (e) {
       // 웹 환경에서 .env 파일을 찾을 수 없을 때의 대체 처리
       if (kIsWeb) {
-        print('Warning: Could not load .env file in web environment. Using default values.');
+        // Warning: Could not load .env file in web environment. Using default values.
         // 기본값 설정
         dotenv.env['ENVIRONMENT'] = development;
         dotenv.env['SUPABASE_URL'] = 'https://hayjukwfcsdmppairazc.supabase.co';

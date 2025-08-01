@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 class ZodiacCompatibilityService {
-  // 12지신 (십이지)
+  // 12지신 (십이지,
   static const List<String> zodiacAnimals = [
     '쥐', '소', '호랑이', '토끼', '용', '뱀', 
     '말', '양', '원숭이', '닭', '개', '돼지'
@@ -19,121 +19,121 @@ class ZodiacCompatibilityService {
       'hanja': '子',
       'element': '수(水)',
       'yin_yang': '양(陽)',
-      'traits': ['영리함', '적응력', '매력', '근면'],
-      'lucky_colors': ['파란색', '금색', '초록색'],
-      'lucky_numbers': [2, 3],
+      'traits': ['영리함', '적응력', '매력', '근면']
+      'lucky_colors': ['파란색', '금색', '초록색']
+      'lucky_numbers': [2, 3]
       'direction': '북',
-    },
+    }
     '소': {
       'hanja': '丑',
       'element': '토(土)',
       'yin_yang': '음(陰)',
-      'traits': ['성실함', '인내심', '신뢰성', '결단력'],
-      'lucky_colors': ['빨간색', '보라색', '파란색'],
-      'lucky_numbers': [1, 4],
+      'traits': ['성실함', '인내심', '신뢰성', '결단력']
+      'lucky_colors': ['빨간색', '보라색', '파란색']
+      'lucky_numbers': [1, 4]
       'direction': '북북동',
-    },
+    }
     '호랑이': {
       'hanja': '寅',
       'element': '목(木)',
       'yin_yang': '양(陽)',
-      'traits': ['용맹함', '자신감', '정의감', '모험심'],
-      'lucky_colors': ['파란색', '회색', '주황색'],
-      'lucky_numbers': [1, 3, 4],
+      'traits': ['용맹함', '자신감', '정의감', '모험심']
+      'lucky_colors': ['파란색', '회색', '주황색']
+      'lucky_numbers': [1, 3, 4]
       'direction': '동북동',
-    },
+    }
     '토끼': {
       'hanja': '卯',
       'element': '목(木)',
       'yin_yang': '음(陰)',
-      'traits': ['온화함', '민첩함', '행운', '외교력'],
-      'lucky_colors': ['빨간색', '분홍색', '보라색'],
-      'lucky_numbers': [3, 4, 6],
+      'traits': ['온화함', '민첩함', '행운', '외교력']
+      'lucky_colors': ['빨간색', '분홍색', '보라색']
+      'lucky_numbers': [3, 4, 6]
       'direction': '동',
-    },
+    }
     '용': {
       'hanja': '辰',
       'element': '토(土)',
       'yin_yang': '양(陽)',
-      'traits': ['카리스마', '열정', '지혜', '행운'],
-      'lucky_colors': ['금색', '은색', '회색'],
-      'lucky_numbers': [1, 6, 7],
+      'traits': ['카리스마', '열정', '지혜', '행운']
+      'lucky_colors': ['금색', '은색', '회색']
+      'lucky_numbers': [1, 6, 7]
       'direction': '동남동',
-    },
+    }
     '뱀': {
       'hanja': '巳',
       'element': '화(火)',
       'yin_yang': '음(陰)',
-      'traits': ['지혜', '직관력', '매력', '신비'],
-      'lucky_colors': ['빨간색', '연한 노란색', '검은색'],
-      'lucky_numbers': [2, 8, 9],
+      'traits': ['지혜', '직관력', '매력', '신비']
+      'lucky_colors': ['빨간색', '연한 노란색', '검은색']
+      'lucky_numbers': [2, 8, 9]
       'direction': '남남동',
-    },
+    }
     '말': {
       'hanja': '午',
       'element': '화(火)',
       'yin_yang': '양(陽)',
-      'traits': ['자유로움', '활력', '독립성', '열정'],
-      'lucky_colors': ['노란색', '초록색', '보라색'],
-      'lucky_numbers': [2, 3, 7],
+      'traits': ['자유로움', '활력', '독립성', '열정']
+      'lucky_colors': ['노란색', '초록색', '보라색']
+      'lucky_numbers': [2, 3, 7]
       'direction': '남',
-    },
+    }
     '양': {
       'hanja': '未',
       'element': '토(土)',
       'yin_yang': '음(陰)',
-      'traits': ['온순함', '창의성', '평화', '예술성'],
-      'lucky_colors': ['초록색', '빨간색', '보라색'],
-      'lucky_numbers': [2, 7],
+      'traits': ['온순함', '창의성', '평화', '예술성']
+      'lucky_colors': ['초록색', '빨간색', '보라색']
+      'lucky_numbers': [2, 7]
       'direction': '남남서',
-    },
+    }
     '원숭이': {
       'hanja': '申',
       'element': '금(金)',
       'yin_yang': '양(陽)',
-      'traits': ['영리함', '재치', '호기심', '재능'],
-      'lucky_colors': ['흰색', '금색', '파란색'],
-      'lucky_numbers': [4, 9],
+      'traits': ['영리함', '재치', '호기심', '재능']
+      'lucky_colors': ['흰색', '금색', '파란색']
+      'lucky_numbers': [4, 9]
       'direction': '서남서',
-    },
+    }
     '닭': {
       'hanja': '酉',
       'element': '금(金)',
       'yin_yang': '음(陰)',
-      'traits': ['정확성', '효율성', '정직', '용기'],
-      'lucky_colors': ['금색', '갈색', '노란색'],
-      'lucky_numbers': [5, 7, 8],
+      'traits': ['정확성', '효율성', '정직', '용기']
+      'lucky_colors': ['금색', '갈색', '노란색']
+      'lucky_numbers': [5, 7, 8]
       'direction': '서',
-    },
+    }
     '개': {
       'hanja': '戌',
       'element': '토(土)',
       'yin_yang': '양(陽)',
-      'traits': ['충성심', '정직', '책임감', '신뢰'],
-      'lucky_colors': ['빨간색', '초록색', '보라색'],
-      'lucky_numbers': [3, 4, 9],
+      'traits': ['충성심', '정직', '책임감', '신뢰']
+      'lucky_colors': ['빨간색', '초록색', '보라색']
+      'lucky_numbers': [3, 4, 9]
       'direction': '서북서',
-    },
+    }
     '돼지': {
       'hanja': '亥',
       'element': '수(水)',
       'yin_yang': '음(陰)',
-      'traits': ['관대함', '정직', '행운', '근면'],
-      'lucky_colors': ['노란색', '회색', '갈색'],
-      'lucky_numbers': [2, 5, 8],
+      'traits': ['관대함', '정직', '행운', '근면']
+      'lucky_colors': ['노란색', '회색', '갈색']
+      'lucky_numbers': [2, 5, 8]
       'direction': '북북서',
-    },
+    }
   };
 
-  // 상성 관계 (삼합)
+  // 상성 관계 (삼합,
   static const List<List<String>> harmonyGroups = [
-    ['쥐', '용', '원숭이'], // 수국(水局)
-    ['소', '뱀', '닭'],     // 금국(金局)
-    ['호랑이', '말', '개'], // 화국(火局)
-    ['토끼', '양', '돼지'], // 목국(木局)
+    ['쥐', '용', '원숭이'], // 수국(水局,
+    ['소', '뱀', '닭'],     // 금국(金局,
+    ['호랑이', '말', '개'], // 화국(火局,
+    ['토끼', '양', '돼지'], // 목국(木局,
   ];
 
-  // 상극 관계 (육해)
+  // 상극 관계 (육해,
   static const Map<String, String> conflictPairs = {
     '쥐': '말',
     '소': '양',
@@ -149,7 +149,7 @@ class ZodiacCompatibilityService {
     '돼지': '뱀',
   };
 
-  // 육합 관계 (최고의 궁합)
+  // 육합 관계 (최고의 궁합,
   static const Map<String, String> bestMatchPairs = {
     '쥐': '소',
     '호랑이': '돼지',
@@ -178,7 +178,7 @@ class ZodiacCompatibilityService {
   static double calculateCompatibility(String zodiac1, String zodiac2) {
     if (zodiac1 == zodiac2) return 0.75; // 같은 띠는 보통
 
-    // 육합 관계 (최고 궁합)
+    // 육합 관계 (최고 궁합,
     if (bestMatchPairs[zodiac1] == zodiac2) return 0.95;
 
     // 삼합 관계 확인
@@ -188,10 +188,10 @@ class ZodiacCompatibilityService {
       }
     }
 
-    // 육해 관계 (상극)
+    // 육해 관계 (상극,
     if (conflictPairs[zodiac1] == zodiac2) return 0.25;
 
-    // 같은 그룹 (사정, 사고, 사맹)
+    // 같은 그룹 (사정, 사고, 사맹,
     if (_inSameGroup(zodiac1, zodiac2)) return 0.65;
 
     // 오행 관계 확인
@@ -275,7 +275,7 @@ class ZodiacCompatibilityService {
 
   // 60갑자 계산
   static Map<String, String> calculate60YearCycle(int year) {
-    // 천간 (10개)
+    // 천간 (10개,
     const heavenlyStems = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'];
     const heavenlyStemHanja = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
     
@@ -287,10 +287,10 @@ class ZodiacCompatibilityService {
     final branchIndex = yearDiff % 12;
     
     return {
-      'stem': heavenlyStems[stemIndex],
-      'stemHanja': heavenlyStemHanja[stemIndex],
-      'branch': zodiacAnimals[branchIndex],
-      'branchHanja': zodiacHanja[branchIndex],
+      'stem': heavenlyStems[stemIndex]
+      'stemHanja': heavenlyStemHanja[stemIndex]
+      'branch': zodiacAnimals[branchIndex]
+      'branchHanja': zodiacHanja[branchIndex]
       'fullName': '${heavenlyStems[stemIndex]}${zodiacAnimals[branchIndex]}년',
       'fullHanja': '${heavenlyStemHanja[stemIndex]}${zodiacHanja[branchIndex]}年',
     };
@@ -303,7 +303,7 @@ class ZodiacCompatibilityService {
     for (final zodiac1 in zodiacAnimals) {
       final row = <double>[];
       for (final zodiac2 in zodiacAnimals) {
-        row.add(calculateCompatibility(zodiac1, zodiac2));
+        row.add(calculateCompatibility(zodiac1, zodiac2);
       }
       matrix.add(row);
     }
@@ -325,8 +325,8 @@ class ZodiacCompatibilityService {
     
     // 현재 나이 계산
     final ages = birthYears
-        .where((year) => year <= currentYear)
-        .map((year) => currentYear - year + 1)
+        .where((year) => year <= currentYear,
+        .map((year) => currentYear - year + 1,
         .toList();
     
     return {

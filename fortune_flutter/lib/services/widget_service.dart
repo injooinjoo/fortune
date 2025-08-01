@@ -113,7 +113,7 @@ class WidgetService {
     HomeWidget.registerBackgroundCallback(callback);
   }
   
-  /// Get initial widget data (when app is launched from widget)
+  /// Get initial widget data (when app is launched from widget,
   static Future<Map<String, dynamic>?> getInitialWidgetData() async {
     try {
       final uri = await HomeWidget.initiallyLaunchedFromHomeWidget();

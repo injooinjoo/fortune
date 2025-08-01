@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class OnboardingProgressBar extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
   
-  const OnboardingProgressBar({
+  const OnboardingProgressBar(
+    {
     super.key,
     required this.currentStep,
     required this.totalSteps,
-  });
+  )});
 
   @override
   Widget build(BuildContext context) {
-    // Don't show progress bar for social login step (step 0)
+    // Don't show progress bar for social login step (step 0,
     if (currentStep == 0) {
       return SizedBox.shrink();
     }
@@ -22,14 +27,13 @@ class OnboardingProgressBar extends StatelessWidget {
     final adjustedTotalSteps = totalSteps - 1;
     
     return Container(
-      height: 4,
-      child: LinearProgressIndicator(
-        value: adjustedCurrentStep / adjustedTotalSteps,
-        backgroundColor: Colors.grey[200],
+      height: context.fortuneTheme.bottomSheetStyles.handleHeight,
+      child: LinearProgressIndicator(,
+      value: adjustedCurrentStep / adjustedTotalSteps),
+        backgroundColor: context.fortuneTheme.dividerColor.withValues(alph,
+      a: 0.5),
         valueColor: AlwaysStoppedAnimation<Color>(
-          Theme.of(context).primaryColor,
-        ),
-      ),
-    );
+          Theme.of(context).primaryColor)
+      )
   }
 }

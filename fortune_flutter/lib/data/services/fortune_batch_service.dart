@@ -136,7 +136,7 @@ class FortuneBatchService {
       data: {
         'package_type': packageType.key,
         'user_profile': userProfile,
-      },
+      }
     );
 
     return _processBatchResponse(response.data, userId);
@@ -167,7 +167,7 @@ class FortuneBatchService {
       data: {
         'custom_fortune_types': fortuneTypes,
         'user_profile': userProfile,
-      },
+      }
     );
 
     return _processBatchResponse(response.data, userId);
@@ -188,7 +188,7 @@ class FortuneBatchService {
         'request_type': packageType.key,
         'user_profile': userProfile,
         'fortune_categories': fortuneTypes,
-      },
+      }
     );
 
     return _processBatchResponse(response.data, userId);
@@ -206,7 +206,7 @@ class FortuneBatchService {
         'request_type': 'custom',
         'user_profile': userProfile,
         'fortune_categories': fortuneTypes,
-      },
+      }
     );
 
     return _processBatchResponse(response.data, userId);
@@ -286,7 +286,7 @@ class FortuneBatchService {
         return [
           'saju', 'traditional-saju', 'tojeong', 'destiny', 'past-life',
           'daily', 'weekly', 'monthly', 'yearly',
-          'love', 'career', 'wealth', 'health', 'lucky-items', 'biorhythm'
+          'love', 'career', 'wealth', 'health', 'lucky-items', 'biorhythm',
         ];
     }
   }
@@ -302,7 +302,7 @@ class FortuneBatchService {
     for (final type in fortuneTypes) {
       final cachedFortune = await _cacheService.getCachedFortune(
         type,
-        {'userId': userId},
+        {'userId': userId}
       );
 
       if (cachedFortune != null) {
@@ -329,7 +329,7 @@ class FortuneBatchService {
         // 캐시 확인
         final cachedFortune = await _cacheService.getCachedFortune(
           type,
-          {'userId': userId},
+          {'userId': userId}
         );
 
         if (cachedFortune != null) {
@@ -381,7 +381,7 @@ class FortuneBatchService {
           'fortune_type': fortuneType,
           'period': period,
           'force_regenerate': forceRegenerate,
-        },
+        }
       );
 
       return response.data;
@@ -419,7 +419,7 @@ class FortuneBatchService {
   double calculateTokenSavings(BatchPackageType packageType) {
     final fortuneTypes = _getFortuneTypesForPackage(packageType);
     
-    // 개별 토큰 비용 (가정)
+    // 개별 토큰 비용 (가정,
     const individualCosts = {
       'saju': 5, 'traditional-saju': 5, 'tojeong': 4, 'destiny': 4, 'past-life': 3,
       'personality': 3, 'talent': 3, 'daily': 1, 'today': 1, 'tomorrow': 1,

@@ -10,13 +10,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class MarriageFortunePage extends BaseFortunePage {
-  const MarriageFortunePage({Key? key})
+  const MarriageFortunePage({Key? key},
       : super(
           key: key,
           title: '결혼운',
           description: '운명의 배우자와 결혼 시기 예측',
           fortuneType: 'marriage',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -219,7 +219,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             ],
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -230,7 +230,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -394,7 +394,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 items: _priorityOptions.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
+                    child: Text(entry.value,
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -454,7 +454,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             : theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       ),
                       deleteIcon: isSelected
-                          ? const Icon(Icons.check_circle, size: 18)
+                          ? const Icon(Icons.check_circle, size: 18,
                           : null,
                       onDeleted: isSelected ? () {} : null,
                     ),
@@ -529,7 +529,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                               style: theme.textTheme.bodyLarge,
                             ),
                           ),
-                          if (isSelected)
+                          if (isSelected,
                             Icon(
                               Icons.check_circle,
                               color: theme.colorScheme.primary,
@@ -566,7 +566,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -612,7 +612,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
         _buildIdealPartnerProfile(),
         _buildMarriageReadinessAssessment(),
         _buildActionPlan(),
-      ],
+      ]
     );
   }
 
@@ -666,7 +666,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     getDrawingVerticalLine: (value) {
                       return FlLine(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                        strokeWidth: 1,
+                        strokeWidth: 1
                       );
                     },
                   ),
@@ -687,7 +687,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                           final age = value.toInt() + 27;
                           return Text(
                             '$age세',
-                            style: theme.textTheme.bodySmall,
+                            style: theme.textTheme.bodySmall
                           );
                         },
                       ),
@@ -721,7 +721,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       spots: timelineEvents.asMap().entries.map((entry) {
                         return FlSpot(
                           entry.key.toDouble(),
-                          (entry.value['probability'] as int).toDouble(),
+                          (entry.value['probability'] as int).toDouble(,
                         );
                       }).toList(),
                       isCurved: true,
@@ -740,7 +740,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             radius: 4,
                             color: Colors.white,
                             strokeWidth: 2,
-                            strokeColor: theme.colorScheme.primary,
+                            strokeColor: theme.colorScheme.primary
                           );
                         },
                       ),
@@ -809,7 +809,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             )).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -900,7 +900,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             }).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -986,7 +986,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -1117,7 +1117,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             }).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -1257,7 +1257,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             )).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 }

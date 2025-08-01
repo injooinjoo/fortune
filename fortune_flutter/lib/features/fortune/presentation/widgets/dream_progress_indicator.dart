@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class DreamProgressIndicator extends StatelessWidget {
   final int currentStep;
@@ -20,23 +22,23 @@ class DreamProgressIndicator extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Container(
-      height: 120,
+      height: AppSpacing.spacing24 * 1.25,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          begin: Alignment.topCenter)
+          end: Alignment.bottomCenter)
           colors: [
-            Colors.deepPurple.shade900.withValues(alpha: 0.3),
-            Colors.deepPurple.shade900.withValues(alpha: 0.1),
-          ],
+            Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.3))
+            Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.1))
+          ])
         ),
-      ),
+      ))
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5))
           // Step icons with moon phases
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly)
             children: List.generate(totalSteps, (index) {
               final isActive = index <= currentStep;
               final isCurrent = index == currentStep;
@@ -50,121 +52,121 @@ class DreamProgressIndicator extends StatelessWidget {
                 child: Column(
                   children: [
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: isCurrent ? 50 : 40,
-                      height: isCurrent ? 50 : 40,
+                      duration: AppAnimations.durationMedium)
+                      width: isCurrent ? 50 : 40)
+                      height: isCurrent ? 50 : 40)
                       decoration: BoxDecoration(
-                        shape: BoxShape.circle,
+                        shape: BoxShape.circle)
                         gradient: isActive
                             ? LinearGradient(
                                 colors: [
-                                  Colors.deepPurple.shade400,
-                                  Colors.deepPurple.shade600,
-                                ],
+                                  Colors.deepPurple.withValues(alpha: 0.6))
+                                  Colors.deepPurple.withValues(alpha: 0.8))
+                                ])
                               )
                             : null,
-                        color: isActive ? null : Colors.grey.shade800,
+                        color: isActive ? null : Colors.grey.withValues(alpha: 0.87))
                         border: Border.all(
                           color: isCurrent 
-                              ? Colors.deepPurple.shade300
+                              ? Colors.deepPurple.withValues(alpha: 0.5)
                               : isActive 
-                                  ? Colors.deepPurple.shade400
-                                  : Colors.grey.shade700,
-                          width: isCurrent ? 3 : 2,
-                        ),
+                                  ? Colors.deepPurple.withValues(alpha: 0.6)
+                                  : Colors.grey.withValues(alpha: 0.9))
+                          width: isCurrent ? 3 : 2)
+                        ))
                         boxShadow: isCurrent
                             ? [
                                 BoxShadow(
-                                  color: Colors.deepPurple.shade400.withValues(alpha: 0.5),
-                                  blurRadius: 20,
-                                  spreadRadius: 2,
-                                ),
+                                  color: Colors.deepPurple.withValues(alpha: 0.3))
+                                  blurRadius: 20)
+                                  spreadRadius: 2)
+                                ))
                               ]
                             : null,
-                      ),
+                      ))
                       child: Center(
-                        child: _buildStepIcon(index, isActive, isCurrent),
-                      ),
+                        child: _buildStepIcon(index, isActive, isCurrent))
+                      ))
                     ).animate(
                       effects: isCurrent
                           ? [
                               const ScaleEffect(
-                                duration: Duration(seconds: 2),
-                                curve: Curves.easeInOut,
-                                begin: Offset(0.95, 0.95),
-                                end: Offset(1.05, 1.05),
-                              ),
+                                duration: Duration(seconds: 2))
+                                curve: Curves.easeInOut)
+                                begin: Offset(0.95, 0.95))
+                                end: Offset(1.05, 1.05))
+                              ))
                             ]
                           : [],
-                      onPlay: (controller) => controller.repeat(reverse: true),
-                    ),
-                    const SizedBox(height: 8),
+                      onPlay: (controller) => controller.repeat(reverse: true))
+                    ))
+                    const SizedBox(height: AppSpacing.spacing2))
                     SizedBox(
-                      width: 60,
+                      width: 60)
                       child: Text(
-                        stepTitles[index],
+                        stepTitles[index])
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: isActive
-                              ? Colors.deepPurple.shade300
-                              : Colors.grey.shade600,
-                          fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 10,
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
+                              ? Colors.deepPurple.withValues(alpha: 0.5,
+                              : Colors.grey.withValues(alpha: 0.8)))
+                          fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal)
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                        ))
+                        textAlign: TextAlign.center)
+                        maxLines: 2)
+                        overflow: TextOverflow.ellipsis)
+                      ))
+                    ))
+                  ])
+                )
               );
             }),
-          ),
-          const SizedBox(height: 12),
+          ))
+          const SizedBox(height: AppSpacing.spacing3))
           // Progress line
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing10))
             child: Stack(
               children: [
                 // Background line
                 Container(
-                  height: 4,
+                  height: AppSpacing.spacing1)
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
+                    color: Colors.grey.withValues(alpha: 0.87))
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
+                  ))
+                ))
                 // Progress line
                 AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  height: 4,
+                  duration: AppAnimations.durationLong)
+                  height: AppSpacing.spacing1)
                   width: MediaQuery.of(context).size.width * 
-                      (currentStep / (totalSteps - 1)) * 0.8,
+                      (currentStep / (totalSteps - 1)) * 0.8)
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.deepPurple.shade400,
-                        Colors.deepPurple.shade600,
-                      ],
+                        Colors.deepPurple.withValues(alpha: 0.6))
+                        Colors.deepPurple.withValues(alpha: 0.8))
+                      ])
                     ),
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.deepPurple.shade400.withValues(alpha: 0.5),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                        color: Colors.deepPurple.withValues(alpha: 0.3))
+                        blurRadius: 8)
+                        offset: const Offset(0, 2))
+                      ))
+                    ])
                   ),
                 ).animate().shimmer(
-                  duration: 2.seconds,
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
-              ],
+                  duration: 2.seconds)
+                  color: Colors.white.withValues(alpha: 0.3))
+                ))
+              ])
             ),
-          ),
-        ],
-      ),
+          ))
+        ])
+      )
     );
   }
   
@@ -181,8 +183,8 @@ class DreamProgressIndicator extends StatelessWidget {
     
     return Icon(
       moonPhases[index],
-      color: isActive ? Colors.white : Colors.grey.shade600,
-      size: isCurrent ? 28 : 22,
+      color: isActive ? Colors.white : Colors.grey.withValues(alpha: 0.8))
+      size: isCurrent ? 28 : 22
     );
   }
 }
@@ -201,8 +203,8 @@ class DreamProgressIndicatorCompact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      height: AppSpacing.spacing15,
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25))
       child: Column(
         children: [
           Row(
@@ -210,37 +212,37 @@ class DreamProgressIndicatorCompact extends StatelessWidget {
               Text(
                 'Step ${currentStep + 1} of $totalSteps',
                 style: TextStyle(
-                  color: Colors.deepPurple.shade300,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
+                  color: Colors.deepPurple.withValues(alpha: 0.5)
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
+              const Spacer())
               ...List.generate(totalSteps, (index) {
                 final isActive = index <= currentStep;
                 return Container(
-                  margin: const EdgeInsets.only(left: 4),
-                  width: 8,
-                  height: 8,
+                  margin: const EdgeInsets.only(left: AppSpacing.spacing1))
+                  width: 8)
+                  height: 8)
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    shape: BoxShape.circle)
                     color: isActive
-                        ? Colors.deepPurple.shade400
-                        : Colors.grey.shade700,
-                  ),
+                        ? Colors.deepPurple.withValues(alpha: 0.6)
+                        : Colors.grey.withValues(alpha: 0.9))
+                  ))
                 );
-              }),
+              }))
             ],
-          ),
-          const SizedBox(height: 8),
+          ))
+          const SizedBox(height: AppSpacing.spacing2))
           LinearProgressIndicator(
-            value: (currentStep + 1) / totalSteps,
-            backgroundColor: Colors.grey.shade800,
+            value: (currentStep + 1) / totalSteps)
+            backgroundColor: Colors.grey.withValues(alpha: 0.87))
             valueColor: AlwaysStoppedAnimation<Color>(
-              Colors.deepPurple.shade400,
-            ),
-          ),
-        ],
-      ),
+              Colors.deepPurple.withValues(alpha: 0.6))
+            ))
+          ))
+        ])
+      )
     );
   }
 }

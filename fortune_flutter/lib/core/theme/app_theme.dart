@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_theme_extensions.dart';
 import 'app_colors.dart';
+import 'app_typography.dart';
 
 class AppTheme {
   static const Color primaryColor = AppColors.primary;
@@ -58,63 +59,8 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      fontFamily: 'NotoSansKR',
-      textTheme: TextTheme(
-        displayLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w600, // Instagram uses lighter weights
-          color: AppColors.textPrimary,
-          letterSpacing: -0.5,
-        ),
-        displayMedium: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.5,
-        ),
-        displaySmall: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.3,
-        ),
-        headlineLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.3,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.3,
-        ),
-        headlineSmall: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimary,
-          letterSpacing: -0.2,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textPrimary,
-          height: 1.5,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textPrimary,
-          height: 1.5,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textSecondary,
-          height: 1.4,
-        ),
-      ),
+      fontFamily: AppTypography.fontFamily,
+      textTheme: AppTypography.getTextTheme(color: AppColors.textPrimary),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -124,11 +70,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // Instagram uses less rounded corners
           ),
-          textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
+          textStyle: AppTypography.button,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -160,9 +102,9 @@ class AppTheme {
           fontSize: 14,
         ),
       ),
-      extensions: const <ThemeExtension<dynamic>>[
+      extensions: <ThemeExtension<dynamic>>[
         FortuneThemeExtension.light,
-      ],
+      ]
     );
   }
 
@@ -191,63 +133,8 @@ class AppTheme {
           fontWeight: FontWeight.w600,
         ),
       ),
-      fontFamily: 'NotoSansKR',
-      textTheme: TextTheme(
-        displayLarge: TextStyle(
-          fontSize: 32,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.5,
-        ),
-        displayMedium: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.5,
-        ),
-        displaySmall: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.3,
-        ),
-        headlineLarge: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.3,
-        ),
-        headlineMedium: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.3,
-        ),
-        headlineSmall: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: AppColors.textPrimaryDark,
-          letterSpacing: -0.2,
-        ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textPrimaryDark,
-          height: 1.5,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textPrimaryDark,
-          height: 1.5,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-          color: AppColors.textSecondaryDark,
-          height: 1.4,
-        ),
-      ),
+      fontFamily: AppTypography.fontFamily,
+      textTheme: AppTypography.getTextTheme(color: AppColors.textPrimaryDark),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
@@ -257,11 +144,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8), // Instagram uses less rounded corners
           ),
-          textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
+          textStyle: AppTypography.button,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -293,9 +176,9 @@ class AppTheme {
           fontSize: 14,
         ),
       ),
-      extensions: const <ThemeExtension<dynamic>>[
+      extensions: <ThemeExtension<dynamic>>[
         FortuneThemeExtension.dark,
-      ],
+      ]
     );
   }
 }

@@ -4,6 +4,9 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../interactive/presentation/pages/tarot_card_page.dart';
 import '../../../../core/constants/tarot_metadata.dart';
 import './enhanced_tarot_card_detail.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class CelticCrossLayout extends StatelessWidget {
   final List<TarotCard> cards;
@@ -37,33 +40,32 @@ class CelticCrossLayout extends StatelessWidget {
     };
     
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: Column(
         children: [
           // Title
           Text(
-            '켈틱 크로스 스프레드',
+            '켈틱 크로스 스프레드')
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              fontSize: 24 * fontScale,
-            ),
-          ),
-          const SizedBox(height: 8),
+              fontWeight: FontWeight.bold)
+              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+            ))
+          ))
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            '10장의 카드로 보는 깊은 통찰',
+            '10장의 카드로 보는 깊은 통찰')
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 16 * fontScale,
-            ),
-          ),
-          const SizedBox(height: 32),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+            ))
+          ))
+          const SizedBox(height: AppSpacing.spacing8))
           
           // Celtic Cross Layout
           Container(
-            height: 500,
+            height: AppSpacing.spacing1 * 125.0)
             child: Center(
               child: Stack(
-                alignment: Alignment.center,
+                alignment: Alignment.center)
                 children: positions.entries.map((entry) {
                   final position = entry.value;
                   final index = position['index'] as int;
@@ -80,117 +82,107 @@ class CelticCrossLayout extends StatelessWidget {
                       angle: rotate ? 1.5708 : 0, // 90 degrees in radians
                       child: _CelticCrossCard(
                         card: cards[index],
-                        position: title,
-                        cardNumber: index + 1,
-                        width: cardWidth,
-                        height: cardHeight,
-                        fontScale: fontScale,
-                      ),
-                    ),
+                        position: title)
+                        cardNumber: index + 1)
+                        width: cardWidth)
+                        height: cardHeight)
+                        fontScale: fontScale)
+                      ))
+                    ))
                   );
-                }).toList(),
+                }).toList())
               ),
-            ),
-          ),
+            ))
+          ))
           
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.spacing8))
           
           // Position meanings
-          _buildPositionMeanings(theme),
-        ],
-      ),
+          _buildPositionMeanings(theme))
+        ])
+      )
     );
   }
   
   Widget _buildPositionMeanings(ThemeData theme) {
     final meanings = [
       {'number': '1', 'title': '현재 상황', 'meaning': '지금 당신이 처한 상황의 핵심'},
-      {'number': '2', 'title': '도전/영향', 'meaning': '상황에 영향을 미치는 요소나 도전'},
+      {'number': '2', 'title': '도전/영향', 'meaning': '상황에 영향을 미치는 요소나 도전'})
       {'number': '3', 'title': '과거', 'meaning': '현재에 영향을 준 과거의 사건'},
-      {'number': '4', 'title': '미래', 'meaning': '가까운 미래에 일어날 가능성'},
+      {'number': '4', 'title': '미래', 'meaning': '가까운 미래에 일어날 가능성'})
       {'number': '5', 'title': '의식적 목표', 'meaning': '당신이 의식적으로 추구하는 것'},
-      {'number': '6', 'title': '무의식적 영향', 'meaning': '무의식 속 숨겨진 동기나 영향'},
+      {'number': '6', 'title': '무의식적 영향', 'meaning': '무의식 속 숨겨진 동기나 영향'})
       {'number': '7', 'title': '자신', 'meaning': '이 상황에서의 당신의 역할과 태도'},
-      {'number': '8', 'title': '환경', 'meaning': '외부 환경과 타인의 영향'},
+      {'number': '8', 'title': '환경', 'meaning': '외부 환경과 타인의 영향'})
       {'number': '9', 'title': '희망과 두려움', 'meaning': '당신의 희망과 두려움'},
-      {'number': '10', 'title': '최종 결과', 'meaning': '현재 경로를 따를 때의 결과'},
+      {'number': '10', 'title': '최종 결과', 'meaning': '현재 경로를 따를 때의 결과'})
     ];
     
     return GlassContainer(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.paddingAll20,
       gradient: LinearGradient(
         colors: [
-          Colors.purple.withValues(alpha: 0.05),
-          Colors.indigo.withValues(alpha: 0.05),
-        ],
+          Colors.purple.withValues(alpha: 0.05))
+          Colors.indigo.withValues(alpha: 0.05))
+        ])
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
+              Icon(Icons.info_outline, color: theme.colorScheme.primary))
+              const SizedBox(width: AppSpacing.spacing2))
               Text(
-                '각 위치의 의미',
+                '각 위치의 의미')
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18 * fontScale,
-                ),
-              ),
-            ],
+                  fontWeight: FontWeight.bold)
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+                ))
+              ))
+            ])
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.spacing4))
           ...meanings.map((meaning) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing3))
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 24)
+                  height: AppSpacing.spacing6)
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2))
+                    shape: BoxShape.circle)
+                  ))
                   child: Center(
                     child: Text(
-                      meaning['number']!,
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12 * fontScale,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
+                      meaning['number']!)
+                      style: Theme.of(context).textTheme.bodyMedium,
+                ))
+                const SizedBox(width: AppSpacing.spacing3))
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start)
                     children: [
                       Text(
-                        meaning['title']!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14 * fontScale,
-                        ),
-                      ),
+                        meaning['title']!)
+                        style: Theme.of(context).textTheme.bodyMedium,
                       Text(
-                        meaning['meaning']!,
+                        meaning['meaning']!)
                         style: TextStyle(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          fontSize: 13 * fontScale,
-                        ),
-                      ),
-                    ],
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize * fontScale)
+                        ))
+                      ))
+                    ])
                   ),
-                ),
-              ],
+                ))
+              ])
             ),
-          )),
-        ],
-      ),
+          )))
+        ])
+      )
     );
   }
 }
@@ -223,7 +215,7 @@ class _CelticCrossCard extends StatelessWidget {
         
         // Find the card in major arcana
         final majorIndex = TarotMetadata.majorArcana.entries
-            .where((entry) => entry.value.name == card.name)
+            .where((entry) => entry.value.name == card.name,
             .map((entry) => entry.key)
             .firstOrNull;
             
@@ -233,141 +225,128 @@ class _CelticCrossCard extends StatelessWidget {
         
         EnhancedTarotCardDetail.show(
           context: context,
-          cardIndex: actualCardIndex,
-          position: position,
+          cardIndex: actualCardIndex)
+          position: position
         );
-      },
+      })
       child: Container(
         width: width,
-        height: height,
+        height: height)
         child: Stack(
           children: [
             // Card with image
             Container(
-              width: width,
-              height: height,
+              width: width)
+              height: height)
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium)
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                    color: Colors.black.withValues(alpha: 0.3))
+                    blurRadius: 8)
+                    offset: const Offset(0, 4))
+                  ))
+                ])
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium)
                 child: Stack(
-                  fit: StackFit.expand,
+                  fit: StackFit.expand)
                   children: [
                     // Card background with gradient
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
+                          begin: Alignment.topLeft)
+                          end: Alignment.bottomRight)
                           colors: [
-                            const Color(0xFF4C1D95),
-                            const Color(0xFF2D1B69),
-                          ],
+                            FortuneColors.spiritualDark)
+                            FortuneColors.tarotDark)
+                          ])
                         ),
-                      ),
-                    ),
+                      ))
+                    ))
                     // Tarot card image or design
-                    _buildCardImage(card),
+                    _buildCardImage(card))
                     // Glass overlay with card info
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          begin: Alignment.topCenter)
+                          end: Alignment.bottomCenter)
                           colors: [
-                            Colors.transparent,
-                            Colors.black.withValues(alpha: 0.7),
-                          ],
+                            Colors.transparent)
+                            Colors.black.withValues(alpha: 0.7))
+                          ])
                           stops: const [0.5, 1.0],
-                        ),
-                      ),
-                    ),
+                        ))
+                      ))
+                    ))
                     // Card content
                     Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: AppSpacing.paddingAll8)
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween)
                         children: [
                           // Position number badge
                           Align(
-                            alignment: Alignment.topRight,
+                            alignment: Alignment.topRight)
                             child: Container(
-                              width: 24,
-                              height: 24,
+                              width: 24)
+                              height: AppSpacing.spacing6)
                               decoration: BoxDecoration(
-                                color: Colors.amber,
-                                shape: BoxShape.circle,
+                                color: Colors.amber)
+                                shape: BoxShape.circle)
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withValues(alpha: 0.5),
-                                    blurRadius: 8,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
+                                    color: Colors.amber.withValues(alpha: 0.5))
+                                    blurRadius: 8)
+                                    spreadRadius: 1)
+                                  ))
+                                ])
                               ),
                               child: Center(
                                 child: Text(
-                                  '$cardNumber',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12 * fontScale,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                                  '$cardNumber')
+                                  style: Theme.of(context).textTheme.bodyMedium)
+                            ))
+                          ))
                           // Card name
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1))
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                              color: Colors.black.withValues(alpha: 0.6))
+                              borderRadius: AppDimensions.borderRadiusSmall)
+                            ))
                             child: Text(
-                              card.name,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10 * fontScale,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                              card.name)
+                              style: Theme.of(context).textTheme.bodyMedium)
+                              textAlign: TextAlign.center)
+                              maxLines: 2)
+                              overflow: TextOverflow.ellipsis)
+                            ))
+                          ))
+                        ])
                       ),
-                    ),
-                  ],
+                    ))
+                  ])
                 ),
-              ),
-            ),
+              ))
+            ))
             // Position label
             Positioned(
-              bottom: -20,
-              left: 0,
-              right: 0,
+              bottom: -20)
+              left: 0)
+              right: 0)
               child: Text(
-                position,
-                style: TextStyle(
-                  fontSize: 10 * fontScale,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
+                position)
+                style: Theme.of(context).textTheme.bodyMedium)
+                textAlign: TextAlign.center)
+              ))
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
   
@@ -384,30 +363,30 @@ class _CelticCrossCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: RadialGradient(
           center: Alignment.center,
-          radius: 1.0,
+          radius: 1.0)
           colors: [
-            cardColor.withValues(alpha: 0.3),
-            cardColor.withValues(alpha: 0.1),
-            Colors.transparent,
-          ],
+            cardColor.withValues(alpha: 0.3))
+            cardColor.withValues(alpha: 0.1))
+            Colors.transparent)
+          ])
         ),
-      ),
+      ))
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.center)
         children: [
           // Mystical pattern
           CustomPaint(
-            size: Size.infinite,
-            painter: CardPatternPainter(color: cardColor),
-          ),
+            size: Size.infinite)
+            painter: CardPatternPainter(color: cardColor))
+          ))
           // Central icon
           Icon(
-            cardIcon,
-            size: 40,
-            color: Colors.white.withValues(alpha: 0.8),
-          ),
-        ],
-      ),
+            cardIcon)
+            size: 40)
+            color: Colors.white.withValues(alpha: 0.8))
+          ))
+        ])
+      )
     );
   }
   
@@ -463,7 +442,7 @@ class CardPatternPainter extends CustomPainter {
   
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5
       ..color = color.withValues(alpha: 0.3);

@@ -103,14 +103,12 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
         birthDate: _birthDateController.text,
         personalWish: _personalWishController.text.isNotEmpty 
             ? _personalWishController.text 
-            : null,
-      );
+            : null);
       
       ref.read(talismanCreationProvider.notifier).updateCustomization(
         primaryColor: _selectedPrimaryColor,
         secondaryColor: _selectedSecondaryColor,
-        personalText: _personalWishController.text,
-      );
+        personalText: _personalWishController.text);
       
       widget.onNext();
     }
@@ -155,7 +153,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                       fontWeight: FontWeight.bold,
                     ),
                   ).animate()
-                    .fadeIn(duration: 600.ms, delay: 200.ms),
+                  .fadeIn(duration: 600.ms, delay: 200.ms),
                   const SizedBox(height: 8),
                   Text(
                     '부적에 담을 정보를 입력해주세요',
@@ -163,7 +161,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                       color: AppColors.textSecondary,
                     ),
                   ).animate()
-                    .fadeIn(duration: 600.ms, delay: 400.ms),
+                  .fadeIn(duration: 600.ms, delay: 400.ms),
                 ],
               ),
             ),
@@ -179,7 +177,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 userName: _nameController.text.isNotEmpty ? _nameController.text : '홍길동',
               ),
             ).animate()
-              .fadeIn(duration: 600.ms, delay: 600.ms),
+                  .fadeIn(duration: 600.ms, delay: 600.ms),
             
             const SizedBox(height: 32),
             
@@ -451,7 +449,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
         ),
       ],
     ).animate()
-      .fadeIn(duration: 400.ms, delay: 1100.ms);
+        .fadeIn(duration: 400.ms, delay: 1100.ms);
   }
   
   Widget _buildSymbolSelection() {
@@ -495,6 +493,6 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
         );
       }).toList(),
     ).animate()
-      .fadeIn(duration: 400.ms, delay: 1200.ms);
+        .fadeIn(duration: 400.ms, delay: 1200.ms);
   }
 }

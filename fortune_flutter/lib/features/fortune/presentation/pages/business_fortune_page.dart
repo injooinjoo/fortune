@@ -19,7 +19,7 @@ class BusinessFortunePage extends ConsumerWidget {
         colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
       ),
       inputBuilder: (context, onSubmit) => _BusinessInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _BusinessFortuneResult(result: result),
+      resultBuilder: (context, result, onShare) => _BusinessFortuneResult(result: result)
     );
   }
 }
@@ -129,7 +129,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -197,7 +197,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -369,7 +369,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 }
@@ -501,7 +501,7 @@ class _BusinessFortuneResult extends StatelessWidget {
             content: result.details!['strategy'],
           ),
         ],
-      ],
+      ]
     );
   }
 

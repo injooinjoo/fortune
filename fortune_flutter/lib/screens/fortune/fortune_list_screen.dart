@@ -8,10 +8,10 @@ class FortuneListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('운세 목록'),
-      ),
+      ))
       body: const Center(
-        child: Text('운세 목록 화면'),
-      ),
+        child: Text('운세 목록 화면'))
+      )
     );
   }
 }

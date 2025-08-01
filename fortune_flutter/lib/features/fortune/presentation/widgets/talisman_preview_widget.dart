@@ -3,6 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:math' as math;
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/models/talisman_models.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
 
 class TalismanPreviewWidget extends StatefulWidget {
   final TalismanType type;
@@ -35,15 +37,14 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
-    )..repeat();
-  }
+      duration: const Duration(seconds: 3))..repeat();
+}
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +52,12 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
       width: widget.size,
       height: widget.size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         boxShadow: [
           BoxShadow(
             color: widget.primaryColor.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          ),
         ],
       ),
       child: Stack(
@@ -66,7 +66,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           // Background with gradient
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -75,23 +75,19 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                   widget.secondaryColor,
                 ],
               ),
-            ),
           ),
           
           // Pattern overlay
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
               color: Colors.black.withValues(alpha: 0.1),
-            ),
             child: CustomPaint(
               size: Size(widget.size, widget.size),
               painter: _TalismanPatternPainter(
                 style: widget.symbol,
                 color: Colors.white.withValues(alpha: 0.2),
-              ),
             ),
-          ),
           
           // Central symbol
           AnimatedBuilder(
@@ -119,47 +115,38 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                       size: widget.size * 0.3,
                       color: widget.primaryColor,
                     ),
-                  ),
-                ),
+                
               );
-            },
+},
           ),
           
           // User name at bottom
           Positioned(
             bottom: 20,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
-                  ),
                 ],
               ),
               child: Text(
                 widget.userName,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: widget.primaryColor,
-                ),
-              ),
-            ),
+                style: Theme.of(context).textTheme.bodyMedium,
           ),
           
           // Decorative corners
           ..._buildCornerDecorations(),
         ],
-      ),
-    ).animate()
-      .fadeIn(duration: 600.ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
-  }
+      )).animate()
+                  .fadeIn(duration: 600.ms,
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1);
+}
   
   List<Widget> _buildCornerDecorations() {
     final decorations = <Widget>[];
@@ -179,7 +166,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           bottom: pos.bottom,
           child: Container(
             width: 30,
-            height: 30,
+            height: AppSpacing.spacing7 * 1.07,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.3),
               borderRadius: BorderRadius.only(
@@ -195,15 +182,13 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                 bottomRight: pos.bottom != null && pos.right != null 
                     ? const Radius.circular(0) 
                     : const Radius.circular(15),
-              ),
             ),
-          ),
-        ),
+        
       );
-    }
+}
     
     return decorations;
-  }
+}
 }
 
 class _TalismanPatternPainter extends CustomPainter {
@@ -219,7 +204,8 @@ class _TalismanPatternPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..style = PaintingStyle.stroke
+      ..style =,
+      PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
     switch (style) {
@@ -235,7 +221,7 @@ class _TalismanPatternPainter extends CustomPainter {
       case 'ornate':
         _drawOrnatePattern(canvas, size, paint);
         break;
-    }
+}
   }
 
   void _drawClassicPattern(Canvas canvas, Size size, Paint paint) {
@@ -252,7 +238,7 @@ class _TalismanPatternPainter extends CustomPainter {
       final x = center.dx + radius * 0.7 * math.cos(angle);
       final y = center.dy + radius * 0.7 * math.sin(angle);
       canvas.drawCircle(Offset(x, y), 10, paint);
-    }
+}
   }
 
   void _drawModernPattern(Canvas canvas, Size size, Paint paint) {
@@ -264,26 +250,26 @@ class _TalismanPatternPainter extends CustomPainter {
       final angle = i * 3.14159 / 3;
       final x = size.width / 2 + size.width * 0.3 * math.cos(angle);
       final y = size.height / 2 + size.height * 0.3 * math.sin(angle);
-      points.add(Offset(x, y));
-    }
+      points.add(Offset(x, y);
+}
     
     path.addPolygon(points, true);
     canvas.drawPath(path, paint);
-  }
+}
 
   void _drawMinimalPattern(Canvas canvas, Size size, Paint paint) {
     // Draw simple lines
     canvas.drawLine(
       Offset(size.width * 0.2, size.height * 0.2),
       Offset(size.width * 0.8, size.height * 0.2),
-      paint,
+      paint
     );
     canvas.drawLine(
       Offset(size.width * 0.2, size.height * 0.8),
       Offset(size.width * 0.8, size.height * 0.8),
-      paint,
+      paint
     );
-  }
+}
 
   void _drawOrnatePattern(Canvas canvas, Size size, Paint paint) {
     // Draw complex ornate pattern
@@ -292,7 +278,7 @@ class _TalismanPatternPainter extends CustomPainter {
     for (int i = 0; i < 3; i++) {
       final radius = size.width * (0.2 + i * 0.1);
       canvas.drawCircle(center, radius, paint);
-    }
+}
     
     // Draw decorative elements
     for (int i = 0; i < 12; i++) {
@@ -302,15 +288,13 @@ class _TalismanPatternPainter extends CustomPainter {
       
       final start = Offset(
         center.dx + startRadius * math.cos(angle),
-        center.dy + startRadius * math.sin(angle),
-      );
+        center.dy + startRadius * math.sin(angle));
       final end = Offset(
         center.dx + endRadius * math.cos(angle),
-        center.dy + endRadius * math.sin(angle),
-      );
+        center.dy + endRadius * math.sin(angle);
       
       canvas.drawLine(start, end, paint);
-    }
+}
   }
 
   @override

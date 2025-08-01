@@ -22,7 +22,7 @@ class LuckyFishingFortunePage extends ConsumerWidget {
         colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
       ),
       inputBuilder: (context, onSubmit) => _FishingInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _FishingFortuneResult(result: result),
+      resultBuilder: (context, result, onShare) => _FishingFortuneResult(result: result,
     );
   }
 }
@@ -52,7 +52,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
         Text(
           '오늘의 낚시 운세를 확인하고\n대어를 낚아보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
             height: 1.5,
           ),
         ),
@@ -132,7 +132,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -170,7 +170,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -200,7 +200,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -231,7 +231,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -252,7 +252,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -283,7 +283,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -304,7 +304,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -342,7 +342,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -372,7 +372,7 @@ class _FishingInputFormState extends State<_FishingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 }
@@ -504,7 +504,7 @@ class _FishingFortuneResult extends StatelessWidget {
             content: result.details!['tips'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -554,7 +554,7 @@ class _FishingFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

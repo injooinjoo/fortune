@@ -50,7 +50,7 @@ class HapticUtils {
     }
   }
 
-  // 진동 (Android)
+  // 진동 (Android,
   static Future<void> vibrate({int duration = 100}) async {
     try {
       final canVibrate = await Haptics.canVibrate();
@@ -122,12 +122,12 @@ class HapticUtils {
     }
   }
 
-  // 성공 알림 피드백 (success와 동일)
+  // 성공 알림 피드백 (success와 동일,
   static Future<void> successNotification() async {
     await success();
   }
 
-  // 에러 알림 피드백 (error와 동일)
+  // 에러 알림 피드백 (error와 동일,
   static Future<void> errorNotification() async {
     await error();
   }

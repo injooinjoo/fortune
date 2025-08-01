@@ -59,7 +59,7 @@ class _EmploymentInputForm extends StatelessWidget {
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.work),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(
@@ -70,7 +70,7 @@ class _EmploymentInputForm extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }

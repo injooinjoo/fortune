@@ -86,7 +86,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
         colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
       ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+      resultBuilder: (context, result, onShare) => _buildResult(context, result,
     );
   }
   
@@ -275,7 +275,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                   ? () => onSubmit({
                         'blessing_type': _selectedGoal,
                         'birthdate': _birthdate!.toIso8601String(),
-                      })
+                      },
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
@@ -309,7 +309,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       context: context,
       initialDate: _birthdate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: DateTime.now(,
     );
     if (picked != null) {
       setState(() {
@@ -322,7 +322,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
     final data = result.details ?? {};
     final selectedBlessing = blessingGoals.firstWhere(
       (b) => b['id'] == (_selectedGoal ?? data['blessing_type']),
-      orElse: () => blessingGoals.first,
+      orElse: () => blessingGoals.first
     );
     
     return Column(
@@ -630,7 +630,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             ),
           ),
         ],
-      ],
+      ]
     );
   }
   

@@ -1,37 +1,43 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/five_elements_explanations.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class FiveElementsExplanationBottomSheet extends StatefulWidget {
   final String element;
   final int elementCount;
   final int totalCount;
   
-  const FiveElementsExplanationBottomSheet({
+  const FiveElementsExplanationBottomSheet(
+    {
     super.key,
     required this.element,
     required this.elementCount,
     required this.totalCount,
-  });
+  )});
 
   static Future<void> show(
     BuildContext context, {
     required String element,
     required int elementCount,
     required int totalCount,
-  }) {
+  )}) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: true,
-      enableDrag: true,
-      builder: (context) => FiveElementsExplanationBottomSheet(
-        element: element,
+      enableDrag: true),
+        builder: (context) => FiveElementsExplanationBottomSheet(,
+      element: element,
         elementCount: elementCount,
-        totalCount: totalCount,
-      ),
-    );
+        totalCount: totalCount)
+      ))
   }
 
   @override
@@ -47,8 +53,8 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
+      vsync: this),
+        duration: AppAnimations.durationMedium
     );
     _animationController.forward();
   }
@@ -63,17 +69,17 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
   Color _getElementColor(String element) {
     switch (element) {
       case '목':
-        return const Color(0xFF4CAF50);
+        return AppColors.success;
       case '화':
-        return const Color(0xFFFF5722);
+        return AppColors.warning;
       case '토':
-        return const Color(0xFFFFB300);
+        return FortuneColors.goldLight;
       case '금':
-        return const Color(0xFF9E9E9E);
+        return AppColors.textTertiary;
       case '수':
-        return const Color(0xFF2196F3);
+        return AppColors.primary;
       default:
-        return Colors.grey;
+        return AppColors.textSecondary;
     }
   }
 
@@ -108,89 +114,85 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     final percentage = widget.totalCount > 0 ? (widget.elementCount / widget.totalCount * 100).round() : 0;
     
     return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
+      animation: _animationController),
+        builder: (context, child) {
         return Container(
           height: screenHeight * 0.85,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
+          decoration: BoxDecoration(,
+      color: theme.colorScheme.surface,
+        ),
+        borderRadius: const BorderRadius.only(,
+      topLeft: Radius.circular(24),
               topRight: Radius.circular(24),
-            ),
-            boxShadow: [
+      boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: AppColors.textPrimary.withValues(alph,
+      a: 0.1),
                 blurRadius: 20,
-                offset: const Offset(0, -5),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
+                offset: const Offset(0, -5))
+            ])
+          child: Column(,
+      children: [
               _buildHandle(),
               _buildHeader(theme, elementColor, explanation, percentage),
               Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildBasicInfo(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildCharacteristics(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildPersonality(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildBalanceAdvice(theme, elementColor, explanation, percentage),
-                      const SizedBox(height: 24),
-                      _buildCompatibility(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildHealth(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildCareer(theme, elementColor, explanation),
-                      const SizedBox(height: 24),
-                      _buildLuckyItems(theme, elementColor, explanation),
-                      const SizedBox(height: 40),
-                    ],
-                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-                ),
+                child: SingleChildScrollView(,
+      controller: _scrollController,
               ),
-            ],
-          ),
-        );
-      },
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing5),
+                  child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
+                      _buildBasicInfo(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildCharacteristics(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildPersonality(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildBalanceAdvice(theme, elementColor, explanation, percentage),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildCompatibility(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildHealth(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildCareer(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing6),
+                      _buildLuckyItems(theme, elementColor, explanation),
+                      SizedBox(height: AppSpacing.spacing10),
+                    ])).animate().fadeIn(duration: 400.ms, delay: 100.ms))))
+            ])))
+      }
     );
   }
 
   Widget _buildHandle() {
     return Container(
-      margin: const EdgeInsets.only(top: 12, bottom: 8),
+      margin: const EdgeInsets.only(to,
+      p: AppSpacing.small, bottom: AppSpacing.xSmall),
       width: 40,
       height: 4,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
+      decoration: BoxDecoration(,
+      color: AppColors.textSecondary,
+        ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
+      )
   }
 
   Widget _buildHeader(ThemeData theme, Color elementColor, Map<String, dynamic> explanation, int percentage) {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll20),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             elementColor.withValues(alpha: 0.1),
             elementColor.withValues(alpha: 0.05),
-          ],
+          ]
           begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+          end: Alignment.bottomCenter)),
       child: Column(
-        children: [
+                children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -198,99 +200,83 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
                 children: [
                   Container(
                     width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: elementColor,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
+                    height: AppSpacing.spacing20,
+                    decoration: BoxDecoration(,
+      color: elementColor,
+                      borderRadius: AppDimensions.borderRadiusLarge,
+        ),
+        boxShadow: [
                         BoxShadow(
-                          color: elementColor.withValues(alpha: 0.3),
+                          color: elementColor.withValues(alph,
+      a: 0.3),
                           blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                          offset: const Offset(0, 4))
+                      ])
+                    child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           explanation['hanja'],
-                          style: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+              ),
+              style: Theme.of(context).textTheme.displaySmall,
                         Text(
                           explanation['name'],
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
-                        ),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(,
+      color: AppColors.textPrimaryDark)
                       ],
-                    ),
-                  ).animate()
+                          )))).animate()
                     .scale(
                       begin: const Offset(0.8, 0.8),
                       end: const Offset(1, 1),
                       duration: 300.ms,
-                      curve: Curves.elasticOut,
-                    ),
-                  const SizedBox(width: 16),
+                      curve: Curves.elasticOut)
+                  SizedBox(width: AppSpacing.spacing4),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '오행 (五行)',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                children: [
+                        Text(
+                          '오행 (五行)',
+                        style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          )))
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
                         explanation['basicMeaning'],
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+                          style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        '나의 오행 비율: $percentage%',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: elementColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                        '나의 오행 비율: $percentage%'),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: elementColor,
+                          ),
+        fontWeight: FontWeight.w600)
+                        ))
+                    ])
+                ])
               IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.of(context).pop(),
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.surface,
-                  shape: const CircleBorder(),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                style: IconButton.styleFrom(,
+      backgroundColor: theme.colorScheme.surface),
+        shape: const CircleBorder())))
+            ])
+        ]
+      )
   }
 
   Widget _buildBasicInfo(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: elementColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: elementColor.withValues(alpha: 0.2),
-        ),
-      ),
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: elementColor.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(,
+      color: elementColor.withValues(alp,
+      ha: 0.2))),
       child: Column(
         children: [
           Row(
@@ -298,49 +284,45 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
               Icon(
                 _getElementIcon(widget.element),
                 color: elementColor,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '기본 정보',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           _buildInfoRow(theme, '색상', explanation['color']),
           _buildInfoRow(theme, '계절', explanation['season']),
           _buildInfoRow(theme, '방향', explanation['direction']),
           _buildInfoRow(theme, '장기', explanation['organ']),
           _buildInfoRow(theme, '감정', explanation['emotion']),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildInfoRow(ThemeData theme, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: EdgeInsets.symmetric(vertica,
+      l: AppSpacing.spacing1),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+                        Text(
+                          label,
+                          style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          )))
           Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-          Text(
-            value,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+            value),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.w600,
+                          ))))
+        ]
+      )
   }
 
   Widget _buildCharacteristics(ThemeData theme, Color elementColor, Map<String, dynamic> explanation) {
@@ -352,50 +334,45 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: elementColor.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Icon(
                 Icons.star,
                 color: elementColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '주요 특징',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         ...characteristics.map((characteristic) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+          child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 Icons.check_circle,
-                size: 20,
-                color: elementColor,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeSmall,
+                color: elementColor)
+              SizedBox(width: AppSpacing.spacing2),
               Expanded(
                 child: Text(
                   characteristic,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    height: 1.5,
-                  ),
-                ),
               ),
-            ],
-          ),
-        )),
-      ],
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.5,
+                          ))))))
+            ]))))
+      ]
     );
   }
 
@@ -406,48 +383,45 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: elementColor.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Icon(
                 Icons.psychology,
                 color: elementColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '성격과 성향',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
+          padding: AppSpacing.paddingAll16,
+          decoration: BoxDecoration(,
+      color: theme.colorScheme.surface,
+            borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: AppColors.textPrimary.withValues(alph,
+      a: 0.05),
                 blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+                offset: const Offset(0, 2))
+            ])
           child: Text(
             explanation['personality'] ?? '',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.6,
-            ),
-          ),
-        ),
-      ],
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.6,
+                          ))))))
+      ]
     );
   }
 
@@ -463,15 +437,15 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
     if (isExcess) {
       advice = balanceAdvice['excess'] ?? '';
       status = '과다';
-      statusColor = Colors.orange;
+      statusColor = AppColors.warning;
     } else if (isDeficient) {
       advice = balanceAdvice['deficiency'] ?? '';
       status = '부족';
-      statusColor = Colors.red;
+      statusColor = AppColors.error;
     } else {
       advice = '${explanation['name']}(${widget.element})의 기운이 적절한 균형을 이루고 있습니다. 현재의 조화로운 상태를 유지하면서 건강한 생활을 이어가세요.';
       status = '균형';
-      statusColor = Colors.green;
+      statusColor = AppColors.success;
     }
     
     return Column(
@@ -480,90 +454,79 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: AppColors.warning.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Icon(
                 Icons.balance,
-                color: Colors.orange,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                color: AppColors.warning,
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '오행 균형 조언',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  color: statusColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            SizedBox(width: AppSpacing.spacing2),
+            Container(
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
+              decoration: BoxDecoration(,
+      color: statusColor.withValues(alp,
+      ha: 0.2),
+                borderRadius: AppDimensions.borderRadiusMedium),
+      child: Text(
+                status,
+        ),
+        style: Theme.of(context).textTheme.labelSmall,
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
+          padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
               colors: [
                 statusColor.withValues(alpha: 0.1),
                 statusColor.withValues(alpha: 0.05),
-              ],
+              ]
               begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: statusColor.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(,
+      color: statusColor.withValues(alp,
+      ha: 0.3))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Icon(
                     Icons.tips_and_updates,
-                    size: 16,
-                    color: statusColor,
-                  ),
-                  const SizedBox(width: 8),
+                    size: AppDimensions.iconSizeXSmall,
+                    color: statusColor)
+                  SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '현재 상태: $percentage%',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: statusColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
+        ),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: statusColor,
+                          ),
+        fontWeight: FontWeight.bold)
+                    ))
+                ])
+              SizedBox(height: AppSpacing.spacing2),
               Text(
                 advice,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.6,
-                ),
               ),
-            ],
-          ),
-        ),
-      ],
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.6,
+                          ))))
+            ])))
+      ]
     );
   }
 
@@ -576,27 +539,25 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: elementColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: elementColor.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Icon(
                 Icons.sync,
                 color: elementColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '다른 오행과의 관계',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         ...compatibility.entries.map((entry) {
           final otherElement = entry.key;
           final relation = entry.value;
@@ -604,103 +565,88 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
           final isHarmonious = relation.contains('에너지를 받는') || relation.contains('에너지를 주는');
           
           return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
+            margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+            padding: AppSpacing.paddingAll12,
+            decoration: BoxDecoration(,
+      gradient: LinearGradient(
                 colors: [
                   otherColor.withValues(alpha: 0.05),
                   otherColor.withValues(alpha: 0.02),
-                ],
+                ]
                 begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: otherColor.withValues(alpha: 0.2),
-              ),
-            ),
-            child: Row(
+                end: Alignment.centerRight),
+      borderRadius: AppDimensions.borderRadiusSmall,
+              border: Border.all(,
+      color: otherColor.withValues(alp,
+      ha: 0.2))),
+      child: Row(
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: otherColor.withValues(alpha: 0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
+                  width: AppDimensions.buttonHeightSmall,
+                  height: AppDimensions.buttonHeightSmall,
+        ),
+        decoration: BoxDecoration(,
+      color: otherColor.withValues(alp,
+      ha: 0.2),
+                    shape: BoxShape.circle),
+      child: Center(
                     child: Icon(
                       _getElementIcon(otherElement),
                       color: otherColor,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
+                      size: AppDimensions.iconSizeSmall)))))
+                SizedBox(width: AppSpacing.spacing3),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            otherElement,
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: otherColor,
-                            ),
+                        Text(
+                          otherElement,
+              ),
+              style: theme.textTheme.bodyLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(width: 8),
+              color: otherColor)
+                            ))
+                          SizedBox(width: AppSpacing.spacing2),
                           if (isHarmonious)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.green.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Text(
+                              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              decoration: BoxDecoration(,
+      color: AppColors.success.withValues(alp,
+      ha: 0.2),
+                                borderRadius: AppDimensions.radiusMedium),
+      child: const Text(
                                 '상생',
-                                style: TextStyle(
-                                  color: Colors.green,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
+        ),
+        style: context.captionMedium),
                           else
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.orange.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Text(
+                              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing1, vertical: AppSpacing.spacing0),
+                              decoration: BoxDecoration(,
+      color: AppColors.warning.withValues(alp,
+      ha: 0.2),
+                                borderRadius: AppDimensions.radiusMedium),
+      child: const Text(
                                 '상극',
-                                style: TextStyle(
-                                  color: Colors.orange,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
+        ),
+        style: context.captionMedium))))
+                        ])
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
                         relation,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
+                          style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.8,
+                          )))
+                    ])))
+              ])))
         }),
-      ],
+      ]
     );
   }
 
@@ -713,62 +659,55 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: AppColors.error.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: const Icon(
                 Icons.favorite,
-                color: Colors.red,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                color: AppColors.error,
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '건강 조언',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.red.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Column(
-            children: healthTips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: AppColors.error.withValues(alp,
+      ha: 0.05),
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(,
+      color: AppColors.error.withValues(alp,
+      ha: 0.2))),
+      child: Column(,
+      children: healthTips.map((tip) => Padding(,
+      padding: const EdgeInsets.only(bott,
+      om: AppSpacing.xSmall),
+              child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.health_and_safety,
-                    size: 16,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(width: 8),
+                    size: AppDimensions.iconSizeXSmall,
+                    color: AppColors.error)
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       tip,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
         ),
-      ],
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.4,
+                          ))))))
+                ]))))).toList())))
+      ]
     );
   }
 
@@ -781,62 +720,55 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: AppColors.primary.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: const Icon(
                 Icons.work,
-                color: Colors.blue,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                color: AppColors.primary,
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '적합한 진로',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.blue.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.blue.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Column(
-            children: careers.map((career) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: AppColors.primary.withValues(alp,
+      ha: 0.05),
+            borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(,
+      color: AppColors.primary.withValues(alp,
+      ha: 0.2))),
+      child: Column(,
+      children: careers.map((career) => Padding(,
+      padding: const EdgeInsets.only(bott,
+      om: AppSpacing.xSmall),
+              child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.arrow_right,
-                    size: 20,
-                    color: Colors.blue,
-                  ),
-                  const SizedBox(width: 8),
+                    size: AppDimensions.iconSizeSmall,
+                    color: AppColors.primary)
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       career,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
         ),
-      ],
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.4,
+                          ))))))
+                ]))))).toList())))
+      ]
     );
   }
 
@@ -849,69 +781,60 @@ class _FiveElementsExplanationBottomSheetState extends State<FiveElementsExplana
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.2),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: const Icon(
                 Icons.auto_awesome,
                 color: Colors.amber,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+                size: AppDimensions.iconSizeSmall)
+              ))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               '행운의 아이템',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
+          padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
               colors: [
                 Colors.amber.withValues(alpha: 0.1),
                 Colors.amber.withValues(alpha: 0.05),
-              ],
+              ]
               begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.amber.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Column(
-            children: luckyItems.map((item) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusMedium,
+            border: Border.all(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.3))),
+      child: Column(,
+      children: luckyItems.map((item) => Padding(,
+      padding: const EdgeInsets.only(bott,
+      om: AppSpacing.xSmall),
+              child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(
                     Icons.stars,
-                    size: 16,
-                    color: Colors.amber,
-                  ),
-                  const SizedBox(width: 8),
+                    size: AppDimensions.iconSizeXSmall,
+                    color: Colors.amber)
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       item,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ),
         ),
-      ],
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.4,
+                          ))))))
+                ]))))).toList())))
+      ]
     );
   }
 }

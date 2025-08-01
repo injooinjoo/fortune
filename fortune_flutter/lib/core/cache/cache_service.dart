@@ -20,8 +20,8 @@ class CacheService {
       await Hive.initFlutter();
       
       // Register adapters
-      if (!Hive.isAdapterRegistered(0)) {
-        Hive.registerAdapter(CachedFortuneAdapter());
+      if (!Hive.isAdapterRegistered(0), {
+        Hive.registerAdapter(CachedFortuneAdapter(),;
       }
       
       // Open boxes
@@ -82,11 +82,11 @@ class CacheService {
       
       for (final cachedFortune in _fortuneBox.values) {
         if (cachedFortune.userId == userId && !cachedFortune.isExpired) {
-          fortunes.add(cachedFortune.toFortune());
+          fortunes.add(cachedFortune.toFortune(),;
         }
       }
       
-      fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt),;
       return fortunes;
     } catch (e) {
       Logger.error('Failed to get all cached fortunes', e);
@@ -210,7 +210,7 @@ class CacheService {
       if (currentSize > _maxCacheSize) {
         // Remove oldest entries until size is under limit
         final entries = _fortuneBox.toMap().entries.toList()
-          ..sort((a, b) => a.value.createdAt.compareTo(b.value.createdAt));
+          ..sort((a, b) => a.value.createdAt.compareTo(b.value.createdAt),;
         
         int removedSize = 0;
         final keysToDelete = <dynamic>[];
@@ -254,8 +254,8 @@ class CacheService {
     return {
       'totalCached': totalCached,
       'cacheSize': cacheSize,
-      'cacheSizeMB': (cacheSize / (1024 * 1024)).toStringAsFixed(2),
-      'oldestEntryDate': oldestEntry?.createdAt.toIso8601String(),
+      'cacheSizeMB': (cacheSize / (1024 * 1024).toStringAsFixed(2)
+      'oldestEntryDate': oldestEntry?.createdAt.toIso8601String()
       'isOffline': isOffline,
     };
   }

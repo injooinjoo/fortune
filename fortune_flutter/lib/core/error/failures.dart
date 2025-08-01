@@ -55,7 +55,7 @@ class PermissionFailure extends Failure {
 class RateLimitFailure extends Failure {
   final DateTime? retryAfter;
   
-  const RateLimitFailure(String message, {String? code, this.retryAfter}) 
+  const RateLimitFailure(String message, {String? code, this.retryAfter})
       : super(message, code: code);
   
   @override

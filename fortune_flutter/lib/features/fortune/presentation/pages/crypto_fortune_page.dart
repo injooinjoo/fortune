@@ -8,13 +8,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class CryptoFortunePage extends BaseFortunePage {
-  const CryptoFortunePage({Key? key})
+  const CryptoFortunePage({Key? key},
       : super(
-          key: key,
-          title: '암호화폐 운세',
-          description: '블록체인의 기운을 읽고 현명한 투자 타이밍을 찾아보세요.',
-          fortuneType: 'lucky-crypto',
-          requiresUserInfo: true,
+          key: key)
+          title: '암호화폐 운세')
+          description: '블록체인의 기운을 읽고 현명한 투자 타이밍을 찾아보세요.')
+          fortuneType: 'lucky-crypto')
+          requiresUserInfo: true
         );
 
   @override
@@ -66,7 +66,7 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       'volatility': fortune.score >= 70 ? 'high' : 'medium',
       'riskLevel': fortune.score >= 80 ? 'aggressive' : 'conservative',
       'stopLoss': fortune.score >= 60 ? '5%' : '3%',
-      'takeProfit': fortune.score >= 60 ? '15%' : '8%',
+      'takeProfit': fortune.score >= 60 ? '15%' : '8%')
     };
   }
 
@@ -75,21 +75,21 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildMarketSentimentCard(fortune),
-          const SizedBox(height: 20),
-          _buildMainFortuneCard(fortune),
-          const SizedBox(height: 20),
-          _buildTradingStrategyCard(),
-          const SizedBox(height: 20),
-          _buildMarketAnalysisCard(),
-          const SizedBox(height: 20),
-          _buildRiskManagementCard(),
-          const SizedBox(height: 20),
-          _buildCoinRecommendationCard(),
-        ],
-      ),
+          _buildMarketSentimentCard(fortune))
+          const SizedBox(height: 20))
+          _buildMainFortuneCard(fortune))
+          const SizedBox(height: 20))
+          _buildTradingStrategyCard())
+          const SizedBox(height: 20))
+          _buildMarketAnalysisCard())
+          const SizedBox(height: 20))
+          _buildRiskManagementCard())
+          const SizedBox(height: 20))
+          _buildCoinRecommendationCard())
+        ])
+      )
     );
   }
 
@@ -111,89 +111,89 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+        borderRadius: BorderRadius.circular(16))
+      ))
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topLeft)
+            end: Alignment.bottomRight)
             colors: [
-              sentimentColor.withValues(alpha: 0.2),
-              sentimentColor.withValues(alpha: 0.05),
-            ],
+              sentimentColor.withValues(alpha: 0.2))
+              sentimentColor.withValues(alpha: 0.05))
+            ])
           ),
-          borderRadius: BorderRadius.circular(16),
-        ),
+          borderRadius: BorderRadius.circular(16))
+        ))
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween)
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 const Text(
-                  '오늘의 시장 기운',
+                  '오늘의 시장 기운')
                   style: TextStyle(
-                    fontSize: 16,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                    fontSize: 16)
+                    color: AppTheme.textSecondaryColor)
+                  ))
+                ))
+                const SizedBox(height: 8))
                 Row(
                   children: [
-                    Icon(sentimentIcon, color: sentimentColor, size: 32),
-                    const SizedBox(width: 12),
+                    Icon(sentimentIcon, color: sentimentColor, size: 32))
+                    const SizedBox(width: 12))
                     Text(
-                      sentimentText,
+                      sentimentText)
                       style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: sentimentColor,
-                      ),
-                    ),
-                  ],
+                        fontSize: 28)
+                        fontWeight: FontWeight.bold)
+                        color: sentimentColor)
+                      ))
+                    ))
+                  ])
                 ),
-              ],
+              ])
             ),
             Container(
-              width: 100,
-              height: 100,
+              width: 100)
+              height: 100)
               child: Stack(
-                alignment: Alignment.center,
+                alignment: Alignment.center)
                 children: [
                   CircularProgressIndicator(
-                    value: fortune.score / 100,
-                    strokeWidth: 10,
+                    value: fortune.score / 100)
+                    strokeWidth: 10)
                     backgroundColor: Colors.grey[300],
-                    valueColor: AlwaysStoppedAnimation<Color>(sentimentColor),
-                  ),
+                    valueColor: AlwaysStoppedAnimation<Color>(sentimentColor))
+                  ))
                   Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.min)
                     children: [
                       Text(
-                        '${fortune.score}',
+                        '${fortune.score}')
                         style: TextStyle(
                           fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: sentimentColor,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)
+                          color: sentimentColor)
+                        ))
+                      ))
                       const Text(
-                        '투자지수',
+                        '투자지수')
                         style: TextStyle(
-                          fontSize: 12,
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                      ),
-                    ],
+                          fontSize: 12)
+                          color: AppTheme.textSecondaryColor)
+                        ))
+                      ))
+                    ])
                   ),
-                ],
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ),
-      ),
+      ))
     ).animate()
       .fadeIn(duration: 500.ms)
       .slideX(begin: -0.2, end: 0);
@@ -204,34 +204,34 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
-                Icon(Icons.currency_bitcoin, color: Colors.orange, size: 28),
-                const SizedBox(width: 12),
+                Icon(Icons.currency_bitcoin, color: Colors.orange, size: 28))
+                const SizedBox(width: 12))
                 const Text(
-                  '암호화폐 운세 분석',
+                  '암호화폐 운세 분석')
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 20)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             Text(
-              fortune.message,
+              fortune.message)
               style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildTimingIndicator(),
-          ],
+                fontSize: 16)
+                height: 1.5)
+              ))
+            ))
+            const SizedBox(height: 20))
+            _buildTimingIndicator())
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -243,73 +243,73 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '시간대별 투자 운세',
+          '시간대별 투자 운세')
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
+            fontSize: 14)
+            fontWeight: FontWeight.bold)
+          ))
+        ))
+        const SizedBox(height: 12))
         SizedBox(
-          height: 150,
+          height: 150)
           child: LineChart(
             LineChartData(
-              gridData: FlGridData(show: false),
+              gridData: FlGridData(show: false))
               titlesData: FlTitlesData(
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
-                    showTitles: true,
+                    showTitles: true)
                     getTitlesWidget: (value, meta) {
                       if (value.toInt() < times.length) {
                         return Text(
-                          times[value.toInt()],
-                          style: const TextStyle(fontSize: 10),
+                          times[value.toInt()])
+                          style: const TextStyle(fontSize: 10,
                         );
                       }
                       return const Text('');
                     },
-                  ),
-                ),
+                  ))
+                ))
                 leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
+                  sideTitles: SideTitles(showTitles: false))
+                ))
                 topTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
+                  sideTitles: SideTitles(showTitles: false))
+                ))
                 rightTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
+                  sideTitles: SideTitles(showTitles: false))
+                ))
+              ))
+              borderData: FlBorderData(show: false))
               lineBarsData: [
                 LineChartBarData(
                   spots: values.asMap().entries.map((e) => 
                     FlSpot(e.key.toDouble(), e.value)
-                  ).toList(),
-                  isCurved: true,
-                  color: AppTheme.primaryColor,
-                  barWidth: 3,
+                  ).toList())
+                  isCurved: true)
+                  color: AppTheme.primaryColor)
+                  barWidth: 3)
                   dotData: FlDotData(
-                    show: true,
+                    show: true)
                     getDotPainter: (spot, percent, barData, index) {
                       return FlDotCirclePainter(
-                        radius: 4,
-                        color: AppTheme.primaryColor,
-                        strokeWidth: 2,
-                        strokeColor: Colors.white,
+                        radius: 4)
+                        color: AppTheme.primaryColor)
+                        strokeWidth: 2)
+                        strokeColor: Colors.white)
                       );
-                    },
+                    })
                   ),
                   belowBarData: BarAreaData(
-                    show: true,
-                    color: AppTheme.primaryColor.withValues(alpha: 0.2),
-                  ),
-                ),
-              ],
+                    show: true)
+                    color: AppTheme.primaryColor.withValues(alpha: 0.2))
+                  ))
+                ))
+              ])
             ),
-          ),
-        ),
-      ],
+          ))
+        ))
+      ]
     );
   }
 
@@ -321,56 +321,56 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     return Card(
       color: strategyColor.withValues(alpha: 0.1),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
-                Icon(Icons.psychology, color: strategyColor, size: 24),
-                const SizedBox(width: 8),
+                Icon(Icons.psychology, color: strategyColor, size: 24))
+                const SizedBox(width: 8))
                 const Text(
-                  '추천 전략',
+                  '추천 전략')
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 18)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16))
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: strategyColor, width: 2),
-              ),
+                color: Colors.white)
+                borderRadius: BorderRadius.circular(12))
+                border: Border.all(color: strategyColor, width: 2))
+              ))
               child: Column(
                 children: [
                   Text(
-                    _tradingStrategy,
+                    _tradingStrategy)
                     style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: strategyColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                      fontSize: 24)
+                      fontWeight: FontWeight.bold)
+                      color: strategyColor)
+                    ))
+                  ))
+                  const SizedBox(height: 8))
                   Text(
-                    _getStrategyDescription(),
+                    _getStrategyDescription())
                     style: const TextStyle(
-                      fontSize: 14,
-                      height: 1.4,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                      fontSize: 14)
+                      height: 1.4)
+                    ))
+                    textAlign: TextAlign.center)
+                  ))
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -402,76 +402,76 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
-                Icon(Icons.analytics, color: Colors.purple, size: 24),
-                const SizedBox(width: 8),
+                Icon(Icons.analytics, color: Colors.purple, size: 24))
+                const SizedBox(width: 8))
                 const Text(
-                  '시장 분석',
+                  '시장 분석')
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 18)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             // Fear & Greed Index
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 const Text(
-                  '공포 & 탐욕 지수',
+                  '공포 & 탐욕 지수')
                   style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                    fontSize: 14)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+                const SizedBox(height: 8))
                 Row(
                   children: [
                     Expanded(
                       child: LinearProgressIndicator(
-                        value: fearGreedIndex / 100,
+                        value: fearGreedIndex / 100)
                         backgroundColor: Colors.grey[300],
-                        valueColor: AlwaysStoppedAnimation<Color>(indexColor),
-                        minHeight: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                        valueColor: AlwaysStoppedAnimation<Color>(indexColor))
+                        minHeight: 20)
+                      ))
+                    ))
+                    const SizedBox(width: 12))
                     Text(
-                      '$fearGreedIndex',
+                      '$fearGreedIndex')
                       style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: indexColor,
-                      ),
-                    ),
-                  ],
+                        fontSize: 20)
+                        fontWeight: FontWeight.bold)
+                        color: indexColor)
+                      ))
+                    ))
+                  ])
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 4))
                 Text(
-                  _getFearGreedText(fearGreedIndex),
+                  _getFearGreedText(fearGreedIndex))
                   style: TextStyle(
-                    fontSize: 12,
-                    color: indexColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 12)
+                    color: indexColor)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 20))
             // Major coins
             if (_marketData!['bitcoin'] != null) ...[
               _buildCoinInfo('Bitcoin', _marketData!['bitcoin']),
-              const SizedBox(height: 12),
-              _buildCoinInfo('Ethereum', _marketData!['ethereum']),
+              const SizedBox(height: 12))
+              _buildCoinInfo('Ethereum', _marketData!['ethereum']))
             ],
-          ],
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -491,46 +491,46 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
+        borderRadius: BorderRadius.circular(8))
+      ))
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween)
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Text(
-                coin,
+                coin)
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
               Text(
                 '${(data['price'] / 1000000).toStringAsFixed(1)}M KRW',
                 style: const TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.textSecondaryColor,
-                ),
-              ),
-            ],
+                  fontSize: 12)
+                  color: AppTheme.textSecondaryColor)
+                ))
+              ))
+            ])
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4))
             decoration: BoxDecoration(
-              color: changeColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
+              color: changeColor.withValues(alpha: 0.2))
+              borderRadius: BorderRadius.circular(12))
+            ))
             child: Text(
               '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}%',
               style: TextStyle(
-                color: changeColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ],
-      ),
+                color: changeColor)
+                fontWeight: FontWeight.bold)
+                fontSize: 12)
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -538,58 +538,58 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
     return Card(
       color: Colors.red.withValues(alpha: 0.05),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
-                Icon(Icons.shield, color: Colors.red, size: 24),
-                const SizedBox(width: 8),
+                Icon(Icons.shield, color: Colors.red, size: 24))
+                const SizedBox(width: 8))
                 const Text(
-                  '리스크 관리',
+                  '리스크 관리')
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 18)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             _buildRiskItem('변동성', _riskAnalysis['volatility'] ?? 'medium'),
-            const SizedBox(height: 12),
+            const SizedBox(height: 12))
             _buildRiskItem('리스크 수준', _riskAnalysis['riskLevel'] ?? 'conservative'),
-            const SizedBox(height: 12),
+            const SizedBox(height: 12))
             _buildRiskItem('손절선', _riskAnalysis['stopLoss'] ?? '5%'),
-            const SizedBox(height: 12),
+            const SizedBox(height: 12))
             _buildRiskItem('목표 수익', _riskAnalysis['takeProfit'] ?? '10%'),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12))
               decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.red),
-              ),
+                color: Colors.red.withValues(alpha: 0.1))
+                borderRadius: BorderRadius.circular(8))
+                border: Border.all(color: Colors.red))
+              ))
               child: Row(
                 children: [
-                  Icon(Icons.warning, color: Colors.red, size: 20),
-                  const SizedBox(width: 8),
+                  Icon(Icons.warning, color: Colors.red, size: 20))
+                  const SizedBox(width: 8))
                   const Expanded(
                     child: Text(
-                      '투자는 항상 리스크가 있습니다. 여유 자금으로 투자하세요.',
+                      '투자는 항상 리스크가 있습니다. 여유 자금으로 투자하세요.')
                       style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                        fontSize: 12)
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                  ))
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
@@ -598,27 +598,27 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          label,
+          label)
           style: const TextStyle(
-            fontSize: 14,
-            color: AppTheme.textSecondaryColor,
-          ),
-        ),
+            fontSize: 14)
+            color: AppTheme.textSecondaryColor)
+          ))
+        ))
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4))
           decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
+            color: Colors.red.withValues(alpha: 0.1))
+            borderRadius: BorderRadius.circular(12))
+          ))
           child: Text(
-            value,
+            value)
             style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+              fontSize: 14)
+              fontWeight: FontWeight.bold)
+            ))
+          ))
+        ))
+      ]
     );
   }
 
@@ -629,58 +629,58 @@ class _CryptoFortunePageState extends BaseFortunePageState<CryptoFortunePage> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Row(
               children: [
-                Icon(Icons.recommend, color: Colors.blue, size: 24),
-                const SizedBox(width: 8),
+                Icon(Icons.recommend, color: Colors.blue, size: 24))
+                const SizedBox(width: 8))
                 const Text(
-                  '추천 코인',
+                  '추천 코인')
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    fontSize: 18)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16))
             Wrap(
-              spacing: 12,
-              runSpacing: 12,
+              spacing: 12)
+              runSpacing: 12)
               children: _recommendedCoins.map((coin) => 
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8))
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppTheme.primaryColor.withValues(alpha: 0.8),
-                        AppTheme.primaryColor.withValues(alpha: 0.6),
-                      ],
+                        AppTheme.primaryColor.withValues(alpha: 0.8))
+                        AppTheme.primaryColor.withValues(alpha: 0.6))
+                      ])
                     ),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(20))
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryColor.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
+                        color: AppTheme.primaryColor.withValues(alpha: 0.3))
+                        blurRadius: 8)
+                        offset: const Offset(0, 2))
+                      ))
+                    ])
                   ),
                   child: Text(
-                    coin,
+                    coin)
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
+                      color: Colors.white)
+                      fontWeight: FontWeight.bold)
+                      fontSize: 16)
+                    ))
+                  ))
                 )
-              ).toList(),
-            ),
-          ],
+              ).toList())
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 }

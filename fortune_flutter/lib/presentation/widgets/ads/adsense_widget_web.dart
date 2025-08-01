@@ -1,9 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'dart:html' as html;
 import 'dart:ui_web' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../../../core/config/environment.dart';
 import '../../../core/utils/logger.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Widget to display Google AdSense ads on Flutter Web
 class AdSenseWidget extends StatefulWidget {
@@ -21,8 +24,8 @@ class AdSenseWidget extends StatefulWidget {
     this.width,
     this.height,
     this.fullWidthResponsive = true,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
-  });
+    this.padding = AppSpacing.paddingVertical8,
+  }));
 
   @override
   State<AdSenseWidget> createState() => _AdSenseWidgetState();
@@ -87,7 +90,7 @@ class _AdSenseWidgetState extends State<AdSenseWidget> {
       );
 
       // Push the ad after a delay
-      Future.delayed(const Duration(milliseconds: 100), () {
+      Future.delayed(AppAnimations.durationMicro, () {
         try {
           final script = html.ScriptElement()
             ..text = '(adsbygoogle = window.adsbygoogle || []).push({});';
@@ -144,8 +147,8 @@ class AdSenseBanner extends StatelessWidget {
   const AdSenseBanner({
     super.key,
     this.size = AdSenseBannerSize.responsive,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
-  });
+    this.padding = AppSpacing.paddingVertical8,
+  }));
 
   @override
   Widget build(BuildContext context) {

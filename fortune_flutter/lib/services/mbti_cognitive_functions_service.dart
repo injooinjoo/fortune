@@ -3,13 +3,13 @@ import 'dart:math' as math;
 class MbtiCognitiveFunctionsService {
   // 8가지 인지기능
   static const List<String> cognitiveFunctions = [
-    'Te', // Extraverted Thinking (외향 사고)
-    'Ti', // Introverted Thinking (내향 사고)
-    'Fe', // Extraverted Feeling (외향 감정)
-    'Fi', // Introverted Feeling (내향 감정)
-    'Ne', // Extraverted Intuition (외향 직관)
-    'Ni', // Introverted Intuition (내향 직관)
-    'Se', // Extraverted Sensing (외향 감각)
+    'Te', // Extraverted Thinking (외향 사고,
+    'Ti', // Introverted Thinking (내향 사고,
+    'Fe', // Extraverted Feeling (외향 감정,
+    'Fi', // Introverted Feeling (내향 감정,
+    'Ne', // Extraverted Intuition (외향 직관,
+    'Ni', // Introverted Intuition (내향 직관,
+    'Se', // Extraverted Sensing (외향 감각,
     'Si', // Introverted Sensing (내향 감각)
   ];
 

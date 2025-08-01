@@ -6,13 +6,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../presentation/providers/auth_provider.dart';
 
 class LuckyColorFortunePage extends BaseFortunePage {
-  const LuckyColorFortunePage({Key? key})
+  const LuckyColorFortunePage({Key? key},
       : super(
           key: key,
           title: '행운의 색깔',
           description: '오늘 당신에게 행운을 가져다줄 색깔을 확인해보세요',
           fortuneType: 'lucky-color',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -111,7 +111,7 @@ class _LuckyColorFortunePageState extends BaseFortunePageState<LuckyColorFortune
     final secondaryColor = colorKeys[secondaryIndex];
     final secondaryColorInfo = _colorMeanings[secondaryColor]!;
     
-    // Avoid color (opposite energy)
+    // Avoid color (opposite energy,
     final avoidIndex = (primaryIndex + colorKeys.length ~/ 2) % colorKeys.length;
     final avoidColor = colorKeys[avoidIndex];
 
@@ -166,7 +166,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
         'avoidColor': avoidColor,
         'colorMeanings': _colorMeanings,
         'colorHarmony': _calculateColorHarmony(primaryColor, secondaryColor),
-      },
+      }
     );
   }
 
@@ -241,7 +241,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
           _buildColorTips(),
           const SizedBox(height: 32),
         ],
-      ),
+      ,
     );
   }
 
@@ -302,7 +302,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -347,7 +347,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             fontWeight: isPrimary ? FontWeight.bold : FontWeight.normal,
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -407,7 +407,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -479,7 +479,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -563,10 +563,10 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
                                 color: colorInfo['color'] as Color,
                                 fontWeight: FontWeight.w600,
                               ),
-                            ),
+                            ,
                           );
                         }).toList(),
-                      )
+                      ,
                     else if (harmonyColors is String)
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -591,7 +591,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             }).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -643,7 +643,7 @@ ${secondaryColorInfo['meaning']}의 에너지가 당신을 도와줄 것입니�
             );
           }).toList(),
         ],
-      ),
+      ,
     );
   }
 }

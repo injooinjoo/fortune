@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/fortune_card_images.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class TarotFortuneListCard extends ConsumerStatefulWidget {
   final String title;
@@ -47,20 +51,20 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-  }
+}
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
-  }
+}
 
   Widget _buildTarotCardDisplay() {
     return Stack(
       children: [
         // Use the actual tarot image
         ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppDimensions.borderRadiusLarge,
           child: Image.asset(
             FortuneCardImages.getImagePath('tarot'),
             fit: BoxFit.cover,
@@ -70,34 +74,31 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               // Fallback to gradient container if image fails
               return Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppDimensions.borderRadiusLarge,
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      const Color(0xFF2D1B69),
-                      const Color(0xFF0F0C29),
+                      FortuneColors.tarotDark,
+                      FortuneColors.tarotDarkest,
                     ],
                   ),
-                ),
                 child: Center(
                   child: Icon(
                     Icons.style_rounded,
                     size: 60,
                     color: Colors.white.withValues(alpha: 0.5),
-                  ),
-                ),
+                
               );
-            },
+},
           ),
-        ),
         // Animated glow effect
         AnimatedBuilder(
           animation: _glowAnimation,
           builder: (context, child) {
             return Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: AppDimensions.borderRadiusLarge,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.purpleAccent.withValues(alpha: 0.3 * _glowAnimation.value),
@@ -105,20 +106,19 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                     spreadRadius: 5,
                   ),
                 ],
-              ),
+              
             );
-          },
+},
         ),
         // Premium badge
-        if (widget.isPremium)
-          Positioned(
+        if (widget.isPremium), Positioned(
             top: 12,
             right: 12,
             child: Container(
-              padding: const EdgeInsets.all(8),
+              padding: AppSpacing.paddingAll8,
               decoration: BoxDecoration(
                 color: Colors.amber.withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.amber.withValues(alpha: 0.5),
@@ -132,7 +132,6 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 size: 20,
                 color: Colors.white,
               ),
-            ),
           ),
         // Title overlay
         Positioned(
@@ -140,12 +139,11 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           left: 0,
           right: 0,
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
-              ),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -155,35 +153,28 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                   Colors.black.withValues(alpha: 0.9),
                 ],
               ),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white),
                     fontWeight: FontWeight.bold,
                   ),
-                ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   widget.description,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 14,
-                  ),
-                  maxLines: 2,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.8, maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-          ),
         ),
-      ],
+      ]
     );
-  }
+}
 
 
   Widget _buildActionButtons() {
@@ -195,20 +186,18 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           onPressed: () {
             setState(() {
               isFavorite = !isFavorite;
-            });
-          },
+});
+},
           icon: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
+            duration: AppAnimations.durationMedium,
             child: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
               key: ValueKey(isFavorite),
               color: isFavorite ? Colors.red : theme.colorScheme.onSurface,
             ),
-          ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
-        ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.spacing4),
         IconButton(
           onPressed: widget.onTap,
           icon: Icon(
@@ -217,8 +206,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
-        ),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.spacing4),
         IconButton(
           onPressed: _handleShare,
           icon: Icon(
@@ -227,21 +215,20 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
           ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
-        ),
         const Spacer(),
         // Soul cost badge
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: widget.soulCost == 0
                   ? [Colors.green, Colors.teal]
-                  : [const Color(0xFF6B46C1), const Color(0xFF4C1D95)],
+                  : [FortuneColors.spiritualPrimary, FortuneColors.spiritualDark],
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppDimensions.borderRadiusLarge,
             boxShadow: [
               BoxShadow(
-                color: (widget.soulCost == 0 ? Colors.green : const Color(0xFF6B46C1))
+                color: (widget.soulCost == 0 ? Colors.green : FortuneColors.spiritualPrimary,
                     .withValues(alpha: 0.3),
                 blurRadius: 8,
                 spreadRadius: 1,
@@ -256,21 +243,18 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                 size: 14,
                 color: Colors.white,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: AppSpacing.spacing1),
               Text(
                 widget.soulCost == 0 ? '무료' : '${widget.soulCost}소울',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.white),
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
             ],
           ),
-        ),
       ],
     );
-  }
+}
 
   void _handleShare() async {
     try {
@@ -278,16 +262,14 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
         '${widget.title} 타로 운세 🔮\n'
         '${widget.description}\n\n'
         '포춘 앱에서 나만의 타로 운세를 확인해보세요!',
-        subject: widget.title,
-      );
-    } catch (e) {
+        subject: widget.title);
+} catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('공유하기 실패')),
-        );
-      }
-    }
-  }
+          const SnackBar(content: Text('공유하기 실패'));
+}
+    },
+}
 
   @override
   Widget build(BuildContext context) {
@@ -296,7 +278,7 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
+        margin: const EdgeInsets.only(bottom: AppSpacing.spacing5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -306,17 +288,16 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
               child: AspectRatio(
                 aspectRatio: 1.0,
                 child: _buildTarotCardDisplay(),
-              ),
             ),
             // Content section
             Container(
               color: theme.scaffoldBackgroundColor,
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingAll16,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildActionButtons(),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.spacing3),
                   // Hashtags
                   Wrap(
                     spacing: 8,
@@ -327,19 +308,14 @@ class _TarotFortuneListCardState extends ConsumerState<TarotFortuneListCard>
                     ].map((tag) => Text(
                       tag,
                       style: TextStyle(
-                        color: const Color(0xFF6B46C1),
-                        fontSize: 13,
+                        color: FortuneColors.spiritualPrimary),
+                        fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
                         fontWeight: FontWeight.w500,
-                      ),
-                    )).toList(),
-                  ),
+                      ))).toList(),
                 ],
               ),
-            ),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 }
 

@@ -15,7 +15,7 @@ class PaymentCardInput extends StatefulWidget {
     super.key,
     required this.onCardDetailsComplete,
     this.showSaveCard = false,
-    this.onSaveCardToggle,
+    this.onSaveCardToggle)
     this.saveCardValue = false,
   });
 
@@ -68,106 +68,106 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '카드 정보',
+          '카드 정보')
           style: AppTextStyles.headlineSmall.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold))
+          ))
+        ))
+        const SizedBox(height: 16))
         CustomCard(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16))
             child: Column(
               children: [
                 // Stripe 카드 입력 폼
                 if (kIsWeb) ...[
                   // Web platform placeholder
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16))
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.divider),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      border: Border.all(color: AppColors.divider))
+                      borderRadius: BorderRadius.circular(12))
+                    ))
                     child: Column(
                       children: [
                         Icon(
-                          Icons.credit_card,
-                          size: 48,
-                          color: AppColors.textSecondary,
-                        ),
-                        const SizedBox(height: 16),
+                          Icons.credit_card)
+                          size: 48)
+                          color: AppColors.textSecondary)
+                        ))
+                        const SizedBox(height: 16))
                         Text(
-                          '웹 브라우저에서는 결제가 지원되지 않습니다.',
+                          '웹 브라우저에서는 결제가 지원되지 않습니다.')
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
+                            color: AppColors.textSecondary))
+                          ))
+                          textAlign: TextAlign.center)
+                        ))
+                        const SizedBox(height: 8))
                         Text(
-                          '모바일 앱을 이용해주세요.',
+                          '모바일 앱을 이용해주세요.')
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                            color: AppColors.textSecondary))
+                          ))
+                          textAlign: TextAlign.center)
+                        ))
+                      ])
                     ),
-                  ),
+                  ))
                 ] else ...[
                   CardFormField(
                     controller: _controller!,
                     style: CardFormStyle(
-                      backgroundColor: AppColors.surface,
-                      borderColor: AppColors.divider,
-                      borderWidth: 1,
-                      borderRadius: 12,
-                      cursorColor: AppColors.primary,
-                      textColor: AppColors.textPrimary,
-                      placeholderColor: AppColors.textSecondary,
-                      fontSize: 16,
-                      fontFamily: 'Pretendard',
-                    ),
-                    enablePostalCode: false,
-                    autofocus: true,
-                    dangerouslyGetFullCardDetails: true,
-                  ),
-                ],
+                      backgroundColor: AppColors.surface)
+                      borderColor: AppColors.divider)
+                      borderWidth: 1)
+                      borderRadius: 12)
+                      cursorColor: AppColors.primary)
+                      textColor: AppColors.textPrimary)
+                      placeholderColor: AppColors.textSecondary)
+                      fontSize: 16)
+                      fontFamily: 'Pretendard')
+                    ))
+                    enablePostalCode: false)
+                    autofocus: true)
+                    dangerouslyGetFullCardDetails: true)
+                  ))
+                ])
                 
                 if (widget.showSaveCard) ...[
                   const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 8),
+                  const Divider())
+                  const SizedBox(height: 8))
                   Row(
                     children: [
                       Checkbox(
-                        value: widget.saveCardValue,
-                        onChanged: (_) => widget.onSaveCardToggle?.call(),
-                        activeColor: AppColors.primary,
+                        value: widget.saveCardValue)
+                        onChanged: (_) => widget.onSaveCardToggle?.call())
+                        activeColor: AppColors.primary)
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
+                          borderRadius: BorderRadius.circular(4))
+                        ))
+                      ))
+                      const SizedBox(width: 8))
                       Expanded(
                         child: Text(
-                          '다음 결제를 위해 카드 정보 저장',
-                          style: AppTextStyles.bodyMedium,
-                        ),
-                      ),
-                    ],
+                          '다음 결제를 위해 카드 정보 저장')
+                          style: AppTextStyles.bodyMedium))
+                        ))
+                      ))
+                    ])
                   ),
-                ],
+                ])
               ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildSecurityInfo(),
+            ))
+          ))
+        ))
+        const SizedBox(height: 16))
+        _buildSecurityInfo())
         if (!_isComplete) ...[
-          const SizedBox(height: 16),
-          _buildHelpText(),
-        ],
+          const SizedBox(height: 16))
+          _buildHelpText())
+        ])
       ],
     );
   }
@@ -176,26 +176,26 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
+        color: AppColors.info.withValues(alpha: 0.1))
+        borderRadius: BorderRadius.circular(8))
+      ))
       child: Row(
         children: [
           Icon(
-            Icons.security,
-            size: 20,
-            color: AppColors.info,
-          ),
-          const SizedBox(width: 8),
+            Icons.security)
+            size: 20)
+            color: AppColors.info)
+          ))
+          const SizedBox(width: 8))
           Expanded(
             child: Text(
-              'PCI DSS 준수 보안 결제',
+              'PCI DSS 준수 보안 결제')
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.info,
-              ),
-            ),
-          ),
-        ],
+                color: AppColors.info))
+              ))
+            ))
+          ))
+        ])
       ),
     );
   }
@@ -205,20 +205,20 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildHelpItem(
-          icon: Icons.credit_card,
-          text: '카드번호 16자리를 입력해주세요',
-        ),
-        const SizedBox(height: 8),
+          icon: Icons.credit_card)
+          text: '카드번호 16자리를 입력해주세요')
+        ))
+        const SizedBox(height: 8))
         _buildHelpItem(
-          icon: Icons.calendar_today,
-          text: '유효기간은 MM/YY 형식으로 입력해주세요',
-        ),
-        const SizedBox(height: 8),
+          icon: Icons.calendar_today)
+          text: '유효기간은 MM/YY 형식으로 입력해주세요')
+        ))
+        const SizedBox(height: 8))
         _buildHelpItem(
-          icon: Icons.lock_outline,
-          text: 'CVC는 카드 뒷면의 3자리 숫자입니다',
-        ),
-      ],
+          icon: Icons.lock_outline)
+          text: 'CVC는 카드 뒷면의 3자리 숫자입니다')
+        ))
+      ]
     );
   }
 
@@ -230,17 +230,17 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
       children: [
         Icon(
           icon,
-          size: 16,
-          color: AppColors.textSecondary,
-        ),
-        const SizedBox(width: 8),
+          size: 16)
+          color: AppColors.textSecondary)
+        ))
+        const SizedBox(width: 8))
         Text(
-          text,
+          text)
           style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
+            color: AppColors.textSecondary))
+          ))
+        ))
+      ]
     );
   }
 }

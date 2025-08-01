@@ -30,24 +30,24 @@ class SavedCardsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '저장된 결제 수단',
+          '저장된 결제 수단')
           style: AppTextStyles.headlineSmall.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
+            fontWeight: FontWeight.bold))
+          ))
+        ))
+        const SizedBox(height: 16))
         ...paymentMethods.asMap().entries.map((entry) {
           final index = entry.key;
           final paymentMethod = entry.value;
           return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: 12))
             child: _buildPaymentMethodCard(
-              context,
-              paymentMethod,
-              index,
-            ),
+              context)
+              paymentMethod)
+              index)
+            ))
           );
-        }).toList(),
+        }).toList())
       ],
     );
   }
@@ -56,29 +56,29 @@ class SavedCardsList extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surface)
+        borderRadius: BorderRadius.circular(12))
         border: Border.all(
-          color: AppColors.divider,
-          style: BorderStyle.solid,
-        ),
-      ),
+          color: AppColors.divider)
+          style: BorderStyle.solid)
+        ))
+      ))
       child: Column(
         children: [
           Icon(
-            Icons.credit_card_off,
-            size: 48,
-            color: AppColors.textSecondary,
-          ),
-          const SizedBox(height: 12),
+            Icons.credit_card_off)
+            size: 48)
+            color: AppColors.textSecondary)
+          ))
+          const SizedBox(height: 12))
           Text(
-            '저장된 결제 수단이 없습니다',
+            '저장된 결제 수단이 없습니다')
             style: AppTextStyles.bodyLarge.copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
+              color: AppColors.textSecondary))
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -97,112 +97,112 @@ class SavedCardsList extends StatelessWidget {
       onTap: () {
         HapticUtils.lightImpact();
         onSelectPaymentMethod(paymentMethod.id);
-      },
+      })
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12))
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.divider,
-            width: isSelected ? 2 : 1,
-          ),
+            color: isSelected ? AppColors.primary : AppColors.divider)
+            width: isSelected ? 2 : 1)
+          ))
           color: isSelected 
               ? AppColors.primary.withValues(alpha: 0.05) 
-              : AppColors.surface,
-        ),
+              : AppColors.surface)
+        ))
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16))
           child: Row(
             children: [
               // 선택 인디케이터
               Container(
-                width: 24,
-                height: 24,
+                width: 24)
+                height: 24)
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
+                  shape: BoxShape.circle)
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                    width: 2,
-                  ),
-                  color: isSelected ? AppColors.primary : Colors.transparent,
-                ),
+                    color: isSelected ? AppColors.primary : AppColors.textSecondary)
+                    width: 2)
+                  ))
+                  color: isSelected ? AppColors.primary : Colors.transparent)
+                ))
                 child: isSelected
                     ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Colors.white,
+                        Icons.check)
+                        size: 16)
+                        color: Colors.white)
                       )
-                    : null,
-              ),
-              const SizedBox(width: 16),
+                    : null)
+              ))
+              const SizedBox(width: 16))
               
               // 카드 브랜드 아이콘
               Icon(
-                cardBrand,
-                size: 32,
-                color: AppColors.textPrimary,
-              ),
-              const SizedBox(width: 12),
+                cardBrand)
+                size: 32)
+                color: AppColors.textPrimary)
+              ))
+              const SizedBox(width: 12))
               
               // 카드 정보
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start)
                   children: [
                     Text(
-                      _getCardBrandName(card.brand ?? ''),
+                      _getCardBrandName(card.brand ?? ''))
                       style: AppTextStyles.bodyLarge.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+                        fontWeight: FontWeight.bold))
+                      ))
+                    ))
+                    const SizedBox(height: 4))
                     Text(
-                      '•••• ${card.last4}',
+                      '•••• ${card.last4}')
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+                        color: AppColors.textSecondary),
+                      ))
+                    ))
+                  ])
                 ),
-              ),
+              ))
               
               // 만료일
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end)
                 children: [
                   Text(
-                    '만료일',
+                    '만료일')
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
+                      color: AppColors.textSecondary))
+                    ))
+                  ))
                   Text(
-                    '${card.expMonth?.toString().padLeft(2, '0')}/${card.expYear?.toString().substring(2)}',
+                    '${card.expMonth?.toString().padLeft(2, '0')}/${card.expYear?.toString().substring(2)}')
                     style: AppTextStyles.bodyMedium,
-                  ),
-                ],
+                  ))
+                ])
               ),
               
               // 삭제 버튼
               if (onDeletePaymentMethod != null) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 8))
                 IconButton(
                   icon: Icon(
-                    Icons.delete_outline,
-                    color: AppColors.error,
-                    size: 20,
-                  ),
+                    Icons.delete_outline)
+                    color: AppColors.error)
+                    size: 20)
+                  ))
                   onPressed: () => _showDeleteConfirmation(
-                    context,
-                    paymentMethod.id,
-                    card.last4 ?? '',
-                  ),
-                ),
-              ],
+                    context)
+                    paymentMethod.id)
+                    card.last4 ?? '')
+                  ))
+                ))
+              ])
             ],
-          ),
-        ),
-      ),
+          ))
+        ))
+      ))
     ).animate(delay: (index * 100).ms).fadeIn().slideX();
   }
 
@@ -250,27 +250,27 @@ class SavedCardsList extends StatelessWidget {
     String last4,
   ) {
     showDialog(
-      context: context,
+      context: context)
       builder: (context) => AlertDialog(
-        title: const Text('카드 삭제'),
-        content: Text('•••• $last4 카드를 삭제하시겠습니까?'),
+        title: const Text('카드 삭제'))
+        content: Text('•••• $last4 카드를 삭제하시겠습니까?'))
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
-          ),
+            onPressed: () => Navigator.of(context).pop())
+            child: const Text('취소'))
+          ))
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               onDeletePaymentMethod?.call(paymentMethodId);
-            },
+            })
             style: TextButton.styleFrom(
               foregroundColor: AppColors.error,
-            ),
-            child: const Text('삭제'),
-          ),
-        ],
-      ),
+            ))
+            child: const Text('삭제'))
+          ))
+        ])
+      )
     );
   }
 }

@@ -18,7 +18,7 @@ class BloodTypeFortunePage extends BaseFortunePage {
           description: '혈액형별 성격과 오늘의 운세를 확인해보세요',
           fortuneType: 'blood-type',
           requiresUserInfo: false,
-          initialParams: initialParams,
+          initialParams: initialParams
         );
 
   @override
@@ -67,7 +67,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -189,7 +189,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -245,7 +245,7 @@ class _BloodTypeFortunePageState extends BaseFortunePageState<BloodTypeFortunePa
         _buildEnhancedPersonalityAnalysis(),
         _buildEnhancedCompatibilitySection(),
         _buildBloodTypeTips(),
-      ],
+      ]
     );
   }
 

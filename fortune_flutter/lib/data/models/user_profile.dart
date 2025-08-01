@@ -71,7 +71,7 @@ class UserProfile extends Equatable {
       testAccountFeatures: json['test_account_features'] as Map<String, dynamic>?,
       fortunePreferences: json['fortune_preferences'] != null
           ? FortunePreferences.fromJson(json['fortune_preferences'] as Map<String, dynamic>)
-          : null,
+          : null
     );
   }
 
@@ -247,7 +247,7 @@ class FortunePreferences extends Equatable {
       preferredHour: json['preferred_hour'] as int?,
       languagePreference: json['language_preference'] as String? ?? 'ko',
       showTrending: json['show_trending'] as bool? ?? true,
-      showPersonalized: json['show_personalized'] as bool? ?? true,
+      showPersonalized: json['show_personalized'] as bool? ?? true
     );
   }
 
@@ -306,7 +306,7 @@ class FortunePreferences extends Equatable {
     return copyWith(
       visitedFortunes: newVisitedFortunes,
       lastVisited: newLastVisited,
-      categoryWeights: newCategoryWeights,
+      categoryWeights: newCategoryWeights
     );
   }
 

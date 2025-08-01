@@ -1,38 +1,44 @@
 // This modal is used for premium features that require souls
 // Premium fortunes consume souls while regular fortunes give souls
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../glassmorphism/glass_container.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../domain/entities/token.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class TokenInsufficientModal extends ConsumerStatefulWidget {
   final int requiredTokens;
   final String fortuneType;
 
-  const TokenInsufficientModal({
+  const TokenInsufficientModal(
+    {
     Key? key,
     required this.requiredTokens,
     required this.fortuneType,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   ConsumerState<TokenInsufficientModal> createState() => _TokenInsufficientModalState();
 
-  static Future<bool> show({
+  static Future<bool> show(
+    {
     required BuildContext context,
     required int requiredTokens,
     required String fortuneType,
-  }) async {
+  )}) async {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => TokenInsufficientModal(
-        requiredTokens: requiredTokens,
-        fortuneType: fortuneType,
-      ),
-    );
+      builder: (context) => TokenInsufficientModal(,
+      requiredTokens: requiredTokens,
+        fortuneType: fortuneType)
+      ))
     return result ?? false;
   }
 }
@@ -47,23 +53,21 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
+      vsync: this),
+        duration: AppAnimations.medium
     );
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
-    ));
+      end: 1.0)).animate(CurvedAnimation(,
+      parent: _animationController),
+        curve: Curves.easeOutBack)
+    )
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+      end: 1.0)).animate(CurvedAnimation(,
+      parent: _animationController),
+        curve: Curves.easeIn)
+    )
     _animationController.forward();
   }
 
@@ -81,281 +85,251 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
 
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Dialog(
-          backgroundColor: Colors.transparent,
-          child: GlassContainer(
-            width: MediaQuery.of(context).size.width * 0.9 > 400 
+      child: ScaleTransition(,
+      scale: _scaleAnimation,
+        child: Dialog(,
+      backgroundColor: Colors.transparent),
+        child: GlassContainer(,
+      width: MediaQuery.of(context).size.width * 0.9 > 400 
                 ? 400 
                 : MediaQuery.of(context).size.width * 0.9,
-            padding: const EdgeInsets.all(24),
-            borderRadius: BorderRadius.circular(20),
+            padding: AppSpacing.paddingAll24,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
             blur: 20,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Column(,
+      mainAxisSize: MainAxisSize.min,
               children: [
                 // Icon
                 Container(
                   width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: theme.colorScheme.error.withValues(alpha: 0.2),
-                  ),
-                  child: Icon(
+                  height: AppSpacing.spacing20,
+                  decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+        ),
+        color: theme.colorScheme.error.withValues(alp,
+      ha: 0.2),
+      child: Icon(
                     Icons.auto_awesome_outlined,
                     size: 40,
-                    color: theme.colorScheme.error,
-                  ),
-                ),
-                const SizedBox(height: 16),
+                    color: theme.colorScheme.error)
+                  ))
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Title
                 Text(
                   '영혼이 부족합니다',
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
+              ),
+              style: theme.textTheme.headlineSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          )))
+                SizedBox(height: AppSpacing.spacing2),
                 
                 // Description
                 Text(
                   '이 프리미엄 운세를 보려면 ${widget.requiredTokens}개의 영혼이 필요합니다.',
                   style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
+                  textAlign: TextAlign.center)
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Current Balance
                 Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: theme.colorScheme.surface.withValues(alp,
+      ha: 0.5),
+                    borderRadius: AppDimensions.borderRadiusMedium),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildTokenInfo(
                         label: '보유 영혼',
                         value: '$remainingTokens개',
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary)
                       Container(
                         width: 1,
-                        height: 40,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                      ),
+                        height: AppDimensions.buttonHeightSmall,
+        ),
+        color: theme.colorScheme.onSurface.withValues(alph,
+      a: 0.2))
                       _buildTokenInfo(
                         label: '필요 영혼',
                         value: '${widget.requiredTokens}개',
-                        color: theme.colorScheme.error,
-                      ),
+                        color: theme.colorScheme.error)
                       Container(
                         width: 1,
-                        height: 40,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                      ),
+                        height: AppDimensions.buttonHeightSmall),
+              color: theme.colorScheme.onSurface.withValues(alph,
+      a: 0.2))
                       _buildTokenInfo(
-                        label: '부족',
-                        value: (widget.requiredTokens - remainingTokens).toString(),
-                        color: theme.colorScheme.error,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
+                        label: '부족'),
+        value: (widget.requiredTokens - remainingTokens).toString(),
+                        color: theme.colorScheme.error)
+                    ])))
+                SizedBox(height: AppSpacing.spacing6),
                 
                 // Options
                 Text(
                   '영혼을 얻으시겠습니까?',
-                  style: theme.textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 16),
+                  style: theme.textTheme.bodyLarge)
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Action Buttons
                 Row(
                   children: [
                     Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.shopping_cart_rounded,
+                      child: _buildActionButton(,
+      icon: Icons.shopping_cart_rounded,
                         label: '영혼 상점',
-                        color: theme.colorScheme.primary,
-                        onTap: () {
+                        color: theme.colorScheme.primary),
+        onTap: () {
                           context.pop();
                           context.push('/payment/tokens');
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
+                        })))
+                    SizedBox(width: AppSpacing.spacing3),
                     Expanded(
-                      child: _buildActionButton(
-                        icon: Icons.card_giftcard_rounded,
+                      child: _buildActionButton(,
+      icon: Icons.card_giftcard_rounded,
                         label: '무료 영혼',
-                        color: Colors.green,
-                        onTap: () async {
+                        color: AppColors.success),
+        onTap: () async {
                           final result = await ref.read(tokenProvider.notifier).claimDailyTokens();
                           if (result && mounted) {
                             Navigator.of(context).pop(true);
                           } else if (mounted) {
                             _showClaimError();
                           }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
+                        })))
+                  ])
+                SizedBox(height: AppSpacing.spacing3),
                 
                 // Subscription Option
                 Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                  decoration: BoxDecoration(,
+      gradient: LinearGradient(
                       colors: [
                         theme.colorScheme.secondary.withValues(alpha: 0.2),
                         theme.colorScheme.primary.withValues(alpha: 0.2),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                    ),
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
+                      ])
+                    borderRadius: AppDimensions.borderRadiusMedium,
+                    border: Border.all(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.5))),
+      child: Material(,
+      color: Colors.transparent,
+        ),
+        child: InkWell(,
+      onTap: () {
                         context.pop();
                         context.push('/subscription');
-                      },
-                      borderRadius: BorderRadius.circular(12),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
+                      }
+                      borderRadius: AppDimensions.borderRadiusMedium,
+                      child: Padding(,
+      padding: AppSpacing.paddingAll16,
+                        child: Row(,
+      children: [
                             Icon(
                               Icons.all_inclusive_rounded,
-                              color: theme.colorScheme.primary,
-                            ),
-                            const SizedBox(width: 12),
+                              color: theme.colorScheme.primary)
+                            SizedBox(width: AppSpacing.spacing3),
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    '무제한 이용권',
-                                    style: theme.textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                        Text(
+                          '무제한 이용권',
+              ),
+              style: theme.textTheme.bodyLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          )))
                                   Text(
                                     '월 ₩30,000으로 모든 프리미엄 운세 무제한',
-                                    style: theme.textTheme.bodySmall?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.7,
+                          ))))
+                                ])))
                             Icon(
                               Icons.arrow_forward_rounded,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                              color: theme.colorScheme.primary)
+                          ])))))))))
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Cancel Button
                 TextButton(
                   onPressed: () => context.pop(),
                   child: Text(
                     '나중에 하기',
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                    style: AppTypography.button)
+                  ))
+              ])))))))))
   }
 
-  Widget _buildTokenInfo({
+  Widget _buildTokenInfo(
+    {
     required String label,
     required String value,
     required Color color,
-  }) {
+  )}) {
     final theme = Theme.of(context);
     
     return Column(
       children: [
+                        Text(
+                          label,
+                          style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          ))
+        SizedBox(height: AppSpacing.spacing1),
         Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
+          value),
+        style: theme.textTheme.headlineSmall?.copyWith(,
+      color: color,
+                          ),
+        fontWeight: FontWeight.bold)
+          ))
+      ])
   }
 
-  Widget _buildActionButton({
+  Widget _buildActionButton(
+    {
     required IconData icon,
     required String label,
     required Color color,
     required VoidCallback onTap,
-  }) {
+  )}) {
     final theme = Theme.of(context);
     
     return Container(
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: 0.5),
+      decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.2),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(,
+      color: color.withValues(alp,
+      ha: 0.5))),
+      child: Material(,
+      color: Colors.transparent,
+        child: InkWell(,
+      onTap: onTap,
+          borderRadius: AppDimensions.borderRadiusMedium,
         ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Column(
-              children: [
-                Icon(icon, color: color, size: 24),
-                const SizedBox(height: 4),
+        child: Padding(,
+      padding: EdgeInsets.symmetric(vertic,
+      al: AppSpacing.spacing3),
+            child: Column(,
+      children: [
+                Icon(icon, color: color, size: AppDimensions.iconSizeMedium),
+                SizedBox(height: AppSpacing.spacing1),
                 Text(
                   label,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+              ),
+              style: theme.textTheme.bodySmall?.copyWith(,
+      color: color,
+                          ),
+        fontWeight: FontWeight.bold)
+                  ))
+              ])))))))))
   }
 
   void _showClaimError() {
@@ -363,15 +337,13 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
     final tokenError = ref.read(tokenProvider).error;
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+        SnackBar(
         content: Text(
           tokenError == 'ALREADY_CLAIMED'
               ? '오늘은 이미 무료 영혼을 받으셨습니다'
-              : '무료 영혼 받기에 실패했습니다',
-        ),
-        backgroundColor: theme.colorScheme.error,
-        behavior: SnackBarBehavior.floating,
+              : '무료 영혼 받기에 실패했습니다'
       ),
-    );
+      backgroundColor: theme.colorScheme.error,
+        behavior: SnackBarBehavior.floating)))
   }
 }

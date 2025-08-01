@@ -30,7 +30,7 @@ class FamilyFortuneUnifiedPage extends BaseFortunePage {
           title: '가족 운세',
           description: '자녀, 육아, 태교, 가족 화합 운세를 확인하세요',
           fortuneType: 'family',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -58,7 +58,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
     final fortune = await fortuneService.getFortune(
       userId: params['userId'],
       fortuneType: _selectedType.value,
-      params: params,
+      params: params
     );
     
     // Cache the fortune
@@ -77,9 +77,9 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Card
-          _buildHeaderCard()
-              .animate()
-              .fadeIn(duration: 600.ms)
+          _buildHeaderCard(,
+              .animate(,
+              .fadeIn(duration: 600.ms,
               .slideY(begin: -0.1, end: 0),
           const SizedBox(height: 24),
           
@@ -94,7 +94,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           _buildTypeGrid(),
           const SizedBox(height: 24),
           
-          // Family Members Input (for children and harmony types)
+          // Family Members Input (for children and harmony types,
           if (_selectedType == FamilyType.children || _selectedType == FamilyType.harmony) ...[
             _buildFamilyMembersSection(),
             const SizedBox(height: 24),
@@ -178,7 +178,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
       itemBuilder: (context, index) {
         final type = FamilyType.values[index];
         return _buildTypeCard(type, index);
-      },
+      }
     );
   }
 
@@ -274,9 +274,9 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           ],
         ),
       ),
-    ).animate(delay: (50 * index).ms)
-      .fadeIn(duration: 300.ms)
-      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
+    ).animate(delay: (50 * index).ms,
+      .fadeIn(duration: 300.ms,
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0);
   }
 
   Widget _buildFamilyMembersSection() {
@@ -321,7 +321,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
                   ),
                 ),
               ),
-            )
+            ),
           else
             ..._familyMembers.map((member) => _buildFamilyMemberCard(member)).toList(),
         ],
@@ -396,7 +396,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
               value: relation,
               decoration: const InputDecoration(labelText: '관계'),
               items: ['자녀', '배우자', '부모', '형제자매']
-                  .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                  .map((r) => DropdownMenuItem(value: r, child: Text(r)),
                   .toList(),
               onChanged: (value) => relation = value ?? '자녀',
             ),
@@ -616,8 +616,8 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 500.ms)
+    ).animate(,
+      .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
 
@@ -671,7 +671,7 @@ class _FamilyFortuneUnifiedPageState extends BaseFortunePageState<FamilyFortuneU
             ],
           ),
         )).toList(),
-      ],
+      ]
     );
   }
 

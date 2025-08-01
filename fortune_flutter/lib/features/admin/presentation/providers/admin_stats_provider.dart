@@ -23,14 +23,14 @@ class AdminStatsState {
     this.isLoading = false,
     this.stats,
     this.error,
-    this.lastUpdated,
+    this.lastUpdated)
   });
 
   AdminStatsState copyWith({
     bool? isLoading,
-    AdminStatsModel? stats,
-    String? error,
-    DateTime? lastUpdated,
+    AdminStatsModel? stats)
+    String? error)
+    DateTime? lastUpdated)
   }) {
     return AdminStatsState(
       isLoading: isLoading ?? this.isLoading,
@@ -45,7 +45,7 @@ class AdminStatsState {
 class AdminStatsNotifier extends StateNotifier<AdminStatsState> {
   final AdminApiService _apiService;
   
-  AdminStatsNotifier(this._apiService) : super(AdminStatsState());
+  AdminStatsNotifier(this._apiService) : super(AdminStatsState();
 
   Future<void> loadStats({DateTime? startDate, DateTime? endDate}) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -65,7 +65,7 @@ class AdminStatsNotifier extends StateNotifier<AdminStatsState> {
       Logger.error('Failed to load admin stats', e);
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: e.toString()
       );
     }
   }
@@ -88,7 +88,7 @@ final tokenUsageStatsProvider = FutureProvider.family<TokenUsageDetailModel, Map
   return await apiService.getTokenUsageStats(
     startDate: params['startDate'] as DateTime?,
     endDate: params['endDate'] as DateTime?,
-    period: params['period'] as String? ?? '7d',
+    period: params['period'] as String? ?? '7d'
   );
 });
 
@@ -104,40 +104,40 @@ final mockAdminStatsProvider = Provider<AdminStatsModel>((ref) {
   
   return AdminStatsModel(
     totalUsers: 15234,
-    activeUsers: 3456,
-    totalFortunes: 98765,
-    todayFortunes: 1234,
-    totalTokensUsed: 456789,
+    activeUsers: 3456)
+    totalFortunes: 98765)
+    todayFortunes: 1234)
+    totalTokensUsed: 456789)
     totalRevenue: 12345600, // in cents
     fortuneTypeStats: {
       'daily': 23456,
-      'saju': 18234,
+      'saju': 18234)
       'compatibility': 15678,
-      'love': 12345,
+      'love': 12345)
       'wealth': 9876,
-      'mbti': 8765,
+      'mbti': 8765)
       'zodiac': 6543,
-      'career': 5432,
-    },
+      'career': 5432)
+    })
     dailyStats: List.generate(7, (index) {
-      final date = now.subtract(Duration(days: 6 - index));
+      final date = now.subtract(Duration(days: 6 - index);
       return DailyStatModel(
         date: date,
-        fortunes: 1000 + (index * 100),
-        users: 300 + (index * 50),
-        tokens: 2000 + (index * 200),
-        revenue: 50000 + (index * 10000),
+        fortunes: 1000 + (index * 100))
+        users: 300 + (index * 50))
+        tokens: 2000 + (index * 200))
+        revenue: 50000 + (index * 10000)
       );
-    }),
+    }))
     tokenUsageStats: List.generate(10, (index) {
       return TokenUsageModel(
         userId: 'user_${index + 1}',
-        userName: 'User ${index + 1}',
+        userName: 'User ${index + 1}')
         tokensUsed: 1000 - (index * 50),
-        fortuneCount: 100 - (index * 5),
-        lastActivity: now.subtract(Duration(hours: index)),
-        isSubscribed: index % 3 == 0,
+        fortuneCount: 100 - (index * 5))
+        lastActivity: now.subtract(Duration(hours: index)))
+        isSubscribed: index % 3 == 0)
       );
-    }),
+    })
   );
-});
+};

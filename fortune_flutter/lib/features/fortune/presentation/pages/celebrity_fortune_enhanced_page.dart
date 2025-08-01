@@ -238,9 +238,9 @@ class _CelebrityGridInputFormState extends ConsumerState<_CelebrityGridInputForm
                       ],
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
           
           if (_selectedCelebrity != null) ...[

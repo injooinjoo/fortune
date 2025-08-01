@@ -68,6 +68,7 @@ class FortuneTypeNames {
     'health': '건강운',
     'moving': '이사',
     'moving-date': '이사 날짜',
+    'moving-unified': '이사 운세',
     
     // Lucky Items (행운의 아이템)
     'lucky-color': '행운의 색깔',

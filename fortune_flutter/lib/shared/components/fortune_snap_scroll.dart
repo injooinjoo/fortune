@@ -1,7 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/utils/haptic_utils.dart';
 import '../glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// A specialized snap scroll view for fortune cards with image headers
 /// Each card's image top snaps to the viewport top when scrolling
@@ -44,7 +49,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     _scrollController = ScrollController();
     _animationController = AnimationController(
       vsync: this,
-      duration: widget.snapDuration,
+      duration: widget.snapDuration
     );
     
     _scrollController.addListener(_onScroll);
@@ -149,7 +154,7 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
       onNotification: (notification) {
         if (notification is ScrollEndNotification) {
           // Final snap check when scrolling ends
-          Future.delayed(const Duration(milliseconds: 100), () {
+          Future.delayed(AppAnimations.durationMicro, () {
             if (!_isSnapping) {
               _checkForSnap();
             }
@@ -208,7 +213,7 @@ class FortuneSnapCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 0),
+        margin: const EdgeInsets.only(bottom: AppSpacing.xxxSmall),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -229,8 +234,8 @@ class FortuneSnapCard extends StatelessWidget {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.black.withValues(alpha: 0.7),
+                      AppColors.textPrimary.withValues(alpha: 0.3),
+                      AppColors.textPrimary.withValues(alpha: 0.7),
                     ],
                     stops: const [0.5, 0.8, 1.0],
                   ),
@@ -244,24 +249,24 @@ class FortuneSnapCard extends StatelessWidget {
                     Text(
                       title,
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.textPrimaryDark,
                         fontWeight: FontWeight.bold,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.8),
+                            color: AppColors.textPrimary.withValues(alpha: 0.8),
                             blurRadius: 8,
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: AppSpacing.spacing2),
                     Text(
                       description,
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: AppColors.textPrimaryDark.withValues(alpha: 0.9),
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.8),
+                            color: AppColors.textPrimary.withValues(alpha: 0.8),
                             blurRadius: 6,
                           ),
                         ],
@@ -334,7 +339,7 @@ class _FortunePageSnapViewState extends State<FortunePageSnapView> {
       scrollDirection: Axis.vertical,
       onPageChanged: _onPageChanged,
       itemCount: widget.pages.length,
-      itemBuilder: (context, index) => widget.pages[index],
+      itemBuilder: (context, index) => widget.pages[index]
     );
   }
 }

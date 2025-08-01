@@ -114,7 +114,7 @@ class AnalyticsService {
       
       await _analytics!.logEvent(
         name: name,
-        parameters: safeParameters,
+        parameters: safeParameters
       );
       Logger.info('Analytics event logged: $name', parameters);
     } catch (e) {
@@ -193,7 +193,7 @@ class AnalyticsService {
     try {
       await _analytics!.logScreenView(
         screenName: screenName,
-        screenClass: screenClass ?? screenName,
+        screenClass: screenClass ?? screenName
       );
       
       Logger.info('Screen view logged: $screenName');
@@ -353,7 +353,7 @@ class AnalyticsService {
     });
   }
 
-  /// Reset analytics (e.g., on logout)
+  /// Reset analytics (e.g., on logout,
   Future<void> reset() async {
     if (!_isInitialized || _analytics == null) return;
 

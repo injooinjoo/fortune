@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../utils/date_utils.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class BirthDatePreview extends StatelessWidget {
   final String birthYear;
@@ -31,36 +35,34 @@ class BirthDatePreview extends StatelessWidget {
     if (birthTimePeriod != null) {
       try {
         selectedTimePeriod = timePeriods.firstWhere(
-          (period) => period.value == birthTimePeriod,
+          (period) => period.value == birthTimePeriod
         );
       } catch (_) {}
     }
 
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.vertical * 0.75),
       decoration: BoxDecoration(
-        color: Colors.purple.shade50,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.purple.shade200),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
+        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
           Text(
             formattedDate,
-            style: TextStyle(
-              fontSize: 14,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Colors.purple.shade800,
+              color: Theme.of(context).primaryColor
             ),
             textAlign: TextAlign.center,
           ),
           if (selectedTimePeriod != null) ...[
-            const SizedBox(height: 4),
+            SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.25),
             Text(
               selectedTimePeriod.label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.purple.shade600,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.8),
               ),
               textAlign: TextAlign.center,
             ),

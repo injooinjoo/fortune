@@ -1,9 +1,14 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../domain/entities/fortune.dart';
 import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
 import '../../core/theme/app_theme.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class FortuneResultDisplay extends StatelessWidget {
   final Fortune fortune;
@@ -26,7 +31,7 @@ class FortuneResultDisplay extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Header Widget (optional custom header)
+          // Header Widget (optional custom header,
           if (headerWidget != null) headerWidget!,
 
           // Main Fortune Content
@@ -51,7 +56,7 @@ class FortuneResultDisplay extends StatelessWidget {
           // Share Button
           _buildShareButton(context),
 
-          const SizedBox(height: 32),
+          SizedBox(height: AppSpacing.spacing8),
         ],
       ),
     );
@@ -61,16 +66,16 @@ class FortuneResultDisplay extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: GlassCard(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAll24,
         child: Column(
           children: [
             // Overall Score (if available)
             if (fortune.overallScore != null)
               Container(
                 width: 100,
-                height: 100,
+                height: AppSpacing.spacing24 * 1.04,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
@@ -88,7 +93,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   child: Text(
                     '${fortune.overallScore}점',
                     style: theme.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
+                      color: AppColors.textPrimaryDark,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -97,14 +102,14 @@ class FortuneResultDisplay extends StatelessWidget {
                   .scale(duration: 600.ms, curve: Curves.elasticOut)
                   .fade(),
 
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.spacing6),
 
             // Category Badge
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                 border: Border.all(
                   color: theme.colorScheme.primary.withValues(alpha: 0.3),
                 ),
@@ -118,7 +123,7 @@ class FortuneResultDisplay extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
 
             // Main Content
             Text(
@@ -131,12 +136,12 @@ class FortuneResultDisplay extends StatelessWidget {
 
             // Description (if different from content)
             if (fortune.description != null && fortune.description != fortune.content) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: AppSpacing.spacing4),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.paddingAll16,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppDimensions.borderRadiusMedium,
                 ),
                 child: Text(
                   fortune.description!,
@@ -148,14 +153,13 @@ class FortuneResultDisplay extends StatelessWidget {
               ),
             ],
 
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
 
             // Date
             Text(
               '생성일: ${_formatDate(fortune.createdAt)}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ],
         ),
@@ -170,40 +174,40 @@ class FortuneResultDisplay extends StatelessWidget {
     final scores = fortune.scoreBreakdown!;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       child: GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.paddingAll20,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.blue.shade400, Colors.blue.shade600],
+                      colors: [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8),],
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: const Icon(
                     Icons.analytics_rounded,
-                    color: Colors.white,
-                    size: 24,
+                    color: AppColors.textPrimaryDark,
+                    size: AppDimensions.iconSizeMedium,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AppSpacing.spacing3),
                 Text(
                   '상세 점수',
                   style: theme.textTheme.headlineSmall,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) {
               final score = entry.value is int ? entry.value as int : 0;
               return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.only(bottom: AppSpacing.small),
                 child: Row(
                   children: [
                     Expanded(
@@ -221,27 +225,27 @@ class FortuneResultDisplay extends StatelessWidget {
                             child: Stack(
                               children: [
                                 Container(
-                                  height: 20,
+                                  height: AppSpacing.spacing5,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(10),
+                                    color: AppColors.textSecondary.withValues(alpha: 0.3),
+                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                                   ),
                                 ),
                                 AnimatedContainer(
-                                  duration: const Duration(milliseconds: 1000),
-                                  height: 20,
+                                  duration: AppAnimations.durationLong * 2,
+                                  height: AppSpacing.spacing5,
                                   width: MediaQuery.of(context).size.width * 0.4 * score / 100,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: _getScoreGradientColors(score),
                                     ),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: AppSpacing.spacing3),
                           Text(
                             '$score점',
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -269,39 +273,39 @@ class FortuneResultDisplay extends StatelessWidget {
     final items = fortune.luckyItems!;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       child: ShimmerGlass(
         shimmerColor: Colors.amber,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
         child: GlassCard(
-          padding: const EdgeInsets.all(20),
+          padding: AppSpacing.paddingAll20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: AppSpacing.paddingAll8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.shade400, Colors.amber.shade600],
+                        colors: [Colors.amber.withValues(alpha: 0.6), Colors.amber.withValues(alpha: 0.8),],
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppDimensions.borderRadiusMedium,
                     ),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: Colors.white,
-                      size: 24,
+                      color: AppColors.textPrimaryDark,
+                      size: AppDimensions.iconSizeMedium,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: AppSpacing.spacing3),
                   Text(
                     '행운 아이템',
                     style: theme.textTheme.headlineSmall,
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: AppSpacing.spacing5),
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -320,7 +324,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   }
 
                   return Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: AppSpacing.paddingAll12,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -328,7 +332,7 @@ class FortuneResultDisplay extends StatelessWidget {
                           theme.colorScheme.primary.withValues(alpha: 0.05),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
                         color: theme.colorScheme.primary.withValues(alpha: 0.3),
                       ),
@@ -338,9 +342,9 @@ class FortuneResultDisplay extends StatelessWidget {
                         Icon(
                           _getLuckyItemIcon(entry.key),
                           color: theme.colorScheme.primary,
-                          size: 20,
+                          size: AppDimensions.iconSizeSmall,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: AppSpacing.spacing2),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,14 +353,14 @@ class FortuneResultDisplay extends StatelessWidget {
                               Text(
                                 entry.key,
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: 10,
+                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                                 ),
                               ),
                               Text(
                                 displayValue,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
+                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -383,48 +387,48 @@ class FortuneResultDisplay extends StatelessWidget {
     final recommendations = fortune.recommendations!;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
       child: GlassCard(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.paddingAll20,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.green.shade400, Colors.green.shade600],
+                      colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8),],
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: const Icon(
                     Icons.tips_and_updates_rounded,
-                    color: Colors.white,
-                    size: 24,
+                    color: AppColors.textPrimaryDark,
+                    size: AppDimensions.iconSizeMedium,
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: AppSpacing.spacing3),
                 Text(
                   '추천 사항',
                   style: theme.textTheme.headlineSmall,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
             ...recommendations.asMap().entries.map((entry) {
               final index = entry.key;
               final recommendation = entry.value;
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.only(bottom: AppSpacing.small),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       width: 24,
-                      height: 24,
+                      height: AppSpacing.spacing6,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
@@ -432,15 +436,11 @@ class FortuneResultDisplay extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${index + 1}',
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Text(
                         recommendation,
@@ -450,7 +450,7 @@ class FortuneResultDisplay extends StatelessWidget {
                   ],
                 ),
               ).animate()
-                  .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
+                  .fadeIn(delay: Duration(milliseconds: 600 + index * 100))
                   .slideX(begin: 0.1, end: 0);
             }).toList(),
           ],
@@ -463,7 +463,7 @@ class FortuneResultDisplay extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: GlassButton(
         onPressed: onShare ?? () {
           // Default share implementation
@@ -472,12 +472,12 @@ class FortuneResultDisplay extends StatelessWidget {
           );
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing6, vertical: AppSpacing.spacing4),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.share_rounded),
-              const SizedBox(width: 8),
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '운세 공유하기',
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -495,21 +495,21 @@ class FortuneResultDisplay extends StatelessWidget {
 
   List<Color> _getScoreGradientColors(int score) {
     if (score >= 80) {
-      return [Colors.green.shade400, Colors.green.shade600];
+      return [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8),];
     } else if (score >= 60) {
-      return [Colors.blue.shade400, Colors.blue.shade600];
+      return [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8),];
     } else if (score >= 40) {
-      return [Colors.orange.shade400, Colors.orange.shade600];
+      return [AppColors.warning.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.8),];
     } else {
-      return [Colors.red.shade400, Colors.red.shade600];
+      return [AppColors.error.withValues(alpha: 0.6), AppColors.error.withValues(alpha: 0.8),];
     }
   }
 
   Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green.shade600;
-    if (score >= 60) return Colors.blue.shade600;
-    if (score >= 40) return Colors.orange.shade600;
-    return Colors.red.shade600;
+    if (score >= 80) return AppColors.success.withValues(alpha: 0.8);
+    if (score >= 60) return AppColors.primary.withValues(alpha: 0.8);
+    if (score >= 40) return AppColors.warning.withValues(alpha: 0.8);
+    return AppColors.error.withValues(alpha: 0.8);
   }
 
   IconData _getLuckyItemIcon(String type) {
@@ -564,10 +564,10 @@ class GlassButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusLarge,
         child: GlassContainer(
-          padding: padding ?? const EdgeInsets.all(16),
-          borderRadius: BorderRadius.circular(16),
+          padding: padding ?? AppSpacing.paddingAll16,
+          borderRadius: AppDimensions.borderRadiusLarge,
           blur: 10,
           child: child,
         ),

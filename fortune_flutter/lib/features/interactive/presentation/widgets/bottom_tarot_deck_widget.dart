@@ -29,7 +29,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
   
   final int cardCount = 30;
   final double cardWidth = 60;
-  final double cardHeight = 84;  // Maintaining 1:1.4 ratio (5:7)
+  final double cardHeight = 84;  // Maintaining 1:1.4 ratio (5:7,
   
   double _dragStartX = 0;
   double _currentRotation = 0;
@@ -47,9 +47,9 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     super.initState();
     
     // Initialize card keys
-    _cardKeys = List.generate(cardCount, (index) => GlobalKey());
+    _cardKeys = List.generate(cardCount, (index) => GlobalKey();
     
-    // Initialize card mappings with random tarot cards (0-21 for Major Arcana)
+    // Initialize card mappings with random tarot cards (0-21 for Major Arcana,
     _initializeCardMappings();
     
     // Slide up animation
@@ -98,7 +98,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     // Scale animation for clicked cards
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 150),
-      vsync: this,
+      vsync: this
     );
     
     _scaleAnimation = Tween<double>(
@@ -111,18 +111,18 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     
     // Start animations
     _startAnimations();
-  }
+}
   
   void _startAnimations() async {
     await _slideUpController.forward();
     await _fanController.forward();
-  }
+}
   
   void _initializeCardMappings() {
     final random = Random();
-    // Generate random card indices from 0-21 (22 Major Arcana cards)
-    _cardMappings = List.generate(cardCount, (index) => random.nextInt(22));
-  }
+    // Generate random card indices from 0-21 (22 Major Arcana cards,
+    _cardMappings = List.generate(cardCount, (index) => random.nextInt(22);
+}
   
   @override
   void dispose() {
@@ -131,7 +131,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     _rotationController.dispose();
     _scaleController.dispose();
     super.dispose();
-  }
+}
   
   @override
   Widget build(BuildContext context) {
@@ -146,22 +146,22 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
           child: GestureDetector(
             onHorizontalDragStart: (details) {
               _dragStartX = details.globalPosition.dx;
-            },
+},
             onHorizontalDragUpdate: (details) {
               setState(() {
                 final dragDistance = details.globalPosition.dx - _dragStartX;
                 _currentRotation = (dragDistance / screenWidth) * math.pi;
-              });
-            },
+});
+},
             onHorizontalDragEnd: (details) {
               // Clear any animation state when dragging
               setState(() {
                 _animatingToIndex = null;
-              });
+});
               // Snap to nearest card
               final velocity = details.velocity.pixelsPerSecond.dx;
               _animateToNearestCard(velocity);
-            },
+},
             child: Container(
               height: cardHeight * 2.5,
               child: Stack(
@@ -169,22 +169,19 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 children: [
                   ...List.generate(cardCount, (index) {
                     return _buildCard(index, screenWidth);
-                  }),
+}),
                   // Swipe indicator
                   Positioned(
                     bottom: -20,
                     left: 0,
                     right: 0,
                     child: _buildSwipeIndicator(),
-                  ),
                 ],
               ),
-            ),
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
   
   Widget _buildCard(int index, double screenWidth) {
     final fanProgress = _fanAnimation.value;
@@ -210,27 +207,27 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     
     // Lift center card higher
     if (isCenter) {
-      y -= 15; // Lift center card 15 pixels higher
-    }
+      y -= 15; // Lift center card 15 pixels higher,
+}
     
-    // Calculate z-index (cards in front should be on top)
+    // Calculate z-index (cards in front should be on top,
     final zIndex = (cardCount - distanceFromCenter * 10).round();
     
     // Apply scale animation when this card is being animated to
     double animationScale = scale;
     if (_animatingToIndex == index) {
       animationScale *= _scaleAnimation.value;
-    }
+}
     
     return Positioned(
       bottom: 0,
       left: screenWidth / 2 - cardWidth / 2,
       child: Transform(
         alignment: Alignment.bottomCenter,
-        transform: Matrix4.identity()
-          ..translate(x * fanProgress, y * fanProgress, zIndex.toDouble())
-          ..rotateZ(angle * 0.3 * fanProgress)
-          ..scale(animationScale * fanProgress),
+        transform: Matrix4.identity(,
+          ..translate(x * fanProgress, y * fanProgress, zIndex.toDouble(),
+          ..rotateZ(angle * 0.3 * fanProgress,
+          ..scale(animationScale * fanProgress, animationScale * fanProgress),
         child: Opacity(
           opacity: (0.3 + fanProgress * 0.7).clamp(0.0, 1.0),
           child: GestureDetector(
@@ -246,24 +243,20 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   final size = renderBox.size;
                   // Pass the actual tarot card index from mappings
                   widget.onCardSelected(_cardMappings[index], position, size);
-                }
+}
               } else {
                 // Always animate to clicked card
                 _animateToCard(index);
-              }
+}
             },
             child: Container(
               key: _cardKeys[index],
               child: Hero(
                 tag: 'tarot-card-$index',
                 child: _buildTarotCard(isCenter, index),
-              ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
+        ));
+}
   
   void _animateToCard(int index) {
     // Cancel any ongoing animations
@@ -273,20 +266,19 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     // Set the animating index for scale effect
     setState(() {
       _animatingToIndex = index;
-    });
+});
     
     // Trigger scale animation
     _scaleController.forward(from: 0).then((_) {
       _scaleController.reverse();
-    });
+});
     
     final targetRotation = -(index - cardCount / 2) / (cardCount / 2) * math.pi * 0.5;
     final rotationDifference = (targetRotation - _currentRotation).abs();
     
     // Faster dynamic duration based on rotation distance
     final duration = Duration(
-      milliseconds: (200 + rotationDifference * 100).clamp(200, 400).toInt(),
-    );
+      milliseconds: (200 + rotationDifference * 100).clamp(200, 400).toInt();
     
     _rotationController.duration = duration;
     
@@ -302,10 +294,10 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
       setState(() {
         _currentRotation = targetRotation;
         _selectedIndex = index;
-        _animatingToIndex = null; // Clear animating index
-      });
-    });
-  }
+        _animatingToIndex = null; // Clear animating index,
+});
+});
+}
   
   void _animateToNearestCard(double velocity) {
     // Calculate which card should be centered based on current rotation
@@ -315,13 +307,13 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     // Apply velocity bias for more natural feel
     if (velocity.abs() > 500) {
       nearestCardIndex += velocity > 0 ? -1 : 1;
-    }
+}
     
     // Ensure index is within bounds
     nearestCardIndex = nearestCardIndex.clamp(0, cardCount - 1);
     
     _animateToCard(nearestCardIndex);
-  }
+}
   
   Widget _buildSwipeIndicator() {
     return AnimatedBuilder(
@@ -332,11 +324,10 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
           child: CustomPaint(
             size: const Size(100, 30),
             painter: SwipeIndicatorPainter(),
-          ),
         );
-      },
+}
     );
-  }
+}
   
   Widget _buildTarotCard(bool isCenter, int index) {
     // Enhanced glow for animating cards
@@ -371,7 +362,6 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
               color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 5,
               offset: const Offset(0, 3),
-            ),
           ],
         ],
       ),
@@ -391,7 +381,6 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                     const Color(0xFF415A77),
                   ],
                 ),
-              ),
             ),
             
             // Card pattern
@@ -400,7 +389,6 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 painter: TarotCardBackPainter(
                   isHighlighted: isCenter,
                 ),
-              ),
             ),
             
             // Card border
@@ -409,17 +397,14 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isCenter 
-                      ? Colors.white.withValues(alpha: 0.5)
+                      ? Colors.white.withValues(alpha: 0.5,
                       : Colors.white.withValues(alpha: 0.2),
                   width: isCenter ? 2 : 1,
                 ),
-              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 }
 
 class TarotCardBackPainter extends CustomPainter {
@@ -429,7 +414,7 @@ class TarotCardBackPainter extends CustomPainter {
   
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.5;
     
@@ -447,17 +432,16 @@ class TarotCardBackPainter extends CustomPainter {
       final angle = i * math.pi / 3;
       final starPos = Offset(
         center.dx + size.width * 0.25 * math.cos(angle),
-        center.dy + size.width * 0.25 * math.sin(angle),
-      );
+        center.dy + size.width * 0.25 * math.sin(angle);
       _drawStar(canvas, starPos, size.width * 0.08, paint);
-    }
+}
     
     // Draw border pattern
     final borderRect = Rect.fromLTWH(
       size.width * 0.1,
       size.height * 0.05,
       size.width * 0.8,
-      size.height * 0.9,
+      size.height * 0.9
     );
     paint.strokeWidth = 1.0;
     canvas.drawRect(borderRect, paint);
@@ -467,11 +451,11 @@ class TarotCardBackPainter extends CustomPainter {
       size.width * 0.15,
       size.height * 0.08,
       size.width * 0.7,
-      size.height * 0.84,
+      size.height * 0.84
     );
     paint.strokeWidth = 0.5;
     canvas.drawRect(innerRect, paint);
-  }
+}
   
   void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
     final path = Path();
@@ -483,21 +467,21 @@ class TarotCardBackPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(outerX, outerY);
-      } else {
+} else {
         path.lineTo(outerX, outerY);
-      }
+}
       
       final innerRadius = radius * 0.4;
       final innerAngle = angle + (i * 2 + 1) * math.pi / 5;
       final innerX = center.dx + innerRadius * math.cos(innerAngle);
       final innerY = center.dy + innerRadius * math.sin(innerAngle);
       path.lineTo(innerX, innerY);
-    }
+}
     
     path.close();
     canvas.drawPath(path, paint..style = PaintingStyle.fill);
     canvas.drawPath(path, paint..style = PaintingStyle.stroke);
-  }
+}
   
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
@@ -506,11 +490,12 @@ class TarotCardBackPainter extends CustomPainter {
 class SwipeIndicatorPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.3)
+    final paint = Paint(,
+      ..color = Colors.white.withValues(alpha: 0.3,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
-      ..strokeCap = StrokeCap.round;
+      ..strokeCap =,
+      StrokeCap.round;
     
     final centerX = size.width / 2;
     final centerY = size.height / 2;
@@ -520,12 +505,12 @@ class SwipeIndicatorPainter extends CustomPainter {
     leftPath.moveTo(centerX - 30, centerY);
     leftPath.quadraticBezierTo(
       centerX - 40, centerY - 5,
-      centerX - 45, centerY - 10,
+      centerX - 45, centerY - 10
     );
     leftPath.moveTo(centerX - 30, centerY);
     leftPath.quadraticBezierTo(
       centerX - 40, centerY + 5,
-      centerX - 45, centerY + 10,
+      centerX - 45, centerY + 10
     );
     
     // Right arrow
@@ -533,12 +518,12 @@ class SwipeIndicatorPainter extends CustomPainter {
     rightPath.moveTo(centerX + 30, centerY);
     rightPath.quadraticBezierTo(
       centerX + 40, centerY - 5,
-      centerX + 45, centerY - 10,
+      centerX + 45, centerY - 10
     );
     rightPath.moveTo(centerX + 30, centerY);
     rightPath.quadraticBezierTo(
       centerX + 40, centerY + 5,
-      centerX + 45, centerY + 10,
+      centerX + 45, centerY + 10
     );
     
     // Draw curved lines
@@ -546,13 +531,13 @@ class SwipeIndicatorPainter extends CustomPainter {
     curvePath.moveTo(centerX - 25, centerY);
     curvePath.quadraticBezierTo(
       centerX, centerY - 5,
-      centerX + 25, centerY,
+      centerX + 25, centerY
     );
     
     canvas.drawPath(leftPath, paint);
     canvas.drawPath(rightPath, paint);
     canvas.drawPath(curvePath, paint);
-  }
+}
   
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;

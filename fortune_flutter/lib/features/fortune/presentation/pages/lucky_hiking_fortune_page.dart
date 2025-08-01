@@ -22,7 +22,7 @@ class LuckyHikingFortunePage extends ConsumerWidget {
         colors: [Color(0xFF10B981), Color(0xFF059669)],
       ),
       inputBuilder: (context, onSubmit) => _HikingInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _HikingFortuneResult(result: result),
+      resultBuilder: (context, result, onShare) => _HikingFortuneResult(result: result,
     );
   }
 }
@@ -140,7 +140,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -178,7 +178,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF10B981), Color(0xFF059669)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -208,7 +208,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -239,7 +239,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF10B981), Color(0xFF059669)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -261,7 +261,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -299,7 +299,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF10B981), Color(0xFF059669)],
-                    )
+                    ,
                   : null,
               border: Border.all(
                 color: isSelected
@@ -329,7 +329,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -360,7 +360,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF10B981), Color(0xFF059669)],
-                      )
+                      ,
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -389,7 +389,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             ),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 }
@@ -521,7 +521,7 @@ class _HikingFortuneResult extends StatelessWidget {
             content: result.details!['equipment'],
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -571,7 +571,7 @@ class _HikingFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }

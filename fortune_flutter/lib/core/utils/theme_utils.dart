@@ -19,7 +19,7 @@ class ThemeUtils {
           AppColors.primaryDarkMode.withValues(alpha: 0.8),
           AppColors.primaryLightDarkMode.withValues(alpha: 0.6),
           AppColors.primaryDarkDarkMode.withValues(alpha: 0.4),
-        ],
+        ]
       );
     }
     return AppColors.primaryGradient;
@@ -65,7 +65,7 @@ class ThemeUtils {
           AppColors.mysticalPurpleDarkMode,
           AppColors.mysticalPurpleLightDarkMode,
           AppColors.mysticalPurpleDarkDarkMode,
-        ],
+        ]
       );
     }
     return AppColors.mysticalGradient;

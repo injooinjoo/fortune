@@ -146,7 +146,6 @@ class SpecialPage extends ConsumerWidget {
                   fontSize: fontSize.value + 4,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
               const SizedBox(height: 16),
               SizedBox(
                 height: 200,
@@ -155,9 +154,8 @@ class SpecialPage extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final item = specialFortunes[index];
                     return _buildBannerCard(context, theme, fontSize.value, item);
-                  },
+},
                 ),
-              ),
               const SizedBox(height: 32),
             ],
 
@@ -188,10 +186,8 @@ class SpecialPage extends ConsumerWidget {
             // Coming Soon Section
             _buildComingSoonSection(theme, fontSize.value),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   Widget _buildBannerCard(
     BuildContext context,
@@ -217,7 +213,6 @@ class SpecialPage extends ConsumerWidget {
                     end: Alignment.bottomRight,
                     colors: item.gradientColors,
                   ),
-                ),
                 child: CachedNetworkImage(
                   imageUrl: item.imageUrl,
                   fit: BoxFit.cover,
@@ -227,9 +222,7 @@ class SpecialPage extends ConsumerWidget {
                   errorWidget: (context, url, error) => Container(
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: const Icon(Icons.image_not_supported),
-                  ),
                 ),
-              ),
             ),
             
             // Gradient Overlay
@@ -244,7 +237,6 @@ class SpecialPage extends ConsumerWidget {
                     Colors.black.withValues(alpha: 0.7),
                   ],
                 ),
-              ),
             ),
             
             // Content
@@ -257,38 +249,32 @@ class SpecialPage extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      if (item.isNew)
-                        Container(
+                      if (item.isNew), Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEF4444),
                             borderRadius: BorderRadius.circular(8),
-                          ),
                           child: Text(
                             'NEW',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.white),
                               fontSize: fontSize - 6,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
                         ),
                       if (item.isNew) const SizedBox(width: 8),
-                      if (item.availableUntil != null)
-                        Container(
+                      if (item.availableUntil != null), Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.orange,
                             borderRadius: BorderRadius.circular(8),
-                          ),
                           child: Text(
                             '${item.availableUntil!.month}/${item.availableUntil!.day}까지',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.white),
                               fontSize: fontSize - 6,
                               fontWeight: FontWeight.bold,
                             ),
-                          ),
                         ),
                     ],
                   ),
@@ -300,23 +286,18 @@ class SpecialPage extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  ),
                   const SizedBox(height: 4),
                   Text(
                     item.description,
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: fontSize,
                       color: Colors.white.withValues(alpha: 0.9),
-                    ),
                   ),
                 ],
               ),
-            ),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   Widget _buildSection(
     BuildContext context,
@@ -344,7 +325,6 @@ class SpecialPage extends ConsumerWidget {
                 fontSize: fontSize + 2,
                 fontWeight: FontWeight.bold,
               ),
-            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -357,12 +337,11 @@ class SpecialPage extends ConsumerWidget {
             itemBuilder: (context, index) {
               final item = items[index];
               return _buildItemCard(context, theme, fontSize, item);
-            },
+},
           ),
-        ),
-      ],
+      ]
     );
-  }
+}
 
   Widget _buildItemCard(
     BuildContext context,
@@ -384,7 +363,7 @@ class SpecialPage extends ConsumerWidget {
                 children: [
                   // Image
                   ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16),
                     child: Container(
                       height: 100,
                       width: double.infinity,
@@ -394,7 +373,6 @@ class SpecialPage extends ConsumerWidget {
                           end: Alignment.bottomRight,
                           colors: item.gradientColors,
                         ),
-                      ),
                       child: CachedNetworkImage(
                         imageUrl: item.imageUrl,
                         fit: BoxFit.cover,
@@ -404,9 +382,7 @@ class SpecialPage extends ConsumerWidget {
                         errorWidget: (context, url, error) => Container(
                           color: theme.colorScheme.surfaceContainerHighest,
                           child: const Icon(Icons.image_not_supported),
-                        ),
                       ),
-                    ),
                   ),
                   
                   // Content
@@ -430,20 +406,16 @@ class SpecialPage extends ConsumerWidget {
                           style: theme.textTheme.bodySmall?.copyWith(
                             fontSize: fontSize - 2,
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
-                  ),
                 ],
               ),
-            ),
             
             // Badges
-            if (item.isNew)
-              Positioned(
+            if (item.isNew), Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
@@ -451,19 +423,15 @@ class SpecialPage extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444),
                     borderRadius: BorderRadius.circular(8),
-                  ),
                   child: Text(
                     'NEW',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.white),
                       fontSize: fontSize - 6,
                       fontWeight: FontWeight.bold,
                     ),
-                  ),
                 ),
-              ),
-            if (item.isPremium)
-              Positioned(
+            if (item.isPremium), Positioned(
                 top: 8,
                 left: 8,
                 child: Container(
@@ -473,19 +441,15 @@ class SpecialPage extends ConsumerWidget {
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
                     ),
                     borderRadius: BorderRadius.circular(8),
-                  ),
                   child: const Icon(
                     Icons.star_rounded,
                     size: 16,
                     color: Colors.white,
                   ),
-                ),
               ),
           ],
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   Widget _buildComingSoonSection(ThemeData theme, double fontSize) {
     return GlassContainer(
@@ -521,11 +485,10 @@ class SpecialPage extends ConsumerWidget {
             style: theme.textTheme.bodyLarge?.copyWith(
               fontSize: fontSize,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
             textAlign: TextAlign.center,
           ),
         ],
-      ),
+      
     );
-  }
+}
 }

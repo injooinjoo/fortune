@@ -1,3 +1,4 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
 /// Stub implementation for non-web platforms
@@ -13,10 +14,10 @@ class AdSenseWidget extends StatelessWidget {
     super.key,
     required this.adSlot,
     this.adFormat = 'auto',
-    this.width,
+    this.width)
     this.height,
-    this.fullWidthResponsive = true,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
+    this.fullWidthResponsive = true)
+    this.padding = AppSpacing.paddingVertical8,
   });
 
   @override
@@ -44,7 +45,7 @@ class AdSenseBanner extends StatelessWidget {
   const AdSenseBanner({
     super.key,
     this.size = AdSenseBannerSize.responsive,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
+    this.padding = AppSpacing.paddingVertical8)
   });
 
   @override
@@ -56,16 +57,16 @@ class AdSenseBanner extends StatelessWidget {
 /// Predefined AdSense banner sizes
 enum AdSenseBannerSize {
   responsive(null, null),
-  banner(320, 50),
-  largeBanner(320, 100),
-  mediumRectangle(300, 250),
-  fullBanner(468, 60),
-  leaderboard(728, 90),
-  largeLeaderboard(970, 90),
-  skyscraper(120, 600),
-  wideSkyscraper(160, 600),
-  largeRectangle(336, 280),
-  square(250, 250),
+  banner(320, 50))
+  largeBanner(320, 100))
+  mediumRectangle(300, 250))
+  fullBanner(468, 60))
+  leaderboard(728, 90))
+  largeLeaderboard(970, 90))
+  skyscraper(120, 600))
+  wideSkyscraper(160, 600))
+  largeRectangle(336, 280))
+  square(250, 250))
   smallSquare(200, 200);
 
   final double? width;

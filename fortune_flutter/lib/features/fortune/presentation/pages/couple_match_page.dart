@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -16,7 +17,7 @@ class CoupleMatchPage extends BaseFortunePage {
           title: '연인 궁합',
           description: '현재 연인과의 깊은 궁합 분석',
           fortuneType: 'couple-match',
-          requiresUserInfo: false,
+          requiresUserInfo: false
         );
 
   @override
@@ -103,7 +104,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -224,7 +225,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
         const SizedBox(height: 16),
         
         // Relationship Info
-        GlassCard(
+        GlassContainer(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +422,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
   }) {
     final theme = Theme.of(context);
     
-    return GlassCard(
+    return GlassContainer(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -634,7 +635,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -705,7 +706,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -880,7 +881,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -951,7 +952,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1091,7 +1092,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1212,7 +1213,7 @@ class _CoupleMatchPageState extends BaseFortunePageState<CoupleMatchPage> {
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-      child: GlassCard(
+      child: GlassContainer(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1326,7 +1327,7 @@ class HeartProgressPainter extends CustomPainter {
         size.width,
         size.height * progress,
       ),
-      paint,
+      paint
     );
     
     canvas.restore();
@@ -1342,25 +1343,25 @@ class HeartProgressPainter extends CustomPainter {
     path.cubicTo(
       dx - 20 * scale, dy - 10 * scale,
       dx - 60 * scale, dy - 10 * scale,
-      dx - 60 * scale, dy + 20 * scale,
+      dx - 60 * scale, dy + 20 * scale
     );
     
     path.cubicTo(
       dx - 60 * scale, dy + 50 * scale,
       dx, dy + 90 * scale,
-      dx, dy + 90 * scale,
+      dx, dy + 90 * scale
     );
     
     path.cubicTo(
       dx, dy + 90 * scale,
       dx + 60 * scale, dy + 50 * scale,
-      dx + 60 * scale, dy + 20 * scale,
+      dx + 60 * scale, dy + 20 * scale
     );
     
     path.cubicTo(
       dx + 60 * scale, dy - 10 * scale,
       dx + 20 * scale, dy - 10 * scale,
-      dx, dy + 25 * scale,
+      dx, dy + 25 * scale
     );
     
     path.close();

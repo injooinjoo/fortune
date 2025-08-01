@@ -48,8 +48,8 @@ class TalismanDesign {
   Map<String, dynamic> toJson() {
     return {
       'baseSymbol': baseSymbol,
-      'primaryColor': primaryColor.value,
-      'secondaryColor': secondaryColor.value,
+      'primaryColor': primaryColor.toARGB32(),
+      'secondaryColor': secondaryColor.toARGB32(),
       'personalText': personalText,
       'protectionSymbol': protectionSymbol,
       'createdDate': createdDate.toIso8601String(),
@@ -69,7 +69,7 @@ class TalismanDesign {
       createdDate: DateTime.parse(json['createdDate']),
       userBirthInfo: json['userBirthInfo'],
       userName: json['userName'],
-      customSymbols: json['customSymbols'],
+      customSymbols: json['customSymbols']
     );
   }
 }
@@ -119,7 +119,7 @@ class TalismanResult {
       effectiveness: json['effectiveness'],
       precautions: List<String>.from(json['precautions']),
       shareableImageUrl: json['shareableImageUrl'],
-      additionalInfo: json['additionalInfo'],
+      additionalInfo: json['additionalInfo']
     );
   }
 }

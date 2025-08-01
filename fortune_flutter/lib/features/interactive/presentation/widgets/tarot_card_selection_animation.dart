@@ -70,17 +70,15 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
     // Set up animations
     _pickAnimation = CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOutBack,
-    );
+      curve: Curves.easeOutBack);
     
     _flipAnimation = CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     _fadeAnimation = CurvedAnimation(
       parent: _fadeController,
-      curve: Curves.easeOut,
+      curve: Curves.easeOut
     );
     
     _scaleAnimation = Tween<double>(
@@ -101,13 +99,13 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
       if (status == AnimationStatus.forward && _flipAnimation.value > 0.5) {
         setState(() {
           _showFront = true;
-        });
-      }
+});
+}
     });
     
     // Start animations
     _startAnimationSequence();
-  }
+}
 
   void _startAnimationSequence() async {
     // Haptic feedback
@@ -124,7 +122,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
     
     // Notify completion
     widget.onAnimationComplete();
-  }
+}
 
   @override
   void dispose() {
@@ -133,7 +131,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
     _fadeController.dispose();
     _glowController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -145,9 +143,8 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: Colors.black.withValues(alpha: _fadeAnimation.value * 0.7),
-            );
-          },
+              color: Colors.black.withValues(alpha: _fadeAnimation.value * 0.7));
+},
         ),
         
         // Other cards fading out
@@ -167,17 +164,16 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             
             return Transform(
               alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..translate(0.0, pickOffset)
-                ..scale(_scaleAnimation.value)
-                ..setEntry(3, 2, 0.001)
+              transform: Matrix4.identity(,
+                ..translate(0.0, pickOffset,
+                ..scale(_scaleAnimation.value, _scaleAnimation.value,
+                ..setEntry(3, 2, 0.001,
                 ..rotateY(flipAngle),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   // Glow effect
-                  if (_flipAnimation.value > 0.5)
-                    Container(
+                  if (_flipAnimation.value > 0.5), Container(
                       width: widget.cardWidth * 1.3,
                       height: widget.cardHeight * 1.3,
                       decoration: BoxDecoration(
@@ -190,21 +186,18 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                           ),
                         ],
                       ),
-                    ),
                   
                   // Card
                   GestureDetector(
                     onTap: () {}, // Prevent interaction during animation
                     child: _buildCard(),
-                  ),
                 ],
-              ),
-            );
-          },
+              ));
+},
         ),
-      ],
+      ]
     );
-  }
+}
 
   List<Widget> _buildOtherCards() {
     return List.generate(widget.totalCards, (index) {
@@ -236,14 +229,12 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                     color: Colors.white.withValues(alpha: 0.2),
                     width: 2,
                   ),
-                ),
               ),
-            ),
           );
-        },
+}
       );
-    });
-  }
+});
+}
 
   Widget _buildCard() {
     final isFlipped = _flipAnimation.value > 0.5;
@@ -258,7 +249,6 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 5),
-          ),
         ],
       ),
       child: ClipRRect(
@@ -266,8 +256,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
         child: Stack(
           children: [
             // Card content
-            if (!_showFront) 
-              _buildCardBack()
+            if (!_showFront), _buildCardBack(,
             else
               _buildCardFront(),
             
@@ -285,15 +274,12 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                         Colors.white.withValues(alpha: 0),
                       ],
                       transform: GradientRotation(_flipAnimation.value * math.pi),
-                    ),
                   ),
-                ),
               ),
           ],
         ),
-      ),
     );
-  }
+}
 
   Widget _buildCardBack() {
     return Container(
@@ -306,7 +292,6 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             Theme.of(context).colorScheme.secondary,
           ],
         ),
-      ),
       child: Stack(
         children: [
           // Mandala pattern
@@ -316,7 +301,6 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                 color: Colors.white.withValues(alpha: 0.2),
                 progress: _pickAnimation.value,
               ),
-            ),
           ),
           
           // Center icon
@@ -325,12 +309,11 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
               Icons.auto_awesome,
               size: 60,
               color: Colors.white.withValues(alpha: 0.8),
-            ),
           ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildCardFront() {
     return Image.asset(
@@ -345,11 +328,10 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
               size: 60,
               color: Colors.white,
             ),
-          ),
         );
-      },
+}
     );
-  }
+}
 }
 
 class AnimatedMandalaPainter extends CustomPainter {
@@ -360,9 +342,10 @@ class AnimatedMandalaPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(),
       ..color = color
-      ..style = PaintingStyle.stroke
+      ..style =,
+      PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
     final center = Offset(size.width / 2, size.height / 2);
@@ -372,7 +355,7 @@ class AnimatedMandalaPainter extends CustomPainter {
     for (int i = 1; i <= 4; i++) {
       final radius = maxRadius * i / 4 * progress;
       canvas.drawCircle(center, radius, paint);
-    }
+}
 
     // Animated radial lines
     for (int i = 0; i < 12; i++) {
@@ -380,19 +363,17 @@ class AnimatedMandalaPainter extends CustomPainter {
       final lineLength = maxRadius * progress;
       final start = Offset(
         center.dx + lineLength * 0.3 * math.cos(angle),
-        center.dy + lineLength * 0.3 * math.sin(angle),
-      );
+        center.dy + lineLength * 0.3 * math.sin(angle));
       final end = Offset(
         center.dx + lineLength * math.cos(angle),
-        center.dy + lineLength * math.sin(angle),
-      );
+        center.dy + lineLength * math.sin(angle);
       canvas.drawLine(start, end, paint);
-    }
+}
 
     // Center star
     if (progress > 0.5) {
-      final starPaint = Paint()
-        ..color = color.withValues(alpha: (progress - 0.5) * 2)
+      final starPaint = Paint(),
+        ..color = color.withValues(alpha: (progress - 0.5) * 2),
         ..style = PaintingStyle.fill;
       
       final path = Path();
@@ -402,13 +383,13 @@ class AnimatedMandalaPainter extends CustomPainter {
         final y = center.dy + 30 * math.sin(angle) * progress;
         if (i == 0) {
           path.moveTo(x, y);
-        } else {
+} else {
           path.lineTo(x, y);
-        }
+}
       }
       path.close();
       canvas.drawPath(path, starPaint);
-    }
+}
   }
 
   @override

@@ -24,7 +24,7 @@ class NetworkReportFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _NetworkReportFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -97,7 +97,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null && picked != _birthDate) {
       setState(() {
@@ -117,7 +117,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
           Text(
             '당신의 인맥 운세를 분석하고\n네트워킹 전략을 제시해드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
               height: 1.5,
             ),
           ),
@@ -381,7 +381,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 }
@@ -541,7 +541,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                           '${entry.key}: ${entry.value}%',
                           style: theme.textTheme.bodySmall,
                         ),
-                      ],
+                      ]
                     );
                   }).toList(),
                 ),
@@ -615,7 +615,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                   Text(
                                     person['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                                       fontSize: 12 + fontSize,
                                     ),
                                   ),
@@ -742,7 +742,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
   
@@ -765,7 +765,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             showTitle: false,
           ),
         ],
-      ),
+      ,
     );
   }
   
@@ -795,7 +795,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
         sectionsSpace: 2,
         centerSpaceRadius: 40,
         sections: sections,
-      ),
+      ,
     );
   }
   
@@ -832,7 +832,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: theme.colorScheme.outline.withValues(alpha: 0.1),
-              strokeWidth: 1,
+              strokeWidth: 1
             );
           },
         ),
@@ -844,7 +844,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   '${value.toInt()}',
-                  style: const TextStyle(fontSize: 10),
+                  style: const TextStyle(fontSize: 10,
                 );
               },
             ),
@@ -872,7 +872,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           ),
         ),
         borderData: FlBorderData(show: false),
-      ),
+      ,
     );
   }
   

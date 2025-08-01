@@ -27,7 +27,7 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
     
     if (user == null) {
       throw Exception('사용자 인증이 필요합니다');
-    }
+}
 
     // Get card information
     final cardInfo = _getCardInfo(request.cardIndex);
@@ -41,22 +41,22 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
       cardInfo: cardInfo,
       position: positionMeaning,
       question: request.question,
-      isFirstCard: request.position == 0,
+      isFirstCard: request.position == 0
     );
 
     try {
       // TODO: Implement tarot interpretation via Edge Functions
       // For now, use local interpretation
       throw Exception('Edge function not implemented');
-    } catch (e) {
+} catch (e) {
       // Fallback to local interpretation
       return _generateLocalInterpretation(
         cardInfo: cardInfo,
         position: positionMeaning,
         question: request.question,
       );
-    }
-  },
+}
+  }
 );
 
 // 타로 전체 해석 프로바이더
@@ -68,7 +68,7 @@ final tarotFullInterpretationProvider = FutureProvider.family<Map<String, dynami
     
     if (user == null) {
       throw Exception('사용자 인증이 필요합니다');
-    }
+}
 
     final cards = params['cards'] as List<int>;
     final interpretations = params['interpretations'] as List<String>;
@@ -82,20 +82,20 @@ final tarotFullInterpretationProvider = FutureProvider.family<Map<String, dynami
       // TODO: Implement full tarot reading via Edge Functions
       // For now, use local summary
       throw Exception('Edge function not implemented');
-    } catch (e) {
+} catch (e) {
       // Fallback to local summary
       return _generateLocalSummary(
         cards: cardInfoList,
         spreadType: spreadType,
         question: question,
       );
-    }
-  },
+}
+  }
 );
 
 // Helper functions
 Map<String, dynamic> _getCardInfo(int cardIndex) {
-  // Major Arcana (0-21)
+  // Major Arcana (0-21,
   if (cardIndex < 22) {
     final majorCard = TarotMetadata.majorArcana[cardIndex];
     if (majorCard != null) {
@@ -108,48 +108,48 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
         'meaning': majorCard.uprightMeaning,
         'advice': majorCard.advice,
       };
-    }
+}
   }
   
-  // Minor Arcana (22-77)
+  // Minor Arcana (22-77,
   TarotCardInfo? minorCard;
   String suit = '';
   
-  // Wands (22-35)
+  // Wands (22-35,
   if (cardIndex >= 22 && cardIndex < 36) {
     suit = 'Wands';
     final wandsCards = TarotMinorArcana.wands.values.toList();
     final index = cardIndex - 22;
     if (index < wandsCards.length) {
       minorCard = wandsCards[index];
-    }
+}
   }
-  // Cups (36-49)
+  // Cups (36-49,
   else if (cardIndex >= 36 && cardIndex < 50) {
     suit = 'Cups';
     final cupsCards = TarotMinorArcana.cups.values.toList();
     final index = cardIndex - 36;
     if (index < cupsCards.length) {
       minorCard = cupsCards[index];
-    }
+}
   }
-  // Swords (50-63)
+  // Swords (50-63,
   else if (cardIndex >= 50 && cardIndex < 64) {
     suit = 'Swords';
     final swordsCards = TarotMinorArcana.swords.values.toList();
     final index = cardIndex - 50;
     if (index < swordsCards.length) {
       minorCard = swordsCards[index];
-    }
+}
   }
-  // Pentacles (64-77)
+  // Pentacles (64-77,
   else if (cardIndex >= 64 && cardIndex < 78) {
     suit = 'Pentacles';
     final pentaclesCards = TarotMinorArcana.pentacles.values.toList();
     final index = cardIndex - 64;
     if (index < pentaclesCards.length) {
       minorCard = pentaclesCards[index];
-    }
+}
   }
   
   if (minorCard != null) {
@@ -163,7 +163,7 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
       'advice': minorCard.advice,
       'suit': suit,
     };
-  }
+}
   
   // Fallback
   return {
@@ -195,7 +195,7 @@ String _createInterpretationPrompt({
   if (question != null && question.isNotEmpty) {
     buffer.writeln();
     buffer.writeln('질문: $question');
-  }
+}
   
   buffer.writeln();
   buffer.writeln('해석 지침:');
@@ -206,7 +206,7 @@ String _createInterpretationPrompt({
   
   if (isFirstCard) {
     buffer.writeln('5. 첫 카드이므로 전체적인 분위기를 설정해주세요');
-  }
+}
   
   buffer.writeln();
   buffer.writeln('형식:');
@@ -232,21 +232,21 @@ String _generateLocalInterpretation({
   if (cardInfo['type'] == 'major') {
     buffer.writeln('이 카드는 **${(cardInfo['keywords'] as List).first}**을 상징하는 중요한 메이저 아르카나입니다.');
     buffer.writeln(cardInfo['meaning'] ?? '');
-  } else {
+} else {
     final suit = cardInfo['suit'];
     final element = cardInfo['element'];
     buffer.writeln('$suit의 카드는 $element 원소를 나타내며, ${_getSuitMeaning(suit)}와 관련이 있습니다.');
     buffer.writeln(cardInfo['meaning'] ?? '');
-  }
+}
   
   buffer.writeln();
   
   // Advice
   if (cardInfo['advice'] != null) {
     buffer.writeln('💡 ${cardInfo['advice']}');
-  } else {
+} else {
     buffer.writeln('💡 이 카드가 전하는 메시지에 귀 기울이고, 내면의 직관을 믿으세요.');
-  }
+}
   
   return buffer.toString();
 }
@@ -263,7 +263,7 @@ Map<String, dynamic> _generateLocalSummary({
   for (final card in cards) {
     final element = card['element'] as String;
     elementCounts[element] = (elementCounts[element] ?? 0) + 1;
-  }
+}
   
   // Find dominant element
   String dominantElement = '';
@@ -272,7 +272,7 @@ Map<String, dynamic> _generateLocalSummary({
     if (count > maxCount) {
       maxCount = count;
       dominantElement = element;
-    }
+}
   });
   
   return {
@@ -301,7 +301,7 @@ List<String> _getMinorArcanaKeywords(String suit, int number) {
       return ['물질', '안정', '성취', '건강'];
     default:
       return ['변화', '성장', '기회'];
-  }
+}
 }
 
 String _getSuitElement(String suit) {
@@ -316,7 +316,7 @@ String _getSuitElement(String suit) {
       return '땅';
     default:
       return '영혼';
-  }
+}
 }
 
 String _getSuitMeaning(String suit) {
@@ -331,22 +331,22 @@ String _getSuitMeaning(String suit) {
       return '물질적 안정과 성취';
     default:
       return '삶의 변화';
-  }
+}
 }
 
 String _getMinorArcanaMeaning(String suit, int number) {
   if (number == 1) {
     return '새로운 시작과 순수한 잠재력을 나타냅니다.';
-  } else if (number <= 10) {
+} else if (number <= 10) {
     return '$suit 에너지의 발전 과정을 보여줍니다.';
-  } else if (number == 11) {
+} else if (number == 11) {
     return '젊고 신선한 에너지, 새로운 메시지를 전달합니다.';
-  } else if (number == 12) {
+} else if (number == 12) {
     return '행동과 모험, 적극적인 추진력을 상징합니다.';
-  } else if (number == 13) {
+} else if (number == 13) {
     return '성숙하고 직관적인 여성성, 감정의 깊이를 나타냅니다.';
-  } else if (number == 14) {
+} else if (number == 14) {
     return '권위와 리더십, 안정적인 통치력을 상징합니다.';
-  }
+}
   return '이 카드의 에너지가 당신의 상황에 영향을 미치고 있습니다.';
 }

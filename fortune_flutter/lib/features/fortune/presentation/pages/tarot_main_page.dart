@@ -63,8 +63,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     'love': GlobalKey(),
     'career': GlobalKey(),
     'choice': GlobalKey(),
-    'health': GlobalKey(),
-  };
+    'health': GlobalKey();
   
   // Card detail state
   int? selectedCardIndex;
@@ -87,9 +86,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     
     // Initialize PageController
     _pageController = PageController(
-      viewportFraction: 0.4,
-      initialPage: 0,
-    );
+      viewportFraction: 0.4),
+                  initialPage: 0);
     
     // Add haptic feedback on page changes
     _pageController.addListener(() {
@@ -98,9 +96,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         if (_lastPage != currentPage) {
           HapticFeedback.selectionClick();
           _lastPage = currentPage;
-        }
-      }
-    });
+}
+      },
+});
     
     // Background animation controller
     _backgroundAnimationController = AnimationController(
@@ -118,16 +116,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       begin: 0.8,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _cardAnimationController,
-      curve: Curves.elasticOut,
+      parent: _cardAnimationController),
+                  curve: Curves.elasticOut)
     ));
     
     _cardRotationAnimation = Tween<double>(
       begin: -0.1,
       end: 0.0,
     ).animate(CurvedAnimation(
-      parent: _cardAnimationController,
-      curve: Curves.easeOutBack,
+      parent: _cardAnimationController),
+                  curve: Curves.easeOutBack)
     ));
     
     _cardAnimationController.forward();
@@ -140,7 +138,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     
     _bottomCardsController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this,
+      vsync: this
     );
     
     // Create staggered animations for bottom cards
@@ -152,11 +150,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         parent: _bottomCardsController,
         curve: Interval(
           index * 0.15,
-          0.4 + index * 0.15,
-          curve: Curves.easeOutCubic,
-        ),
-      ));
-    });
+          0.4 + index * 0.15),
+                  curve: Curves.easeOutCubic)
+        )));
+});
     
     // Initialize card expansion animations
     _cardExpansionController = AnimationController(
@@ -168,24 +165,24 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _cardExpansionController,
-      curve: Curves.easeInOutCubic,
+      parent: _cardExpansionController),
+                  curve: Curves.easeInOutCubic)
     ));
     
     _cardExpansionSizeAnimation = Tween<double>(
       begin: 0.85,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _cardExpansionController,
-      curve: Curves.easeInOutCubic,
+      parent: _cardExpansionController),
+                  curve: Curves.easeInOutCubic)
     ));
     
     _cardRadiusAnimation = Tween<double>(
       begin: 20.0,
       end: 0.0,
     ).animate(CurvedAnimation(
-      parent: _cardExpansionController,
-      curve: Curves.easeInOutCubic,
+      parent: _cardExpansionController),
+                  curve: Curves.easeInOutCubic)
     ));
     
     // Initialize swap animation controller
@@ -197,16 +194,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     // Initialize card flip animation controller
     _cardFlipController = AnimationController(
       duration: const Duration(milliseconds: 1200),
-      vsync: this,
+      vsync: this
     );
     
     _flipAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _cardFlipController,
-      curve: const Interval(0.3, 0.8, curve: Curves.easeInOut),
-    ));
+      parent: _cardFlipController),
+                  curve: const Interval(0.3, 0.8, curve: Curves.easeInOut)));
     
     // Position animation will be initialized when card is selected
     _cardDetailPositionAnimation = const AlwaysStoppedAnimation(Offset.zero);
@@ -216,8 +212,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(
-      parent: _swapAnimationController,
-      curve: Curves.easeInOutCubic,
+      parent: _swapAnimationController),
+                  curve: Curves.easeInOutCubic)
     ));
     
     _swapScaleAnimation = TweenSequence<double>([
@@ -228,13 +224,11 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.8, end: 1.0),
         weight: 0.5,
-      ),
-    ]).animate(CurvedAnimation(
-      parent: _swapAnimationController,
-      curve: Curves.easeInOut,
+      )).animate(CurvedAnimation(
+      parent: _swapAnimationController),
+                  curve: Curves.easeInOut)
     ));
-    
-  }
+}
 
   @override
   void dispose() {
@@ -247,18 +241,18 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     _cardFlipController.dispose();
     _pageController.dispose();
     super.dispose();
-  }
+}
   
   void _startTransition() async {
     setState(() {
       _currentState = TarotPageState.transitioning;
-    });
+});
     
     // Start bottom cards fade out animation
     _bottomCardsController.forward();
     
     // Wait a bit before expanding the card
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 300);
     
     // Start card expansion animation
     await _cardExpansionController.forward();
@@ -267,36 +261,35 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     if (mounted) {
       setState(() {
         _currentState = TarotPageState.cardExpanded;
-      });
-    }
+});
+}
   }
   
   void _onCardSwap(String cardType, Map<String, dynamic> cardData) async {
     if (_isSwapping || cardType == _selectedCardType) {
       return;
-    }
+}
     
     // Store previous card data for the card moving down
     Map<String, dynamic>? prevData;
     if (_selectedCardType == 'daily') {
       prevData = {
-        'title': 'Daily fortune',
+        'title': 'Daily fortune'
         'icon': Icons.auto_awesome,
-        'color': const Color(0xFFFFA726),
-      };
-    } else {
+        'color': const Color(0xFFFFA726);
+} else {
       prevData = _selectedCardData;
-    }
+}
     
     setState(() {
       _isSwapping = true;
       _swappingToCardType = cardType; // Card moving up
       _swappingFromCardType = _selectedCardType; // Card moving down
       _previousCardData = prevData;
-    });
+});
     
     // Small delay to ensure proper layout calculation
-    await Future.delayed(const Duration(milliseconds: 50));
+    await Future.delayed(const Duration(milliseconds: 50);
     
     // Start swap animation
     await _swapAnimationController.forward();
@@ -310,11 +303,11 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       _swappingFromCardType = null;
       // Keep initial state - don't show tarot deck yet
       _currentState = TarotPageState.initial;
-    });
+});
     
     // Reset animation
     _swapAnimationController.reset();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -328,77 +321,69 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         children: [
           // Animated mystical background
           AnimatedBuilder(
-            animation: _bottomCardsController,
-            builder: (context, child) {
+            animation: _bottomCardsController),
+                  builder: (context, child) {
               final rawOpacity = 1.0 - (_bottomCardsController.value * 0.5);
               final clampedOpacity = rawOpacity.clamp(0.0, 1.0);
               return Opacity(
-                opacity: clampedOpacity,
-                child: _buildAnimatedBackground(),
-              );
-            },
+                opacity: clampedOpacity),
+                  child: _buildAnimatedBackground();
+},
           ),
           
           // Main content
           SafeArea(
             child: Stack(
               children: [
-                // Initial layout (header, subtitle, bottom cards)
-                Column(
+                // Initial layout (header, subtitle, bottom cards), Column(
                   children: [
                 // Header
                 AnimatedBuilder(
-                  animation: _bottomCardsController,
+                  animation: _bottomCardsController),
                   builder: (context, child) {
                     final rawOpacity = 1.0 - _bottomCardsController.value;
                     final clampedOpacity = rawOpacity.clamp(0.0, 1.0);
                     return Opacity(
-                      opacity: clampedOpacity,
-                      child: Padding(
+                      opacity: clampedOpacity),
+                  child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween),
+                  children: [
                             Text(
-                              'My tarot',
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
+                              'My tarot'),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: Colors.white),
+                  fontWeight: FontWeight.bold)
                               ),
-                            ),
                             IconButton(
                               icon: const Icon(Icons.search, color: Colors.white70),
                               onPressed: () {},
                             ),
-                          ],
-                        ),
-                      ),
+                      
                     );
-                  },
+},
                 ),
                 
                 // Subtitle
                 AnimatedBuilder(
-                  animation: _bottomCardsController,
+                  animation: _bottomCardsController),
                   builder: (context, child) {
                     final rawOpacity = 1.0 - _bottomCardsController.value;
                     final clampedOpacity = rawOpacity.clamp(0.0, 1.0);
                     return Opacity(
-                      opacity: clampedOpacity,
-                      child: Padding(
+                      opacity: clampedOpacity),
+                  child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Everything has its unseen roots',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.white60,
+                            'Everything has its unseen roots'),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white60)
                             ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                        ));
+},
                 ),
                 
                 // Large space for card placement and to push Tarot Reading section down
@@ -406,27 +391,24 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 
                 // Tarot Reading section
                 AnimatedBuilder(
-                  animation: _bottomCardsController,
+                  animation: _bottomCardsController),
                   builder: (context, child) {
                     final rawOpacity = 1.0 - _bottomCardsController.value;
                     final clampedOpacity = rawOpacity.clamp(0.0, 1.0);
                     return Opacity(
-                      opacity: clampedOpacity,
-                      child: Padding(
+                      opacity: clampedOpacity),
+                  child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            'Tarot Reading',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                            'Tarot Reading'),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Colors.white),
+                  fontWeight: FontWeight.bold)
                             ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                        ));
+},
                 ),
                 
                 const SizedBox(height: 16),
@@ -435,10 +417,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 SizedBox(
                   height: 200,
                   child: PageView.builder(
-                    controller: _pageController,
-                    physics: const BouncingScrollPhysics(
+                    controller: _pageController),
+                  physics: const BouncingScrollPhysics(
                       parent: AlwaysScrollableScrollPhysics(),
-                    ),
                     pageSnapping: true,
                     itemCount: 4,
                     itemBuilder: (context, index) {
@@ -456,25 +437,21 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           index: index,
                           title: card['title'] as String,
                           icon: card['icon'] as IconData,
-                          color: card['color'] as Color,
-                          cardType: card['type'] as String,
-                        ),
-                      );
-                    },
+                          color: card['color'] as Color),
+                  cardType: card['type'] as String);
+},
                   ),
                 ),
-                  ],
-                ),
                 
-                // Show the card moving down during swap (with higher z-index)
+                // Show the card moving down during swap (with higher z-index,
                 if (_isSwapping && _swappingFromCardType != null && _previousCardData != null)
                   Positioned.fill(
                     child: AnimatedBuilder(
-                      animation: _swapAnimationController,
-                      builder: (context, child) {
+                      animation: _swapAnimationController),
+                  builder: (context, child) {
                         final swapProgress = _swapProgressAnimation.value;
                         
-                        // Find target position (where the clicked card was)
+                        // Find target position (where the clicked card was,
                         final targetKey = _bottomCardKeys[_swappingToCardType];
                         if (targetKey?.currentContext == null) return const SizedBox();
                         
@@ -498,53 +475,48 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                         final animatedHeight = 280 - (280 - 140) * swapProgress;
                         
                         return Positioned(
-                          top: animatedTop,
+                          top: animatedTop
                           left: animatedLeft,
                           child: Transform.scale(
                             scale: _swapScaleAnimation.value,
                             child: Container(
-                                  width: animatedWidth,
-                                  height: animatedHeight,
-                                  decoration: BoxDecoration(
+                                  width: animatedWidth),
+                  height: animatedHeight),
+                  decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(16),
                                     gradient: LinearGradient(
                                       begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
+                                      end: Alignment.bottomRight),
+                  colors: [
                                         (() {
                                           final alpha = 0.8;
                                           return (_previousCardData!['color'] as Color).withValues(alpha: alpha);
-                                        })(),
+})(),
                                         _previousCardData!['color'] as Color,
-                                      ],
                                     ),
                                     boxShadow: [
                                       BoxShadow(
                                         color: (() {
                                           final alpha = 0.4;
                                           return (_previousCardData!['color'] as Color).withValues(alpha: alpha);
-                                        })(),
+})(),
                                         blurRadius: 20,
                                         spreadRadius: 5,
                                       ),
-                                    ],
-                                  ),
                                   child: Stack(
                                     children: [
                                       // Background icon
-                                      if (_previousCardData!['icon'] != null)
-                                        Positioned(
+                                      if (_previousCardData!['icon'] != null), Positioned(
                                           top: 30,
                                           left: 0,
                                           right: 0,
                                           child: Icon(
-                                            _previousCardData!['icon'] as IconData,
-                                            color: (() {
+                                            _previousCardData!['icon'] as IconData),
+                  color: (() {
                                               final alpha = 0.3;
                                               return Colors.white.withValues(alpha: alpha);
-                                            })(),
+})(),
                                             size: 80 - (20 * swapProgress),
-                                          ),
                                         ),
                                       // Title
                                       Positioned(
@@ -552,22 +524,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                         left: 20,
                                         right: 20,
                                         child: Text(
-                                          _previousCardData!['title'] ?? '',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 24 - (8 * swapProgress),
+                                          _previousCardData!['title'] ?? ''),
+                  style: TextStyle(
+                                            color: Colors.white),
+                  fontSize: 24 - (8 * swapProgress),
                                             fontWeight: FontWeight.bold,
                                           ),
-                                        ),
                                       ),
-                                    ],
-                                  ),
-                            ),
-                          ),
-                        );
-                      },
+                            ));
+},
                     ),
-                  ),
                 
                 // Animated positioned card with swap animation
                 AnimatedBuilder(
@@ -588,7 +554,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     double animatedOpacity = 1.0;
                     if (_isSwapping) {
                       animatedOpacity = 1.0 - swapProgress;
-                    }
+}
                     final clampedOpacity = animatedOpacity.clamp(0.0, 1.0);
                     // Removed repetitive logging
                     
@@ -599,24 +565,21 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       child: Opacity(
                         opacity: clampedOpacity,
                         child: Transform.scale(
-                          scale: _isSwapping ? _swapScaleAnimation.value : 1.0,
-                          child: GestureDetector(
-                            key: _mainCardKey,
-                            onTap: () {
+                          scale: _isSwapping ? _swapScaleAnimation.value : 1.0),
+                  child: GestureDetector(
+                            key: _mainCardKey),
+                  onTap: () {
                               if (_currentState == TarotPageState.initial) {
                                 // All cards use the same transition effect
                                 _startTransition();
-                              }
+}
                             },
                             child: Hero(
-                              tag: 'daily-tarot-card',
-                              child: _buildMainCard(dateString),
-                            ),
+                              tag: 'daily-tarot-card'),
+                  child: _buildMainCard(dateString),
                           ),
-                        ),
-                      ),
-                    );
-                  },
+                      ));
+},
                 ),
                 
                 // New content when card is expanded
@@ -628,16 +591,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       right: 0,
                       child: Center(
                       child: Text(
-                        _selectedCardData != null ? _selectedCardData!['title'] : 'Daily fortune',
+                        _selectedCardData != null ? _selectedCardData!['title'] : 'Daily fortune'
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 32),
+                  fontWeight: FontWeight.bold)
                         ),
-                      ),
-                    ),
-                  );
-                  })(),
+                    ));
+})(),
                   
                   // Tarot deck when card is expanded
                   (() {
@@ -646,13 +607,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    child: _buildTarotDeck(),
-                  );
-                  })(),
-                ],
-                  
-              ],
-            ),
+                    child: _buildTarotDeck();
+})(),
           ),
           
           // Card detail overlay with full-screen dark background
@@ -666,12 +622,12 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       setState(() {
                         isShowingCardDetail = false;
                         selectedCardIndex = null;
-                      });
-                    });
-                  });
-                },
+});
+});
+});
+},
                 child: AnimatedBuilder(
-                  animation: _cardFlipController,
+                  animation: _cardFlipController),
                   builder: (context, child) {
                     return Container(
                       color: const Color(0xFF0A0E27).withValues(alpha: _cardFlipController.value * 0.95),
@@ -679,20 +635,19 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           ? Opacity(
                               opacity: (_cardFlipController.value - 0.3) / 0.7,
                               child: _buildAnimatedBackground(),
-                            )
-                          : null,
+                            ,
+                          : null
                     );
-                  },
+},
                 ),
-              ),
             ),
             
             // Card detail with Hero animation - removed to integrate with scrollable view
               
             // Overlay UI elements with scrollable content
             AnimatedBuilder(
-              animation: _flipAnimation,
-              builder: (context, child) {
+              animation: _flipAnimation),
+                  builder: (context, child) {
                 // Only show after flip completes
                 if (_flipAnimation.value < 0.5) return const SizedBox();
                 
@@ -702,15 +657,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 
                 return Opacity(
                   opacity: (_flipAnimation.value - 0.5) * 2, // Fade in after flip
-                  child: _buildFullScreenCardDetail(context, cardInfo),
-                );
-              },
-            ),
-          ],
-        ],
-      ),
-    );
-  }
+                  child: _buildFullScreenCardDetail(context, cardInfo));
+},
+            ));
+}
   
   Widget _buildMainCard(String dateString) {
     final screenSize = MediaQuery.of(context).size;
@@ -728,7 +678,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       final alpha = 0.8;
       gradientStart = color.withValues(alpha: alpha);
       gradientEnd = color;
-    }
+}
     
     return AnimatedBuilder(
       animation: Listenable.merge([_cardAnimationController, _cardExpansionController]),
@@ -747,7 +697,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         
         return Transform(
           alignment: Alignment.center,
-          transform: Matrix4.identity()
+          transform: Matrix4.identity(,
             ..setEntry(3, 2, 0.001)
             ..rotateY(_cardRotationAnimation.value)
             ..scale(_cardScaleAnimation.value),
@@ -762,21 +712,17 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 end: Alignment.bottomRight,
                 colors: [
                   gradientStart,
-                  gradientEnd,
-                ],
-              ),
+                  gradientEnd),
               boxShadow: [
                 BoxShadow(
                   color: (() {
                     final alpha = 0.4;
                     // Removed repetitive logging
                     return gradientStart.withValues(alpha: alpha);
-                  })(),
+})(),
                   blurRadius: 30,
                   spreadRadius: 5,
                 ),
-              ],
-            ),
             child: Stack(
               children: [
                 // Card background pattern
@@ -784,28 +730,24 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(_cardRadiusAnimation.value),
                     child: AnimatedTarotCardWidget(),
-                  ),
                 ),
                 
                 // Icon for non-daily cards
-                if (icon != null && _currentState != TarotPageState.cardExpanded)
-                  Positioned(
+                if (icon != null && _currentState != TarotPageState.cardExpanded), Positioned(
                     top: 40,
                     left: 0,
                     right: 0,
                     child: Icon(
-                      icon,
-                      color: (() {
+                      icon),
+                  color: (() {
                         final alpha = 0.3;
                         return Colors.white.withValues(alpha: alpha);
-                      })(),
+})(),
                       size: 80,
                     ),
-                  ),
                 
                 // Card content
-                if (_currentState != TarotPageState.cardExpanded)
-                  Positioned(
+                if (_currentState != TarotPageState.cardExpanded), Positioned(
                     bottom: 20,
                     left: 20,
                     right: 20,
@@ -813,70 +755,58 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          dateString,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
+                          dateString),
+                  style: const TextStyle(
+                            color: Colors.white70),
+                  fontSize: 14)
                           ),
-                        ),
                         const SizedBox(height: 8),
                         Text(
                           title,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
+                  fontWeight: FontWeight.bold)
                           ),
-                        ),
                         const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
+                            horizontal: 16),
+                  vertical: 8),
                           decoration: BoxDecoration(
                             color: (() {
                               final alpha = 0.2;
                               // Removed repetitive logging
                               return Colors.white.withValues(alpha: alpha);
-                            })(),
+})(),
                             borderRadius: BorderRadius.circular(20),
-                          ),
                           child: const Text(
                             'DRAW',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.2,
+                              fontWeight: FontWeight.bold),
+                  letterSpacing: 1.2)
                             ),
-                          ),
                         ),
-                      ],
-                    ),
                   ),
-              ],
-            ),
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
   
   Widget _buildAnimatedBackground() {
     return AnimatedBuilder(
-      animation: _backgroundAnimationController,
-      builder: (context, child) {
+      animation: _backgroundAnimationController),
+                  builder: (context, child) {
         // Removed logging - this runs 60 times per second
         return CustomPaint(
           painter: _MysticalBackgroundPainter(
-            animation: _backgroundAnimationController.value,
-          ),
-          child: Container(),
-        );
-      },
+            animation: _backgroundAnimationController.value),
+          child: Container());
+}
     );
-  }
+}
   
   Widget _buildTarotTypeCard(
     BuildContext context,
@@ -885,7 +815,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     Color color,
     String route,
     String cardType,
-    GlobalKey cardKey,
+    GlobalKey cardKey)
   ) {
     final currentDate = DateTime.now();
     final dateString = '${_getWeekday(currentDate.weekday)}, ${_getMonth(currentDate.month)} ${currentDate.day}';
@@ -895,21 +825,20 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         'title': title,
         'icon': icon,
         'color': color,
-        'route': route,
-      }),
+        'route': route),
+}),
       child: Container(
         key: cardKey,
-        width: 140,
-        height: 180,
-        decoration: BoxDecoration(
+        width: 140),
+                  height: 180),
+                  decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
+            end: Alignment.bottomRight),
+                  colors: [
               color.withValues(alpha: 0.8),
               color,
-            ],
           ),
           boxShadow: [
             BoxShadow(
@@ -917,8 +846,6 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               blurRadius: 20,
               spreadRadius: 2,
             ),
-          ],
-        ),
         child: Stack(
           children: [
             // Card background pattern
@@ -926,7 +853,6 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: AnimatedTarotCardWidget(),
-              ),
             ),
             
             // Icon at top
@@ -935,11 +861,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               left: 0,
               right: 0,
               child: Icon(
-                icon,
-                color: Colors.white.withValues(alpha: 0.3),
+                icon),
+                  color: Colors.white.withValues(alpha: 0.3),
                 size: 60,
               ),
-            ),
             
             // Card content at bottom
             Positioned(
@@ -952,43 +877,35 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                   Text(
                     title,
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  fontSize: 20),
+                  fontWeight: FontWeight.bold)
                     ),
-                  ),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 6,
-                    ),
+                      horizontal: 16),
+                  vertical: 6),
                     decoration: BoxDecoration(
                       color: (() {
                         final alpha = 0.2;
                         // Removed repetitive logging
                         return Colors.white.withValues(alpha: alpha);
-                      })(),
+})(),
                       borderRadius: BorderRadius.circular(16),
-                    ),
                     child: const Text(
                       'DRAW',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.bold),
+                  letterSpacing: 1.2)
                       ),
-                    ),
                   ),
-                ],
-              ),
             ),
-          ],
-        ),
-      ),
+      
     );
-  }
+}
   
   String _getWeekday(int weekday) {
     switch (weekday) {
@@ -1000,7 +917,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       case 6: return 'Saturday';
       case 7: return 'Sunday';
       default: return '';
-    }
+}
   }
   
   String _getMonth(int month) {
@@ -1018,7 +935,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       case 11: return 'Nov';
       case 12: return 'Dec';
       default: return '';
-    }
+}
   }
   
   Widget _buildTarotDeck() {
@@ -1030,80 +947,74 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           setState(() {
             selectedCardIndex = cardIndex; // Use the actual random card index
             isShowingCardDetail = true;
-          });
+});
           
           // Delay flip animation to let Hero animation complete
           Future.delayed(const Duration(milliseconds: 300), () {
             _cardFlipController.forward();
-          });
-        },
-      ),
+});
+},
+      
     );
-  }
+}
   
   Widget _buildCardDetail() {
     // If not showing detail, return the deck card design matching BottomTarotDeckWidget
     if (!isShowingCardDetail) {
       return Container(
-        width: 60,
-        height: 84,
-        decoration: BoxDecoration(
+        width: 60),
+                  height: 84),
+                  decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
+            end: Alignment.bottomRight),
+                  colors: [
               const Color(0xFF1E3A5F),
               const Color(0xFF0D1B2A),
               const Color(0xFF415A77),
-            ],
-          ),
           boxShadow: [
             BoxShadow(
               color: Colors.blue.withValues(alpha: 0.6),
               blurRadius: 20,
               spreadRadius: 5,
             ),
-          ],
-        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: CustomPaint(
             painter: TarotCardBackPainter(isHighlighted: true),
-          ),
-        ),
+        
       );
-    }
+}
     
-    // Standard card size (tarot card ratio 1:1.4)
+    // Standard card size (tarot card ratio 1: 1.4,
     final cardWidth = 300.0;
     final cardHeight = cardWidth * 1.4;
     
     return AnimatedBuilder(
-      animation: _flipAnimation,
-      builder: (context, child) {
+      animation: _flipAnimation),
+                  builder: (context, child) {
         final isShowingFront = _flipAnimation.value < 0.5;
         
         return Container(
           width: cardWidth,
           height: cardHeight,
           child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
+            alignment: Alignment.center),
+                  transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001)
               ..rotateY(_flipAnimation.value * math.pi),
             child: isShowingFront
                 ? _buildCardBack() // Card back design
                 : Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.identity()..rotateY(math.pi),
-                    child: _buildCardFront(), // Card front (THE FOOL, etc.)
+                    alignment: Alignment.center),
+                  transform: Matrix4.identity()..rotateY(math.pi),
+                    child: _buildCardFront(), // Card front (THE FOOL, etc.,
                   ),
-          ),
         );
-      },
+},
     );
-  }
+}
   
   Widget _buildCardBack() {
     // Card back design with rounded corners
@@ -1112,29 +1023,24 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
+          end: Alignment.bottomRight),
+                  colors: [
             const Color(0xFF1E3A5F),
             const Color(0xFF0D1B2A),
             const Color(0xFF415A77),
-          ],
-        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 30,
             spreadRadius: 10,
           ),
-        ],
-      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: CustomPaint(
           painter: TarotCardBackDetailPainter(),
-        ),
-      ),
+      
     );
-  }
+}
   
   Widget _buildCardFront() {
     // Get card metadata
@@ -1150,12 +1056,12 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         'fool', 'magician', 'high_priestess', 'empress', 'emperor',
         'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
         'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
-      ];
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world',
+];
       imagePath = 'assets/images/tarot/decks/rider_waite/major/${selectedCardIndex.toString().padLeft(2, '0')}_${cardNames[selectedCardIndex!]}.jpg';
-    } else {
+} else {
       imagePath = 'assets/images/tarot/decks/rider_waite/major/00_fool.jpg';
-    }
+}
     
     // Card design with rounded corners and shadow
     return Container(
@@ -1167,18 +1073,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
             blurRadius: 30,
             spreadRadius: 10,
           ),
-        ],
-      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: Stack(
-          fit: StackFit.expand,
-          children: [
+          fit: StackFit.expand),
+                  children: [
             // Card image
             Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
+              imagePath),
+                  fit: BoxFit.cover),
+                  errorBuilder: (context, error, stackTrace) {
                 // Fallback to solid color with card name
                 return Container(
                   color: const Color(0xFF2A2A2A),
@@ -1187,31 +1091,24 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.image_not_supported,
-                          color: Colors.white54,
-                          size: 48,
-                        ),
+                          Icons.image_not_supported),
+                  color: Colors.white54),
+                  size: 48),
                         const SizedBox(height: 16),
                         Text(
                           cardInfo.name,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                            fontSize: 24),
+                  fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                  ));
+},
             ),
-          ],
-        ),
-      ),
+      
     );
-  }
+}
   
   Widget _buildFullScreenCardDetail(BuildContext context, TarotCardInfo cardInfo) {
     final themeColor = _getThemeColor();
@@ -1229,9 +1126,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               // Card with Hero animation
               Center(
                 child: Hero(
-                  tag: 'tarot-card-$selectedCardIndex',
+                  tag: 'tarot-card-$selectedCardIndex'),
                   child: _buildCardDetail(),
-                ),
               ),
               
               const SizedBox(height: 40),
@@ -1252,7 +1148,6 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       content: _getThemeSpecificInterpretation(cardInfo),
                       color: themeColor,
                       icon: _getThemeIcon(),
-                    ),
                     
                     const SizedBox(height: 20),
                     
@@ -1260,15 +1155,13 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     if (cardInfo.keywords.isNotEmpty) ...[
                       _buildKeywordsSection(cardInfo.keywords),
                       const SizedBox(height: 20),
-                    ],
                     
                     // General meaning
                     _buildSectionCard(
                       title: '기본 의미',
                       content: cardInfo.uprightMeaning,
                       color: Colors.purple,
-                      icon: Icons.auto_awesome,
-                    ),
+                      icon: Icons.auto_awesome),
                     
                     const SizedBox(height: 20),
                     
@@ -1277,8 +1170,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       title: '조언',
                       content: cardInfo.advice,
                       color: Colors.blue,
-                      icon: Icons.lightbulb_outline,
-                    ),
+                      icon: Icons.lightbulb_outline),
                     
                     const SizedBox(height: 20),
                     
@@ -1286,21 +1178,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                     if (cardInfo.questions.isNotEmpty) ...[
                       _buildQuestionsSection(cardInfo.questions),
                       const SizedBox(height: 20),
-                    ],
                     
                     // Affirmations
                     if (cardInfo.affirmations != null && cardInfo.affirmations!.isNotEmpty) ...[
                       _buildAffirmationsSection(cardInfo.affirmations!),
                       const SizedBox(height: 20),
-                    ],
                     
                     // Bottom padding
                     const SizedBox(height: 100),
-                  ],
-                ),
               ),
-            ],
-          ),
         ),
         
         // Fixed header
@@ -1311,20 +1197,18 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
+                begin: Alignment.topCenter),
+                  end: Alignment.bottomCenter),
+                  colors: [
                   Colors.black.withValues(alpha: 0.9),
                   Colors.black.withValues(alpha: 0.7),
                   Colors.transparent,
-                ],
               ),
-            ),
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween),
                   children: [
                     IconButton(
                       icon: const Icon(Icons.close, color: Colors.white, size: 32),
@@ -1334,10 +1218,10 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             setState(() {
                               isShowingCardDetail = false;
                               selectedCardIndex = null;
-                            });
-                          });
-                        });
-                      },
+});
+});
+});
+},
                     ),
                     Text(
                       cardInfo.name.split('(')[0].trim(),
@@ -1345,22 +1229,16 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
+                        letterSpacing: 1.2)
                       ),
-                    ),
                     IconButton(
                       icon: const Icon(Icons.bookmark_border, color: Colors.white, size: 28),
                       onPressed: () {},
                     ),
-                  ],
-                ),
               ),
-            ),
-          ),
-        ),
-      ],
+          ))
     );
-  }
+}
   
   
   Widget _buildScrollIndicator() {
@@ -1369,37 +1247,33 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       duration: const Duration(seconds: 2),
       builder: (context, value, child) {
         return Container(
-          alignment: Alignment.center,
-          child: Column(
+          alignment: Alignment.center),
+                  child: Column(
             children: [
               Transform.translate(
                 offset: Offset(0, math.sin(value * 2 * math.pi) * 5),
                 child: Icon(
-                  Icons.expand_more,
+                  Icons.expand_more),
                   color: Colors.white.withValues(alpha: 0.6),
                   size: 32,
                 ),
-              ),
               Text(
-                '아래로 스크롤하여 더 많은 내용을 확인하세요',
-                style: TextStyle(
+                '아래로 스크롤하여 더 많은 내용을 확인하세요'),
+                  style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.5),
                   fontSize: 12,
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
   
   Widget _buildSectionCard({
     required String title,
     required String content,
     required Color color,
-    required IconData icon,
-  }) {
+    required IconData icon),
+}) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1407,17 +1281,14 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           colors: [
             color.withValues(alpha: 0.2),
             color.withValues(alpha: 0.1),
-          ],
-        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
           width: 1,
         ),
-      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        crossAxisAlignment: CrossAxisAlignment.start),
+                  children: [
           Row(
             children: [
               Icon(icon, color: color, size: 24),
@@ -1426,25 +1297,21 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 title,
                 style: TextStyle(
                   color: color,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18),
+                  fontWeight: FontWeight.bold)
                 ),
-              ),
-            ],
           ),
           const SizedBox(height: 12),
           Text(
             content,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 16,
-              height: 1.6,
+              fontSize: 16),
+                  height: 1.6)
             ),
-          ),
-        ],
-      ),
+      
     );
-  }
+}
   
   Widget _buildKeywordsSection(List<String> keywords) {
     return Column(
@@ -1453,16 +1320,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         const Text(
           '키워드',
           style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+            color: Colors.white),
+                  fontSize: 18),
+                  fontWeight: FontWeight.bold)
           ),
-        ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
-          runSpacing: 8,
-          children: keywords.map((keyword) {
+          runSpacing: 8),
+                  children: keywords.map((keyword) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
@@ -1470,39 +1336,35 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.2),
-                ),
               ),
               child: Text(
                 keyword,
                 style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
+                  color: Colors.white),
+                  fontSize: 14)
                 ),
-              ),
             );
-          }).toList(),
-        ),
-      ],
+}).toList(),
     );
-  }
+}
   
   Widget _buildQuestionsSection(List<String> questions) {
     return _buildSectionCard(
-      title: '성찰을 위한 질문',
-      content: questions.map((q) => '• $q').join('\n'),
+      title: '성찰을 위한 질문'),
+                  content: questions.map((q) => '• $q').join('\n'),
       color: Colors.amber,
       icon: Icons.help_outline,
     );
-  }
+}
   
   Widget _buildAffirmationsSection(List<String> affirmations) {
     return _buildSectionCard(
-      title: '확언',
-      content: affirmations.map((a) => '"$a"').join('\n\n'),
+      title: '확언'),
+                  content: affirmations.map((a) => '"$a"').join('\n\n'),
       color: Colors.green,
-      icon: Icons.format_quote,
+      icon: Icons.format_quote
     );
-  }
+}
   
   String _getThemeTitle() {
     switch (_selectedCardType) {
@@ -1518,7 +1380,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         return '건강과 활력';
       default:
         return '카드의 메시지';
-    }
+}
   }
   
   IconData _getThemeIcon() {
@@ -1534,7 +1396,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       case 'daily':
       default:
         return Icons.auto_awesome;
-    }
+}
   }
   
   String _getCardImagePath(int cardIndex) {
@@ -1547,12 +1409,12 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         'fool', 'magician', 'high_priestess', 'empress', 'emperor',
         'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
         'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'
-      ];
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world',
+];
       return '$deckPath/major/${cardIndex.toString().padLeft(2, '0')}_${cardNames[cardIndex]}.jpg';
-    }
+}
     return '$deckPath/major/00_fool.jpg';
-  }
+}
   
   Widget _buildInfoBadge({required IconData icon, required String label}) {
     return Container(
@@ -1560,23 +1422,20 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-      ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+        mainAxisSize: MainAxisSize.min),
+                  children: [
           Icon(icon, size: 16, color: Colors.white60),
           const SizedBox(width: 6),
           Text(
             label,
             style: const TextStyle(
-              color: Colors.white60,
-              fontSize: 14,
+              color: Colors.white60),
+                  fontSize: 14)
             ),
-          ),
-        ],
-      ),
+      
     );
-  }
+}
   
   String _getThemeSpecificInterpretation(TarotCardInfo cardInfo) {
     switch (_selectedCardType) {
@@ -1592,7 +1451,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         return "건강운: ${cardInfo.healthMessage ?? cardInfo.uprightMeaning}";
       default:
         return cardInfo.uprightMeaning;
-    }
+}
   }
   
   Color _getThemeColor() {
@@ -1608,7 +1467,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       case 'daily':
       default:
         return const Color(0xFFFFA726);
-    }
+}
   }
   
   IconData _getAstrologyIcon(String astrology) {
@@ -1641,9 +1500,8 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
       case '명왕성':
       case 'Pluto':
         return Icons.dark_mode;
-      default:
-        return Icons.stars;
-    }
+      default: return Icons.stars;
+}
   }
   
   Widget _buildAnimatedBottomCard({
@@ -1651,22 +1509,22 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
     required String title,
     required IconData icon,
     required Color color,
-    required String cardType,
-  }) {
+    required String cardType),
+}) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return AnimatedBuilder(
           animation: Listenable.merge([
-            _bottomCardAnimations[index], 
-            _swapAnimationController,
-            _pageController,
-          ]),
+            _bottomCardAnimations[index],
+            _swapAnimationController)
+            _pageController),
+]),
           builder: (context, child) {
             // Calculate page offset for 3D effect
             double pageOffset = 0;
             if (_pageController.hasClients && _pageController.position.hasContentDimensions) {
               pageOffset = index - _pageController.page!;
-            }
+}
             
             // Enhanced animations with smooth curves
             final absOffset = pageOffset.abs();
@@ -1695,7 +1553,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
               final targetTop = -400.0;
               yOffset = targetTop * _swapProgressAnimation.value;
               scale = 1.0 + (0.5 * _swapProgressAnimation.value);
-            }
+}
             
             return Transform(
               alignment: Alignment.center,
@@ -1713,11 +1571,11 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                       'title': title,
                       'icon': icon,
                       'color': color,
-                      'route': '',
-                    }),
+                      'route': ''),
+}),
                     child: Container(
-                      key: _bottomCardKeys[cardType],
-                      decoration: BoxDecoration(
+                      key: _bottomCardKeys[cardType]),
+                  decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(28),
                         boxShadow: [
                           // Primary glow
@@ -1726,61 +1584,51 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             blurRadius: 30,
                             spreadRadius: 5,
                             offset: Offset(0, 15),
-                          ),
                           // Secondary shadow for depth
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.3 * opacity),
                             blurRadius: 20,
                             spreadRadius: -5,
                             offset: Offset(0, 20),
-                          ),
                           // Inner glow
                           BoxShadow(
                             color: color.withValues(alpha: 0.3 * opacity),
                             blurRadius: 15,
                             spreadRadius: -10,
                             offset: Offset(0, -5),
-                          ),
-                        ],
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(28),
                         child: BackdropFilter(
                           filter: ImageFilter.blur(
-                            sigmaX: blurAmount,
-                            sigmaY: blurAmount,
-                          ),
+                            sigmaX: blurAmount),
+                  sigmaY: blurAmount),
                           child: Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
+                                begin: Alignment.topLeft),
+                  end: Alignment.bottomRight),
+                  colors: [
                                   color.withValues(alpha: 0.9),
                                   color.withValues(alpha: 0.7),
                                   color.withValues(alpha: 0.5),
-                                ],
                                 stops: [0.0, 0.5, 1.0],
                               ),
-                            ),
                             child: Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: [
+                                  end: Alignment.bottomRight),
+                  colors: [
                                     Colors.white.withValues(alpha: 0.25),
                                     Colors.white.withValues(alpha: 0.15),
                                     Colors.white.withValues(alpha: 0.05),
-                                  ],
-                                ),
                                 borderRadius: BorderRadius.circular(28),
                                 border: Border.all(
                                   color: Colors.white.withValues(alpha: 0.3),
                                   width: 1.5,
                                 ),
-                              ),
                               child: Stack(
                                 children: [
                                   // Animated background pattern
@@ -1790,12 +1638,11 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                         color: Colors.white.withValues(alpha: 0.1),
                                         animation: _backgroundAnimationController.value,
                                       ),
-                                    ),
                                   ),
                                   // Content
                                   Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                                    mainAxisAlignment: MainAxisAlignment.center),
+                  children: [
                                       // Icon with glow effect
                                       Container(
                                         padding: const EdgeInsets.all(18),
@@ -1805,7 +1652,6 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                               Colors.white.withValues(alpha: 0.3),
                                               Colors.white.withValues(alpha: 0.1),
                                               Colors.transparent,
-                                            ],
                                             stops: [0.0, 0.5, 1.0],
                                           ),
                                           shape: BoxShape.circle,
@@ -1815,19 +1661,15 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                               blurRadius: 20,
                                               spreadRadius: 5,
                                             ),
-                                          ],
-                                        ),
                                         child: Icon(
                                           icon,
-                                          size: 42,
-                                          color: Colors.white,
-                                          shadows: [
+                                          size: 42),
+                  color: Colors.white),
+                  shadows: [
                                             Shadow(
                                               color: color.withValues(alpha: 0.8),
                                               blurRadius: 10,
                                             ),
-                                          ],
-                                        ),
                                       ),
                                       const SizedBox(height: 16),
                                       // Title with enhanced styling
@@ -1836,9 +1678,9 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          letterSpacing: 1.5,
-                                          shadows: [
+                                          fontWeight: FontWeight.bold),
+                  letterSpacing: 1.5),
+                  shadows: [
                                             Shadow(
                                               color: Colors.black.withValues(alpha: 0.5),
                                               offset: Offset(0, 2),
@@ -1848,43 +1690,31 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                               color: color.withValues(alpha: 0.8),
                                               blurRadius: 8,
                                             ),
-                                          ],
-                                        ),
                                       ),
                                       const SizedBox(height: 8),
                                       // Subtle animation indicator
                                       Container(
                                         width: 40,
-                                        height: 3,
-                                        decoration: BoxDecoration(
+                                        height: 3),
+                  decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
-                                              Colors.transparent,
+                                              Colors.transparent)
                                               Colors.white.withValues(alpha: 0.6),
                                               Colors.transparent,
-                                            ],
                                           ),
                                           borderRadius: BorderRadius.circular(1.5),
-                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ],
                               ),
-                            ),
                           ),
-                        ),
                       ),
-                    ),
                   ),
-                ),
-              ),
-            );
-          },
+              ));
+},
         );
-      },
+}
     );
-  }
+}
 }
 
 class TarotCardBackPainter extends CustomPainter {
@@ -1912,17 +1742,16 @@ class TarotCardBackPainter extends CustomPainter {
       final angle = i * math.pi / 3;
       final starPos = Offset(
         center.dx + size.width * 0.25 * math.cos(angle),
-        center.dy + size.width * 0.25 * math.sin(angle),
-      );
+        center.dy + size.width * 0.25 * math.sin(angle);
       _drawStar(canvas, starPos, size.width * 0.08, paint);
-    }
+}
     
     // Draw border pattern
     final borderRect = Rect.fromLTWH(
       size.width * 0.1,
-      size.height * 0.05,
-      size.width * 0.8,
-      size.height * 0.9,
+      size.height * 0.05)
+      size.width * 0.8)
+      size.height * 0.9
     );
     paint.strokeWidth = 1.0;
     canvas.drawRect(borderRect, paint);
@@ -1930,13 +1759,13 @@ class TarotCardBackPainter extends CustomPainter {
     // Inner border
     final innerRect = Rect.fromLTWH(
       size.width * 0.15,
-      size.height * 0.08,
-      size.width * 0.7,
-      size.height * 0.84,
+      size.height * 0.08)
+      size.width * 0.7)
+      size.height * 0.84
     );
     paint.strokeWidth = 0.5;
     canvas.drawRect(innerRect, paint);
-  }
+}
   
   void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
     final path = Path();
@@ -1948,21 +1777,21 @@ class TarotCardBackPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(outerX, outerY);
-      } else {
+} else {
         path.lineTo(outerX, outerY);
-      }
+}
       
       final innerRadius = radius * 0.4;
       final innerAngle = angle + (i * 2 + 1) * math.pi / 5;
       final innerX = center.dx + innerRadius * math.cos(innerAngle);
       final innerY = center.dy + innerRadius * math.sin(innerAngle);
       path.lineTo(innerX, innerY);
-    }
+}
     
     path.close();
     canvas.drawPath(path, paint..style = PaintingStyle.fill);
     canvas.drawPath(path, paint..style = PaintingStyle.stroke);
-  }
+}
   
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
@@ -1987,21 +1816,20 @@ class TarotCardBackDetailPainter extends CustomPainter {
       final angle = i * math.pi / 4;
       final starPos = Offset(
         center.dx + size.width * 0.35 * math.cos(angle),
-        center.dy + size.width * 0.35 * math.sin(angle),
-      );
+        center.dy + size.width * 0.35 * math.sin(angle);
       _drawStar(canvas, starPos, size.width * 0.1, paint);
-    }
+}
     
     // Draw border pattern
     final borderRect = Rect.fromLTWH(
       size.width * 0.05,
-      size.height * 0.05,
-      size.width * 0.9,
-      size.height * 0.9,
+      size.height * 0.05)
+      size.width * 0.9)
+      size.height * 0.9
     );
     paint.strokeWidth = 2.0;
     canvas.drawRect(borderRect, paint);
-  }
+}
   
   void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
     final path = Path();
@@ -2013,21 +1841,21 @@ class TarotCardBackDetailPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(outerX, outerY);
-      } else {
+} else {
         path.lineTo(outerX, outerY);
-      }
+}
       
       final innerRadius = radius * 0.4;
       final innerAngle = angle + (i * 2 + 1) * math.pi / 5;
       final innerX = center.dx + innerRadius * math.cos(innerAngle);
       final innerY = center.dy + innerRadius * math.sin(innerAngle);
       path.lineTo(innerX, innerY);
-    }
+}
     
     path.close();
     canvas.drawPath(path, paint..style = PaintingStyle.fill);
     canvas.drawPath(path, paint..style = PaintingStyle.stroke);
-  }
+}
   
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
@@ -2042,7 +1870,8 @@ class _MysticalBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 50);
+      ..maskFilter = const,
+      MaskFilter.blur(BlurStyle.normal, 50);
     
     // Animated orbs
     for (int i = 0; i < 5; i++) {
@@ -2054,21 +1883,20 @@ class _MysticalBackgroundPainter extends CustomPainter {
       paint.color = Color.lerp(
         const Color(0xFF6A5ACD),
         const Color(0xFFFF6B6B),
-        (i / 5),
-      )!.withValues(alpha: opacity);
+        (i / 5))!.withValues(alpha: opacity);
       
       final x = size.width * (0.2 + i * 0.15 + math.sin(progress * math.pi * 2) * 0.1);
       final y = size.height * (0.3 + math.cos(progress * math.pi * 2) * 0.2);
       final radius = 100 + math.sin(progress * math.pi) * 30;
       
       canvas.drawCircle(Offset(x, y), radius, paint);
-    }
+}
   }
   
   @override
   bool shouldRepaint(_MysticalBackgroundPainter oldDelegate) {
     return oldDelegate.animation != animation;
-  }
+}
 }
 
 class _CardPatternPainter extends CustomPainter {
@@ -2081,7 +1909,8 @@ class _CardPatternPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..style = PaintingStyle.stroke
+      ..style =,
+      PaintingStyle.stroke
       ..strokeWidth = 0.5;
     
     // Create animated mystical patterns
@@ -2108,10 +1937,10 @@ class _CardPatternPainter extends CustomPainter {
         final x = center.dx + radius * math.cos(angle);
         final y = center.dy + radius * math.sin(angle);
         canvas.drawCircle(Offset(x, y), 3, paint..style = PaintingStyle.fill);
-      }
+}
       
       canvas.restore();
-    }
+}
     
     // Draw corner ornaments
     paint
@@ -2124,8 +1953,7 @@ class _CardPatternPainter extends CustomPainter {
       Offset(0, 0),
       Offset(size.width, 0),
       Offset(0, size.height),
-      Offset(size.width, size.height),
-    ];
+      Offset(size.width, size.height);
     
     for (int i = 0; i < corners.length; i++) {
       final corner = corners[i];
@@ -2135,26 +1963,26 @@ class _CardPatternPainter extends CustomPainter {
         path.moveTo(corner.dx + cornerSize, corner.dy);
         path.lineTo(corner.dx, corner.dy);
         path.lineTo(corner.dx, corner.dy + cornerSize);
-      } else if (i == 1) { // Top-right
+} else if (i == 1) { // Top-right
         path.moveTo(corner.dx - cornerSize, corner.dy);
         path.lineTo(corner.dx, corner.dy);
         path.lineTo(corner.dx, corner.dy + cornerSize);
-      } else if (i == 2) { // Bottom-left
+} else if (i == 2) { // Bottom-left
         path.moveTo(corner.dx + cornerSize, corner.dy);
         path.lineTo(corner.dx, corner.dy);
         path.lineTo(corner.dx, corner.dy - cornerSize);
-      } else { // Bottom-right
+} else { // Bottom-right
         path.moveTo(corner.dx - cornerSize, corner.dy);
         path.lineTo(corner.dx, corner.dy);
         path.lineTo(corner.dx, corner.dy - cornerSize);
-      }
+}
       
       canvas.drawPath(path, paint);
-    }
+}
   }
   
   @override
   bool shouldRepaint(_CardPatternPainter oldDelegate) {
     return oldDelegate.animation != animation || oldDelegate.color != color;
-  }
+}
 }

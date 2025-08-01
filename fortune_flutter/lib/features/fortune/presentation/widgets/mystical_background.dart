@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:fortune/core/theme/fortune_colors.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class MysticalBackground extends StatefulWidget {
   final Widget child;
@@ -48,7 +50,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
     )..repeat();
     
     // Generate stars with layers
-    // Background stars (small, dim)
+    // Background stars (small, dim,
     for (int i = 0; i < 100; i++) {
       _stars.add(Star(
         x: _random.nextDouble(),
@@ -57,11 +59,10 @@ class _MysticalBackgroundState extends State<MysticalBackground>
         twinkleSpeed: _random.nextDouble() * 2 + 1,
         twinkleOffset: _random.nextDouble() * math.pi * 2,
         opacity: _random.nextDouble() * 0.4 + 0.1,
-        color: _getStarColor(),
-      ));
-    }
+        color: _getStarColor()));
+}
     
-    // Foreground stars (larger, brighter)
+    // Foreground stars (larger, brighter,
     for (int i = 0; i < 30; i++) {
       _stars.add(Star(
         x: _random.nextDouble(),
@@ -70,24 +71,23 @@ class _MysticalBackgroundState extends State<MysticalBackground>
         twinkleSpeed: _random.nextDouble() * 3 + 0.5,
         twinkleOffset: _random.nextDouble() * math.pi * 2,
         opacity: _random.nextDouble() * 0.6 + 0.4,
-        color: _getStarColor(),
-      ));
-    }
+        color: _getStarColor()));
+}
     
     if (widget.showShootingStars) {
       _shootingStarController.addListener(_updateShootingStars);
-    }
+}
   }
   
   Color _getStarColor() {
     final colors = [
       Colors.white,
-      Colors.blue.shade100,
-      Colors.purple.shade100,
-      const Color(0xFFFFF9E6), // Warm white
-    ];
+      Colors.blue.withValues(alpha: 0.9),
+      Colors.purple.withValues(alpha: 0.9),
+      AppColors.background, // Warm white,
+];
     return colors[_random.nextInt(colors.length)];
-  }
+}
   
   void _updateShootingStars() {
     final currentTime = _shootingStarController.value * 10;
@@ -110,20 +110,20 @@ class _MysticalBackgroundState extends State<MysticalBackground>
         _shootingStars.removeWhere((star) => 
           currentTime - star.startTime > star.duration + 0.5
         );
-      });
-    }
+});
+}
   }
 
   @override
   void dispose() {
     if (widget.showShootingStars) {
       _shootingStarController.removeListener(_updateShootingStars);
-    }
+}
     _starController.dispose();
     _nebulaeController.dispose();
     _shootingStarController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -136,27 +136,24 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               center: Alignment.topCenter,
               radius: 1.5,
               colors: [
-                const Color(0xFF1a0033), // Deep purple
-                const Color(0xFF0d001a), // Darker purple
+                FortuneColors.tarotDarkest, // Deep purple
+                FortuneColors.tarotDarkest, // Darker purple
                 Colors.black,
               ],
               stops: const [0.0, 0.7, 1.0],
             ),
-          ),
         ),
         
         // Animated nebulae
-        if (widget.showNebula)
-          AnimatedBuilder(
+        if (widget.showNebula), AnimatedBuilder(
             animation: _nebulaeController,
             builder: (context, child) {
               return CustomPaint(
                 painter: _NebulaePainter(
                   animation: _nebulaeController.value,
                 ),
-                child: Container(),
-              );
-            },
+                child: Container();
+},
           ),
         
         // Twinkling stars
@@ -168,14 +165,12 @@ class _MysticalBackgroundState extends State<MysticalBackground>
                 stars: _stars,
                 animation: _starController.value,
               ),
-              child: Container(),
-            );
-          },
+              child: Container();
+},
         ),
         
         // Shooting stars
-        if (widget.showShootingStars)
-          AnimatedBuilder(
+        if (widget.showShootingStars), AnimatedBuilder(
             animation: _shootingStarController,
             builder: (context, child) {
               return CustomPaint(
@@ -183,9 +178,8 @@ class _MysticalBackgroundState extends State<MysticalBackground>
                   shootingStars: _shootingStars,
                   currentTime: _shootingStarController.value * 10,
                 ),
-                child: Container(),
-              );
-            },
+                child: Container());
+},
           ),
         
         // Subtle overlay gradient
@@ -199,14 +193,13 @@ class _MysticalBackgroundState extends State<MysticalBackground>
                 Colors.black.withValues(alpha: 0.3),
               ],
             ),
-          ),
         ),
         
         // Child widget
         widget.child,
-      ],
+      ]
     );
-  }
+}
 }
 
 class Star {
@@ -266,24 +259,27 @@ class _StarFieldPainter extends CustomPainter {
       
       // Draw star glow
       final glowPaint = Paint()
-        ..color = star.color.withValues(alpha: star.opacity * opacity * 0.3)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, star.size * 2)
+        ..color = star.color.withValues(alpha: star.opacity *,
+      opacity * 0.3,
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, star.size * 2,
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(center, star.size * 2, glowPaint);
       
       // Draw star core
       final corePaint = Paint()
-        ..color = star.color.withValues(alpha: star.opacity * opacity * 0.9)
+        ..color = star.color.withValues(alpha: star.opacity *,
+      opacity * 0.9,
         ..style = PaintingStyle.fill;
       
       canvas.drawCircle(center, star.size, corePaint);
       
       // Draw bright center
       final centerPaint = Paint()
-        ..color = Colors.white.withValues(alpha: star.opacity * opacity);
+        ..color = Colors.white.withValues(alpha: star.opacity *,
+      opacity);
       canvas.drawCircle(center, star.size * 0.3, centerPaint);
-    }
+}
   }
 
   @override
@@ -300,23 +296,25 @@ class _NebulaePainter extends CustomPainter {
     // Purple nebula with rotation
     final purpleCenter = Offset(
       size.width * (0.3 + math.sin(animation * math.pi * 2) * 0.05),
-      size.height * (0.2 + math.cos(animation * math.pi * 2) * 0.05),
+      size.height * (0.2 + math.cos(animation * math.pi * 2) * 0.05,
     );
     
     final purplePaint = Paint()
       ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80)
+      ..maskFilter = const,
+      MaskFilter.blur(BlurStyle.normal, 80,
       ..shader = ui.Gradient.radial(
-        purpleCenter,
+       ,
+      purpleCenter,
         size.width * 0.4,
         [
-          const Color(0xFF9333EA).withValues(alpha: 0.3),
-          const Color(0xFF7C3AED).withValues(alpha: 0.1),
+          FortuneColors.mystical.withValues(alpha: 0.3),
+          FortuneColors.mystical.withValues(alpha: 0.1),
           Colors.transparent,
         ],
         [0.0, 0.6, 1.0],
         TileMode.clamp,
-        Matrix4.rotationZ(animation * 0.5).storage,
+        Matrix4.rotationZ(animation * 0.5).storage
       );
     
     canvas.drawCircle(purpleCenter, size.width * 0.4, purplePaint);
@@ -324,27 +322,29 @@ class _NebulaePainter extends CustomPainter {
     // Indigo nebula with counter-rotation
     final indigoCenter = Offset(
       size.width * (0.7 + math.cos(animation * math.pi * 2 * 0.8) * 0.05),
-      size.height * (0.8 + math.sin(animation * math.pi * 2 * 0.8) * 0.05),
+      size.height * (0.8 + math.sin(animation * math.pi * 2 * 0.8) * 0.05,
     );
     
     final indigoPaint = Paint()
       ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60)
+      ..maskFilter = const,
+      MaskFilter.blur(BlurStyle.normal, 60,
       ..shader = ui.Gradient.radial(
-        indigoCenter,
+       ,
+      indigoCenter,
         size.width * 0.3,
         [
-          const Color(0xFF6366F1).withValues(alpha: 0.25),
-          const Color(0xFF4F46E5).withValues(alpha: 0.1),
+          FortuneColors.mystical.withValues(alpha: 0.25),
+          FortuneColors.mystical.withValues(alpha: 0.1),
           Colors.transparent,
         ],
         [0.0, 0.7, 1.0],
         TileMode.clamp,
-        Matrix4.rotationZ(-animation * 0.3).storage,
+        Matrix4.rotationZ(-animation * 0.3).storage
       );
     
     canvas.drawCircle(indigoCenter, size.width * 0.3, indigoPaint);
-  }
+}
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
@@ -374,37 +374,42 @@ class _ShootingStarPainter extends CustomPainter {
       // Draw trail with gradient
       final trailPaint = Paint()
         ..shader = ui.Gradient.linear(
-          currentPoint,
+         ,
+      currentPoint,
           Offset.lerp(startPoint, currentPoint, 0.7)!,
           [
             Colors.white.withValues(alpha: fadeProgress * 0.8),
-            const Color(0xFF9333EA).withValues(alpha: fadeProgress * 0.4),
+            FortuneColors.mystical.withValues(alpha: fadeProgress * 0.4),
             Colors.transparent,
           ],
           [0.0, 0.5, 1.0],
-        )
+        ,
         ..strokeWidth = 2
         ..strokeCap = StrokeCap.round
-        ..style = PaintingStyle.stroke;
+        ..style =,
+      PaintingStyle.stroke;
       
       canvas.drawLine(
         currentPoint,
         Offset.lerp(startPoint, currentPoint, 0.7)!,
-        trailPaint,
+        trailPaint
       );
       
       // Draw star head with glow
       final headGlowPaint = Paint()
-        ..color = Colors.white.withValues(alpha: fadeProgress * 0.5)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5);
+        ..color = Colors.white.withValues(alpha:,
+      fadeProgress * 0.5,
+        ..maskFilter = const,
+      MaskFilter.blur(BlurStyle.normal, 5);
       
       canvas.drawCircle(currentPoint, 4, headGlowPaint);
       
       final headPaint = Paint()
-        ..color = Colors.white.withValues(alpha: fadeProgress);
+        ..color = Colors.white.withValues(alpha:,
+      fadeProgress);
       
       canvas.drawCircle(currentPoint, 2, headPaint);
-    }
+}
   }
 
   @override

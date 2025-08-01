@@ -14,15 +14,16 @@ class CelebrityService {
   // Get celebrities by category
   List<Celebrity> getCelebritiesByCategory(CelebrityCategory category) {
     return CelebrityDatabaseEnhanced.allCelebrities
-        .where((celebrity) => celebrity.category == category)
+        .where((celebrity) => celebrity.category == category,
         .toList();
   }
 
   // Search celebrities with filters
-  List<Celebrity> searchCelebrities({
+  List<Celebrity> searchCelebrities(
+    {
     String? query,
     CelebrityFilter? filter,
-  }) {
+  )}) {
     var celebrities = CelebrityDatabaseEnhanced.allCelebrities;
     
     // Apply search query
@@ -58,7 +59,7 @@ class CelebrityService {
   Celebrity? getCelebrityById(String id) {
     try {
       return CelebrityDatabaseEnhanced.allCelebrities.firstWhere(
-        (celebrity) => celebrity.id == id,
+        (celebrity) => celebrity.id == id
       );
     } catch (e) {
       return null;
@@ -66,10 +67,11 @@ class CelebrityService {
   }
 
   // Get random celebrities
-  List<Celebrity> getRandomCelebrities({
+  List<Celebrity> getRandomCelebrities(
+    {
     int count = 10,
     CelebrityCategory? category,
-  }) {
+  )}) {
     var celebrities = category != null
         ? getCelebritiesByCategory(category)
         : CelebrityDatabaseEnhanced.allCelebrities;
@@ -89,14 +91,14 @@ class CelebrityService {
   // Get celebrities by zodiac sign
   List<Celebrity> getCelebritiesByZodiac(String zodiacSign) {
     return CelebrityDatabaseEnhanced.allCelebrities
-        .where((celebrity) => celebrity.zodiacSign == zodiacSign)
+        .where((celebrity) => celebrity.zodiacSign == zodiacSign,
         .toList();
   }
 
   // Get celebrities by Chinese zodiac
   List<Celebrity> getCelebritiesByChineseZodiac(String chineseZodiac) {
     return CelebrityDatabaseEnhanced.allCelebrities
-        .where((celebrity) => celebrity.chineseZodiac == chineseZodiac)
+        .where((celebrity) => celebrity.chineseZodiac == chineseZodiac,
         .toList();
   }
 
@@ -109,10 +111,11 @@ class CelebrityService {
   }
 
   // Get popular celebrities by category
-  List<Celebrity> getPopularCelebrities({
+  List<Celebrity> getPopularCelebrities(
+    {
     CelebrityCategory? category,
     int limit = 10,
-  }) {
+  )}) {
     final celebrities = category != null 
         ? getCelebritiesByCategory(category)
         : getAllCelebrities();
@@ -122,7 +125,7 @@ class CelebrityService {
     return celebrities.take(limit).toList();
   }
 
-  // Get celebrity match score (for compatibility features)
+  // Get celebrity match score (for compatibility features,
   double calculateMatchScore(Celebrity celebrity1, Celebrity celebrity2) {
     double score = 0.0;
     
@@ -136,7 +139,7 @@ class CelebrityService {
       score += 0.15;
     }
     
-    // Similar age (within 5 years)
+    // Similar age (within 5 years,
     final ageDiff = (celebrity1.age - celebrity2.age).abs();
     if (ageDiff <= 5) {
       score += 0.15;

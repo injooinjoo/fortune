@@ -45,7 +45,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           ? const FortuneLoadingWidget()
           : _showResult && _fortuneResult != null
               ? _buildResultView()
-              : _buildInputView(),
+              : _buildInputView()
     );
   }
   

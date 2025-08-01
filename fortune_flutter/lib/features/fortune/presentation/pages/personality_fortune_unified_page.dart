@@ -27,7 +27,7 @@ class PersonalityFortuneUnifiedPage extends BaseFortunePage {
           title: '성격 운세',
           description: 'MBTI와 혈액형으로 보는 성격 기반 운세',
           fortuneType: 'personality',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -68,7 +68,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
     final fortune = await fortuneService.getPersonalityFortune(
       userId: params['userId'],
       fortuneType: _selectedType.value,
-      params: params,
+      params: params
     );
     
     // Cache the fortune
@@ -87,9 +87,9 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header Card
-          _buildHeaderCard()
-              .animate()
-              .fadeIn(duration: 600.ms)
+          _buildHeaderCard(,
+              .animate(,
+              .fadeIn(duration: 600.ms,
               .slideY(begin: -0.1, end: 0),
           const SizedBox(height: 24),
           
@@ -168,7 +168,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             textAlign: TextAlign.center,
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -240,12 +240,12 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   ],
                 ),
               ),
-            ).animate()
-              .fadeIn(duration: 300.ms)
+            ).animate(,
+              .fadeIn(duration: 300.ms,
               .slideX(begin: type == PersonalityType.mbti ? -0.2 : 0.2, end: 0),
           ),
         );
-      }).toList(),
+      }).toList(,
     );
   }
 
@@ -350,7 +350,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -396,7 +396,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                       height: 60,
                       decoration: BoxDecoration(
                         gradient: isSelected
-                            ? LinearGradient(colors: _selectedType.gradientColors)
+                            ? LinearGradient(colors: _selectedType.gradientColors,
                             : null,
                         color: isSelected ? null : Colors.grey[200],
                         borderRadius: BorderRadius.circular(8),
@@ -520,7 +520,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         style: TextButton.styleFrom(
           foregroundColor: _selectedType.gradientColors[0],
         ),
-      ),
+      ,
     );
   }
 
@@ -655,8 +655,8 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           ],
         ],
       ),
-    ).animate()
-      .fadeIn(duration: 500.ms)
+    ).animate(,
+      .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
 
@@ -694,7 +694,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ),
           )).toList(),
         ),
-      ],
+      ]
     );
   }
 
@@ -733,7 +733,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -768,7 +768,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 

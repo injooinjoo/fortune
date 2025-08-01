@@ -3,6 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../providers/dream_chat_provider.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class DreamChatBubble extends StatelessWidget {
   final DreamChatMessage message;
@@ -25,8 +27,8 @@ class DreamChatBubble extends StatelessWidget {
         return _LoadingBubble(message: message);
       case MessageType.result:
         return _ResultBubble(message: message);
-    }
-  }
+}
+  },
 }
 
 // Fortune teller message bubble
@@ -44,39 +46,35 @@ class _FortuneTellerBubble extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing2, horizontal: AppSpacing.spacing4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showAvatar) ...[
             _buildAvatar(),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.spacing3),
           ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (showAvatar)
-                  Text(
+                if (showAvatar), Text(
                     '해몽가',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.deepPurple.shade300,
-                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold,
                     ),
-                  ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.paddingAll16,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     topRight: Radius.circular(20),
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
-                  ),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.shade900.withValues(alpha: 0.3),
-                      Colors.deepPurple.shade800.withValues(alpha: 0.2),
+                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.3),
+                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.2),
                     ],
                   ),
                   child: Text(
@@ -85,46 +83,40 @@ class _FortuneTellerBubble extends StatelessWidget {
                       color: Colors.white,
                       height: 1.4,
                     ),
-                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: 60),
+          const SizedBox(width: AppSpacing.spacing15),
         ],
-      ),
-    ).animate()
-        .fadeIn(duration: 300.ms)
+      )).animate()
+                  .fadeIn(duration: 300.ms,
         .slideX(begin: -0.1, end: 0, duration: 300.ms);
-  }
+}
   
   Widget _buildAvatar() {
     return Container(
       width: 40,
-      height: 40,
+      height: AppDimensions.buttonHeightSmall,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
           colors: [
-            Colors.deepPurple.shade400,
-            Colors.deepPurple.shade600,
+            Colors.deepPurple.withValues(alpha: 0.6),
+            Colors.deepPurple.withValues(alpha: 0.8),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.deepPurple.shade400.withValues(alpha: 0.3),
+            color: Colors.deepPurple.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
-          ),
         ],
       ),
       child: const Icon(
         Icons.auto_awesome,
         color: Colors.white,
-        size: 24,
-      ),
-    );
-  }
+        size: 24);
+}
 }
 
 // User message bubble
@@ -138,17 +130,17 @@ class _UserBubble extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing2, horizontal: AppSpacing.spacing4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          const SizedBox(width: 60),
+          const SizedBox(width: AppSpacing.spacing15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.paddingAll16,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withValues(alpha: 0.2),
                     borderRadius: const BorderRadius.only(
@@ -156,10 +148,8 @@ class _UserBubble extends StatelessWidget {
                       topRight: Radius.circular(4),
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
-                    ),
                     border: Border.all(
                       color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                    ),
                   ),
                   child: Text(
                     message.content,
@@ -167,17 +157,14 @@ class _UserBubble extends StatelessWidget {
                       color: Colors.white,
                       height: 1.4,
                     ),
-                  ),
                 ),
               ],
             ),
-          ),
         ],
-      ),
-    ).animate()
-        .fadeIn(duration: 300.ms)
+      )).animate()
+                  .fadeIn(duration: 300.ms,
         .slideX(begin: 0.1, end: 0, duration: 300.ms);
-  }
+}
 }
 
 // Loading bubble with animation
@@ -191,30 +178,27 @@ class _LoadingBubble extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing2, horizontal: AppSpacing.spacing4),
       child: Row(
         children: [
           Container(
             width: 40,
-            height: 40,
+            height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400,
-                  Colors.deepPurple.shade600,
+                  Colors.deepPurple.withValues(alpha: 0.6),
+                  Colors.deepPurple.withValues(alpha: 0.8),
                 ],
               ),
-            ),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
               size: 24,
-            ),
-          ).animate(
-            onPlay: (controller) => controller.repeat(),
-          ).rotate(duration: 2.seconds),
-          const SizedBox(width: 12),
+            )).animate(
+            onPlay: (controller) => controller.repeat()).rotate(duration: 2.seconds),
+          const SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,23 +206,20 @@ class _LoadingBubble extends StatelessWidget {
                 Text(
                   '해몽가',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.shade300,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold,
                   ),
-                ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.paddingAll16,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     topRight: Radius.circular(20),
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
-                  ),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.shade900.withValues(alpha: 0.3),
-                      Colors.deepPurple.shade800.withValues(alpha: 0.2),
+                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.3),
+                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.2),
                     ],
                   ),
                   child: Row(
@@ -249,31 +230,25 @@ class _LoadingBubble extends StatelessWidget {
                           color: Colors.white,
                           height: 1.4,
                         ),
-                      ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.spacing2),
                       SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.deepPurple.shade300,
-                          ),
+                            Colors.deepPurple.withValues(alpha: 0.5),
                         ),
-                      ),
                     ],
                   ),
-                ),
               ],
             ),
-          ),
-          const SizedBox(width: 60),
+          const SizedBox(width: AppSpacing.spacing15),
         ],
-      ),
-    ).animate()
-        .fadeIn(duration: 300.ms)
+      )).animate()
+                  .fadeIn(duration: 300.ms,
         .slideX(begin: -0.1, end: 0, duration: 300.ms);
-  }
+}
 }
 
 // Result bubble with special formatting
@@ -287,27 +262,26 @@ class _ResultBubble extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing2, horizontal: AppSpacing.spacing4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 40,
-            height: 40,
+            height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400,
-                  Colors.deepPurple.shade600,
+                  Colors.deepPurple.withValues(alpha: 0.6),
+                  Colors.deepPurple.withValues(alpha: 0.8),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.deepPurple.shade400.withValues(alpha: 0.3),
+                  color: Colors.deepPurple.withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
-                ),
               ],
             ),
             child: const Icon(
@@ -315,8 +289,7 @@ class _ResultBubble extends StatelessWidget {
               color: Colors.white,
               size: 24,
             ),
-          ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,28 +297,24 @@ class _ResultBubble extends StatelessWidget {
                 Text(
                   '해몽가',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.deepPurple.shade300,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple.withValues(alpha: 0.5, fontWeight: FontWeight.bold,
                   ),
-                ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 GlassContainer(
-                  padding: const EdgeInsets.all(20),
+                  padding: AppSpacing.paddingAll20,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(4),
                     topRight: Radius.circular(20),
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
-                  ),
                   gradient: LinearGradient(
                     colors: [
-                      Colors.deepPurple.shade900.withValues(alpha: 0.4),
-                      Colors.deepPurple.shade800.withValues(alpha: 0.3),
+                      Colors.deepPurple.withValues(alpha: 0.92).withValues(alpha: 0.4),
+                      Colors.deepPurple.withValues(alpha: 0.87).withValues(alpha: 0.3),
                     ],
                   ),
                   border: Border.all(
-                    color: Colors.deepPurple.shade400.withValues(alpha: 0.3),
-                  ),
+                    color: Colors.deepPurple.withValues(alpha: 0.3),
                   child: MarkdownBody(
                     data: message.content,
                     styleSheet: MarkdownStyleSheet(
@@ -358,11 +327,11 @@ class _ResultBubble extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                       h2: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.deepPurple.shade300,
+                        color: Colors.deepPurple.withValues(alpha: 0.5),
                         fontWeight: FontWeight.bold,
                       ),
                       h3: theme.textTheme.titleMedium?.copyWith(
-                        color: Colors.deepPurple.shade300,
+                        color: Colors.deepPurple.withValues(alpha: 0.5),
                         fontWeight: FontWeight.bold,
                       ),
                       strong: const TextStyle(
@@ -373,20 +342,16 @@ class _ResultBubble extends StatelessWidget {
                         color: Colors.white70,
                         fontStyle: FontStyle.italic,
                       ),
-                    ),
                   ),
-                ),
               ],
             ),
-          ),
-          const SizedBox(width: 40),
+          const SizedBox(width: AppSpacing.spacing10),
         ],
-      ),
-    ).animate()
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.1, end: 0, duration: 500.ms)
-        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1));
-  }
+      )).animate()
+                  .fadeIn(duration: 500.ms,
+        .slideY(begin: 0.1, end: 0, duration: 500.ms,
+        .scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1);
+}
 }
 
 // Typing indicator widget
@@ -396,66 +361,59 @@ class TypingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing2, horizontal: AppSpacing.spacing4),
       child: Row(
         children: [
           Container(
             width: 40,
-            height: 40,
+            height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400,
-                  Colors.deepPurple.shade600,
+                  Colors.deepPurple.withValues(alpha: 0.6),
+                  Colors.deepPurple.withValues(alpha: 0.8),
                 ],
               ),
-            ),
             child: const Icon(
               Icons.auto_awesome,
               color: Colors.white,
               size: 24,
             ),
-          ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.spacing3),
           GlassContainer(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            borderRadius: BorderRadius.circular(20),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing3),
+            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildDot(0),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.spacing1),
                 _buildDot(1),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.spacing1),
                 _buildDot(2),
               ],
             ),
-          ),
         ],
-      ),
+      
     );
-  }
+}
   
   Widget _buildDot(int index) {
     return Container(
       width: 8,
-      height: 8,
+      height: AppSpacing.spacing2,
       decoration: BoxDecoration(
         color: Colors.white60,
         shape: BoxShape.circle,
-      ),
-    ).animate(
-      onPlay: (controller) => controller.repeat(),
-    ).scale(
+      )).animate(
+      onPlay: (controller) => controller.repeat()).scale(
       duration: 600.ms,
       delay: Duration(milliseconds: index * 200),
       begin: const Offset(0.8, 0.8),
-      end: const Offset(1.2, 1.2),
-    ).then().scale(
+      end: const Offset(1.2, 1.2)).then().scale(
       duration: 600.ms,
       begin: const Offset(1.2, 1.2),
-      end: const Offset(0.8, 0.8),
-    );
-  }
+      end: const Offset(0.8, 0.8);
+}
 }

@@ -43,23 +43,23 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
+      vsync: this)
     );
     
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0.0)
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
+      parent: _animationController)
+      curve: Curves.easeIn)
     ));
     
     _slideAnimation = Tween<double>(
-      begin: 30.0,
-      end: 0.0,
+      begin: 30.0)
+      end: 0.0)
     ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutBack,
+      parent: _animationController)
+      curve: Curves.easeOutBack)
     ));
     
     _animationController.forward();
@@ -75,7 +75,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
   }
 
   Future<void> _checkCachedFortune() async {
-    final cachedFortune = await ref.read(fortuneProvider.notifier)
+    final cachedFortune = await ref.read(fortuneProvider.notifier,
         .getCachedFortune(widget.fortuneType.key);
     
     if (cachedFortune != null) {
@@ -103,7 +103,7 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
       }
 
       // Generate fortune
-      final result = await ref.read(fortuneProvider.notifier)
+      final result = await ref.read(fortuneProvider.notifier,
           .generateFortune(widget.fortuneType.key);
       
       setState(() {
@@ -132,24 +132,24 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('토큰 부족'),
+        title: const Text('토큰 부족'))
         content: Text(
           '이 운세를 보려면 ${metadata.tokenCost}개의 토큰이 필요합니다.\n'
           '현재 보유 토큰이 부족합니다.',
-        ),
+        ))
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('취소'),
-          ),
+            onPressed: () => Navigator.of(context).pop())
+            child: const Text('취소'))
+          ))
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               context.push('/token-purchase');
-            },
+            })
             child: const Text('토큰 구매'),
-          ),
-        ],
+          ))
+        ])
       ),
     );
   }
@@ -157,13 +157,13 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
   void _showExplanation() {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      isScrollControlled: true)
+      backgroundColor: Colors.transparent)
       builder: (context) => FortuneExplanationBottomSheet(
-        fortuneType: widget.fortuneType.key,
-        title: metadata.title,
-        description: metadata.description,
-      ),
+        fortuneType: widget.fortuneType.key)
+        title: metadata.title)
+        description: metadata.description)
+      )
     );
   }
 
@@ -175,92 +175,92 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.transparent)
+        elevation: 0)
         title: Text(
-          metadata.title,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+          metadata.title)
+          style: const TextStyle(fontWeight: FontWeight.bold))
+        ))
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: _showExplanation,
-          ),
-        ],
+            icon: const Icon(Icons.info_outline))
+            onPressed: _showExplanation)
+          ))
+        ])
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topLeft)
+            end: Alignment.bottomRight)
             colors: [
-              metadata.primaryColor.withValues(alpha: 0.1),
-              metadata.secondaryColor.withValues(alpha: 0.05),
-              theme.scaffoldBackgroundColor,
-            ],
+              metadata.primaryColor.withValues(alpha: 0.1))
+              metadata.secondaryColor.withValues(alpha: 0.05))
+              theme.scaffoldBackgroundColor)
+            ])
           ),
-        ),
+        ))
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0))
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.stretch)
               children: [
                 // Header Card
                 FadeTransition(
-                  opacity: _fadeAnimation,
+                  opacity: _fadeAnimation)
                   child: Transform.translate(
-                    offset: Offset(0, _slideAnimation.value),
-                    child: _buildHeaderCard(),
-                  ),
-                ),
+                    offset: Offset(0, _slideAnimation.value))
+                    child: _buildHeaderCard())
+                  ))
+                ))
                 
-                const SizedBox(height: 24),
+                const SizedBox(height: 24))
                 
                 // Result or Generate Button
                 if (_fortuneResult != null)
                   FadeTransition(
-                    opacity: _fadeAnimation,
+                    opacity: _fadeAnimation)
                     child: Transform.translate(
-                      offset: Offset(0, _slideAnimation.value),
-                      child: _buildResultContent(),
-                    ),
+                      offset: Offset(0, _slideAnimation.value))
+                      child: _buildResultContent())
+                    ))
                   )
                 else
-                  _buildGenerateSection(),
+                  _buildGenerateSection())
                   
                 if (_errorMessage != null)
                   Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
+                    padding: const EdgeInsets.only(top: 16.0))
                     child: Card(
-                      color: theme.colorScheme.errorContainer,
+                      color: theme.colorScheme.errorContainer)
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(12.0))
                         child: Row(
                           children: [
                             Icon(
-                              Icons.error_outline,
-                              color: theme.colorScheme.onErrorContainer,
-                            ),
-                            const SizedBox(width: 8),
+                              Icons.error_outline)
+                              color: theme.colorScheme.onErrorContainer)
+                            ))
+                            const SizedBox(width: 8))
                             Expanded(
                               child: Text(
-                                _errorMessage!,
+                                _errorMessage!)
                                 style: TextStyle(
-                                  color: theme.colorScheme.onErrorContainer,
-                                ),
-                              ),
-                            ),
-                          ],
+                                  color: theme.colorScheme.onErrorContainer)
+                                ))
+                              ))
+                            ))
+                          ])
                         ),
-                      ),
-                    ),
-                  ),
-              ],
+                      ))
+                    ))
+                  ))
+              ])
             ),
-          ),
-        ),
-      ),
+          ))
+        ))
+      )
     );
   }
 
@@ -270,83 +270,83 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+        borderRadius: BorderRadius.circular(20))
+      ))
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20))
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topLeft)
+            end: Alignment.bottomRight)
             colors: [
-              metadata.primaryColor,
-              metadata.secondaryColor,
-            ],
+              metadata.primaryColor)
+              metadata.secondaryColor)
+            ])
           ),
-        ),
-        padding: const EdgeInsets.all(24.0),
+        ))
+        padding: const EdgeInsets.all(24.0))
         child: Column(
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 80)
+              height: 80)
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
+                color: Colors.white.withValues(alpha: 0.2))
+                shape: BoxShape.circle)
+              ))
               child: Icon(
-                metadata.icon,
-                size: 48,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 16),
+                metadata.icon)
+                size: 48)
+                color: Colors.white)
+              ))
+            ))
+            const SizedBox(height: 16))
             Text(
-              metadata.title,
+              metadata.title)
               style: theme.textTheme.headlineSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
+                color: Colors.white)
+                fontWeight: FontWeight.bold)
+              ))
+            ))
+            const SizedBox(height: 8))
             Text(
-              metadata.subtitle,
+              metadata.subtitle)
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withValues(alpha: 0.9),
-              ),
-              textAlign: TextAlign.center,
-            ),
+                color: Colors.white.withValues(alpha: 0.9))
+              ))
+              textAlign: TextAlign.center)
+            ))
             if (metadata.tokenCost > 0) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 16))
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8))
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                  color: Colors.white.withValues(alpha: 0.2))
+                  borderRadius: BorderRadius.circular(20))
+                ))
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min)
                   children: [
                     const Icon(
-                      Icons.toll,
-                      size: 16,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 4),
+                      Icons.toll)
+                      size: 16)
+                      color: Colors.white)
+                    ))
+                    const SizedBox(width: 4))
                     Text(
-                      '${metadata.tokenCost} 토큰',
+                      '${metadata.tokenCost} 토큰')
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
+                        fontWeight: FontWeight.bold)
+                      ))
+                    ))
+                  ])
                 ),
-              ),
-            ],
+              ))
+            ])
           ],
-        ),
-      ),
+        ))
+      ))
     );
   }
 
@@ -357,76 +357,76 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     
     return Column(
       children: [
-        if (!hasEnoughTokens)
+        if (!hasEnoughTokens,
           Card(
-            color: theme.colorScheme.errorContainer,
+            color: theme.colorScheme.errorContainer)
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0))
               child: Row(
                 children: [
                   Icon(
-                    Icons.warning,
-                    color: theme.colorScheme.onErrorContainer,
-                  ),
-                  const SizedBox(width: 12),
+                    Icons.warning)
+                    color: theme.colorScheme.onErrorContainer)
+                  ))
+                  const SizedBox(width: 12))
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         Text(
-                          '토큰이 부족합니다',
+                          '토큰이 부족합니다')
                           style: TextStyle(
-                            color: theme.colorScheme.onErrorContainer,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            color: theme.colorScheme.onErrorContainer)
+                            fontWeight: FontWeight.bold)
+                          ))
+                        ))
                         Text(
                           '필요: ${metadata.tokenCost}개 / 보유: $tokenBalance개',
                           style: TextStyle(
-                            color: theme.colorScheme.onErrorContainer,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                            color: theme.colorScheme.onErrorContainer)
+                            fontSize: 12)
+                          ))
+                        ))
+                      ])
                     ),
-                  ),
-                ],
+                  ))
+                ])
               ),
-            ),
-          ),
+            ))
+          ))
         
-        const SizedBox(height: 24),
+        const SizedBox(height: 24))
         
         SizedBox(
-          width: double.infinity,
-          height: 56,
+          width: double.infinity)
+          height: 56)
           child: ElevatedButton(
-            onPressed: _isLoading || !hasEnoughTokens ? null : _generateFortune,
+            onPressed: _isLoading || !hasEnoughTokens ? null : _generateFortune)
             style: ElevatedButton.styleFrom(
-              backgroundColor: metadata.primaryColor,
+              backgroundColor: metadata.primaryColor)
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
+                borderRadius: BorderRadius.circular(16))
+              ))
+            ))
             child: _isLoading
                 ? const SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 24)
+                    height: 24)
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
+                      strokeWidth: 2)
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white))
+                    ))
                   )
                 : Text(
-                    hasEnoughTokens ? '운세 보기' : '토큰 구매하기',
+                    hasEnoughTokens ? '운세 보기' : '토큰 구매하기')
                     style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-          ),
-        ),
-      ],
+                      fontSize: 18)
+                      fontWeight: FontWeight.bold)
+                    ))
+                  ))
+          ))
+        ))
+      ])
     );
   }
 
@@ -435,9 +435,9 @@ class _DynamicFortunePageState extends ConsumerState<DynamicFortunePage>
     
     return FortuneContentCard(
       fortune: _fortuneResult!,
-      primaryColor: metadata.primaryColor,
-      secondaryColor: metadata.secondaryColor,
-      onRefresh: metadata.tokenCost == 0 ? _generateFortune : null,
+      primaryColor: metadata.primaryColor)
+      secondaryColor: metadata.secondaryColor)
+      onRefresh: metadata.tokenCost == 0 ? _generateFortune : null
     );
   }
 }

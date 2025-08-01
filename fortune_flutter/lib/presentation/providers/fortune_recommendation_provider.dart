@@ -39,8 +39,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
           options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
-      },
-    ));
+      },));
 
     // Fetch recommendations on initialization
     fetchRecommendations();
@@ -89,9 +88,8 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
             'count': recommendations.length,
             'top_type': recommendations.firstOrNull?.fortuneType,
             'top_score': recommendations.firstOrNull?.totalScore,
-          },
-        );
-      } else {
+          });
+  } else {
         throw Exception('Failed to fetch recommendations: ${response.statusCode}');
       }
     } catch (error, stackTrace) {
@@ -145,8 +143,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
           'fortune_type': fortuneType,
           'category': category,
           'source': 'recommendation',
-        },
-      );
+        });
 
       // Optionally refresh recommendations after visit
       // This helps to update personal scores based on new visit data
@@ -199,10 +196,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
 }
 
 /// Main provider for fortune recommendations
-final fortuneRecommendationProvider = 
-    StateNotifierProvider<FortuneRecommendationNotifier, AsyncValue<List<FortuneCardScore>>>(
-  (ref) => FortuneRecommendationNotifier(ref),
-);
+final fortuneRecommendationProvider = StateNotifierProvider((ref) => FortuneRecommendationNotifier(ref));
 
 /// Provider for getting recommendations by category
 final fortuneRecommendationsByCategoryProvider = Provider.family<List<FortuneCardScore>, String>(

@@ -61,10 +61,7 @@ class NavigationVisibilityNotifier extends StateNotifier<NavigationVisibilitySta
   }
 }
 
-final navigationVisibilityProvider = 
-    StateNotifierProvider<NavigationVisibilityNotifier, NavigationVisibilityState>(
-  (ref) => NavigationVisibilityNotifier(),
-);
+final navigationVisibilityProvider = StateNotifierProvider<NavigationVisibilityNotifier, NavigationVisibilityState>((ref) => NavigationVisibilityNotifier());
 
 /// Extension to determine if a route should show navigation bar
 extension RouteNavigationVisibility on String {
@@ -89,7 +86,7 @@ extension RouteNavigationVisibility on String {
     return false;
   }
 
-  /// Check if this is a deep route (more than 1 level deep)
+  /// Check if this is a deep route (more than 1 level deep,
   bool _isDeepRoute(String baseRoute) {
     // If the path is exactly the base route, it's not deep
     if (this == baseRoute) return false;
@@ -100,7 +97,7 @@ extension RouteNavigationVisibility on String {
     // If there's more than just a trailing slash, it's a deep route
     if (remainingPath.isEmpty || remainingPath == '/') return false;
     
-    // Count slashes in the remaining path (excluding leading slash)
+    // Count slashes in the remaining path (excluding leading slash,
     final cleanPath = remainingPath.startsWith('/') ? remainingPath.substring(1) : remainingPath;
     return cleanPath.contains('/') || cleanPath.isNotEmpty;
   }

@@ -1,0 +1,33 @@
+=== Flutter Build Error Summary (Sixth Build) ===
+
+Total files with errors: 290
+
+=== 전체 빌드 진행 기록 ===
+1차 빌드: 400개 파일 (시작)
+2차 빌드: 307개 파일 (-93개, 23.25% 개선)
+3차 빌드: 6개 파일 (-301개, 98.05% 개선) ✅ 최고 성과
+4차 빌드: 120개 파일 (+114개)
+5차 빌드: 291개 파일 (+171개)
+6차 빌드: 290개 파일 (-1개)
+
+=== 현재 상황 ===
+- 3차 빌드 대비: +284개 파일 증가
+- 초기 대비: -110개 파일 (27.5% 개선)
+- 5차 대비: -1개 파일
+
+=== 주요 에러 타입 (상위 15개) ===
+10342 Error: Expected ';' after this.
+7879 Error: Unexpected token ';'.
+5696 Error: Expected an identifier, but got ','.
+4263 Error: Expected an identifier, but got ')'.
+2004 Error: Expected ',' before this.
+1770 Error: Too many positional arguments: 0 allowed, but 1 found.
+1694 Error: Can't find ']' to match '['.
+1586 Error: 'String' isn't a type.
+1110 Error: Can't find ')' to match '('.
+1040 Error: Expected '{' before this.
+ 873 Error: Non-optional parameters can't have a default value.
+ 746 Error: Expected ')' before this.
+ 706 Error: Variables must be declared using the keywords 'const', 'final', 'var' or a type name.
+ 702 Error: Expected a declaration, but got ')'.
+ 493 Error: Not a constant expression.

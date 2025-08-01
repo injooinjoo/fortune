@@ -201,7 +201,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
         colors: [Color(0xFF9966CC), Color(0xFF7FFFD4)],
       ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+      resultBuilder: (context, result, onShare) => _buildResult(context, result)
     );
   }
 
@@ -300,7 +300,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
                       ),
                     ],
                   ),
-                ),
+                )
               );
             },
           ),
@@ -397,7 +397,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -587,7 +587,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             ),
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -617,7 +617,7 @@ class _BirthstoneFortunePageState extends ConsumerState<BirthstoneFortunePage> {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 }

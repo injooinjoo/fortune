@@ -8,7 +8,7 @@ class FontSizeNotifier extends StateNotifier<FontSize> {
 
   FontSizeNotifier(this._prefs) : super(FontSize.medium) {
     _loadFontSize();
-  }
+}
 
   void _loadFontSize() {
     final savedSize = _prefs.getString(_fontSizeKey);
@@ -22,14 +22,14 @@ class FontSizeNotifier extends StateNotifier<FontSize> {
           break;
         default:
           state = FontSize.medium;
-      }
-    }
-  }
+}
+    },
+}
 
   void setFontSize(FontSize size) {
     state = size;
     _saveFontSize(size);
-  }
+}
 
   void _saveFontSize(FontSize size) {
     String sizeString;
@@ -42,9 +42,9 @@ class FontSizeNotifier extends StateNotifier<FontSize> {
         break;
       default:
         sizeString = 'medium';
-    }
+}
     _prefs.setString(_fontSizeKey, sizeString);
-  }
+}
 }
 
 // This provider must be overridden in the ProviderScope
@@ -55,4 +55,4 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 final fontSizeProvider = StateNotifierProvider<FontSizeNotifier, FontSize>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return FontSizeNotifier(prefs);
-});
+};

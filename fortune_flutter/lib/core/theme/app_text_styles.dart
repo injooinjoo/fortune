@@ -121,7 +121,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     color: AppColors.textLight,
     letterSpacing: 1.5,
-    height: 1.4,
+    height: 1.4
   );
   
   // Aliases for backward compatibility

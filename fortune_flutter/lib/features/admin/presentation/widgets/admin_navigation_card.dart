@@ -27,64 +27,63 @@ class AdminNavigationCard extends StatelessWidget {
     
     return InkWell(
       onTap: () => context.push(route),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(16))
       child: GlassContainer(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24))
         child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 56)
+            height: 56)
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
-            ),
+              color: iconColor.withValues(alpha: 0.1))
+              borderRadius: BorderRadius.circular(16))
+            ))
             child: Icon(
-              icon,
-              color: iconColor,
-              size: 28,
-            ),
+              icon)
+              color: iconColor)
+              size: 28)
+            ))
           ).animate().scale(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutBack,
-          ),
-          const SizedBox(width: 16),
+            duration: const Duration(milliseconds: 300))
+            curve: Curves.easeOutBack)
+          ))
+          const SizedBox(width: 16))
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Row(
                   children: [
                     Text(
-                      title,
+                      title)
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold))
+                      ))
+                    ))
                     if (badge != null) ...[
-                      const SizedBox(width: 8),
-                      badge!,
-                    ],
+                      const SizedBox(width: 8))
+                      badge!)
+                    ])
                   ],
-                ),
-                const SizedBox(height: 4),
+                ))
+                const SizedBox(height: 4))
                 Text(
-                  subtitle,
+                  subtitle)
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
+                ))
+              ])
             ),
-          ),
+          ))
           Icon(
-            Icons.arrow_forward_ios,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-            size: 16,
-          ),
-        ],
+            Icons.arrow_forward_ios)
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.3))
+            size: 16)
+          ))
+        ])
       ),
-    ),
+    ))
     ).animate().fadeIn().slideX(begin: 0.1, end: 0);
   }
 }

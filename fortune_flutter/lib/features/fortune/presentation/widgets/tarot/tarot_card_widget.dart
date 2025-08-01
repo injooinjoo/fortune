@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../../core/constants/tarot_deck_metadata.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Unified tarot card widget that handles both front and back display
 /// with flip animation support
@@ -26,7 +29,7 @@ class TarotCardWidget extends StatefulWidget {
     this.isSelected = false,
     this.isHovered = false,
     this.onTap,
-    this.flipDuration = const Duration(milliseconds: 800),
+    this.flipDuration = AppAnimations.durationXLong,
     this.enableFlipAnimation = true,
   }) : super(key: key);
 
@@ -47,7 +50,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     
     _flipController = AnimationController(
       duration: widget.flipDuration,
-      vsync: this,
+      vsync: this
     );
     
     _flipAnimation = Tween<double>(
@@ -60,7 +63,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
 
     if (widget.showFront) {
       _flipController.value = 1.0;
-    }
+}
   }
 
   @override
@@ -69,21 +72,21 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     if (widget.showFront != oldWidget.showFront && widget.enableFlipAnimation) {
       if (widget.showFront) {
         _flipController.forward();
-      } else {
+} else {
         _flipController.reverse();
-      }
+}
       _isShowingFront = widget.showFront;
-    } else if (!widget.enableFlipAnimation) {
+} else if (!widget.enableFlipAnimation) {
       _isShowingFront = widget.showFront;
       _flipController.value = widget.showFront ? 1.0 : 0.0;
-    }
+}
   }
 
   @override
   void dispose() {
     _flipController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -95,42 +98,37 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     return GestureDetector(
       onTap: widget.onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: AppAnimations.durationShort,
         width: widget.width,
         height: widget.height,
-        transform: Matrix4.identity()
-          ..scale(widget.isHovered ? 1.05 : 1.0),
+        transform: Matrix4.identity(,
+          ..scale(widget.isHovered ? 1.05 : 1.0, widget.isHovered ? 1.05 : 1.0),
         child: AnimatedBuilder(
           animation: _flipAnimation,
           builder: (context, child) {
             final isShowingFront = _flipAnimation.value >= 0.5;
             return Transform(
               alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.002)
+              transform: Matrix4.identity(,
+                ..setEntry(3, 2, 0.002,
                 ..rotateY(math.pi * _flipAnimation.value),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppDimensions.borderRadiusMedium,
                   boxShadow: _buildBoxShadow(),
-                ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppDimensions.borderRadiusMedium,
                   child: isShowingFront
                       ? Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
                           child: _buildCardFront(),
-                        )
+                        ,
                       : _buildCardBack(),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
+              ));
+},
+        ));
+}
 
   List<BoxShadow> _buildBoxShadow() {
     print('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
@@ -143,7 +141,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           spreadRadius: 5,
         ),
       ];
-    } else if (widget.isHovered) {
+} else if (widget.isHovered) {
       print('[TarotCard] Using hovered shadow with primaryColor alpha: 0.4');
       return [
         BoxShadow(
@@ -152,16 +150,15 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           spreadRadius: 2,
         ),
       ];
-    } else {
+} else {
       print('[TarotCard] Using default shadow with black alpha: 0.3');
       return [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 10,
           offset: const Offset(0, 5),
-        ),
       ];
-    }
+}
   }
 
   Widget _buildCardBack() {
@@ -175,7 +172,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             widget.deck.secondaryColor,
           ],
         ),
-      ),
       child: Stack(
         children: [
           // Pattern overlay
@@ -186,7 +182,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
               isHighlighted: widget.isHovered || widget.isSelected,
             ),
             size: Size(widget.width, widget.height),
-          ),
           // Center emblem
           Center(
             child: Column(
@@ -198,13 +193,12 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   color: (() {
                     print('[TarotCard] Icon white alpha: 0.8');
                     return Colors.white.withValues(alpha: 0.8);
-                  })(),
-                ),
-                const SizedBox(height: 8),
+})(),
+                const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   widget.deck.koreanName,
                   style: TextStyle(
-                    fontSize: widget.width * 0.12,
+                    fontSize: widget.width * 0.12),
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     letterSpacing: 1,
@@ -213,11 +207,10 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 ),
               ],
             ),
-          ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildCardFront() {
     // Simplified front display - can be expanded based on actual card data
@@ -231,7 +224,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             Colors.grey[100]!,
           ],
         ),
-      ),
       child: Stack(
         children: [
           // Card content area
@@ -244,42 +236,34 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   size: widget.width * 0.5,
                   color: widget.deck.primaryColor,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.spacing4),
                 Text(
                   'Card ${widget.cardIndex + 1}',
                   style: TextStyle(
-                    fontSize: widget.width * 0.15,
+                    fontSize: widget.width * 0.15),
                     fontWeight: FontWeight.bold,
                     color: widget.deck.primaryColor,
                   ),
-                ),
               ],
             ),
-          ),
           // Card number
           Positioned(
             top: 8,
             left: 8,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
                 color: widget.deck.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppDimensions.borderRadiusMedium,
               ),
               child: Text(
                 '${widget.cardIndex + 1}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: widget.deck.primaryColor,
-                ),
-              ),
-            ),
+                style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
-      ),
+      
     );
-  }
+}
 }
 
 /// Custom painter for tarot card back patterns
@@ -298,7 +282,8 @@ class TarotCardBackPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = isHighlighted ? 2.0 : 1.5;
+      ..strokeWidth =,
+      isHighlighted ? 2.0 : 1.5;
 
     // Draw mystical patterns
     final centerX = size.width / 2;
@@ -325,9 +310,9 @@ class TarotCardBackPainter extends CustomPainter {
       paint.color = Colors.white.withValues(alpha: 0.1);
       for (int i = 1; i <= 3; i++) {
         canvas.drawCircle(Offset(centerX, centerY), size.width * 0.15 * i, paint);
-      }
-    }
-  }
+}
+    },
+}
 
   void _drawStar(Canvas canvas, Paint paint, double cx, double cy, double radius) {
     final path = Path();
@@ -340,13 +325,13 @@ class TarotCardBackPainter extends CustomPainter {
       
       if (i == 0) {
         path.moveTo(x, y);
-      } else {
+} else {
         path.lineTo(x, y);
-      }
+}
     }
     path.close();
     canvas.drawPath(path, paint);
-  }
+}
 
   void _drawCornerPattern(Canvas canvas, Paint paint, double x, double y,
       double size, bool flipX, bool flipY) {
@@ -367,12 +352,12 @@ class TarotCardBackPainter extends CustomPainter {
       flipX && !flipY ? math.pi : flipX && flipY ? math.pi / 2 : flipY ? 3 * math.pi / 2 : 0,
       math.pi / 2,
       false,
-      paint,
+      paint
     );
-  }
+}
 
   @override
   bool shouldRepaint(covariant TarotCardBackPainter oldDelegate) {
     return oldDelegate.isHighlighted != isHighlighted;
-  }
+}
 }

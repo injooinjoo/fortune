@@ -4,10 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import '../../data/services/fortune_api_service.dart';
 import '../../services/user_statistics_service.dart';
 import '../../shared/components/base_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class FortuneHistorySummaryWidget extends ConsumerStatefulWidget {
   const FortuneHistorySummaryWidget({super.key});
@@ -39,15 +43,15 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
         return;
       }
       
-      // Load recent fortune scores (last 7 days)
+      // Load recent fortune scores (last 7 days,
       final fortuneApiService = ref.read(fortuneApiServiceProvider);
       final scores = await fortuneApiService.getUserFortuneHistory(
-        userId: userId,
+        userId: userId
       );
       
       // Load recent fortunes
       final response = await supabase
-          .from('fortunes')
+          .from('fortunes',
           .select()
           .eq('user_id', userId)
           .order('created_at', ascending: false)
@@ -56,7 +60,13 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
       if (mounted) {
         setState(() {
           recentScores = scores.take(7).toList();
-          recentFortunes = response as Map<String, dynamic>?;
+          // Response is a List of fortunes, not a single Map
+          if (response != null && response is List) {
+            recentFortunes = {
+              'data': response,
+              'count': response.length,
+            };
+          }
           isLoading = false;
         });
       }
@@ -75,30 +85,32 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
     
     if (recentScores.isEmpty) {
       return Container(
-        height: 60,
+        height: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputHeight * 1.2,
         alignment: Alignment.center,
         child: Text(
-          '아직 기록이 없어요',
-          style: TextStyle(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            fontSize: 14,
-          ),
-        ),
-      );
+          '아직 기록이 없어요'),
+        style: TextStyle(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6),
+            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14)
+        )
     }
     
     final spots = recentScores.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.toDouble());
+      return FlSpot(entry.key.toDouble(), entry.value.toDouble();
     }).toList();
     
     return Container(
-      height: 60,
-      padding: const EdgeInsets.only(right: 8),
+      height: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputHeight * 1.2,
+      padding: EdgeInsets.zero,
       child: LineChart(
         LineChartData(
-          gridData: const FlGridData(show: false),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
+          gridData: const FlGridData(sho,
+      w: false),
+          titlesData: const FlTitlesData(sho,
+      w: false),
+          borderData: FlBorderData(sho,
+      w: false),
           minX: 0,
           maxX: 6,
           minY: 0,
@@ -107,29 +119,24 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
             LineChartBarData(
               spots: spots,
               isCurved: true,
-              color: AppColors.primary,
-              barWidth: 3,
+              color: AppColors.primary),
+        barWidth: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderWidth * 3,
               isStrokeCapRound: true,
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (spot, percent, barData, index) {
+              dotData: FlDotData(,
+      show: true),
+        getDotPainter: (spot, percent, barData, index) {
                   return FlDotCirclePainter(
-                    radius: 3,
+                    radius: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderWidth * 3,
                     color: AppColors.primary,
-                    strokeWidth: 1.5,
-                    strokeColor: Colors.white,
-                  );
-                },
-              ),
-              belowBarData: BarAreaData(
-                show: true,
-                color: AppColors.primary.withValues(alpha: 0.1),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    strokeWidth: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderWidth * 1.5,
+                    strokeColor: AppColors.textPrimaryDark)
+                })
+              belowBarData: BarAreaData(,
+      show: true),
+        color: AppColors.primary.withValues(alph,
+      a: 0.1))))
+          ])
+      )
   }
   
   String _getTimeAgo(DateTime dateTime) {
@@ -173,80 +180,69 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
     final theme = Theme.of(context);
     
     return BaseCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
+      padding: EdgeInsets.zero),
+        child: Column(,
+      children: [
           Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
+            padding: EdgeInsets.all(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal * 1.25),
+            decoration: BoxDecoration(,
+      gradient: LinearGradient(
                 colors: [
-                  Colors.purple.shade50,
-                  Colors.purple.shade100.withValues(alpha: 0.5),
-                ],
+                  Colors.purple.withValues(alpha: 0.1),
+                  Colors.purple.withValues(alpha: 0.05),
+                ]
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                end: Alignment.bottomRight),
+      borderRadius: BorderRadius.only(,
+      topLeft: Radius.circular(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderRadius * 2),
+                topRight: Radius.circular(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderRadius * 2))),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.auto_graph,
-                      color: Colors.purple.shade700,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
+        ),
+        color: Colors.purple.withValues(alph,
+      a: 0.9),
+                      size: AppDimensions.iconSizeMedium)
+                    SizedBox(width: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.75),
                     Text(
                       '운세 기록',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 20,
-                        color: Colors.purple.shade700,
-                      ),
-                    ),
-                  ],
-                ),
+              ),
+              style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.w700),
+        fontSize: Theme.of(context).textTheme.titleLarge?.fontSize ?? 20,
+                        color: Colors.purple.withValues(alph,
+      a: 0.9,
+                          ))))
+                  ])
                 TextButton(
                   onPressed: () => context.push('/fortune/history'),
-                  child: Row(
-                    children: [
-                      Text(
-                        '전체보기',
-                        style: TextStyle(
-                          color: Colors.purple.shade700,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
+                  child: Row(,
+      children: [
+                        Text(
+                          '전체보기',
+                          style: AppTypography.button))
+                      SizedBox(width: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.25),
                       Icon(
-                        Icons.arrow_forward,
-                        size: 16,
-                        color: Colors.purple.shade700,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+                        Icons.arrow_forward),
+        size: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal,
+                        color: Colors.purple.withValues(alph,
+      a: 0.9))
+                    ])))
+              ])))
           
           // Chart and Stats Section
           Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
+            padding: EdgeInsets.all(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal * 1.25),
+            child: Column(,
+      children: [
                 // Mini Chart
                 _buildMiniChart(context),
                 
-                const SizedBox(height: 20),
+                SizedBox(height: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal * 1.25),
                 
                 // Quick Stats
                 Row(
@@ -254,80 +250,69 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
                     _buildStatItem(
                       context,
                       label: '평균 점수',
-                      value: '${_calculateAverage(recentScores)}점',
+              ),
+              value: '${_calculateAverage(
+    recentScores,
+  )}점',
                       icon: Icons.stars,
-                      color: Colors.orange,
-                    ),
-                    const SizedBox(width: 12),
+                      color: AppColors.warning)
+                    SizedBox(width: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.75),
                     _buildStatItem(
                       context,
-                      label: '이번주',
-                      value: '${_calculateTrend(recentScores) >= 0 ? '+' : ''}${_calculateTrend(recentScores).toStringAsFixed(0)}%',
+                      label: '이번주'),
+        value: '${_calculateTrend(recentScores) >= 0 ? '+' : ''}${_calculateTrend(recentScores).toStringAsFixed(
+    0,
+  )}%',
                       icon: _calculateTrend(recentScores) >= 0 
                           ? Icons.trending_up 
-                          : Icons.trending_down,
+                          : Icons.trending_down
                       color: _calculateTrend(recentScores) >= 0 
-                          ? Colors.green 
-                          : Colors.red,
-                    ),
-                  ],
-                ),
+                          ? AppColors.success 
+                          : AppColors.error)
+                  ])
                 
-                const SizedBox(height: 20),
+                SizedBox(height: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal * 1.25),
                 
                 // Recent Fortunes
-                if (!isLoading && recentFortunes != null) ...[
+                if (!isLoading && recentFortunes != null && recentFortunes!['data'] != null) ...[
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    width: double.infinity),
+              padding: EdgeInsets.all(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.horizontal),
+                    decoration: BoxDecoration(,
+      color: Theme.of(context).extension<FortuneTheme>()!.cardBackground,
+                      borderRadius: BorderRadius.circular(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderRadius * 1.5),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           '최근 운세',
-                          style: TextStyle(
-                            fontSize: 14,
+        ),
+        style: TextStyle(,
+      fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14),
                             fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        // Show recent fortune items here
-                        // This would need to be implemented based on actual data structure
-                        _buildRecentFortuneItem(
-                          context,
-                          title: '오늘의 운세',
-                          score: 85,
-                          time: '2시간 전',
-                        ),
-                        const SizedBox(height: 8),
-                        _buildRecentFortuneItem(
-                          context,
-                          title: '연애운',
-                          score: 78,
-                          time: '어제',
-                        ),
-                        const SizedBox(height: 8),
-                        _buildRecentFortuneItem(
-                          context,
-                          title: '재물운',
-                          score: 91,
-                          time: '2일 전',
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.7))))
+                        SizedBox(height: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.75),
+                        // Show actual recent fortune items from data
+                        ...(recentFortunes!['data'] as List).map((fortune) {
+                          final createdAt = DateTime.parse(fortune['created_at']);
+                          final fortuneType = fortune['fortune_type'] ?? '운세';
+                          final score = fortune['overall_score'] ?? 0;
+                          
+                          return Padding(
+                            padding: EdgeInsets.only(botto,
+      m: AppSpacing.spacing2),
+                            child: _buildRecentFortuneItem(
+                              context,
+              ),
+              title: _getFortuneTypeLabel(fortuneType),
+                              score: score,
+                              time: _getTimeAgo(createdAt))))
+                        }).toList(),
+                      ])))
+                ]
+              ])))
+        ]
+      )
   }
   
   Widget _buildStatItem(
@@ -336,51 +321,45 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
     required String value,
     required IconData icon,
     required Color color,
-  }) {
+  )}) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: color.withValues(alpha: 0.2),
-          ),
-        ),
-        child: Row(
+      child: Container(,
+      padding: EdgeInsets.all(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.75),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.1),
+          borderRadius: BorderRadius.circular(Theme.of(context).extension<FortuneTheme>()!.formStyles.inputBorderRadius),
+          border: Border.all(,
+      color: color.withValues(alp,
+      ha: 0.2))),
+      child: Row(
           children: [
             Icon(
               icon,
-              size: 20,
-              color: color,
-            ),
-            const SizedBox(width: 8),
+        ),
+        size: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputHeight * 0.4,
+              color: color)
+            SizedBox(width: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.5),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
+                        Text(
+                          label,
+              ),
+              style: TextStyle(,
+      fontSize: Theme.of(context).textTheme.bodySmall?.fontSize ?? 12),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alph,
+      a: 0.6))))
                   Text(
                     value,
-                    style: TextStyle(
-                      fontSize: 16,
+                          style: TextStyle(,
+      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16),
                       fontWeight: FontWeight.w700,
-                      color: color,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+      color: color)))
+                ])))
+          ])
+      )
   }
   
   Widget _buildRecentFortuneItem(
@@ -388,41 +367,54 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
     required String title,
     required int score,
     required String time,
-  }) {
+  )}) {
     final scoreColor = score >= 80 
-        ? Colors.green 
+        ? AppColors.success 
         : score >= 60 
-            ? Colors.blue 
-            : Colors.orange;
+            ? AppColors.primary 
+            : AppColors.warning;
     
     return Row(
       children: [
         Expanded(
           child: Text(
-            '• $title',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
+            '• $title'),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ),))
         Text(
           '($score점)',
-          style: TextStyle(
-            fontSize: 14,
+          style: TextStyle(,
+      fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize ?? 14),
             fontWeight: FontWeight.w600,
-            color: scoreColor,
-          ),
-        ),
-        const SizedBox(width: 8),
+      color: scoreColor)))
+        SizedBox(width: Theme.of(context).extension<FortuneTheme>()!.formStyles.inputPadding.vertical * 0.5),
         Text(
-          '- $time',
-          style: TextStyle(
-            fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
-      ],
+          '- $time'),
+        style: TextStyle(,
+      fontSize: Theme.of(context).textTheme.bodySmall?.fontSize ?? 12),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alph,
+      a: 0.6))))
+      ]
     );
+  }
+  
+  String _getFortuneTypeLabel(String fortuneType) {
+    final typeMap = {
+      'daily': '오늘의 운세',
+      'love': '연애운',
+      'money': '재물운',
+      'career': '직업운',
+      'study': '학업운',
+      'health': '건강운',
+      'tarot': '타로',
+      'zodiac': '별자리운',
+      'biorhythm': '바이오리듬',
+      'dream': '꿈해몽',
+      'compatibility': '궁합',
+      'business': '사업운',
+    };
+    
+    return typeMap[fortuneType] ?? fortuneType;
   }
 }

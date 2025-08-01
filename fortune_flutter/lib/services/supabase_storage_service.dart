@@ -72,7 +72,7 @@ class SupabaseStorageService {
     }
   }
   
-  // Delete old profile images for a user (keep only the latest)
+  // Delete old profile images for a user (keep only the latest,
   Future<void> cleanupOldProfileImages({
     required String userId,
     String? currentImageUrl,
@@ -116,7 +116,7 @@ class SupabaseStorageService {
         source: ImageSource.gallery,
         maxWidth: 800,
         maxHeight: 800,
-        imageQuality: 80,
+        imageQuality: 80
       );
       return image;
     } catch (e) {
@@ -133,7 +133,7 @@ class SupabaseStorageService {
         source: ImageSource.camera,
         maxWidth: 800,
         maxHeight: 800,
-        imageQuality: 80,
+        imageQuality: 80
       );
       return image;
     } catch (e) {
@@ -144,7 +144,7 @@ class SupabaseStorageService {
   
   // Validate image file
   static bool validateImageFile(XFile file) {
-    // Check file size (max 5MB)
+    // Check file size (max 5MB,
     const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
     
     // Check file extension

@@ -19,7 +19,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
         end: Alignment.bottomRight,
       ),
       inputBuilder: (context, onSubmit) => _buildInputSection(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare),
+      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare,
     );
   }
 
@@ -98,7 +98,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                       const SnackBar(
                         content: Text('모든 정보를 입력해주세요'),
                         backgroundColor: Colors.orange,
-                      ),
+                      ,
                     );
                   }
                 },
@@ -117,7 +117,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -174,7 +174,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
         ],
-      ),
+      ,
     );
   }
 
@@ -213,7 +213,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -260,7 +260,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -302,7 +302,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -344,7 +344,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 }

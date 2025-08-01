@@ -53,7 +53,7 @@ class _BaseFortunePageV2State extends ConsumerState<BaseFortunePageV2>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800)
     );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -105,7 +105,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
 
       await Share.share(
         shareText,
-        subject: '${widget.title} - Fortune 앱',
+        subject: '${widget.title} - Fortune 앱'
       );
       
       // Log share event
@@ -118,7 +118,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
   }
 
   Future<void> _generateFortune(Map<String, dynamic> params) async {
-    // Check if user has unlimited access (premium)
+    // Check if user has unlimited access (premium,
     final tokenState = ref.read(tokenProvider);
     final isPremium = tokenState.hasUnlimitedAccess;
 
@@ -130,7 +130,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
     try {
       Fortune? generatedFortune;
       
-      // Show ad loading screen (or premium loading for premium users)
+      // Show ad loading screen (or premium loading for premium users,
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -154,21 +154,21 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                     fortuneType: widget.fortuneType,
                     userInfo: params,
                   ),
-                ).future,
+                ).future
               );
               generatedFortune = fortune;
               return fortune;
             },
             onAdComplete: isPremium ? null : () async {
-              // Reward tokens for watching ad (free users only)
+              // Reward tokens for watching ad (free users only,
               await ref.read(tokenProvider.notifier).rewardTokensForAd(
                 fortuneType: widget.fortuneType,
                 rewardAmount: 1,
               );
             },
           ),
-          fullscreenDialog: true,
-        ),
+          fullscreenDialog: true
+        )
       );
 
       // Check if fortune was successfully generated
@@ -186,7 +186,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
           scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
             MapEntry(key, value is int ? value : (value as num).toInt())),
           luckyItems: generatedFortune!.luckyItems,
-          recommendations: generatedFortune!.recommendations,
+          recommendations: generatedFortune!.recommendations
         );
 
         setState(() {
@@ -200,7 +200,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
         if (!isPremium && mounted) {
           Toast.success(
             context, 
-            '운세가 생성되었습니다! (1토큰 획득)',
+            '운세가 생성되었습니다! (1토큰 획득)'
           );
         }
       } else {
@@ -325,8 +325,8 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
               ),
             ],
           ),
-        ),
-      ),
+        )
+      )
     );
   }
 }

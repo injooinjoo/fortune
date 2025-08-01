@@ -23,7 +23,7 @@ class CelebrityMatchPage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _CelebrityMatchResult(
         result: result,
         onShare: onShare,
-      ),
+      )
     );
   }
 }
@@ -124,7 +124,7 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
           items: ['10대', '20대', '30대', '40대', '50대 이상'].map((age) {
             return DropdownMenuItem(
               value: age,
-              child: Text(age),
+              child: Text(age)
             );
           }).toList(),
           onChanged: (value) {
@@ -232,7 +232,7 @@ class _CelebrityMatchInputFormState extends State<_CelebrityMatchInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -520,7 +520,7 @@ class _CelebrityMatchResultState extends ConsumerState<_CelebrityMatchResult> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }

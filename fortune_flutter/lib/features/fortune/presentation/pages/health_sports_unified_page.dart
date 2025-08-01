@@ -33,7 +33,7 @@ class HealthSportsUnifiedPage extends BaseFortunePage {
           title: '건강 & 운동',
           description: '건강, 피트니스, 요가, 스포츠 운세를 확인하세요',
           fortuneType: 'health_sports',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -53,7 +53,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
     
     final fortune = await fortuneService.getSportsFortune(
       userId: params['userId'],
-      params: params,
+      params: params
     );
     
     // Cache the fortune
@@ -167,7 +167,7 @@ class _HealthSportsUnifiedPageState extends BaseFortunePageState<HealthSportsUni
       itemBuilder: (context, index) {
         final type = HealthSportsType.values[index];
         return _buildTypeCard(type, index);
-      },
+      }
     );
   }
 

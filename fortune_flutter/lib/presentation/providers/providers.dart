@@ -245,8 +245,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       iconName: 'heart',
       color: 'pink',
       gradient: 'from-pink-50 to-red-50',
-      isPopular: true,
-    ),
+      isPopular: true)
     const FortuneTypeInfo(
       id: 'marriage',
       title: '결혼운',
@@ -255,8 +254,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'heart',
       color: 'rose',
-      gradient: 'from-rose-50 to-pink-50',
-    ),
+      gradient: 'from-rose-50 to-pink-50')
     const FortuneTypeInfo(
       id: 'compatibility',
       title: '궁합',
@@ -265,8 +263,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'users',
       color: 'rose',
-      gradient: 'from-rose-50 to-pink-50',
-    ),
+      gradient: 'from-rose-50 to-pink-50')
     const FortuneTypeInfo(
       id: 'traditional-compatibility',
       title: '전통 궁합',
@@ -275,8 +272,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'yin-yang',
       color: 'purple',
-      gradient: 'from-purple-50 to-pink-50',
-    ),
+      gradient: 'from-purple-50 to-pink-50')
     const FortuneTypeInfo(
       id: 'couple-match',
       title: '연인 궁합',
@@ -285,8 +281,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'heart-circle',
       color: 'pink',
-      gradient: 'from-pink-50 to-red-50',
-    ),
+      gradient: 'from-pink-50 to-red-50')
     const FortuneTypeInfo(
       id: 'ex-lover',
       title: '전 애인 운세',
@@ -295,8 +290,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'heart-broken',
       color: 'grey',
-      gradient: 'from-grey-50 to-blue-50',
-    ),
+      gradient: 'from-grey-50 to-blue-50')
     const FortuneTypeInfo(
       id: 'blind-date',
       title: '소개팅 운세',
@@ -305,8 +299,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'users',
       color: 'pink',
-      gradient: 'from-pink-50 to-purple-50',
-    ),
+      gradient: 'from-pink-50 to-purple-50')
     
     // 직업/사업
     const FortuneTypeInfo(
@@ -317,8 +310,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'briefcase',
       color: 'blue',
-      gradient: 'from-blue-50 to-indigo-50',
-    ),
+      gradient: 'from-blue-50 to-indigo-50')
     const FortuneTypeInfo(
       id: 'business',
       title: '사업운',
@@ -327,8 +319,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'trending-up',
       color: 'indigo',
-      gradient: 'from-indigo-50 to-purple-50',
-    ),
+      gradient: 'from-indigo-50 to-purple-50')
     
     // 재물/투자
     const FortuneTypeInfo(
@@ -340,8 +331,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       iconName: 'coins',
       color: 'yellow',
       gradient: 'from-yellow-50 to-orange-50',
-      isPopular: true,
-    ),
+      isPopular: true)
   ];
 });
 
@@ -355,11 +345,12 @@ class RecentFortune {
   final String title;
   final DateTime visitedAt;
 
-  RecentFortune({
+  RecentFortune(
+    {
     required this.path,
     required this.title,
     required this.visitedAt,
-  });
+  };
 }
 
 class RecentFortunesNotifier extends StateNotifier<List<RecentFortune>> {

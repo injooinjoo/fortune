@@ -14,7 +14,7 @@ class ExLoverFortunePage extends BaseFortunePage {
           title: '전 애인 운세',
           description: '과거 관계의 의미와 새로운 시작',
           fortuneType: 'ex-lover',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -264,7 +264,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -986,7 +986,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                                   Icons.check,
                                   color: Colors.white,
                                   size: 20,
-                                )
+                                ),
                               : Text(
                                   '${index + 1}',
                                   style: theme.textTheme.bodyMedium?.copyWith(

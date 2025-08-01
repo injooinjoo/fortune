@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:fortune_flutter/main.dart' as app;
-import 'package:fortune_flutter/features/fortune/presentation/pages/fortune_list_page.dart';
-import 'package:fortune_flutter/features/fortune/presentation/pages/compatibility_page.dart';
-import 'package:fortune_flutter/features/fortune/presentation/pages/marriage_fortune_page.dart';
-import 'package:fortune_flutter/features/fortune/presentation/pages/chemistry_fortune_page.dart';
+import 'package:fortune/main.dart' as app;
+import 'package:fortune/features/fortune/presentation/pages/fortune_list_page.dart';
+import 'package:fortune/features/fortune/presentation/pages/compatibility_page.dart';
+import 'package:fortune/features/fortune/presentation/pages/marriage_fortune_page.dart';
+import 'package:fortune/features/fortune/presentation/pages/chemistry_fortune_page.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -220,7 +220,7 @@ Future<void> _fillPartnerInfo(WidgetTester tester) async {
   // Fill partner name
   final nameField = find.byWidgetPredicate(
     (widget) => widget is TextFormField && 
-      widget.decoration?.labelText == '이름'
+      (widget.decoration as InputDecoration?)?.labelText == '이름'
   );
   if (nameField.evaluate().isNotEmpty) {
     await tester.enterText(nameField, '테스트 파트너');
@@ -229,7 +229,7 @@ Future<void> _fillPartnerInfo(WidgetTester tester) async {
   // Select birth date
   final birthDateField = find.byWidgetPredicate(
     (widget) => widget is TextFormField && 
-      widget.decoration?.labelText?.contains('생년월일') == true
+      ((widget.decoration as InputDecoration?)?.labelText?.contains('생년월일') == true)
   );
   if (birthDateField.evaluate().isNotEmpty) {
     await tester.tap(birthDateField);

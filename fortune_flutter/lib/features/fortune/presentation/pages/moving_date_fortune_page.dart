@@ -24,7 +24,7 @@ class MovingDateFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _MovingDateFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -79,7 +79,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
           ),
           child: child!,
         );
-      },
+      }
     );
     if (picked != null && picked != _birthDate) {
       setState(() {
@@ -98,7 +98,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
         Text(
           '이사 가능한 날짜를 선택하시면\n최적의 이사 날짜를 추천해드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
             height: 1.5,
           ),
         ),
@@ -259,7 +259,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                     context: context,
                     initialDate: _selectedStartDate ?? DateTime.now(),
                     firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    lastDate: DateTime.now().add(const Duration(days: 365),
                   );
                   if (picked != null) {
                     setState(() {
@@ -297,7 +297,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                     context: context,
                     initialDate: _selectedEndDate ?? (_selectedStartDate ?? DateTime.now()),
                     firstDate: _selectedStartDate ?? DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                    lastDate: DateTime.now().add(const Duration(days: 365),
                   );
                   if (picked != null) {
                     setState(() {
@@ -381,7 +381,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -613,7 +613,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                          ,
                         );
                       }
                       return null;
@@ -799,7 +799,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
             ),
           ),
         ),
-      ],
+      ]
     );
   }
   
@@ -823,7 +823,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
             fontWeight: FontWeight.w600,
           ),
         ),
-      ],
+      ]
     );
   }
 }

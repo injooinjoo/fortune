@@ -1,3 +1,4 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import '../../providers/ad_provider.dart';
 import '../../../services/ad_service.dart';
 import '../../../core/utils/logger.dart';
 import '../../../core/config/environment.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 /// Widget to display banner ads
 class BannerAdWidget extends ConsumerStatefulWidget {
@@ -16,9 +18,9 @@ class BannerAdWidget extends ConsumerStatefulWidget {
   const BannerAdWidget({
     super.key,
     this.adSize = AdSize.banner,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
+    this.padding = AppSpacing.paddingVertical8,
     this.backgroundColor,
-  });
+  }));
 
   @override
   ConsumerState<BannerAdWidget> createState() => _BannerAdWidgetState();
@@ -98,7 +100,9 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
       child: SizedBox(
         width: widget.adSize.width.toDouble(),
         height: widget.adSize.height.toDouble(),
-        child: AdWidget(ad: _bannerAd!),
+        child: AdWidget(
+          ad: _bannerAd!,
+        ),
       ),
     );
   }

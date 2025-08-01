@@ -53,8 +53,7 @@ class StatsCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                 ),
               ),
               if (trailing != null) trailing!,
@@ -81,8 +80,7 @@ class StatsCard extends StatelessWidget {
             Text(
               subtitle!,
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
             ),
           ],
         ],

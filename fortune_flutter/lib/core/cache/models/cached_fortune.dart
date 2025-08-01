@@ -5,7 +5,7 @@ part 'cached_fortune.g.dart';
 
 @HiveType(typeId: 0)
 class CachedFortune extends HiveObject {
-  @HiveField(0)
+  @HiveField(0,
   final String id;
 
   @HiveField(1)

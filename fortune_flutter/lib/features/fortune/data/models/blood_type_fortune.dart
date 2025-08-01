@@ -31,7 +31,7 @@ class BloodTypeFortune {
       workAdvice: json['workAdvice'] ?? '',
       healthTip: json['healthTip'] ?? '',
       luckyColor: json['luckyColor'] ?? '',
-      luckyNumber: json['luckyNumber'] ?? 1,
+      luckyNumber: json['luckyNumber'] ?? 1
     );
   }
 
@@ -40,12 +40,12 @@ class BloodTypeFortune {
       'bloodType': bloodType,
       'rhType': rhType,
       'personality': personality,
-      'todaysFortune': todaysFortune,
+      'todaysFortune': todaysFortune)
       'loveCompatibility': loveCompatibility,
-      'workAdvice': workAdvice,
+      'workAdvice': workAdvice)
       'healthTip': healthTip,
-      'luckyColor': luckyColor,
-      'luckyNumber': luckyNumber,
+      'luckyColor': luckyColor)
+      'luckyNumber': luckyNumber)
     };
   }
 }

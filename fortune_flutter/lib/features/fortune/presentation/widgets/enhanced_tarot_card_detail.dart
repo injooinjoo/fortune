@@ -4,6 +4,10 @@ import 'dart:ui';
 import 'dart:math' as math;
 import '../../../../core/constants/tarot_metadata.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class EnhancedTarotCardDetail extends StatefulWidget {
   final int cardIndex;
@@ -14,41 +18,41 @@ class EnhancedTarotCardDetail extends StatefulWidget {
     Key? key,
     required this.cardIndex,
     this.position,
-    this.showAnimation = true,
+    this.showAnimation = true)
   }) : super(key: key);
 
   static Future<void> show({
     required BuildContext context,
     required int cardIndex,
-    String? position,
+    String? position)
   }) {
     return showGeneralDialog(
       context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Dismiss',
-      barrierColor: Colors.black87,
-      transitionDuration: const Duration(milliseconds: 400),
+      barrierDismissible: true)
+      barrierLabel: 'Dismiss')
+      barrierColor: Colors.black87)
+      transitionDuration: const Duration(milliseconds: 400))
       pageBuilder: (context, animation, secondaryAnimation) {
         return EnhancedTarotCardDetail(
-          cardIndex: cardIndex,
-          position: position,
+          cardIndex: cardIndex)
+          position: position
         );
-      },
+      })
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
           child: ScaleTransition(
             scale: Tween<double>(
-              begin: 0.9,
-              end: 1.0,
+              begin: 0.9)
+              end: 1.0)
             ).animate(CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutCubic,
-            )),
-            child: child,
-          ),
+              parent: animation)
+              curve: Curves.easeOutCubic)
+            )))
+            child: child)
+          ))
         );
-      },
+      })
     );
   }
 
@@ -75,48 +79,48 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     
     // Card flip animation
     _cardFlipController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
+      duration: AppAnimations.durationXLong,
+      vsync: this
     );
     
     _cardFlipAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
+      begin: 0)
+      end: 1)
     ).animate(CurvedAnimation(
-      parent: _cardFlipController,
-      curve: Curves.easeInOutCubic,
+      parent: _cardFlipController)
+      curve: Curves.easeInOutCubic)
     ));
     
     // Glow animation
     _glowController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
+      duration: const Duration(seconds: 2))
+      vsync: this)
     )..repeat(reverse: true);
     
     _glowAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0.0)
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _glowController,
-      curve: Curves.easeInOut,
+      parent: _glowController)
+      curve: Curves.easeInOut)
     ));
     
     // Floating animation
     _floatingController = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this,
+      duration: const Duration(seconds: 3))
+      vsync: this)
     )..repeat(reverse: true);
     
     _floatingAnimation = Tween<double>(
-      begin: -10,
-      end: 10,
+      begin: -10)
+      end: 10)
     ).animate(CurvedAnimation(
-      parent: _floatingController,
-      curve: Curves.easeInOut,
+      parent: _floatingController)
+      curve: Curves.easeInOut)
     ));
     
     if (widget.showAnimation) {
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(AppAnimations.durationMedium, () {
         if (mounted) {
           _cardFlipController.forward();
         }
@@ -146,22 +150,22 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   Widget _buildCardFront(TarotCardInfo card) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
           colors: [
-            const Color(0xFF2D1B69),
-            const Color(0xFF0F0C29),
-          ],
+            FortuneColors.tarotDark)
+            FortuneColors.tarotDarkest)
+          ])
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.purpleAccent.withValues(alpha: 0.3),
-            blurRadius: 30,
-            spreadRadius: 10,
-          ),
-        ],
+            color: Colors.purpleAccent.withValues(alpha: 0.3))
+            blurRadius: 30)
+            spreadRadius: 10)
+          ))
+        ])
       ),
       child: Stack(
         children: [
@@ -169,58 +173,51 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
           Positioned.fill(
             child: CustomPaint(
               painter: MysticalBackgroundPainter(
-                glowIntensity: _glowAnimation.value,
-              ),
-            ),
-          ),
+                glowIntensity: _glowAnimation.value)
+              ))
+            ))
+          ))
           // Card content
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: AppSpacing.paddingAll24)
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: [
                 // Card number/name
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5, vertical: AppSpacing.spacing2 * 1.25))
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.white.withValues(alpha: 0.1))
+                    borderRadius: BorderRadius.circular(AppSpacing.spacing7 * 1.07))
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
-                    ),
-                  ),
+                      color: Colors.white.withValues(alpha: 0.2))
+                    ))
+                  ))
                   child: Text(
-                    card.id < 22 
+                    card.id < 22 ))
                         ? '${_romanNumeral(card.id)} · ${card.name}'
                         : card.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 40),
+                    style: Theme.of(context).textTheme.bodyMedium)
+                const SizedBox(height: AppSpacing.spacing10))
                 // Card image placeholder with glow
                 AnimatedBuilder(
-                  animation: _glowAnimation,
+                  animation: _glowAnimation)
                   builder: (context, child) {
                     return Container(
-                      width: 200,
-                      height: 300,
+                      width: 200)
+                      height: AppSpacing.spacing24 * 3.125)
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: AppDimensions.borderRadiusLarge)
                         boxShadow: [
                           BoxShadow(
-                            color: _getTarotColor(card).withValues(alpha: 0.5 * _glowAnimation.value),
-                            blurRadius: 30,
-                            spreadRadius: 10,
-                          ),
-                        ],
+                            color: _getTarotColor(card).withValues(alpha: 0.5 * _glowAnimation.value))
+                            blurRadius: 30)
+                            spreadRadius: 10)
+                          ))
+                        ])
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: AppDimensions.borderRadiusLarge)
                         child: Stack(
                           children: [
                             // Gradient background
@@ -228,97 +225,86 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                               decoration: BoxDecoration(
                                 gradient: RadialGradient(
                                   colors: [
-                                    _getTarotColor(card).withValues(alpha: 0.3),
-                                    _getTarotColor(card).withValues(alpha: 0.1),
-                                    Colors.transparent,
-                                  ],
+                                    _getTarotColor(card).withValues(alpha: 0.3))
+                                    _getTarotColor(card).withValues(alpha: 0.1))
+                                    Colors.transparent)
+                                  ])
                                 ),
-                              ),
-                            ),
+                              ))
+                            ))
                             // Center icon
                             Center(
                               child: Icon(
-                                _getCardIcon(card),
-                                size: 80,
-                                color: Colors.white.withValues(alpha: 0.8),
-                              ),
-                            ),
+                                _getCardIcon(card))
+                                size: 80)
+                                color: Colors.white.withValues(alpha: 0.8))
+                              ))
+                            ))
                             // Border decoration
                             Container(
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: AppDimensions.borderRadiusLarge)
                                 border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.3),
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ],
+                                  color: Colors.white.withValues(alpha: 0.3))
+                                  width: 2)
+                                ))
+                              ))
+                            ))
+                          ])
                         ),
-                      ),
+                      )
                     );
-                  },
+                  })
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: AppSpacing.spacing10))
                 // Keywords
                 Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
+                  spacing: 12)
+                  runSpacing: 8)
+                  alignment: WrapAlignment.center)
                   children: card.keywords.take(3).map((keyword) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2))
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            _getTarotColor(card).withValues(alpha: 0.3),
-                            _getTarotColor(card).withValues(alpha: 0.1),
-                          ],
+                            _getTarotColor(card).withValues(alpha: 0.3))
+                            _getTarotColor(card).withValues(alpha: 0.1))
+                          ])
                         ),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
                         border: Border.all(
-                          color: _getTarotColor(card).withValues(alpha: 0.5),
-                        ),
-                      ),
+                          color: _getTarotColor(card).withValues(alpha: 0.5))
+                        ))
+                      ))
                       child: Text(
-                        keyword,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                        keyword)
+                        style: Theme.of(context).textTheme.bodyMedium
                     );
-                  }).toList(),
+                  }).toList())
                 ),
-              ],
+              ])
             ),
-          ),
+          ))
           // Position indicator if available
           if (widget.position != null)
             Positioned(
-              top: 20,
-              right: 20,
+              top: 20)
+              right: 20)
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2))
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white.withValues(alpha: 0.2))
+                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
-                  ),
-                ),
+                    color: Colors.white.withValues(alpha: 0.3))
+                  ))
+                ))
                 child: Text(
-                  widget.position!,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-        ],
+                  widget.position!)
+                  style: Theme.of(context).textTheme.bodyMedium)
+            ))
+        ])
       ),
     );
   }
@@ -326,41 +312,41 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   Widget _buildCardBack() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
           colors: [
-            Color(0xFF4C1D95),
-            Color(0xFF2D1B69),
-          ],
+            FortuneColors.spiritualDark)
+            FortuneColors.tarotDark)
+          ])
         ),
-      ),
+      ))
       child: CustomPaint(
-        painter: TarotCardBackPainter(),
+        painter: TarotCardBackPainter())
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center)
             children: [
               Icon(
-                Icons.auto_awesome,
-                size: 60,
-                color: Colors.white.withValues(alpha: 0.3),
-              ),
-              const SizedBox(height: 16),
+                Icons.auto_awesome)
+                size: 60)
+                color: Colors.white.withValues(alpha: 0.3))
+              ))
+              const SizedBox(height: AppSpacing.spacing4))
               Text(
-                'TAP TO REVEAL',
+                'TAP TO REVEAL')
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                ),
-              ),
-            ],
+                  color: Colors.white.withValues(alpha: 0.5)
+                  fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize)
+                  fontWeight: FontWeight.w600)
+                  letterSpacing: 2)
+                ))
+              ))
+            ])
           ),
-        ),
-      ),
+        ))
+      )
     );
   }
 
@@ -371,49 +357,45 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          end: Alignment.bottomCenter)
           colors: [
-            Colors.black.withValues(alpha: 0.9),
-            const Color(0xFF0F0C29),
-          ],
+            Colors.black.withValues(alpha: 0.9))
+            FortuneColors.tarotDarkest)
+          ])
         ),
-      ),
+      ))
       child: SafeArea(
         child: Column(
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingAll16)
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close, color: Colors.white),
-                  ),
+                    onPressed: () => Navigator.of(context).pop())
+                    icon: const Icon(Icons.close, color: Colors.white))
+                  ))
                   Expanded(
                     child: Text(
-                      card.name,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(width: 48),
-                ],
+                      card.name)
+                      style: Theme.of(context).textTheme.bodyMedium)
+                      textAlign: TextAlign.center)
+                    ))
+                  ))
+                  const SizedBox(width: AppSpacing.spacing12))
+                ])
               ),
-            ),
+            ))
             // Card display with floating animation
             AnimatedBuilder(
-              animation: _floatingAnimation,
+              animation: _floatingAnimation)
               builder: (context, child) {
                 return Transform.translate(
-                  offset: Offset(0, _floatingAnimation.value),
+                  offset: Offset(0, _floatingAnimation.value))
                   child: Container(
-                    height: 400,
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    height: AppSpacing.spacing1 * 100.0)
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing10))
                     child: GestureDetector(
                       onTap: () {
                         setState(() {
@@ -426,183 +408,177 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
                         });
                       },
                       child: AnimatedBuilder(
-                        animation: _cardFlipAnimation,
+                        animation: _cardFlipAnimation)
                         builder: (context, child) {
                           final isShowingFront = _cardFlipAnimation.value < 0.5;
                           return Transform(
-                            alignment: Alignment.center,
+                            alignment: Alignment.center)
                             transform: Matrix4.identity()
                               ..setEntry(3, 2, 0.001)
-                              ..rotateY(math.pi * _cardFlipAnimation.value),
+                              ..rotateY(math.pi * _cardFlipAnimation.value))
                             child: isShowingFront
                                 ? _buildCardBack()
                                 : Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.identity()..rotateY(math.pi),
-                                    child: _buildCardFront(card),
-                                  ),
+                                    alignment: Alignment.center)
+                                    transform: Matrix4.identity()..rotateY(math.pi))
+                                    child: _buildCardFront(card))
+                                  ))
                           );
-                        },
+                        })
                       ),
-                    ),
-                  ),
+                    ))
+                  )
                 );
-              },
+              })
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.spacing10))
             // Page indicators
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: List.generate(3, (index) {
                 return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 24 : 8,
-                  height: 8,
+                  duration: AppAnimations.durationMedium)
+                  margin: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing1))
+                  width: _currentPage == index ? 24 : 8)
+                  height: 8)
                   decoration: BoxDecoration(
                     color: _currentPage == index 
                         ? Colors.purpleAccent 
-                        : Colors.white.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                        : Colors.white.withValues(alpha: 0.3))
+                    borderRadius: AppDimensions.borderRadiusSmall)
+                  ))
                 );
-              }),
+              }))
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.spacing5))
             // Content pages
             Expanded(
               child: PageView(
-                controller: _pageController,
+                controller: _pageController)
                 onPageChanged: (page) {
                   setState(() {
                     _currentPage = page;
                   });
                 },
                 children: [
-                  _buildMeaningPage(card),
-                  _buildSymbolismPage(card),
-                  _buildAdvicePage(card),
-                ],
+                  _buildMeaningPage(card))
+                  _buildSymbolismPage(card))
+                  _buildAdvicePage(card))
+                ])
               ),
-            ),
-          ],
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
   Widget _buildMeaningPage(TarotCardInfo card) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildSectionTitle('정방향 의미'),
-          const SizedBox(height: 12),
-          _buildMeaningItem(card.uprightMeaning, true),
-          const SizedBox(height: 24),
-          _buildSectionTitle('역방향 의미'),
-          const SizedBox(height: 12),
-          _buildMeaningItem(card.reversedMeaning, false),
-        ],
-      ),
+          _buildSectionTitle('정방향 의미'))
+          const SizedBox(height: AppSpacing.spacing3))
+          _buildMeaningItem(card.uprightMeaning, true))
+          const SizedBox(height: AppSpacing.spacing6))
+          _buildSectionTitle('역방향 의미'))
+          const SizedBox(height: AppSpacing.spacing3))
+          _buildMeaningItem(card.reversedMeaning, false))
+        ])
+      )
     );
   }
 
   Widget _buildSymbolismPage(TarotCardInfo card) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildSectionTitle('상징과 의미'),
-          const SizedBox(height: 16),
-          if (card.element != null) _buildInfoRow('원소', card.element!),
-          if (card.astrology != null) _buildInfoRow('점성술', card.astrology!),
-          if (card.numerology != null) _buildInfoRow('수비학', card.numerology.toString()),
-          const SizedBox(height: 24),
-          _buildSectionTitle('핵심 키워드'),
-          const SizedBox(height: 16),
+          _buildSectionTitle('상징과 의미'))
+          const SizedBox(height: AppSpacing.spacing4))
+          if (card.element != null) _buildInfoRow('원소', card.element!))
+          if (card.astrology != null) _buildInfoRow('점성술', card.astrology!))
+          if (card.numerology != null) _buildInfoRow('수비학', card.numerology.toString()))
+          const SizedBox(height: AppSpacing.spacing6))
+          _buildSectionTitle('핵심 키워드'))
+          const SizedBox(height: AppSpacing.spacing4))
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8)
+            runSpacing: 8)
             children: card.keywords.map((keyword) {
               return Chip(
                 label: Text(
-                  keyword,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                backgroundColor: _getTarotColor(card).withValues(alpha: 0.3),
+                  keyword)
+                  style: const TextStyle(color: Colors.white)))
+                ))
+                backgroundColor: _getTarotColor(card).withValues(alpha: 0.3))
                 side: BorderSide(
-                  color: _getTarotColor(card).withValues(alpha: 0.5),
-                ),
+                  color: _getTarotColor(card).withValues(alpha: 0.5))
+                ))
               );
-            }).toList(),
+            }).toList())
           ),
-        ],
+        ])
       ),
     );
   }
 
   Widget _buildAdvicePage(TarotCardInfo card) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildSectionTitle('오늘의 조언'),
-          const SizedBox(height: 16),
+          _buildSectionTitle('오늘의 조언'))
+          const SizedBox(height: AppSpacing.spacing4))
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: AppSpacing.paddingAll20)
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  _getTarotColor(card).withValues(alpha: 0.2),
-                  _getTarotColor(card).withValues(alpha: 0.1),
-                ],
+                  _getTarotColor(card).withValues(alpha: 0.2))
+                  _getTarotColor(card).withValues(alpha: 0.1))
+                ])
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: AppDimensions.borderRadiusLarge)
               border: Border.all(
-                color: _getTarotColor(card).withValues(alpha: 0.3),
-              ),
-            ),
+                color: _getTarotColor(card).withValues(alpha: 0.3))
+              ))
+            ))
             child: Text(
-              _generateAdvice(card),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                height: 1.6,
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          _buildSectionTitle('명상 포인트'),
-          const SizedBox(height: 16),
+              _generateAdvice(card))
+              style: Theme.of(context).textTheme.bodyMedium)
+          const SizedBox(height: AppSpacing.spacing6))
+          _buildSectionTitle('명상 포인트'))
+          const SizedBox(height: AppSpacing.spacing4))
           ..._generateMeditationPoints(card).map((point) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing3))
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Icon(
-                  Icons.spa_outlined,
-                  color: _getTarotColor(card),
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
+                  Icons.spa_outlined)
+                  color: _getTarotColor(card))
+                  size: 20)
+                ))
+                const SizedBox(width: AppSpacing.spacing3))
                 Expanded(
                   child: Text(
-                    point,
+                    point)
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-              ],
+                      color: Colors.white.withValues(alpha: 0.9)
+                      fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize)
+                      height: 1.5)
+                    ))
+                  ))
+                ))
+              ])
             ),
-          )),
-        ],
+          )))
+        ])
       ),
     );
   }
@@ -610,64 +586,55 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
+      style: Theme.of(context).textTheme.bodyMedium
     );
   }
 
   Widget _buildMeaningItem(String meaning, bool isUpright) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: AppSpacing.spacing2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Icon(
-            isUpright ? Icons.arrow_upward : Icons.arrow_downward,
-            color: isUpright ? Colors.greenAccent : Colors.redAccent,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
+            isUpright ? Icons.arrow_upward : Icons.arrow_downward)
+            color: isUpright ? Colors.greenAccent : Colors.redAccent)
+            size: 20)
+          ))
+          const SizedBox(width: AppSpacing.spacing2))
           Expanded(
             child: Text(
-              meaning,
+              meaning)
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 15,
-                height: 1.4,
-              ),
-            ),
-          ),
-        ],
-      ),
+                color: Colors.white.withValues(alpha: 0.9)
+                fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize)
+                height: 1.4)
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AppSpacing.spacing3),
       child: Row(
         children: [
           Text(
-            '$label: ',
+            '$label: ')
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6),
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+              color: Colors.white.withValues(alpha: 0.6)
+              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize)
+              fontWeight: FontWeight.w500)
+            ))
+          ))
           Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
+            value)
+            style: Theme.of(context).textTheme.bodyMedium)
+        ])
+      )
     );
   }
 
@@ -690,7 +657,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
   String _romanNumeral(int number) {
     final numerals = [
       '', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX',
-      'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX',
+      'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX')
       'XX', 'XXI'
     ];
     return number < numerals.length ? numerals[number] : number.toString();
@@ -706,7 +673,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     return [
       '나는 ${card.keywords.first}을(를) 어떻게 실천할 수 있을까?',
       '최근 나의 삶에서 ${card.keywords.last}이(가) 필요한 부분은 어디일까?',
-      '이 카드가 나에게 주는 가장 중요한 메시지는 무엇일까?',
+      '이 카드가 나에게 주는 가장 중요한 메시지는 무엇일까?')
     ];
   }
 
@@ -716,7 +683,7 @@ class _EnhancedTarotCardDetailState extends State<EnhancedTarotCardDetail>
     
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: _buildDetailPage(card),
+      body: _buildDetailPage(card)
     );
   }
 }
@@ -729,7 +696,7 @@ class MysticalBackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.fill;
 
     // Draw stars
@@ -768,7 +735,7 @@ class MysticalBackgroundPainter extends CustomPainter {
 class TarotCardBackPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5
       ..color = Colors.white.withValues(alpha: 0.2);
@@ -783,15 +750,15 @@ class TarotCardBackPainter extends CustomPainter {
       // Outer petals
       final path = Path();
       path.moveTo(
-        centerX + math.cos(angle) * 80,
-        centerY + math.sin(angle) * 80,
+        centerX + math.cos(angle) * 80)
+        centerY + math.sin(angle) * 80)
       );
       
       path.quadraticBezierTo(
-        centerX + math.cos(angle + 0.5) * 100,
-        centerY + math.sin(angle + 0.5) * 100,
-        centerX + math.cos(angle + 1) * 80,
-        centerY + math.sin(angle + 1) * 80,
+        centerX + math.cos(angle + 0.5) * 100)
+        centerY + math.sin(angle + 0.5) * 100)
+        centerX + math.cos(angle + 1) * 80)
+        centerY + math.sin(angle + 1) * 80
       );
       
       canvas.drawPath(path, paint);
@@ -825,12 +792,12 @@ class TarotCardBackPainter extends CustomPainter {
     // Bottom right
     canvas.drawLine(
       Offset(size.width - 10, size.height - 30),
-      Offset(size.width - 10, size.height - 10),
+      Offset(size.width - 10, size.height - 10))
       paint
     );
     canvas.drawLine(
-      Offset(size.width - 10, size.height - 10),
-      Offset(size.width - 30, size.height - 10),
+      Offset(size.width - 10, size.height - 10))
+      Offset(size.width - 30, size.height - 10))
       paint
     );
   }

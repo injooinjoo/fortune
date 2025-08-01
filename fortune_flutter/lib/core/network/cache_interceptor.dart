@@ -51,7 +51,7 @@ class CacheEntry {
     createdAt: DateTime.parse(json['createdAt']),
     expiresAt: DateTime.parse(json['expiresAt']),
     statusCode: json['statusCode'],
-    headers: json['headers'],
+    headers: json['headers']
   );
 }
 
@@ -118,7 +118,7 @@ class CacheInterceptor extends Interceptor {
           statusCode: cachedData.statusCode,
           headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
           extra: {'cached': true, 'cacheKey': cacheKey},
-        ),
+        )
       );
       return;
     }
@@ -161,7 +161,7 @@ class CacheInterceptor extends Interceptor {
               statusCode: cachedData.statusCode,
               headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
               extra: {'cached': true, 'stale': true, 'originalError': err},
-            ),
+            )
           );
           return;
         }

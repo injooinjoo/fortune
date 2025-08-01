@@ -54,7 +54,7 @@ class _ChildrenFortunePageState extends BaseFortunePageState<ChildrenFortunePage
       final fortune = await fortuneService.getFortune(
         fortuneType: widget.fortuneType,
         userId: user.id,
-        params: params,
+        params: params
       );
       
       return fortune;

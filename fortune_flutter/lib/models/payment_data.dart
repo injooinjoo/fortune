@@ -16,9 +16,9 @@ class PaymentData {
     required this.orderName,
     this.customerName,
     this.customerEmail,
-    this.successUrl,
+    this.successUrl)
     this.failUrl,
-    this.metadata,
+    this.metadata)
   });
 
   Map<String, dynamic> toJson() {
@@ -26,12 +26,12 @@ class PaymentData {
       'paymentKey': paymentKey,
       'orderId': orderId,
       'amount': amount,
-      'orderName': orderName,
-      if (customerName != null) 'customerName': customerName,
-      if (customerEmail != null) 'customerEmail': customerEmail,
-      if (successUrl != null) 'successUrl': successUrl,
-      if (failUrl != null) 'failUrl': failUrl,
-      if (metadata != null) 'metadata': metadata,
+      'orderName': orderName)
+      if (customerName != null) 'customerName': customerName)
+      if (customerEmail != null) 'customerEmail': customerEmail)
+      if (successUrl != null) 'successUrl': successUrl)
+      if (failUrl != null) 'failUrl': failUrl)
+      if (metadata != null) 'metadata': metadata)
     };
   }
 
@@ -45,7 +45,7 @@ class PaymentData {
       customerEmail: json['customerEmail'],
       successUrl: json['successUrl'],
       failUrl: json['failUrl'],
-      metadata: json['metadata'],
+      metadata: json['metadata']
     );
   }
 }

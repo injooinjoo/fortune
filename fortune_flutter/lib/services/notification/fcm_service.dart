@@ -33,13 +33,14 @@ class NotificationSettings {
   final bool promotion;
   final String? dailyFortuneTime; // HH:mm 형식
 
-  NotificationSettings({
-    this.enabled = true,
+  NotificationSettings(
+    {
+    this.enabled = true
     this.dailyFortune = true,
     this.tokenAlert = true,
     this.promotion = true,
     this.dailyFortuneTime = '07:00',
-  });
+  )});
 
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
@@ -54,8 +55,8 @@ class NotificationSettings {
       enabled: json['enabled'] ?? true,
       dailyFortune: json['dailyFortune'] ?? true,
       tokenAlert: json['tokenAlert'] ?? true,
-      promotion: json['promotion'] ?? true,
-      dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00',
+      promotion: json['promotion'] ?? true),
+        dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00'
     );
   }
 }
@@ -88,7 +89,7 @@ class FCMService {
       // Firebase 초기화
       // TODO: Firebase options not available
       // await Firebase.initializeApp(
-      //   options: DefaultFirebaseOptions.currentPlatform,
+      //   options: DefaultFirebaseOptions.currentPlatform)
       // );
       
       // 백그라운드 메시지 핸들러 설정
@@ -130,7 +131,7 @@ class FCMService {
     final iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
-      requestSoundPermission: true,
+      requestSoundPermission: true)
       // onDidReceiveLocalNotification is deprecated
       // iOS 9 이하에서 포그라운드 알림 처리
     );
@@ -138,13 +139,11 @@ class FCMService {
     // 초기화
     final initSettings = InitializationSettings(
       android: androidSettings,
-      iOS: iosSettings,
-    );
+      iOS: iosSettings)
     
     await _localNotifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
-    );
+      initSettings),
+        onDidReceiveNotificationResponse: _onNotificationTapped)
     
     // Android 알림 채널 생성
     await _createNotificationChannels();
@@ -158,32 +157,28 @@ class FCMService {
         NotificationChannels.dailyFortune,
         '일일 운세',
         description: '매일 아침 오늘의 운세를 알려드립니다',
-        importance: Importance.high,
-      );
+        importance: Importance.high)
       
       // 토큰 알림 채널
       const tokenChannel = AndroidNotificationChannel(
         NotificationChannels.tokenAlert,
         '토큰 알림',
         description: '토큰 부족 및 충전 관련 알림',
-        importance: Importance.high,
-      );
+        importance: Importance.high)
       
       // 프로모션 채널
       const promotionChannel = AndroidNotificationChannel(
         NotificationChannels.promotion,
         '이벤트 및 프로모션',
         description: '특별 이벤트와 할인 정보',
-        importance: Importance.defaultImportance,
-      );
+        importance: Importance.defaultImportance)
       
       // 시스템 채널
       const systemChannel = AndroidNotificationChannel(
         NotificationChannels.system,
         '시스템 알림',
         description: '중요한 시스템 공지사항',
-        importance: Importance.high,
-      );
+        importance: Importance.high)
       
       final plugin = _localNotifications.resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin>();
@@ -201,10 +196,10 @@ class FCMService {
       alert: true,
       announcement: false,
       badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
+      carPlay: false),
+        criticalAlert: false),
+        provisional: false),
+        sound: true
     );
     
     Logger.info('알림 권한 상태: ${settings.authorizationStatus}');
@@ -244,12 +239,12 @@ class FCMService {
   Future<void> _sendTokenToServer(String token) async {
     try {
       await _apiClient.post('/user/fcm-token', data: {
-        'token': token,
+        'token': token)
         'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
         'deviceInfo': {
           'os': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown'),
           'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown'),
-        },
+        }
       });
       
       Logger.info('FCM 토큰 서버 전송 완료');
@@ -295,45 +290,43 @@ class FCMService {
       // 포그라운드에서 로컬 알림 표시
       _showLocalNotification(
         title: notification.title ?? '',
-        body: notification.body ?? '',
+        body: notification.body ?? ''),
         payload: jsonEncode(data),
-        channelId: data['channel'] ?? NotificationChannels.system,
+        channelId: data['channel'] ?? NotificationChannels.system
       );
     }
   }
   
   // 로컬 알림 표시
-  Future<void> _showLocalNotification({
+  Future<void> _showLocalNotification(
+    {
     required String title,
     required String body,
     String? payload,
     String channelId = NotificationChannels.system,
-  }) async {
+  )}) async {
     final androidDetails = AndroidNotificationDetails(
       channelId,
       channelId,
       importance: Importance.high,
       priority: Priority.high,
-      showWhen: true,
-    );
+      showWhen: true)
     
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
-      presentSound: true,
-    );
+      presentSound: true)
     
     final details = NotificationDetails(
       android: androidDetails,
-      iOS: iosDetails,
-    );
+      iOS: iosDetails)
     
     await _localNotifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title,
       body,
       details,
-      payload: payload,
+      payload: payload
     );
   }
   
@@ -409,7 +402,7 @@ class FCMService {
       
       if (settingsJson != null) {
         _settings = NotificationSettings.fromJson(
-          jsonDecode(settingsJson) as Map<String, dynamic>,
+          jsonDecode(settingsJson) as Map<String, dynamic>
         );
       }
     } catch (e) {
@@ -424,10 +417,10 @@ class FCMService {
       
       // 로컬 저장
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('notification_settings', jsonEncode(settings.toJson()));
+      await prefs.setString('notification_settings', jsonEncode(settings.toJson())
       
       // 서버에 전송
-      await _apiClient.put('/user/notification-settings', data: settings.toJson());
+      await _apiClient.put('/user/notification-settings', data: settings.toJson();
       
       // 토픽 재구독
       await _updateTopicSubscriptions();
@@ -457,8 +450,8 @@ class FCMService {
   Future<void> sendTestNotification() async {
     await _showLocalNotification(
       title: '테스트 알림',
-      body: 'Fortune 앱의 테스트 알림입니다.',
-      channelId: NotificationChannels.system,
+      body: 'Fortune 앱의 테스트 알림입니다.'),
+        channelId: NotificationChannels.system
     );
   }
   
@@ -480,17 +473,15 @@ class FCMService {
       RepeatInterval.daily,
       NotificationDetails(
         android: AndroidNotificationDetails(
-          NotificationChannels.dailyFortune,
-          NotificationChannels.dailyFortune,
-          importance: Importance.high,
-          priority: Priority.high,
-        ),
-        iOS: const DarwinNotificationDetails(),
-      ),
+          NotificationChannels.dailyFortune
+          NotificationChannels.dailyFortune),
+        importance: Importance.high),
+        priority: Priority.high),
+      iOS: const DarwinNotificationDetails(),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: jsonEncode({'type': 'daily_fortune'}),
-    );
-  }
+      payload: jsonEncode(
+    {'type': 'daily_fortune'},
+  )}
   
   // 리소스 정리
   void dispose() {

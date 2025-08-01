@@ -21,7 +21,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
   Future<TokenBalance> getTokenBalance() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        ApiEndpoints.profile,
+        ApiEndpoints.profile
       );
       
       return TokenBalance(
@@ -44,7 +44,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         ApiEndpoints.tokenHistory,
         queryParameters: {
           if (limit != null) 'limit': limit,
-        },
+        }
       );
       
       final List<dynamic> data = response['data'] ?? [];
@@ -91,7 +91,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
   Future<List<TokenPackage>> getTokenPackages() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        '/api/tokens/packages',
+        '/api/tokens/packages'
       );
       
       final List<dynamic> data = response['data'] ?? [];
@@ -120,7 +120,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         ApiEndpoints.createCheckout,
         data: {
           'packageId': packageId,
-          'type': 'token',
+          'type': 'token'
         },
       );
       

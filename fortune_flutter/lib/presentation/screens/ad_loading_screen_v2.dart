@@ -7,6 +7,9 @@ import '../../core/utils/logger.dart';
 import '../providers/ad_provider.dart';
 import '../widgets/ads/interstitial_ad_helper.dart';
 import '../../services/ad_service.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 /// Enhanced Ad Loading Screen that integrates real AdMob ads
 class AdLoadingScreenV2 extends ConsumerStatefulWidget {
@@ -67,7 +70,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
     
     _animationController = AnimationController(
       duration: const Duration(seconds: 3),
-      vsync: this,
+      vsync: this
     );
 
     _progressAnimation = Tween<double>(
@@ -90,7 +93,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
     _animationController.forward();
 
     // Message rotation timer
-    Timer.periodic(const Duration(milliseconds: 1500), (timer) {
+    Timer.periodic(AppAnimations.durationSkeleton, (timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -116,17 +119,17 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
     
     // Fetch fortune data
     if (widget.fetchData != null) {
-      futures.add(_fetchFortuneData());
+      futures.add(_fetchFortuneData();
     }
     
     // Preload and show interstitial ad
-    futures.add(_showInterstitialAd());
+    futures.add(_showInterstitialAd();
     
     // Wait for both operations
     await Future.wait(futures);
     
     // Small delay to ensure smooth transition
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(AppAnimations.durationLong);
     
     if (mounted) {
       _completeLoading();
@@ -186,7 +189,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
       if (!adService.isInterstitialAdReady) {
         await InterstitialAdHelper.preloadInterstitialAd(ref);
         // Wait a bit for ad to load
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2);
       }
 
       // Show the interstitial ad
@@ -233,14 +236,14 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               _startLoading();
             },
           ),
-        ),
+        ,
       );
       return;
     }
 
     // Wait for both data fetch and ad to complete
     if (!_dataFetched || !_adShown) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Future.delayed(AppAnimations.durationLong, () {
         if (mounted) {
           _completeLoading();
         }
@@ -261,7 +264,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
           extra: {
             'fortuneData': _fetchedData,
             'fortuneParams': widget.fortuneParams,
-          },
+          }
         );
       } catch (e) {
         Logger.error('Navigation error', e);
@@ -270,7 +273,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
             SnackBar(
               content: Text('페이지 이동 중 오류가 발생했습니다: $e'),
               backgroundColor: Colors.red,
-            ),
+            ,
           );
           Navigator.of(context).pop();
         }
@@ -304,14 +307,14 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.purple.shade900.withValues(alpha: 0.3),
-                          Colors.indigo.shade900.withValues(alpha: 0.3),
+                          Colors.purple.withValues(alpha: 0.92).withValues(alpha: 0.3),
+                          Colors.indigo.withValues(alpha: 0.92).withValues(alpha: 0.3),
                         ],
                         transform: GradientRotation(
                           _animationController.value * 2 * 3.14159,
                         ),
                       ),
-                    ),
+                    ,
                   );
                 },
               ),
@@ -320,14 +323,14 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
             // Main content
             Center(
               child: Padding(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(AppSpacing.spacing8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Animated icon
                     Container(
                       width: 100,
-                      height: 100,
+                      height: AppSpacing.spacing24 * 1.04,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
@@ -337,7 +340,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                           ],
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.auto_awesome,
                         size: 50,
                         color: Colors.white,
@@ -354,24 +357,24 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       color: Colors.white.withValues(alpha: 0.3),
                     ),
                     
-                    const SizedBox(height: 48),
+                    const SizedBox(height: AppSpacing.spacing12),
                     
                     // Title
                     Text(
                       widget.fortuneTitle,
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
+                        color: Colors.white),),
                         fontWeight: FontWeight.bold,
                       ),
-                    ).animate()
-                      .fadeIn(duration: 800.ms)
+                    ).animate(,
+                      .fadeIn(duration: 800.ms,
                       .slideY(begin: -0.3, end: 0),
                     
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.spacing6),
                     
                     // Loading message
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 800),
+                      duration: AppAnimations.durationXLong,
                       child: Text(
                         _currentMessage,
                         key: ValueKey(_currentMessage),
@@ -382,15 +385,15 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                       ),
                     ),
                     
-                    const SizedBox(height: 48),
+                    const SizedBox(height: AppSpacing.spacing12),
                     
                     // Progress bar
                     Container(
-                      height: 8,
+                      height: AppSpacing.spacing2,
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: AppDimensions.borderRadiusSmall,
                       ),
                       child: AnimatedBuilder(
                         animation: _progressAnimation,
@@ -406,14 +409,14 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                                     Theme.of(context).colorScheme.secondary,
                                   ],
                                 ),
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: AppDimensions.borderRadiusSmall,
                               ),
                             ).animate(
                               onPlay: (controller) => controller.repeat(),
                             ).shimmer(
                               duration: 1.5.seconds,
                               color: Colors.white.withValues(alpha: 0.3),
-                            ),
+                            ,
                           );
                         },
                       ),
@@ -423,7 +426,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               ),
             ),
             
-            // Skip button (top right)
+            // Skip button (top right,
             Positioned(
               top: 16,
               right: 16,
@@ -439,8 +442,8 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               ),
             ),
             
-            // Premium upgrade button (bottom)
-            if (!widget.isPremium)
+            // Premium upgrade button (bottom,
+            if (!widget.isPremium,
               Positioned(
                 left: 32,
                 right: 32,
@@ -450,11 +453,11 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                     Text(
                       '광고 없이 바로 운세를 확인하고 싶으신가요?',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white60,
+                        color: Colors.white60),),
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.spacing4),
                     ElevatedButton(
                       onPressed: widget.onSkip,
                       style: ElevatedButton.styleFrom(
@@ -462,21 +465,17 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
                         foregroundColor: Theme.of(context).colorScheme.primary,
                         minimumSize: const Size(double.infinity, 56),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28),
+                          borderRadius: BorderRadius.circular(AppSpacing.spacing7),
                         ),
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.rocket_launch, size: 20),
-                          SizedBox(width: 8),
+                          SizedBox(width: AppSpacing.spacing2),
                           Text(
                             '프리미엄으로 업그레이드',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                            style: Theme.of(context).textTheme.bodyMedium,
                         ],
                       ),
                     ),
@@ -485,7 +484,7 @@ class _AdLoadingScreenV2State extends ConsumerState<AdLoadingScreenV2>
               ),
           ],
         ),
-      ),
+      ,
     );
   }
 }

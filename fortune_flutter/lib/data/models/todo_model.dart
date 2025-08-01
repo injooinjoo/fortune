@@ -47,7 +47,7 @@ class TodoModel extends Todo {
       tags: _parseTags(json['tags']),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      isDeleted: json['is_deleted'] as bool? ?? false,
+      isDeleted: json['is_deleted'] as bool? ?? false
     );
   }
 

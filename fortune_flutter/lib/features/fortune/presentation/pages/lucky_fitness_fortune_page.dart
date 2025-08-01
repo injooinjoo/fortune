@@ -21,7 +21,7 @@ class LuckyFitnessFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckyFitnessFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -41,7 +41,7 @@ class _LuckyFitnessInputForm extends StatelessWidget {
         Text(
           '오늘의 운동 운세를 확인해보세요!\n효과적인 운동법과 루틴을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
             height: 1.5,
           ),
         ),
@@ -70,7 +70,7 @@ class _LuckyFitnessInputForm extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -276,7 +276,7 @@ class _LuckyFitnessFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ),
+      ,
     );
   }
 

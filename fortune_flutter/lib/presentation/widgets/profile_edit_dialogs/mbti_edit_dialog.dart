@@ -1,17 +1,21 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../constants/fortune_constants.dart';
 import 'profile_field_edit_dialog.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 class MbtiEditDialog extends StatefulWidget {
   final String? initialMbti;
   final Function(String?) onSave;
 
-  const MbtiEditDialog({
+  const MbtiEditDialog(
+    {
     super.key,
     this.initialMbti,
     required this.onSave,
-  });
+  )});
 
   @override
   State<MbtiEditDialog> createState() => _MbtiEditDialogState();
@@ -31,18 +35,18 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
     setState(() => _isLoading = true);
     
     try {
-      await widget.onSave(_selectedMbti?.toLowerCase());
+      await widget.onSave(_selectedMbti?.toLowerCase();
       if (mounted) {
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('저장 중 오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+    SnackBar(
+            content: Text('저장 중 오류가 발생했습니다: ${e.toString(,
+  )}'),
+            backgroundColor: AppColors.error,
+          )
       }
     } finally {
       if (mounted) {
@@ -57,60 +61,50 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
       title: 'MBTI 수정',
       isLoading: _isLoading,
       onSave: _handleSave,
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
+      content: Column(,
+      mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'MBTI 성격 유형을 선택해주세요',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 14,
-            ),
-          ),
-          const SizedBox(height: 8),
+                        Text(
+                          'MBTI 성격 유형을 선택해주세요',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
+      color: AppColors.textSecondary)
+          SizedBox(height: AppSpacing.spacing2,
+                          ),
           InkWell(
             onTap: () {
               // TODO: Open web browser to MBTI test
-            },
-            child: const Text(
-              'MBTI를 모르시나요? 테스트 하러 가기 →',
-              style: TextStyle(
-                color: AppColors.primary,
-                fontSize: 12,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
+            }
+            child: Text(
+              'MBTI를 모르시나요? 테스트 하러 가기 →'),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: AppColors.primary)
+          SizedBox(height: AppSpacing.spacing5,
+                          ),
           Container(
-            constraints: const BoxConstraints(maxHeight: 300),
-            child: SingleChildScrollView(
-              child: Column(
+            constraints: const BoxConstraints(maxHeigh,
+      t: 300),
+            child: SingleChildScrollView(,
+      child: Column(
                 children: [
                   GridView.builder(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
+              ),
+              physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(,
+      crossAxisCount: 4,
                       crossAxisSpacing: 8,
                       mainAxisSpacing: 8,
-                      childAspectRatio: 1.8,
-                    ),
-                    itemCount: mbtiTypes.length,
+                      childAspectRatio: 1.8),
+      itemCount: mbtiTypes.length,
                     itemBuilder: (context, index) {
                       final mbti = mbtiTypes[index];
                       return _buildMbtiOption(mbti);
-                    },
-                  ),
-                  const SizedBox(height: 12),
+                    })
+                  SizedBox(height: AppSpacing.spacing3),
                   _buildMbtiOption(null, '선택 안함'),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                ])))))
+        ]
+      )
   }
 
   Widget _buildMbtiOption(String? value, [String? customLabel]) {
@@ -118,36 +112,27 @@ class _MbtiEditDialogState extends State<MbtiEditDialog> {
     final label = customLabel ?? value ?? '';
     
     return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
+      color: Colors.transparent),
+        child: InkWell(,
+      onTap: () {
           setState(() {
             _selectedMbti = value;
           });
-        },
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.divider,
-              width: isSelected ? 2 : 1,
-            ),
-            borderRadius: BorderRadius.circular(8),
-            color: isSelected ? AppColors.primary : Colors.white,
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.textPrimary,
-              ),
-            ),
-          ),
+        }
+        borderRadius: AppDimensions.borderRadiusSmall,
+        child: Container(,
+      padding: AppSpacing.paddingVertical8),
+        decoration: BoxDecoration(,
+      border: Border.all(,
+      color: isSelected ? AppColors.primary : AppColors.divider,
         ),
-      ),
-    );
+        width: isSelected ? 2 : 1),
+      borderRadius: AppDimensions.borderRadiusSmall,
+            color: isSelected ? AppColors.primary : AppColors.textPrimaryDark),
+      child: Center(
+            child: Text(
+              label),
+        style: Theme.of(context).textTheme.titleSmall)
+      )
   }
 }

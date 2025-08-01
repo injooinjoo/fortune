@@ -20,15 +20,13 @@ class SameBirthdayCelebrityFortunePage extends ConsumerWidget {
       fortuneType: 'same-birthday-celebrity',
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        end: Alignment.bottomRight)
         colors: [Color(0xFFFF1744), Color(0xFFE91E63)],
       ),
       inputBuilder: (context, onSubmit) => _SameBirthdayInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _SameBirthdayFortuneResult(
-        result: result,
-        onShare: onShare,
-      ),
-    );
+        result: result)
+        onShare: onShare);
   }
 }
 
@@ -58,10 +56,10 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
     final theme = Theme.of(context);
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start
       children: [
         Text(
-          '생일이 같은 연예인과의 특별한 인연!\n오늘의 운세를 확인해보세요.',
+          '생일이 같은 연예인과의 특별한 인연!\n오늘의 운세를 확인해보세요.')
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
@@ -71,16 +69,16 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
         
         // Name Input
         Text(
-          '이름',
+          '이름')
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.bold)
           ),
         ),
         const SizedBox(height: 12),
         TextField(
           controller: _nameController,
           decoration: InputDecoration(
-            hintText: '이름을 입력하세요',
+            hintText: '이름을 입력하세요')
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -96,9 +94,9 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
         
         // Birth Date Selection
         Text(
-          '생년월일',
+          '생년월일')
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.bold)
           ),
         ),
         const SizedBox(height: 12),
@@ -106,9 +104,9 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
           onTap: () async {
             DateTime? selectedDate;
             await showModalBottomSheet(
-              context: context,
+              context: context
               isScrollControlled: true,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Colors.transparent)
               builder: (context) => CustomCalendarDatePicker(
                 initialDate: _birthDate ?? DateTime(1990, 1, 1),
                 firstDate: DateTime(1900),
@@ -122,11 +120,11 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                     setState(() {
                       _birthDate = selectedDate;
                       // Find celebrities with the same birthday
-                      _sameBirthdayCelebrities = ref.read(celebritiesWithBirthdayProvider(selectedDate!));
+                      _sameBirthdayCelebrities = ref.read(celebritiesWithBirthdayProvider(selectedDate!);
                     });
                   }
                 },
-              ),
+              
             );
           },
           child: Container(
@@ -138,23 +136,22 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
             child: Row(
               children: [
                 Icon(
-                  Icons.calendar_today_rounded,
-                  color: theme.colorScheme.primary,
+                  Icons.calendar_today_rounded)
+                  color: theme.colorScheme.primary)
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                        : '생년월일을 선택하세요',
+                        : '생년월일을 선택하세요')
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
                           : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
-                ),
-              ],
+                )$1,
             ),
           ),
         ),
@@ -162,9 +159,9 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
         
         // Lunar/Solar Selection
         Text(
-          '양력/음력',
+          '양력/음력')
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.bold)
           ),
         ),
         const SizedBox(height: 12),
@@ -210,8 +207,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                   ),
                 ),
               ),
-            ),
-          ],
+            )$1,
         ),
         
         // Show celebrities with same birthday
@@ -232,24 +228,23 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                 Row(
                   children: [
                     Icon(
-                      Icons.star,
-                      color: theme.colorScheme.primary,
-                      size: 20,
+                      Icons.star)
+                      color: theme.colorScheme.primary)
+                      size: 20)
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '같은 생일의 연예인 (${_sameBirthdayCelebrities.length}명)',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold)
+                        color: theme.colorScheme.primary)
                       ),
-                    ),
-                  ],
+                    )$1,
                 ),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
-                  runSpacing: 8,
+                  runSpacing: 8)
                   children: _sameBirthdayCelebrities.take(5).map((celebrity) {
                     return Chip(
                       avatar: CircleAvatar(
@@ -258,39 +253,36 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                           celebrity.name.substring(0, 1),
                           style: TextStyle(
                             color: theme.colorScheme.primary,
-                            fontSize: 12,
+                            fontSize: 12)
                           ),
                         ),
                       ),
                       label: Text(
-                        celebrity.name,
-                        style: theme.textTheme.bodySmall,
+                        celebrity.name)
+                        style: theme.textTheme.bodySmall)
                       ),
                       backgroundColor: theme.colorScheme.surface,
                       side: BorderSide(
                         color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                      ),
+                      
                     );
                   }).toList(),
                 ),
                 if (_sameBirthdayCelebrities.length > 5) ...[
                   const SizedBox(height: 8),
                   Text(
-                    '그 외 ${_sameBirthdayCelebrities.length - 5}명',
+                    '그 외 ${_sameBirthdayCelebrities.length - 5}명')
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-                  ),
-                ],
-              ],
+                  )$1$1,
             ),
-          ),
-        ],
+          )$1,
         const SizedBox(height: 32),
         
         // Submit Button
         SizedBox(
-          width: double.infinity,
+          width: double.infinity)
           child: ElevatedButton(
             onPressed: () {
               if (_nameController.text.isEmpty) {
@@ -309,16 +301,14 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
                 'category': celebrity.category.displayName,
                 'age': celebrity.age,
                 'zodiac': celebrity.zodiacSign,
-                'description': celebrity.description,
-              }).toList();
+                'description': celebrity.description$1).toList();
               
               widget.onSubmit({
-                'user_name': _nameController.text,
+                'user_name': _nameController.text)
                 'birth_date': _birthDate!.toIso8601String(),
                 'lunar_solar': _lunarSolarType,
                 'same_birthday_celebrities': celebrityData,
-                'celebrity_count': _sameBirthdayCelebrities.length,
-              });
+                'celebrity_count': _sameBirthdayCelebrities.length$1);
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -327,12 +317,11 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
               ),
             ),
             child: const Text(
-              '같은 생일 연예인 찾기',
+              '같은 생일 연예인 찾기')
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-        ),
-      ],
+        )$1
     );
   }
 }
@@ -343,7 +332,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
 
   const _SameBirthdayFortuneResult({
     required this.result,
-    required this.onShare,
+    required this.onShare)
   });
 
   double _getFontSize(FontSize fontSize) {
@@ -369,21 +358,20 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
     
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           // Birthday Energy Card
           if (birthdayEnergy != null) ...[
             GlassContainer(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
                   theme.colorScheme.primary.withValues(alpha: 0.15),
-                  theme.colorScheme.secondary.withValues(alpha: 0.1),
-                ],
+                  theme.colorScheme.secondary.withValues(alpha: 0.1)$1,
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Row(
                     children: [
@@ -391,34 +379,31 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          birthdayEnergy['date'] ?? '',
+                          birthdayEnergy['date'] ?? '')
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.bold)
                           ),
                         ),
-                      ),
-                    ],
+                      )$1,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    birthdayEnergy['description'] ?? '',
+                    birthdayEnergy['description'] ?? '')
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: _getFontSize(fontSize),
                       height: 1.6,
                     ),
-                  ),
-                ],
+                  )$1,
               ),
             ),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)$1,
           
           // Same Birthday Celebrities
           if (celebrities.isNotEmpty) ...[
             Text(
-              '같은 생일의 연예인들',
+              '같은 생일의 연예인들')
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold)
               ),
             ),
             const SizedBox(height: 16),
@@ -431,19 +416,18 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                     children: [
                       Container(
                         width: 60,
-                        height: 60,
+                        height: 60)
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                          shape: BoxShape.circle)
                           gradient: LinearGradient(
                             colors: [
                               theme.colorScheme.primary.withValues(alpha: 0.3),
-                              theme.colorScheme.secondary.withValues(alpha: 0.3),
-                            ],
+                              theme.colorScheme.secondary.withValues(alpha: 0.3)$1,
                           ),
                         ),
                         child: Center(
                           child: Text(
-                            celebrity['emoji'] ?? '⭐',
+                            celebrity['emoji'] ?? '⭐')
                             style: const TextStyle(fontSize: 28),
                           ),
                         ),
@@ -451,39 +435,36 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start)
                           children: [
                             Text(
-                              celebrity['name'] ?? '',
+                              celebrity['name'] ?? '')
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold)
                               ),
                             ),
                             Text(
-                              celebrity['category'] ?? '',
+                              celebrity['category'] ?? '')
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary,
+                                color: theme.colorScheme.primary)
                               ),
                             ),
                             if (celebrity['description'] != null)
                               Text(
-                                celebrity['description'],
+                                celebrity['description'])
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                              ),
-                          ],
+                              )$1,
                         ),
-                      ),
-                    ],
+                      )$1,
                   ),
-                ),
+                
               );
             }),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)$1,
           
           // Main Fortune Summary
           GlassContainer(
@@ -492,28 +473,26 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.auto_awesome, 
-                      color: theme.colorScheme.primary,
-                      size: 20,
+                    Icon(Icons.auto_awesome)
+                      color: theme.colorScheme.primary)
+                      size: 20)
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '오늘의 운세',
+                      '오늘의 운세')
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold)
                       ),
-                    ),
-                  ],
+                    )$1,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  result.details?['summary'] ?? result.summary,
+                  result.details?['summary'] ?? result.summary)
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontSize: _getFontSize(fontSize),
                     height: 1.6,
                   ),
-                ),
-              ],
+                )$1,
             ),
           ),
           const SizedBox(height: 20),
@@ -525,8 +504,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 child: _buildLuckyCard(
                   context,
                   '행운의 숫자',
-                  result.details?['lucky_number'] ?? '',
-                  Icons.looks_one,
+                  result.details?['lucky_number'] ?? '')
+                  Icons.looks_one)
                   theme.colorScheme.primary.withValues(alpha: 0.1),
                 ),
               ),
@@ -535,12 +514,11 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 child: _buildLuckyCard(
                   context,
                   '행운의 색상',
-                  result.details?['lucky_color'] ?? '',
-                  Icons.palette,
+                  result.details?['lucky_color'] ?? '')
+                  Icons.palette)
                   theme.colorScheme.secondary.withValues(alpha: 0.1),
                 ),
-              ),
-            ],
+              )$1,
           ),
           const SizedBox(height: 12),
           Row(
@@ -549,8 +527,8 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 child: _buildLuckyCard(
                   context,
                   '행운의 방향',
-                  result.details?['lucky_direction'] ?? '',
-                  Icons.explore,
+                  result.details?['lucky_direction'] ?? '')
+                  Icons.explore)
                   theme.colorScheme.tertiary.withValues(alpha: 0.1),
                 ),
               ),
@@ -559,21 +537,20 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
                 child: _buildLuckyCard(
                   context,
                   '행운의 시간',
-                  result.details?['lucky_time'] ?? '',
-                  Icons.access_time,
+                  result.details?['lucky_time'] ?? '')
+                  Icons.access_time)
                   Colors.orange.withValues(alpha: 0.1),
                 ),
-              ),
-            ],
+              )$1,
           ),
           const SizedBox(height: 20),
           
           // Predictions Section
           if (predictions != null) ...[
             Text(
-              '분야별 운세',
+              '분야별 운세')
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.bold)
               ),
             ),
             const SizedBox(height: 16),
@@ -581,7 +558,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
               context,
               '연애운',
               predictions['love'] ?? '',
-              Icons.favorite,
+              Icons.favorite)
               const Color(0xFFFF6B9D),
               _getFontSize(fontSize),
             ),
@@ -590,7 +567,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
               context,
               '재물운',
               predictions['wealth'] ?? '',
-              Icons.payments,
+              Icons.payments)
               const Color(0xFFF7B731),
               _getFontSize(fontSize),
             ),
@@ -599,7 +576,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
               context,
               '건강운',
               predictions['health'] ?? '',
-              Icons.favorite_border,
+              Icons.favorite_border)
               const Color(0xFF5F27CD),
               _getFontSize(fontSize),
             ),
@@ -608,53 +585,47 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
               context,
               '대인관계운',
               predictions['social'] ?? '',
-              Icons.people,
+              Icons.people)
               const Color(0xFF4ECDC4),
               _getFontSize(fontSize),
-            ),
-          ],
+            )$1,
           
           // Celebrity Connection Message
           if (result.details?['celebrity_connection'] != null) ...[
             const SizedBox(height: 20),
             GlassContainer(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                begin: Alignment.topLeft)
+                end: Alignment.bottomRight)
                 colors: [
                   Colors.purple.withValues(alpha: 0.1),
-                  Colors.pink.withValues(alpha: 0.05),
-                ],
+                  Colors.pink.withValues(alpha: 0.05)$1,
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
                   Row(
                     children: [
                       const Icon(Icons.star, color: Colors.amber, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        '연예인과의 특별한 인연',
+                        '연예인과의 특별한 인연')
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.bold)
                         ),
-                      ),
-                    ],
+                      )$1,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    result.details?['celebrity_connection'],
+                    result.details?['celebrity_connection'])
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: _getFontSize(fontSize),
                       height: 1.6,
                     ),
-                  ),
-                ],
+                  )$1,
               ),
-            ),
-          ],
-        ],
-      ),
+            )$1$1,
+      
     );
   }
 
@@ -663,37 +634,35 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
     String label,
     String value,
     IconData icon,
-    Color backgroundColor,
+    Color backgroundColor)
   ) {
     final theme = Theme.of(context);
     return GlassContainer(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        end: Alignment.bottomRight)
         colors: [
-          backgroundColor,
-          backgroundColor.withValues(alpha: 0.5),
-        ],
+          backgroundColor)
+          backgroundColor.withValues(alpha: 0.5)$1,
       ),
       child: Column(
         children: [
           Icon(icon, color: theme.colorScheme.primary, size: 24),
           const SizedBox(height: 8),
           Text(
-            label,
+            label)
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            value,
+            value)
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold)
             ),
-          ),
-        ],
-      ),
+          )$1,
+      
     );
   }
 
@@ -703,44 +672,41 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
     String content,
     IconData icon,
     Color color,
-    double fontSize,
+    double fontSize)
   ) {
     final theme = Theme.of(context);
     return GlassContainer(
       gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        begin: Alignment.topLeft)
+        end: Alignment.bottomRight)
         colors: [
           color.withValues(alpha: 0.1),
-          color.withValues(alpha: 0.05),
-        ],
+          color.withValues(alpha: 0.05)$1,
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Row(
             children: [
               Icon(icon, color: color, size: 24),
               const SizedBox(width: 12),
               Text(
-                title,
+                title)
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
+                  fontWeight: FontWeight.bold)
+                  color: color)
                 ),
-              ),
-            ],
+              )$1,
           ),
           const SizedBox(height: 12),
           Text(
-            content,
+            content)
             style: theme.textTheme.bodyMedium?.copyWith(
-              fontSize: fontSize,
-              height: 1.5,
+              fontSize: fontSize)
+              height: 1.5)
             ),
-          ),
-        ],
-      ),
+          )$1,
+      
     );
   }
 }

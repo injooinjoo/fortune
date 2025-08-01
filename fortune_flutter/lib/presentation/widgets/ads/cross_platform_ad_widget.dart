@@ -1,3 +1,4 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart' show AdSize;
@@ -12,13 +13,13 @@ class CrossPlatformAdWidget extends StatelessWidget {
   final AdSenseBannerSize webAdSize;
   final Color? backgroundColor;
 
-  CrossPlatformAdWidget({
+  const CrossPlatformAdWidget({
     super.key,
-    this.padding = const EdgeInsets.symmetric(vertical: 8.0),
+    this.padding = AppSpacing.paddingVertical8,
     this.mobileAdSize = AdSize.banner,
     this.webAdSize = AdSenseBannerSize.responsive,
     this.backgroundColor,
-  });
+  }));
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +48,17 @@ class CrossPlatformAdWidget extends StatelessWidget {
 class CommonAdPlacements {
   /// Ad placement at the bottom of lists or feeds
   static Widget listBottomAd({
-    EdgeInsets padding = const EdgeInsets.symmetric(vertical: 16.0),
-  }) {
+    EdgeInsets padding = AppSpacing.paddingVertical16,
+  })) {
     return CrossPlatformAdWidget(
       padding: padding,
       mobileAdSize: AdSize.banner,
       webAdSize: AdSenseBannerSize.responsive,
     );
-  }
 
   /// Ad placement between content sections
   static Widget betweenContentAd({
-    EdgeInsets padding = const EdgeInsets.symmetric(vertical: 24.0),
+    EdgeInsets padding = EdgeInsets.symmetric(vertical: AppSpacing.spacing6),
     Color? backgroundColor,
   }) {
     return CrossPlatformAdWidget(
@@ -67,22 +67,20 @@ class CommonAdPlacements {
       webAdSize: AdSenseBannerSize.mediumRectangle,
       backgroundColor: backgroundColor,
     );
-  }
 
   /// Small ad placement for sidebars or compact spaces
   static Widget compactAd({
-    EdgeInsets padding = const EdgeInsets.all(8.0),
-  }) {
+    EdgeInsets padding = AppSpacing.paddingAll8,
+  })) {
     return CrossPlatformAdWidget(
       padding: padding,
       mobileAdSize: AdSize.banner,
       webAdSize: AdSenseBannerSize.banner,
     );
-  }
 
   /// Large ad placement for main content areas
   static Widget largeAd({
-    EdgeInsets padding = const EdgeInsets.symmetric(vertical: 32.0),
+    EdgeInsets padding = EdgeInsets.symmetric(vertical: AppSpacing.spacing8),
     Color? backgroundColor,
   }) {
     return CrossPlatformAdWidget(

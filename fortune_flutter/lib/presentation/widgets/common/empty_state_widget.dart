@@ -1,4 +1,7 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class EmptyStateWidget extends StatelessWidget {
   final IconData icon;
@@ -14,7 +17,7 @@ class EmptyStateWidget extends StatelessWidget {
     this.subtitle,
     this.action,
     this.iconSize = 80,
-  });
+  }));
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +26,12 @@ class EmptyStateWidget extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
                 color: colorScheme.surfaceVariant.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
@@ -39,7 +42,7 @@ class EmptyStateWidget extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.spacing6),
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -49,7 +52,7 @@ class EmptyStateWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             if (subtitle != null) ...[
-              const SizedBox(height: 8),
+              SizedBox(height: AppSpacing.spacing2),
               Text(
                 subtitle!,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -57,9 +60,9 @@ class EmptyStateWidget extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-            ],
+            ]
             if (action != null) ...[
-              const SizedBox(height: 24),
+              SizedBox(height: AppSpacing.spacing6),
               action!,
             ],
           ],

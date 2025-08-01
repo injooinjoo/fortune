@@ -15,7 +15,7 @@ class TokenMonitorService {
   Timer? _timer;
   final SupabaseClient _supabase = Supabase.instance.client;
   
-  // Check token every 4 minutes (tokens typically last 1 hour)
+  // Check token every 4 minutes (tokens typically last 1 hour,
   static const Duration _checkInterval = Duration(minutes: 4);
   
   // Refresh if token expires within 10 minutes

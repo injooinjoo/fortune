@@ -10,13 +10,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class LuckyGolfFortunePage extends BaseFortunePage {
-  const LuckyGolfFortunePage({Key? key})
+  const LuckyGolfFortunePage({Key? key},
       : super(
           key: key,
           title: '골프 운세',
           description: '오늘의 라운딩을 위한 행운의 가이드',
           fortuneType: 'lucky-golf',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -106,7 +106,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -245,7 +245,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ],
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -330,7 +330,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                 items: _timePreferences.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
+                    child: Text(entry.value,
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _preferredTime = value),
@@ -450,7 +450,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -550,9 +550,9 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                   ],
                 ),
               ),
-            ).animate()
-                .scale(duration: 600.ms)
-                .then()
+            ).animate(,
+                .scale(duration: 600.ms,
+                .then(,
                 .shimmer(duration: 1000.ms),
             
             const SizedBox(height: 16),
@@ -563,7 +563,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -609,8 +609,8 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
                       ),
                     ),
                   ),
-                ).animate()
-                    .fadeIn(delay: (luckyHoles.indexOf(hole) * 100).ms)
+                ).animate(,
+                    .fadeIn(delay: (luckyHoles.indexOf(hole) * 100).ms,
                     .scale();
               }).toList(),
             ),
@@ -622,7 +622,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -652,7 +652,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             _buildClubItem('퍼터', '오늘은 퍼팅 감각이 최고조!', Icons.radio_button_checked),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -692,7 +692,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -723,7 +723,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             _buildStrategyItem('파5 홀', '투온 도전 추천!'),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -756,7 +756,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -791,7 +791,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -820,7 +820,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             color: color,
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -877,7 +877,7 @@ class _LuckyGolfFortunePageState extends BaseFortunePageState<LuckyGolfFortunePa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 

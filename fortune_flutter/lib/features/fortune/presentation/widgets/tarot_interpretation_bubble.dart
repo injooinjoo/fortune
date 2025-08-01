@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class TarotInterpretationBubble extends StatefulWidget {
   final String interpretation;
@@ -44,7 +46,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
     
     _typingController = AnimationController(
       duration: Duration(milliseconds: widget.interpretation.length * 15),
-      vsync: this,
+      vsync: this
     );
     
     _fadeAnimation = Tween<double>(
@@ -74,27 +76,27 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
     _typingAnimation.addListener(() {
       setState(() {
         _displayedText = widget.interpretation.substring(0, _typingAnimation.value);
-      });
-    });
+});
+});
     
     _typingController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
           _typingComplete = true;
-        });
-      }
+});
+}
     });
     
     if (widget.isCurrentCard) {
       _animationController.forward().then((_) {
         _typingController.forward();
-      });
-    } else {
+});
+} else {
       _animationController.value = 1.0;
       _typingController.value = 1.0;
       _typingComplete = true;
       _displayedText = widget.interpretation;
-    }
+}
   }
 
   @override
@@ -102,7 +104,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
     _animationController.dispose();
     _typingController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +119,9 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
           onTap: () {
             setState(() {
               _isExpanded = !_isExpanded;
-            });
+});
             widget.onTap?.call();
-          },
+},
           child: Container(
             margin: EdgeInsets.only(
               left: widget.isCurrentCard ? 0 : 40,
@@ -129,7 +131,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
               children: [
                 // Main bubble
                 GlassContainer(
-                  padding: const EdgeInsets.all(16),
+                  padding: AppSpacing.paddingAll16,
                   gradient: LinearGradient(
                     colors: widget.isCurrentCard
                         ? [
@@ -143,7 +145,7 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppDimensions.borderRadiusLarge,
                   border: Border.all(
                     color: widget.isCurrentCard
                         ? Colors.purple.withValues(alpha: 0.4)
@@ -155,39 +157,31 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Tarot reader avatar and name
-                      if (widget.isCurrentCard)
-                        Row(
+                      if (widget.isCurrentCard), Row(
                           children: [
                             Container(
                               width: 32,
-                              height: 32,
+                              height: AppSpacing.spacing8,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: LinearGradient(
                                   colors: [
-                                    Colors.purple.shade400,
-                                    Colors.indigo.shade400,
+                                    Colors.purple.withValues(alpha: 0.6),
+                                    Colors.indigo.withValues(alpha: 0.6),
                                   ],
                                 ),
-                              ),
                               child: const Icon(
                                 Icons.auto_awesome,
                                 color: Colors.white,
                                 size: 18,
                               ),
-                            ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.spacing2),
                             Text(
                               '타로 마스터',
-                              style: TextStyle(
-                                fontSize: 14 * widget.fontScale,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.purple.shade300,
-                              ),
-                            ),
+                              style: Theme.of(context).textTheme.bodyMedium,
                           ],
                         ),
-                      if (widget.isCurrentCard) const SizedBox(height: 12),
+                      if (widget.isCurrentCard) const SizedBox(height: AppSpacing.spacing3),
                       
                       // Interpretation text with typing effect
                       if (widget.isCurrentCard && !_typingComplete) ...[
@@ -197,25 +191,18 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                             Expanded(
                               child: Text(
                                 _displayedText,
-                                style: TextStyle(
-                                  fontSize: 14 * widget.fontScale,
-                                  color: Colors.white,
-                                  height: 1.5,
-                                ),
-                              ),
-                            ),
+                                style: Theme.of(context).textTheme.bodyMedium,
                             // Typing cursor
                             AnimatedBuilder(
                               animation: _typingController,
                               builder: (context, child) {
                                 return Container(
                                   width: 2,
-                                  height: 18,
+                                  height: AppSpacing.spacing4 * 1.125,
                                   color: Colors.white.withValues(
                                     alpha: (math.sin(_typingController.value * math.pi * 4) + 1) / 2,
-                                  ),
-                                );
-                              },
+                                  ));
+},
                             ),
                           ],
                         ),
@@ -226,65 +213,51 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
                           
                           if (!_isExpanded && index >= 2) {
                             return const SizedBox.shrink();
-                          }
+}
                           
                           return Padding(
                             padding: EdgeInsets.only(
                               bottom: index < lines.length - 1 ? 12 : 0,
                             ),
-                            child: _buildInterpretationLine(line),
-                          );
-                        }).toList(),
+                            child: _buildInterpretationLine(line);
+}).toList(),
                       ],
                       
                       // Show more/less button
-                      if (lines.length > 2)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                      if (lines.length > 2), Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.spacing2),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 _isExpanded ? '접기' : '더 보기',
-                                style: TextStyle(
-                                  fontSize: 12 * widget.fontScale,
-                                  color: Colors.purple.shade300,
+                                style: Theme.of(context).textTheme.bodyMedium,
                                   fontWeight: FontWeight.w500,
                                 ),
-                              ),
                               Icon(
                                 _isExpanded
                                     ? Icons.keyboard_arrow_up
                                     : Icons.keyboard_arrow_down,
                                 size: 16,
-                                color: Colors.purple.shade300,
-                              ),
+                                color: Colors.purple.withValues(alpha: 0.5),
                             ],
                           ),
-                        ),
                     ],
                   ),
-                ),
                 
-                // Speech bubble tail (only for current card)
-                if (widget.isCurrentCard)
-                  Positioned(
+                // Speech bubble tail (only for current card,
+                if (widget.isCurrentCard), Positioned(
                     top: 40,
                     left: -10,
                     child: CustomPaint(
                       painter: _BubbleTailPainter(
                         color: Colors.purple.withValues(alpha: 0.2),
-                      ),
                       size: const Size(20, 20),
-                    ),
                   ),
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
+        ));
+}
 
   Widget _buildInterpretationLine(String line) {
     // Check if this line contains special formatting
@@ -292,84 +265,56 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
       // Bold emphasis
       return Text(
         line.replaceAll('**', ''),
-        style: TextStyle(
-          fontSize: 15 * widget.fontScale,
-          fontWeight: FontWeight.bold,
-          color: widget.isCurrentCard ? Colors.white : Colors.white70,
-          height: 1.5,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       );
-    } else if (line.startsWith('- ')) {
+} else if (line.startsWith('- ')) {
       // Bullet point
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '• ',
-            style: TextStyle(
-              fontSize: 14 * widget.fontScale,
-              color: Colors.purple.shade300,
-            ),
-          ),
+            style: Theme.of(context).textTheme.bodyMedium,
           Expanded(
             child: Text(
               line.substring(2),
-              style: TextStyle(
-                fontSize: 14 * widget.fontScale,
-                color: widget.isCurrentCard ? Colors.white : Colors.white70,
-                height: 1.5,
-              ),
-            ),
-          ),
-        ],
+              style: Theme.of(context).textTheme.bodyMedium,
+        ]
       );
-    } else if (line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('✨')) {
+} else if (line.startsWith('💡') || line.startsWith('⚠️') || line.startsWith('✨')) {
       // Special callout
       final emoji = line.substring(0, 2);
       final text = line.substring(2).trim();
       
       return Container(
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.paddingAll12,
         decoration: BoxDecoration(
           color: _getCalloutColor(emoji).withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppDimensions.borderRadiusSmall,
           border: Border.all(
             color: _getCalloutColor(emoji).withValues(alpha: 0.3),
             width: 1,
           ),
-        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               emoji,
-              style: TextStyle(fontSize: 20 * widget.fontScale),
-            ),
-            const SizedBox(width: 8),
+              style: Theme.of(context).textTheme.bodyMedium,
+            const SizedBox(width: AppSpacing.spacing2),
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(
-                  fontSize: 14 * widget.fontScale,
-                  color: widget.isCurrentCard ? Colors.white : Colors.white70,
-                  height: 1.4,
-                ),
-              ),
-            ),
+                style: Theme.of(context).textTheme.bodyMedium,
           ],
-        ),
-      );
-    } else {
+        ));
+} else {
       // Regular text
       return Text(
         line,
-        style: TextStyle(
-          fontSize: 14 * widget.fontScale,
-          color: widget.isCurrentCard ? Colors.white : Colors.white70,
-          height: 1.5,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium
       );
-    }
+}
   }
 
   Color _getCalloutColor(String emoji) {
@@ -382,8 +327,8 @@ class _TarotInterpretationBubbleState extends State<TarotInterpretationBubble>
         return Colors.purple;
       default:
         return Colors.blue;
-    }
-  }
+}
+  },
 }
 
 class _BubbleTailPainter extends CustomPainter {
@@ -395,23 +340,24 @@ class _BubbleTailPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
-      ..style = PaintingStyle.fill;
+      ..style =,
+      PaintingStyle.fill;
 
-    final path = Path()
-      ..moveTo(size.width, 0)
-      ..lineTo(size.width, size.height * 0.8)
+    final path = Path(,
+      ..moveTo(size.width, 0,
+      ..lineTo(size.width, size.height * 0.8,
       ..quadraticBezierTo(
         size.width * 0.5,
         size.height * 0.9,
         0,
         size.height * 0.5,
-      )
+      ,
       ..quadraticBezierTo(
         size.width * 0.5,
         size.height * 0.3,
         size.width,
         0,
-      )
+      ,
       ..close();
 
     canvas.drawPath(path, paint);
@@ -423,7 +369,7 @@ class _BubbleTailPainter extends CustomPainter {
       ..strokeWidth = 1;
 
     canvas.drawPath(path, borderPaint);
-  }
+}
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;

@@ -1,5 +1,9 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import '../../shared/glassmorphism/glass_container.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 class TarotFortuneCard extends StatelessWidget {
   final String title;
@@ -27,106 +31,106 @@ class TarotFortuneCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 180,
+        height: AppSpacing.spacing1 * 45.0)
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topLeft)
+            end: Alignment.bottomRight)
             colors: isDarkMode 
                 ? gradientColors 
-                : gradientColors.map((color) => Color.lerp(color, Colors.white, 0.7)!).toList(),
-          ),
-          borderRadius: BorderRadius.circular(20),
+                : gradientColors.map((color) => Color.lerp(color, AppColors.textPrimaryDark, 0.7)!).toList())
+          ))
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
           boxShadow: [
             BoxShadow(
-              color: gradientColors.first.withValues(alpha: isDarkMode ? 0.3 : 0.15),
-              blurRadius: 12,
-              offset: Offset(0, 4),
-            ),
-          ],
+              color: gradientColors.first.withValues(alpha: isDarkMode ? 0.3 : 0.15))
+              blurRadius: 12)
+              offset: Offset(0, 4))
+            ))
+          ])
         ),
         child: Material(
-          color: Colors.transparent,
+          color: Colors.transparent)
           child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(20),
+            onTap: onTap)
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.paddingAll20)
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center)
                 children: [
                   // Hero animated icon container
                   Hero(
-                    tag: heroTag,
+                    tag: heroTag)
                     child: GlassContainer(
-                      width: 50,
-                      height: 50,
-                      borderRadius: BorderRadius.circular(15),
+                      width: 50)
+                      height: AppSpacing.spacing12 * 1.04)
+                      borderRadius: AppDimensions.radiusLarge)
                       gradient: LinearGradient(
                         colors: [
-                          Colors.white.withValues(alpha: 0.2),
-                          Colors.white.withValues(alpha: 0.1),
-                        ],
+                          AppColors.textPrimaryDark.withValues(alpha: 0.2))
+                          AppColors.textPrimaryDark.withValues(alpha: 0.1))
+                        ])
                       ),
                       child: Center(
                         child: Icon(
-                          Icons.auto_awesome,
-                          size: 28,
-                          color: isDarkMode ? Colors.white : theme.colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
+                          Icons.auto_awesome)
+                          size: AppDimensions.iconSizeLarge)
+                          color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.primary)
+                        ))
+                      ))
+                    ))
+                  ))
+                  SizedBox(height: AppSpacing.spacing4))
                   Text(
-                    title,
+                    title)
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: isDarkMode ? Colors.white : theme.colorScheme.onSurface,
-                      letterSpacing: -0.5,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
+                      fontWeight: FontWeight.w700)
+                      color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
+                      letterSpacing: -0.5)
+                    ))
+                    textAlign: TextAlign.center)
+                    maxLines: 1)
+                    overflow: TextOverflow.ellipsis)
+                  ))
+                  AppSpacing.xSmallVertical)
                   Text(
-                    description,
+                    description)
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: (isDarkMode ? Colors.white : theme.colorScheme.onSurface)
-                          .withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                      color: (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
+                          .withValues(alpha: 0.7)))
+                      fontWeight: FontWeight.w400)
+                    ))
+                    textAlign: TextAlign.center)
+                    maxLines: 2)
+                    overflow: TextOverflow.ellipsis)
+                  ))
                   if (isPremium) ...[
-                    const Spacer(),
+                    const Spacer())
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.spacing3)
+                        vertical: AppSpacing.spacing1)
+                      ))
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        color: AppColors.textPrimaryDark.withValues(alpha: 0.2))
+                        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
+                      ))
                       child: Text(
-                        'Premium',
+                        'Premium')
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: isDarkMode ? Colors.white : theme.textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                          color: isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color)
+                          fontWeight: FontWeight.w600)
+                        ))
+                      ))
+                    ))
+                  ])
                 ],
-              ),
-            ),
-          ),
-        ),
-      ),
+              ))
+            ))
+          ))
+        ))
+      )
     );
   }
 }

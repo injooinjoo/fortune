@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_sheet_mbti_picker.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class MbtiStep extends StatefulWidget {
   final Function(String) onMbtiChanged;
@@ -31,7 +37,7 @@ class _MbtiStepState extends State<MbtiStep> {
     {'title': '에너지 방향', 'option1': 'E', 'option2': 'I'},
     {'title': '인식 기능', 'option1': 'N', 'option2': 'S'},
     {'title': '판단 기능', 'option1': 'T', 'option2': 'F'},
-    {'title': '생활 양식', 'option1': 'J', 'option2': 'P'},
+    {'title': '생활 양식', 'option1': 'J', 'option2': 'P'})
   ];
 
   @override
@@ -48,7 +54,7 @@ class _MbtiStepState extends State<MbtiStep> {
       dimension: dimension['title']!,
       option1: dimension['option1']!,
       option2: dimension['option2']!,
-      selectedOption: _getSelectedOption(_currentDimension),
+      selectedOption: _getSelectedOption(_currentDimension)
     );
     
     if (selected != null) {
@@ -78,7 +84,7 @@ class _MbtiStepState extends State<MbtiStep> {
       
       // Show next picker or complete
       if (_currentDimension < dimensions.length) {
-        Future.delayed(Duration(milliseconds: 300), () {
+        Future.delayed(AppAnimations.durationMedium, () {
           _showMbtiPicker();
         });
       }
@@ -106,101 +112,103 @@ class _MbtiStepState extends State<MbtiStep> {
     final mbti = isComplete ? '$_e_i$_n_s$_t_f$_j_p' : '';
     
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
       child: Column(
         children: [
           // Back button
           Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerLeft)
             child: IconButton(
-              onPressed: widget.onBack,
-              icon: Icon(Icons.arrow_back),
-              padding: EdgeInsets.zero,
-            ),
-          ),
+              onPressed: widget.onBack)
+              icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText))
+              padding: EdgeInsets.zero)
+            ))
+          ))
           
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center)
               children: [
                 Text(
-                  'MBTI를 선택해주세요',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    height: 1.2,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 48),
+                  'MBTI를 선택해주세요')
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
+                    fontWeight: FontWeight.bold)
+                    height: 1.2)
+                    color: context.fortuneTheme.primaryText)
+                  ))
+                  textAlign: TextAlign.center)
+                ))
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3))
                 
                 // MBTI display or start button
                 if (_currentDimension == 0 && _e_i == null)
                   // Show start button
                   ElevatedButton(
-                    onPressed: _showMbtiPicker,
+                    onPressed: _showMbtiPicker)
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+                      backgroundColor: Theme.of(context).primaryColor)
+                      foregroundColor: AppColors.textPrimaryDark)
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 3)
+                        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal)
+                      ))
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
+                      ))
+                    ))
                     child: Text(
-                      'MBTI 선택 시작',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                      'MBTI 선택 시작')
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600),))
+                      ))
                   )
                 else
                   // Show MBTI progress
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 2)
+                      vertical: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)
+                    ))
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                      color: context.fortuneTheme.cardBackground)
+                      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4))
+                    ))
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center)
                       children: [
-                        _buildMbtiLetter(_e_i),
-                        const SizedBox(width: 8),
-                        _buildMbtiLetter(_n_s),
-                        const SizedBox(width: 8),
-                        _buildMbtiLetter(_t_f),
-                        const SizedBox(width: 8),
-                        _buildMbtiLetter(_j_p),
-                      ],
+                        _buildMbtiLetter(_e_i))
+                        SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
+                        _buildMbtiLetter(_n_s))
+                        SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
+                        _buildMbtiLetter(_t_f))
+                        SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
+                        _buildMbtiLetter(_j_p))
+                      ])
                     ),
-                  ),
+                  ))
                 
-                const SizedBox(height: 24),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
                 
                 if (!isComplete)
                   Text(
                     '${_currentDimension}/4 단계',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: context.fortuneTheme.subtitleText),))
+                    ))
                 
                 if (isComplete)
                   Column(
                     children: [
                       Text(
-                        mbti,
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                        mbti)
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
+                          fontWeight: FontWeight.bold)
+                          color: Theme.of(context).primaryColor)
+                        ))
+                      ))
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -212,71 +220,66 @@ class _MbtiStepState extends State<MbtiStep> {
                           });
                           _showMbtiPicker();
                         },
-                        child: Text('다시 선택하기'),
-                      ),
-                    ],
+                        child: Text('다시 선택하기'))
+                      ))
+                    ])
                   ),
                 
-                const SizedBox(height: 80),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5))
                 
                 // Complete button
                 SizedBox(
-                  width: double.infinity,
-                  height: 56,
+                  width: double.infinity)
+                  height: context.fortuneTheme.formStyles.inputHeight)
                   child: ElevatedButton(
-                    onPressed: isComplete && !widget.isLoading ? widget.onComplete : null,
+                    onPressed: isComplete && !widget.isLoading ? widget.onComplete : null)
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: context.fortuneTheme.primaryText)
+                      foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      elevation: 0,
-                    ),
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
+                      ))
+                      elevation: 0)
+                    ))
                     child: widget.isLoading
                         ? CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
+                            color: AppColors.textPrimaryDark)
+                            strokeWidth: 2)
                           )
-                        : const Text(
-                            '완료',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                  ),
-                ),
-              ],
+                        : Text(
+                            '완료')
+                            style: Theme.of(context).textTheme.titleLarge)
+                ))
+              ])
             ),
-          ),
-        ],
+          ))
+        ])
       ),
     );
   }
   
   Widget _buildMbtiLetter(String? letter) {
     return Container(
-      width: 48,
-      height: 48,
+      width: context.fortuneTheme.socialSharing.shareButtonSize - 8,
+      height: context.fortuneTheme.socialSharing.shareButtonSize - 8)
       decoration: BoxDecoration(
-        color: letter != null ? Theme.of(context).primaryColor : Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        color: letter != null ? Theme.of(context).primaryColor : context.fortuneTheme.cardSurface)
+        borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius * 0.67))
         border: Border.all(
-          color: letter != null ? Theme.of(context).primaryColor : Colors.grey[300]!,
-          width: 2,
-        ),
-      ),
+          color: letter != null ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor)
+          width: letter != null ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth)
+        ))
+      ))
       child: Center(
         child: Text(
-          letter ?? '?',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: letter != null ? Colors.white : Colors.grey[400],
-          ),
-        ),
-      ),
+          letter ?? '?')
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
+            fontWeight: FontWeight.bold)
+            color: letter != null ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText.withValues(alpha: 0.7))
+          ))
+        ))
+      )
     );
   }
 }

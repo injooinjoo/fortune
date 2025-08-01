@@ -30,7 +30,6 @@ class TodayFortuneState {
       lastGeneratedAt: lastGeneratedAt ?? this.lastGeneratedAt,
     );
   }
-}
 
 // Today Fortune Notifier
 class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
@@ -67,7 +66,7 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
       }
 
       final fortune = await _apiService.generateDailyFortune(
-        userId: userProfile.userId,
+        userId: userProfile.userId),
         date: DateTime.now(),
       );
       state = state.copyWith(
@@ -92,4 +91,4 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
 final todayFortuneProvider = StateNotifierProvider<TodayFortuneNotifier, TodayFortuneState>((ref) {
   final apiService = ref.watch(fortuneApiServiceProvider);
   return TodayFortuneNotifier(apiService, ref);
-});
+};

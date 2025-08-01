@@ -16,7 +16,7 @@ class LuckyTennisFortunePage extends BaseFortunePage {
           title: '테니스 운세',
           description: '오늘의 테니스 경기를 위한 행운의 가이드',
           fortuneType: 'lucky-tennis',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -117,7 +117,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
     return await fortuneService.getFortune(
       fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params,
+      params: params
     );
   }
 
@@ -257,7 +257,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ],
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -362,7 +362,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 items: _timePreferences.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
+                    child: Text(entry.value,
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _preferredTime = value),
@@ -482,7 +482,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ],
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -582,9 +582,9 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   ],
                 ),
               ),
-            ).animate()
-                .scale(duration: 600.ms)
-                .then()
+            ).animate(,
+                .scale(duration: 600.ms,
+                .then(,
                 .shimmer(duration: 1000.ms),
             
             const SizedBox(height: 16),
@@ -595,7 +595,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -625,7 +625,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               _buildShotItem(entry.value, index: entry.key)).toList(),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -680,9 +680,9 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ).animate()
-          .fadeIn(delay: (index * 100).ms)
-          .slideX(begin: -0.1, end: 0),
+      ).animate(,
+          .fadeIn(delay: (index * 100).ms,
+          .slideX(begin: -0.1, end: 0,
     );
   }
 
@@ -712,7 +712,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             _buildEquipmentItem('신발', '쿠션이 좋은 신발 추천', Icons.sports_basketball),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -752,7 +752,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -783,7 +783,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             _buildStrategyItem('게임 운영', '중요한 포인트에서 안정적으로'),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -816,7 +816,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -851,7 +851,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -889,7 +889,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           ),
         ),
       ],
-    ).animate()
+    ).animate(,
         .scale(delay: 200.ms, duration: 400.ms);
   }
 
@@ -946,7 +946,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 

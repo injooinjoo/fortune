@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class PhoneVerificationStep extends StatefulWidget {
   final String phoneNumber;
@@ -29,7 +34,7 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
   );
   final List<FocusNode> _focusNodes = List.generate(
     6,
-    (index) => FocusNode(),
+    (index) => FocusNode()
   );
   
   Timer? _timer;
@@ -142,42 +147,39 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent, // Keep transparent for overlay
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
           child: Column(
             children: [
-              const SizedBox(height: 48),
+              SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
               Text(
                 '인증번호를 입력해주세요',
-                style: TextStyle(
-                  fontSize: 32,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                   fontWeight: FontWeight.bold,
                   height: 1.2,
-                  color: Colors.black,
+                  color: context.fortuneTheme.primaryText,
                 ),
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
+              ),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               Text(
                 '${widget.countryCode} ${_formatPhoneNumber(widget.phoneNumber)}로\n인증번호를 전송했습니다',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: context.fortuneTheme.subtitleText,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
+              ),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
               // OTP Input Fields
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(6, (index) {
                   return Container(
-                    width: 48,
-                    height: 56,
-                    margin: EdgeInsets.only(right: index < 5 ? 8 : 0),
+                    width: context.fortuneTheme.socialSharing.shareButtonSize - 8,
+                    height: context.fortuneTheme.formStyles.inputHeight,
+                    margin: EdgeInsets.only(right: 8),
                     child: RawKeyboardListener(
                       focusNode: FocusNode(),
                       onKey: (event) => _onKeyDown(event, index),
@@ -187,107 +189,92 @@ class _PhoneVerificationStepState extends State<PhoneVerificationStep> {
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         maxLength: 1,
-                        style: const TextStyle(
-                          fontSize: 24,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.w600,
-                        ),
-                        decoration: InputDecoration(
+                        ),                        decoration: InputDecoration(
                           counterText: '',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
                             borderSide: BorderSide(
-                              color: Colors.grey[300]!,
+                              color: context.fortuneTheme.dividerColor,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
                             borderSide: BorderSide(
                               color: Theme.of(context).primaryColor,
-                              width: 2,
+                              width: context.fortuneTheme.formStyles.focusBorderWidth,
                             ),
                           ),
                           filled: true,
                           fillColor: _controllers[index].text.isNotEmpty
-                              ? Colors.grey[100]
-                              : Colors.white,
-                        ),
-                        inputFormatters: [
+                              ? context.fortuneTheme.cardBackground
+                              : context.fortuneTheme.cardSurface,
+                        ),                        inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(1),
                         ],
                         onChanged: (value) => _onOtpFieldChanged(value, index),
                       ),
-                    ),
-                  );
+                    ),                  );
                 }),
-              ),
-              const SizedBox(height: 32),
+              ),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2),
               // Resend Timer
               _canResend
                   ? TextButton(
                       onPressed: _resendOtp,
-                      child: const Text(
+                      child: Text(
                         '인증번호 다시 받기',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600
                         ),
                       ),
-                    )
-                  : Text(
+                    )                  : Text(
                       '${_resendTimer}초 후 다시 받기',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: context.fortuneTheme.subtitleText
                       ),
-                    ),
-              const Spacer(),
+                    ),              const Spacer(),
               // Verify Button
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: context.fortuneTheme.formStyles.inputHeight,
                 child: ElevatedButton(
                   onPressed: _isOtpComplete() && !_isLoading
                       ? _verifyOtp
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: context.fortuneTheme.primaryText,
+                    foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4),
                     ),
                     elevation: 0,
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
+                  ),                   child: _isLoading
+                      ? SizedBox(
+                          width: context.fortuneTheme.socialSharing.shareIconSize,
+                          height: context.fortuneTheme.socialSharing.shareIconSize,
+                          child: const CircularProgressIndicator(
+                            color: AppColors.textPrimaryDark,
                             strokeWidth: 2,
                           ),
-                        )
-                      : const Text(
+                        )                      : Text(
                           '인증 완료',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600
                           ),
                         ),
                 ),
-              ),
-              const SizedBox(height: 16),
+              ),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
               TextButton(
                 onPressed: widget.onBack,
                 child: Text(
                   '번호 다시 입력',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: context.fortuneTheme.subtitleText
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
+              ),               SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
             ],
           ),
         ),

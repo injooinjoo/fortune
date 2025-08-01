@@ -24,7 +24,7 @@ class FortuneSnapScrollPage extends BaseFortunePage {
     title: title,
     description: description,
     fortuneType: 'multi', // Special type for multiple fortunes
-    requiresUserInfo: true,
+    requiresUserInfo: true
   );
 
   @override

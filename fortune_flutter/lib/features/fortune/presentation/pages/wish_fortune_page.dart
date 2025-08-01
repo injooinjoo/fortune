@@ -59,7 +59,7 @@ class _WishInputForm extends StatelessWidget {
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.star),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(
@@ -109,7 +109,7 @@ class _WishFortuneResult extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '소원 성취',
+                      '소원 성취 운세',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -126,164 +126,8 @@ class _WishFortuneResult extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-
-          // Score Breakdown
-          if (fortune.scoreBreakdown != null) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.analytics,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '상세 분석',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            entry.key,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
-                        Container(
-                          width: 60,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: _getScoreColor(entry.value).withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '${entry.value}점',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: _getScoreColor(entry.value),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Lucky Items
-          if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.stars,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '행운 아이템',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: fortune.luckyItems!.entries.map((entry) {
-                      return Chip(
-                        label: Text('${entry.key}: ${entry.value}'),
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          // Recommendations
-          if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
-            GlassContainer(
-              padding: const EdgeInsets.all(20),
-              borderRadius: BorderRadius.circular(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.tips_and_updates,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '조언',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...fortune.recommendations!.map((rec) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            rec,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ],
         ],
       ),
     );
-  }
-
-  Color _getScoreColor(int score) {
-    if (score >= 80) return Colors.green;
-    if (score >= 60) return Colors.blue;
-    if (score >= 40) return Colors.orange;
-    return Colors.red;
   }
 }

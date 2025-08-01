@@ -81,15 +81,15 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       body: SafeArea(
         child: Column(
           children: [
-            const AppHeader(title: '토큰 구매'),
+            const AppHeader(title: '토큰 구매'))
             Expanded(
               child: _isLoading 
                   ? _buildLoadingState()
-                  : _buildContent(),
-            ),
-          ],
+                  : _buildContent())
+            ))
+          ])
         ),
-      ),
+      ))
     );
   }
 
@@ -98,10 +98,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text('상품 정보를 불러오는 중...'),
-        ],
+          CircularProgressIndicator())
+          SizedBox(height: 16))
+          Text('상품 정보를 불러오는 중...'))
+        ])
       ),
     );
   }
@@ -114,18 +114,18 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
-          _buildCurrentBalance(),
-          const SizedBox(height: 24),
-          _buildProductList(),
-          const SizedBox(height: 24),
-          _buildPurchaseButton(),
-          const SizedBox(height: 16),
-          _buildRestoreButton(),
-          const SizedBox(height: 16),
-          _buildSecurityInfo(),
-        ],
+          _buildCurrentBalance())
+          const SizedBox(height: 24))
+          _buildProductList())
+          const SizedBox(height: 24))
+          _buildPurchaseButton())
+          const SizedBox(height: 16))
+          _buildRestoreButton())
+          const SizedBox(height: 16))
+          _buildSecurityInfo())
+        ])
       ),
     );
   }
@@ -136,22 +136,22 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.shopping_cart_outlined,
-            size: 64,
-            color: AppColors.textSecondary,
-          ),
-          const SizedBox(height: 16),
+            Icons.shopping_cart_outlined)
+            size: 64)
+            color: AppColors.textSecondary)
+          ))
+          const SizedBox(height: 16))
           Text(
-            '상품을 불러올 수 없습니다',
-            style: AppTextStyles.bodyLarge,
-          ),
-          const SizedBox(height: 8),
+            '상품을 불러올 수 없습니다')
+            style: AppTextStyles.bodyLarge))
+          ))
+          const SizedBox(height: 8))
           TextButton(
-            onPressed: _loadProducts,
-            child: const Text('다시 시도'),
-          ),
-        ],
-      ),
+            onPressed: _loadProducts)
+            child: const Text('다시 시도'))
+          ))
+        ])
+      )
     );
   }
 
@@ -162,41 +162,41 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return CustomCard(
       gradient: LinearGradient(
         colors: [AppColors.primary, AppColors.secondary],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        begin: Alignment.topLeft)
+        end: Alignment.bottomRight)
+      ))
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20))
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween)
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start)
               children: [
                 Text(
-                  '현재 보유 토큰',
+                  '현재 보유 토큰')
                   style: AppTextStyles.caption.copyWith(
-                    color: Colors.white70,
-                  ),
-                ),
-                const SizedBox(height: 4),
+                    color: Colors.white70))
+                  ))
+                ))
+                const SizedBox(height: 4))
                 Text(
-                  '$currentTokens 토큰',
+                  '$currentTokens 토큰')
                   style: AppTextStyles.headlineLarge.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                    color: Colors.white)
+                    fontWeight: FontWeight.bold)
+                  ))
+                ))
+              ])
             ),
             Icon(
-              Icons.account_balance_wallet,
-              size: 48,
-              color: Colors.white.withValues(alpha: 0.5),
-            ),
-          ],
+              Icons.account_balance_wallet)
+              size: 48)
+              color: Colors.white.withValues(alpha: 0.5))
+            ))
+          ])
         ),
-      ),
+      ))
     ).animate().fadeIn().scale();
   }
 
@@ -205,10 +205,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '토큰 패키지 선택',
-          style: AppTextStyles.headlineMedium,
-        ),
-        const SizedBox(height: 16),
+          '토큰 패키지 선택')
+          style: AppTextStyles.headlineMedium))
+        ))
+        const SizedBox(height: 16))
         ...List.generate(_products.length, (index) {
           final product = _products[index];
           if (_isSubscription(product.id)) {
@@ -217,7 +217,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             return _buildTokenPackageCard(product, index);
           }
         }),
-      ],
+      ]
     );
   }
 
@@ -235,102 +235,102 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           });
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200))
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16))
             border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.surface,
-              width: isSelected ? 2 : 1,
-            ),
+              color: isSelected ? AppColors.primary : AppColors.surface)
+              width: isSelected ? 2 : 1)
+            ))
             color: isSelected 
                 ? AppColors.primary.withValues(alpha: 0.1) 
-                : AppColors.surface,
-          ),
+                : AppColors.surface)
+          ))
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16))
             child: Row(
               children: [
                 // 선택 인디케이터
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 24)
+                  height: 24)
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    shape: BoxShape.circle)
                     border: Border.all(
-                      color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                      width: 2,
-                    ),
-                    color: isSelected ? AppColors.primary : Colors.transparent,
-                  ),
+                      color: isSelected ? AppColors.primary : AppColors.textSecondary)
+                      width: 2)
+                    ))
+                    color: isSelected ? AppColors.primary : Colors.transparent)
+                  ))
                   child: isSelected
                       ? const Icon(
-                          Icons.check,
-                          size: 16,
-                          color: Colors.white,
+                          Icons.check)
+                          size: 16)
+                          color: Colors.white)
                         )
-                      : null,
-                ),
-                const SizedBox(width: 16),
+                      : null)
+                ))
+                const SizedBox(width: 16))
                 
                 // 패키지 정보
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start)
                     children: [
                       Row(
                         children: [
                           Text(
-                            product.title,
+                            product.title)
                             style: AppTextStyles.bodyLarge.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold))
+                            ))
+                          ))
                           if (_getBadge(product.id) != null) ...[
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 8))
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
+                                horizontal: 8)
+                                vertical: 2)
+                              ))
                               decoration: BoxDecoration(
-                                color: AppColors.secondary,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                                color: AppColors.secondary)
+                                borderRadius: BorderRadius.circular(12))
+                              ))
                               child: Text(
-                                _getBadge(product.id)!,
+                                _getBadge(product.id)!)
                                 style: AppTextStyles.caption.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
+                                  color: Colors.white)
+                                  fontWeight: FontWeight.bold)
+                                ))
+                              ))
+                            ))
+                          ])
                         ],
-                      ),
-                      const SizedBox(height: 4),
+                      ))
+                      const SizedBox(height: 4))
                       Text(
-                        '$tokenAmount 토큰',
+                        '$tokenAmount 토큰')
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
+                          color: AppColors.textSecondary))
+                        ))
+                      ))
+                    ])
                   ),
-                ),
+                ))
                 
                 // 가격
                 Text(
-                  product.price,
+                  product.price)
                   style: AppTextStyles.headlineSmall.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                  ),
-                ),
-              ],
+                    fontWeight: FontWeight.bold)
+                    color: isSelected ? AppColors.primary : AppColors.textPrimary)
+                  ))
+                ))
+              ])
             ),
-          ),
-        ),
-      ).animate(delay: (index * 100).ms).fadeIn().slideX(),
+          ))
+        ))
+      ).animate(delay: (index * 100).ms).fadeIn().slideX()
     );
   }
 
@@ -348,126 +348,125 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           });
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 200))
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16))
             border: Border.all(
-              color: isSelected ? AppColors.accent : AppColors.surface,
-              width: isSelected ? 2 : 1,
-            ),
+              color: isSelected ? AppColors.accent : AppColors.surface)
+              width: isSelected ? 2 : 1)
+            ))
             gradient: isSelected
                 ? LinearGradient(
                     colors: [
-                      AppColors.accent.withValues(alpha: 0.1),
-                      AppColors.gradient2.withValues(alpha: 0.1),
-                    ],
+                      AppColors.accent.withValues(alpha: 0.1))
+                      AppColors.gradient2.withValues(alpha: 0.1))
+                    ])
                     begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                    end: Alignment.bottomRight)
                   )
-                : null,
-            color: !isSelected ? AppColors.surface : null,
-          ),
+                : null)
+            color: !isSelected ? AppColors.surface : null)
+          ))
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16))
             child: Row(
               children: [
                 // 선택 인디케이터
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 24)
+                  height: 24)
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    shape: BoxShape.circle)
                     border: Border.all(
-                      color: isSelected ? AppColors.accent : AppColors.textSecondary,
-                      width: 2,
-                    ),
-                    color: isSelected ? AppColors.accent : Colors.transparent,
-                  ),
+                      color: isSelected ? AppColors.accent : AppColors.textSecondary)
+                      width: 2)
+                    ))
+                    color: isSelected ? AppColors.accent : Colors.transparent)
+                  ))
                   child: isSelected
                       ? const Icon(
-                          Icons.check,
-                          size: 16,
-                          color: Colors.white,
+                          Icons.check)
+                          size: 16)
+                          color: Colors.white)
                         )
-                      : null,
-                ),
-                const SizedBox(width: 16),
+                      : null)
+                ))
+                const SizedBox(width: 16))
                 
                 // 구독 정보
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start)
                     children: [
                       Row(
                         children: [
                           const Icon(
-                            Icons.workspace_premium,
-                            size: 20,
-                            color: AppColors.accent,
-                          ),
-                          const SizedBox(width: 4),
+                            Icons.workspace_premium)
+                            size: 20)
+                            color: AppColors.accent)
+                          ))
+                          const SizedBox(width: 4))
                           Text(
-                            '무제한 구독',
+                            '무제한 구독')
                             style: AppTextStyles.bodyLarge.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
+                              fontWeight: FontWeight.bold))
+                            ))
+                          ))
+                          const SizedBox(width: 8))
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
-                            ),
+                              horizontal: 8)
+                              vertical: 2)
+                            ))
                             decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Text(
-                              '인기',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
+                              color: AppColors.accent)
+                              borderRadius: BorderRadius.circular(12))
+                            ))
+                            child: Text(
+                              '인기')
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: Colors.white),))
+                                fontWeight: FontWeight.bold)
+                                fontSize: 10)
+                              ))
+                          ))
+                        ])
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 4))
                       Text(
-                        '모든 운세 무제한 이용',
+                        '모든 운세 무제한 이용')
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
+                          color: AppColors.textSecondary))
+                        ))
+                      ))
+                    ])
                   ),
-                ),
+                ))
                 
                 // 가격
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end)
                   children: [
                     Text(
-                      product.price,
+                      product.price)
                       style: AppTextStyles.headlineSmall.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: isSelected ? AppColors.accent : AppColors.textPrimary,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)
+                        color: isSelected ? AppColors.accent : AppColors.textPrimary)
+                      ))
+                    ))
                     Text(
-                      isMonthly ? '/월' : '/년',
+                      isMonthly ? '/월' : '/년')
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
+                        color: AppColors.textSecondary))
+                      ))
+                    ))
+                  ])
                 ),
-              ],
+              ])
             ),
-          ),
-        ),
-      ).animate(delay: (index * 100).ms).fadeIn().slideX(),
+          ))
+        ))
+      ).animate(delay: (index * 100).ms).fadeIn().slideX()
     );
   }
 
@@ -476,11 +475,11 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     
     return CustomButton(
       onPressed: isEnabled ? _processPurchase : null,
-      text: _isProcessing ? '처리 중...' : '구매하기',
-      isLoading: _isProcessing,
+      text: _isProcessing ? '처리 중...' : '구매하기')
+      isLoading: _isProcessing)
       gradient: isEnabled
           ? LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
+              colors: [AppColors.primary, AppColors.secondary])
             )
           : null,
     );
@@ -490,11 +489,11 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return TextButton(
       onPressed: _isProcessing ? null : _restorePurchases,
       child: Text(
-        '이전 구매 복원',
+        '이전 구매 복원')
         style: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.primary,
-        ),
-      ),
+          color: AppColors.primary))
+        ))
+      ))
     );
   }
 
@@ -502,27 +501,27 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        color: AppColors.info.withValues(alpha: 0.1))
+        borderRadius: BorderRadius.circular(12))
+      ))
       child: Row(
         children: [
           Icon(
-            Icons.lock,
-            color: AppColors.info,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
+            Icons.lock)
+            color: AppColors.info)
+            size: 20)
+          ))
+          const SizedBox(width: 12))
           Expanded(
             child: Text(
-              '모든 결제는 Apple/Google을 통해 안전하게 처리됩니다.',
+              '모든 결제는 Apple/Google을 통해 안전하게 처리됩니다.')
               style: AppTextStyles.caption.copyWith(
-                color: AppColors.info,
-              ),
-            ),
-          ),
-        ],
-      ),
+                color: AppColors.info))
+              ))
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -541,7 +540,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     } catch (e) {
       Logger.error('구매 실패', error: e);
       HapticUtils.error();
-      _showError(e.toString());
+      _showError(e.toString();
     } finally {
       setState(() => _isProcessing = false);
     }
@@ -592,9 +591,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           message: _isSubscription(product.id)
               ? '무제한 구독이 시작되었습니다!\n모든 운세를 자유롭게 이용하세요.'
               : '${tokenAmount ?? 0}개의 토큰이 충전되었습니다!',
-          tokenAmount: tokenAmount,
-        ),
-      ),
+          tokenAmount: tokenAmount)
+        ))
+      ))
     );
   }
 
@@ -602,9 +601,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-      ),
+        backgroundColor: AppColors.error)
+        behavior: SnackBarBehavior.floating)
+      ))
     );
   }
 
@@ -612,9 +611,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-      ),
+        backgroundColor: AppColors.success)
+        behavior: SnackBarBehavior.floating)
+      )
     );
   }
 

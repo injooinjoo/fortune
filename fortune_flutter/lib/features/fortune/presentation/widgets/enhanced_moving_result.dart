@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'direction_compass.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class EnhancedMovingResult extends StatelessWidget {
   final Map<String, dynamic> fortuneData;
@@ -20,42 +22,42 @@ class EnhancedMovingResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 종합 점수 카드
           _buildOverallScoreCard(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 이사 정보 요약
           if (fromAddress != null || toAddress != null)
             _buildMovingInfoCard(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 방위 나침반
           if (fortuneData['auspiciousDirections'] != null)
             _buildDirectionSection(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 지역 분석
           if (fortuneData['areaAnalysis'] != null)
             _buildAreaAnalysisSection(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 길일 정보
           if (fortuneData['dateAnalysis'] != null)
             _buildDateAnalysisSection(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 상세 점수 분석
           _buildDetailedScoreSection(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 추천사항
           if (fortuneData['recommendations'] != null)
             _buildRecommendationsSection(context),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.spacing5),
           
           // 주의사항
           if (fortuneData['cautions'] != null)
@@ -72,12 +74,12 @@ class EnhancedMovingResult extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusLarge,
       ),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAll24,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppDimensions.borderRadiusLarge,
           gradient: LinearGradient(
             colors: [
               scoreColor.withValues(alpha: 0.1),
@@ -95,7 +97,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.spacing5),
             SizedBox(
               height: 150,
               width: 150,
@@ -105,7 +107,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   CircularProgressIndicator(
                     value: overallScore / 100,
                     strokeWidth: 15,
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor: Colors.grey.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                   ),
                   Column(
@@ -113,11 +115,7 @@ class EnhancedMovingResult extends StatelessWidget {
                     children: [
                       Text(
                         '$overallScore',
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: scoreColor,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
                         '점',
@@ -128,7 +126,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
               _getScoreDescription(overallScore),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -139,21 +137,21 @@ class EnhancedMovingResult extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )
     );
   }
 
   Widget _buildMovingInfoCard(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.swap_horiz, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '이사 정보',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -162,12 +160,12 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             if (fromAddress != null) ...[
               Row(
                 children: [
-                  const Icon(Icons.home_outlined, size: 20),
-                  const SizedBox(width: 8),
+                  Icon(Icons.home_outlined, size: 20),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       '출발: $fromAddress',
@@ -176,13 +174,13 @@ class EnhancedMovingResult extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.spacing2),
             ],
             if (toAddress != null) ...[
               Row(
                 children: [
                   const Icon(Icons.home, size: 20),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       '도착: $toAddress',
@@ -191,13 +189,13 @@ class EnhancedMovingResult extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.spacing2),
             ],
             if (selectedDate != null) ...[
               Row(
                 children: [
                   const Icon(Icons.calendar_today, size: 20),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '이사 예정일: $selectedDate',
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -216,20 +214,20 @@ class EnhancedMovingResult extends StatelessWidget {
       fortuneData['auspiciousDirections'] ?? [],
     );
     final avoidDirections = List<String>.from(
-      fortuneData['avoidDirections'] ?? [],
+      fortuneData['avoidDirections'] ?? []
     );
     final primaryDirection = fortuneData['primaryDirection'] as String?;
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.explore, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '방위 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -238,7 +236,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.spacing5),
             Center(
               child: DirectionCompass(
                 auspiciousDirections: auspiciousDirections,
@@ -258,14 +256,14 @@ class EnhancedMovingResult extends StatelessWidget {
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.location_city, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '지역 상세 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -274,12 +272,12 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.spacing5),
             
             // 지역 점수 차트
             if (areaAnalysis['scores'] != null)
               _buildAreaScoreChart(context, areaAnalysis['scores']),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.spacing5),
             
             // 교통
             if (areaAnalysis['transportation'] != null)
@@ -332,7 +330,7 @@ class EnhancedMovingResult extends StatelessWidget {
               ),
           ],
         ),
-      ),
+      )
     );
   }
 
@@ -343,11 +341,11 @@ class EnhancedMovingResult extends StatelessWidget {
     
     return Container(
       height: 200,
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: RadarChart(
         RadarChartData(
           radarShape: RadarShape.polygon,
-          radarBorderData: const BorderSide(color: Colors.grey, width: 2),
+          radarBorderData: const BorderSide(color: Colors.grey, width: AppSpacing.spacing0 * 0.5),
           gridBorderData: const BorderSide(color: Colors.grey, width: 0.5),
           titlePositionPercentageOffset: 0.2,
           radarBackgroundColor: Colors.transparent,
@@ -364,14 +362,14 @@ class EnhancedMovingResult extends StatelessWidget {
             final titles = scores.keys.toList();
             return RadarChartTitle(
               text: titles[index],
-              angle: 0,
+              angle: 0
             );
           },
           tickCount: 5,
-          ticksTextStyle: const TextStyle(fontSize: 10, color: Colors.grey),
+          ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
           tickBorderData: const BorderSide(color: Colors.grey, width: 0.5),
         ),
-      ),
+      )
     );
   }
 
@@ -383,19 +381,19 @@ class EnhancedMovingResult extends StatelessWidget {
     Color color,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVertical8,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: AppSpacing.paddingAll8,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppDimensions.borderRadiusSmall,
             ),
             child: Icon(icon, color: color, size: 24),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,7 +404,7 @@ class EnhancedMovingResult extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   description,
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -415,7 +413,7 @@ class EnhancedMovingResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -425,14 +423,14 @@ class EnhancedMovingResult extends StatelessWidget {
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.calendar_month, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '날짜 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -441,21 +439,21 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             
             // 손없는날 여부
             if (dateAnalysis['isAuspicious'] == true)
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
                   color: Colors.amber.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppDimensions.borderRadiusSmall,
                   border: Border.all(color: Colors.amber),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.star, color: Colors.amber),
-                    const SizedBox(width: 8),
+                    Icon(Icons.star, color: Colors.amber),
+                    const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
                         '손없는날 - 모든 방향으로 이사하기 좋은 최고의 날입니다!',
@@ -467,7 +465,7 @@ class EnhancedMovingResult extends StatelessWidget {
                   ],
                 ),
               ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.spacing3),
             
             // 음력 정보
             if (dateAnalysis['lunarDate'] != null)
@@ -494,13 +492,13 @@ class EnhancedMovingResult extends StatelessWidget {
               ),
           ],
         ),
-      ),
+      )
     );
   }
 
   Widget _buildDateInfoRow(BuildContext context, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
       child: Row(
         children: [
           SizedBox(
@@ -519,7 +517,7 @@ class EnhancedMovingResult extends StatelessWidget {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -534,14 +532,14 @@ class EnhancedMovingResult extends StatelessWidget {
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(Icons.analytics, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '상세 운세 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -550,7 +548,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) => _buildScoreBar(
               context,
               entry.key,
@@ -558,7 +556,7 @@ class EnhancedMovingResult extends StatelessWidget {
             )),
           ],
         ),
-      ),
+      )
     );
   }
 
@@ -566,7 +564,7 @@ class EnhancedMovingResult extends StatelessWidget {
     final color = _getScoreColor(score.toInt());
     
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVertical8,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -586,13 +584,13 @@ class EnhancedMovingResult extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.spacing1),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: AppDimensions.borderRadiusSmall,
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: 8,
-              backgroundColor: Colors.grey.shade200,
+              backgroundColor: Colors.grey.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -603,21 +601,21 @@ class EnhancedMovingResult extends StatelessWidget {
 
   Widget _buildRecommendationsSection(BuildContext context) {
     final recommendations = List<String>.from(
-      fortuneData['recommendations'] ?? [],
+      fortuneData['recommendations'] ?? []
     );
     
     if (recommendations.isEmpty) return const SizedBox.shrink();
     
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber.shade700),
-                const SizedBox(width: 8),
+                Icon(Icons.lightbulb, color: Colors.amber.withValues(alpha: 0.9)),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '추천사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -626,17 +624,17 @@ class EnhancedMovingResult extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             ...recommendations.map((rec) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.check_circle, 
+                  Icon(Icons.check_circle, 
                     color: Colors.green, 
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       rec,
@@ -654,47 +652,47 @@ class EnhancedMovingResult extends StatelessWidget {
 
   Widget _buildCautionsSection(BuildContext context) {
     final cautions = List<String>.from(
-      fortuneData['cautions'] ?? [],
+      fortuneData['cautions'] ?? []
     );
     
     if (cautions.isEmpty) return const SizedBox.shrink();
     
     return Card(
-      color: Colors.red.shade50,
+      color: Colors.red.withValues(alpha: 0.08),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAll16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.warning, color: Colors.red.shade700),
-                const SizedBox(width: 8),
+                Icon(Icons.warning, color: Colors.red.withValues(alpha: 0.9)),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '주의사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.red.shade700,
+                    color: Colors.red.withValues(alpha: 0.9),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             ...cautions.map((caution) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(Icons.error_outline, 
-                    color: Colors.red.shade700, 
+                    color: Colors.red.withValues(alpha: 0.9), 
                     size: 20,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       caution,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red.shade700,
+                        color: Colors.red.withValues(alpha: 0.9),
                       ),
                     ),
                   ),

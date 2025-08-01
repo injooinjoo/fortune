@@ -203,7 +203,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
         colors: [Color(0xFFEC4899), Color(0xFFDB2777)],
       ),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+      resultBuilder: (context, result, onShare) => _buildResult(context, result)
     );
   }
 
@@ -278,7 +278,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
                   initialDate: _selectedDate ?? DateTime.now(),
                   firstDate: DateTime(1900),
                   lastDate: DateTime.now(),
-                  locale: const Locale('ko', 'KR'),
+                  locale: const Locale('ko', 'KR')
                 );
                 if (date != null) {
                   setState(() {
@@ -376,7 +376,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             ),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -395,7 +395,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ],
-      ),
+      )
     );
   }
 
@@ -585,7 +585,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             ),
           ),
         ],
-      ],
+      ]
     );
   }
 
@@ -613,7 +613,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 
@@ -645,7 +645,7 @@ class _BirthdateFortunePageState extends ConsumerState<BirthdateFortunePage> {
             style: const TextStyle(fontSize: 14),
           ),
         ),
-      ],
+      ]
     );
   }
 }

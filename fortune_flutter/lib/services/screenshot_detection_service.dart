@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,8 @@ import '../core/utils/logger.dart';
 import 'native_platform_service.dart';
 import '../presentation/widgets/enhanced_shareable_fortune_card.dart';
 import '../presentation/widgets/social_share_bottom_sheet.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Provider for screenshot detection service
 final screenshotDetectionServiceProvider = Provider<ScreenshotDetectionService>((ref) {
@@ -28,6 +31,12 @@ class ScreenshotDetectionService {
   /// Initialize screenshot detection
   Future<void> initialize() async {
     if (_isListening) return;
+    
+    // Skip initialization on web
+    if (kIsWeb) {
+      Logger.info('Screenshot detection service skipped on web');
+      return;
+    }
     
     try {
       // Listen to native screenshot events
@@ -55,6 +64,9 @@ class ScreenshotDetectionService {
   void dispose() {
     _screenshotSubscription?.cancel();
     _isListening = false;
+    
+    // Skip platform-specific cleanup on web
+    if (kIsWeb) return;
     
     if (Platform.isAndroid) {
       NativePlatformService.android.stopScreenshotDetection();
@@ -185,11 +197,16 @@ class ScreenshotDetectionService {
       if (image == null) {
         throw Exception('Failed to capture image');
       }
-      // Save to temporary directory
-      final directory = await getTemporaryDirectory();
-      final imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
-      final imageFile = File(imagePath);
-      await imageFile.writeAsBytes(image);
+      // Save to temporary directory (skip on web,
+      String? imagePath;
+      File? imageFile;
+      
+      if (!kIsWeb) {
+        final directory = await getTemporaryDirectory();
+        imagePath = '${directory.path}/fortune_${DateTime.now().millisecondsSinceEpoch}.png';
+        imageFile = File(imagePath);
+        await imageFile.writeAsBytes(image);
+      }
 
       // Close loading dialog
       if (context.mounted) {
@@ -199,40 +216,77 @@ class ScreenshotDetectionService {
       // Handle platform-specific sharing
       switch (platform) {
         case SharePlatform.kakaoTalk:
-          await _shareToKakaoTalk(imagePath, fortuneTitle, fortuneContent);
+          if (imagePath != null) {
+            await _shareToKakaoTalk(imagePath, fortuneTitle, fortuneContent);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.instagram:
-          await _shareToInstagram(imagePath);
+          if (imagePath != null) {
+            await _shareToInstagram(imagePath);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.facebook:
-          await _shareToFacebook(imagePath, fortuneTitle);
+          if (imagePath != null) {
+            await _shareToFacebook(imagePath, fortuneTitle);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.twitter:
-          await _shareToTwitter(imagePath, fortuneTitle);
+          if (imagePath != null) {
+            await _shareToTwitter(imagePath, fortuneTitle);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.whatsapp:
-          await _shareToWhatsApp(imagePath, fortuneTitle);
+          if (imagePath != null) {
+            await _shareToWhatsApp(imagePath, fortuneTitle);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.gallery:
-          await _saveToGallery(image, context);
+          if (!kIsWeb) {
+            await _saveToGallery(image, context);
+          } else {
+            // On web, just copy text
+            await _copyToClipboard(fortuneTitle, fortuneContent, context);
+          }
           break;
         case SharePlatform.copy:
           await _copyToClipboard(fortuneTitle, fortuneContent, context);
           break;
         default:
           // Use system share dialog
-          await Share.shareXFiles(
-            [XFile(imagePath)],
-            text: '$fortuneTitle\n\nFortune AI 운세 앱에서 확인하세요!',
-          );
+          if (imagePath != null) {
+            await Share.shareXFiles(
+              [XFile(imagePath)],
+              text: '$fortuneTitle\n\nFortune AI 운세 앱에서 확인하세요!'
+            );
+          } else {
+            // On web, just share text
+            await Share.share('$fortuneTitle\n\nFortune AI 운세 앱에서 확인하세요!');
+          }
       }
 
       // Clean up temporary file
-      Future.delayed(const Duration(seconds: 5), () {
-        if (imageFile.existsSync()) {
-          imageFile.deleteSync();
-        }
-      });
+      if (imageFile != null) {
+        Future.delayed(const Duration(seconds: 5), () {
+          if (imageFile?.existsSync() ?? false) {
+            imageFile?.deleteSync();
+          }
+        });
+      }
     } catch (e) {
       Logger.error('Failed to share fortune', e);
       if (context.mounted) {
@@ -251,7 +305,7 @@ class ScreenshotDetectionService {
       // For now, use system share with pre-filled text
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세',
+        text: '🌟 $title\n\n$content\n\n#운세 #FortuneAI #오늘의운세'
       );
     } catch (e) {
       Logger.error('Failed to share to KakaoTalk', e);
@@ -265,7 +319,7 @@ class ScreenshotDetectionService {
       // Instagram Stories sharing
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text: '나만의 운세를 확인해보세요! 🔮',
+        text: '나만의 운세를 확인해보세요! 🔮'
       );
     } catch (e) {
       Logger.error('Failed to share to Instagram', e);
@@ -278,7 +332,7 @@ class ScreenshotDetectionService {
     try {
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세',
+        text: '🌟 $title - Fortune AI에서 확인한 오늘의 운세'
       );
     } catch (e) {
       Logger.error('Failed to share to Facebook', e);
@@ -291,7 +345,7 @@ class ScreenshotDetectionService {
     try {
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세',
+        text: '🌟 $title\n\n#운세 #FortuneAI #오늘의운세 #AI운세'
       );
     } catch (e) {
       Logger.error('Failed to share to Twitter', e);
@@ -304,7 +358,7 @@ class ScreenshotDetectionService {
     try {
       await Share.shareXFiles(
         [XFile(imagePath)],
-        text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!',
+        text: '🌟 $title\n\nFortune AI에서 확인한 오늘의 운세입니다!'
       );
     } catch (e) {
       Logger.error('Failed to share to WhatsApp', e);
@@ -326,10 +380,10 @@ class ScreenshotDetectionService {
           SnackBar(
             content: Text(
               result['isSuccess'] == true 
-                ? '이미지가 갤러리에 저장되었습니다' 
+                ? '이미지가 갤러리에 저장되었습니다'
                 : '저장 중 오류가 발생했습니다',
             ),
-            backgroundColor: result['isSuccess'] == true ? Colors.green : Colors.red,
+            backgroundColor: result['isSuccess'] == true ? AppColors.success : AppColors.error,
           ),
         );
       }
@@ -348,7 +402,7 @@ class ScreenshotDetectionService {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세가 클립보드에 복사되었습니다'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -358,7 +412,7 @@ class ScreenshotDetectionService {
     }
   }
   
-  /// Capture and share fortune with custom styling (legacy method for compatibility)
+  /// Capture and share fortune with custom styling (legacy method for compatibility,
   Future<void> captureAndShareFortune({
     required GlobalKey captureKey,
     required String fortuneTitle,
@@ -376,7 +430,7 @@ class ScreenshotDetectionService {
       );
     }
   }
-  /// Save fortune image to gallery (legacy method for compatibility)
+  /// Save fortune image to gallery (legacy method for compatibility,
   Future<bool> saveFortuneToGallery({
     required GlobalKey captureKey,
     required String fortuneTitle,

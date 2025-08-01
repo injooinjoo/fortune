@@ -1,7 +1,10 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
 
 class FortuneBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -65,14 +68,14 @@ class FortuneBottomNavigationBar extends StatelessWidget {
         border: Border(
           top: BorderSide(
             color: context.fortuneTheme.dividerColor,
-            width: 0.5,
+            width: AppSpacing.spacing0 * 0.5,
           ),
         ),
       ),
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 56,
+          height: AppDimensions.buttonHeightLarge,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
@@ -144,22 +147,17 @@ class _NavItemWidget extends StatelessWidget {
           children: [
             Icon(
               isSelected ? item.selectedIcon : item.icon,
-              size: 24,
+              size: AppDimensions.iconSizeMedium,
               color: isSelected 
                 ? theme.colorScheme.primary 
                 : context.fortuneTheme.subtitleText,
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: AppSpacing.spacing1),
             Text(
               item.label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected 
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isSelected 
                   ? theme.colorScheme.primary 
-                  : context.fortuneTheme.subtitleText,
-              ),
-            ),
+                  : context.fortuneTheme.subtitleText)),
           ],
         ),
       ),

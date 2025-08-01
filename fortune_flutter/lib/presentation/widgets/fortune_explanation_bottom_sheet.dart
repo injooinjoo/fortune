@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,37 +9,40 @@ import '../../core/constants/fortune_type_names.dart';
 import '../../data/fortune_explanations.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/screens/ad_loading_screen.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
   final String fortuneType;
   final Map<String, dynamic>? fortuneData;
   final VoidCallback? onFortuneButtonPressed;
   
-  const FortuneExplanationBottomSheet({
+  const FortuneExplanationBottomSheet(
+    {
     super.key,
     required this.fortuneType,
     this.fortuneData,
     this.onFortuneButtonPressed,
-  });
+  )});
 
   static Future<void> show(
     BuildContext context, {
     required String fortuneType,
     Map<String, dynamic>? fortuneData,
     VoidCallback? onFortuneButtonPressed,
-  }) {
+  )}) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       isDismissible: true,
-      enableDrag: true,
-      builder: (context) => FortuneExplanationBottomSheet(
-        fortuneType: fortuneType,
+      enableDrag: true),
+        builder: (context) => FortuneExplanationBottomSheet(,
+      fortuneType: fortuneType,
         fortuneData: fortuneData,
-        onFortuneButtonPressed: onFortuneButtonPressed,
-      ),
-    );
+        onFortuneButtonPressed: onFortuneButtonPressed)
+      ))
   }
 
   @override
@@ -61,8 +66,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
+      vsync: this),
+        duration: AppAnimations.durationMedium
     );
     _animationController.forward();
     _loadUserProfile();
@@ -103,109 +108,101 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     final screenHeight = MediaQuery.of(context).size.height;
     
     return AnimatedBuilder(
-      animation: _animationController,
-      builder: (context, child) {
+      animation: _animationController),
+        builder: (context, child) {
         return Container(
           height: screenHeight * 0.9,
-          child: Stack(
-            children: [
+          child: Stack(,
+      children: [
               Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24),
+                decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        ),
+        borderRadius: const BorderRadius.only(,
+      topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
+      boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: AppColors.textPrimary.withValues(alph,
+      a: 0.1),
                       blurRadius: 20,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
+                      offset: const Offset(0, -5))
+                  ])
+                child: Column(,
+      children: [
                     _buildHandle(),
                     _buildHeader(theme),
                     Expanded(
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                      child: SingleChildScrollView(,
+      controller: _scrollController,
+              ),
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing5),
+                        child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
                             _buildFortuneTypeSection(theme),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AppSpacing.spacing6),
                             _buildFortuneSettingsSection(theme),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AppSpacing.spacing6),
                             _buildCustomFortuneSection(theme),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AppSpacing.spacing6),
                             _buildScoreGuideSection(theme),
-                            const SizedBox(height: 24),
+                            SizedBox(height: AppSpacing.spacing6),
                             _buildLuckyItemsSection(theme),
                             // Removed user info section as requested
-                            // const SizedBox(height: 24),
+                            // SizedBox(height: AppSpacing.spacing6),
                             // _buildRequiredInfoSection(theme),
-                            const SizedBox(height: 100),
-                          ],
-                        ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                            SizedBox(height: AppSpacing.spacing24 * 1.04),
+                          ])).animate().fadeIn(duration: 400.ms, delay: 100.ms))))
+                  ])))
               _buildBottomButton(context),
-            ],
-          ),
-        );
-      },
+            ])))
+      }
     );
   }
 
   Widget _buildHandle() {
     return Container(
-      margin: const EdgeInsets.only(top: 12, bottom: 8),
+      margin: const EdgeInsets.only(to,
+      p: AppSpacing.small, bottom: AppSpacing.xSmall),
       width: 40,
       height: 4,
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
+      decoration: BoxDecoration(,
+      color: AppColors.textSecondary,
+        ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
+      )
   }
 
   Widget _buildHeader(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey[200]!,
-            width: 1,
-          ),
+      padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing5, vertical: AppSpacing.spacing4),
+      decoration: BoxDecoration(,
+      border: Border(,
+      bottom: BorderSide(,
+      color: AppColors.divider,
+            width: 1)
+          ))))
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    '${FortuneTypeNames.getName(widget.fortuneType,
+  )} 가이드',
+            style: theme.textTheme.headlineSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.grey[100],
-              shape: const CircleBorder(),
-            ),
-          ),
-        ],
-      ),
-    );
+            style: IconButton.styleFrom(,
+      backgroundColor: AppColors.surface),
+        shape: const CircleBorder())))
+        ])))
   }
 
   Widget _buildFortuneSettingsSection(ThemeData theme) {
@@ -213,158 +210,138 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       title: '운세 설정',
       icon: Icons.settings,
       color: theme.colorScheme.secondary,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '정확한 운세를 위해 아래 정보를 입력해주세요.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 16),
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Name input
           TextField(
-            controller: _nameController,
-            onChanged: (_) => _checkFormValidity(),
-            decoration: InputDecoration(
-              labelText: '이름',
-              hintText: '이름을 입력하세요',
-              prefixIcon: const Icon(Icons.person),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: Colors.grey[50],
-            ),
-          ),
-          const SizedBox(height: 16),
+            controller: _nameController),
+        onChanged: (_) => _checkFormValidity(),
+            decoration: InputDecoration(,
+      labelText: '이름',
+              hintText: '이름을 입력하세요'),
+        prefixIcon: const Icon(Icons.person),
+              border: OutlineInputBorder(,
+      borderRadius: AppDimensions.borderRadiusMedium),
+      filled: true,
+              fillColor: AppColors.surface)))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Birth date picker
           InkWell(
             onTap: () async {
               final picked = await showDatePicker(
-                context: context,
-                initialDate: _selectedDate ?? DateTime.now(),
+                context: context),
+        initialDate: _selectedDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now()
               if (picked != null) {
                 setState(() {
                   _selectedDate = picked;
                   _checkFormValidity();
                 });
               }
-            },
-            child: InputDecorator(
-              decoration: InputDecoration(
-                labelText: '생년월일',
-                prefixIcon: const Icon(Icons.calendar_today),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: Colors.grey[50],
-              ),
-              child: Text(
+            }
+            child: InputDecorator(,
+      decoration: InputDecoration(,
+      labelText: '생년월일'),
+        prefixIcon: const Icon(Icons.calendar_today),
+                border: OutlineInputBorder(,
+      borderRadius: AppDimensions.borderRadiusMedium),
+      filled: true,
+                fillColor: AppColors.surface),
+      child: Text(
                 _selectedDate != null
-                    ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
-                    : '생년월일을 선택하세요',
-                style: TextStyle(
-                  color: _selectedDate != null ? Colors.black : Colors.grey[600],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
+                    ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'),
+                    : '생년월일을 선택하세요'
+                style: TextStyle(,
+      color: _selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary))))))))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Gender selection
           Row(
             children: [
               Expanded(
-                child: _buildChoiceChip(
-                  label: '남성',
+                child: _buildChoiceChip(,
+      label: '남성',
                   icon: Icons.male,
-                  selected: _selectedGender == 'male',
-                  onSelected: (selected) {
+                  selected: _selectedGender == 'male'),
+        onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'male';
                         _checkFormValidity();
                       });
                     }
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
+                  })))
+              SizedBox(width: AppSpacing.spacing3),
               Expanded(
-                child: _buildChoiceChip(
-                  label: '여성',
+                child: _buildChoiceChip(,
+      label: '여성',
                   icon: Icons.female,
-                  selected: _selectedGender == 'female',
-                  onSelected: (selected) {
+                  selected: _selectedGender == 'female'),
+        onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'female';
                         _checkFormValidity();
                       });
                     }
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+                  })))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           
-          // MBTI selection (optional)
+          // MBTI selection (optional,
           Text(
             '추가 정보 (선택사항)',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
+            style: theme.textTheme.titleSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing3),
           
           // MBTI dropdown
           DropdownButtonFormField<String>(
             value: _selectedMbti,
-            decoration: InputDecoration(
-              labelText: 'MBTI',
-              prefixIcon: const Icon(Icons.psychology),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              filled: true,
-              fillColor: Colors.grey[50],
-            ),
-            items: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
+            decoration: InputDecoration(,
+      labelText: 'MBTI'),
+        prefixIcon: const Icon(Icons.psychology),
+              border: OutlineInputBorder(,
+      borderRadius: AppDimensions.borderRadiusMedium),
+      filled: true,
+              fillColor: AppColors.surface),
+      items: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
                     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']
                 .map((mbti) => DropdownMenuItem(
-                      value: mbti,
-                      child: Text(mbti),
-                    ))
+                      value: mbti),
+        child: Text(mbti))
                 .toList(),
             onChanged: (value) {
               setState(() {
                 _selectedMbti = value;
               });
-            },
-          ),
-          const SizedBox(height: 16),
+            })
+          SizedBox(height: AppSpacing.spacing4),
           
           // Blood type selection
           Row(
             children: [
               Text(
                 '혈액형: ',
-                style: theme.textTheme.bodyMedium,
-              ),
-              const SizedBox(width: 8),
+                style: theme.textTheme.bodyMedium)
+              SizedBox(width: AppSpacing.spacing2),
               ...['A', 'B', 'AB', 'O'].map((type) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: ChoiceChip(
-                  label: Text(type),
+                padding: const EdgeInsets.only(righ,
+      t: AppSpacing.xSmall),
+                child: ChoiceChip(,
+      label: Text(type),
                   selected: _selectedBloodType == type,
                   onSelected: (selected) {
                     if (selected) {
@@ -372,38 +349,33 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         _selectedBloodType = type;
                       });
                     }
-                  },
-                ),
-              )),
-            ],
-          ),
-        ],
-      ),
-    );
+                  }))))
+            ])
+        ]
+      )
   }
   
   Widget _buildChoiceChip({
     required String label,
     required IconData icon,
-    required bool selected,
+    required bool selected)
     required Function(bool) onSelected,
   }) {
     final theme = Theme.of(context);
     return FilterChip(
-      label: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      label: Row(,
+      mainAxisAlignment: MainAxisAlignment.center),
         children: [
           Icon(icon, size: 18),
-          const SizedBox(width: 4),
+          SizedBox(width: AppSpacing.spacing1),
           Text(label),
-        ],
-      ),
+        ])
       selected: selected,
       onSelected: onSelected,
-      backgroundColor: Colors.grey[100],
-      selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
-      checkmarkColor: theme.colorScheme.primary,
-    );
+      backgroundColor: AppColors.surface,
+      selectedColor: theme.colorScheme.primary.withValues(alph,
+      a: 0.2),
+      checkmarkColor: theme.colorScheme.primary)
   }
 
   Widget _buildFortuneTypeSection(ThemeData theme) {
@@ -413,30 +385,27 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       title: '${explanation['title']} 안내',
       icon: Icons.auto_awesome,
       color: theme.colorScheme.primary,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             explanation['description'] ?? '',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 16),
+              ),
+              style: theme.textTheme.bodyLarge?.copyWith(,
+      height: 1.6,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           _buildInfoCard(
             theme,
-            title: '운세 특징',
-            content: List<String>.from(explanation['features'] ?? []),
-          ),
-          const SizedBox(height: 12),
+            title: '운세 특징'),
+        content: List<String>.from(explanation['features'] ?? []))
+          SizedBox(height: AppSpacing.spacing3),
           _buildInfoCard(
             theme,
-            title: '활용 팁',
-            content: List<String>.from(explanation['tips'] ?? []),
-          ),
-        ],
-      ),
-    );
+            title: '활용 팁'),
+        content: List<String>.from(explanation['tips'] ?? []))
+        ]
+      )
   }
 
   Widget _buildCustomFortuneSection(ThemeData theme) {
@@ -499,85 +468,77 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (visualSection != null) ...[
           visualSection,
-          const SizedBox(height: 24),
-        ],
+          SizedBox(height: AppSpacing.spacing6),
+        ]
         if (hasSpecialNote)
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.2),
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.05),
+              borderRadius: AppDimensions.borderRadiusMedium,
+              border: Border.all(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.2))),
+      child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
                   Icons.info,
                   color: theme.colorScheme.primary,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
+                  size: AppDimensions.iconSizeMedium)
+                SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Text(
                     specialNote,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      height: 1.5,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        if (hasSpecialNote && hasCustomSections) const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.5,
+                          ),
+              color: theme.colorScheme.primary)
+                    ))))
+              ])))
+        if (hasSpecialNote && hasCustomSections) SizedBox(height: AppSpacing.spacing4),
         if (hasCustomSections)
           Column(
             children: customSections!.entries.map((entry) {
               final section = entry.value as Map<String, dynamic>;
               return Container(
-                margin: const EdgeInsets.only(bottom: 16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                margin: const EdgeInsets.only(botto,
+      m: AppSpacing.medium),
+                padding: AppSpacing.paddingAll16,
+                decoration: BoxDecoration(,
+      gradient: LinearGradient(
                     colors: [
                       theme.colorScheme.primary.withValues(alpha: 0.05),
                       theme.colorScheme.primary.withValues(alpha: 0.02),
-                    ],
+                    ]
                     begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                    end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusMedium,
+                  border: Border.all(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      section['title'] ?? '',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                        Text(
+                          section['title'] ?? '',
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ),
+              color: theme.colorScheme.primary)
+                      ))
+                    SizedBox(height: AppSpacing.spacing2),
                     Text(
                       section['description'] ?? '',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-      ],
-    );
+                          style: theme.textTheme.bodyMedium?.copyWith(,
+      height: 1.5,
+                          ))))
+                  ])))
+            }).toList())
+      ])
   }
 
   Widget _buildScoreGuideSection(ThemeData theme) {
@@ -586,9 +547,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return _buildSection(
       title: '점수 해석 방법',
       icon: Icons.analytics,
-      color: context.fortuneTheme.scoreExcellent,
-      child: Column(
-        children: scoreInterpretations.map((interpretation) {
+      color: context.fortuneTheme.scoreExcellent),
+        child: Column(,
+      children: scoreInterpretations.map((interpretation) {
           final score = interpretation['range']!;
           Color color;
           if (score.startsWith('90')) {
@@ -604,16 +565,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           }
           
           return _buildExpandableScoreItem(
-            theme,
+    theme,
             interpretation['range']!,
             interpretation['label']!,
             interpretation['description']!,
             interpretation['advice']!,
             color,
-          );
-        }).toList(),
-      ),
-    );
+  )}).toList(),
+      )
   }
 
   Widget _buildLuckyItemsSection(ThemeData theme) {
@@ -622,33 +581,33 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return _buildSection(
       title: '행운 아이템 의미',
       icon: Icons.stars,
-      color: Colors.amber,
-      child: Column(
-        children: [
-          if (luckyItemExplanations.containsKey('color'))
+      color: Colors.amber),
+        child: Column(,
+      children: [
+          if (luckyItemExplanations.containsKey('color'),
             _buildEnhancedLuckyItem(theme, 'color', Icons.palette, luckyItemExplanations['color']!),
-          if (luckyItemExplanations.containsKey('number'))
+          if (luckyItemExplanations.containsKey('number'),
             _buildEnhancedLuckyItem(theme, 'number', Icons.looks_one, luckyItemExplanations['number']!),
-          if (luckyItemExplanations.containsKey('direction'))
+          if (luckyItemExplanations.containsKey('direction'),
             _buildEnhancedLuckyItem(theme, 'direction', Icons.explore, luckyItemExplanations['direction']!),
-          if (luckyItemExplanations.containsKey('time'))
+          if (luckyItemExplanations.containsKey('time'),
             _buildEnhancedLuckyItem(theme, 'time', Icons.access_time, luckyItemExplanations['time']!),
-          if (luckyItemExplanations.containsKey('food'))
+          if (luckyItemExplanations.containsKey('food'),
             _buildEnhancedLuckyItem(theme, 'food', Icons.restaurant, luckyItemExplanations['food']!),
-          if (luckyItemExplanations.containsKey('person'))
+          if (luckyItemExplanations.containsKey('person'),
             _buildEnhancedLuckyItem(theme, 'person', Icons.person, luckyItemExplanations['person']!),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
 
-  Widget _buildSection({
+  Widget _buildSection(
+    {
     required String title,
     required IconData icon,
     required Color color,
     required Widget child,
-  }) {
+  )}) {
     final theme = Theme.of(context);
     
     return Column(
@@ -657,67 +616,65 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(width: 12),
+              padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Icon(icon, color: color, size: AppDimensions.iconSizeSmall))
+            SizedBox(width: AppSpacing.spacing3),
             Text(
               title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
-        const SizedBox(height: 16),
+        style: theme.textTheme.titleLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          ])
+        SizedBox(height: AppSpacing.spacing4),
         child,
-      ],
+      ]
     );
   }
 
-  Widget _buildInfoCard(ThemeData theme, {
+  Widget _buildInfoCard(
+    ThemeData theme, {
     required String title,
     required List<String> content,
-  }) {
+  )}) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: AppColors.surface,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: AppColors.divider),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing2),
           ...content.map((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('• ', style: TextStyle(color: theme.colorScheme.primary)),
+            padding: const EdgeInsets.only(botto,
+      m: AppSpacing.xxSmall),
+            child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text('• ', style: TextStyle(colo,
+      r: theme.colorScheme.primary)
                 Expanded(
                   child: Text(
                     item,
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-          )),
-        ],
-      ),
-    );
+                    style: theme.textTheme.bodyMedium)
+                  ))
+              ]))))
+        ]
+      )
   }
 
   Widget _buildExpandableScoreItem(
@@ -726,150 +683,143 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     String label,
     String description,
     String advice,
-    Color color,
+    Color color)
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Theme(
-        data: theme.copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+      decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(color: color.withValues(alp,
+      ha: 0.2)),
+      child: Theme(,
+      data: theme.copyWith(dividerColo,
+      r: Colors.transparent),
+        child: ExpansionTile(,
+      tilePadding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          leading: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
+          leading: Container(,
+      padding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+            decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.2),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
+      child: Text(
               range,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+        ),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: color,
+                          ),
+        fontWeight: FontWeight.bold)
+              ))))
           title: Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
           subtitle: Text(
-            description,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: Colors.grey[600],
-            ),
-          ),
+          description,
+          style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: AppSpacing.paddingAll12,
+              decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+                borderRadius: AppDimensions.borderRadiusSmall),
+      child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    size: 20,
-                    color: color,
-                  ),
-                  const SizedBox(width: 8),
+                    size: AppDimensions.iconSizeSmall,
+                    color: color)
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       advice,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
-      ),
-    );
+        style: theme.textTheme.bodySmall?.copyWith(,
+      height: 1.5,
+                          ))))))
+                ])))
+          ])
+      )
   }
 
   Widget _buildEnhancedLuckyItem(
     ThemeData theme,
     String type,
     IconData icon,
-    Map<String, String> itemData,
+    Map<String, String> itemData)
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.amber.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+      padding: AppSpacing.paddingAll12,
+      decoration: BoxDecoration(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.05),
+        borderRadius: AppDimensions.borderRadiusMedium,
+        border: Border.all(color: Colors.amber.withValues(alp,
+      ha: 0.2)),
+      child: Row(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.amber.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 20, color: Colors.amber[700]),
-          ),
-          const SizedBox(width: 12),
+            width: AppDimensions.buttonHeightSmall,
+            height: AppDimensions.buttonHeightSmall,
+        ),
+        decoration: BoxDecoration(,
+      color: Colors.amber.withValues(alp,
+      ha: 0.2),
+              shape: BoxShape.circle),
+      child: Icon(
+                icon, size: AppDimensions.iconSizeSmall, color: Colors.amber[700]))
+          SizedBox(width: AppSpacing.spacing3),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  itemData['title'] ?? '',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
+                        Text(
+                          itemData['title'] ?? '',
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+                SizedBox(height: AppSpacing.spacing1),
                 Text(
                   itemData['description'] ?? '',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[700],
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 4),
+                          style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textPrimary,
+                          ),
+        height: 1.4)
+                  ))
+                SizedBox(height: AppSpacing.spacing1),
                 Row(
                   children: [
                     Icon(
                       Icons.tips_and_updates,
                       size: 14,
-                      color: Colors.amber[600],
-                    ),
-                    const SizedBox(width: 4),
+                      color: Colors.amber[600])
+                    SizedBox(width: AppSpacing.spacing1),
                     Expanded(
                       child: Text(
                         itemData['usage'] ?? '',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.amber[800],
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ),
+              style: theme.textTheme.bodySmall?.copyWith(,
+      color: Colors.amber[800],
+                          ),
+                          fontStyle: FontStyle.italic)))))
+                  ])
+              ])))
+        ]
+      )
   }
 
 
@@ -886,110 +836,102 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       title: '내 정보',
       icon: Icons.person_outline,
       color: Colors.indigo,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Expanded(
                 child: Text(
                   '운세 생성에 사용되는 내 정보입니다.',
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
               ),
+              style: theme.textTheme.bodyLarge?.copyWith(,
+      height: 1.6,
+                          ))))))
               if (missingRequiredInfo.isNotEmpty)
                 TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pop();
                     context.go('/profile');
-                  },
-                  icon: Icon(Icons.edit, size: 16),
+                  }
+                  icon: Icon(Icons.edit, size: AppDimensions.iconSizeXSmall),
                   label: Text('수정'),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.indigo,
-                  ),
-                ),
-            ],
-          ),
+                  style: TextButton.styleFrom(,
+      foregroundColor: Colors.indigo))))
+            ])
           if (missingRequiredInfo.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.spacing2),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.orange[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.orange[200]!),
-              ),
-              child: Row(
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+              decoration: BoxDecoration(,
+      color: AppColors.warning.withValues(alp,
+      ha: 0.1),
+                borderRadius: AppDimensions.borderRadiusSmall,
+                border: Border.all(color: AppColors.warning.withValues(alp,
+      ha: 0.3)),
+      child: Row(
                 children: [
                   Icon(Icons.warning_amber_rounded, 
-                    color: Colors.orange[700], 
-                    size: 20
+                    color: AppColors.warning,
+        ),
+        size: AppDimensions.iconSizeSmall
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
-                      '더 정확한 운세를 위해 추가 정보를 입력해주세요.',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.orange[700],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          const SizedBox(height: 16),
+                      '더 정확한 운세를 위해 추가 정보를 입력해주세요.'),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.warning,
+                          ))))))
+                ])))
+          ]
+          SizedBox(height: AppSpacing.spacing4),
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.indigo[50],
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.indigo[200]!),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: AppSpacing.paddingAll16,
+            decoration: BoxDecoration(,
+      color: Colors.indigo[50],
+      borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: Colors.indigo[200]!),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '필수 정보',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo[800],
-                  ),
-                ),
-                const SizedBox(height: 12),
+                        Text(
+                          '필수 정보',
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: Colors.indigo[800],
+                          )))
+                SizedBox(height: AppSpacing.spacing3),
                 ...requiredInfo['required']!.map((info) => _buildInfoItem(
                   theme,
                   info,
                   userInfo[info] != null && userInfo[info] != '',
-                  userInfo[info],
-                )),
+                  userInfo[info])
+                )
                 if (requiredInfo['optional']!.isNotEmpty) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: AppSpacing.spacing4),
                   Text(
                     '선택 정보',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.indigo[600],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                          style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: Colors.indigo[600],
+                          )))
+                  SizedBox(height: AppSpacing.spacing3),
                   ...requiredInfo['optional']!.map((info) => _buildInfoItem(
                     theme,
                     info,
                     userInfo[info] != null && userInfo[info] != '',
-                    userInfo[info],
-                    isOptional: true,
-                  )),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    userInfo[info]
+                    isOptional: true)
+                  )
+                ]
+              ])))
+        ]
+      )
   }
 
   Widget _buildInfoItem(
@@ -998,7 +940,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     bool hasInfo,
     dynamic infoValue, {
     bool isOptional = false,
-  }) {
+  )}) {
     final labels = {
       'name': '이름',
       'birthDate': '생년월일',
@@ -1014,69 +956,65 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     };
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
+      padding: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+      child: Row(,
+      children: [
           Icon(
             hasInfo ? Icons.check_circle : (isOptional ? Icons.circle_outlined : Icons.warning_amber_rounded),
-            size: 20,
-            color: hasInfo ? Colors.green : (isOptional ? Colors.grey : Colors.orange),
-          ),
-          const SizedBox(width: 12),
+            size: AppDimensions.iconSizeSmall,
+            color: hasInfo ? AppColors.success : (isOptional ? AppColors.textSecondary : AppColors.warning))
+          SizedBox(width: AppSpacing.spacing3),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  labels[infoType] ?? infoType,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: hasInfo ? null : Colors.grey[600],
-                  ),
-                ),
+                        Text(
+                          labels[infoType] ?? infoType,
+                          style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.w500),
+        color: hasInfo ? null : AppColors.textSecondary,
+                          )))
                 if (hasInfo)
                   Container(
-                    constraints: BoxConstraints(maxWidth: 180),
+                    constraints: BoxConstraints(maxWidt,
+      h: 180),
                     child: Text(
                       _formatInfoValue(infoType, infoValue),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.indigo[700],
-                        fontWeight: FontWeight.w600,
-                      ),
-                      textAlign: TextAlign.end,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )
+                      style: theme.textTheme.bodyMedium?.copyWith(,
+      color: Colors.indigo[700],
+                          ),
+        fontWeight: FontWeight.w600),
+      textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis)
+                  ,
                 else
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
                       context.go('/profile');
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isOptional ? Colors.grey[100] : Colors.orange[50],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isOptional ? Colors.grey[300]! : Colors.orange[300]!,
-                        ),
-                      ),
-                      child: Text(
+                    }
+                    child: Container(,
+      padding: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+                      decoration: BoxDecoration(,
+      color: isOptional ? AppColors.surface : AppColors.warning.withValues(alp,
+      ha: 0.1),
+                        borderRadius: AppDimensions.borderRadiusMedium,
+                        border: Border.all(,
+      color: isOptional ? AppColors.textSecondary! : AppColors.warning.withValues(alp,
+      ha: 0.5)!)),
+      child: Text(
                         '입력하기',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: isOptional ? Colors.grey[700] : Colors.orange[700],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+        ),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: isOptional ? AppColors.textPrimary : AppColors.warning,
+                          ),
+        fontWeight: FontWeight.bold)
+                        ))))))
+              ])))
+        ]
+      )
   }
 
   Map<String, List<String>> _getRequiredInfoForFortuneType(String fortuneType) {
@@ -1086,46 +1024,46 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       case 'monthly':
       case 'yearly':
         return {
-          'required': ['name', 'birthDate'],
-          'optional': ['birthTime', 'gender', 'mbti'],
+          'required': ['name', 'birthDate']
+          'optional': ['birthTime', 'gender', 'mbti']
         };
       case 'saju':
         return {
-          'required': ['name', 'birthDate', 'birthTime'],
-          'optional': ['gender', 'location'],
+          'required': ['name', 'birthDate', 'birthTime']
+          'optional': ['gender', 'location']
         };
       case 'mbti':
         return {
-          'required': ['name', 'mbti'],
-          'optional': ['birthDate', 'gender'],
+          'required': ['name', 'mbti']
+          'optional': ['birthDate', 'gender']
         };
       case 'zodiac':
         return {
-          'required': ['name', 'birthDate'],
-          'optional': ['birthTime'],
+          'required': ['name', 'birthDate']
+          'optional': ['birthTime']
         };
       case 'chemistry':
       case 'compatibility':
         return {
-          'required': ['name', 'birthDate', 'partnerName', 'partnerBirthDate'],
-          'optional': ['gender', 'mbti'],
+          'required': ['name', 'birthDate', 'partnerName', 'partnerBirthDate']
+          'optional': ['gender', 'mbti']
         };
       case 'love':
         return {
-          'required': ['name', 'birthDate'],
-          'optional': ['gender', 'mbti', 'bloodType'],
+          'required': ['name', 'birthDate']
+          'optional': ['gender', 'mbti', 'bloodType']
         };
       case 'career':
       case 'wealth':
       case 'business':
         return {
-          'required': ['name', 'birthDate'],
-          'optional': ['mbti', 'location'],
+          'required': ['name', 'birthDate']
+          'optional': ['mbti', 'location']
         };
       default:
         return {
-          'required': ['name', 'birthDate'],
-          'optional': ['gender', 'mbti'],
+          'required': ['name', 'birthDate']
+          'optional': ['gender', 'mbti']
         };
     }
   }
@@ -1139,21 +1077,21 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           // Extract additional info from preferences if available
           final prefs = profile.preferences ?? {};
           return {
-            'name': profile.name ?? '',
+            'name': profile.name ?? ''
             'birthDate': profile.birthDate,
-            'birthTime': prefs['birthTime'],
+            'birthTime': prefs['birthTime']
             'gender': profile.gender,
             'mbti': profile.mbtiType,
-            'bloodType': prefs['bloodType'],
+            'bloodType': prefs['bloodType']
             'zodiacSign': profile.zodiacSign,
-            'chineseZodiac': prefs['chineseZodiac'],
-            'location': prefs['location'],
+            'chineseZodiac': prefs['chineseZodiac']
+            'location': prefs['location']
           };
         }
         return {};
-      },
+      }
       loading: () => {},
-      error: (_, __) => {},
+      error: (_, __) => {}
     );
   }
 
@@ -1185,30 +1123,26 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       right: 0,
       bottom: 0,
       height: 100 + bottomPadding, // Add explicit height
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
+      child: Container(,
+      decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        ),
+        boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: AppColors.textPrimary.withValues(alph,
+      a: 0.1),
               blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 16,
-          bottom: bottomPadding + 16,
-        ),
-        child: ElevatedButton(
-          onPressed: _isFormValid ? () async {
+              offset: const Offset(0, -2))
+          ])
+        padding: EdgeInsets.only(to,
+      p: AppSpacing.medium, left: AppSpacing.large, right: AppSpacing.large),
+        child: ElevatedButton(,
+      onPressed: _isFormValid ? () async {
             // Save form data and generate fortune
             final fortuneParams = {
-              'name': _nameController.text,
+              'name': _nameController.text
               'birthDate': _selectedDate?.toIso8601String(),
-              'gender': _selectedGender,
+              'gender': _selectedGender
               'mbti': _selectedMbti,
               'bloodType': _selectedBloodType,
             };
@@ -1220,51 +1154,45 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             final isPremium = false;
             
             await Navigator.push(
-              context,
+              context)
               MaterialPageRoute(
-                builder: (context) => AdLoadingScreen(
-                  fortuneType: widget.fortuneType,
-                  fortuneTitle: FortuneTypeNames.getName(widget.fortuneType),
+                builder: (context) => AdLoadingScreen(,
+      fortuneType: widget.fortuneType),
+        fortuneTitle: FortuneTypeNames.getName(widget.fortuneType),
                   isPremium: isPremium,
                   fortuneParams: fortuneParams,
                   onComplete: () {
                     // Fortune generation completed
-                  },
+                  }
                   onSkip: () {
                     // User skipped ad
-                  },
-                ),
-              ),
-            );
+                  })
+              )
           } : null,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: _isFormValid ? theme.colorScheme.primary : Colors.grey[400],
-            foregroundColor: Colors.white,
+          style: ElevatedButton.styleFrom(,
+      backgroundColor: _isFormValid ? theme.colorScheme.primary : AppColors.textSecondary.withValues(alp,
+      ha: 0.4),
+            foregroundColor: AppColors.textPrimaryDark,
             minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            elevation: _isFormValid ? 4 : 0,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.auto_awesome, size: 24),
-              const SizedBox(width: 8),
+            shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusLarge),
+      elevation: _isFormValid ? 4 : 0),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center),
+        children: [
+              const Icon(Icons.auto_awesome, size: AppDimensions.iconSizeMedium),
+              SizedBox(width: AppSpacing.spacing2),
               Text(
-                _isFormValid ? '운세보기' : '정보를 입력해주세요',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ).animate()
+                _isFormValid ? '운세보기' : '정보를 입력해주세요'),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      color: AppColors.textPrimaryDark,
+                          ),
+        fontWeight: FontWeight.bold)
+                ))
+            ])))).animate()
           .fadeIn(duration: 300.ms)
           .slideY(begin: 0.2, end: 0, duration: 300.ms),
-      ),
-    );
+      )
   }
 
   // Visual component builders
@@ -1278,49 +1206,45 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (timeFlow != null) _buildTimeFlowChart(theme, timeFlow),
-        if (timeFlow != null && categories != null) const SizedBox(height: 20),
+        if (timeFlow != null && categories != null) SizedBox(height: AppSpacing.spacing5),
         if (categories != null) _buildCategoryScores(theme, categories),
-      ],
+      ]
     );
   }
 
   Widget _buildTimeFlowChart(ThemeData theme, List<dynamic> timeFlow) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             theme.colorScheme.primary.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: theme.colorScheme.primary.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.access_time,
                 color: theme.colorScheme.primary,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '24시간 운세 흐름',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           ...timeFlow.map((item) {
             final data = item as Map<String, dynamic>;
             final score = (data['score'] as num).toDouble();
@@ -1336,9 +1260,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             }
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+              child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -1346,101 +1271,86 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         width: 100,
                         child: Text(
                           data['time'] ?? '',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+              ),
+              style: theme.textTheme.bodySmall?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ))))))
                       Expanded(
-                        child: Stack(
-                          children: [
+                        child: Stack(,
+      children: [
                             Container(
-                              height: 24,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
+                              height: AppSpacing.spacing6,
+                              decoration: BoxDecoration(,
+      color: AppColors.divider,
+                                borderRadius: AppDimensions.borderRadiusMedium)
+                              ))
                             FractionallySizedBox(
                               widthFactor: score / 100,
-                              child: Container(
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
+                              child: Container(,
+      height: AppSpacing.spacing6,
+                                decoration: BoxDecoration(,
+      gradient: LinearGradient(
                                     colors: [
-                                      barColor,
+                                      barColor)
                                       barColor.withValues(alpha: 0.8),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
+                                    ])
+                                  borderRadius: AppDimensions.borderRadiusMedium,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: barColor.withValues(alpha: 0.3),
+                                      color: barColor.withValues(alph,
+      a: 0.3),
                                       blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                      offset: const Offset(0, 2))
+                                  ])))))
                             Positioned.fill(
-                              child: Center(
-                                child: Text(
-                                  '${score.toInt()}%',
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: score >= 50 ? Colors.white : Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
+    child: Center(,
+      child: Text(
+                                  '${score.toInt(,
+  )}%',
+                                  style: theme.textTheme.labelSmall?.copyWith(,
+      color: score >= 50 ? AppColors.textPrimaryDark : AppColors.textPrimary.withValues(alp,
+      ha: 0.87, fontWeight: FontWeight.bold,
+                          ))))))))
+                          ])))
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        data['icon'] ?? '',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
+                        data['icon'] ?? ''),
+        style: Theme.of(context).textTheme.headlineSmall,
+                    ])
                   if (data['label'] != null)
                     Padding(
-                      padding: const EdgeInsets.only(left: 108, top: 4),
+                      padding: const EdgeInsets.only(to,
+      p: AppSpacing.xxSmall, left: AppSpacing.spacing108).value),
                       child: Text(
-                        data['label'],
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            );
+                        data['label']),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildCategoryScores(ThemeData theme, Map<String, dynamic> categories) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: AppColors.surface,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: AppColors.divider),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '분야별 운세',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing3),
           Row(
             children: categories.entries.map((entry) {
               final score = entry.value as num;
@@ -1456,41 +1366,37 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               }
               
               return Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: scoreColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: scoreColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Column(
+                child: Container(,
+      margin: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing1),
+                  padding: AppSpacing.paddingAll12,
+                  decoration: BoxDecoration(,
+      color: scoreColor.withValues(alp,
+      ha: 0.1),
+                    borderRadius: AppDimensions.borderRadiusSmall,
+                    border: Border.all(,
+      color: scoreColor.withValues(alp,
+      ha: 0.3))),
+      child: Column(
                     children: [
                       Text(
                         entry.key,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+        ),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ))))
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        '${score}점',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: scoreColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                        '${score}점'),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      color: scoreColor,
+                          ),
+        fontWeight: FontWeight.bold)
+                        ))
+                    ])))))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildSajuVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1503,194 +1409,176 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (fourPillars != null) _buildFourPillarsChart(theme, fourPillars),
-        if (fourPillars != null && fiveElements != null) const SizedBox(height: 20),
+        if (fourPillars != null && fiveElements != null) SizedBox(height: AppSpacing.spacing5),
         if (fiveElements != null) _buildFiveElementsChart(theme, fiveElements),
-      ],
+      ]
     );
   }
 
   Widget _buildFourPillarsChart(ThemeData theme, List<dynamic> pillars) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.deepPurple.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.deepPurple.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.2))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.view_column,
                 color: Colors.deepPurple,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '사주의 구성',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           Row(
             children: pillars.map((item) {
               final pillar = item as Map<String, dynamic>;
               return Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.deepPurple.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Column(
+                child: Container(,
+      margin: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing1),
+                  padding: AppSpacing.paddingAll12,
+                  decoration: BoxDecoration(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.1),
+                    borderRadius: AppDimensions.borderRadiusSmall,
+                    border: Border.all(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.3))),
+      child: Column(
                     children: [
-                      Text(
-                        pillar['pillar'] ?? '',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          pillar['value'] ?? '',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        Text(
+                          pillar['pillar'] ?? '',
+        ),
+        style: theme.textTheme.titleSmall?.copyWith(,
+      color: Colors.deepPurple,
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
+        fontWeight: FontWeight.bold)
+                        ))
+                      SizedBox(height: AppSpacing.spacing2),
+                      Container(
+                        padding: AppSpacing.paddingAll8,
+                        decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        ),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
+      child: Text(
+                          pillar['value'] ?? '',
+              ),
+              style: theme.textTheme.bodyLarge?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))))
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
                         pillar['label'] ?? '',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.grey[600],
-                        ),
-                      ),
+                          style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
                       Text(
-                        pillar['description'] ?? '',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.grey[500],
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                        pillar['description'] ?? ''),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+                    ])))))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildFiveElementsChart(ThemeData theme, Map<String, dynamic> elements) {
     final elementColors = {
-      '목': Colors.green,
-      '화': Colors.red,
+      '목': AppColors.success,
+      '화': AppColors.error,
       '토': Colors.yellow[700]!,
-      '금': Colors.grey,
-      '수': Colors.blue,
+      '금': AppColors.textSecondary,
+      '수': AppColors.primary,
     };
     
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: AppColors.surface,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: AppColors.divider),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '오행의 균형',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+                        Text(
+                          '오행의 균형',
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           ...elements.entries.map((entry) {
             final element = entry.key;
             final value = (entry.value as num).toDouble();
-            final color = elementColors[element] ?? Colors.grey;
+            final color = elementColors[element] ?? AppColors.textSecondary;
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+              child: Row(,
+      children: [
                   SizedBox(
                     width: 30,
                     child: Text(
                       element,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                          style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: color,
+                          )))))
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
-                    child: Stack(
-                      children: [
+                    child: Stack(,
+      children: [
                         Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
+                          height: AppSpacing.spacing5,
+                          decoration: BoxDecoration(,
+      color: AppColors.divider,
+        ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))
                         FractionallySizedBox(
                           widthFactor: value / 100,
-                          child: Container(
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: color,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                          child: Container(,
+      height: AppSpacing.spacing5,
+                            decoration: BoxDecoration(,
+      color: color,
+        ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))))
+                      ])))
+                  SizedBox(width: AppSpacing.spacing2),
                   Text(
-                    '${value.toInt()}%',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            );
+    '${value.toInt(,
+  )}%',
+                    style: theme.textTheme.bodySmall?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ))))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildMbtiVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1702,50 +1590,47 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (typeGroups != null) _buildMbtiTypeGroups(theme, typeGroups),
-      ],
+      ]
     );
   }
 
   Widget _buildMbtiTypeGroups(ThemeData theme, List<dynamic> groups) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             theme.colorScheme.secondary.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: theme.colorScheme.secondary.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.groups,
                 color: theme.colorScheme.secondary,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 'MBTI 성격 유형 그룹',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           GridView.count(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+              ),
+              physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
             childAspectRatio: 1.5,
             crossAxisSpacing: 12,
@@ -1756,47 +1641,43 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               final types = group['types'] as List<dynamic>;
               
               return Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: color.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: AppSpacing.paddingAll12),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusMedium,
+                  border: Border.all(,
+      color: color.withValues(alp,
+      ha: 0.3))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       group['group'] ?? '',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+        ),
+        style: theme.textTheme.titleSmall?.copyWith(,
+      color: color,
+                          ),
+        fontWeight: FontWeight.bold)
+                      ))
+                    SizedBox(height: AppSpacing.spacing1),
                     Text(
                       types.join(', '),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                      style: theme.textTheme.labelSmall?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          )))
                     const Spacer(),
                     Text(
                       group['characteristics'] ?? '',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.grey[600],
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+              ),
+              style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+                  ])))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildZodiacVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1808,50 +1689,47 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (zodiacWheel != null) _buildZodiacWheel(theme, zodiacWheel),
-      ],
+      ]
     );
   }
 
   Widget _buildZodiacWheel(ThemeData theme, List<dynamic> zodiacSigns) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.purple.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.purple.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.purple.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.stars,
                 color: Colors.purple,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '12궁도 별자리',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           GridView.count(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+              ),
+              physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 3,
             childAspectRatio: 1.2,
             crossAxisSpacing: 8,
@@ -1859,100 +1737,90 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             children: zodiacSigns.map((item) {
               final sign = item as Map<String, dynamic>;
               final elementColors = {
-                '불': Colors.red,
+                '불': AppColors.error,
                 '흙': Colors.brown,
                 '공기': Colors.lightBlue,
-                '물': Colors.blue,
+                '물': AppColors.primary,
               };
               final color = elementColors[sign['element']] ?? Colors.purple;
               
               return Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: color.withValues(alpha: 0.3),
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                padding: AppSpacing.paddingAll8),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.1),
+                  borderRadius: AppDimensions.borderRadiusSmall,
+                  border: Border.all(,
+      color: color.withValues(alp,
+      ha: 0.3))),
+      child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      sign['symbol'] ?? '',
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    const SizedBox(height: 4),
+                        Text(
+                          sign['symbol'] ?? '',
+        ),
+        style: Theme.of(context).textTheme.headlineMedium,
+                    SizedBox(height: AppSpacing.spacing1),
                     Text(
                       sign['sign'] ?? '',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              ),
+              style: theme.textTheme.labelSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
                     Text(
                       sign['period'] ?? '',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontSize: 9,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                          style: theme.textTheme.labelSmall?.copyWith(,
+      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                          ),
+                        color: AppColors.textSecondary)))
+                  ])))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildZodiacAnimalVisuals(ThemeData theme, Map<String, dynamic> explanation) {
     // Simple display for zodiac animals
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
-            Colors.orange.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.warning.withValues(alpha: 0.05),
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.orange.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: AppColors.warning.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.pets,
-                color: Colors.orange,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                color: AppColors.warning,
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '12지신 동물 띠',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           Text(
             '띠별 상성 관계와 특성을 확인하세요',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
+        ]
+      )
   }
 
   Widget _buildTarotVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1964,128 +1832,115 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (tarotCards != null) _buildTarotSpread(theme, tarotCards),
-      ],
+      ]
     );
   }
 
   Widget _buildTarotSpread(ThemeData theme, List<dynamic> cards) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.deepPurple.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.deepPurple.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.style,
                 color: Colors.deepPurple,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '타로 카드 스프레드',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           Row(
             children: cards.map((item) {
               final card = item as Map<String, dynamic>;
               return Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                child: Container(,
+      margin: EdgeInsets.symmetric(horizont,
+      al: AppSpacing.spacing1),
+                  padding: AppSpacing.paddingAll12,
+                  decoration: BoxDecoration(,
+      gradient: LinearGradient(
                       colors: [
                         Colors.deepPurple.withValues(alpha: 0.1),
                         Colors.deepPurple.withValues(alpha: 0.05),
-                      ],
+                      ]
                       begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.deepPurple.withValues(alpha: 0.3),
-                    ),
-                    boxShadow: [
+                      end: Alignment.bottomCenter),
+      borderRadius: AppDimensions.borderRadiusMedium,
+                    border: Border.all(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.3),
+      boxShadow: [
                       BoxShadow(
-                        color: Colors.deepPurple.withValues(alpha: 0.1),
+                        color: Colors.deepPurple.withValues(alph,
+      a: 0.1),
                         blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        card['position'] ?? '',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                        offset: const Offset(0, 4))
+                    ])
+                  child: Column(,
+      children: [
+                        Text(
+                          card['position'] ?? '',
+        ),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: Colors.deepPurple,
+                          ),
+        fontWeight: FontWeight.bold)
+                        ))
+                      SizedBox(height: AppSpacing.spacing2),
                       Container(
                         width: 60,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Colors.deepPurple.withValues(alpha: 0.2),
-                          ),
-                        ),
-                        child: Center(
+                        height: AppSpacing.spacing20,
+                        decoration: BoxDecoration(,
+      color: AppColors.textPrimaryDark,
+        ),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
+                          border: Border.all(,
+      color: Colors.deepPurple.withValues(alp,
+      ha: 0.2))),
+      child: Center(
                           child: Text(
                             card['icon'] ?? '',
-                            style: const TextStyle(fontSize: 32),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+              ),
+              style: Theme.of(context).textTheme.displaySmall)
+                      SizedBox(height: AppSpacing.spacing2),
                       Text(
                         card['card'] ?? '',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 4),
+                          style: theme.textTheme.labelMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))
+                        textAlign: TextAlign.center)
+                      SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        card['meaning'] ?? '',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontSize: 10,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                        card['meaning'] ?? ''),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
+      textAlign: TextAlign.center)
+                    ])))))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildCompatibilityVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2097,115 +1952,103 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (radarData != null) _buildCompatibilityRadar(theme, radarData),
-      ],
+      ]
     );
   }
 
   Widget _buildCompatibilityRadar(ThemeData theme, Map<String, dynamic> data) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.pink.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.pink.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.pink.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.favorite,
                 color: Colors.pink,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '궁합 분석',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           ...data.entries.map((entry) {
             final score = (entry.value as num).toDouble();
             Color barColor;
             if (score >= 80) {
               barColor = Colors.pink;
             } else if (score >= 60) {
-              barColor = Colors.orange;
+              barColor = AppColors.warning;
             } else {
-              barColor = Colors.grey;
+              barColor = AppColors.textSecondary;
             }
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+              child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         entry.key,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ))))
                       Text(
-                        '${score.toInt()}점',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: barColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
+    '${score.toInt(,
+  )}점',
+                        style: theme.textTheme.bodyMedium?.copyWith(,
+      color: barColor,
+                          ),
+        fontWeight: FontWeight.bold)
+                        ))
+                    ])
+                  SizedBox(height: AppSpacing.spacing1),
                   Stack(
                     children: [
                       Container(
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
+                        height: AppSpacing.spacing2,
+                        decoration: BoxDecoration(,
+      color: AppColors.divider,
+        ),
+        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))
                       FractionallySizedBox(
                         widthFactor: score / 100,
-                        child: Container(
-                          height: 8,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                        child: Container(,
+      height: AppSpacing.spacing2,
+                          decoration: BoxDecoration(,
+      gradient: LinearGradient(
                               colors: [
-                                barColor,
+                                barColor)
                                 barColor.withValues(alpha: 0.7),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
+                              ])
+                            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))))
+                    ])
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildLoveVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2218,151 +2061,137 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (singleRoadmap != null) _buildSingleRoadmap(theme, singleRoadmap),
-        if (singleRoadmap != null && couplePhases != null) const SizedBox(height: 20),
+        if (singleRoadmap != null && couplePhases != null) SizedBox(height: AppSpacing.spacing5),
         if (couplePhases != null) _buildCouplePhases(theme, couplePhases),
-      ],
+      ]
     );
   }
 
   Widget _buildSingleRoadmap(ThemeData theme, List<dynamic> roadmap) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.pink.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.pink.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.pink.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '싱글을 위한 로드맵',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           ...roadmap.map((item) {
             final step = item as Map<String, dynamic>;
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.pink.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.pink.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+              padding: AppSpacing.paddingAll12,
+              decoration: BoxDecoration(,
+      color: Colors.pink.withValues(alp,
+      ha: 0.05),
+                borderRadius: AppDimensions.borderRadiusSmall,
+                border: Border.all(,
+      color: Colors.pink.withValues(alp,
+      ha: 0.2))),
+      child: Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.pink.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
+                    width: AppDimensions.buttonHeightSmall,
+                    height: AppDimensions.buttonHeightSmall,
+        ),
+        decoration: BoxDecoration(,
+      color: Colors.pink.withValues(alp,
+      ha: 0.2),
+                      shape: BoxShape.circle),
+      child: Center(
                       child: Text(
                         step['icon'] ?? '',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
+              ),
+              style: Theme.of(context).textTheme.headlineSmall)
+                  SizedBox(width: AppSpacing.spacing3),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${step['step']}단계: ${step['title']}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                          '${step['step']}단계: ${step['title']}'),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
                         Text(
-                          step['description'] ?? '',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                          step['description'] ?? ''),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
+                      ])))
                   Icon(
                     Icons.arrow_forward_ios,
-                    size: 16,
-                    color: Colors.pink.withValues(alpha: 0.5),
-                  ),
-                ],
-              ),
-            );
+                    size: AppDimensions.iconSizeXSmall),
+        color: Colors.pink.withValues(alph,
+      a: 0.5))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildCouplePhases(ThemeData theme, List<dynamic> phases) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.pink[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.pink[100]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: Colors.pink[50],
+      borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: Colors.pink[100]!),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '커플을 위한 관계 발전 단계',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+                        Text(
+                          '커플을 위한 관계 발전 단계',
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           Row(
             children: phases.map((item) {
               final phase = item as Map<String, dynamic>;
               return Expanded(
-                child: Column(
-                  children: [
+                child: Column(,
+      children: [
                     Text(
                       phase['icon'] ?? '',
-                      style: const TextStyle(fontSize: 32),
-                    ),
-                    const SizedBox(height: 4),
+              ),
+              style: Theme.of(context).textTheme.displaySmall,
+                    SizedBox(height: AppSpacing.spacing1),
                     Text(
                       phase['phase'] ?? '',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                          style: theme.textTheme.labelSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
                     Text(
-                      phase['period'] ?? '',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.grey[600],
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                      phase['period'] ?? ''),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+                  ])))
+            }).toList())
+        ]
+      )
   }
 
   Widget _buildCareerVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2374,104 +2203,95 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (jobTypeScores != null) _buildJobTypeScores(theme, jobTypeScores),
-      ],
+      ]
     );
   }
 
   Widget _buildJobTypeScores(ThemeData theme, List<dynamic> scores) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
-            Colors.blue.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.primary.withValues(alpha: 0.05),
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.blue.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: AppColors.primary.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.work,
-                color: Colors.blue,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                color: AppColors.primary,
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '직종별 운세 지수',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           ...scores.map((item) {
             final job = item as Map<String, dynamic>;
             final score = job['score'] as num;
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
-              child: Row(
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+              padding: AppSpacing.paddingAll12,
+              decoration: BoxDecoration(,
+      color: AppColors.surface,
+                borderRadius: AppDimensions.borderRadiusSmall,
+        ),
+        border: Border.all(col,
+      or: AppColors.divider),
+      child: Row(
                 children: [
                   Text(
                     job['icon'] ?? '',
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                  const SizedBox(width: 12),
+              ),
+              style: Theme.of(context).textTheme.headlineMedium,
+                  SizedBox(width: AppSpacing.spacing3),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Text(
                               job['type'] ?? '',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
+              ),
+              style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+                            SizedBox(width: AppSpacing.spacing2),
                             ...List.generate(5, (index) {
                               return Icon(
-                                index < score ? Icons.star : Icons.star_border,
-                                size: 16,
-                                color: index < score ? Colors.amber : Colors.grey[400],
-                              );
+                                index < score ? Icons.star : Icons.star_border
+                                size: AppDimensions.iconSizeXSmall),
+        color: index < score ? Colors.amber : AppColors.textSecondary.withValues(alph,
+      a: 0.4))
                             }),
-                          ],
-                        ),
+                          ])
                         Text(
-                          job['activity'] ?? '',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+                          job['activity'] ?? ''),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
+                      ])))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildWealthVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2483,47 +2303,43 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (investmentSignals != null) _buildInvestmentSignals(theme, investmentSignals),
-      ],
+      ]
     );
   }
 
   Widget _buildInvestmentSignals(ThemeData theme, List<dynamic> signals) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
-            Colors.green.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.success.withValues(alpha: 0.05),
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.green.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: AppColors.success.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.trending_up,
-                color: Colors.green,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                color: AppColors.success,
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '투자 적기 신호등',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           ...signals.map((item) {
             final signal = item as Map<String, dynamic>;
             final signalType = signal['signal'] as String;
@@ -2532,85 +2348,78 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             
             switch (signalType) {
               case 'green':
-                signalColor = Colors.green;
+                signalColor = AppColors.success;
                 signalIcon = Icons.check_circle;
                 break;
               case 'yellow':
-                signalColor = Colors.orange;
+                signalColor = AppColors.warning;
                 signalIcon = Icons.warning;
                 break;
               case 'red':
-                signalColor = Colors.red;
+                signalColor = AppColors.error;
                 signalIcon = Icons.cancel;
                 break;
               default:
-                signalColor = Colors.grey;
+                signalColor = AppColors.textSecondary;
                 signalIcon = Icons.help;
             }
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: signalColor.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: signalColor.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Row(
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.small),
+              padding: AppSpacing.paddingAll12,
+              decoration: BoxDecoration(,
+      color: signalColor.withValues(alp,
+      ha: 0.05),
+                borderRadius: AppDimensions.borderRadiusSmall,
+                border: Border.all(,
+      color: signalColor.withValues(alp,
+      ha: 0.2))),
+      child: Row(
                 children: [
                   Icon(
                     signalIcon,
                     color: signalColor,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 12),
+                    size: AppDimensions.iconSizeMedium)
+                  SizedBox(width: AppSpacing.spacing3),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Text(
                               signal['type'] ?? '',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+        ),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
                             const Spacer(),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: signalColor.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${signal['percentage']}%',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: signalColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          signal['note'] ?? '',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey[600],
+                              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing2, vertical: AppSpacing.spacing0),
+                              decoration: BoxDecoration(,
+      color: signalColor.withValues(alp,
+      ha: 0.2),
+                                borderRadius: AppDimensions.borderRadiusMedium),
+      child: Text(
+                                '${signal['percentage']}%'),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: signalColor,
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+        fontWeight: FontWeight.bold)
+                                ))))
+                          ])
+                        Text(
+                          signal['note'] ?? ''),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: AppColors.textSecondary,
+                          ))))
+                      ])))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildHealthVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2622,84 +2431,76 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (healthChecklist != null) _buildHealthChecklist(theme, healthChecklist),
-      ],
+      ]
     );
   }
 
   Widget _buildHealthChecklist(ThemeData theme, List<dynamic> checklist) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.teal.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.teal.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.teal.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.checklist,
                 color: Colors.teal,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '건강 관리 체크리스트',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           ...checklist.map((item) {
             final task = item as Map<String, dynamic>;
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+              child: Row(,
+      children: [
                   Container(
                     width: 24,
                     height: 24,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.teal,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
+                    decoration: BoxDecoration(,
+      shape: BoxShape.circle,
+        ),
+        border: Border.all(,
+      color: Colors.teal),
+        width: AppSpacing.spacing0 * 0.5)
+                      ))))
+                  SizedBox(width: AppSpacing.spacing3),
                   Text(
                     task['icon'] ?? '',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  const SizedBox(width: 8),
+              ),
+              style: Theme.of(context).textTheme.headlineSmall,
+                  SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       task['item'] ?? '',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
+                      style: theme.textTheme.bodyMedium)
+                    ))
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
   Widget _buildBusinessVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2712,53 +2513,50 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     return Column(
       children: [
         if (timeline != null) _buildBusinessTimeline(theme, timeline),
-        if (timeline != null && industryScores != null) const SizedBox(height: 20),
+        if (timeline != null && industryScores != null) SizedBox(height: AppSpacing.spacing5),
         if (industryScores != null) _buildIndustryScores(theme, industryScores),
-      ],
+      ]
     );
   }
 
   Widget _buildBusinessTimeline(ThemeData theme, List<dynamic> timeline) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16),
+        decoration: BoxDecoration(,
+      gradient: LinearGradient(
           colors: [
             Colors.indigo.withValues(alpha: 0.05),
-            Colors.white,
-          ],
+            AppColors.textPrimaryDark,
+          ]
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.indigo.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+          end: Alignment.bottomRight),
+      borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(,
+      color: Colors.indigo.withValues(alp,
+      ha: 0.1))),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.timeline,
                 color: Colors.indigo,
-                size: 24,
-              ),
-              const SizedBox(width: 8),
+                size: AppDimensions.iconSizeMedium)
+              SizedBox(width: AppSpacing.spacing2),
               Text(
                 '사업 성공 타임라인',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+        ),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+            ])
+          SizedBox(height: AppSpacing.spacing4),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: timeline.asMap().entries.map((entry) {
+              ),
+              child: Row(,
+      children: timeline.asMap().entries.map((entry) {
                 final index = entry.key;
                 final phase = entry.value as Map<String, dynamic>;
                 final isLast = index == timeline.length - 1;
@@ -2769,73 +2567,66 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       children: [
                         Container(
                           width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.indigo.withValues(alpha: 0.1),
+                          height: AppSpacing.spacing15),
+              decoration: BoxDecoration(,
+      color: Colors.indigo.withValues(alp,
+      ha: 0.1),
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.indigo.withValues(alpha: 0.3),
-                              width: 2,
-                            ),
-                          ),
-                          child: Center(
+                            border: Border.all(,
+      color: Colors.indigo.withValues(alp,
+      ha: 0.3),
+                              width: 2)),
+      child: Center(
                             child: Text(
                               phase['icon'] ?? '',
-                              style: const TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
+        ),
+        style: Theme.of(context).textTheme.headlineMedium)
+                        SizedBox(height: AppSpacing.spacing2),
                         Text(
-                          phase['phase'] ?? '',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                          phase['phase'] ?? ''),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
                         Text(
-                          phase['duration'] ?? '',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: Colors.grey[600],
-                            fontSize: 10,
+                          phase['duration'] ?? ''),
+        style: theme.textTheme.labelSmall?.copyWith(,
+      color: AppColors.textSecondary,
                           ),
-                        ),
-                      ],
-                    ),
+        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
+                      ])
                     if (!isLast)
                       Container(
                         width: 40,
-                        height: 2,
-                        color: Colors.indigo.withValues(alpha: 0.3),
-                        margin: const EdgeInsets.only(bottom: 40),
-                      ),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
+                        height: AppSpacing.spacing0 * 0.5),
+              color: Colors.indigo.withValues(alph,
+      a: 0.3),
+                        margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xxxLarge))
+                  ])
+              }).toList())))
+        ]
+      )
   }
 
   Widget _buildIndustryScores(ThemeData theme, List<dynamic> scores) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(,
+      color: AppColors.surface,
+        borderRadius: AppDimensions.borderRadiusMedium,
+        ),
+        border: Border.all(col,
+      or: AppColors.divider),
+      child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '업종별 추천 지수',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
+              ),
+              style: theme.textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.bold,
+                          ))))
+          SizedBox(height: AppSpacing.spacing4),
           ...scores.map((item) {
             final industry = item as Map<String, dynamic>;
             final score = (industry['score'] as num).toDouble();
@@ -2847,71 +2638,59 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               case '상승':
               case '급상승':
                 trendIcon = Icons.trending_up;
-                trendColor = Colors.green;
+                trendColor = AppColors.success;
                 break;
               case '하락':
                 trendIcon = Icons.trending_down;
-                trendColor = Colors.red;
+                trendColor = AppColors.error;
                 break;
               default:
                 trendIcon = Icons.trending_flat;
-                trendColor = Colors.grey;
+                trendColor = AppColors.textSecondary;
             }
             
             return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
+              margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+              child: Row(,
+      children: [
                   SizedBox(
                     width: 80,
                     child: Text(
-                      industry['industry'] ?? '',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                      industry['industry'] ?? ''),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      fontWeight: FontWeight.w500,
+                          ))))))
                   Expanded(
-                    child: Stack(
-                      children: [
+                    child: Stack(,
+      children: [
                         Container(
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
+                          height: AppSpacing.spacing5,
+                          decoration: BoxDecoration(,
+      color: AppColors.divider,
+        ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))
                         FractionallySizedBox(
                           widthFactor: score / 100,
-                          child: Container(
-                            height: 20,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
+                          child: Container(,
+      height: AppSpacing.spacing5,
+                            decoration: BoxDecoration(,
+      gradient: LinearGradient(
                                 colors: [
-                                  Colors.indigo,
+                                  Colors.indigo)
                                   Colors.indigo.withValues(alpha: 0.7),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                                ])
+                              borderRadius: AppDimensions.radiusMedium)))))
+                      ])))
+                  SizedBox(width: AppSpacing.spacing2),
                   Icon(
                     trendIcon,
-                    size: 16,
-                    color: trendColor,
-                  ),
-                ],
-              ),
-            );
+                    size: AppDimensions.iconSizeXSmall,
+                    color: trendColor)
+                ])))
           }).toList(),
-        ],
-      ),
-    );
+        ]
+      )
   }
 
 }

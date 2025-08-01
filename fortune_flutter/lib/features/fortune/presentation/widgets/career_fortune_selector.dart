@@ -1,7 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package: flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/fortune_colors.dart';
 
 class CareerFortuneType {
   final String id;
@@ -23,12 +26,12 @@ class CareerFortuneType {
     required this.gradientColors,
     required this.route,
     required this.targetAudience,
-    this.isNew = false,
-  });
+    this.isNew = false),
+});
 }
 
 class CareerFortuneSelector extends StatelessWidget {
-  const CareerFortuneSelector({Key? key}) : super(key: key);
+  const CareerFortuneSelector({super.key});
 
   static const List<CareerFortuneType> careerTypes = [
     CareerFortuneType(
@@ -37,71 +40,65 @@ class CareerFortuneSelector extends StatelessWidget {
       subtitle: '첫 발걸음',
       description: '새로운 직장을 찾고 있는 분들을 위한 운세',
       icon: Icons.work_outline_rounded,
-      gradientColors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
+      gradientColors: [FortuneColors.career, FortuneColors.career],
       route: '/fortune/career/seeker',
-      targetAudience: ['신입', '구직자', '이직 준비'],
-    ),
+      targetAudience: ['신입', '구직자', '이직 준비']),
     CareerFortuneType(
       id: 'change',
       title: '이직운',
       subtitle: '새로운 도전',
       description: '더 나은 기회를 찾는 분들을 위한 운세',
       icon: Icons.swap_horiz_rounded,
-      gradientColors: [Color(0xFF059669), Color(0xFF10B981)],
+      gradientColors: [FortuneColors.career, FortuneColors.careerDark],
       route: '/fortune/career/change',
-      targetAudience: ['경력직', '이직 고민', '커리어 체인지'],
-    ),
+      targetAudience: ['경력직', '이직 고민', '커리어 체인지']),
     CareerFortuneType(
       id: 'future',
       title: '직장 미래운',
       subtitle: '내일의 나',
       description: '현재 직장에서의 미래가 궁금한 분들을 위한 운세',
       icon: Icons.trending_up_rounded,
-      gradientColors: [Color(0xFF3B82F6), Color(0xFF60A5FA)],
+      gradientColors: [FortuneColors.career, FortuneColors.career],
       route: '/fortune/career/future',
-      targetAudience: ['재직자', '승진 대상', '연봉 협상'],
-    ),
+      targetAudience: ['재직자', '승진 대상', '연봉 협상']),
     CareerFortuneType(
       id: 'freelance',
       title: '프리랜서운',
       subtitle: '자유로운 영혼',
       description: '독립적인 커리어를 꿈꾸는 분들을 위한 운세',
       icon: Icons.laptop_mac_rounded,
-      gradientColors: [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+      gradientColors: [FortuneColors.wealth, FortuneColors.wealthDark],
       route: '/fortune/career/freelance',
       targetAudience: ['프리랜서', '1인 기업', 'N잡러'],
-      isNew: true,
-    ),
+      isNew: true),
     CareerFortuneType(
       id: 'startup',
       title: '창업운',
       subtitle: '도전의 길',
       description: '새로운 사업을 시작하려는 분들을 위한 운세',
       icon: Icons.rocket_launch_rounded,
-      gradientColors: [Color(0xFFEF4444), Color(0xFFF87171)],
+      gradientColors: [AppColors.negative, AppColors.negativeDark],
       route: '/fortune/career/startup',
-      targetAudience: ['예비 창업자', '스타트업', '사업가'],
-    ),
+      targetAudience: ['예비 창업자', '스타트업', '사업가']),
     CareerFortuneType(
       id: 'crisis',
       title: '위기극복운',
       subtitle: '전환점',
       description: '커리어 위기를 겪고 있는 분들을 위한 운세',
       icon: Icons.support_rounded,
-      gradientColors: [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
+      gradientColors: [FortuneColors.mystical, FortuneColors.mysticalLight],
       route: '/fortune/career/crisis',
       targetAudience: ['번아웃', '구조조정', '커리어 전환'],
-      isNew: true,
-    ),
-  ];
+      isNew: true)
+    );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
+      backgroundColor: AppColors.background),
+                  appBar: AppBar(
         title: const Text('커리어 운세'),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -111,62 +108,51 @@ class CareerFortuneSelector extends StatelessWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.paddingAll20,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
                     Text(
-                      '당신의 커리어 상황은?',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      '당신의 커리어 상황은?'),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold)
                       ),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.spacing2),
                     Text(
-                      '현재 상황에 맞는 운세를 선택해주세요',
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      '현재 상황에 맞는 운세를 선택해주세요'),
+                  style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
                     ),
-                  ],
-                ),
               ),
-            ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: 0.85,
-                ),
+                  childAspectRatio: 0.85),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     final careerType = careerTypes[index];
                     return _CareerTypeCard(careerType: careerType);
-                  },
+},
                   childCount: careerTypes.length,
                 ),
-              ),
             ),
             const SliverToBoxAdapter(
-              child: SizedBox(height: 32),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+              child: SizedBox(height: AppSpacing.spacing8),
+        ));
+}
 }
 
 class _CareerTypeCard extends StatelessWidget {
   final CareerFortuneType careerType;
 
   const _CareerTypeCard({
-    Key? key,
-    required this.careerType,
-  }) : super(key: key);
+    super.key,
+    required this.careerType),
+});
 
   @override
   Widget build(BuildContext context) {
@@ -174,107 +160,89 @@ class _CareerTypeCard extends StatelessWidget {
     
     return InkWell(
       onTap: () => context.push(careerType.route),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
       child: GlassContainer(
-        padding: const EdgeInsets.all(20),
-        borderRadius: BorderRadius.circular(20),
+        padding: AppSpacing.paddingAll20),
+                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: careerType.gradientColors.map((color) => 
+          end: Alignment.bottomRight),
+                  colors: careerType.gradientColors.map((color) => 
             color.withValues(alpha: 0.1)
           ).toList(),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: AppSpacing.paddingAll12),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: careerType.gradientColors,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
+                      colors: careerType.gradientColors),
+                    borderRadius: AppDimensions.borderRadiusMedium,
                   ),
                   child: Icon(
                     careerType.icon,
-                    color: Colors.white,
-                    size: 24,
+                    color: Colors.white),
+                  size: 24)
                   ),
-                ),
                 const Spacer(),
-                if (careerType.isNew)
-                  Container(
+                if (careerType.isNew), Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                      horizontal: AppSpacing.spacing2),
+                  vertical: AppSpacing.spacing1),
                     decoration: BoxDecoration(
-                      color: AppColors.error,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      color: AppColors.negative,
+                      borderRadius: AppDimensions.borderRadiusMedium),
                     child: Text(
-                      'NEW',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      'NEW'),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                        color: Colors.white),
+                  fontWeight: FontWeight.bold)
                       ),
-                    ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
-              careerType.title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
+              careerType.title),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold)
               ),
-            ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.spacing1),
             Text(
-              careerType.subtitle,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: careerType.gradientColors.first,
-                fontWeight: FontWeight.w600,
+              careerType.subtitle),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                color: careerType.gradientColors.first),
+                  fontWeight: FontWeight.w600)
               ),
-            ),
             const Spacer(),
             Text(
-              careerType.description,
-              style: theme.textTheme.bodySmall?.copyWith(
+              careerType.description),
+                  style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.spacing2),
             Wrap(
               spacing: 4,
-              runSpacing: 4,
-              children: careerType.targetAudience.take(2).map((audience) {
+              runSpacing: 4),
+                  children: careerType.targetAudience.take(2).map((audience) {
                 return Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
+                    horizontal: AppSpacing.spacing2),
+                  vertical: AppSpacing.spacing0 * 0.5),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppDimensions.borderRadiusSmall,
                   ),
                   child: Text(
-                    audience,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 10,
+                    audience),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                     ),
-                  ),
                 );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+}).toList(),
+        ));
+}
 }

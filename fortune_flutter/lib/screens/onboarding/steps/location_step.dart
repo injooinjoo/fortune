@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../../core/theme/app_theme_extensions.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class LocationStep extends StatefulWidget {
   final Function(String region) onLocationChanged;
   final VoidCallback onComplete;
   final VoidCallback onBack;
   
-  const LocationStep({
+  const LocationStep(
+    {
     super.key,
     required this.onLocationChanged,
     required this.onComplete,
     required this.onBack,
-  });
+  )});
 
   @override
   State<LocationStep> createState() => _LocationStepState();
@@ -43,71 +49,70 @@ class _LocationStepState extends State<LocationStep> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
+      padding: EdgeInsets.symmetric(horizonta,
+      l: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+      child: Column(,
+      children: [
           // Back button
           Align(
             alignment: Alignment.centerLeft,
-            child: IconButton(
-              onPressed: widget.onBack,
-              icon: Icon(Icons.arrow_back),
-              padding: EdgeInsets.zero,
-            ),
-          ),
+            child: IconButton(,
+      onPressed: widget.onBack,
+              ),
+              icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
+              padding: EdgeInsets.zero)))
           
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Title with typewriter animation
                 Text(
                   '어디에 사시나요?',
-                  style: TextStyle(
-                    fontSize: 28,
+              ),
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(,
+      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                          ),
                     fontWeight: FontWeight.bold,
                     height: 1.2,
-                    color: Colors.black,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(duration: 600.ms).shimmer(
-                  duration: 1200.ms,
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
+                    color: context.fortuneTheme.primaryText),
+      textAlign: TextAlign.center)).animate().fadeIn(durati,
+      on: 600.ms).shimmer(,
+      duration: 1200.ms),
+        color: AppColors.textPrimaryDark.withValues(alph,
+      a: 0.3))
                 
-                const SizedBox(height: 16),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
                 // Subtitle with delay
                 Text(
-                  '운세의 정확도를 높이기 위해\n지역 정보가 필요해요',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate(delay: 300.ms).fadeIn(duration: 600.ms),
+                  '운세의 정확도를 높이기 위해\n지역 정보가 필요해요'),
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
+      color: context.fortuneTheme.subtitleText,
+                          ),))
+                  textAlign: TextAlign.center)).animate(del,
+      ay: 300.ms).fadeIn(duratio,
+      n: 600.ms),
                 
-                const SizedBox(height: 48),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
                 
                 // Region dropdown
                 Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedRegion,
-                    decoration: InputDecoration(
-                      labelText: '지역 선택',
+                  decoration: BoxDecoration(,
+      border: Border.all(col,
+      or: context.fortuneTheme.dividerColor),
+                    borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
+      child: DropdownButtonFormField<String>(,
+      value: _selectedRegion,
+                    decoration: InputDecoration(,
+      labelText: '지역 선택',
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    ),
-                    items: _regions.map((region) {
+                      contentPadding: context.fortuneTheme.formStyles.inputPadding),
+      items: _regions.map((region) {
                       return DropdownMenuItem(
-                        value: region,
-                        child: Text(region),
-                      );
-                    }).toList(),
+    value: region,
+                        child: Text(region,
+  )}).toList(),
                     onChanged: (value) {
                       setState(() {
                         _selectedRegion = value;
@@ -115,46 +120,36 @@ class _LocationStepState extends State<LocationStep> {
                       if (value != null) {
                         widget.onLocationChanged(value);
                       }
-                    },
-                  ),
-                ).animate(delay: 500.ms).fadeIn(duration: 600.ms).slideY(
-                  begin: 0.1,
-                  end: 0,
-                  curve: Curves.easeOutQuart,
-                ),
+                    })))).animate(delay: 500.ms).fadeIn(durati,
+      on: 600.ms).slideY(,
+      begin: 0.1),
+        end: 0),
+        curve: Curves.easeOutQuart)
                 
-                const SizedBox(height: 80),
+                SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5),
                 
                 // Complete button
                 SizedBox(
                   width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _selectedRegion != null
+                  height: context.fortuneTheme.formStyles.inputHeight,
+                  child: ElevatedButton(,
+      onPressed: _selectedRegion != null
                         ? widget.onComplete 
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      '완료',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ).animate(delay: 700.ms).fadeIn(duration: 600.ms),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                        : null),
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: context.fortuneTheme.primaryText),
+        foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark),
+        shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4),
+      elevation: 0),
+      child: Text(
+                      '완료'),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(,
+      fontWeight: FontWeight.w600,
+                          ),))))).animate(delay: 700.ms).fadeIn(duratio,
+      n: 600.ms),
+              ])))
+        ]
+      )
   }
 }

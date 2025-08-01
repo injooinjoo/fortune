@@ -928,7 +928,7 @@ class TarotMinorArcana {
     final allCards = getAllMinorArcana();
     return allCards.values.firstWhere(
       (card) => card.id == id,
-      orElse: () => allCards.values.first,
+      orElse: () => allCards.values.first
     );
   }
 

@@ -245,8 +245,8 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
             },
             child: const Text('토큰 충전'),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -318,8 +318,8 @@ class _BatchFortunePageState extends ConsumerState<BatchFortunePage> {
             onPressed: () => Navigator.pop(context, true),
             child: Text('${packageType.tokenCost} 토큰 사용'),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 

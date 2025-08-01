@@ -16,8 +16,8 @@ class FortuneApiServiceWithCache {
   final CacheService _cacheService;
   final Ref? _ref;
 
-  FortuneApiServiceWithCache(this._apiClient, {Ref? ref}) 
-    : _cacheService = CacheService(),
+  FortuneApiServiceWithCache(this._apiClient, {Ref? ref}, 
+    : _cacheService = CacheService())
       _ref = ref;
 
   bool get _isOffline => _ref?.read(offlineModeProvider).isOffline ?? false;
@@ -26,8 +26,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getFortune({
     required String fortuneType,
     required String userId,
-    Map<String, dynamic>? additionalParams,
-    String? endpoint,
+    Map<String, dynamic>? additionalParams)
+    String? endpoint)
   }) async {
     try {
       // Check cache first
@@ -46,9 +46,9 @@ class FortuneApiServiceWithCache {
       final response = await _apiClient.post(
         endpoint ?? '/api/fortune/$fortuneType',
         data: {
-          'userId': userId,
-          ...?additionalParams,
-        },
+          'userId': userId)
+          ...?additionalParams)
+        }
       );
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
@@ -74,14 +74,14 @@ class FortuneApiServiceWithCache {
   // Daily Fortune
   Future<Fortune> getDailyFortune({
     required String userId,
-    DateTime? date,
+    DateTime? date)
   }) async {
     return getFortune(
       fortuneType: 'daily',
-      userId: userId,
+      userId: userId)
       additionalParams: {
-        if (date != null) 'date': date.toIso8601String(),
-      },
+        if (date != null) 'date': date.toIso8601String())
+      })
       endpoint: ApiEndpoints.dailyFortune,
     );
   }
@@ -90,8 +90,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getTodayFortune({required String userId}) async {
     return getFortune(
       fortuneType: 'today',
-      userId: userId,
-      endpoint: ApiEndpoints.today,
+      userId: userId)
+      endpoint: ApiEndpoints.today)
     );
   }
 
@@ -99,8 +99,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getTomorrowFortune({required String userId}) async {
     return getFortune(
       fortuneType: 'tomorrow',
-      userId: userId,
-      endpoint: ApiEndpoints.tomorrow,
+      userId: userId)
+      endpoint: ApiEndpoints.tomorrow)
     );
   }
 
@@ -108,8 +108,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getWeeklyFortune({required String userId}) async {
     return getFortune(
       fortuneType: 'weekly',
-      userId: userId,
-      endpoint: ApiEndpoints.weekly,
+      userId: userId)
+      endpoint: ApiEndpoints.weekly)
     );
   }
 
@@ -117,8 +117,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getMonthlyFortune({required String userId}) async {
     return getFortune(
       fortuneType: 'monthly',
-      userId: userId,
-      endpoint: ApiEndpoints.monthly,
+      userId: userId)
+      endpoint: ApiEndpoints.monthly
     );
   }
 
@@ -129,11 +129,11 @@ class FortuneApiServiceWithCache {
   }) async {
     return getFortune(
       fortuneType: 'saju',
-      userId: userId,
+      userId: userId)
       additionalParams: {
-        'birthDate': birthDate.toIso8601String(),
-      },
-      endpoint: ApiEndpoints.sajuFortune,
+        'birthDate': birthDate.toIso8601String())
+      })
+      endpoint: ApiEndpoints.sajuFortune
     );
   }
 
@@ -145,12 +145,12 @@ class FortuneApiServiceWithCache {
   }) async {
     return getFortune(
       fortuneType: 'compatibility',
-      userId: userId,
+      userId: userId)
       additionalParams: {
         'userBirthDate': userBirthDate.toIso8601String(),
-        'partnerBirthDate': partnerBirthDate.toIso8601String(),
-      },
-      endpoint: ApiEndpoints.compatibilityFortune,
+        'partnerBirthDate': partnerBirthDate.toIso8601String())
+      })
+      endpoint: ApiEndpoints.compatibilityFortune
     );
   }
 
@@ -161,11 +161,11 @@ class FortuneApiServiceWithCache {
   }) async {
     return getFortune(
       fortuneType: 'mbti',
-      userId: userId,
+      userId: userId)
       additionalParams: {
-        'mbtiType': mbtiType,
-      },
-      endpoint: ApiEndpoints.mbtiFortune,
+        'mbtiType': mbtiType)
+      })
+      endpoint: ApiEndpoints.mbtiFortune
     );
   }
 
@@ -176,10 +176,10 @@ class FortuneApiServiceWithCache {
   }) async {
     return getFortune(
       fortuneType: 'love',
-      userId: userId,
+      userId: userId)
       additionalParams: {
-        'relationshipStatus': relationshipStatus,
-      },
+        'relationshipStatus': relationshipStatus)
+      })
       endpoint: ApiEndpoints.loveFortune,
     );
   }
@@ -188,8 +188,8 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getWealthFortune({required String userId}) async {
     return getFortune(
       fortuneType: 'wealth',
-      userId: userId,
-      endpoint: ApiEndpoints.wealthFortune,
+      userId: userId)
+      endpoint: ApiEndpoints.wealthFortune
     );
   }
 
@@ -197,13 +197,13 @@ class FortuneApiServiceWithCache {
   Future<Fortune> generateFortune({
     required String fortuneType,
     required String userId,
-    Map<String, dynamic>? additionalData,
+    Map<String, dynamic>? additionalData)
   }) async {
     return getFortune(
       fortuneType: fortuneType,
-      userId: userId,
-      additionalParams: additionalData,
-      endpoint: '/api/fortune/$fortuneType',
+      userId: userId)
+      additionalParams: additionalData)
+      endpoint: '/api/fortune/$fortuneType'
     );
   }
 
@@ -261,4 +261,4 @@ class FortuneApiServiceWithCache {
 final fortuneApiServiceWithCacheProvider = Provider.family<FortuneApiServiceWithCache, Ref>((ref, selfRef) {
   final apiClient = ref.watch(apiClientProvider);
   return FortuneApiServiceWithCache(apiClient, ref: selfRef);
-});
+};

@@ -69,8 +69,7 @@ class TarotExperienceLevelNotifier extends StateNotifier<TarotDifficulty> {
     if (savedLevel != null) {
       try {
         state = TarotDifficulty.values.firstWhere(
-          (level) => level.toString() == savedLevel,
-        );
+          (level) => level.toString() == savedLevel);
       } catch (_) {
         // 잘못된 값이 저장되어 있으면 기본값 유지
       }
@@ -104,8 +103,7 @@ class PreferredTarotStyleNotifier extends StateNotifier<TarotStyle?> {
     if (savedStyle != null) {
       try {
         state = TarotStyle.values.firstWhere(
-          (style) => style.toString() == savedStyle,
-        );
+          (style) => style.toString() == savedStyle);
       } catch (_) {
         // 잘못된 값이 저장되어 있으면 null 유지
       }
@@ -187,8 +185,7 @@ class TarotDeckStatsNotifier extends StateNotifier<Map<String, int>> {
     if (statsJson != null) {
       try {
         final Map<String, dynamic> decoded = Map<String, dynamic>.from(
-          Uri.splitQueryString(statsJson),
-        );
+          Uri.splitQueryString(statsJson));
         state = decoded.map((key, value) => MapEntry(key, int.parse(value.toString())));
       } catch (_) {
         state = {};

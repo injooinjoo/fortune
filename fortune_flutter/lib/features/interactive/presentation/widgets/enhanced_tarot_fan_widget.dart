@@ -44,31 +44,31 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
     // Initialize page controller with center page
     _pageController = PageController(
       initialPage: 6,
-      viewportFraction: 0.3,
+      viewportFraction: 0.3)
     );
     
     // Gathering animation controller
     _gatherController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
+      duration: const Duration(milliseconds: 1500))
+      vsync: this)
     );
     
     // Fan out animation controller
     _fanController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
+      duration: const Duration(milliseconds: 800))
+      vsync: this)
     );
     
     // Floating animation for center card
     _floatController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
+      duration: const Duration(milliseconds: 2000))
+      vsync: this)
     )..repeat(reverse: true);
     
     // Rotation animation for circular scroll effect
     _rotateController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
+      duration: const Duration(milliseconds: 300))
+      vsync: this
     );
     
     // Create gathering animations from different screen positions
@@ -79,15 +79,15 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
       final startY = math.sin(angle) * 2.0;
       
       return Tween<Offset>(
-        begin: Offset(startX, startY),
-        end: Offset.zero,
+        begin: Offset(startX, startY))
+        end: Offset.zero)
       ).animate(CurvedAnimation(
-        parent: _gatherController,
+        parent: _gatherController)
         curve: Interval(
-          index / cardCount * 0.5,
-          0.5 + index / cardCount * 0.5,
-          curve: Curves.easeOutBack,
-        ),
+          index / cardCount * 0.5)
+          0.5 + index / cardCount * 0.5)
+          curve: Curves.easeOutBack)
+        ))
       ));
     });
     
@@ -95,24 +95,24 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
     _scaleAnimations = List.generate(cardCount, (index) {
       return Tween<double>(
         begin: 0.0,
-        end: 1.0,
+        end: 1.0)
       ).animate(CurvedAnimation(
-        parent: _gatherController,
+        parent: _gatherController)
         curve: Interval(
-          index / cardCount * 0.5,
-          0.5 + index / cardCount * 0.5,
-          curve: Curves.easeOutBack,
-        ),
+          index / cardCount * 0.5)
+          0.5 + index / cardCount * 0.5)
+          curve: Curves.easeOutBack)
+        ))
       ));
     });
     
     // Fan animation
     _fanAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
+      end: 1.0)
     ).animate(CurvedAnimation(
-      parent: _fanController,
-      curve: Curves.easeOutBack,
+      parent: _fanController)
+      curve: Curves.easeOutBack)
     ));
     
     // Start animations sequence
@@ -150,56 +150,51 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
     
     return Container(
       color: Colors.black,
-      width: double.infinity,
-      height: double.infinity,
+      width: double.infinity)
+      height: double.infinity)
       child: Stack(
         children: [
           // Fortune type title
           Positioned(
-            top: MediaQuery.of(context).padding.top + 60,
-            left: 0,
-            right: 0,
+            top: MediaQuery.of(context).padding.top + 60)
+            left: 0)
+            right: 0)
             child: Column(
               children: [
                 Text(
-                  widget.fortuneType,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
+                  widget.fortuneType)
+                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    color: Colors.white),))
+                    fontWeight: FontWeight.bold)
+                  ))
+                const SizedBox(height: 8))
                 Text(
-                  'Choose your card',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+                  'Choose your card')
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.7)))
+              ])
             ),
-          ),
+          ))
           
           // Card fan
           Positioned(
-            top: screenSize.height * 0.25,
-            left: 0,
-            right: 0,
+            top: screenSize.height * 0.25)
+            left: 0)
+            right: 0)
             // Removed bottom constraint to avoid assertion error
             child: AnimatedBuilder(
               animation: Listenable.merge([
-                _gatherController,
-                _fanController,
-                _floatController,
-              ]),
+                _gatherController)
+                _fanController)
+                _floatController)
+              ]))
               builder: (context, child) {
                 return PageView.builder(
                   controller: _pageController,
                   itemCount: cardCount * 100, // Large number for infinite scroll
                   onPageChanged: (index) {
                     HapticFeedback.selectionClick();
-                  },
+                  })
                   itemBuilder: (context, index) {
                     final cardIndex = index % cardCount;
                     final isCenter = cardIndex == _centerIndex;
@@ -222,16 +217,16 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                         final fanProgress = _fanAnimation.value;
                         
                         return Transform(
-                          alignment: Alignment.center,
+                          alignment: Alignment.center)
                           transform: Matrix4.identity()
                             ..setEntry(3, 2, 0.001)
                             ..translate(
                               _gatherAnimations[cardIndex].value.dx * screenSize.width * (1 - gatherProgress),
                               _gatherAnimations[cardIndex].value.dy * screenSize.height * (1 - gatherProgress) - elevation - floatOffset,
-                              0,
+                              0)
                             )
                             ..rotateY(rotation * fanProgress)
-                            ..scale(scale * _scaleAnimations[cardIndex].value),
+                            ..scale(scale * _scaleAnimations[cardIndex].value, scale * _scaleAnimations[cardIndex].value),
                           child: GestureDetector(
                             onTap: () {
                               if (isCenter) {
@@ -241,81 +236,81 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                                 // Scroll to tapped card
                                 _pageController!.animateToPage(
                                   index,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
+                                  duration: const Duration(milliseconds: 300))
+                                  curve: Curves.easeInOut)
                                 );
                               }
                             },
                             child: _buildCard(
-                              cardIndex,
-                              isCenter,
-                              _scaleAnimations[cardIndex].value,
+                              cardIndex)
+                              isCenter)
+                              _scaleAnimations[cardIndex].value)
                             ),
-                          ),
+                          ))
                         );
-                      },
+                      })
                     );
-                  },
+                  }
                 );
               },
-            ),
-          ),
+            ))
+          ))
           
           // Back button
           Positioned(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 10,
+            top: MediaQuery.of(context).padding.top + 10)
+            left: 10)
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-        ],
-      ),
+              icon: const Icon(Icons.arrow_back, color: Colors.white))
+              onPressed: () => Navigator.pop(context))
+            ))
+          ))
+        ])
+      )
     );
   }
   
   Widget _buildCard(int index, bool isCenter, double scale) {
     return Container(
       width: cardWidth,
-      height: cardHeight,
-      margin: const EdgeInsets.symmetric(horizontal: 10),
+      height: cardHeight)
+      margin: const EdgeInsets.symmetric(horizontal: 10))
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))
         boxShadow: isCenter ? [
           BoxShadow(
-            color: widget.primaryColor.withValues(alpha: 0.6),
-            blurRadius: 30,
-            spreadRadius: 10,
-          ),
+            color: widget.primaryColor.withValues(alpha: 0.6))
+            blurRadius: 30)
+            spreadRadius: 10)
+          ))
         ] : [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+            blurRadius: 10)
+            offset: const Offset(0, 5))
+          ))
+        ])
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16))
         child: Stack(
           children: [
             // Card background
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: Alignment.topLeft)
+                  end: Alignment.bottomRight)
                   colors: isCenter ? [
-                    widget.primaryColor,
-                    widget.primaryColor.withValues(alpha: 0.7),
+                    widget.primaryColor)
+                    widget.primaryColor.withValues(alpha: 0.7))
                   ] : [
                     const Color(0xFF2C1810),
-                    const Color(0xFF1A0F08),
-                  ],
+                    const Color(0xFF1A0F08))
+                  ])
                 ),
-              ),
-            ),
+              ))
+            ))
             
             // Card pattern
             Positioned.fill(
@@ -323,37 +318,37 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 painter: CardPatternPainter(
                   color: isCenter 
                       ? Colors.white.withValues(alpha: 0.3)
-                      : Colors.white.withValues(alpha: 0.1),
-                  isAnimated: isCenter,
-                ),
-              ),
-            ),
+                      : Colors.white.withValues(alpha: 0.1))
+                  isAnimated: isCenter)
+                ))
+              ))
+            ))
             
             // Card border
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16))
                 border: Border.all(
                   color: isCenter 
                       ? Colors.white.withValues(alpha: 0.5)
-                      : Colors.white.withValues(alpha: 0.2),
-                  width: isCenter ? 3 : 1,
-                ),
-              ),
-            ),
+                      : Colors.white.withValues(alpha: 0.2))
+                  width: isCenter ? 3 : 1)
+                ))
+              ))
+            ))
             
             // Center icon
             if (scale > 0.5)
               Center(
                 child: Icon(
-                  Icons.auto_awesome,
-                  size: 40 * scale,
-                  color: Colors.white.withValues(alpha: isCenter ? 0.9 : 0.5),
-                ),
-              ),
-          ],
+                  Icons.auto_awesome)
+                  size: 40 * scale)
+                  color: Colors.white.withValues(alpha: isCenter ? 0.9 : 0.5))
+                ))
+              ))
+          ])
         ),
-      ),
+      )
     );
   }
 }
@@ -369,7 +364,7 @@ class CardPatternPainter extends CustomPainter {
   
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final paint = Paint(,
       ..color = color
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.0;
@@ -382,8 +377,8 @@ class CardPatternPainter extends CustomPainter {
       final radius = size.width * 0.3;
       
       final point = Offset(
-        center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle),
+        center.dx + radius * math.cos(angle))
+        center.dy + radius * math.sin(angle)
       );
       
       canvas.drawLine(center, point, paint);

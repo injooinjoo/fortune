@@ -62,7 +62,7 @@ class SocialAuthService {
         queryParams: {
           'access_type': 'offline',
           'prompt': 'consent',
-        },
+        }
       );
       
       print('🟡 [SocialAuthService] OAuth redirect initiated successfully');
@@ -117,7 +117,7 @@ class SocialAuthService {
         scopes: [
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
-        ],
+        ]
       );
       
       final String? idToken = credential.identityToken;
@@ -133,7 +133,7 @@ class SocialAuthService {
       
       Logger.securityCheckpoint('User signed in with Apple: ${response.user?.id}');
       
-      // 사용자 프로필 업데이트 (비동기로 처리)
+      // 사용자 프로필 업데이트 (비동기로 처리,
       if (response.user != null && credential.givenName != null) {
         // Fire and forget - 프로필 업데이트는 백그라운드에서 처리
         _updateUserProfile(
@@ -178,7 +178,7 @@ class SocialAuthService {
     }
   }
   
-  // 사용자 프로필 업데이트 (최적화됨)
+  // 사용자 프로필 업데이트 (최적화됨,
   Future<void> _updateUserProfile({
     required String userId,
     String? email,
@@ -423,25 +423,39 @@ class SocialAuthService {
       }
       
       final data = response.data as Map<String, dynamic>;
+      final userData = data['user'] as Map<String, dynamic>;
       
-      // Set the session in Supabase client
-      await _supabase.auth.setSession(
-        data['refresh_token'] as String,
-      );
+      // Sign in the user with email and generated password
+      // Since Naver doesn't provide direct OAuth, we use email/password auth
+      final email = userData['email'] as String;
+      final userId = userData['id'] as String;
       
-      // Get the current session to return as AuthResponse
-      final session = _supabase.auth.currentSession;
-      if (session == null) {
-        throw Exception('Failed to establish session');
+      // Try to sign in first
+      try {
+        final signInResponse = await _supabase.auth.signInWithPassword(
+          email: email,
+          password: 'naver_$userId', // Use a consistent password pattern
+        );
+        
+        Logger.securityCheckpoint('User signed in with Naver: ${signInResponse.user?.id}');
+        
+        // Update user profile with Naver info
+        await _updateUserProfile(
+          userId: signInResponse.user!.id,
+          email: email,
+          provider: 'naver',
+        );
+        
+        return signInResponse;
+      } catch (signInError) {
+        // If sign in fails, the user might not exist with password auth
+        // In this case, we need to handle it differently
+        Logger.warning('Naver sign in with password failed, user might need different auth method');
+        
+        // Since we can't create a session directly, we return null
+        // and show a message to the user
+        throw Exception('Naver 로그인을 완료하려면 이메일 인증이 필요합니다. 이메일을 확인해주세요.');
       }
-      
-      Logger.securityCheckpoint('User signed in with Naver: ${session.user.id}');
-      
-      // Return AuthResponse-like object
-      return AuthResponse(
-        session: session,
-        user: session.user,
-      );
     } catch (error) {
       Logger.error('Naver Sign-In failed', error);
       rethrow;

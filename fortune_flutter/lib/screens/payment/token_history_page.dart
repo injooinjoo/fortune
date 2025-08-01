@@ -1,3 +1,5 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,9 @@ import '../../shared/glassmorphism/glass_effects.dart';
 import '../../presentation/providers/token_provider.dart';
 import '../../domain/entities/token.dart';
 import '../../shared/components/loading_states.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class TokenHistoryPage extends ConsumerStatefulWidget {
   const TokenHistoryPage({Key? key}) : super(key: key);
@@ -27,16 +32,15 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
+      vsync: this),
+        duration: AppAnimations.durationXLong
     );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+      end: 1.0)).animate(CurvedAnimation(,
+      parent: _animationController),
+        curve: Curves.easeIn)
+    )
     _animationController.forward();
     
     // Load token history
@@ -59,30 +63,26 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     final history = _filterTransactions(tokenState.history);
 
     return Scaffold(
-      appBar: const AppHeader(
-        title: '영혼 사용 내역',
+      appBar: const AppHeader(,
+      title: '영혼 사용 내역',
         showShareButton: false,
-        showFontSizeSelector: false,
-        showTokenBalance: true,
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 1.5,
-            colors: isDark
+        showFontSizeSelector: false),
+        showTokenBalance: true),
+      body: Container(,
+      decoration: BoxDecoration(,
+      gradient: RadialGradient(,
+      center: Alignment.topCenter,
+        ),
+        radius: 1.5),
+        colors: isDark
                 ? [
                     const Color(0xFF1E293B),
-                    const Color(0xFF0F172A),
-                  ]
+                    const Color(0xFF0F172A)
                 : [
-                    Colors.amber.shade50,
-                    Colors.white,
-                  ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
+                    Colors.amber.withValues(alpha: 0.08)
+                    AppColors.textPrimaryDark)))
+        child: SafeArea(,
+      child: Column(
             children: [
               // Filter Chips
               _buildFilterChips(theme),
@@ -90,26 +90,19 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
               // Transaction List
               Expanded(
                 child: tokenState.isLoading && tokenState.history.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator(),
                     : history.isEmpty
                         ? _buildEmptyState(theme)
                         : RefreshIndicator(
                             onRefresh: () async {
                               await ref.read(tokenProvider.notifier).loadTokenHistory();
-                            },
-                            child: FadeTransition(
-                              opacity: _fadeAnimation,
-                              child: _buildTransactionList(history, theme, isDark),
-                            ),
-                          ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: -1),
-    );
-  }
+                            }
+                            child: FadeTransition(,
+      opacity: _fadeAnimation),
+        child: _buildTransactionList(history, theme, isDark))))))))))))
+      bottomNavigationBar: const FortuneBottomNavigationBar(,
+      currentIndex: -1,
+  )}
 
   Widget _buildFilterChips(ThemeData theme) {
     final filters = {
@@ -117,46 +110,43 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
       'purchase': '구매',
       'usage': '사용',
       'bonus': '보너스',
-      'refund': '환불',
-    };
+      'refund': '환불';
 
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
+      height: AppSpacing.spacing15),
+              padding: EdgeInsets.symmetric(horizonta,
+      l: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
+      child: ListView(,
+      scrollDirection: Axis.horizontal),
         children: filters.entries.map((entry) {
           final isSelected = _selectedFilter == entry.key;
           
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FilterChip(
-              label: Text(entry.value),
+            padding: const EdgeInsets.only(righ,
+      t: AppSpacing.xSmall),
+            child: FilterChip(,
+      label: Text(entry.value),
               selected: isSelected,
               onSelected: (selected) {
                 setState(() {
                   _selectedFilter = entry.key;
                 });
-              },
+              }
               backgroundColor: Colors.transparent,
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
-              checkmarkColor: theme.colorScheme.primary,
-              labelStyle: TextStyle(
+              selectedColor: theme.colorScheme.primary.withValues(alph,
+      a: 0.2),
+        checkmarkColor: theme.colorScheme.primary,
+              labelStyle: TextStyle(,
+      color: isSelected 
+                    ? theme.colorScheme.primary 
+                    : theme.colorScheme.onSurface
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+      side: BorderSide(
                 color: isSelected 
                     ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-              side: BorderSide(
-                color: isSelected 
-                    ? theme.colorScheme.primary 
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.3)
+              ))))
+        }).toList()))
   }
 
   Widget _buildTransactionList(List<TokenTransaction> transactions, ThemeData theme, bool isDark) {
@@ -164,37 +154,34 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     final groupedTransactions = _groupTransactionsByDate(transactions);
     
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: groupedTransactions.length,
-      itemBuilder: (context, index) {
+      padding: AppSpacing.paddingHorizontal16),
+        itemCount: groupedTransactions.length),
+        itemBuilder: (context, index) {
         final group = groupedTransactions[index];
         final dateLabel = group['label'] as String;
         final dateTransactions = group['transactions'] as List<TokenTransaction>;
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+                children: [
             // Date Header
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertica,
+      l: AppSpacing.spacing3),
               child: Text(
-                dateLabel,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+                dateLabel),
+        style: theme.textTheme.titleSmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6, fontWeight: FontWeight.bold,
+                          )))))
             
             // Transactions for this date
             ...dateTransactions.map((transaction) => _buildTransactionItem(
               transaction,
-              theme,
-              isDark,
-            )).toList(),
-          ],
-        );
-      },
+              theme)
+              isDark)
+            )).toList())
+      }
     );
   }
 
@@ -204,110 +191,99 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     final color = _getTransactionColor(transaction.type, isAddition);
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: GlassContainer(
-        padding: const EdgeInsets.all(16),
-        borderRadius: BorderRadius.circular(16),
-        blur: 20,
-        child: Row(
-          children: [
+      margin: const EdgeInsets.only(botto,
+      m: AppSpacing.xSmall),
+      child: GlassContainer(,
+      padding: AppSpacing.paddingAll16,
+        borderRadius: AppDimensions.borderRadiusLarge,
+        blur: 20),
+        child: Row(,
+      children: [
             // Icon
             Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
+              width: AppDimensions.buttonHeightMedium),
+              height: AppDimensions.buttonHeightMedium),
+        decoration: BoxDecoration(,
+      color: color.withValues(alp,
+      ha: 0.2,
+        ),
+        shape: BoxShape.circle),
+      child: Icon(
                 icon,
-                color: color,
-                size: 24,
               ),
-            ),
-            const SizedBox(width: 16),
+              color: color),
+        size: AppDimensions.iconSizeMedium)
+              ))
+            SizedBox(width: AppSpacing.spacing4),
             
             // Transaction Details
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child: Column(,
+      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              children: [
                   Text(
                     _getTransactionTitle(transaction),
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 4),
+                    style: theme.textTheme.titleMedium)
+                  SizedBox(height: AppSpacing.spacing1),
                   Text(
                     DateFormat('HH:mm').format(transaction.createdAt),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                    style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          )))))
             
             // Amount and Balance
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
+                children: [
                 Text(
-                  '${isAddition ? '+' : ''}${transaction.amount}',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                  '${isAddition ? '+' : ''}${transaction.amount}'),
+        style: theme.textTheme.titleMedium?.copyWith(,
+      color: color,
+                          ),
+        fontWeight: FontWeight.bold)
+                  ))
                 if (transaction.balanceAfter != null) ...[
-                  const SizedBox(height: 4),
+                  SizedBox(height: AppSpacing.spacing1),
                   Text(
-                    '잔액: ${transaction.balanceAfter}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                    '잔액: ${transaction.balanceAfter}'),
+        style: theme.textTheme.bodySmall?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.6,
+                          ))
+              ])))))))
   }
 
   Widget _buildEmptyState(ThemeData theme) {
     return Center(
-      child: FadeTransition(
-        opacity: _fadeAnimation,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      child: FadeTransition(,
+      opacity: _fadeAnimation,
+        child: Column(,
+      mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              children: [
             Icon(
-              Icons.receipt_long_outlined,
-              size: 80,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
-            const SizedBox(height: 16),
+              Icons.receipt_long_outlined),
+        size: 80),
+        color: theme.colorScheme.onSurface.withValues(alph,
+      a: 0.3)
+            SizedBox(height: AppSpacing.spacing4),
             Text(
               _selectedFilter == 'all' 
-                  ? '아직 토큰 사용 내역이 없습니다'
-                  : '해당하는 내역이 없습니다',
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-            ),
-            const SizedBox(height: 8),
+                  ? '아직 토큰 사용 내역이 없습니다')
+                  : '해당하는 내역이 없습니다'
+              style: theme.textTheme.titleLarge?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.6)
+            SizedBox(height: AppSpacing.spacing2,
+                          ),
             Text(
-              '운세를 보거나 토큰을 구매하면\n여기에 내역이 표시됩니다',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+              '운세를 보거나 토큰을 구매하면\n여기에 내역이 표시됩니다'),
+        style: theme.textTheme.bodyMedium?.copyWith(,
+      color: theme.colorScheme.onSurface.withValues(alp,
+      ha: 0.5,
+                          ),
+        textAlign: TextAlign.center))))))
   }
 
   List<TokenTransaction> _filterTransactions(List<TokenTransaction> transactions) {
@@ -320,13 +296,13 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     final groups = <String, List<TokenTransaction>>{};
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
+    final yesterday = today.subtract(const Duration(days: 1);
     
     for (final transaction in transactions) {
       final transactionDate = DateTime(
-        transaction.createdAt.year,
-        transaction.createdAt.month,
-        transaction.createdAt.day,
+        transaction.createdAt.year)
+        transaction.createdAt.month)
+        transaction.createdAt.day
       );
       
       String label;
@@ -348,8 +324,8 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
     
     // Convert to list and sort
     final sortedGroups = groups.entries.map((entry) => {
-      'label': entry.key,
-      'transactions': entry.value,
+      'label': entry.key
+      'transactions': entry.value
     }).toList();
     
     // Custom sort order
@@ -357,8 +333,7 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
       '오늘': 0,
       '어제': 1,
       '이번 주': 2,
-      '이번 달': 3,
-    };
+      '이번 달': 3;
     
     sortedGroups.sort((a, b) {
       final aOrder = orderMap[a['label']] ?? 4;
@@ -392,16 +367,16 @@ class _TokenHistoryPageState extends ConsumerState<TokenHistoryPage>
   Color _getTransactionColor(String type, bool isAddition) {
     switch (type) {
       case 'purchase':
-        return Colors.blue;
+        return AppColors.primary;
       case 'usage':
       case 'consumption':
-        return Colors.orange;
+        return AppColors.warning;
       case 'bonus':
-        return Colors.green;
+        return AppColors.success;
       case 'refund':
         return Colors.purple;
       default:
-        return isAddition ? Colors.green : Colors.red;
+        return isAddition ? AppColors.success : AppColors.error;
     }
   }
 

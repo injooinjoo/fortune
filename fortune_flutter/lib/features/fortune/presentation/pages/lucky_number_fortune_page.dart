@@ -13,7 +13,7 @@ class LuckyNumberFortunePage extends BaseFortunePage {
           title: '오늘의 행운의 숫자',
           description: '오늘 당신에게 행운을 가져다줄 숫자를 확인해보세요',
           fortuneType: 'lucky-number',
-          requiresUserInfo: true,
+          requiresUserInfo: true
         );
 
   @override
@@ -186,7 +186,7 @@ ${numberInfo['description']}
         'lotteryNumbers': lotteryNumbers,
         'timeNumbers': timeNumbers,
         'numerologyAnalysis': _getNumerologyAnalysis(birthDate),
-      },
+      }
     );
   }
 
@@ -342,7 +342,7 @@ ${numberInfo['description']}
             ),
           ),
         );
-      },
+      }
     );
   }
 
@@ -605,7 +605,7 @@ ${numberInfo['description']}
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -718,7 +718,7 @@ ${numberInfo['description']}
             );
           }).toList(),
         ],
-      ),
+      ,
     );
   }
 }

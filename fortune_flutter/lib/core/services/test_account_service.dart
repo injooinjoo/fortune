@@ -16,7 +16,7 @@ class TestAccountService {
       final response = await _supabase.rpc(
         'toggle_test_account_premium',
         params: {
-          'user_id': userId,
+          'user_id': userId,  // This is the auth user ID which is same as profile ID
           'enabled': enabled,
         },
       );
@@ -38,7 +38,7 @@ class TestAccountService {
         'is_test_account',
         params: {
           'user_email': email,
-        },
+        }
       );
 
       return response == true;

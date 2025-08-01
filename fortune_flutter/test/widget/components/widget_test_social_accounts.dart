@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fortune_flutter/presentation/widgets/social_accounts_section.dart';
-import 'package:fortune_flutter/services/social_auth_service.dart';
+import 'package:fortune/presentation/widgets/social_accounts_section.dart';
+import 'package:fortune/services/social_auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {

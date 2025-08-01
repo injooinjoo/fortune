@@ -16,7 +16,7 @@ class LoadingIndicator extends StatelessWidget {
     // Delegate to FortuneLoadingIndicator for consistent loading experience
     return FortuneLoadingIndicator(
       size: size,
-      message: message,
+      message: message
     );
   }
 }

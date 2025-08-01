@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class AnimatedTarotCardWidget extends StatefulWidget {
   final double width;
@@ -9,7 +11,7 @@ class AnimatedTarotCardWidget extends StatefulWidget {
     super.key,
     this.width = double.infinity,
     this.height = double.infinity,
-  });
+  }));
 
   @override
   State<AnimatedTarotCardWidget> createState() => _AnimatedTarotCardWidgetState();
@@ -102,7 +104,7 @@ class _Sparkle {
     required this.size,
     required this.speed,
     required this.delay,
-  });
+  }));
 }
 
 class _TarotCardPainter extends CustomPainter {
@@ -114,13 +116,13 @@ class _TarotCardPainter extends CustomPainter {
     required this.sparkles,
     required this.sparkleProgress,
     required this.floatOffset,
-  });
+  }));
   
   @override
   void paint(Canvas canvas, Size size) {
     // Draw mystical symbols
     final symbolPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.1)
+      ..color = AppColors.textPrimaryDark.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
     
@@ -179,7 +181,7 @@ class _TarotCardPainter extends CustomPainter {
       final opacity = math.sin(progress * math.pi).abs() * 0.8; // Use abs() to ensure positive value
       
       if (opacity > 0) {
-        sparklePaint.color = Colors.white.withValues(alpha: opacity);
+        sparklePaint.color = AppColors.textPrimaryDark.withValues(alpha: opacity);
         
         final x = size.width * sparkle.x;
         final y = size.height * sparkle.y + floatOffset * 0.5;

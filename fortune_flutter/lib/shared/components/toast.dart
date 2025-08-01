@@ -1,7 +1,12 @@
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../glassmorphism/glass_container.dart';
 import '../glassmorphism/glass_effects.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 enum ToastType { success, error, warning, info }
 
@@ -23,8 +28,8 @@ class Toast {
     final theme = Theme.of(context);
 
     final toast = OverlayEntry(
-      builder: (context) => _ToastWidget(
-        message: message,
+      builder: (context) => _ToastWidget(,
+      message: message,
         type: type,
         duration: duration,
         onTap: onTap,
@@ -93,8 +98,8 @@ class _ToastWidgetState extends State<_ToastWidget>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
+      duration: AppAnimations.durationMedium,
+      vsync: this
     );
 
     _offsetAnimation = Tween<Offset>(
@@ -103,7 +108,7 @@ class _ToastWidgetState extends State<_ToastWidget>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutBack,
-    ));
+    )
 
     _fadeAnimation = Tween<double>(
       begin: 0,
@@ -111,7 +116,7 @@ class _ToastWidgetState extends State<_ToastWidget>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeIn,
-    ));
+    )
 
     _controller.forward();
   }
@@ -143,13 +148,13 @@ class _ToastWidgetState extends State<_ToastWidget>
   Color get _color {
     switch (widget.type) {
       case ToastType.success:
-        return Colors.green;
+        return AppColors.success;
       case ToastType.error:
-        return Colors.red;
+        return AppColors.error;
       case ToastType.warning:
-        return Colors.orange;
+        return AppColors.warning;
       case ToastType.info:
-        return Colors.blue;
+        return AppColors.primary;
     }
   }
 
@@ -162,48 +167,49 @@ class _ToastWidgetState extends State<_ToastWidget>
       top: mediaQuery.padding.top + 16,
       left: 16,
       right: 16,
-      child: SlideTransition(
-        position: _offsetAnimation,
-        child: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Material(
-            color: Colors.transparent,
-            child: GestureDetector(
-              onTap: widget.onTap ?? _dismiss,
+      child: SlideTransition(,
+      position: _offsetAnimation,
+        child: FadeTransition(,
+      opacity: _fadeAnimation,
+          child: Material(,
+      color: Colors.transparent,
+            child: GestureDetector(,
+      onTap: widget.onTap ?? _dismiss,
               onHorizontalDragEnd: (details) {
                 if (details.primaryVelocity!.abs() > 100) {
                   _dismiss();
                 }
               },
-              child: ShimmerGlass(
-                shimmerColor: _color,
-                borderRadius: BorderRadius.circular(16),
-                child: GlassContainer(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+              child: ShimmerGlass(,
+      shimmerColor: _color,
+                borderRadius: AppDimensions.borderRadiusLarge,
+                child: GlassContainer(,
+      padding: EdgeInsets.symmetric(,
+      horizontal: AppSpacing.spacing4,
+                    vertical: AppSpacing.spacing3,
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: AppDimensions.borderRadiusLarge,
                   blur: 20,
-                  boxShadow: GlassEffects.glassShadow(
-                    color: _color,
+                  boxShadow: GlassEffects.glassShadow(,
+      color: _color,
                     elevation: 8,
                   ),
-                  child: Row(
-                    children: [
+                  child: Row(,
+      children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: _color.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
+                        padding: AppSpacing.paddingAll8,
+                        decoration: BoxDecoration(,
+      color: _color.withValues(alp,
+      ha: 0.2),
+                          borderRadius: AppDimensions.borderRadiusMedium,
                         ),
                         child: Icon(
                           _icon,
                           color: _color,
-                          size: 24,
+                          size: AppDimensions.iconSizeMedium,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: AppSpacing.spacing3),
                       Expanded(
                         child: Text(
                           widget.message,
@@ -212,13 +218,14 @@ class _ToastWidgetState extends State<_ToastWidget>
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: AppSpacing.spacing2),
                       IconButton(
                         onPressed: _dismiss,
                         icon: Icon(
                           Icons.close_rounded,
-                          size: 20,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          size: AppDimensions.iconSizeSmall,
+                          color: theme.colorScheme.onSurface.withValues(alph,
+      a: 0.6),
                         ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -235,26 +242,26 @@ class _ToastWidgetState extends State<_ToastWidget>
             end: const Offset(1, 1),
             duration: 300.ms,
             curve: Curves.easeOutBack,
-          ),
+      ),
     );
   }
 }
 
 class SnackBarHelper {
   static void showSuccess(BuildContext context, String message) {
-    _showSnackBar(context, message, Colors.green, Icons.check_circle_rounded);
+    _showSnackBar(context, message, AppColors.success, Icons.check_circle_rounded);
   }
 
   static void showError(BuildContext context, String message) {
-    _showSnackBar(context, message, Colors.red, Icons.error_rounded);
+    _showSnackBar(context, message, AppColors.error, Icons.error_rounded);
   }
 
   static void showWarning(BuildContext context, String message) {
-    _showSnackBar(context, message, Colors.orange, Icons.warning_rounded);
+    _showSnackBar(context, message, AppColors.warning, Icons.warning_rounded);
   }
 
   static void showInfo(BuildContext context, String message) {
-    _showSnackBar(context, message, Colors.blue, Icons.info_rounded);
+    _showSnackBar(context, message, AppColors.primary, Icons.info_rounded);
   }
 
   static void _showSnackBar(
@@ -268,24 +275,25 @@ class SnackBarHelper {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          children: [
-            Icon(icon, color: Colors.white, size: 20),
-            const SizedBox(width: 12),
+        content: Row(,
+      children: [
+            Icon(icon, color: AppColors.textPrimaryDark, size: AppDimensions.iconSizeSmall),
+            SizedBox(width: AppSpacing.spacing3),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(colo,
+      r: AppColors.textPrimaryDark),
               ),
             ),
           ],
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        shape: RoundedRectangleBorder(,
+      borderRadius: AppDimensions.borderRadiusMedium,
         ),
-        margin: const EdgeInsets.all(16),
+        margin: AppSpacing.paddingAll16,
         dismissDirection: DismissDirection.horizontal,
       ),
     );

@@ -21,7 +21,7 @@ class LuckyCryptoFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckyCryptoFortuneResult(
         result: result,
         onShare: onShare,
-      ),
+      ,
     );
   }
 }
@@ -70,7 +70,7 @@ class _LuckyCryptoInputForm extends StatelessWidget {
             ),
           ),
         ),
-      ],
+      ]
     );
   }
 }
@@ -276,7 +276,7 @@ class _LuckyCryptoFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ),
+      ,
     );
   }
 

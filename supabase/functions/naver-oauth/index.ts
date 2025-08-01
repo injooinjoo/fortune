@@ -85,9 +85,10 @@ serve(async (req) => {
       // User exists, get the user ID
       userId = existingUser.id
     } else {
-      // Create new user using Supabase Admin API
+      // Create new user using Supabase Admin API with password
       const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
+        password: `naver_${naverUser.id}`, // Consistent password pattern
         email_confirm: true,
         user_metadata: {
           provider: 'naver',
@@ -139,22 +140,41 @@ serve(async (req) => {
       throw sessionError
     }
 
-    // Create a session for the user
-    const { data: { session: userSession }, error: signInError } = await supabaseAdmin.auth.admin.createSession({
+    // Generate a refresh token for the user
+    const { data: { user, session }, error: refreshError } = await supabaseAdmin.auth.admin.updateUserById(
       userId,
-    })
+      { 
+        email_confirm: true,
+        app_metadata: { provider: 'naver' }
+      }
+    )
 
-    if (signInError) {
-      throw signInError
+    if (refreshError) {
+      throw refreshError
     }
 
+    // Create a new session by generating a magic link
+    const { data, error: magicLinkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'magiclink',
+      email: email,
+      options: {
+        redirectTo: `${req.headers.get('origin')}/auth/callback`,
+      }
+    })
+
+    if (magicLinkError) {
+      throw magicLinkError
+    }
+
+    // Return user info for the client to handle
     return new Response(
       JSON.stringify({
-        access_token: userSession.access_token,
-        refresh_token: userSession.refresh_token,
-        expires_in: userSession.expires_in,
-        token_type: 'bearer',
-        user: userSession.user,
+        user: {
+          id: userId,
+          email: email,
+          app_metadata: { provider: 'naver' }
+        },
+        message: 'User authenticated successfully. Please handle session creation on the client side.'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

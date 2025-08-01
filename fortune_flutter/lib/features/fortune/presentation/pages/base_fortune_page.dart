@@ -76,7 +76,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800)
     );
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -136,7 +136,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         loading: () {
           Logger.debug('⏳ [BaseFortunePage] User profile is loading');
           // Profile is loading
-        },
+        }
       );
     } catch (e) {
       Logger.error('❌ [BaseFortunePage] Error loading user profile', e);
@@ -164,7 +164,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       'timestamp': DateTime.now().toIso8601String(),
     });
     
-    // Check if user has unlimited access (premium)
+    // Check if user has unlimited access (premium,
     final tokenState = ref.read(tokenProvider);
     final tokenNotifier = ref.read(tokenProvider.notifier);
     final isPremium = tokenState.hasUnlimitedAccess;
@@ -197,7 +197,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         await TokenInsufficientModal.show(
           context: context,
           requiredTokens: requiredSouls,
-          fortuneType: widget.fortuneType,
+          fortuneType: widget.fortuneType
         );
         Logger.endTimer('Fortune Generation - ${widget.fortuneType}', stopwatch);
         return;
@@ -222,7 +222,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       _userParams = fortuneParams;
 
       // Generate fortune directly without showing ad screen
-      // (Ad screen is now shown before navigating to this page)
+      // (Ad screen is now shown before navigating to this page,
       Logger.debug('🔮 [BaseFortunePage] Calling generateFortune implementation');
       final fortuneStopwatch = Logger.startTimer('API Call - ${widget.fortuneType}');
       
@@ -273,7 +273,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       if (!isPremium) {
         Logger.debug('💫 [BaseFortunePage] Processing soul transaction');
         final result = await ref.read(tokenProvider.notifier).processSoulForFortune(
-          widget.fortuneType,
+          widget.fortuneType
         );
         
         final soulAmount = SoulRates.getSoulAmount(widget.fortuneType);
@@ -291,17 +291,17 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
           if (mounted) {
             if (soulAmount > 0) {
               Logger.debug('🎁 [BaseFortunePage] Showing soul earn animation', {'amount': soulAmount});
-              // 영혼 획득 애니메이션 (무료 운세)
+              // 영혼 획득 애니메이션 (무료 운세,
               SoulEarnAnimation.show(
                 context: context,
-                soulAmount: soulAmount,
+                soulAmount: soulAmount
               );
             } else if (soulAmount < 0) {
               Logger.debug('💸 [BaseFortunePage] Showing soul consume animation', {'amount': -soulAmount});
-              // 영혼 소비 애니메이션 (프리미엄 운세)
+              // 영혼 소비 애니메이션 (프리미엄 운세,
               SoulConsumeAnimation.show(
                 context: context,
-                soulAmount: -soulAmount,
+                soulAmount: -soulAmount
               );
             }
           }
@@ -675,8 +675,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               ),
             );
           }).toList(),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -785,8 +785,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             ),
             if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton(),
           ],
-        ),
-      ),
+        )
+      )
     );
   }
 
@@ -892,8 +892,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               child: const Text('다시 시도'),
             ),
           ],
-        ),
-      ),
+        )
+      )
     );
   }
 
@@ -930,7 +930,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   'timestamp': DateTime.now().toIso8601String(),
                 });
                 // This will be handled by the bottom sheet
-              },
+              }
             );
           },
           style: ElevatedButton.styleFrom(
@@ -940,8 +940,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             '운세 보기',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-        ),
-      ),
+        )
+      )
     );
   }
 }

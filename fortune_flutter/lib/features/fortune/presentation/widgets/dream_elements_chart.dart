@@ -3,6 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'dart:math' as math;
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/dream_elements_analysis_service.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class DreamElementsChart extends StatefulWidget {
   final Map<String, double> elementWeights;
@@ -13,7 +16,7 @@ class DreamElementsChart extends StatefulWidget {
     Key? key,
     required this.elementWeights,
     required this.elements,
-    this.showAnimation = true,
+    this.showAnimation = true)
   }) : super(key: key);
 
   @override
@@ -30,12 +33,12 @@ class _DreamElementsChartState extends State<DreamElementsChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
+      duration: AppAnimations.durationShimmer,
+      vsync: this)
     );
     _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
+      parent: _animationController)
+      curve: Curves.easeInOut)
     );
     
     if (widget.showAnimation) {
@@ -56,12 +59,12 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeader(),
-        const SizedBox(height: 20),
-        _buildChart(),
-        const SizedBox(height: 20),
-        _buildElementsList(),
-      ],
+        _buildHeader())
+        const SizedBox(height: AppSpacing.spacing5))
+        _buildChart())
+        const SizedBox(height: AppSpacing.spacing5))
+        _buildElementsList())
+      ]
     );
   }
 
@@ -70,33 +73,22 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '꿈 요소 분석',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+          '꿈 요소 분석')
+          style: Theme.of(context).textTheme.bodyMedium)
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5))
           decoration: BoxDecoration(
-            color: Colors.deepPurple.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(20),
+            color: Colors.deepPurple.withValues(alpha: 0.2))
+            borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge))
             border: Border.all(
-              color: Colors.deepPurple.withValues(alpha: 0.3),
-              width: 1,
-            ),
-          ),
+              color: Colors.deepPurple.withValues(alpha: 0.3))
+              width: 1)
+            ))
+          ))
           child: Text(
             '${_getTotalElements()}개 요소 발견',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
+            style: Theme.of(context).textTheme.bodyMedium)
+      ]
     );
   }
 
@@ -113,15 +105,15 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       animation: _animation,
       builder: (context, child) {
         return GlassContainer(
-          height: 300,
-          padding: const EdgeInsets.all(20),
+          height: AppSpacing.spacing24 * 3.125)
+          padding: AppSpacing.paddingAll20)
           child: Stack(
             children: [
               // 파이 차트
               PieChart(
                 PieChartData(
                   pieTouchData: PieTouchData(
-                    enabled: true,
+                    enabled: true)
                     touchCallback: (FlTouchEvent event, pieTouchResponse) {
                       setState(() {
                         if (pieTouchResponse?.touchedSection != null) {
@@ -131,23 +123,23 @@ class _DreamElementsChartState extends State<DreamElementsChart>
                         }
                       });
                     },
-                  ),
-                  borderData: FlBorderData(show: false),
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 80,
-                  sections: _getPieChartSections(),
-                ),
-                swapAnimationDuration: const Duration(milliseconds: 150),
-                swapAnimationCurve: Curves.linear,
-              ),
+                  ))
+                  borderData: FlBorderData(show: false))
+                  sectionsSpace: 2)
+                  centerSpaceRadius: 80)
+                  sections: _getPieChartSections())
+                ))
+                swapAnimationDuration: const Duration(milliseconds: 150))
+                swapAnimationCurve: Curves.linear)
+              ))
               // 중앙 텍스트
               Center(
-                child: _buildCenterInfo(),
-              ),
-            ],
+                child: _buildCenterInfo())
+              ))
+            ])
           ),
         );
-      },
+      })
     );
   }
 
@@ -163,17 +155,17 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         sections.add(
           PieChartSectionData(
             color: _getCategoryColor(entry.key),
-            value: value * 100,
-            title: '${(value * 100).toInt()}%',
+            value: value * 100)
+            title: '${(value * 100).toInt()}%')
             radius: isSelected ? 80 : 70,
             titleStyle: TextStyle(
-              fontSize: isSelected ? 16 : 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-            badgeWidget: _buildBadge(entry.key),
-            badgePositionPercentageOffset: 1.3,
-          ),
+              fontSize: isSelected ? 16 : 14)
+              fontWeight: FontWeight.bold)
+              color: Colors.white)
+            ))
+            badgeWidget: _buildBadge(entry.key))
+            badgePositionPercentageOffset: 1.3)
+          ))
         );
       }
       index++;
@@ -184,20 +176,20 @@ class _DreamElementsChartState extends State<DreamElementsChart>
 
   Widget _buildBadge(String category) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: AppSpacing.paddingAll8,
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        color: _getCategoryColor(category).withValues(alpha: 0.2))
+        borderRadius: AppDimensions.borderRadiusMedium)
         border: Border.all(
-          color: _getCategoryColor(category).withValues(alpha: 0.5),
-          width: 1,
-        ),
-      ),
+          color: _getCategoryColor(category).withValues(alpha: 0.5))
+          width: 1)
+        ))
+      ))
       child: Icon(
-        _getCategoryIcon(category),
-        size: 20,
-        color: _getCategoryColor(category),
-      ),
+        _getCategoryIcon(category))
+        size: 20)
+        color: _getCategoryColor(category))
+      ))
     );
   }
 
@@ -207,20 +199,15 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.bedtime,
-            size: 32,
-            color: Colors.white54,
-          ),
-          const SizedBox(height: 8),
+            Icons.bedtime)
+            size: 32)
+            color: Colors.white54)
+          ))
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            '꿈 요소',
-            style: TextStyle(
-              color: Colors.white54,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+            '꿈 요소')
+            style: Theme.of(context).textTheme.bodyMedium)
+        ])
       );
     }
     
@@ -233,27 +220,18 @@ class _DreamElementsChartState extends State<DreamElementsChart>
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            _getCategoryIcon(category),
-            size: 32,
-            color: _getCategoryColor(category),
-          ),
-          const SizedBox(height: 4),
+            _getCategoryIcon(category))
+            size: 32)
+            color: _getCategoryColor(category))
+          ))
+          const SizedBox(height: AppSpacing.spacing1))
           Text(
-            category,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+            category)
+            style: Theme.of(context).textTheme.bodyMedium)
           Text(
-            '$count개',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-          ),
-        ],
+            '$count개')
+            style: Theme.of(context).textTheme.bodyMedium)
+        ]
       );
     }
     
@@ -265,84 +243,74 @@ class _DreamElementsChartState extends State<DreamElementsChart>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '발견된 요소 상세',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 12),
+          '발견된 요소 상세')
+          style: Theme.of(context).textTheme.bodyMedium)
+        const SizedBox(height: AppSpacing.spacing3))
         ...widget.elements.entries.where((e) => e.value.isNotEmpty).map((entry) {
           return _buildCategorySection(entry.key, entry.value);
-        }).toList(),
-      ],
+        }).toList())
+      ]
     );
   }
 
   Widget _buildCategorySection(String category, List<String> items) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: AppSpacing.spacing3),
+      padding: AppSpacing.paddingAll12)
       decoration: BoxDecoration(
-        color: _getCategoryColor(category).withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: _getCategoryColor(category).withValues(alpha: 0.1))
+        borderRadius: AppDimensions.borderRadiusMedium)
         border: Border.all(
-          color: _getCategoryColor(category).withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          color: _getCategoryColor(category).withValues(alpha: 0.3))
+          width: 1)
+        ))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Row(
             children: [
               Icon(
-                _getCategoryIcon(category),
-                size: 16,
-                color: _getCategoryColor(category),
-              ),
-              const SizedBox(width: 8),
+                _getCategoryIcon(category))
+                size: 16)
+                color: _getCategoryColor(category))
+              ))
+              const SizedBox(width: AppSpacing.spacing2))
               Text(
-                category,
+                category)
                 style: TextStyle(
-                  color: _getCategoryColor(category),
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+                  color: _getCategoryColor(category)
+                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+                  fontWeight: FontWeight.bold)
+                ))
+              ))
+            ])
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.spacing2))
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 8)
+            runSpacing: 8)
             children: items.map((item) {
               return GestureDetector(
-                onTap: () => _showElementDetail(category, item),
+                onTap: () => _showElementDetail(category, item))
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5))
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white.withValues(alpha: 0.1))
+                    borderRadius: AppDimensions.borderRadiusLarge)
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      width: 1,
-                    ),
-                  ),
+                      color: Colors.white.withValues(alpha: 0.2))
+                      width: 1)
+                    ))
+                  ))
                   child: Text(
-                    item,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
+                    item)
+                    style: Theme.of(context).textTheme.bodyMedium)
               );
-            }).toList(),
+            }).toList())
           ),
-        ],
-      ),
+        ])
+      )
     );
   }
 
@@ -352,104 +320,90 @@ class _DreamElementsChartState extends State<DreamElementsChart>
     
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent)
       builder: (context) => Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
+          color: Theme.of(context).scaffoldBackgroundColor)
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)))
+        ))
+        padding: AppSpacing.paddingAll24)
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min)
           children: [
             Container(
-              width: 40,
-              height: 4,
+              width: 40)
+              height: AppSpacing.spacing1)
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 20),
+                color: Colors.white.withValues(alpha: 0.3))
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
+              ))
+            ))
+            const SizedBox(height: AppSpacing.spacing5))
             Icon(
-              _getCategoryIcon(category),
-              size: 48,
-              color: _getCategoryColor(category),
-            ),
-            const SizedBox(height: 12),
+              _getCategoryIcon(category))
+              size: 48)
+              color: _getCategoryColor(category))
+            ))
+            const SizedBox(height: AppSpacing.spacing3))
             Text(
-              element,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+              element)
+              style: Theme.of(context).textTheme.bodyMedium)
             Text(
               symbolData['meaning'] as String,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white54,
-              ),
-            ),
-            const SizedBox(height: 20),
+              style: Theme.of(context).textTheme.bodyMedium,
+            const SizedBox(height: AppSpacing.spacing5))
             _buildMeaningSection(
-              '긍정적 의미',
+              '긍정적 의미')
               symbolData['positive'] as String,
               Colors.green,
-            ),
-            const SizedBox(height: 12),
+            ))
+            const SizedBox(height: AppSpacing.spacing3))
             _buildMeaningSection(
-              '부정적 의미',
+              '부정적 의미')
               symbolData['negative'] as String,
               Colors.orange,
-            ),
-            const SizedBox(height: 12),
+            ))
+            const SizedBox(height: AppSpacing.spacing3))
             _buildMeaningSection(
-              '심리학적 해석',
+              '심리학적 해석')
               symbolData['psychological'] as String,
               Colors.purple,
-            ),
-          ],
+            ))
+          ])
         ),
-      ),
+      )
     );
   }
 
   Widget _buildMeaningSection(String title, String content, Color color) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16)
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
+        color: color.withValues(alpha: 0.1))
+        borderRadius: AppDimensions.borderRadiusMedium)
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          color: color.withValues(alpha: 0.3))
+          width: 1)
+        ))
+      ))
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start)
         children: [
           Text(
-            title,
-            style: TextStyle(
-              color: color,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
+            title)
+            style: Theme.of(context).textTheme.bodyMedium)
+          const SizedBox(height: AppSpacing.spacing1))
           Text(
-            content,
+            content)
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 14,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
+              color: Colors.white.withValues(alpha: 0.8)
+              fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
+              height: 1.4)
+            ))
+          ))
+        ])
+      )
     );
   }
 

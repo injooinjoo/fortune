@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:fortune/main.dart' as app;
-import 'package:fortune/screens/auth/login_screen.dart';
-import 'package:fortune/screens/home/home_screen.dart';
+import 'package:fortune/screens/landing_page.dart' as landing;
+import 'package:fortune/screens/home/home_screen.dart' as home;
 import 'package:fortune/screens/fortune/daily_fortune_screen.dart';
 import 'package:fortune/presentation/widgets/fortune_card.dart';
 import 'package:mocktail/mocktail.dart';
@@ -55,13 +55,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should be on login screen
-      expect(find.byType(LoginScreen), findsOneWidget);
+      expect(find.byType(landing.LandingPage), findsOneWidget);
 
       // Find and tap email input field
       final emailField = find.byWidgetPredicate(
         (widget) => widget is TextField && 
-                    widget.decoration?.labelText == 'Email' ||
-                    widget.decoration?.hintText == 'Enter your email',
+                    (widget.decoration?.labelText == 'Email' ||
+                     widget.decoration?.hintText == 'Enter your email'),
       );
       
       if (emailField.evaluate().isNotEmpty) {
@@ -73,8 +73,8 @@ void main() {
       // Find and tap password input field
       final passwordField = find.byWidgetPredicate(
         (widget) => widget is TextField && 
-                    widget.decoration?.labelText == 'Password' ||
-                    widget.decoration?.hintText == 'Enter your password',
+                    (widget.decoration?.labelText == 'Password' ||
+                     widget.decoration?.hintText == 'Enter your password'),
       );
       
       if (passwordField.evaluate().isNotEmpty) {
@@ -100,8 +100,8 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Verify we're on the home screen
-      if (find.byType(HomeScreen).evaluate().isNotEmpty) {
-        expect(find.byType(HomeScreen), findsOneWidget);
+      if (find.byType(home.HomeScreen).evaluate().isNotEmpty) {
+        expect(find.byType(home.HomeScreen), findsOneWidget);
 
         // Find and tap daily fortune card
         final dailyFortuneCard = find.byWidgetPredicate(
@@ -131,7 +131,7 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // Should show login screen when offline
-      expect(find.byType(LoginScreen), findsOneWidget);
+      expect(find.byType(landing.LandingPage), findsOneWidget);
 
       // Look for offline indicator if implemented
       final offlineIndicator = find.byWidgetPredicate(
@@ -211,11 +211,11 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // If on login screen, try invalid login
-      if (find.byType(LoginScreen).evaluate().isNotEmpty) {
+      if (find.byType(landing.LandingPage).evaluate().isNotEmpty) {
         final emailField = find.byWidgetPredicate(
           (widget) => widget is TextField && 
-                      widget.decoration?.labelText == 'Email' ||
-                      widget.decoration?.hintText == 'Enter your email',
+                      (widget.decoration?.labelText == 'Email' ||
+                       widget.decoration?.hintText == 'Enter your email'),
         );
         
         if (emailField.evaluate().isNotEmpty) {
@@ -275,9 +275,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Should not be on login screen if session persisted
-      if (find.byType(HomeScreen).evaluate().isNotEmpty) {
-        expect(find.byType(HomeScreen), findsOneWidget);
-        expect(find.byType(LoginScreen), findsNothing);
+      if (find.byType(home.HomeScreen).evaluate().isNotEmpty) {
+        expect(find.byType(home.HomeScreen), findsOneWidget);
+        expect(find.byType(landing.LandingPage), findsNothing);
       }
     });
 
@@ -294,7 +294,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Navigate directly to a specific fortune type
-      if (find.byType(HomeScreen).evaluate().isNotEmpty) {
+      if (find.byType(home.HomeScreen).evaluate().isNotEmpty) {
         // Find weekly fortune card
         final weeklyFortuneCard = find.byWidgetPredicate(
           (widget) => widget is FortuneCard && 
@@ -354,7 +354,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Navigate to a fortune screen
-      if (find.byType(HomeScreen).evaluate().isNotEmpty) {
+      if (find.byType(home.HomeScreen).evaluate().isNotEmpty) {
         final fortuneCard = find.byType(FortuneCard).first;
         if (fortuneCard.evaluate().isNotEmpty) {
           await tester.tap(fortuneCard);

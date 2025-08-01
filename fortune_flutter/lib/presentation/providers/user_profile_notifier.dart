@@ -29,8 +29,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
         email: user.email ?? 'unknown@example.com',
         name: user.userMetadata?['name'] as String? ?? 
               user.userMetadata?['full_name'] as String?,
-        profileImageUrl: user.userMetadata?['avatar_url'] as String?,
-      );
+        profileImageUrl: user.userMetadata?['avatar_url'] as String?);
       
       if (profileData != null) {
         final profile = UserProfile.fromJson(profileData);
@@ -49,8 +48,7 @@ class UserProfileNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
       // Update in database using SupabaseHelper
       await SupabaseHelper.updateUserProfile(
         userId: updatedProfile.userId,
-        updates: updatedProfile.toJson(),
-      );
+        updates: updatedProfile.toJson());
       
       // Update local state
       state = AsyncValue.data(updatedProfile);

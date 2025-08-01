@@ -163,7 +163,7 @@ class OfflineModeNotifier extends StateNotifier<OfflineModeState> {
       
       // Remove successfully synced items from pending list
       final remainingItems = state.pendingSyncItems
-          .where((id) => !syncedItems.contains(id))
+          .where((id) => !syncedItems.contains(id),
           .toList();
       
       Logger.info('Synced ${syncedItems.length} of ${state.pendingSyncItems.length} pending items');

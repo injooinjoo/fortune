@@ -10,7 +10,8 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import '../core/constants/in_app_products.dart';
 import '../core/network/api_client.dart';
-import '../core/constants/api_endpoints.dart';
+import '../core/constants/edge_functions_endpoints.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../presentation/providers/user_provider.dart';
 
 class InAppPurchaseService {
@@ -19,7 +20,7 @@ class InAppPurchaseService {
   InAppPurchaseService._internal();
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
-  final ApiClient _apiClient = ApiClient();
+  final _supabase = Supabase.instance.client;
   
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   final List<ProductDetails> _products = [];
@@ -45,7 +46,7 @@ class InAppPurchaseService {
     if (!kIsWeb && Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
           _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
-      await iosPlatformAddition.setDelegate(PaymentQueueDelegate());
+      await iosPlatformAddition.setDelegate(PaymentQueueDelegate();
     }
     
     // Load products
@@ -54,10 +55,9 @@ class InAppPurchaseService {
     // Listen to purchase updates
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen(
-      _handlePurchaseUpdate,
-      onDone: _onDone,
-      onError: _onError,
-    );
+      _handlePurchaseUpdate),
+        onDone: _onDone),
+        onError: _onError)
   }
   
   // Load available products
@@ -65,8 +65,7 @@ class InAppPurchaseService {
     if (!_isAvailable) return;
     
     final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(
-      InAppProducts.allProductIds.toSet(),
-    );
+      InAppProducts.allProductIds.toSet())
     
     if (response.error != null) {
       debugPrint('Error loading products: ${response.error}');
@@ -79,7 +78,7 @@ class InAppPurchaseService {
     
     _products.clear();
     _products.addAll(response.productDetails);
-    _products.sort((a, b) => a.price.compareTo(b.price));
+    _products.sort((a, b) => a.price.compareTo(b.price);
   }
   
   // Purchase a product
@@ -88,27 +87,24 @@ class InAppPurchaseService {
     
     final ProductDetails? productDetails = _products.firstWhere(
       (product) => product.id == productId,
-      orElse: () => throw Exception('Product not found: $productId'),
-    );
+      orElse: () => throw Exception('Product not foun,
+      d: $productId'))
     
     if (productDetails == null) return false;
     
     final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: productDetails,
-    );
+      productDetails: productDetails)
     
     try {
       _purchasePending = true;
       
       if (InAppProducts.consumableIds.contains(productId)) {
         return await _inAppPurchase.buyConsumable(
-          purchaseParam: purchaseParam,
-        );
-      } else {
+    purchaseParam: purchaseParam,
+  )} else {
         return await _inAppPurchase.buyNonConsumable(
-          purchaseParam: purchaseParam,
-        );
-      }
+    purchaseParam: purchaseParam,
+  )}
     } catch (e) {
       debugPrint('Purchase error: $e');
       _purchasePending = false;
@@ -126,8 +122,8 @@ class InAppPurchaseService {
           _purchasePending = true;
           break;
           
-        case PurchaseStatus.purchased:
-        case PurchaseStatus.restored:
+        case PurchaseStatus.purchased: case PurchaseStatus.restore,
+      d:
           await _verifyAndDeliverProduct(purchaseDetails);
           _purchasePending = false;
           break;
@@ -156,33 +152,16 @@ class InAppPurchaseService {
     
     try {
       // Verify purchase with backend
-      final Map<String, dynamic> response = await _apiClient.post(
-        ApiEndpoints.verifyPurchase,
-        data: {
-          'productId': purchaseDetails.productID,
-          'purchaseToken': purchaseDetails.verificationData.serverVerificationData,
+      final response = await _supabase.functions.invoke(
+        EdgeFunctionsEndpoints.verifyPurchase),
+        body: {
+          'productId': purchaseDetails.productID)
+          'purchaseToken': purchaseDetails.verificationData.serverVerificationData)
           'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
-        },
-      );
+        })
       
-      if (response['success'] == true) {
-        // Update user tokens or subscription status
-        final productInfo = InAppProducts.productDetails[purchaseDetails.productID];
-        if (productInfo != null) {
-          if (productInfo.isSubscription) {
-            // Update subscription status
-            await _apiClient.post(
-              ApiEndpoints.subscriptionStatus,
-              data: {'isSubscribed': true},
-            );
-          } else {
-            // Add tokens
-            await _apiClient.post(
-              ApiEndpoints.addTokens,
-              data: {'tokens': productInfo.tokens},
-            );
-          }
-        }
+      if (response.data != null && response.data['success'] == true) {
+        debugPrint('Purchase verified successfully');
       }
     } catch (e) {
       debugPrint('Verification error: $e');
@@ -204,10 +183,11 @@ class InAppPurchaseService {
   Future<bool> checkSubscriptionStatus() async {
     // Check with backend for current subscription status
     try {
-      final Map<String, dynamic> response = await _apiClient.get(
-        ApiEndpoints.subscriptionStatus,
+      final response = await _supabase.functions.invoke(
+        EdgeFunctionsEndpoints.subscriptionStatus),
+        httpMethod: HttpMethod.get
       );
-      return response['isSubscribed'] == true;
+      return response.data != null && response.data['isSubscribed'] == true;
     } catch (e) {
       debugPrint('Subscription check error: $e');
       return false;
@@ -238,7 +218,7 @@ class PaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
     SKPaymentTransactionWrapper transaction,
-    SKStorefrontWrapper storefront,
+    SKStorefrontWrapper storefront)
   ) {
     return true;
   }

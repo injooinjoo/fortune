@@ -52,7 +52,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
         colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
       ),
       inputBuilder: (context, onSubmit) => _buildSeasonInfo(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result),
+      resultBuilder: (context, result, onShare) => _buildResult(context, result)
     );
   }
 
@@ -130,7 +130,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
+                )
               );
             },
           ),
@@ -163,8 +163,8 @@ class BirthSeasonFortunePage extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -315,7 +315,7 @@ class BirthSeasonFortunePage extends StatelessWidget {
               height: 1.6,
             ),
           ),
-      ],
+      ]
     );
   }
 
@@ -358,8 +358,8 @@ class BirthSeasonFortunePage extends StatelessWidget {
               height: 1.5,
             ),
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -397,8 +397,8 @@ class BirthSeasonFortunePage extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-        ],
-      ),
+        ]
+      )
     );
   }
 }

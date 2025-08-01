@@ -1,3 +1,4 @@
+import 'package:fortune/core/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -103,16 +104,16 @@ final appRouterProviderV2 = Provider<GoRouter>((ref) {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                            const SizedBox(height: 16),
+                            SizedBox(height: AppSpacing.spacing4),
                             Text('알 수 없는 운세 타입: $fortuneTypeKey'),
-                            const SizedBox(height: 16),
+                            SizedBox(height: AppSpacing.spacing4),
                             ElevatedButton(
                               onPressed: () => context.go('/fortune-list'),
                               child: const Text('목록으로 돌아가기'),
                             ),
                           ],
                         ),
-                      ),
+                      )
                     );
                   }
                   
@@ -249,18 +250,18 @@ final appRouterProviderV2 = Provider<GoRouter>((ref) {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
+            SizedBox(height: AppSpacing.spacing4),
             const Text(
               '페이지를 찾을 수 없습니다',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AppSpacing.spacing2),
             Text(
               state.error?.toString() ?? '알 수 없는 오류가 발생했습니다',
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.grey),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: AppSpacing.spacing6),
             ElevatedButton(
               onPressed: () => context.go('/home'),
               child: const Text('홈으로'),
@@ -268,7 +269,7 @@ final appRouterProviderV2 = Provider<GoRouter>((ref) {
           ],
         ),
       ),
-    ),
+    )
   );
 });
 

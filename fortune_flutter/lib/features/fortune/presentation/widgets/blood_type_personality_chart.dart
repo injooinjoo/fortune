@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../services/blood_type_analysis_service.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class BloodTypePersonalityChart extends StatefulWidget {
   final String bloodType;
@@ -33,9 +36,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
+      duration: AppAnimations.durationSkeleton,
+      vsync: this);
     
     _biorhythmController = AnimationController(
       duration: const Duration(seconds: 2),
@@ -60,9 +62,9 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     
     if (widget.showAnimation) {
       _animationController.forward();
-    } else {
+} else {
       _animationController.value = 1.0;
-    }
+}
   }
 
   @override
@@ -70,20 +72,20 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
     _animationController.dispose();
     _biorhythmController.dispose();
     super.dispose();
-  }
+}
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         _buildHeader(),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.spacing5),
         _buildTabSelector(),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.spacing5),
         _buildContent(),
-      ],
+      ]
     );
-  }
+}
 
   Widget _buildHeader() {
     final characteristics = BloodTypeAnalysisService.bloodTypeCharacteristics[widget.bloodType]!;
@@ -99,13 +101,13 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             children: [
               Container(
                 width: 80,
-                height: 80,
+                height: AppSpacing.spacing20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      Colors.red.shade400,
-                      Colors.red.shade600,
+                      Colors.red.withValues(alpha: 0.6),
+                      Colors.red.withValues(alpha: 0.8),
                     ],
                   ),
                   boxShadow: [
@@ -119,47 +121,35 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 child: Center(
                   child: Text(
                     '${widget.bloodType}${widget.rhType}',
-                    style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                    style: Theme.of(context).textTheme.bodyMedium,
               ),
-              const SizedBox(width: 20),
+              const SizedBox(width: AppSpacing.spacing5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '${widget.bloodType}형 ${widget.rhType} 혈액형',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold),
                       color: Colors.white,
                     ),
-                  ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     '${characteristics['element']} 원소 · ${rhData['description']}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                  ),
+                    style: Theme.of(context).textTheme.bodyMedium,
                 ],
               ),
             ],
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
 
   Widget _buildTabSelector() {
     final tabs = ['성격 분석', '바이오리듬', '특성 강도'];
     
     return GlassContainer(
-      padding: const EdgeInsets.all(4),
+      padding: AppSpacing.paddingAll4,
       child: Row(
         children: tabs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -170,8 +160,8 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             child: GestureDetector(
               onTap: () => setState(() => _selectedTab = index),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                duration: AppAnimations.durationShort,
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
                 decoration: BoxDecoration(
                   gradient: isSelected
                       ? LinearGradient(
@@ -179,26 +169,21 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                             Theme.of(context).colorScheme.primary,
                             Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
                           ],
-                        )
+                        ,
                       : null,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppDimensions.borderRadiusSmall,
                 ),
                 child: Center(
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
+                      color: isSelected ? Colors.white : Colors.white70),
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
-                  ),
                 ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
+            ));
+}).toList());
+}
 
   Widget _buildContent() {
     switch (_selectedTab) {
@@ -210,7 +195,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         return _buildStrengthRadar();
       default:
         return const SizedBox();
-    }
+}
   }
 
   Widget _buildPersonalityAnalysis() {
@@ -225,30 +210,23 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
           child: Column(
             children: [
               GlassContainer(
-                padding: const EdgeInsets.all(20),
+                padding: AppSpacing.paddingAll20,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '성격 개요',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold),
                         color: Colors.white,
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.spacing3),
                     Text(
                       characteristics['personality'],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                        height: 1.5,
-                      ),
-                    ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                   ],
                 ),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.spacing4),
               Row(
                 children: [
                   Expanded(
@@ -258,8 +236,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       Colors.green,
                       Icons.thumb_up,
                     ),
-                  ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppSpacing.spacing4),
                   Expanded(
                     child: _buildTraitCard(
                       '부정적 특성',
@@ -267,111 +244,96 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                       Colors.orange,
                       Icons.thumb_down,
                     ),
-                  ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.spacing4),
               _buildLifeStyleCard(characteristics),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.spacing4),
               _buildRhInfluence(rhData),
             ],
-          ),
-        );
-      },
+          ));
+}
     );
-  }
+}
 
   Widget _buildTraitCard(String title, List<String> traits, Color color, IconData icon) {
     return GlassContainer(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: AppSpacing.paddingAll8,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppDimensions.borderRadiusSmall,
                 ),
                 child: Icon(icon, color: color, size: 20),
-              ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
+                style: Theme.of(context).textTheme.bodyMedium,
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           ...traits.map((trait) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing2),
             child: Row(
               children: [
                 Container(
                   width: 6,
-                  height: 6,
+                  height: AppSpacing.spacing1 * 1.5,
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
                   ),
-                ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   trait,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
+                  style: Theme.of(context).textTheme.bodyMedium,
               ],
-            ),
-          )).toList(),
+            ))).toList(),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildLifeStyleCard(Map<String, dynamic> characteristics) {
     return GlassContainer(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.paddingAll20,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '라이프스타일',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.bold),
               color: Colors.white,
             ),
-          ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.spacing4),
           _buildLifeStyleItem(
             '연애 스타일',
             characteristics['love_style'],
             Icons.favorite,
             Colors.pink,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '업무 스타일',
             characteristics['work_style'],
             Icons.work,
             Colors.blue,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '스트레스 반응',
             characteristics['stress_response'],
             Icons.psychology,
             Colors.purple,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           _buildLifeStyleItem(
             '건강 조언',
             characteristics['health_tips'],
@@ -379,50 +341,40 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
             Colors.green,
           ),
         ],
-      ),
+      
     );
-  }
+}
 
   Widget _buildLifeStyleItem(String title, String content, IconData icon, Color color) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: AppSpacing.paddingAll8,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppDimensions.borderRadiusSmall,
           ),
           child: Icon(icon, color: color, size: 20),
-        ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.spacing3),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 4),
+                style: Theme.of(context).textTheme.bodyMedium,
+              const SizedBox(height: AppSpacing.spacing1),
               Text(
                 content,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.9),
+                style: Theme.of(context).textTheme.bodyMedium,
                   height: 1.4,
                 ),
-              ),
             ],
           ),
-        ),
-      ],
+      ]
     );
-  }
+}
 
   Widget _buildRhInfluence(Map<String, dynamic> rhData) {
     return GlassContainer(
@@ -432,7 +384,7 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
           Colors.purple.withValues(alpha: 0.05),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -443,62 +395,46 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                 color: Colors.purple,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 'Rh${widget.rhType} 특성',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.purple,
-                ),
-              ),
+                style: Theme.of(context).textTheme.bodyMedium,
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.spacing3),
           Text(
             rhData['description'],
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ),
-          const SizedBox(height: 8),
+            style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: AppSpacing.spacing2),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: (rhData['traits'] as List<String>).map((trait) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
                   color: Colors.purple.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                   border: Border.all(
                     color: Colors.purple.withValues(alpha: 0.4),
                     width: 1,
                   ),
-                ),
                 child: Text(
                   trait,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                  ),
-                ),
+                  style: Theme.of(context).textTheme.bodyMedium,
               );
-            }).toList(),
-          ),
+}).toList(),
           if (rhData.containsKey('special_note')) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.spacing3),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
                 color: Colors.amber.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppDimensions.borderRadiusSmall,
                 border: Border.all(
                   color: Colors.amber.withValues(alpha: 0.3),
                   width: 1,
                 ),
-              ),
               child: Row(
                 children: [
                   Icon(
@@ -506,68 +442,55 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                     color: Colors.amber,
                     size: 16,
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       rhData['special_note'],
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.amber.shade100,
-                      ),
-                    ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
-            ),
           ],
         ],
-      ),
-    );
-  }
+      ));
+}
 
   Widget _buildBiorhythm() {
     final biorhythm = BloodTypeAnalysisService.calculateDailyBiorhythm(
       widget.bloodType,
       widget.rhType,
-      _selectedDate,
-    );
+      _selectedDate);
     
     return Column(
       children: [
         GlassContainer(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAll16,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '선택된 날짜',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
-              ),
+                style: Theme.of(context).textTheme.bodyMedium,
               GestureDetector(
                 onTap: () async {
                   final date = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate,
-                    firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
+                    firstDate: DateTime.now().subtract(const Duration(days: 365),
+                    lastDate: DateTime.now().add(const Duration(days: 365));
                   if (date != null) {
                     setState(() => _selectedDate = date);
-                  }
+}
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                     border: Border.all(
                       color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                       width: 1,
                     ),
-                  ),
                   child: Row(
                     children: [
                       Icon(
@@ -575,42 +498,38 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                         size: 16,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.spacing2),
                       Text(
                         '${_selectedDate.year}.${_selectedDate.month}.${_selectedDate.day}',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.primary),
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
                     ],
                   ),
-                ),
               ),
             ],
           ),
-        ),
-        const SizedBox(height: 20),
+        const SizedBox(height: AppSpacing.spacing5),
         AnimatedBuilder(
           animation: _biorhythmController,
           builder: (context, child) {
             return GlassContainer(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.paddingAll20,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '오늘의 바이오리듬',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold),
                       color: Colors.white,
                     ),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: AppSpacing.spacing5),
                   ...biorhythm.entries.map((entry) {
                     final color = _getBiorhythmColor(entry.key);
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.spacing4),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -621,59 +540,46 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                                 children: [
                                   Container(
                                     width: 8,
-                                    height: 8,
+                                    height: AppSpacing.spacing2,
                                     decoration: BoxDecoration(
                                       color: color,
                                       shape: BoxShape.circle,
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: AppSpacing.spacing2),
                                   Text(
                                     entry.key,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white.withValues(alpha: 0.8),
-                                    ),
-                                  ),
+                                    style: Theme.of(context).textTheme.bodyMedium,
                                 ],
                               ),
                               Text(
                                 '${(entry.value * 100).toInt()}%',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
-                                ),
-                              ),
+                                style: Theme.of(context).textTheme.bodyMedium,
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppSpacing.spacing2),
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: AppDimensions.borderRadiusSmall,
                             child: LinearProgressIndicator(
                               value: entry.value,
                               backgroundColor: color.withValues(alpha: 0.2),
                               valueColor: AlwaysStoppedAnimation<Color>(color),
                               minHeight: 8,
                             ),
-                          ),
                         ],
-                      ),
-                    );
-                  }).toList(),
+                      ));
+}).toList(),
                 ],
-              ),
-            );
-          },
+              ));
+},
         ),
       ],
     );
-  }
+}
 
   Widget _buildStrengthRadar() {
     final strengths = BloodTypeAnalysisService.analyzePersonalityStrengths(
       widget.bloodType,
-      widget.rhType,
+      widget.rhType
     );
     
     return AnimatedBuilder(
@@ -682,18 +588,17 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         return Transform.scale(
           scale: _scaleAnimation.value,
           child: GlassContainer(
-            padding: const EdgeInsets.all(20),
+            padding: AppSpacing.paddingAll20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '성격 강도 분석',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold),
                     color: Colors.white,
                   ),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.spacing5),
                 SizedBox(
                   height: 300,
                   child: RadarChart(
@@ -720,58 +625,45 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                           borderWidth: 2,
                           dataEntries: strengths.entries
                               .map((e) => RadarEntry(value: e.value * 100))
-                              .toList(),
-                        ),
+                        .toList(),
                       ],
                       getTitle: (index, angle) {
                         final titles = strengths.keys.toList();
                         return RadarChartTitle(
                           text: titles[index],
-                          angle: 0,
-                        );
-                      },
+                          angle: 0);
+},
                       tickCount: 5,
                       ticksTextStyle: TextStyle(
                         color: Colors.white.withValues(alpha: 0.5),
-                        fontSize: 10,
+                        fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
                       ),
-                      titleTextStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      titleTextStyle: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.spacing5),
                 _buildStrengthLegend(strengths),
               ],
             ),
-          ),
         );
-      },
+}
     );
-  }
+}
 
   Widget _buildStrengthLegend(Map<String, double> strengths) {
-    final sortedStrengths = strengths.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final sortedStrengths = strengths.entries.toList(,
+      ..sort((a, b) => b.value.compareTo(a.value);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '주요 강점',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white.withValues(alpha: 0.8),
-          ),
-        ),
-        const SizedBox(height: 12),
+          style: Theme.of(context).textTheme.bodyMedium,
+        const SizedBox(height: AppSpacing.spacing3),
         ...sortedStrengths.take(3).map((entry) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: AppSpacing.spacing2),
             child: Row(
               children: [
                 Icon(
@@ -779,30 +671,20 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
                   color: Colors.amber,
                   size: 16,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   entry.key,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                  ),
-                ),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 const Spacer(),
                 Text(
                   '${(entry.value * 100).toInt()}%',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.amber,
-                  ),
-                ),
+                  style: Theme.of(context).textTheme.bodyMedium,
               ],
-            ),
-          );
-        }).toList(),
-      ],
+            ));
+}).toList(),
+      ]
     );
-  }
+}
 
   Color _getBiorhythmColor(String type) {
     switch (type) {
@@ -818,6 +700,6 @@ class _BloodTypePersonalityChartState extends State<BloodTypePersonalityChart>
         return Colors.orange;
       default:
         return Colors.grey;
-    }
-  }
+}
+  },
 }

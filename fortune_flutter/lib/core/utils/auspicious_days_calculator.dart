@@ -2,7 +2,7 @@ import 'package:lunar/lunar.dart';
 
 /// 손없는날 계산기 - 한국 전통 이사 길일 계산
 class AuspiciousDaysCalculator {
-  // 손없는날 기준 (음력 기준)
+  // 손없는날 기준 (음력 기준,
   // 1,2일: 동쪽 손 없음
   // 3,4일: 남쪽 손 없음  
   // 5,6일: 서쪽 손 없음
@@ -23,7 +23,7 @@ class AuspiciousDaysCalculator {
       final lunar = Lunar.fromDate(day);
       final lunarDay = lunar.getDay();
       
-      // 음력 9일, 10일은 모든 방향 손 없음 (최고의 날)
+      // 음력 9일, 10일은 모든 방향 손 없음 (최고의 날,
       if (lunarDay == 9 || lunarDay == 10) {
         auspiciousDays.add(day);
       }
@@ -67,7 +67,7 @@ class AuspiciousDaysCalculator {
     }
   }
   
-  /// 날짜별 이사 길흉 점수 계산 (0.0 ~ 1.0)
+  /// 날짜별 이사 길흉 점수 계산 (0.0 ~ 1.0,
   static double getMovingLuckScore(DateTime date, String? userBirthDate) {
     double score = 0.5; // 기본 점수
     
@@ -86,7 +86,7 @@ class AuspiciousDaysCalculator {
       score += 0.1;
     }
     
-    // 월초 감점 (바쁜 시기)
+    // 월초 감점 (바쁜 시기,
     if (date.day <= 3 || date.day >= 28) {
       score -= 0.1;
     }
@@ -96,7 +96,7 @@ class AuspiciousDaysCalculator {
       score -= 0.1;
     }
     
-    // 생일 기준 길일 계산 (사주 간단 계산)
+    // 생일 기준 길일 계산 (사주 간단 계산,
     if (userBirthDate != null) {
       try {
         final birthDate = DateTime.parse(userBirthDate);
@@ -111,11 +111,11 @@ class AuspiciousDaysCalculator {
       }
     }
     
-    // 점수 정규화 (0.0 ~ 1.0)
+    // 점수 정규화 (0.0 ~ 1.0,
     return score.clamp(0.0, 1.0);
   }
   
-  /// 천간 조화 확인 (간단한 버전)
+  /// 천간 조화 확인 (간단한 버전,
   static bool _isHarmoniousDay(Lunar birthLunar, Lunar targetLunar) {
     final birthGan = birthLunar.getDayGan(); // 생일의 일간
     final targetGan = targetLunar.getDayGan(); // 이사일의 일간

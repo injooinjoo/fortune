@@ -49,7 +49,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
       final fortune = await fortuneService.getFortune(
         fortuneType: widget.fortuneType,
         userId: user.id,
-        params: params,
+        params: params
       );
       
       return fortune;
@@ -103,7 +103,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             child: Container(), // The base class handles the generate button
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -130,7 +130,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             child: const Text('로그인하기'),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -216,7 +216,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             ),
           ],
         ),
-      ),
+      ,
     );
   }
 
@@ -408,7 +408,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             '칭찬과 보상으로 올바른 행동을 강화하세요',
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -451,7 +451,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             ),
           ),
         ],
-      ),
+      ,
     );
   }
 
@@ -501,7 +501,7 @@ class _PetCompatibilityPageState extends BaseFortunePageState<PetCompatibilityPa
             child: const Text('확인'),
           ),
         ],
-      ),
+      ,
     );
   }
 }

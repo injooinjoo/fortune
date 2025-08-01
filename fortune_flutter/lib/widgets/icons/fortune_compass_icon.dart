@@ -53,28 +53,28 @@ class FortuneCompassPainter extends CustomPainter {
     canvas.drawLine(
       Offset(center.dx, center.dy - radius),
       Offset(center.dx, 0),
-      paint,
+      paint
     );
 
     // Bottom line
     canvas.drawLine(
       Offset(center.dx, center.dy + radius),
       Offset(center.dx, size.height),
-      paint,
+      paint
     );
 
     // Right line
     canvas.drawLine(
       Offset(center.dx + radius, center.dy),
       Offset(size.width, center.dy),
-      paint,
+      paint
     );
 
     // Left line
     canvas.drawLine(
       Offset(center.dx - radius, center.dy),
       Offset(0, center.dy),
-      paint,
+      paint
     );
 
     // Diagonal lines
@@ -84,28 +84,28 @@ class FortuneCompassPainter extends CustomPainter {
     canvas.drawLine(
       Offset(center.dx + diagonalOffset * 0.536, center.dy - diagonalOffset * 0.536),
       Offset(center.dx + diagonalOffset * 1.2, center.dy - diagonalOffset * 1.2),
-      paint,
+      paint
     );
 
     // SW
     canvas.drawLine(
       Offset(center.dx - diagonalOffset * 0.536, center.dy + diagonalOffset * 0.536),
       Offset(center.dx - diagonalOffset * 1.2, center.dy + diagonalOffset * 1.2),
-      paint,
+      paint
     );
 
     // NW
     canvas.drawLine(
       Offset(center.dx - diagonalOffset * 0.536, center.dy - diagonalOffset * 0.536),
       Offset(center.dx - diagonalOffset * 1.2, center.dy - diagonalOffset * 1.2),
-      paint,
+      paint
     );
 
     // SE
     canvas.drawLine(
       Offset(center.dx + diagonalOffset * 0.536, center.dy + diagonalOffset * 0.536),
       Offset(center.dx + diagonalOffset * 1.2, center.dy + diagonalOffset * 1.2),
-      paint,
+      paint
     );
 
     // Central star/sparkle

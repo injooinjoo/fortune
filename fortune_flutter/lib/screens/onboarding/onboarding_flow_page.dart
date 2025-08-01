@@ -8,11 +8,17 @@ import '../../services/social_auth_service.dart';
 import '../../models/user_profile.dart';
 import '../../constants/fortune_constants.dart';
 import '../../utils/date_utils.dart';
+import '../../core/theme/app_theme_extensions.dart';
 import 'widgets/onboarding_progress_bar.dart';
 import 'steps/name_step.dart';
 import 'steps/birth_info_step.dart';
 import 'steps/gender_step.dart';
 import 'steps/location_step.dart';
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_animations.dart';
 
 class OnboardingFlowPage extends StatefulWidget {
   const OnboardingFlowPage({super.key});
@@ -70,9 +76,8 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
         _currentStep++;
       });
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+        duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut)
     }
   }
 
@@ -82,8 +87,8 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
         _currentStep--;
       });
       _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: AppAnimations.durationMedium),
+        curve: Curves.easeInOut
       );
     }
   }
@@ -99,18 +104,17 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       // Sync the local profile to Supabase with the authenticated user ID
       try {
         await Supabase.instance.client.from('user_profiles').upsert({
-          'id': _currentUser!.id,
-          'email': _currentUser!.email,
-          'name': _name,
+          'id': _currentUser!.id)
+          'email': _currentUser!.email)
+          'name': _name)
           'birth_date': _birthDate!.toIso8601String(),
           'birth_time': _birthTime,
           'gender': _gender?.value,
-          'region': _region,
-          'onboarding_completed': true,
-          'zodiac_sign': localProfile['zodiac_sign'],
-          'chinese_zodiac': localProfile['chinese_zodiac'],
-          'updated_at': DateTime.now().toIso8601String(),
-        });
+          'region': _region
+          'onboarding_completed': true
+          'zodiac_sign': localProfile['zodiac_sign']
+          'chinese_zodiac': localProfile['chinese_zodiac']
+          'updated_at': DateTime.now().toIso8601String()
         
         // Update local profile with correct user ID
         localProfile['id'] = _currentUser!.id;
@@ -147,22 +151,21 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       
       // Prepare profile data with location
       final profileData = {
-        'id': profileId,
-        'name': _name,
+        'id': profileId
+        'name': _name
         'email': _currentUser?.email ?? 'guest@fortune.app',
         'birth_date': _birthDate!.toIso8601String(),
         'birth_time': _birthTime,
         'gender': _gender?.value ?? Gender.other.value,
-        'region': _region,
-        'zodiac_sign': FortuneDateUtils.getZodiacSign(_birthDate!.toIso8601String()),
-        'chinese_zodiac': FortuneDateUtils.getChineseZodiac(_birthDate!.toIso8601String()),
+        'region': _region
+        'zodiac_sign': FortuneDateUtils.getZodiacSign(_birthDate!.toIso8601String()
+        'chinese_zodiac': FortuneDateUtils.getChineseZodiac(_birthDate!.toIso8601String()
         'onboarding_completed': true,
         'subscription_status': 'free',
         'fortune_count': 0,
         'premium_fortunes_count': 0,
         'created_at': DateTime.now().toIso8601String(),
-        'updated_at': DateTime.now().toIso8601String(),
-      };
+        'updated_at': DateTime.now().toIso8601String();
 
       // Save to local storage
       await _storageService.saveUserProfile(profileData);
@@ -179,18 +182,17 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       if (_currentUser != null) {
         try {
           await Supabase.instance.client.from('user_profiles').upsert({
-            'id': _currentUser!.id,
-            'email': _currentUser!.email,
-            'name': _name,
+            'id': _currentUser!.id)
+            'email': _currentUser!.email)
+            'name': _name)
             'birth_date': _birthDate!.toIso8601String(),
             'birth_time': _birthTime, // This is already in Korean format like "축시"
             'gender': _gender?.value,
-            'region': _region,
-            'onboarding_completed': true,
-            'zodiac_sign': profileData['zodiac_sign'],
-            'chinese_zodiac': profileData['chinese_zodiac'],
-            'updated_at': DateTime.now().toIso8601String(),
-          });
+            'region': _region
+            'onboarding_completed': true
+            'zodiac_sign': profileData['zodiac_sign']
+            'chinese_zodiac': profileData['chinese_zodiac']
+            'updated_at': DateTime.now().toIso8601String()
           debugPrint('Profile synced to Supabase');
         } catch (e) {
           debugPrint('Supabase sync failed: $e');
@@ -211,11 +213,10 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
       debugPrint('Profile save failed: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+          SnackBar(
+            content: const Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.fortuneTheme.errorColor,
+          )
       }
     } finally {
       if (mounted) {
@@ -228,62 +229,60 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: false,
-      enableDrag: false,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
+      backgroundColor: Colors.transparent, // Keep transparent for bottom sheet overlay
+      isDismissible: false),
+        enableDrag: false),
+        builder: build,
+      er: (context) => DraggableScrollableSheet(,
+      initialChildSize: 0.8,
+      minChildSize: 0.5),
+        maxChildSize: 0.95),
         builder: (context, scrollController) => Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-          ),
-          child: Column(
-            children: [
+          decoration: BoxDecoration(,
+      color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(,
+      topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
+              topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))),
+      child: Column(
+                children: [
               // Drag handle
               Container(
-                margin: EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
+                margin: EdgeInsets.only(),
+                width: context.fortuneTheme.bottomSheetStyles.handleWidth,
+                height: context.fortuneTheme.bottomSheetStyles.handleHeight,
+                decoration: BoxDecoration(,
+      color: context.isDarkMode ? context.fortuneTheme.dividerColor : AppColors.textSecondary,
+        ),
+        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))))
               
               // Content
               Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
-                    children: [
+                child: SingleChildScrollView(,
+      controller: scrollController,
+              ),
+              padding: EdgeInsets.symmetric(,
+      horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
+        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal),
+      child: Column(
+                children: [
                       // Title
                       Text(
                         '거의 다 왔습니다!',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+              ),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(,
+      fontWeight: FontWeight.w700,
+                          ))
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical),
                       
                       // Subtitle
                       Text(
-                        '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                        '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다'),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: context.fortuneTheme.subtitleText,
+                          ),
+                        textAlign: TextAlign.center)
                       
-                      const SizedBox(height: 24),
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
                       
                       // Social Login Buttons
                       Column(
@@ -293,80 +292,70 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleSocialLogin('Google');
-                            },
-                            type: 'google',
-                          ),
-                          const SizedBox(height: 10),
+                            }
+                            type: 'google')
+                          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
                           
                           // Apple Login
                           _buildModernSocialButton(
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleAppleLogin();
-                            },
-                            type: 'apple',
-                          ),
-                          const SizedBox(height: 10),
+                            }
+                            type: 'apple')
+                          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
                           
                           // Kakao Login
                           _buildModernSocialButton(
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleSocialLogin('Kakao');
-                            },
-                            type: 'kakao',
-                          ),
-                          const SizedBox(height: 10),
+                            }
+                            type: 'kakao')
+                          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
                           
                           // Naver Login
                           _buildModernSocialButton(
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleNaverLogin();
-                            },
-                            type: 'naver',
-                          ),
-                          const SizedBox(height: 10),
+                            }
+                            type: 'naver')
+                          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
                           
                           // Instagram Login
                           _buildModernSocialButton(
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleSocialLogin('Instagram');
-                            },
-                            type: 'instagram',
-                          ),
-                          const SizedBox(height: 10),
+                            }
+                            type: 'instagram')
+                          SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
                           
                           // TikTok Login
                           _buildModernSocialButton(
                             onPressed: _isLoading ? null : () {
                               Navigator.pop(context);
                               _handleSocialLogin('TikTok');
-                            },
-                            type: 'tiktok',
-                          ),
-                        ],
-                      ),
+                            }
+                            type: 'tiktok')))
                       
-                      const SizedBox(height: 20),
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
                       
-                      Divider(height: 1),
+                      Divider(height: 1, color: context.fortuneTheme.dividerColor),
                       
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                       
                       // Terms text
                       Text(
-                        '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                        '계속하면 서비스 이용약관 및\n개인정보 처리방침에 동의하는 것으로 간주됩니다.'),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(,
+      color: context.fortuneTheme.subtitleText,
+                          ),
+        height: 1.5),
+      textAlign: TextAlign.center)
                       
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                       
                       // Skip button for guests
                       TextButton(
@@ -374,99 +363,76 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
                           Navigator.pop(context);
                           // Continue as guest
                           _skipAuthentication();
-                        },
+                        }
                         child: Text(
-                          '나중에 하기',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[700],
-                            decoration: TextDecoration.underline,
+                          '나중에 하기'),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
+      color: context.fortuneTheme.secondaryText,
                           ),
-                        ),
-                      ),
+        decoration: TextDecoration.underline)
+                          ))))
                       
-                      const SizedBox(height: 8),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))))))))))
+      )
   }
 
   Widget _buildModernSocialButton({
-    required VoidCallback? onPressed,
-    required String type,
+    required VoidCallback? onPressed)
+    required String type)
   }) {
     final configs = {
       'google': {
-        'text': 'Google로 계속하기',
-        'assetPath': 'assets/images/social/google.svg',
-      },
+        'text': 'Google로 계속하기'
+        'assetPath': 'assets/images/social/google.svg'
+      }
       'apple': {
         'text': 'Apple로 계속하기',
-        'assetPath': 'assets/images/social/apple.svg',
-      },
+        'assetPath': 'assets/images/social/apple.svg'
       'kakao': {
         'text': '카카오로 계속하기',
-        'assetPath': 'assets/images/social/kakao.svg',
-      },
+        'assetPath': 'assets/images/social/kakao.svg'
       'naver': {
         'text': '네이버로 계속하기',
-        'assetPath': 'assets/images/social/naver.svg',
-      },
+        'assetPath': 'assets/images/social/naver.svg'
       'instagram': {
         'text': 'Instagram으로 계속하기',
-        'assetPath': 'assets/images/social/instagram.svg',
-      },
+        'assetPath': 'assets/images/social/instagram.svg'
       'tiktok': {
         'text': 'TikTok으로 계속하기',
-        'assetPath': 'assets/images/social/tiktok.svg',
-      },
+        'assetPath': 'assets/images/social/tiktok.svg'
     };
 
     final config = configs[type]!;
 
     return SizedBox(
       width: double.infinity,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: Colors.grey[300]!,
-              width: 1,
-            ),
-          ),
-          elevation: 0,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+      height: context.fortuneTheme.formStyles.inputHeight - 8),
+              child: ElevatedButton(,
+      onPressed: onPressed),
+        style: ElevatedButton.styleFrom(,
+      backgroundColor: context.isDarkMode ? context.fortuneTheme.cardSurface : AppColors.textPrimaryDark),
+        foregroundColor: context.isDarkMode ? context.fortuneTheme.primaryText : AppColors.textPrimary.withValues(alph,
+      a: 0.87),
+          shape: RoundedRectangleBorder(,
+      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
+            side: BorderSide(,
+      color: context.fortuneTheme.dividerColor),
+        width: context.fortuneTheme.formStyles.inputBorderWidth)
+            ))
+          elevation: 0),
+      child: Row(,
+      mainAxisAlignment: MainAxisAlignment.center),
+        children: [
             SvgPicture.asset(
-              config['assetPath'] as String,
-              width: 20,
-              height: 20,
-            ),
-            const SizedBox(width: 10),
+              config['assetPath'] as String),
+        width: context.fortuneTheme.socialSharing.shareIconSize - 4),
+              height: context.fortuneTheme.socialSharing.shareIconSize - 4)
+            SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.8),
             Text(
-              config['text'] as String,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+              config['text'] as String),
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(,
+      fontWeight: FontWeight.w600,
+                          ))))))))
   }
 
   Future<void> _handleSocialLogin(String provider) async {
@@ -479,33 +445,26 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
           await _onAuthenticationComplete();
         }
       } else if (provider == 'Kakao') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('카카오 로그인은 현재 준비 중입니다.'),
-          ),
-        );
+        final response = await _socialAuthService.signInWithKakao();
+        if (response != null && response.user != null && mounted) {
+          await _onAuthenticationComplete();
+        }
       } else if (provider == 'Instagram') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Instagram 로그인은 현재 준비 중입니다.'),
-          ),
-        );
+            content: Text('Instagram 로그인은 현재 준비 중입니다.'))))
       } else if (provider == 'TikTok') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('TikTok 로그인은 현재 준비 중입니다.'),
-          ),
-        );
+            content: Text('TikTok 로그인은 현재 준비 중입니다.'))))
       }
     } catch (e) {
       debugPrint('Social login error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+          SnackBar(
+            content: const Text('로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.fortuneTheme.errorColor)))
       }
     } finally {
       if (mounted) {
@@ -518,19 +477,17 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
     setState(() => _isLoading = true);
     
     try {
-      await _authService.signInWithApple();
-      if (mounted) {
+      final response = await _socialAuthService.signInWithApple();
+      if (response != null && response.user != null && mounted) {
         await _onAuthenticationComplete();
       }
     } catch (e) {
       debugPrint('Apple login error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+          SnackBar(
+            content: const Text('Apple 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.fortuneTheme.errorColor)))
       }
     } finally {
       if (mounted) {
@@ -543,19 +500,18 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
     setState(() => _isLoading = true);
     
     try {
-      await _authService.signInWithNaver();
-      if (mounted) {
+      final response = await _socialAuthService.signInWithNaver();
+      if (response != null && response.user != null && mounted) {
         await _onAuthenticationComplete();
       }
     } catch (e) {
       debugPrint('Naver login error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+          SnackBar(
+            content: const Text('네이버 로그인 중 문제가 발생했습니다. 다시 시도해주세요.'),
+            backgroundColor: context.fortuneTheme.errorColor,
+          )
       }
     } finally {
       if (mounted) {
@@ -567,29 +523,28 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(,
+      child: Column(
+                children: [
             // Progress bar
             OnboardingProgressBar(
               currentStep: _currentStep,
-              totalSteps: _totalSteps,
-            ),
+              ),
+              totalSteps: _totalSteps)
             
             // Main content
             Expanded(
-              child: PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
+              child: PageView(,
+      controller: _pageController),
+        physics: const NeverScrollableScrollPhysics(),
                 children: [
                   // Step 0: Name
                   NameStep(
-                    initialName: _name,
-                    onNameChanged: (name) => setState(() => _name = name),
+                    initialName: _name),
+        onNameChanged: (name) => setState(() => _name = name),
                     onNext: _nextStep,
-                    onShowSocialLogin: _showSocialLoginBottomSheet,
-                  ),
+                    onShowSocialLogin: _showSocialLoginBottomSheet)
                   
                   // Step 1: Birth info
                   BirthInfoStep(
@@ -598,17 +553,15 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
                         _birthDate = date;
                         _birthTime = time;
                       });
-                    },
+                    }
                     onNext: _nextStep,
-                    onBack: _previousStep,
-                  ),
+                    onBack: _previousStep)
                   
                   // Step 2: Gender
                   GenderStep(
                     onGenderChanged: (gender) => setState(() => _gender = gender),
                     onNext: _nextStep,
-                    onBack: _previousStep,
-                  ),
+                    onBack: _previousStep)
                   
                   // Step 3: Location
                   LocationStep(
@@ -616,20 +569,13 @@ class _OnboardingFlowPageState extends State<OnboardingFlowPage> {
                       setState(() {
                         _region = region;
                       });
-                    },
+                    }
                     onComplete: () {
                       // Show login bottom sheet after location completion
                       _showSocialLoginBottomSheet();
-                    },
-                    onBack: _previousStep,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    }
+                    onBack: _previousStep)))))))
+      )
   }
   
   @override

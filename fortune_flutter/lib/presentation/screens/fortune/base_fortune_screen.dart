@@ -13,6 +13,9 @@ import '../../widgets/fortune_explanation_bottom_sheet.dart';
 import '../ad_loading_screen.dart';
 import '../../../features/fortune/presentation/mixins/screenshot_detection_mixin.dart';
 import '../../../services/screenshot_detection_service.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
+import 'package:fortune/core/theme/app_colors.dart';
 
 /// Fortune 화면의 기본 템플릿
 /// 웹 디자인과 동일한 레이아웃 유지
@@ -58,8 +61,8 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
     super.initState();
     Logger.developmentProgress(
       'Fortune Screen',
-      'Opening ${widget.fortuneType}',
-      details: 'Token cost: ${widget.tokenCost}',
+      'Opening ${widget.fortuneType}')
+      details: 'Token cost: ${widget.tokenCost}'
     );
     _checkAndLoadFortune();
   }
@@ -80,7 +83,7 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
     await _loadFortune();
   }
 
-  /// 운세 데이터 로드 (하위 클래스에서 구현)
+  /// 운세 데이터 로드 (하위 클래스에서 구현,
   Future<dynamic> loadFortuneData();
 
   /// 운세 컨텐츠 빌드 (하위 클래스에서 구현)
@@ -131,7 +134,7 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
       final text = _getShareText();
       await Share.share(
         text,
-        subject: '${widget.title} - Fortune',
+        subject: '${widget.title} - Fortune'
       );
 
       Logger.analytics('fortune_shared', {
@@ -142,7 +145,7 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
     }
   }
 
-  /// 공유할 텍스트 생성 (하위 클래스에서 커스터마이징 가능)
+  /// 공유할 텍스트 생성 (하위 클래스에서 커스터마이징 가능,
   String _getShareText() {
     return '''
 🔮 ${widget.title} 🔮
@@ -155,14 +158,14 @@ https://fortune.app
   }
 
   // Screenshot detection mixin handles the save functionality
-  // via saveFortuneToGallery() and buildSaveButton()
+  // via saveFortuneToGallery() and buildSaveButton(,
 
   /// 운세 설명 바텀시트 표시
   void _showFortuneExplanation() {
     FortuneExplanationBottomSheet.show(
-      context,
-      fortuneType: widget.fortuneType,
-      fortuneData: _fortuneData,
+      context)
+      fortuneType: widget.fortuneType)
+      fortuneData: _fortuneData)
       onFortuneButtonPressed: () {
         // 이미 운세 화면에 있으므로, 운세 데이터가 없을 때만 다시 로드
         if (_fortuneData == null && !_isLoading) {
@@ -179,64 +182,59 @@ https://fortune.app
       final userProfile = ref.watch(userProfileProvider).value;
       return AdLoadingScreen(
         fortuneType: widget.fortuneType,
-        fortuneTitle: widget.title,
-        isPremium: userProfile?.isPremiumActive ?? false,
-        onComplete: _onAdComplete,
-        onSkip: _onUpgrade,
-        fetchData: loadFortuneData,
+        fortuneTitle: widget.title)
+        isPremium: userProfile?.isPremiumActive ?? false)
+        onComplete: _onAdComplete)
+        onSkip: _onUpgrade)
+        fetchData: loadFortuneData
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Colors.white)
+        elevation: 0)
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87))
+          onPressed: () => Navigator.pop(context))
+        ))
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start)
           children: [
             Text(
-              widget.title,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+              widget.title)
+              style: Theme.of(context).textTheme.bodyMedium)
             Text(
-              widget.description,
+              widget.description)
               style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 12,
-              ),
-            ),
-          ],
+                color: Colors.grey.withValues(alpha: 0.8))
+                fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize,
+              ))
+            ))
+          ])
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.info_outline, color: Colors.black87),
-            onPressed: () => _showFortuneExplanation(),
-          ),
+            icon: const Icon(Icons.info_outline, color: Colors.black87))
+            onPressed: () => _showFortuneExplanation())
+          ))
           if (_fortuneData != null) ...[
             IconButton(
-              icon: const Icon(Icons.share_outlined, color: Colors.black87),
-              onPressed: _shareFortune,
-            ),
-            buildSaveButton(),
-          ],
+              icon: const Icon(Icons.share_outlined, color: Colors.black87))
+              onPressed: _shareFortune)
+            ))
+            buildSaveButton())
+          ])
         ],
-      ),
-      body: _buildBody(),
+      ))
+      body: _buildBody()
     );
   }
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: LoadingIndicator());
+      return const Center(child: LoadingIndicator();
     }
 
     if (_errorMessage != null) {
@@ -244,83 +242,81 @@ https://fortune.app
     }
 
     if (_fortuneData == null) {
-      return const Center(child: Text('운세 데이터가 없습니다.'));
+      return const Center(child: Text('운세 데이터가 없습니다.');
     }
 
     return RepaintBoundary(
       key: _screenshotKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const AppSpacing.paddingAll24)
         child: Column(
           children: [
             // 헤더 카드
-            _buildHeaderCard(),
-            const SizedBox(height: 24),
+            _buildHeaderCard())
+            const SizedBox(height: AppSpacing.spacing6))
             
             // 운세 컨텐츠
             buildFortuneContent(context, _fortuneData)
                 .animate()
                 .fadeIn(duration: 600.ms)
-                .slideY(begin: 0.1, end: 0),
+                .slideY(begin: 0.1, end: 0))
             
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.spacing8))
             
             // 하단 액션
-            _buildBottomActions(),
-          ],
+            _buildBottomActions())
+          ])
         ),
-      ),
+      )
     );
   }
 
   Widget _buildHeaderCard() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const AppSpacing.paddingAll24,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topLeft)
+          end: Alignment.bottomRight)
           colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
-          ],
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.8))
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8))
+          ])
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppDimensions.borderRadiusLarge)
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))
+            blurRadius: 12)
+            offset: const Offset(0, 6))
+          ))
+        ])
       ),
       child: Column(
         children: [
           Icon(
-            _getFortuneIcon(),
-            size: 48,
-            color: Colors.white,
-          ),
-          const SizedBox(height: 16),
+            _getFortuneIcon())
+            size: 48)
+            color: Colors.white)
+          ))
+          const SizedBox(height: AppSpacing.spacing4))
           Text(
-            widget.title,
+            widget.title)
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
+              color: Colors.white),))
+              fontWeight: FontWeight.bold)
+            ))
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            DateTime.now().toString().substring(0, 10),
+            DateTime.now().toString().substring(0, 10))
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white70,
-            ),
-          ),
-        ],
+              color: Colors.white70)
+            ))
+        ])
       ),
     ).animate()
       .fadeIn(duration: 400.ms)
-      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+      .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1);
   }
 
   Widget _buildErrorState() {
@@ -329,24 +325,21 @@ https://fortune.app
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.grey.shade400,
-          ),
-          const SizedBox(height: 16),
+            Icons.error_outline)
+            size: 64)
+            color: Colors.grey.withValues(alpha: 0.6))
+          ))
+          const SizedBox(height: AppSpacing.spacing4))
           Text(
-            '오류가 발생했습니다',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
+            '오류가 발생했습니다')
+            style: Theme.of(context).textTheme.titleLarge)
+          const SizedBox(height: AppSpacing.spacing2))
           Text(
-            _errorMessage!,
+            _errorMessage!)
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey.shade600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
+              color: Colors.grey.withValues(alpha: 0.8, textAlign: TextAlign.center)
+          ))
+          const SizedBox(height: AppSpacing.spacing6))
           ElevatedButton(
             onPressed: () {
               if (_errorMessage!.contains('토큰')) {
@@ -356,11 +349,11 @@ https://fortune.app
               }
             },
             child: Text(
-              _errorMessage!.contains('토큰') ? '토큰 구매하기' : '다시 시도',
-            ),
-          ),
-        ],
-      ),
+              _errorMessage!.contains('토큰') ? '토큰 구매하기' : '다시 시도')
+            ))
+          ))
+        ])
+      )
     );
   }
 
@@ -369,39 +362,38 @@ https://fortune.app
       children: [
         // 다른 운세 보기
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const AppSpacing.paddingAll20,
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(12),
-          ),
+            color: Colors.grey.withValues(alpha: 0.08))
+            borderRadius: AppDimensions.borderRadiusMedium)
+          ))
           child: Column(
             children: [
               Text(
-                '다른 운세도 확인해보세요',
+                '다른 운세도 확인해보세요')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
+                  fontWeight: FontWeight.bold),))
+                ))
+              const SizedBox(height: AppSpacing.spacing4))
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: 8)
+                runSpacing: 8)
                 children: _getRelatedFortunes().map((fortune) {
                   return ActionChip(
                     label: Text(fortune['title'] as String),
                     onPressed: () {
                       Navigator.pushReplacementNamed(
-                        context,
+                        context)
                         fortune['route'] as String,
                       );
-                    },
+                    }
                   );
                 }).toList(),
-              ),
-            ],
+              ))
+            ])
           ),
-        ),
-        const SizedBox(height: 16),
+        ))
+        const SizedBox(height: AppSpacing.spacing4))
         
         // 토큰 정보
         Consumer(
@@ -410,44 +402,40 @@ https://fortune.app
             if (tokenBalance == null) return const SizedBox.shrink();
             
             return Container(
-              padding: const EdgeInsets.all(16),
+              padding: const AppSpacing.paddingAll16)
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
+                color: Colors.white)
+                borderRadius: AppDimensions.borderRadiusMedium)
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.3)))
+              ))
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween)
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start)
                     children: [
                       Text(
-                        '남은 토큰',
+                        '남은 토큰')
                         style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                        ),
-                      ),
+                          color: Colors.grey.withValues(alpha: 0.8)
+                          fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize,
+                        ))
+                      ))
                       Text(
-                        '${tokenBalance.balance} 토큰',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                        '${tokenBalance.balance} 토큰')
+                        style: Theme.of(context).textTheme.bodyMedium,
+                    ])
                   ),
                   TextButton(
-                    onPressed: () => Navigator.pushNamed(context, '/tokens'),
-                    child: const Text('토큰 충전'),
-                  ),
-                ],
+                    onPressed: () => Navigator.pushNamed(context, '/tokens'))
+                    child: const Text('토큰 충전'))
+                  ))
+                ])
               ),
             );
-          },
+          })
         ),
-      ],
+      ]
     );
   }
 

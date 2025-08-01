@@ -101,7 +101,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 300),
-      vsync: this,
+      vsync: this
     );
     
     _fadeAnimation = Tween<double>(
@@ -280,7 +280,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               ref.read(exLoverStepProvider.notifier).previousStep();
               _pageController.previousPage(
                 duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
+                curve: Curves.easeInOut
               );
             } else {
               context.pop();
@@ -612,7 +612,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   ref.read(exLoverStepProvider.notifier).nextStep();
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                    curve: Curves.easeInOut
                   );
                 }
               },
@@ -936,7 +936,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                   ref.read(exLoverStepProvider.notifier).nextStep();
                   _pageController.nextPage(
                     duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
+                    curve: Curves.easeInOut
                   );
                 }
               },
@@ -1119,7 +1119,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     ref.read(exLoverStepProvider.notifier).nextStep();
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      curve: Curves.easeInOut
                     );
                   },
                   style: OutlinedButton.styleFrom(
@@ -1142,7 +1142,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                     ref.read(exLoverStepProvider.notifier).nextStep();
                     _pageController.nextPage(
                       duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
+                      curve: Curves.easeInOut
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -1451,7 +1451,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
                                 theme.colorScheme.primary,
                               ),
                             ),
-                          )
+                          ),
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -1598,7 +1598,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             ),
           ],
         );
-      },
+      }
     );
   }
   
@@ -1655,7 +1655,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
     // Check if it's a URL
     final urlRegex = RegExp(
       r'^https?:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._]{1,30}\/?',
-      caseSensitive: false,
+      caseSensitive: false
     );
     
     if (!urlRegex.hasMatch(value)) {
@@ -1764,7 +1764,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             child: child,
           ),
         );
-      },
+      }
     );
   }
   
@@ -1923,7 +1923,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             );
           },
         );
-      },
+      }
     );
     
     try {
@@ -2103,7 +2103,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
               ),
           ],
         );
-      },
+      }
     );
   }
   
@@ -2180,7 +2180,7 @@ class _ExLoverFortuneEnhancedPageState extends ConsumerState<ExLoverFortuneEnhan
             ),
           ],
         );
-      },
+      }
     );
   }
 }

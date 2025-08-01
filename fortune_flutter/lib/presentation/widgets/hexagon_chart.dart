@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:fortune/core/theme/app_typography.dart';
+import 'package:fortune/core/theme/app_colors.dart';
+import 'package:fortune/core/theme/app_spacing.dart';
+import 'package:fortune/core/theme/app_dimensions.dart';
 
 class HexagonChart extends StatelessWidget {
   final Map<String, int> scores;
@@ -10,7 +14,8 @@ class HexagonChart extends StatelessWidget {
   final bool showValues;
   final bool animate;
 
-  const HexagonChart({
+  const HexagonChart(
+    {
     Key? key,
     required this.scores,
     this.size = 200,
@@ -19,32 +24,26 @@ class HexagonChart extends StatelessWidget {
     this.labelStyle,
     this.showValues = true,
     this.animate = true,
-  }) : super(key: key);
+  )}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final effectivePrimaryColor = primaryColor ?? theme.primaryColor;
-    final effectiveBackgroundColor = backgroundColor ?? Colors.grey.withValues(alpha: 0.1);
-    final effectiveLabelStyle = labelStyle ?? TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      color: theme.textTheme.bodyMedium?.color,
-    );
+    final effectiveBackgroundColor = backgroundColor ?? AppColors.textSecondary.withValues(alpha: 0.1);
+    final effectiveLabelStyle = labelStyle ?? Theme.of(context).textTheme.labelSmall;
 
     return SizedBox(
       width: size * 1.5,
       height: size * 1.5,
-      child: CustomPaint(
-        painter: HexagonChartPainter(
-          scores: scores,
+      child: CustomPaint(,
+      painter: HexagonChartPainter(,
+      scores: scores,
           primaryColor: effectivePrimaryColor,
           backgroundColor: effectiveBackgroundColor,
           labelStyle: effectiveLabelStyle,
-          showValues: showValues,
-        ),
-      ),
-    );
+          showValues: showValues)
+        ))))
   }
 }
 
@@ -55,13 +54,14 @@ class HexagonChartPainter extends CustomPainter {
   final TextStyle labelStyle;
   final bool showValues;
 
-  HexagonChartPainter({
+  HexagonChartPainter(
+    {
     required this.scores,
     required this.primaryColor,
     required this.backgroundColor,
     required this.labelStyle,
     required this.showValues,
-  });
+  )});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -97,8 +97,7 @@ class HexagonChartPainter extends CustomPainter {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
       final endPoint = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle),
-      );
+        center.dy + radius * math.sin(angle)
       canvas.drawLine(center, endPoint, paint);
     }
   }
@@ -111,8 +110,7 @@ class HexagonChartPainter extends CustomPainter {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
       final point = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle),
-      );
+        center.dy + radius * math.sin(angle)
       
       if (i == 0) {
         path.moveTo(point.dx, point.dy);
@@ -145,8 +143,7 @@ class HexagonChartPainter extends CustomPainter {
       final distance = radius * (score / 100);
       final point = Offset(
         center.dx + distance * math.cos(angle),
-        center.dy + distance * math.sin(angle),
-      );
+        center.dy + distance * math.sin(angle)
       
       points.add(point);
       
@@ -176,27 +173,24 @@ class HexagonChartPainter extends CustomPainter {
   void _drawLabels(Canvas canvas, Offset center, double radius) {
     final labels = scores.keys.toList();
     final textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-    );
+      textDirection: TextDirection.ltr)
 
     for (int i = 0; i < labels.length; i++) {
       final angle = (i * 2 * math.pi / labels.length) - math.pi / 2;
       final labelRadius = radius + 30;
       final labelCenter = Offset(
         center.dx + labelRadius * math.cos(angle),
-        center.dy + labelRadius * math.sin(angle),
-      );
+        center.dy + labelRadius * math.sin(angle))
 
       // Draw label
       textPainter.text = TextSpan(
         text: labels[i],
-        style: labelStyle,
-      );
+      style: labelStyle)
       textPainter.layout();
       
       final offset = Offset(
-        labelCenter.dx - textPainter.width / 2,
-        labelCenter.dy - textPainter.height / 2,
+        labelCenter.dx - textPainter.width / 2)
+        labelCenter.dy - textPainter.height / 2
       );
       textPainter.paint(canvas, offset);
 
@@ -204,17 +198,16 @@ class HexagonChartPainter extends CustomPainter {
       if (showValues) {
         final score = scores[labels[i]] ?? 0;
         textPainter.text = TextSpan(
-          text: '$score',
-          style: labelStyle.copyWith(
-            fontWeight: FontWeight.bold,
-            color: primaryColor,
-          ),
-        );
+          text: '$score'),
+        style: labelStyle.copyWith(,
+      fontWeight: FontWeight.bold),
+        color: primaryColor,
+                          )))
         textPainter.layout();
         
         final valueOffset = Offset(
-          labelCenter.dx - textPainter.width / 2,
-          labelCenter.dy - textPainter.height / 2 + 15,
+          labelCenter.dx - textPainter.width / 2)
+          labelCenter.dy - textPainter.height / 2 + 15
         );
         textPainter.paint(canvas, valueOffset);
       }
