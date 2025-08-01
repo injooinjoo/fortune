@@ -14,13 +14,14 @@ class TalentFortunePage extends ConsumerWidget {
       fortuneType: 'talent',
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight)
+        end: Alignment.bottomRight,
         colors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
       ),
       inputBuilder: (context, onSubmit) => _TalentInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _TalentFortuneResult(
-        result: result)
-        onShare: onShare);
+        result: result,
+        onShare: onShare,
+      );
   }
 }
 
@@ -39,7 +40,7 @@ class _TalentInputForm extends StatelessWidget {
         Text(
           '당신의 숨겨진 재능을 발견해보세요!\n잠재력과 발전 가능성을 알려드립니다.')
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),

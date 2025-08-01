@@ -20,13 +20,15 @@ class SameBirthdayCelebrityFortunePage extends ConsumerWidget {
       fortuneType: 'same-birthday-celebrity',
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight)
+        end: Alignment.bottomRight,
         colors: [Color(0xFFFF1744), Color(0xFFE91E63)],
       ),
       inputBuilder: (context, onSubmit) => _SameBirthdayInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _SameBirthdayFortuneResult(
-        result: result)
-        onShare: onShare);
+        result: result,
+        onShare: onShare,
+      ),
+    );
   }
 }
 
@@ -82,11 +84,11 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -130,7 +132,7 @@ class _SameBirthdayInputFormState extends ConsumerState<_SameBirthdayInputForm> 
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -365,7 +367,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
             GlassContainer(
               gradient: LinearGradient(
                 begin: Alignment.topLeft)
-                end: Alignment.bottomRight)
+                end: Alignment.bottomRight,
                 colors: [
                   theme.colorScheme.primary.withValues(alpha: 0.15),
                   theme.colorScheme.secondary.withValues(alpha: 0.1)$1,
@@ -596,7 +598,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
             GlassContainer(
               gradient: LinearGradient(
                 begin: Alignment.topLeft)
-                end: Alignment.bottomRight)
+                end: Alignment.bottomRight,
                 colors: [
                   Colors.purple.withValues(alpha: 0.1),
                   Colors.pink.withValues(alpha: 0.05)$1,
@@ -640,7 +642,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight)
+        end: Alignment.bottomRight,
         colors: [
           backgroundColor)
           backgroundColor.withValues(alpha: 0.5)$1,
@@ -678,7 +680,7 @@ class _SameBirthdayFortuneResult extends ConsumerWidget {
     return GlassContainer(
       gradient: LinearGradient(
         begin: Alignment.topLeft)
-        end: Alignment.bottomRight)
+        end: Alignment.bottomRight,
         colors: [
           color.withValues(alpha: 0.1),
           color.withValues(alpha: 0.05)$1,

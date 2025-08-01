@@ -44,7 +44,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               ),
             )$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -137,7 +137,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
           ).animate()
             .fadeIn(duration: 600.ms, delay: 600.ms)
             .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))$1,
-      ,
+      ),
     );
   }
 
@@ -240,7 +240,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                 Text(
                   '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.')
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 )$1,

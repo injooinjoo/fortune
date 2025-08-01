@@ -259,7 +259,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
 }
                 },
                 selectedColor: level.color.withValues(alpha: 0.3),
-                backgroundColor: Colors.white.withValues(alpha: 0.1));
+                backgroundColor: Colors.white.withValues(alpha: 0.1);
 }).toList(),
         ],
       ));

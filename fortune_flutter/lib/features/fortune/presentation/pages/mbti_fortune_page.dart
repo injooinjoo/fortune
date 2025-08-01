@@ -373,7 +373,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                     theme.colorScheme.primary,
                     theme.colorScheme.primary.withValues(alpha: 0.8),
                   ],
-                ,
+                ),
               : null,
           borderRadius: BorderRadius.circular(16),
         ),

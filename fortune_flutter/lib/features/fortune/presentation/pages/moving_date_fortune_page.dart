@@ -24,7 +24,7 @@ class MovingDateFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _MovingDateFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -98,7 +98,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
         Text(
           '이사 가능한 날짜를 선택하시면\n최적의 이사 날짜를 추천해드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             height: 1.5,
           ),
         ),
@@ -119,11 +119,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -142,12 +142,12 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
@@ -180,11 +180,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.location_on_outlined),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -205,11 +205,11 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
             prefixIcon: const Icon(Icons.location_searching),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -273,7 +273,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                    border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -308,7 +308,7 @@ class _MovingDateInputFormState extends State<_MovingDateInputForm> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   decoration: BoxDecoration(
-                    border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                    border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -613,7 +613,7 @@ class _MovingDateFortuneResultState extends ConsumerState<_MovingDateFortuneResu
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ,
+                          ),
                         );
                       }
                       return null;

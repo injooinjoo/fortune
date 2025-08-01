@@ -24,7 +24,7 @@ class NetworkReportFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _NetworkReportFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -117,7 +117,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
           Text(
             '당신의 인맥 운세를 분석하고\n네트워킹 전략을 제시해드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               height: 1.5,
             ),
           ),
@@ -138,11 +138,11 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -161,12 +161,12 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -199,11 +199,11 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.work_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -381,7 +381,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 }
@@ -615,7 +615,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                   Text(
                                     person['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                                       fontSize: 12 + fontSize,
                                     ),
                                   ),
@@ -765,7 +765,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             showTitle: false,
           ),
         ],
-      ,
+      ),
     );
   }
   
@@ -795,7 +795,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
         sectionsSpace: 2,
         centerSpaceRadius: 40,
         sections: sections,
-      ,
+      ),
     );
   }
   
@@ -872,7 +872,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           ),
         ),
         borderData: FlBorderData(show: false),
-      ,
+      ),
     );
   }
   

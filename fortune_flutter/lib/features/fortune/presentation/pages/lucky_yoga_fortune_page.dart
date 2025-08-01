@@ -21,7 +21,7 @@ class LuckyYogaFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckyYogaFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -276,7 +276,7 @@ class _LuckyYogaFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ,
+      ),
     );
   }
 

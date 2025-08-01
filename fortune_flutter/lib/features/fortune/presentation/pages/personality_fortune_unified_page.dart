@@ -168,7 +168,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             textAlign: TextAlign.center,
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -245,7 +245,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               .slideX(begin: type == PersonalityType.mbti ? -0.2 : 0.2, end: 0),
           ),
         );
-      }).toList(,
+      }).toList(),
     );
   }
 
@@ -350,7 +350,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -520,7 +520,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         style: TextButton.styleFrom(
           foregroundColor: _selectedType.gradientColors[0],
         ),
-      ,
+      ),
     );
   }
 
@@ -768,7 +768,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 

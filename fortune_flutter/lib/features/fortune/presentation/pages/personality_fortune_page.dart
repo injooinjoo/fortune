@@ -24,7 +24,7 @@ class PersonalityFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _PersonalityFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -131,11 +131,11 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -154,12 +154,12 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
@@ -376,7 +376,7 @@ class _PersonalityInputFormState extends State<_PersonalityInputForm> {
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 }
@@ -898,7 +898,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
         borderColor: theme.colorScheme.primary,
         borderWidth: 2,
         dataEntries: values.map((v) => RadarEntry(value: v)).toList(),
-      ,
+      ),
     );
     
     return RadarChart(
@@ -931,7 +931,7 @@ class _PersonalityFortuneResult extends ConsumerWidget {
           color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
           fontSize: 10,
         ),
-      ,
+      ),
     );
   }
   

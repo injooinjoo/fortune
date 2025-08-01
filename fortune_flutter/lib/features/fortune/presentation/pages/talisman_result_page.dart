@@ -116,7 +116,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
-                  ,
+                  ),
                 : const Icon(Icons.share),
             onPressed: _isCapturing ? null : _captureTalisman,
           ),

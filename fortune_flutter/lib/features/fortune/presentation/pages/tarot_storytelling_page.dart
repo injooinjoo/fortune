@@ -641,7 +641,7 @@ class _TarotStorytellingPageState extends ConsumerState<TarotStorytellingPage>
                     child: const CircularProgressIndicator(
                       strokeWidth: 2),
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ,
+                  ),
                 else if (onPressed != null), Icon(
                     _currentCardIndex == widget.selectedCards.length - 1 && _showInterpretation
                         ? Icons.auto_awesome
