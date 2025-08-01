@@ -120,7 +120,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     margin: AppSpacing.paddingAll16,
                     padding: AppSpacing.paddingAll16,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                       borderRadius: AppDimensions.borderRadiusMedium,
                     ),
                     child: Row(
