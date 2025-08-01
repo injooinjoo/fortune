@@ -1,15 +1,15 @@
-# OpenAI Codex 문법 수정 요청 - 중간 에러 파일 배치
+# OpenAI Codex 문법 수정 요청 - 미니 배치 2
 
 **Flutter/Dart 프로젝트 문법 에러 수정 요청**
 
-## 📁 수정 대상 파일 (5개 파일, 총 404 에러)
+## 📁 수정 대상 파일 (5개 파일, 총 55 에러)
 
 ```
-lib/features/fortune/presentation/pages/sports_fortune_page.dart (95 errors)
-lib/features/fortune/presentation/pages/physiognomy_fortune_page.dart (61 errors)
-lib/screens/onboarding/onboarding_flow_page.dart (55 errors)
-lib/features/fortune/presentation/pages/zodiac_animal_fortune_page.dart (98 errors)
-lib/features/fortune/presentation/widgets/career_fortune_selector.dart (116 errors)
+lib/screens/settings/phone_management_screen.dart (9 errors)
+lib/features/fortune/presentation/pages/lucky_number_fortune_page.dart (11 errors)
+lib/features/fortune/presentation/pages/love_fortune_page.dart (12 errors)
+lib/features/fortune/presentation/pages/lucky_place_fortune_page.dart (12 errors)
+lib/features/fortune/presentation/pages/lucky_color_fortune_page.dart (19 errors)
 ```
 
 ## 📋 중요 제약사항
