@@ -219,7 +219,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             ],
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -809,7 +809,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             )).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -900,7 +900,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             }).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -986,7 +986,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -1117,7 +1117,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             }).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -1257,7 +1257,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             )).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 }

@@ -486,7 +486,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                                     borderRadius: BorderRadius.circular(16),
                                     gradient: LinearGradient(
                                       begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight),
+                                      end: Alignment.bottomRight,,
                   colors: [
                                         (() {
                                           final alpha = 0.8;
@@ -635,7 +635,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                           ? Opacity(
                               opacity: (_cardFlipController.value - 0.3) / 0.7,
                               child: _buildAnimatedBackground(),
-                            ,
+                            ),
                           : null
                     );
 },
@@ -835,7 +835,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
+            end: Alignment.bottomRight,,
                   colors: [
               color.withValues(alpha: 0.8),
               color,
@@ -968,7 +968,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
+            end: Alignment.bottomRight,,
                   colors: [
               const Color(0xFF1E3A5F),
               const Color(0xFF0D1B2A),
@@ -1023,7 +1023,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight),
+          end: Alignment.bottomRight,,
                   colors: [
             const Color(0xFF1E3A5F),
             const Color(0xFF0D1B2A),
@@ -1198,7 +1198,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter),
-                  end: Alignment.bottomCenter),
+                  end: Alignment.bottomCenter,,
                   colors: [
                   Colors.black.withValues(alpha: 0.9),
                   Colors.black.withValues(alpha: 0.7),
@@ -1607,7 +1607,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topLeft),
-                  end: Alignment.bottomRight),
+                  end: Alignment.bottomRight,,
                   colors: [
                                   color.withValues(alpha: 0.9),
                                   color.withValues(alpha: 0.7),
@@ -1619,7 +1619,7 @@ class _TarotMainPageState extends ConsumerState<TarotMainPage>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight),
+                                  end: Alignment.bottomRight,,
                   colors: [
                                     Colors.white.withValues(alpha: 0.25),
                                     Colors.white.withValues(alpha: 0.15),

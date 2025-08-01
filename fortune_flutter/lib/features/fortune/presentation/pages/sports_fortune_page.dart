@@ -351,7 +351,7 @@ class _SportsFortunePageState extends BaseFortunePageState<SportsFortunePage> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight)
+            end: Alignment.bottomRight,
             colors: [
               _getSportColor(_selectedType).withValues(alpha: 0.1),
               _getSportColor(_selectedType).withValues(alpha: 0.05)$1,

@@ -333,7 +333,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight),
+                end: Alignment.bottomRight,,
                   colors: [
                   AppTheme.primaryColor.withValues(alpha: 0.1),
                   AppTheme.primaryColor.withValues(alpha: 0.05),
@@ -495,7 +495,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
+            end: Alignment.bottomRight,,
                   colors: [
               AppTheme.primaryColor.withValues(alpha: 0.1),
               AppTheme.primaryColor.withValues(alpha: 0.05),

@@ -190,7 +190,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                         selectedType: state.selectedType!
                         onNext: _handleNextStep,
                         onBack: _handlePreviousStep,
-                      ,
+                      ),
                     : const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center)
@@ -285,7 +285,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                       Icons.check,
                       size: 16
                       color: Colors.white,
-                    ,
+                    ),
                   : Text(
                       '$step',
                       style: TextStyle(

@@ -14,13 +14,14 @@ class TalismanFortunePage extends ConsumerWidget {
       fortuneType: 'talisman',
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight)
+        end: Alignment.bottomRight,
         colors: [Color(0xFF8D6E63), Color(0xFF6D4C41)],
       ),
       inputBuilder: (context, onSubmit) => _TalismanInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _TalismanFortuneResult(
-        result: result)
-        onShare: onShare);
+        result: result,
+        onShare: onShare,
+      );
   }
 }
 

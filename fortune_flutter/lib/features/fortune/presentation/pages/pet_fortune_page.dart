@@ -103,7 +103,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             right: 0)
             child: _buildGenerateButton(),
           )$1,
-      ,
+      ),
     );
   }
 
@@ -129,7 +129,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             onPressed: () => context.push('/onboarding'),
             child: const Text('로그인하기'),
           )$1,
-      ,
+      ),
     );
   }
 
@@ -224,7 +224,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 )$1,
             )$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -292,7 +292,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 )$1,
             ),
           )).toList()$1,
-      ,
+      ),
     );
   }
 
@@ -351,7 +351,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                     strokeWidth: 2)
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
-                ,
+                ),
               : const Text(
                   '운세 보기',
                   style: TextStyle(
@@ -381,7 +381,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('확인'),
           )$1,
-      ,
+      ),
     );
   }
 }

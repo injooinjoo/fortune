@@ -186,7 +186,7 @@ class StartupFortunePage extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [Colors.purple.shade50, Colors.indigo.shade50],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight)
+            end: Alignment.bottomRight,
           ),
         ),
         child: Column(

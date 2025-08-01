@@ -121,7 +121,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
               ),
             )$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -294,7 +294,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                         ),
                       ),
                     )$1,
-                ,
+                ),
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center)
                   children: [
@@ -642,7 +642,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 title: const Text('취소'),
                 onTap: () => Navigator.pop(context),
               )$1,

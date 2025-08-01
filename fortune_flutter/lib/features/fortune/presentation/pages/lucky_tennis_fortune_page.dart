@@ -257,7 +257,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ],
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -595,7 +595,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -625,7 +625,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               _buildShotItem(entry.value, index: entry.key)).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -712,7 +712,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             _buildEquipmentItem('신발', '쿠션이 좋은 신발 추천', Icons.sports_basketball),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -752,7 +752,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -783,7 +783,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             _buildStrategyItem('게임 운영', '중요한 포인트에서 안정적으로'),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -816,7 +816,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 
@@ -851,7 +851,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -946,7 +946,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 

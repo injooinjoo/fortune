@@ -535,7 +535,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight)
+                  end: Alignment.bottomRight,
                   colors: [
                     theme.colorScheme.primary.withValues(alpha: 0.1),
                     theme.colorScheme.secondary.withValues(alpha: 0.1)$1,
@@ -569,7 +569,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
             const SizedBox(height: 12),
             _buildAnalysisScore('직업운', 90, '리더십과 창의성이 뛰어납니다')$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -688,7 +688,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               }).toList(),
             )$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -783,7 +783,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               ),
             )).toList()$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -862,7 +862,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               ),
             )).toList()$1,
         ),
-      ,
+      ),
     );
   }
 }

@@ -138,11 +138,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.person_outline),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -161,12 +161,12 @@ class _MovingInputFormState extends State<_MovingInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                 const SizedBox(width: 12),
                 Text(
                   _birthDate != null
@@ -199,11 +199,11 @@ class _MovingInputFormState extends State<_MovingInputForm> {
             prefixIcon: const Icon(Icons.home_outlined),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -222,12 +222,12 @@ class _MovingInputFormState extends State<_MovingInputForm> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
-                Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                Icon(Icons.event, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                 const SizedBox(width: 12),
                 Text(
                   _plannedDate != null
@@ -677,7 +677,7 @@ class _MovingFortuneResult extends ConsumerWidget {
                     Text(
                       avoidDirection['reason'],
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         fontSize: 12 + fontSize,
                       ),
                     ),

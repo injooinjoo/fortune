@@ -170,7 +170,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-                    ,
+                    ),
                   : null,
               border: Border.all(
                 color: isSelected
@@ -231,7 +231,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
                 gradient: isSelected
                     ? const LinearGradient(
                         colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-                      ,
+                      ),
                     : null,
                 border: Border.all(
                   color: isSelected
@@ -252,7 +252,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
             ),
           ),
         );
-      }).toList(,
+      }).toList(),
     );
   }
 
@@ -290,7 +290,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-                    ,
+                    ),
                   : null,
               border: Border.all(
                 color: isSelected
@@ -358,7 +358,7 @@ class _RunningInputFormState extends State<_RunningInputForm> {
               gradient: isSelected
                   ? const LinearGradient(
                       colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-                    ,
+                    ),
                   : null,
               border: Border.all(
                 color: isSelected
@@ -570,7 +570,7 @@ class _RunningFortuneResult extends StatelessWidget {
             ),
           ),
         ],
-      ,
+      ),
     );
   }
 }

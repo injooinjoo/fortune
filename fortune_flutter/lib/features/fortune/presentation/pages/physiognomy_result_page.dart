@@ -190,7 +190,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               label: const Text('다시 시도'),
             )$1,
         ),
-      ,
+      ),
     );
   }
 
@@ -226,7 +226,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           // Action Buttons
           _buildActionButtons(theme),
           const SizedBox(height: 32)$1,
-      ,
+      ),
     );
   }
 
@@ -270,7 +270,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                         progress: value)
                         color: _getScoreColor(score),
                         strokeWidth: 8,
-                      ,
+                      ),
                     );
                   },
                 ),
@@ -289,7 +289,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                           style: theme.textTheme.displayMedium?.copyWith(
                             fontWeight: FontWeight.bold)
                             color: _getScoreColor(score),
-                          ,
+                          ),
                         );
                       },
                     ),
@@ -326,7 +326,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               textAlign: TextAlign.center,
             ),
           )$1,
-      ,
+      ),
     );
   }
 
@@ -436,7 +436,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           
           // Feature analysis cards
           ..._buildFeatureAnalysis(theme, analysis)$1,
-      ,
+      ),
     );
   }
 
@@ -502,7 +502,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                 ),
               )$1,
           ),
-        ,
+        ),
       );
     }).toList();
   }
@@ -577,7 +577,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               ),
             );
           }).toList()$1,
-      ,
+      ),
     );
   }
 
@@ -659,7 +659,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               ),
             );
           }).toList()$1,
-      ,
+      ),
     );
   }
 

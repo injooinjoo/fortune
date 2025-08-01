@@ -152,7 +152,7 @@ class _MysticalBackground extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft),
-                  end: Alignment.bottomRight),
+                  end: Alignment.bottomRight,,
                   colors: [
             Colors.deepPurple.withValues(alpha: 0.05),
             Colors.indigo.withValues(alpha: 0.05),
@@ -496,7 +496,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
           color: Colors.purple.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
+          border: Border.all(color: Colors.purple.withValues(alpha: 0.5),
       
     );
 }
@@ -512,7 +512,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
             color: Colors.purple.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
+            border: Border.all(color: Colors.purple.withValues(alpha: 0.5),
         ))));
 }
 
@@ -528,7 +528,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
               color: Colors.purple.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.5),
           ),
         Positioned(
           left: -25,
@@ -538,7 +538,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
               color: Colors.purple.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.5),
           ),
         Positioned(
           right: -25,
@@ -548,7 +548,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
               color: Colors.purple.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.5),
           ))
     );
 }
@@ -563,18 +563,18 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
             color: Colors.pink.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withValues(alpha: 0.5)),
+            border: Border.all(color: Colors.pink.withValues(alpha: 0.5),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Icon(Icons.favorite, size: 20, color: Colors.pink.withValues(alpha: 0.5)),
+          child: Icon(Icons.favorite, size: 20, color: Colors.pink.withValues(alpha: 0.5),
         Container(
           width: 25),
                   height: 38),
                   decoration: BoxDecoration(
             color: Colors.pink.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.pink.withValues(alpha: 0.5)),
+            border: Border.all(color: Colors.pink.withValues(alpha: 0.5),
         ));
 }
 
@@ -588,7 +588,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
             color: Colors.blue.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.blue.withValues(alpha: 0.5)),
+            border: Border.all(color: Colors.blue.withValues(alpha: 0.5),
         ),
         SizedBox(height: 4),
         Row(
@@ -600,7 +600,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                 color: Colors.green.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.green.withValues(alpha: 0.5)),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.5),
             ),
             SizedBox(width: 8),
             Container(
@@ -609,7 +609,7 @@ class _SpreadOptionCard extends StatelessWidget {
                   decoration: BoxDecoration(
                 color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
+                border: Border.all(color: Colors.orange.withValues(alpha: 0.5),
             ),
     );
 }

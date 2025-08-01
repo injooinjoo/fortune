@@ -528,7 +528,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight)
+                  end: Alignment.bottomRight,
                   colors: [
                     Colors.red.withValues(alpha: 0.1),
                     Colors.orange.withValues(alpha: 0.1)$1,
@@ -780,7 +780,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
-                    end: Alignment.bottomRight)
+                    end: Alignment.bottomRight,
                     colors: [
                       theme.colorScheme.primary.withValues(alpha: 0.05),
                       theme.colorScheme.secondary.withValues(alpha: 0.05)$1,

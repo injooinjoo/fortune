@@ -120,7 +120,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight)
+          end: Alignment.bottomRight,
           colors: [
             Color(0xFFE11D48).withValues(alpha: 0.1),
             Color(0xFF9333EA).withValues(alpha: 0.05)$1,
@@ -156,7 +156,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
             ),
             textAlign: TextAlign.center,
           )$1,
-      ,
+      ),
     );
   }
 
@@ -367,7 +367,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
         style: TextButton.styleFrom(
           foregroundColor: _selectedType.gradientColors[0])
         ),
-      ,
+      ),
     );
   }
 
@@ -393,7 +393,7 @@ class _PetFortuneUnifiedPageState extends BaseFortunePageState<PetFortuneUnified
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight)
+          end: Alignment.bottomRight,
           colors: [
             _selectedType.gradientColors[0].withValues(alpha: 0.1),
             _selectedType.gradientColors[1].withValues(alpha: 0.05)$1,

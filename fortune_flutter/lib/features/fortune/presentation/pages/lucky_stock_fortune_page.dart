@@ -21,7 +21,7 @@ class LuckyStockFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckyStockFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -276,7 +276,7 @@ class _LuckyStockFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ,
+      ),
     );
   }
 

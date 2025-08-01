@@ -241,7 +241,7 @@ class _TalismanGenerationStepState extends ConsumerState<TalismanGenerationStep>
                                 color: Colors.white,
                                 size: 50,
                               )).animate(onPlay: (controller) => controller.repeat())
-                              .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.3))
+                              .shimmer(duration: 2000.ms, color: Colors.white.withValues(alpha: 0.3)
                               .scale(
                                 begin: const Offset(0.9, 0.9),
                                 end: const Offset(1.1, 1.1),

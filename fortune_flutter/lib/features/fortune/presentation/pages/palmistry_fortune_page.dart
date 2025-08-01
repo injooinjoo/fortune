@@ -321,7 +321,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -500,7 +500,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             ),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -654,7 +654,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             )).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -728,7 +728,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             }).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 
@@ -828,7 +828,7 @@ class _PalmistryFortunePageState extends BaseFortunePageState<PalmistryFortunePa
             )).toList(),
           ],
         ),
-      ,
+      ),
     );
   }
 }
