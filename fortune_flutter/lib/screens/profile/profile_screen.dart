@@ -50,7 +50,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // Load from local storage first
       localProfile = await _storageService.getUserProfile();
       debugPrint('Local profile: $localProfile');
-      
+
       final userId = supabase.auth.currentUser?.id;
       if (userId != null) {
         // Load user profile
@@ -59,9 +59,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             .select()
             .eq('id', userId)
             .maybeSingle();
-        
+
         debugPrint('Supabase profile: $response');
-        
+
         // Load user statistics with error handling for missing table
         Map<String, dynamic>? statsResponse;
         try {
@@ -77,7 +77,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             debugPrint('user_statistics table not found - using default values');
           }
         }
-            
+
         if (mounted) {
           setState(() {
             userProfile = response;
@@ -97,7 +97,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             isLoading = false;
           });
         }
-        
+
         // Load fortune history
         _loadFortuneHistory();
       } else {
@@ -122,21 +122,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       }
     }
   }
-  
+
   Future<void> _loadFortuneHistory() async {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
-    
+
     if (mounted) {
       setState(() {
         isLoadingHistory = true;
       });
     }
-    
+
     try {
       final fortuneApiService = ref.read(fortuneApiServiceProvider);
       final scores = await fortuneApiService.getUserFortuneHistory(userId: userId);
-      
+
       if (mounted) {
         setState(() {
           fortuneScores = scores;
@@ -159,10 +159,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final theme = Theme.of(context);
     final tokenState = ref.watch(tokenProvider);
     final themeMode = ref.watch(themeModeProvider);
-    final isDarkMode = themeMode == ThemeMode.dark || 
-        (themeMode == ThemeMode.system && 
+    final isDarkMode = themeMode == ThemeMode.dark ||
+        (themeMode == ThemeMode.system &&
          MediaQuery.of(context).platformBrightness == Brightness.dark);
-    
+
     if (isLoading) {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
@@ -171,7 +171,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
       );
     }
-    
+
     return Scaffold(
       backgroundColor: AppColors.cardBackground, // #F6F6F6
       appBar: AppBar(
@@ -220,7 +220,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ],
-            
+
             // 테스트 계정 섹션 (테스트 계정인 경우에만 표시)
             FutureBuilder<UserProfile?>(
               future: ref.watch(userProfileProvider.future),
@@ -331,13 +331,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               // Refresh user profile
                                               ref.invalidate(userProfileProvider);
                                               _loadUserData();
-                                              
+
                                               if (mounted) {
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
                                                     content: Text(
-                                                      value 
-                                                        ? '프리미엄 기능이 활성화되었습니다.' 
+                                                      value
+                                                        ? '프리미엄 기능이 활성화되었습니다.'
                                                         : '프리미엄 기능이 비활성화되었습니다.',
                                                     ),
                                                     backgroundColor: value ? Colors.green : Colors.grey,
@@ -409,7 +409,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 return const SizedBox.shrink();
               },
             ),
-            
+
             // 사주 정보 섹션
             if (userProfile != null || localProfile != null) ...[
               const SizedBox(height: 16),
@@ -420,7 +420,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ],
-            
+
             // 오행 분석 섹션
             if (userProfile != null || localProfile != null) ...[
               const SizedBox(height: 16),
@@ -431,14 +431,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ],
-            
+
             // 운세 히스토리 요약 카드
             const SizedBox(height: 16),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: FortuneHistorySummaryWidget(),
             ),
-            
+
             // 활동 통계 섹션
             const SizedBox(height: 24),
             Container(
@@ -508,7 +508,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ],
                     ),
                   ),
-                  
+
                   // Statistics Items
                   _buildInsightItem(
                     context,
@@ -540,7 +540,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
               ),
             ),
-            
+
             // 추천 활동 섹션
             const SizedBox(height: 24),
             Padding(
@@ -579,7 +579,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ),
-            
+
             // 내 도구 섹션
             const SizedBox(height: 24),
             Padding(
@@ -648,7 +648,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ),
-            
+
             // 계정 설정 버튼
             const SizedBox(height: 32),
             Padding(
@@ -674,7 +674,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
           ],
         ),
@@ -685,10 +685,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _inviteFriend() async {
     final user = supabase.auth.currentUser;
     final userName = userProfile?['name'] ?? localProfile?['name'] ?? '사용자';
-    
+
     const appStoreUrl = 'https://apps.apple.com/app/fortune/id123456789'; // TODO: Replace with actual App Store URL
     const playStoreUrl = 'https://play.google.com/store/apps/details?id=com.fortune.app'; // TODO: Replace with actual Play Store URL
-    
+
     final shareText = '''🔮 Fortune - AI 운세 서비스
 
 안녕하세요! $userName님이 Fortune 앱을 추천했어요!
@@ -704,7 +704,7 @@ iOS: $appStoreUrl
 Android: $playStoreUrl
 
 초대 코드: ${user?.id?.substring(0, 8) ?? 'FORTUNE2024'}''';
-    
+
     await Share.share(
       shareText,
       subject: 'Fortune 앱 초대',
@@ -714,7 +714,7 @@ Android: $playStoreUrl
   Future<void> _shareWithFriends() async {
     final userName = userProfile?['name'] ?? localProfile?['name'] ?? '나';
     final lastFortuneScore = fortuneScores.isNotEmpty ? fortuneScores.last : 0;
-    
+
     String fortuneMessage = '';
     if (lastFortuneScore >= 80) {
       fortuneMessage = '오늘의 운세가 아주 좋아요! 🌟';
@@ -725,7 +725,7 @@ Android: $playStoreUrl
     } else {
       fortuneMessage = '오늘은 조심하는 게 좋겠어요 🍀';
     }
-    
+
     final shareText = '''🔮 $userName의 Fortune 운세
 
 $fortuneMessage
@@ -738,7 +738,7 @@ $fortuneMessage
 
 Fortune 앱에서 나만의 운세를 확인해보세요!
 https://fortune.app''';
-    
+
     await Share.share(
       shareText,
       subject: 'Fortune 운세 공유',
@@ -814,8 +814,8 @@ https://fortune.app''';
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: isText && value == '없음' 
-                        ? AppColors.textSecondary 
+                    color: isText && value == '없음'
+                        ? AppColors.textSecondary
                         : AppColors.textPrimary,
                   ),
                 ),
