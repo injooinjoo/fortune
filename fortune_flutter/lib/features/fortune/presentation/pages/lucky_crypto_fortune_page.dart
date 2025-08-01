@@ -21,7 +21,7 @@ class LuckyCryptoFortunePage extends ConsumerWidget {
       resultBuilder: (context, result, onShare) => _LuckyCryptoFortuneResult(
         result: result,
         onShare: onShare,
-      ,
+      ),
     );
   }
 }
@@ -58,8 +58,8 @@ class _LuckyCryptoInputForm extends StatelessWidget {
         const SizedBox(height: 32),
         
         Center(
-          child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            child: ElevatedButton.icon(
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.currency_bitcoin),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(
@@ -276,8 +276,7 @@ class _LuckyCryptoFortuneResult extends StatelessWidget {
             ),
           ],
         ],
-      ,
-    );
+      );
   }
 
   Color _getScoreColor(int score) {

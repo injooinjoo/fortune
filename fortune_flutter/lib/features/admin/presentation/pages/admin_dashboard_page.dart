@@ -593,7 +593,6 @@ class _UsageTrendTab extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10 * fontScale,
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                            ,
                           );
                         },
                       ),
@@ -831,8 +830,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                     ),
                   ],
                 ),
-              ,
-            );
+              );
           }).toList(),
           
           const SizedBox(height: 24),

@@ -135,8 +135,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d'),
           ),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildSummaryCards(TokenUsageSummary summary) {
@@ -252,8 +251,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           ),
           borderData: FlBorderData(show: false),
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildUsageByType(BuildContext context, List<TokenUsageByType> usageByType) {
@@ -317,8 +315,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             ),
           )).toList(),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildPackageEfficiency(BuildContext context, PackageEfficiency efficiency) {
@@ -391,8 +388,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             );
           }).toList(),
         ],
-      ,
-    );
+      );
   }
 
   Widget _buildUsageTrend(BuildContext context, TokenUsageTrend trend) {
@@ -489,8 +485,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             ),
           ),
         ],
-      ,
-    );
+      );
   }
 }
 
@@ -523,11 +518,11 @@ class _PeriodButton extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : theme.colorScheme.onSurface),
+            color: isSelected ? Colors.white : theme.colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
-      ,
+      ),
     );
   }
 }
@@ -575,7 +570,6 @@ class _InfoCard extends StatelessWidget {
             ),
           ),
         ],
-      ,
-    );
+      );
   }
 }
