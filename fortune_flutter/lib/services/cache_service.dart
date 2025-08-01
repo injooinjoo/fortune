@@ -31,13 +31,11 @@ class CacheService {
     
     // Register adapters
     if (!Hive.isAdapterRegistered(0)) {
-      Hive.registerAdapter(
-    FortuneModelAdapter(,
-  )}
+      Hive.registerAdapter(FortuneModelAdapter());
+    }
     if (!Hive.isAdapterRegistered(1)) {
-      Hive.registerAdapter(
-    CacheEntryAdapter(,
-  )}
+      Hive.registerAdapter(CacheEntryAdapter());
+    }
     
     // Open boxes
     _fortuneBox = await Hive.openBox<FortuneModel>(_fortuneBoxName);
@@ -55,15 +53,13 @@ class CacheService {
     final sortedParams = Map.fromEntries(
       params.entries.where((e) => e.key != 'userId').toList()
         ..sort((a, b) => a.key.compareTo(b.key))
+    );
     
-    // Generate key with format: userId:fortuneTy,
-      pe: dat,
-      e:params
+    // Generate key with format: userId:fortuneType:date:params
     final dateKey = _getDateKeyForType(fortuneType);
     final paramsString = sortedParams.isEmpty ? '' : ':${sortedParams.toString()}';
     
-    return '$userId: $fortuneTyp,
-      e:$dateKey$paramsString';
+    return '$userId:$fortuneType:$dateKey$paramsString';
   }
 
   String _getDateKeyForType(String fortuneType) {
@@ -124,7 +120,7 @@ class CacheService {
     try {
       final key = _generateCacheKey(fortuneType, params);
       final duration = _cacheDuration[fortuneType] ?? _cacheDuration['default']!;
-      final expiryDate = DateTime.now().add(Duration(hours: duration)
+      final expiryDate = DateTime.now().add(Duration(hours: duration));
       
       // Save fortune
       await _fortuneBox.put(key, fortune);
@@ -205,8 +201,8 @@ class CacheService {
         'valid': validCount,
         'expired': expiredCount,
         'sizeInBytes': _fortuneBox.path != null 
-            ? await _calculateBoxSize(_fortuneBox.path!)
-            : 0
+            ? await _calculateBoxSize(_fortuneBox.path!) 
+            : 0,
       };
     } catch (e) {
       debugPrint('Error getting cache stats: $e');
@@ -262,7 +258,7 @@ class CacheService {
       }
       
       // Sort by creation date (newest first)
-      fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt)
+      fortunes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       
       return fortunes;
     } catch (e) {

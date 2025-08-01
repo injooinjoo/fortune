@@ -1,4 +1,4 @@
-import 'package: flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -10,13 +10,13 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class PhysiognomyFortunePage extends BaseFortunePage {
-  const PhysiognomyFortunePage({Key? key},
+  const PhysiognomyFortunePage({Key? key})
       : super(
-          key: key
+          key: key,
           title: '관상 운세',
           description: '얼굴에 담긴 운명과 성격 분석',
-          fortuneType: 'physiognomy')
-          requiresUserInfo: false
+          fortuneType: 'physiognomy',
+          requiresUserInfo: false,
         );
 
   @override
@@ -37,12 +37,13 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
   String? _chinType;
 
   final Map<String, String> _faceShapes = {
-    'round': '둥근형'
+    'round': '둥근형',
     'oval': '계란형',
     'square': '사각형',
     'heart': '하트형',
     'diamond': '다이아몬드형',
-    'oblong': '직사각형'$1;
+    'oblong': '직사각형',
+  };
 
   final Map<String, String> _eyebrowTypes = {
     'straight': '일자 눈썹',
@@ -50,7 +51,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     'angled': '각진 눈썹',
     'rounded': '둥근 눈썹',
     'thick': '진한 눈썹',
-    'thin': '얇은 눈썹'$1;
+    'thin': '얇은 눈썹',
+  };
 
   final Map<String, String> _eyeTypes = {
     'big': '큰 눈',
@@ -58,7 +60,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     'round': '둥근 눈',
     'almond': '아몬드형 눈',
     'droopy': '처진 눈',
-    'upturned': '올라간 눈'$1;
+    'upturned': '올라간 눈',
+  };
 
   final Map<String, String> _noseTypes = {
     'high': '높은 코',
@@ -66,7 +69,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     'straight': '곧은 코',
     'hooked': '매부리코',
     'snub': '들창코',
-    'wide': '넓은 코'$1;
+    'wide': '넓은 코',
+  };
 
   final Map<String, String> _lipTypes = {
     'full': '도톰한 입술',
@@ -74,16 +78,17 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     'heart': '하트형 입술',
     'wide': '넓은 입술',
     'small': '작은 입술',
-    'uneven': '비대칭 입술'$1;
+    'uneven': '비대칭 입술',
+  };
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
     final fortuneService = ref.read(fortuneServiceProvider);
     
     return await fortuneService.getFortune(
-      fortuneType: widget.fortuneType)
+      fortuneType: widget.fortuneType,
       userId: ref.read(userProvider).value?.id ?? 'anonymous',
-      params: params
+      params: params,
     );
   }
 
@@ -96,7 +101,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
     }
 
     return {
-      'faceShape': _faceShape
+      'faceShape': _faceShape,
       'eyebrowType': _eyebrowType,
       'eyeType': _eyeType,
       'noseType': _noseType,
@@ -104,16 +109,17 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
       'earType': _earType,
       'foreheadType': _foreheadType,
       'chinType': _chinType,
-      'hasImage': _selectedImage != null$1;
+      'hasImage': _selectedImage != null,
+    };
   }
 
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(
-        source: source
-        maxWidth: 1080)
-        maxHeight: 1080)
-        imageQuality: 85
+        source: source,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        imageQuality: 85,
       );
       
       if (image != null) {
@@ -143,7 +149,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               ),
               const SizedBox(height: 8),
               Text(
-                'AI가 더 정확한 관상 분석을 제공합니다')
+                'AI가 더 정확한 관상 분석을 제공합니다',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
@@ -155,8 +161,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   child: Image.file(
                     _selectedImage!,
                     height: 200,
-                    width: 200)
-                    fit: BoxFit.cover)
+                    width: 200,
+                    fit: BoxFit.cover,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -169,11 +175,12 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   icon: const Icon(Icons.delete_rounded),
                   label: const Text('사진 제거'),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.red)
+                    foregroundColor: Colors.red,
                   ),
-                )$1 else ...[
+                ),
+              ] else ...[
                 Container(
-                  height: 150)
+                  height: 150,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surface.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(12),
@@ -185,20 +192,21 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   ),
                   child: Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center)
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.face_rounded)
-                          size: 48)
+                          Icons.face_rounded,
+                          size: 48,
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '정면 사진을 업로드하세요')
+                          '정면 사진을 업로드하세요',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
-                        )$1,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -225,8 +233,11 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                       ),
-                    )$1,
-                )$1$1,
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -235,15 +246,15 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start)
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '얼굴형')
-                style: theme.textTheme.headlineSmall)
+                '얼굴형',
+                style: theme.textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
               GridView.count(
-                shrinkWrap: true)
+                shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 3,
                 childAspectRatio: 2,
@@ -266,13 +277,13 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                       borderColor: isSelected
                           ? theme.colorScheme.primary.withValues(alpha: 0.5)
                           : Colors.transparent,
-                      borderWidth: isSelected ? 2 : 0
+                      borderWidth: isSelected ? 2 : 0,
                       child: Center(
                         child: Text(
-                          entry.value)
+                          entry.value,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)
-                            color: isSelected ? theme.colorScheme.primary : null)
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? theme.colorScheme.primary : null,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -280,7 +291,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                     ),
                   );
                 }).toList(),
-              )$1,
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -289,11 +301,11 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start)
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '얼굴 특징 분석')
-                style: theme.textTheme.headlineSmall)
+                '얼굴 특징 분석',
+                style: theme.textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
               
@@ -301,7 +313,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               _buildFeatureDropdown(
                 '눈썹',
                 _eyebrowType,
-                _eyebrowTypes)
+                _eyebrowTypes,
                 (value) => setState(() => _eyebrowType = value),
                 Icons.remove_rounded,
               ),
@@ -311,7 +323,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               _buildFeatureDropdown(
                 '눈',
                 _eyeType,
-                _eyeTypes)
+                _eyeTypes,
                 (value) => setState(() => _eyeType = value),
                 Icons.visibility_rounded,
               ),
@@ -321,7 +333,7 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               _buildFeatureDropdown(
                 '코',
                 _noseType,
-                _noseTypes)
+                _noseTypes,
                 (value) => setState(() => _noseType = value),
                 Icons.air_rounded,
               ),
@@ -331,19 +343,20 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               _buildFeatureDropdown(
                 '입술',
                 _lipType,
-                _lipTypes)
+                _lipTypes,
                 (value) => setState(() => _lipType = value),
                 Icons.mood_rounded,
-              )$1,
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
         
-        // Additional Features (Optional,
+        // Additional Features (Optional)
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start)
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '추가 특징 (선택사항)',
@@ -360,7 +373,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   'small': '작은 귀',
                   'thick': '두꺼운 귀',
                   'thin': '얇은 귀',
-                  'protruding': '돌출된 귀'$1)
+                  'protruding': '돌출된 귀',
+                },
                 (value) => setState(() => _earType = value),
               ),
               const SizedBox(height: 16),
@@ -374,7 +388,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   'narrow': '좁은 이마',
                   'high': '높은 이마',
                   'low': '낮은 이마',
-                  'rounded': '둥근 이마'$1)
+                  'rounded': '둥근 이마',
+                },
                 (value) => setState(() => _foreheadType = value),
               ),
               const SizedBox(height: 16),
@@ -388,42 +403,46 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   'rounded': '둥근 턱',
                   'square': '각진 턱',
                   'receding': '들어간 턱',
-                  'protruding': '나온 턱'$1)
+                  'protruding': '나온 턱',
+                },
                 (value) => setState(() => _chinType = value),
-              )$1,
+              ),
+            ],
           ),
-        )$1
+        ),
+      ],
     );
   }
 
   Widget _buildFeatureDropdown(
     String label,
     String? value,
-    Map<String, String> options)
+    Map<String, String> options,
     Function(String?) onChanged,
     IconData icon,
   ) {
     final theme = Theme.of(context);
     
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start)
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Icon(icon, size: 20, color: theme.colorScheme.primary),
             const SizedBox(width: 8),
             Text(
-              label)
+              label,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold)
+                fontWeight: FontWeight.bold,
               ),
-            )$1,
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           decoration: InputDecoration(
-            hintText: '$label 형태를 선택하세요')
+            hintText: '$label 형태를 선택하세요',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -433,31 +452,32 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
           ),
           items: options.entries.map((entry) {
             return DropdownMenuItem(
-              value: entry.key)
+              value: entry.key,
               child: Text(entry.value),
             );
           }).toList(),
           onChanged: onChanged,
-        )$1
+        ),
+      ],
     );
   }
 
   Widget _buildOptionalFeatureDropdown(
     String label,
     String? value,
-    Map<String, String> options)
+    Map<String, String> options,
     Function(String?) onChanged,
   ) {
     final theme = Theme.of(context);
     
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Text(
-              label)
-              style: theme.textTheme.bodyLarge)
+              label,
+              style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(width: 8),
             Text(
@@ -465,13 +485,14 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
-            )$1,
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: value,
           decoration: InputDecoration(
-            hintText: '선택하세요')
+            hintText: '선택하세요',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -481,17 +502,19 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
           ),
           items: [
             const DropdownMenuItem(
-              value: null)
+              value: null,
               child: Text('선택 안함'),
             ),
             ...options.entries.map((entry) {
               return DropdownMenuItem(
-                value: entry.key)
+                value: entry.key,
                 child: Text(entry.value),
               );
-            }).toList()$1,
+            }).toList(),
+          ],
           onChanged: onChanged,
-        )$1,
+        ),
+      ],
     );
   }
 
@@ -503,7 +526,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         _buildFaceReadingAnalysis(),
         _buildPersonalityProfile(),
         _buildFortuneByFeature(),
-        _buildLifeAdvice()$1
+        _buildLifeAdvice(),
+      ],
     );
   }
 
@@ -515,19 +539,20 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start)
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.face_retouching_natural_rounded)
-                  color: theme.colorScheme.primary)
+                  Icons.face_retouching_natural_rounded,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '관상 종합 분석')
-                  style: theme.textTheme.headlineSmall)
-                )$1,
+                  '관상 종합 분석',
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             Container(
@@ -538,26 +563,28 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                   end: Alignment.bottomRight,
                   colors: [
                     theme.colorScheme.primary.withValues(alpha: 0.1),
-                    theme.colorScheme.secondary.withValues(alpha: 0.1)$1,
+                    theme.colorScheme.secondary.withValues(alpha: 0.1),
+                  ],
                 ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start)
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '전체적인 인상')
+                    '전체적인 인상',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold)
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '당신의 얼굴은 강한 의지와 따뜻한 성품을 동시에 나타냅니다. 특히 눈매와 입술의 조화가 신뢰감을 주며, 이마의 형태는 지적 능력과 창의성을 암시합니다.')
+                    '당신의 얼굴은 강한 의지와 따뜻한 성품을 동시에 나타냅니다. 특히 눈매와 입술의 조화가 신뢰감을 주며, 이마의 형태는 지적 능력과 창의성을 암시합니다.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
-                  )$1,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
@@ -567,7 +594,8 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
             const SizedBox(height: 12),
             _buildAnalysisScore('건강운', 80, '타고난 건강 체질입니다'),
             const SizedBox(height: 12),
-            _buildAnalysisScore('직업운', 90, '리더십과 창의성이 뛰어납니다')$1,
+            _buildAnalysisScore('직업운', 90, '리더십과 창의성이 뛰어납니다'),
+          ],
         ),
       ),
     );
@@ -581,12 +609,12 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween)
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              label)
+              label,
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold)
+                fontWeight: FontWeight.bold,
               ),
             ),
             Container(
@@ -596,27 +624,29 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '$score점')
+                '$score점',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: color)
-                  fontWeight: FontWeight.bold)
+                  color: color,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            )$1,
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         Text(
-          description)
+          description,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(height: 4),
         LinearProgressIndicator(
-          value: score / 100)
+          value: score / 100,
           backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
           valueColor: AlwaysStoppedAnimation<Color>(color),
-        )$1
+        ),
+      ],
     );
   }
 
@@ -635,30 +665,32 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
       {'name': '공감능력', 'icon': Icons.favorite_rounded, 'color': Colors.pink},
       {'name': '분석력', 'icon': Icons.analytics_rounded, 'color': Colors.blue},
       {'name': '인내심', 'icon': Icons.timer_rounded, 'color': Colors.green},
-      {'name': '소통능력', 'icon': Icons.chat_rounded, 'color': Colors.orange}$1;
+      {'name': '소통능력', 'icon': Icons.chat_rounded, 'color': Colors.orange},
+    ];
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start)
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.psychology_rounded)
-                  color: theme.colorScheme.primary)
+                  Icons.psychology_rounded,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '성격 프로필')
-                  style: theme.textTheme.headlineSmall)
-                )$1,
+                  '성격 프로필',
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             GridView.count(
-              shrinkWrap: true)
+              shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 3,
               childAspectRatio: 1,
@@ -673,20 +705,22 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        trait['icon'] as IconData)
-                        size: 28)
-                        color: trait['color'] as Color)
+                        trait['icon'] as IconData,
+                        size: 28,
+                        color: trait['color'] as Color,
                       ),
                       const SizedBox(height: 8),
                       Text(
                         trait['name'] as String,
-                        style: theme.textTheme.bodySmall)
-                        textAlign: TextAlign.center)
-                      )$1,
+                        style: theme.textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 );
               }).toList(),
-            )$1,
+            ),
+          ],
         ),
       ),
     );
@@ -700,41 +734,47 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
         'feature': '눈',
         'interpretation': '맑고 깊은 눈은 순수한 마음과 직관력을 나타냅니다.',
         'fortune': '인간관계에서 좋은 운이 따를 것입니다.',
-        'icon': Icons.visibility_rounded$1,
+        'icon': Icons.visibility_rounded,
+      },
       {
         'feature': '코',
         'interpretation': '균형 잡힌 코는 재물운과 건강운을 상징합니다.',
         'fortune': '경제적 안정과 성공이 예상됩니다.',
-        'icon': Icons.air_rounded$1,
+        'icon': Icons.air_rounded,
+      },
       {
         'feature': '입',
         'interpretation': '적당한 크기의 입술은 소통 능력과 표현력을 의미합니다.',
         'fortune': '말과 글로 인한 행운이 있을 것입니다.',
-        'icon': Icons.mood_rounded$1,
+        'icon': Icons.mood_rounded,
+      },
       {
         'feature': '이마',
         'interpretation': '넓은 이마는 지혜와 학업 성취를 암시합니다.',
         'fortune': '새로운 지식과 기회가 찾아올 것입니다.',
-        'icon': Icons.lightbulb_rounded$1$1;
+        'icon': Icons.lightbulb_rounded,
+      },
+    ];
     
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start)
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.auto_awesome_rounded)
-                  color: theme.colorScheme.primary)
+                  Icons.auto_awesome_rounded,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '부위별 운세')
-                  style: theme.textTheme.headlineSmall)
-                )$1,
+                  '부위별 운세',
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ...features.map((item) => Padding(
@@ -754,34 +794,37 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                     Row(
                       children: [
                         Icon(
-                          item['icon'] as IconData)
-                          size: 20)
-                          color: theme.colorScheme.primary)
+                          item['icon'] as IconData,
+                          size: 20,
+                          color: theme.colorScheme.primary,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          item['feature'] as String)
+                          item['feature'] as String,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold)
+                            fontWeight: FontWeight.bold,
                           ),
-                        )$1,
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      item['interpretation'] as String)
-                      style: theme.textTheme.bodyMedium)
+                      item['interpretation'] as String,
+                      style: theme.textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '→ ${item['fortune']}')
+                      '→ ${item['fortune']}',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.primary)
-                        fontWeight: FontWeight.w500)
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w500,
                       ),
-                    )$1,
+                    ),
+                  ],
                 ),
               ),
-            )).toList()$1,
+            )).toList(),
+          ],
         ),
       ),
     );
@@ -794,38 +837,44 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
       {
         'category': '재물',
         'advice': '40대 중반에 큰 재물운이 있으니 그때를 위해 준비하세요.',
-        'color': Colors.amber$1,
+        'color': Colors.amber,
+      },
       {
         'category': '건강',
         'advice': '스트레스 관리에 신경 쓰고, 규칙적인 운동을 하세요.',
-        'color': Colors.green$1,
+        'color': Colors.green,
+      },
       {
         'category': '인연',
         'advice': '진실한 마음으로 대하면 좋은 인연을 만날 수 있습니다.',
-        'color': Colors.pink$1,
+        'color': Colors.pink,
+      },
       {
         'category': '직업',
         'advice': '창의적인 분야나 리더십을 발휘할 수 있는 직종이 적합합니다.',
-        'color': Colors.blue$1$1;
+        'color': Colors.blue,
+      },
+    ];
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start)
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
-                  Icons.tips_and_updates_rounded)
-                  color: theme.colorScheme.primary)
+                  Icons.tips_and_updates_rounded,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '인생 조언')
-                  style: theme.textTheme.headlineSmall)
-                )$1,
+                  '인생 조언',
+                  style: theme.textTheme.headlineSmall,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             ...advices.map((item) => Padding(
@@ -835,32 +884,35 @@ class _PhysiognomyFortunePageState extends BaseFortunePageState<PhysiognomyFortu
                 children: [
                   Container(
                     width: 4,
-                    height: 40)
-                    color: item['color'] as Color)
+                    height: 40,
+                    color: item['color'] as Color,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start)
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item['category'] as String)
+                          item['category'] as String,
                           style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold)
-                            color: item['color'] as Color)
+                            fontWeight: FontWeight.bold,
+                            color: item['color'] as Color,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          item['advice'] as String)
+                          item['advice'] as String,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                           ),
-                        )$1,
+                        ),
+                      ],
                     ),
-                  )$1,
+                  ),
+                ],
               ),
-            )).toList()$1,
+            )).toList(),
+          ],
         ),
       ),
     );

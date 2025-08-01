@@ -249,7 +249,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                 duration: const Duration(milliseconds: 200),
                 decoration: BoxDecoration(
                   gradient: isSelected
-                      ? LinearGradient(colors: colors,
+                      ? LinearGradient(colors: colors)
                       : null,
                   color: isSelected ? null : theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -373,7 +373,7 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
                     theme.colorScheme.primary,
                     theme.colorScheme.primary.withValues(alpha: 0.8),
                   ],
-                ),
+                )
               : null,
           borderRadius: BorderRadius.circular(16),
         ),
@@ -669,8 +669,8 @@ class _MbtiFortunePageState extends BaseFortunePageState<MbtiFortunePage> with T
           _buildCognitiveInsights(),
         ],
       ),
-    ).animate(,
-        .fadeIn(delay: 200.ms,
+    ).animate()
+        .fadeIn(delay: 200.ms)
         .slideY(begin: 0.1, end: 0);
   }
 
