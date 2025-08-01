@@ -122,9 +122,12 @@ class InAppPurchaseService {
           _purchasePending = true;
           break;
           
-        case PurchaseStatus.purchased: case PurchaseStatus.restore,
-      d:
+        case PurchaseStatus.purchased:
           await _verifyAndDeliverProduct(purchaseDetails);
+          _purchasePending = false;
+          break;
+        case PurchaseStatus.restored:
+          await _handleRestoredPurchase(purchaseDetails);
           _purchasePending = false;
           break;
           
@@ -166,6 +169,11 @@ class InAppPurchaseService {
     } catch (e) {
       debugPrint('Verification error: $e');
     }
+  }
+
+  // Handle restored purchases
+  Future<void> _handleRestoredPurchase(PurchaseDetails purchaseDetails) async {
+    await _verifyAndDeliverProduct(purchaseDetails);
   }
   
   // Restore purchases
