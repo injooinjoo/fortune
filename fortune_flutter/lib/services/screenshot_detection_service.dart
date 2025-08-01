@@ -27,6 +27,7 @@ class ScreenshotDetectionService {
   StreamSubscription<dynamic>? _screenshotSubscription;
   final ScreenshotController _screenshotController = ScreenshotController();
   bool _isListening = false;
+  void Function(BuildContext context)? onScreenshotDialogRequested;
   
   /// Initialize screenshot detection
   Future<void> initialize() async {
@@ -78,7 +79,10 @@ class ScreenshotDetectionService {
   /// Handle screenshot detected event
   void _handleScreenshotDetected(Map<String, dynamic>? data) {
     Logger.info('Screenshot detected');
-    // This will be called by the UI to show dialog
+    // Notify UI through callback if provided
+    if (onScreenshotDialogRequested != null && data?['context'] is BuildContext) {
+      onScreenshotDialogRequested!(data!['context'] as BuildContext);
+    }
   }
   
   /// Show screenshot sharing dialog
