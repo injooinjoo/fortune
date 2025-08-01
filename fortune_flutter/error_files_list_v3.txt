@@ -1,6 +1,0 @@
-lib/routes/app_router.dart
-lib/screens/auth/callback_page.dart
-lib/screens/home/home_screen.dart
-lib/screens/landing_page.dart
-lib/services/ad_service.dart
-lib/services/cache_service.dart
