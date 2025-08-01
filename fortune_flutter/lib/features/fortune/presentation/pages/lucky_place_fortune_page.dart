@@ -172,7 +172,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
           },
           selectedColor: (info['color'] as Color).withValues(alpha: 0.8),
         );
-      }).toList(,
+      }).toList(),
     );
   }
 
@@ -206,7 +206,7 @@ class _LuckyPlaceFortunePageState extends BaseFortunePageState<LuckyPlaceFortune
           },
           selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
         );
-      }).toList(,
+      }).toList(),
     );
   }
 
@@ -350,9 +350,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
           _buildPlaceEnergyMap(),
           _buildPlaceVisitTips(),
           const SizedBox(height: 32),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 
   Widget _buildMainPlaceCard() {
@@ -423,9 +423,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               ),
             ),
           ),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 
   Widget _buildDirectionCompass() {
@@ -531,9 +531,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               ),
             ),
           ],
+          ),
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildPlaceCategoryGrid() {
@@ -579,8 +579,8 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                   padding: const EdgeInsets.all(12),
                   borderRadius: BorderRadius.circular(16),
                   blur: 10,
-                  borderColor: isPrimary 
-                      ? (info['color'] as Color).withValues(alpha: 0.5,
+                  borderColor: isPrimary
+                      ? (info['color'] as Color).withValues(alpha: 0.5)
                       : Colors.transparent,
                   borderWidth: isPrimary ? 2 : 0,
                   gradient: LinearGradient(
@@ -610,7 +610,7 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      if (isPrimary,
+                      if (isPrimary)
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -633,9 +633,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               }).toList(),
             ),
           ],
+          ),
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildTimeSchedule() {
@@ -696,9 +696,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               Colors.indigo,
             ),
           ],
+          ),
         ),
-      ,
-    );
+      );
   }
 
   Widget _buildTimeSlot(String period, String time, String activity, IconData icon, Color color) {
@@ -755,9 +755,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               ],
             ),
           ),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 
   Widget _buildPlaceEnergyMap() {
@@ -867,9 +867,9 @@ ${primaryCategory} 환경의 ${mainPlace}에서 ${primaryCategoryInfo['energy']}
               ),
             );
           }).toList(),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 }
 
@@ -885,7 +885,7 @@ class CompassPainter extends CustomPainter {
     final radius = size.width / 2;
     
     // Draw compass needle
-    final paint = Paint(,
+    final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
 

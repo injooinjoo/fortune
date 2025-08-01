@@ -604,9 +604,9 @@ ${numberInfo['description']}
               ],
             ),
           ),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 
   Widget _buildNumberMeaningCard() {
@@ -717,8 +717,8 @@ ${numberInfo['description']}
               ),
             );
           }).toList(),
-        ],
-      ,
-    );
+          ],
+        ),
+      );
   }
 }
