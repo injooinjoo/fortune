@@ -164,7 +164,7 @@ class _EnhancedTarotFanWidgetState extends State<EnhancedTarotFanWidget>
                 Text(
                   widget.fortuneType)
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: Colors.white),))
+                    color: Colors.white))
                     fontWeight: FontWeight.bold)
                   ))
                 const SizedBox(height: 8))

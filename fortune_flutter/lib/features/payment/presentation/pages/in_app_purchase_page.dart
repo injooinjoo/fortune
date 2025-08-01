@@ -425,7 +425,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                             child: Text(
                               '인기')
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Colors.white),))
+                                color: Colors.white))
                                 fontWeight: FontWeight.bold)
                                 fontSize: 10)
                               ))

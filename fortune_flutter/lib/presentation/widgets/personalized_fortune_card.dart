@@ -123,13 +123,13 @@ class PersonalizedFortuneCard extends StatelessWidget {
                     Text(
                       '환영합니다! 🎉')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                     SizedBox(height: AppSpacing.spacing1))
                     Text(
                       '다양한 운세를 확인하고 나만의 운세를 찾아보세요')
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: context.fortuneTheme.subtitleText),))
+                        color: context.fortuneTheme.subtitleText))
                       ))
                   ])
                 ),
@@ -235,7 +235,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                 child: Text(
                                   '나의 관심 운세')
                                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: AppColors.textPrimaryDark),))
+                                    color: AppColors.textPrimaryDark))
                                     fontWeight: FontWeight.bold)
                                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                   ))
@@ -252,7 +252,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                   child: Text(
                                     '자주 봄')
                                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: AppColors.textPrimaryDark),))
+                                      color: AppColors.textPrimaryDark))
                                       fontWeight: FontWeight.bold)
                                       fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                     ))
@@ -264,7 +264,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                           Text(
                             fortuneTypeInfo['name'])
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold),))
+                              fontWeight: FontWeight.bold))
                               color: AppColors.textPrimaryDark,
                             ))
                           Text(
@@ -314,7 +314,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                 Text(
                                   '최근 운세 결과')
                                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: context.fortuneTheme.subtitleText),))
+                                    color: context.fortuneTheme.subtitleText))
                                   ))
                               ])
                             ),
@@ -338,7 +338,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                     child: Text(
                                       '${recentFortune!['score']}점')
                                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                        color: fortuneTypeInfo['color']),))
+                                        color: fortuneTypeInfo['color']))
                                         fontWeight: FontWeight.bold,
                                       ))
                                 ])

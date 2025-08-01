@@ -136,7 +136,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             Text(
               label)
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600),))
+                fontWeight: FontWeight.w600))
                 color: textColor ?? context.fortuneTheme.primaryText)
               ))
           ])
@@ -154,7 +154,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
         Text(
           '거의 다 왔습니다!')
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ))
           textAlign: TextAlign.center)
         ))
@@ -162,7 +162,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
         Text(
           '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다')
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: context.fortuneTheme.subtitleText),))
+                color: context.fortuneTheme.subtitleText))
               ))
           textAlign: TextAlign.center)
         ))
@@ -184,7 +184,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
                   child: Text(
                     _errorMessage!)
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: context.fortuneTheme.errorColor),))
+                      color: context.fortuneTheme.errorColor))
                     ))
               ])
             ),
@@ -238,7 +238,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
                     child: Text(
                       'K')
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                         color: const Color(0xFFFEE500), // Kakao brand color
                       ))
                     ))
@@ -263,7 +263,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
               child: Text(
                 'N')
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                   color: const Color(0xFF03C75A), // Naver brand color
                 ))
               ))
@@ -282,7 +282,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             child: Text(
               '나중에 하기')
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: context.fortuneTheme.subtitleText),))
+                color: context.fortuneTheme.subtitleText))
               ))
 
         if (_isLoading) ...[

@@ -381,7 +381,7 @@ class _FortuneHistorySummaryWidgetState extends ConsumerState<FortuneHistorySumm
             '• $title'),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
       fontWeight: FontWeight.w500,
-                          ),))
+                          ))
         Text(
           '($score점)',
           style: TextStyle(,

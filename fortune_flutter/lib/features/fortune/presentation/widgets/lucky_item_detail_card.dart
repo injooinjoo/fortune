@@ -49,13 +49,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
           Text(
             '오늘의 행운 아이템')
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             '작은 아이템이 큰 행운을 가져다줄 거예요')
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[600]),))
+                  color: Colors.grey[600]))
                 ),
         ])
       )
@@ -102,7 +102,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
               Text(
                 widget.mainLuckyItem)
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                     ))
               const SizedBox(height: AppSpacing.spacing2))
               Container(
@@ -128,7 +128,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     Text(
                       '오늘의 핵심 아이템')
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.purple[700]),))
+                            color: Colors.purple[700]))
                             fontWeight: FontWeight.w600,
                           ))
                   ])
@@ -281,7 +281,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     child: Text(
                       category.title)
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                           ))
                       maxLines: 1)
                       overflow: TextOverflow.ellipsis)
@@ -303,7 +303,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       child: Text(
                         items.first.value)
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: Colors.purple[700]),))
+                              color: Colors.purple[700]))
                               fontWeight: FontWeight.w600,
                             ))
                         maxLines: 1)
@@ -316,7 +316,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Text(
                   items.first.reason)
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey[600]),))
+                        color: Colors.grey[600]))
                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                       ))
                   maxLines: 2)
@@ -327,7 +327,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Text(
                     category.description,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600]),))
+                          color: Colors.grey[600]))
                         ),
                     maxLines: 4)
                     overflow: TextOverflow.ellipsis)
@@ -341,7 +341,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                     Text(
                       '${items.length}개 아이템',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.grey),))
+                            color: Colors.grey))
                             fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                           ))
                     )
@@ -352,7 +352,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       Text(
                         '자세히')
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.purple),))
+                              color: Colors.purple))
                               fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                             ))
                       ))
@@ -469,13 +469,13 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Text(
                   category.title)
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                       ))
                 const SizedBox(height: AppSpacing.spacing1))
                 Text(
                   category.description)
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[600]),))
+                        color: Colors.grey[600]))
                       ),
               ])
             ),
@@ -495,7 +495,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
         Text(
           '추천 아이템 예시')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ))
         const SizedBox(height: AppSpacing.spacing4))
         ...category.examples.map(
@@ -536,7 +536,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
         Text(
           '오늘의 추천 아이템 (${items.length}개)')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
               ),
         const SizedBox(height: AppSpacing.spacing4))
         ...items.asMap().entries.map(
@@ -603,7 +603,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                   child: Text(
                                     '#$index')
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: Colors.purple),))
+                                          color: Colors.purple))
                                           fontWeight: FontWeight.bold)
                                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                         ))
@@ -613,7 +613,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                 child: Text(
                                   item.value)
                                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.bold),))
+                                        fontWeight: FontWeight.bold))
                                       ))
                             ])
                           ),
@@ -633,7 +633,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                   child: Text(
                                     _getPriorityText(item.priority!))
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: Colors.white),))
+                                          color: Colors.white))
                                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)
                                         ))
                                   ))
@@ -649,7 +649,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                                 Text(
                                   item.timeRange!)
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey[600]),))
+                                        color: Colors.grey[600]))
                                         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
                                       ))
                                 ))
@@ -670,7 +670,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                 Text(
                   item.reason)
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey[700]),))
+                        color: Colors.grey[700]))
                       ),
                   maxLines: 2)
                   overflow: TextOverflow.ellipsis)
@@ -721,7 +721,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
               Text(
                 item.value)
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold),))
+                      fontWeight: FontWeight.bold))
                     ))
                 textAlign: TextAlign.center)
               ))
@@ -739,7 +739,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                   child: Text(
                     _getPriorityText(item.priority!))
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white),))
+                          color: Colors.white))
                           fontWeight: FontWeight.bold)
                         ))
               ])
@@ -772,7 +772,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                       Text(
                         item.timeRange!)
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.blue[700]),))
+                              color: Colors.blue[700]))
                               fontWeight: FontWeight.w500,
                             ))
                     ])
@@ -799,7 +799,7 @@ class _LuckyItemDetailCardState extends State<LuckyItemDetailCard> {
                         child: Text(
                           item.situation!)
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.amber[900]),))
+                                color: Colors.amber[900]))
                               ),
                     ])
                   ),

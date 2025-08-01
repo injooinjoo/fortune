@@ -303,7 +303,7 @@ https://fortune.app
           Text(
             widget.title)
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white),))
+              color: Colors.white))
               fontWeight: FontWeight.bold)
             ))
           const SizedBox(height: AppSpacing.spacing2))
@@ -372,7 +372,7 @@ https://fortune.app
               Text(
                 '다른 운세도 확인해보세요')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing4))
               Wrap(

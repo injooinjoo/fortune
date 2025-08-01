@@ -543,7 +543,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '상세 운세 분석')
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                   ))
               ])
             ),
@@ -616,7 +616,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '추천사항')
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                   ))
               ])
             ),
@@ -665,7 +665,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '주의사항')
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                     color: Colors.red.withValues(alpha: 0.9))
               ])
             ),

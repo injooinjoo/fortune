@@ -25,13 +25,13 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 '상세 운세')
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing3))
               Text(
                 fortune.content)
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  height: 1.6),))
+                  height: 1.6))
                 ))
               const SizedBox(height: AppSpacing.spacing6))
             ])
@@ -42,7 +42,7 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 '분야별 운세',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing4))
               ..._buildScoreBreakdown(context))
@@ -55,7 +55,7 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 '행운의 아이템',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing4))
               _buildLuckyItems(context))
@@ -68,7 +68,7 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 '추천 사항',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing3))
               ...fortune.recommendations!.map(
@@ -99,7 +99,7 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 '주의 사항',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                 ))
               const SizedBox(height: AppSpacing.spacing3))
               ...fortune.warnings!.map(
@@ -170,12 +170,12 @@ class FortuneContentCard extends StatelessWidget {
                       Text(
                         category.$2)
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.w600),))
+                          fontWeight: FontWeight.w600))
                         ))
                       Text(
                         '$score점')
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold),))
+                          fontWeight: FontWeight.bold))
                           color: category.$4)
                         ))
                     ])
@@ -277,12 +277,12 @@ class FortuneContentCard extends StatelessWidget {
               Text(
                 label)
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: context.fortuneTheme.subtitleText),))
+                  color: context.fortuneTheme.subtitleText))
                 ))
               Text(
                 value)
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                   color: color)
                 ))
             ])

@@ -590,7 +590,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
         ),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(,
       color: context.fortuneTheme.subtitleText,
-                          ),))
+                          ))
           if (value != null) ...[
             SizedBox(height: AppSpacing.xxxSmall),
             Text(
@@ -598,7 +598,7 @@ class DailyFortuneSummaryCard extends StatelessWidget {
               ),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(,
       fontWeight: FontWeight.bold,
-                          ),))
+                          ))
           ]
         ]
       )

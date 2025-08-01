@@ -105,7 +105,7 @@ class PersonalityTraitsChips extends StatelessWidget {
                     Text(
                       group['title'] as String,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold),))
+                        fontWeight: FontWeight.bold))
                         color: color,
                       ))
                   ])

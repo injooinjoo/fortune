@@ -40,7 +40,7 @@ class AdDialog extends ConsumerWidget {
               '광고 시청하기'),
         style: Theme.of(context).textTheme.headlineSmall?.copyWith(,
       fontWeight: FontWeight.bold,
-                          ),))
+                          ))
               ))
             SizedBox(height: AppSpacing.spacing2))
             Text(
@@ -154,13 +154,13 @@ class NativeAdWidget extends StatelessWidget {
                           'Sponsored Content',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(,
       fontWeight: FontWeight.bold,
-                          ),))
+                          ))
                       ))
                     Text(
                       'Learn more'),
         style: Theme.of(context).textTheme.bodySmall?.copyWith(,
       color: AppColors.primary,
-                          ),))
+                          ))
                       ))
                   ])
                 ))))

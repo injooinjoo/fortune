@@ -79,7 +79,7 @@ class _GenderStepState extends State<GenderStep> {
                   '음양의 조화를 살펴볼게요',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
       color: context.fortuneTheme.subtitleText,
-                          ),))
+                          ))
                   textAlign: TextAlign.center)).animate(del,
       ay: 300.ms).fadeIn(duratio,
       n: 600.ms),

@@ -82,27 +82,27 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
   void dispose() {
     _heroController.dispose();
     _fadeController.dispose();
-    super.dispose();,
+    super.dispose();
 }
 
   void _selectSpread(TarotSpreadType spread) {
     setState(() {
       _selectedSpread = spread;
       _showSpreadSelection = false;,
-});,
+});
 }
 
   void _backToSpreadSelection() {
     setState(() {
       _showSpreadSelection = true;
       _selectedSpread = null;,
-});,
+});
 }
 
   void _proceedFromQuestion() {
     setState(() {
       _showQuestionInput = false;,
-});,
+});
 }
 
   @override
@@ -141,7 +141,7 @@ class _TarotEnhancedPageState extends ConsumerState<TarotEnhancedPage>
                       fontScale: fontScale)
                     ),
             ),
-      ));,
+      ));
 }
 }
 
@@ -160,7 +160,7 @@ class _MysticalBackground extends StatelessWidget {
       ),
       child: CustomPaint(
         painter: _MysticalParticlesPainter(),
-        child: Container());,
+        child: Container());
 }
 }
 
@@ -177,7 +177,7 @@ class _MysticalParticlesPainter extends CustomPainter {
       final y = random.nextDouble() * size.height;
       final radius = random.nextDouble() * 3 + 1;
       
-      canvas.drawCircle(Offset(x, y), radius, paint);,
+      canvas.drawCircle(Offset(x, y), radius, paint);
 }
   }
 
@@ -197,7 +197,7 @@ class _QuestionInputView extends ConsumerStatefulWidget {
 });
 
   @override
-  ConsumerState<_QuestionInputView> createState() => _QuestionInputViewState();,
+  ConsumerState<_QuestionInputView> createState() => _QuestionInputViewState();
 }
 
 class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
@@ -206,7 +206,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
   @override
   void dispose() {
     _questionController.dispose();
-    super.dispose();,
+    super.dispose();
 }
 
   void _proceed() {
@@ -214,7 +214,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
     // Navigate to animated tarot flow
     context.push('/interactive/tarot/animated-flow', extra: {
       'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text)
-      'heroTag': 'daily-fortune-${DateTime.now().millisecondsSinceEpoch}');,
+      'heroTag': 'daily-fortune-${DateTime.now().millisecondsSinceEpoch}');
 }
 
   @override
@@ -354,7 +354,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                     context.push('/interactive/tarot', extra: {
                       'question': _questionController.text.isEmpty ? '오늘의 운세를 봐주세요' : _questionController.text)
                       'skipSpreadSelection': true,  // Skip spread selection, let user select cards first,
-});,
+});
 },
                   gradient: LinearGradient(
                     colors: [
@@ -375,7 +375,7 @@ class _QuestionInputViewState extends ConsumerState<_QuestionInputView> {
                           ),
                     ),
                 ),
-          ));,
+          ));
 }
 }
 
@@ -432,7 +432,7 @@ class _SpreadSelectionView extends StatelessWidget {
                   onTap: () => onSpreadSelected(spread),
               fontScale: fontScale,
             ))),
-    );,
+    );
 }
 }
 
@@ -458,7 +458,7 @@ class _TarotHeaderCard extends StatelessWidget {
           Icons.auto_awesome,
           size: 56),
                   color: theme.colorScheme.primary)
-        ));,
+        ));
 }
 }
 
@@ -484,7 +484,7 @@ class _SpreadOptionCard extends StatelessWidget {
       case TarotSpreadType.relationship:
         return _buildRelationshipPreview();
       case TarotSpreadType.decision:
-        return _buildDecisionPreview();,
+        return _buildDecisionPreview();
 }
   }
 
@@ -498,7 +498,7 @@ class _SpreadOptionCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
       
-    );,
+    );
 }
 
   Widget _buildThreeCardPreview() {
@@ -513,7 +513,7 @@ class _SpreadOptionCard extends StatelessWidget {
             color: Colors.purple.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
-        ))));,
+        ))));
 }
 
   Widget _buildCelticCrossPreview() {
@@ -550,7 +550,7 @@ class _SpreadOptionCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
               border: Border.all(color: Colors.purple.withValues(alpha: 0.5)),
           ))
-    );,
+    );
 }
 
   Widget _buildRelationshipPreview() {
@@ -575,7 +575,7 @@ class _SpreadOptionCard extends StatelessWidget {
             color: Colors.pink.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.pink.withValues(alpha: 0.5)),
-        ));,
+        ));
 }
 
   Widget _buildDecisionPreview() {
@@ -611,7 +611,7 @@ class _SpreadOptionCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(color: Colors.orange.withValues(alpha: 0.5)),
             ),
-    );,
+    );
 }
 
   @override
@@ -676,7 +676,7 @@ class _SpreadOptionCard extends StatelessWidget {
               Icons.arrow_forward_ios),
                   size: 20),
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-        ));,
+        ));
 }
 }
 
@@ -692,7 +692,7 @@ class _TarotReadingView extends ConsumerStatefulWidget {
 });
 
   @override
-  ConsumerState<_TarotReadingView> createState() => _TarotReadingViewState();,
+  ConsumerState<_TarotReadingView> createState() => _TarotReadingViewState();
 }
 
 class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
@@ -701,7 +701,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
   @override
   void dispose() {
     _questionController.dispose();
-    super.dispose();,
+    super.dispose();
 }
 
   void _startReading() {
@@ -711,14 +711,14 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                   message: '질문을 입력해주세요'),
                   type: ToastType.warning
       );
-      return;,
+      return;
 }
 
     // Navigate to the existing tarot page with spread type parameter
     context.push('/interactive/tarot', extra: {
       'spreadType': widget.spreadType.value)
       'question': _questionController.text),
-});,
+});
 }
 
   @override
@@ -835,7 +835,7 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
                 ),
             ),
       
-    );,
+    );
 }
 
   String _getSpreadDescription(TarotSpreadType type) {
@@ -849,8 +849,8 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
       case TarotSpreadType.relationship:
         return '관계의 역학과 잠재력을 탐구합니다';
       case TarotSpreadType.decision:
-        return '중요한 선택을 위한 명확한 가이드를 제공합니다';,
-}
+        return '중요한 선택을 위한 명확한 가이드를 제공합니다';
+    }
   }
 
   String _getQuestionHint(TarotSpreadType type) {
@@ -864,9 +864,9 @@ class _TarotReadingViewState extends ConsumerState<_TarotReadingView> {
       case TarotSpreadType.relationship:
         return '예: 우리 관계의 미래는 어떨까요?';
       case TarotSpreadType.decision:
-        return '예: 이직을 해야 할까요, 아니면 현재 직장에 남아야 할까요?';,
-}
-  },
+        return '예: 이직을 해야 할까요, 아니면 현재 직장에 남아야 할까요?';
+    }
+  }
 }
 
 // Glass Button with gradient support
@@ -895,8 +895,10 @@ class GlassButton extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: gradient ?? LinearGradient(
               colors: [
-                theme.colorScheme.primary
-                theme.colorScheme.secondary),
+                theme.colorScheme.primary,
+                theme.colorScheme.secondary,
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -910,6 +912,6 @@ class GlassButton extends StatelessWidget {
               data: IconThemeData(color: Colors.white),
               child: child,
             ),
-        ));,
+        ));
 }
 }

@@ -20,7 +20,7 @@ class TarotDeckSelectionPage extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  ConsumerState<TarotDeckSelectionPage> createState() => _TarotDeckSelectionPageState();,
+  ConsumerState<TarotDeckSelectionPage> createState() => _TarotDeckSelectionPageState();
 }
 
 class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
@@ -41,20 +41,20 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
       parent: _animationController,
       curve: Curves.easeIn,
     );
-    _animationController.forward();,
+    _animationController.forward();
 }
 
   @override
   void dispose() {
     _animationController.dispose();
-    super.dispose();,
+    super.dispose();
 }
 
   void _selectDeck(String deckId) {
     HapticFeedback.lightImpact();
     setState(() {
       _tempSelectedDeckId = deckId;,
-});,
+});
 }
   
   void _confirmSelection() async {
@@ -76,7 +76,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           if (widget.spreadType != null) 'spreadType': widget.spreadType!,
           if (widget.initialQuestion != null) 'question': widget.initialQuestion!,
         },
-      );,
+      );
 }
   }
 
@@ -189,7 +189,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   icon: const Icon(Icons.check, color: Colors.white),
               ),
         ),
-      ));,
+      ));
 }
 
   Widget _buildSectionTitle(String title, double fontScale) {
@@ -216,7 +216,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
             color: Colors.white,
           ),
       ],
-    );,
+    );
 }
 
   Widget _buildExperienceLevelSection(ThemeData theme, double fontScale) {
@@ -255,14 +255,14 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                 selected: isSelected,
                 onSelected: (selected) {
                   if (selected) {
-                    ref.read(tarotExperienceLevelProvider.notifier).setExperienceLevel(level);,
+                    ref.read(tarotExperienceLevelProvider.notifier).setExperienceLevel(level);
 }
                 },
                 selectedColor: level.color.withValues(alpha: 0.3),
-                backgroundColor: Colors.white.withValues(alpha: 0.1));,
+                backgroundColor: Colors.white.withValues(alpha: 0.1));
 }).toList(),
         ],
-      ));,
+      ));
 }
 
   Widget _buildDeckGrid(
@@ -288,9 +288,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           isSelected: deck.id == (_tempSelectedDeckId ?? currentDeckId),
           isMostUsed: deck.id == mostUsedDeckId,
           fontScale: fontScale,
-        );,
+        );
 },
-    );,
+    );
 }
 
   Widget _buildDeckCard(
@@ -412,7 +412,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   ),
           ),
       
-    );,
+    );
 }
 
   Widget _buildDeckPreview(TarotDeck deck) {
@@ -431,7 +431,7 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           Transform.rotate(
             angle: 0.2),
                   child: _buildPreviewCard(deck, 2)) else ...[
-          _buildPreviewCard(deck, 0)    );,
+          _buildPreviewCard(deck, 0)    );
 }
 
   Widget _buildPreviewCard(TarotDeck deck, int index) {
@@ -464,9 +464,9 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
                   color: Colors.white.withValues(alpha: 0.5),
                   size: 30,
                 ),
-            );,
+            );
 },
-        ));,
+        ));
 }
 
   Widget _buildTag(String text, Color color, double fontScale) {
@@ -485,6 +485,6 @@ class _TarotDeckSelectionPageState extends ConsumerState<TarotDeckSelectionPage>
           fontSize: 10 * fontScale,
           color: Colors.white),
                   fontWeight: FontWeight.w500)
-        ));,
+        ));
 }
 }

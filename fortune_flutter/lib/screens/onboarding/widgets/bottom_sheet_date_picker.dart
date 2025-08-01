@@ -82,14 +82,14 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                   child: Text(
                     '취소')
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.fortuneTheme.subtitleText),))
+                      color: context.fortuneTheme.subtitleText))
                     ))
                 Column(
                   children: [
                     Text(
                       '생년월일')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600),))
+                        fontWeight: FontWeight.w600))
                       ))
                     SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.25))
                     Text(
@@ -106,7 +106,7 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                   child: Text(
                     '확인')
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600),))
+                      fontWeight: FontWeight.w600))
                     ))
               ])
             ),

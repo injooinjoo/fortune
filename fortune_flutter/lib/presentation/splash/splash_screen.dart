@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               'Fortune.')
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: Colors.white),))
+                color: Colors.white))
                 fontWeight: FontWeight.w300)
                 letterSpacing: 2)
                 fontFamily: 'NotoSansKR')

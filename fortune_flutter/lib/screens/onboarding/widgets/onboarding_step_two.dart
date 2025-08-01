@@ -27,7 +27,7 @@ class OnboardingStepTwo extends StatelessWidget {
                           'MBTI 선택 (선택사항)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(,
       fontWeight: FontWeight.bold,
-                          ),))
+                          ))
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
         
         DropdownButtonFormField<String>(
@@ -50,7 +50,7 @@ class OnboardingStepTwo extends StatelessWidget {
           '성격 기반 운세 분석에 활용됩니다.',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(,
       color: context.fortuneTheme.subtitleText,
-                          ),))
+                          ))
         
         const Spacer(),
         

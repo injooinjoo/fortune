@@ -72,7 +72,7 @@ class DailyFortuneCard extends StatelessWidget {
                         Text(
                           '${timeGreeting['greeting']} 운세',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold),))
+                            fontWeight: FontWeight.bold))
                           ))
                         Text(
                           '${now.month}월 ${now.day}일 ${_getWeekday(now.weekday)} • ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
@@ -149,7 +149,7 @@ class DailyFortuneCard extends StatelessWidget {
               child: Text(
                 '${fortune!.score}점')
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold),))
+                  fontWeight: FontWeight.bold))
                   color: Theme.of(context).textTheme.headlineSmall?.color,
                 ))
               ))
@@ -164,7 +164,7 @@ class DailyFortuneCard extends StatelessWidget {
               child: Text(
                 fortune!.mood)
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500),))
+                  fontWeight: FontWeight.w500))
                   color: Theme.of(context).textTheme.bodyMedium?.color)
                 ))
               ))
@@ -177,7 +177,7 @@ class DailyFortuneCard extends StatelessWidget {
                 Text(
                   '에너지 ${fortune!.energy}%')
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: context.fortuneTheme.subtitleText),))
+                    color: context.fortuneTheme.subtitleText))
                   ),
               ])
             ),
@@ -350,7 +350,7 @@ class DailyFortuneCard extends StatelessWidget {
                             Text(
                               '행운의 색')
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.w500),))
+                                fontWeight: FontWeight.w500))
                                 color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)
                               ))
                             ))
@@ -391,7 +391,7 @@ class DailyFortuneCard extends StatelessWidget {
                             Text(
                               '행운의 숫자: ${fortune!.luckyNumber}',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.w500),))
+                                fontWeight: FontWeight.w500))
                                 color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)
                               ))
                             ))
@@ -418,7 +418,7 @@ class DailyFortuneCard extends StatelessWidget {
             Text(
               fortune!.bestTime)
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.fortuneTheme.subtitleText),))
+                color: context.fortuneTheme.subtitleText))
               ))
             SizedBox(width: AppSpacing.spacing4))
             Icon(Icons.people_outline, size: 14, color: context.fortuneTheme.subtitleText))
@@ -426,7 +426,7 @@ class DailyFortuneCard extends StatelessWidget {
             Text(
               fortune!.compatibility)
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.fortuneTheme.subtitleText),))
+                color: context.fortuneTheme.subtitleText))
               ))
           ])
         ),
@@ -467,7 +467,7 @@ class DailyFortuneCard extends StatelessWidget {
                 Text(
                   '$value%')
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.bold),))
+                    fontWeight: FontWeight.bold))
                     color: Theme.of(context).textTheme.headlineSmall?.color)
                   ))
                 ))
@@ -505,7 +505,7 @@ class DailyFortuneCard extends StatelessWidget {
           Text(
             '오늘의 운세를 확인해보세요')
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.fortuneTheme.subtitleText),))
+              color: context.fortuneTheme.subtitleText))
             ))
         ])
       )

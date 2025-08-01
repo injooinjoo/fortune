@@ -106,7 +106,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                   '정확한 운세를 위해 필요해요',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
       color: context.fortuneTheme.subtitleText,
-                          ),))
+                          ))
                   textAlign: TextAlign.center)).animate(del,
       ay: 300.ms).fadeIn(duratio,
       n: 600.ms),

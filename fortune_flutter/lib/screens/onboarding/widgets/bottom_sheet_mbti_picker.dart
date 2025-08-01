@@ -97,7 +97,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
             child: Text(
               dimension)
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600),))
+                fontWeight: FontWeight.w600))
               ))
           
           // Options
@@ -142,7 +142,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
             Text(
               option)
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold),))
+                fontWeight: FontWeight.bold))
                 color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText)
               ))
             ))
@@ -150,7 +150,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
             Text(
               _getDescription(option))
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.fortuneTheme.subtitleText),))
+                color: context.fortuneTheme.subtitleText))
               ))
           ])
         ),

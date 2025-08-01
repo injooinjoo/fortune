@@ -160,7 +160,7 @@ class _MbtiStepState extends State<MbtiStep> {
                     child: Text(
                       'MBTI 선택 시작')
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600),))
+                        fontWeight: FontWeight.w600))
                       ))
                   )
                 else
@@ -194,7 +194,7 @@ class _MbtiStepState extends State<MbtiStep> {
                   Text(
                     '${_currentDimension}/4 단계',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.fortuneTheme.subtitleText),))
+                      color: context.fortuneTheme.subtitleText))
                     ))
                 
                 if (isComplete)
