@@ -593,6 +593,7 @@ class _UsageTrendTab extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10 * fontScale,
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            ),
                           );
                         },
                       ),
@@ -725,14 +726,14 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10 * fontScale),
+            fontSize: 10 * fontScale,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: 12 * fontScale),
+            fontSize: 12 * fontScale,
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -909,24 +910,24 @@ class _PackageStat extends StatelessWidget {
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10 * fontScale),
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10 * fontScale,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14 * fontScale),
-            fontWeight: FontWeight.bold,
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14 * fontScale,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
   }
 }
 

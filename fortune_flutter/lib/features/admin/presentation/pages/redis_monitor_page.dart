@@ -167,13 +167,14 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
               Text(
                 '${connection.activeConnections}/${connection.totalConnections}',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 '활성 연결',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                ),
               ),
             ],
           ),
@@ -199,7 +200,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   center: Text(
                     '${cache.hitRate.toStringAsFixed(1)}%',
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   progressColor: theme.colorScheme.primary,
@@ -383,10 +384,10 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '레이트 리밋 현황',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
-            ),
+          '레이트 리밋 현황',
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           ),
           const SizedBox(height: 16),
           ...rateLimits.entries.map((entry) {
@@ -404,7 +405,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                       Text(
                         info.tier.toUpperCase(),
                         style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
@@ -423,9 +424,10 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '재설정: ${_formatResetTime(info.resetAt)}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      '재설정: ${_formatResetTime(info.resetAt)}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
                   ),
                 ],
               ),
