@@ -61,8 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           const SnackBar(
             content: Text('환영합니다! 오늘의 운세를 확인해보세요 ✨'),
             backgroundColor: Colors.green,
-            duration: Duration(second,
-      s: 3),
+            duration: Duration(seconds: 3),
           ),
         );
       }
@@ -162,9 +161,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-            content: Text('운세를 불러오는 중 오류가 발생했습니다: ${e.toString(,
-  )}'),
+          SnackBar(
+            content: Text('운세를 불러오는 중 오류가 발생했습니다: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -201,8 +199,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           caution: dailyData['caution'] ?? _getCautionByScore(score),
           bestTime: dailyData['bestTime'] ?? _getBestTimeByUser(userId, today),
           compatibility: dailyData['compatibility'] ?? '좋은 사람들과 함께',
-          elements: FortuneElements(,
-      love: dailyData['elements']?['love'] ?? 75,
+          elements: FortuneElements(
+            love: dailyData['elements']?['love'] ?? 75,
             career: dailyData['elements']?['career'] ?? 80,
             money: dailyData['elements']?['money'] ?? 70,
             health: dailyData['elements']?['health'] ?? 85,
@@ -233,8 +231,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           caution: _getCautionByScore(score),
           bestTime: _getBestTimeByUser(userId, today),
           compatibility: '좋은 사람들과 함께',
-          elements: FortuneElements(,
-      love: fortune.scoreBreakdown?['love'] ?? 75,
+          elements: FortuneElements(
+            love: fortune.scoreBreakdown?['love'] ?? 75,
             career: fortune.scoreBreakdown?['career'] ?? 80,
             money: fortune.scoreBreakdown?['money'] ?? 70,
             health: fortune.scoreBreakdown?['health'] ?? 85,
@@ -326,7 +324,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           try {
             final userId = supabase.auth.currentUser?.id;
             if (userId != null) {
-              await _cacheService.cacheFortune('daily', {'userId': userId}, FortuneModel.fromEntity(fortune)
+              await _cacheService.cacheFortune(
+                'daily',
+                {'userId': userId},
+                FortuneModel.fromEntity(fortune),
+              );
               debugPrint('✅ [HomeScreen] Fortune cached successfully');
             }
           } catch (e) {
@@ -365,8 +367,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               final userId = supabase.auth.currentUser?.id;
               if (userId != null) {
                 await _cacheService.cacheFortune(
-    'daily', {'userId': userId}, FortuneModel.fromEntity(fortune,
-  )}
+                  'daily',
+                  {'userId': userId},
+                  FortuneModel.fromEntity(fortune),
+                );
+              }
             } catch (e) {
               debugPrint('❌ [HomeScreen] Failed to cache updated fortune: $e');
             }
@@ -393,8 +398,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               
               // 일일 운세 요약 카드 (환영 메시지 대신) - 전체 너비
               Padding(
-                padding: const EdgeInsets.symmetric(horizonta,
-      l: 16, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 child: DailyFortuneSummaryCard(,
       fortune: todaysFortune,
                   isLoading: isLoadingFortune,
@@ -418,8 +422,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                       children: [
                         Text(
                           '✨ ',
-                          style: TextStyle(fontSiz,
-      e: 20),
+                          style: TextStyle(fontSize: 20),
                         ),
                         Text(
                           '인기 운세',
@@ -458,8 +461,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                       children: [
                         Text(
                           '💕 ',
-                          style: TextStyle(fontSiz,
-      e: 20),
+                          style: TextStyle(fontSize: 20),
                         ),
                         Text(
                           '나를 위한 추천',
@@ -548,14 +550,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             service['title'] as String,
           ),
         ).animate()
-          .fadeIn(delay: Duration(millisecond,
-      s: 300 + (index * 100)))
+          .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
           .slideY(begin: 0.1, end: 0)
-          .scale(begin: Offset(0.9, 0.9), end: Offset(
-    1.0, 1.0,
-  )},
+          .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
+        },
     );
-  }
 
   Widget _buildRecentFortunes(BuildContext context) {
     // 아이콘 매핑
@@ -596,8 +595,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         final title = fortune['title'] as String;
         
         return Container(
-          margin: const EdgeInsets.only(botto,
-      m: 12),
+          margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(,
       onTap: () => _navigateToFortune(path, title),
             borderRadius: BorderRadius.circular(12),
@@ -606,12 +604,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               decoration: BoxDecoration(,
       color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(colo,
-      r: context.fortuneTheme.dividerColor),
+                border: Border.all(color: context.fortuneTheme.dividerColor),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).shadowColor.withValues(alph,
-      a: 0.05),
+                    color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -623,8 +619,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(,
-      color: Theme.of(context).colorScheme.primary.withValues(alp,
-      ha: 0.1),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Icon(
@@ -657,13 +652,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(,
-      horizontal: 8,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
                           vertical: 4,
                         ),
-                        decoration: BoxDecoration(,
-      color: Theme.of(context).colorScheme.primary.withValues(alp,
-      ha: 0.1),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -749,8 +743,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             }
             
             return Container(
-              margin: const EdgeInsets.only(botto,
-      m: 12),
+              margin: const EdgeInsets.only(bottom: 12),
               child: InkWell(,
       onTap: () {
                   // 최근 방문 기록에 추가
@@ -763,8 +756,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   decoration: BoxDecoration(,
       color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(colo,
-      r: context.fortuneTheme.dividerColor),
+                    border: Border.all(color: context.fortuneTheme.dividerColor),
                   ),
                   child: Row(,
       children: [
@@ -772,8 +764,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(,
-      color: Theme.of(context).colorScheme.primary.withValues(alp,
-      ha: 0.1),
+                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Icon(
@@ -803,8 +794,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(,
-      color: Theme.of(context).colorScheme.primary.withValues(alp,
-      ha: 0.1),
+      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -849,8 +839,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                 ),
               ),
             ).animate()
-              .fadeIn(delay: Duration(millisecond,
-      s: 600 + (index * 100)))
+              .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
               .slideX(begin: 0.1, end: 0);
           }).toList(),
         );
@@ -863,14 +852,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
   Widget _buildLoadingRecommendations(BuildContext context) {
     return Column(
       children: List.generate(3, (index) => Container(
-        margin: const EdgeInsets.only(botto,
-      m: 12),
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(,
       color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(colo,
-      r: context.fortuneTheme.dividerColor),
+          border: Border.all(color: context.fortuneTheme.dividerColor),
         ),
         child: Row(,
       children: [
@@ -947,8 +934,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         final fortune = entry.value;
         
         return Container(
-          margin: const EdgeInsets.only(botto,
-      m: 12),
+          margin: const EdgeInsets.only(bottom: 12),
           child: InkWell(,
       onTap: () {
               _storageService.addRecentFortune(
@@ -966,8 +952,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               decoration: BoxDecoration(,
       color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(colo,
-      r: context.fortuneTheme.dividerColor),
+                border: Border.all(color: context.fortuneTheme.dividerColor),
               ),
               child: Row(,
       children: [
@@ -1037,8 +1022,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             ),
           ),
         ).animate()
-          .fadeIn(delay: Duration(millisecond,
-      s: 600 + (index * 100)))
+          .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
           .slideX(begin: 0.1, end: 0);
       }).toList(),
     );
