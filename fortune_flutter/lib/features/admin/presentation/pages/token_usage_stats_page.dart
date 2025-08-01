@@ -263,12 +263,12 @@ class TokenUsageStatsPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '운세별 사용량 TOP 10',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+            Text(
+              '운세별 사용량 TOP 10',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
           const SizedBox(height: 16),
           ...topTypes.map((type) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -285,7 +285,8 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       Text(
                         type.fortuneCategory,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
                       ),
                     ],
                   ),
@@ -329,7 +330,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '패키지 효율성',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
@@ -428,7 +429,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '상위 사용자',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
@@ -455,8 +456,9 @@ class TokenUsageStatsPage extends ConsumerWidget {
                         ),
                         Text(
                           user.email,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                            ),
                         ),
                       ],
                     ),
