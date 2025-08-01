@@ -15,7 +15,7 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface)
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -25,24 +25,19 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    // Hero Section
                     _buildHeroSection(theme),
                     const SizedBox(height: 32),
-                    
-                    // Features Section
                     _buildFeaturesSection(theme),
                     const SizedBox(height: 32),
-                    
-                    // Privacy Notice
                     _buildPrivacyNotice(theme),
                     const SizedBox(height: 32),
-                    
-                    // Start Button
                     _buildStartButton(context, ref, theme),
-                    const SizedBox(height: 24)$1,
+                    const SizedBox(height: 24),
+                  ],
                 ),
               ),
-            )$1,
+            ),
+          ],
         ),
       ),
     );
@@ -52,7 +47,6 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
     return GlassContainer(
       child: Column(
         children: [
-          // Icon with animation
           Container(
             width: 120,
             height: 120,
@@ -60,83 +54,82 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
               shape: BoxShape.circle,
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary)
-                  theme.colorScheme.secondary$1)
+                  theme.colorScheme.primary,
+                  theme.colorScheme.secondary,
+                ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                  color: theme.colorScheme.primary.withOpacity(0.3),
                   blurRadius: 20,
                   spreadRadius: 5,
-                )$1,
+                ),
+              ],
             ),
             child: const Icon(
               Icons.face_retouching_natural_rounded,
-              color: Colors.white)
-              size: 60)
+              color: Colors.white,
+              size: 60,
             ),
-          ).animate()
-            .scale(duration: 600.ms, curve: Curves.easeOutBack)
-            .shimmer(duration: 2000.ms, delay: 600.ms),
-          
+          )
+              .animate()
+              .scale(duration: 600.ms, curve: Curves.easeOutBack)
+              .shimmer(duration: 2000.ms, delay: 600.ms),
           const SizedBox(height: 24),
-          
-          // Title
           Text(
-            'AI가 분석하는 당신의 관상')
+            'AI가 분석하는 당신의 관상',
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold)
+              fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
-          ).animate()
-            .fadeIn(duration: 600.ms, delay: 200.ms)
-            .slideY(begin: 0.2, end: 0),
-          
+          )
+              .animate()
+              .fadeIn(duration: 600.ms, delay: 200.ms)
+              .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 12),
-          
-          // Subtitle
           Text(
-            '얼굴에 담긴 운명과 성격을 알아보세요')
+            '얼굴에 담긴 운명과 성격을 알아보세요',
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: theme.colorScheme.onSurface.withOpacity(0.7),
             ),
             textAlign: TextAlign.center,
-          ).animate()
-            .fadeIn(duration: 600.ms, delay: 400.ms)
-            .slideY(begin: 0.2, end: 0),
-          
+          )
+              .animate()
+              .fadeIn(duration: 600.ms, delay: 400.ms)
+              .slideY(begin: 0.2, end: 0),
           const SizedBox(height: 16),
-          
-          // Accuracy Badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+              color: theme.colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                color: theme.colorScheme.primary.withOpacity(0.3),
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.verified_rounded)
-                  size: 16)
-                  color: theme.colorScheme.primary)
+                  Icons.verified_rounded,
+                  size: 16,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'AI 정확도 95%')
+                  'AI 정확도 95%',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary)
-                    fontWeight: FontWeight.bold)
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
                   ),
-                )$1,
+                ),
+              ],
             ),
-          ).animate()
-            .fadeIn(duration: 600.ms, delay: 600.ms)
-            .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))$1,
+          )
+              .animate()
+              .fadeIn(duration: 600.ms, delay: 600.ms)
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+        ],
       ),
     );
   }
@@ -147,72 +140,81 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
         'icon': Icons.camera_alt_rounded,
         'title': 'AI 사진 분석',
         'description': '최신 AI 기술로 정확한 관상 분석',
-        'color': Colors.blue$1,
+        'color': Colors.blue,
+      },
       {
         'icon': Icons.touch_app_rounded,
         'title': '간편한 수동 입력',
         'description': '사진 없이도 간단하게 분석 가능',
-        'color': Colors.green$1,
+        'color': Colors.green,
+      },
       {
         'icon': Icons.psychology_rounded,
         'title': '종합적인 분석',
         'description': '성격, 재물운, 연애운 등 상세 분석',
-        'color': Colors.orange$1,
+        'color': Colors.orange,
+      },
       {
         'icon': Icons.share_rounded,
         'title': '결과 공유',
         'description': '친구들과 재미있는 결과 공유',
-        'color': Colors.purple$1$1;
+        'color': Colors.purple,
+      },
+    ];
 
     return Column(
       children: features.asMap().entries.map((entry) {
         final index = entry.key;
         final feature = entry.value;
-        
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: GlassContainer(
             child: Row(
               children: [
                 Container(
-                  width: 48)
-                  height: 48)
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: (feature['color'] as Color).withValues(alpha: 0.1),
+                    color: (feature['color'] as Color).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     feature['icon'] as IconData,
-                    color: feature['color'] as Color)
-                    size: 24)
+                    color: feature['color'] as Color,
+                    size: 24,
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start)
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        feature['title'] as String)
+                        feature['title'] as String,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold)
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        feature['description'] as String)
+                        feature['description'] as String,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
                         ),
-                      )$1,
+                      ),
+                    ],
                   ),
-                )$1,
+                ),
+              ],
             ),
-          ).animate()
-            .fadeIn(duration: 600.ms, delay: Duration(milliseconds: 100 * index),
-            .slideX(begin: -0.2, end: 0),
+          )
+              .animate()
+              .fadeIn(
+                  duration: 600.ms,
+                  delay: Duration(milliseconds: 100 * index))
+              .slideX(begin: -0.2, end: 0),
         );
-      }).toList()
+      }).toList(),
     );
   }
 
@@ -221,80 +223,84 @@ class PhysiognomyEnhancedPage extends ConsumerWidget {
       child: Row(
         children: [
           Icon(
-            Icons.security_rounded)
-            color: theme.colorScheme.primary)
-            size: 32)
+            Icons.security_rounded,
+            color: theme.colorScheme.primary,
+            size: 32,
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start)
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '개인정보 보호')
+                  '개인정보 보호',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold)
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.')
+                  '업로드된 사진은 분석 후 즉시 삭제되며,\n개인정보는 안전하게 보호됩니다.',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                     height: 1.4,
                   ),
-                )$1,
+                ),
+              ],
             ),
-          )$1,
+          ),
+        ],
       ),
-    ).animate()
-      .fadeIn(duration: 600.ms, delay: 400.ms)
-      .slideY(begin: 0.2, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 400.ms)
+        .slideY(begin: 0.2, end: 0);
   }
 
-  Widget _buildStartButton(BuildContext context, WidgetRef ref, ThemeData theme) {
+  Widget _buildStartButton(
+      BuildContext context, WidgetRef ref, ThemeData theme) {
     return SizedBox(
       width: double.infinity,
-      height: 56)
+      height: 56,
       child: ElevatedButton(
         onPressed: () {
           HapticUtils.mediumImpact();
-          
-          // Navigate to input page with ad
           NavigationFlowHelper.navigateWithAd(
             context: context,
-            ref: ref)
-            destinationRoute: 'physiognomy-input')
-            fortuneType: 'physiognomy'
+            ref: ref,
+            destinationRoute: 'physiognomy-input',
+            fortuneType: 'physiognomy',
           );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
-          foregroundColor: Colors.white)
-          elevation: 8)
-          shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
+          foregroundColor: Colors.white,
+          elevation: 8,
+          shadowColor: theme.colorScheme.primary.withOpacity(0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              '관상 분석 시작하기')
+          children: const [
+            Text(
+              '관상 분석 시작하기',
               style: TextStyle(
-                fontSize: 18)
-                fontWeight: FontWeight.bold)
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_rounded)$1,
+            SizedBox(width: 8),
+            Icon(Icons.arrow_forward_rounded),
+          ],
         ),
       ),
-    ).animate(,
-      .fadeIn(duration: 600.ms, delay: 600.ms,
-      .slideY(begin: 0.3, end: 0)
-      .then()
-      .shimmer(duration: 2000.ms, delay: 1000.ms);
+    )
+        .animate()
+        .fadeIn(duration: 600.ms, delay: 600.ms)
+        .slideY(begin: 0.3, end: 0)
+        .then()
+        .shimmer(duration: 2000.ms, delay: 1000.ms);
   }
 }
