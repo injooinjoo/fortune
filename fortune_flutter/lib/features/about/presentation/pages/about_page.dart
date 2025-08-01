@@ -209,7 +209,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             );
           },
         ),
-      ]
+      ],
     );
   }
 
@@ -348,7 +348,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           ),
         ),
         const SizedBox(height: 32),
-      ]
+      ],
     );
   }
 }

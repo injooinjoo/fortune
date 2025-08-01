@@ -370,7 +370,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
           icon: Icons.warning,
           iconColor: Colors.orange,
         ),
-      ]
+      ],
     );
   }
 
