@@ -1,0 +1,36 @@
+❌ lib/features/fortune/presentation/pages/fortune_list_page.dart - 27 errors
+❌ lib/features/fortune/presentation/pages/love_fortune_page.dart - 12 errors
+❌ lib/features/fortune/presentation/pages/lucky_color_fortune_page.dart - 41 errors
+❌ lib/features/fortune/presentation/pages/lucky_food_fortune_page.dart - 40 errors
+❌ lib/features/fortune/presentation/pages/lucky_number_fortune_page.dart - 15 errors
+❌ lib/features/fortune/presentation/pages/lucky_place_fortune_page.dart - 44 errors
+❌ lib/features/fortune/presentation/pages/mbti_fortune_page.dart - 32 errors
+❌ lib/features/fortune/presentation/pages/palmistry_fortune_page.dart - 36 errors
+❌ lib/features/fortune/presentation/pages/physiognomy_enhanced_page.dart - 262 errors
+❌ lib/features/fortune/presentation/pages/physiognomy_fortune_page.dart - 61 errors
+❌ lib/features/fortune/presentation/pages/physiognomy_input_page.dart - 33 errors
+❌ lib/features/fortune/presentation/pages/physiognomy_result_page.dart - 777 errors
+❌ lib/features/fortune/presentation/pages/sports_fortune_page.dart - 95 errors
+❌ lib/features/fortune/presentation/pages/time_based_fortune_page.dart - 754 errors
+❌ lib/features/fortune/presentation/pages/tojeong_fortune_page.dart - 257 errors
+❌ lib/features/fortune/presentation/pages/traditional_saju_fortune_page.dart - 402 errors
+❌ lib/features/fortune/presentation/pages/wealth_fortune_page.dart - 303 errors
+❌ lib/features/fortune/presentation/pages/zodiac_animal_fortune_page.dart - 65 errors
+❌ lib/features/fortune/presentation/pages/zodiac_fortune_page.dart - 58 errors
+❌ lib/features/fortune/presentation/widgets/career_fortune_selector.dart - 206 errors
+⚠️ lib/routes/app_router.dart - Cannot analyze
+❌ lib/screens/home/home_screen.dart - 131 errors
+❌ lib/screens/landing_page.dart - 125 errors
+❌ lib/screens/onboarding/enhanced_onboarding_flow.dart - 617 errors
+❌ lib/screens/onboarding/onboarding_flow_page.dart - 55 errors
+⚠️ lib/screens/onboarding/onboarding_page_v2.dart - Cannot analyze
+⚠️ lib/screens/onboarding/onboarding_page.dart - Cannot analyze
+⚠️ lib/screens/premium/premium_screen.dart - Cannot analyze
+⚠️ lib/screens/profile/profile_edit_page.dart - Cannot analyze
+❌ lib/screens/profile/profile_screen.dart - 189 errors
+❌ lib/screens/settings/phone_management_screen.dart - 9 errors
+🟡 lib/screens/settings/settings_screen.dart - 5 minor issues
+🟡 lib/screens/settings/social_accounts_screen.dart - 2 minor issues
+🟡 lib/screens/splash_screen.dart - 5 minor issues
+❌ lib/services/cache_service.dart - 25 errors
+❌ lib/services/native_features_initializer.dart - 37 errors
