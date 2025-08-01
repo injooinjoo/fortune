@@ -148,15 +148,16 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   connection.status,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
                 if (connection.error != null) ...[
                   const SizedBox(height: 4),
-                  Text(
-                    connection.error!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.error),
+                    Text(
+                      connection.error!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.error,
+                      ),
                     ),
-                  ),
                 ],
               ],
             ),
