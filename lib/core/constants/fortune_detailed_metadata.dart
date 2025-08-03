@@ -1,0 +1,448 @@
+import 'package:flutter/material.dart';
+
+class FortuneDetailedMetadata {
+  static const Map<String, LuckyNumberCategory> luckyNumbers = {
+    'lottery': LuckyNumberCategory(
+      title: '로또 번호 추천',
+      icon: Icons.monetization_on,
+      description: '오늘의 행운을 극대화할 로또 번호 조합',
+      examples: [
+        '메인 번호 6개 조합',
+        '보너스 번호 추천',
+        '연속 번호 피하기',
+        '홀짝 균형 맞추기',
+      ],
+    ),
+    'time': LuckyNumberCategory(
+      title: '행운의 시간대',
+      icon: Icons.access_time,
+      description: '중요한 일을 시작하기 좋은 시간',
+      examples: [
+        '업무 시작 시간',
+        '미팅 예약 시간',
+        '운동하기 좋은 시간',
+        '휴식 시간',
+      ],
+    ),
+    'floor': LuckyNumberCategory(
+      title: '행운의 층수/호수',
+      icon: Icons.apartment,
+      description: '오늘 방문하면 좋은 층수와 호수',
+      examples: [
+        '엘리베이터 층수',
+        '주차장 층수',
+        '카페 좌석 번호',
+        '회의실 번호',
+      ],
+    ),
+    'phone': LuckyNumberCategory(
+      title: '연락하기 좋은 번호',
+      icon: Icons.phone,
+      description: '오늘 연락하면 좋은 결과를 얻을 번호 패턴',
+      examples: [
+        '끝자리 추천',
+        '피해야 할 번호',
+        '행운의 시간대와 연계',
+      ],
+    ),
+    'vehicle': LuckyNumberCategory(
+      title: '차량 번호',
+      icon: Icons.directions_car,
+      description: '주의하거나 행운을 가져다줄 차량 번호',
+      examples: [
+        '행운의 차량 번호',
+        '주의해야 할 번호',
+        '주차 구역 번호',
+      ],
+    ),
+    'payment': LuckyNumberCategory(
+      title: '결제 금액',
+      icon: Icons.payment,
+      description: '행운을 부르는 결제 금액대',
+      examples: [
+        '커피값 추천',
+        '선물 금액대',
+        '기부 금액',
+      ],
+    ),
+    'exercise': LuckyNumberCategory(
+      title: '운동 횟수',
+      icon: Icons.fitness_center,
+      description: '오늘의 최적 운동량',
+      examples: [
+        '세트 수',
+        '반복 횟수',
+        '조깅 거리(km)',
+        '휴식 시간(분)',
+      ],
+    ),
+    'seat': LuckyNumberCategory(
+      title: '좌석 번호',
+      icon: Icons.event_seat,
+      description: '행운을 가져다줄 좌석 위치',
+      examples: [
+        '영화관 좌석',
+        '대중교통 좌석',
+        '식당 테이블',
+      ],
+    ),
+  };
+
+  static const Map<String, LuckyColorCategory> luckyColors = {
+    'outfit': LuckyColorCategory(
+      title: '오늘의 아웃핏',
+      icon: Icons.checkroom,
+      description: '행운을 부르는 의상 색상 조합',
+      examples: [
+        '상의 메인 컬러',
+        '하의 매칭 컬러',
+        '액세서리 포인트',
+        '신발 색상',
+      ],
+    ),
+    'digital': LuckyColorCategory(
+      title: '디지털 테마',
+      icon: Icons.phone_android,
+      description: '폰과 디지털 기기의 행운 색상',
+      examples: [
+        '폰 배경화면',
+        '앱 테마 색상',
+        '노트북 배경',
+        '스마트워치 페이스',
+      ],
+    ),
+    'beauty': LuckyColorCategory(
+      title: '뷰티 컬러',
+      icon: Icons.face_retouching_natural,
+      description: '메이크업과 네일 행운 색상',
+      examples: [
+        '립스틱 컬러',
+        '아이섀도우',
+        '네일 아트',
+        '헤어 액세서리',
+      ],
+    ),
+    'stationery': LuckyColorCategory(
+      title: '문구류 색상',
+      icon: Icons.edit,
+      description: '업무운을 높이는 문구 색상',
+      examples: [
+        '펜 색상',
+        '노트 커버',
+        '포스트잇',
+        '하이라이터',
+      ],
+    ),
+    'interior': LuckyColorCategory(
+      title: '인테리어 포인트',
+      icon: Icons.home,
+      description: '공간에 행운을 부르는 색상',
+      examples: [
+        '쿠션 색상',
+        '화분 색상',
+        '조명 색온도',
+        '커튼 색상',
+      ],
+    ),
+    'sns': LuckyColorCategory(
+      title: 'SNS 테마',
+      icon: Icons.photo_camera,
+      description: '좋아요를 부르는 색상 조합',
+      examples: [
+        '프로필 배경',
+        '포스팅 필터',
+        '스토리 배경',
+        '하이라이트 커버',
+      ],
+    ),
+  };
+
+  static const Map<String, LuckyFoodCategory> luckyFoods = {
+    'breakfast': LuckyFoodCategory(
+      title: '아침 메뉴',
+      icon: Icons.free_breakfast,
+      description: '활력 넘치는 하루를 위한 아침 식사',
+      examples: [
+        '시리얼 종류',
+        '빵 종류',
+        '음료 추천',
+        '과일 조합',
+      ],
+    ),
+    'lunch': LuckyFoodCategory(
+      title: '점심 추천',
+      icon: Icons.lunch_dining,
+      description: '오후를 든든하게 만들어줄 점심',
+      examples: [
+        '한식 메뉴',
+        '중식 메뉴',
+        '일식 메뉴',
+        '양식 메뉴',
+      ],
+    ),
+    'snack': LuckyFoodCategory(
+      title: '간식 타임',
+      icon: Icons.cookie,
+      description: '기분전환을 위한 간식',
+      examples: [
+        '과자류',
+        '과일',
+        '디저트',
+        '음료',
+      ],
+    ),
+    'dinner': LuckyFoodCategory(
+      title: '저녁 메뉴',
+      icon: Icons.dinner_dining,
+      description: '하루를 마무리하는 저녁 식사',
+      examples: [
+        '회식 메뉴',
+        '데이트 메뉴',
+        '가족 외식',
+        '혼밥 추천',
+      ],
+    ),
+    'delivery': LuckyFoodCategory(
+      title: '배달 음식',
+      icon: Icons.delivery_dining,
+      description: '오늘의 배달 음식 추천',
+      examples: [
+        '치킨/피자',
+        '중국집',
+        '족발/보쌈',
+        '일식/초밥',
+      ],
+    ),
+    'beverage': LuckyFoodCategory(
+      title: '음료 추천',
+      icon: Icons.local_cafe,
+      description: '기운을 북돋아줄 음료',
+      examples: [
+        '커피 종류',
+        '차 종류',
+        '주스/스무디',
+        '알코올',
+      ],
+    ),
+    'convenience': LuckyFoodCategory(
+      title: '편의점 꿀조합',
+      icon: Icons.store,
+      description: '편의점에서 찾는 행운의 조합',
+      examples: [
+        '김밥 조합',
+        '라면 토핑',
+        '간단 요리',
+        '음료 믹스',
+      ],
+    ),
+  };
+
+  static const Map<String, LuckyItemCategory> luckyItems = {
+    'work': LuckyItemCategory(
+      title: '업무 필수템',
+      icon: Icons.work,
+      description: '업무 효율을 높이는 아이템',
+      examples: [
+        '명함 지갑',
+        '고급 펜',
+        '노트/다이어리',
+        'USB/보조배터리',
+      ],
+    ),
+    'date': LuckyItemCategory(
+      title: '데이트 아이템',
+      icon: Icons.favorite,
+      description: '로맨틱한 분위기를 만드는 아이템',
+      examples: [
+        '향수',
+        '액세서리',
+        '손수건',
+        '민트/껌',
+      ],
+    ),
+    'exercise': LuckyItemCategory(
+      title: '운동 용품',
+      icon: Icons.sports_handball,
+      description: '운동 효과를 높이는 아이템',
+      examples: [
+        '운동화',
+        '이어폰',
+        '수건',
+        '보충제',
+      ],
+    ),
+    'beauty': LuckyItemCategory(
+      title: '뷰티 아이템',
+      icon: Icons.face,
+      description: '매력을 높이는 뷰티 용품',
+      examples: [
+        '손거울',
+        '빗/브러시',
+        '향수',
+        '핸드크림',
+      ],
+    ),
+    'digital': LuckyItemCategory(
+      title: '디지털 액세서리',
+      icon: Icons.devices,
+      description: '디지털 라이프를 풍요롭게',
+      examples: [
+        '폰케이스',
+        '에어팟 케이스',
+        '스마트워치 밴드',
+        '노트북 파우치',
+      ],
+    ),
+    'fashion': LuckyItemCategory(
+      title: '패션 소품',
+      icon: Icons.watch,
+      description: '스타일을 완성하는 아이템',
+      examples: [
+        '시계',
+        '안경/선글라스',
+        '모자',
+        '스카프',
+      ],
+    ),
+    'car': LuckyItemCategory(
+      title: '차량 용품',
+      icon: Icons.directions_car,
+      description: '안전운전을 돕는 아이템',
+      examples: [
+        '방향제',
+        '키링',
+        '썬바이저',
+        '휴대폰 거치대',
+      ],
+    ),
+    'hobby': LuckyItemCategory(
+      title: '취미 용품',
+      icon: Icons.palette,
+      description: '여가를 즐겁게 만드는 아이템',
+      examples: [
+        '책/만화',
+        '게임 아이템',
+        '악기 픽',
+        '스케치북',
+      ],
+    ),
+    'sleep': LuckyItemCategory(
+      title: '수면 용품',
+      icon: Icons.bedtime,
+      description: '편안한 잠을 위한 아이템',
+      examples: [
+        '베개',
+        '아로마 오일',
+        '수면등',
+        '이어플러그',
+      ],
+    ),
+    'charm': LuckyItemCategory(
+      title: '부적/장신구',
+      icon: Icons.star,
+      description: '행운을 가져다주는 특별한 아이템',
+      examples: [
+        '팔찌',
+        '목걸이',
+        '반지',
+        '키홀더',
+      ],
+    ),
+  };
+}
+
+class LuckyNumberCategory {
+  final String title;
+  final IconData icon;
+  final String description;
+  final List<String> examples;
+
+  const LuckyNumberCategory({
+    required this.title,
+    required this.icon,
+    required this.description,
+    required this.examples,
+  });
+}
+
+class LuckyColorCategory {
+  final String title;
+  final IconData icon;
+  final String description;
+  final List<String> examples;
+
+  const LuckyColorCategory({
+    required this.title,
+    required this.icon,
+    required this.description,
+    required this.examples,
+  });
+}
+
+class LuckyFoodCategory {
+  final String title;
+  final IconData icon;
+  final String description;
+  final List<String> examples;
+
+  const LuckyFoodCategory({
+    required this.title,
+    required this.icon,
+    required this.description,
+    required this.examples,
+  });
+}
+
+class LuckyItemCategory {
+  final String title;
+  final IconData icon;
+  final String description;
+  final List<String> examples;
+
+  const LuckyItemCategory({
+    required this.title,
+    required this.icon,
+    required this.description,
+    required this.examples,
+  });
+}
+
+class DetailedLuckyItem {
+  final String category;
+  final String value;
+  final String reason;
+  final String? timeRange;
+  final String? situation;
+  final int? priority;
+
+  const DetailedLuckyItem({
+    required this.category,
+    required this.value,
+    required this.reason,
+    this.timeRange,
+    this.situation,
+    this.priority,
+  });
+
+  factory DetailedLuckyItem.fromJson(Map<String, dynamic> json) {
+    return DetailedLuckyItem(
+      category: json['category'],
+      value: json['value'],
+      reason: json['reason'],
+      timeRange: json['time_range'],
+      situation: json['situation'],
+      priority: json['priority'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'category': category,
+      'value': null,
+      'reason': null,
+      if (timeRange != null) 'time_range': null,
+      if (situation != null) 'situation': null,
+      if (priority != null) 'priority': null,
+    };
+  }
+}

@@ -1,8 +1,0 @@
-lib/features/fortune/presentation/pages/wealth_fortune_page.dart
-lib/features/fortune/presentation/pages/zodiac_animal_fortune_page.dart
-lib/features/fortune/presentation/pages/zodiac_fortune_page.dart
-lib/features/fortune/presentation/widgets/career_fortune_selector.dart
-lib/routes/app_router.dart
-lib/screens/home/home_screen.dart
-lib/screens/landing_page.dart
-lib/screens/onboarding/enhanced_onboarding_flow.dart

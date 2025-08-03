@@ -1,13 +1,37 @@
 {
   "permissions": {
     "allow": [
-      "Bash(# 기존 codex 프롬프트 파일들 모두 삭제\nrm -f codex_*.md)"
+      "Bash(flutter pub:*)",
+      "Bash(mkdir:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(dart:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(perl:*)",
+      "Bash(git checkout:*)",
+      "Bash(chmod:*)",
+      "Bash(/Users/jacobmac/Desktop/Dev/fortune/fortune_flutter/fix_textstyle_brackets.sh)",
+      "Bash(true)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(kill:*)",
+      "Bash(pkill:*)",
+      "Bash(python:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(q)",
+      "Bash(git add:*)"
     ],
     "deny": []
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "figma-dev-mode-mcp-server"
-  ],
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  ]
 }

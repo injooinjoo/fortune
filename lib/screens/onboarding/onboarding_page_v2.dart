@@ -1,0 +1,741 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../models/user_profile.dart';
+import '../../services/storage_service.dart';
+import '../../constants/fortune_constants.dart';
+
+class OnboardingPageV2 extends StatefulWidget {
+  const OnboardingPageV2({super.key});
+
+  @override
+  State<OnboardingPageV2> createState() => _OnboardingPageV2State();
+}
+
+class _OnboardingPageV2State extends State<OnboardingPageV2> {
+  final PageController _pageController = PageController();
+  final TextEditingController _nameController = TextEditingController();
+  final StorageService _storageService = StorageService();
+  
+  int _currentStep = 0;
+  bool _isLoading = false;
+  User? _currentUser;
+  
+  // Form values
+  String _name = '';
+  DateTime? _birthDate;
+  Gender? _gender;
+  String? _birthTime;
+  String? _mbti;
+
+  // Korean time periods
+  final List<Map<String, String>> _timePeriods = [
+    {'value': '자시', 'time': '23:00-01:00'},
+    {'value': '축시', 'time': '01:00-03:00'},
+    {'value': '인시', 'time': '03:00-05:00'},
+    {'value': '묘시', 'time': '05:00-07:00'},
+    {'value': '진시', 'time': '07:00-09:00'},
+    {'value': '사시', 'time': '09:00-11:00'},
+    {'value': '오시', 'time': '11:00-13:00'},
+    {'value': '미시', 'time': '13:00-15:00'},
+    {'value': '신시', 'time': '15:00-17:00'},
+    {'value': '유시', 'time': '17:00-19:00'},
+    {'value': '술시', 'time': '19:00-21:00'},
+    {'value': '해시', 'time': '21:00-23:00'},
+  ];
+
+  // MBTI types
+  final List<String> _mbtiTypes = [
+    'INTJ', 'INTP', 'ENTJ', 'ENTP',
+    'INFJ', 'INFP', 'ENFJ', 'ENFP',
+    'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
+    'ISTP', 'ISFP', 'ESTP', 'ESFP',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUser();
+  }
+
+  Future<void> _initializeUser() async {
+    final session = Supabase.instance.client.auth.currentSession;
+    setState(() {
+      _currentUser = session?.user;
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  void _nextStep() {
+    // Validate current step
+    switch (_currentStep) {
+      case 0: // Name
+        if (_nameController.text.trim().isEmpty) {
+          _showError('이름을 입력해주세요');
+          return;
+        }
+        _name = _nameController.text.trim();
+        break;
+      case 1: // Birth date
+        if (_birthDate == null) {
+          _showError('생년월일을 선택해주세요');
+          return;
+        }
+        break;
+      case 2: // Gender
+        if (_gender == null) {
+          _showError('성별을 선택해주세요');
+          return;
+        }
+        break;
+    }
+
+    if (_currentStep < 4) {
+      HapticFeedback.lightImpact();
+      setState(() {
+        _currentStep++;
+      });
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+      );
+    } else {
+      _completeOnboarding();
+    }
+  }
+
+  void _previousStep() {
+    if (_currentStep > 0) {
+      HapticFeedback.lightImpact();
+      setState(() {
+        _currentStep--;
+      });
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  Future<void> _completeOnboarding() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      // Create user profile
+      final profile = {
+        'id': _currentUser?.id ?? 'guest_${DateTime.now().millisecondsSinceEpoch}',
+        'name': _name,
+        'email': _currentUser?.email,
+        'birth_date': _birthDate!.toIso8601String(),
+        'gender': _gender?.toString().split('.').last ?? 'other',
+        'birth_time': _birthTime,
+        'mbti': _mbti,
+        'onboarding_completed': true,
+        'created_at': DateTime.now().toIso8601String(),
+      };
+
+      // Save to local storage
+      await _storageService.saveUserProfile(profile);
+
+      // Save to Supabase if authenticated
+      if (_currentUser != null) {
+        await Supabase.instance.client
+            .from('user_profiles')
+            .upsert(profile);
+      }
+
+      if (mounted) {
+        context.go('/home');
+      }
+    } catch (e) {
+      debugPrint('Profile update error: $e');
+      _showError('프로필 저장 중 오류가 발생했습니다');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Progress bar
+            _buildProgressBar(),
+            
+            // Content
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _buildNameStep(),
+                  _buildBirthDateStep(),
+                  _buildGenderStep(),
+                  _buildBirthTimeStep(),
+                  _buildMbtiStep(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressBar() {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          // Back button
+          if (_currentStep > 0)
+            IconButton(
+              onPressed: _previousStep,
+              icon: const Icon(Icons.arrow_back_ios),
+            )
+          else
+            const SizedBox(width: 48),
+          
+          // Progress text
+          Expanded(
+            child: Center(
+              child: Text(
+                '${_currentStep + 1} / 5',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          
+          // Skip button for optional steps
+          if (_currentStep >= 3)
+            TextButton(
+              onPressed: _nextStep,
+              child: const Text(
+                '건너뛰기',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),
+              ),
+            )
+          else
+            const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNameStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'What should we\ncall you?',
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, end: 0),
+          
+          const SizedBox(height: 60),
+          
+          TextField(
+            controller: _nameController,
+            autofocus: true,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+            ),
+            decoration: InputDecoration(
+              hintText: 'Your First Name',
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
+              border: InputBorder.none,
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.grey[300]!,
+                  width: 2,
+                ),
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: Colors.black,
+                  width: 2,
+                ),
+              ),
+            ),
+            onSubmitted: (_) => _nextStep(),
+          ).animate()
+            .fadeIn(delay: 300.ms, duration: 600.ms),
+          
+          const SizedBox(height: 80),
+          
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: _isLoading ? null : _nextStep,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: const Text(
+                '확인',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ).animate()
+            .fadeIn(delay: 600.ms, duration: 600.ms)
+            .slideY(begin: 0.2, end: 0),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBirthDateStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'When were you\nborn?',
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, end: 0),
+          
+          const SizedBox(height: 40),
+          
+          // Display selected date
+          if (_birthDate != null)
+            Text(
+              '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
+            ).animate()
+              .fadeIn(duration: 300.ms),
+          
+          const SizedBox(height: 40),
+          
+          // Calendar button
+          GestureDetector(
+            onTap: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 20)),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: const ColorScheme.light(
+                        primary: Colors.black,
+                        onPrimary: Colors.white,
+                        onSurface: Colors.black,
+                      ),
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+              
+              if (date != null) {
+                setState(() {
+                  _birthDate = date;
+                });
+              }
+            },
+            child: Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.grey[300]!,
+                  width: 2,
+                ),
+              ),
+              child: const Icon(
+                Icons.calendar_month,
+                size: 80,
+                color: Colors.black54,
+              ),
+            ),
+          ).animate()
+            .fadeIn(delay: 300.ms, duration: 600.ms),
+          
+          const SizedBox(height: 60),
+          
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: _birthDate == null || _isLoading ? null : _nextStep,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: Colors.grey[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(28),
+                ),
+              ),
+              child: const Text(
+                'Next',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ).animate()
+            .fadeIn(delay: 600.ms, duration: 600.ms)
+            .slideY(begin: 0.2, end: 0),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGenderStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '성별을\n선택해주세요',
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, end: 0),
+          
+          const SizedBox(height: 60),
+          
+          // Gender options
+          Column(
+            children: [
+              _buildGenderOption('여성', Gender.female, Icons.female),
+              const SizedBox(height: 16),
+              _buildGenderOption('남성', Gender.male, Icons.male),
+              const SizedBox(height: 16),
+              _buildGenderOption('기타', Gender.other, Icons.transgender),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGenderOption(String label, Gender value, IconData icon) {
+    final isSelected = _gender == value;
+    
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _gender = value;
+        });
+        Future.delayed(const Duration(milliseconds: 300), _nextStep);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: double.infinity,
+        height: 80,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? Colors.black : Colors.grey[300]!,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: isSelected ? Colors.white : Colors.black,
+            ),
+            const SizedBox(width: 16),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate()
+      .fadeIn(delay: Duration(milliseconds: 300 + (value.index * 100)))
+      .slideX(begin: 0.1, end: 0);
+  }
+
+  Widget _buildBirthTimeStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          
+          Text(
+            '태어난 시간을\n알고 계신가요?',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, end: 0),
+          
+          const SizedBox(height: 20),
+          
+          Text(
+            '정확한 시간을 모르셔도 괜찮아요',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(delay: 300.ms, duration: 600.ms),
+          
+          const SizedBox(height: 40),
+          
+          // Time periods grid
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 1.5,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: _timePeriods.length + 1,
+              itemBuilder: (context, index) {
+                if (index == _timePeriods.length) {
+                  // "모름" option
+                  return _buildTimeOption('모름', null, null);
+                }
+                
+                final period = _timePeriods[index];
+                return _buildTimeOption(
+                  period['value']!,
+                  period['value']!,
+                  period['time']!,
+                );
+              },
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimeOption(String label, String? value, String? timeRange) {
+    final isSelected = _birthTime == value;
+    
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _birthTime = value;
+        });
+        Future.delayed(const Duration(milliseconds: 300), _nextStep);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? Colors.black : Colors.grey[300]!,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+            ),
+            if (timeRange != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                timeRange,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected ? Colors.white70 : Colors.grey[600],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    ).animate()
+      .fadeIn(delay: Duration(milliseconds: 300 + (value.hashCode % 10 * 50)))
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
+  }
+
+  Widget _buildMbtiStep() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+          
+          Text(
+            'MBTI를\n알고 계신가요?',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(duration: 600.ms)
+            .slideY(begin: 0.1, end: 0),
+          
+          const SizedBox(height: 20),
+          
+          Text(
+            'MBTI를 모르셔도 운세 확인이 가능해요',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ).animate()
+            .fadeIn(delay: 300.ms, duration: 600.ms),
+          
+          const SizedBox(height: 40),
+          
+          // MBTI grid
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                childAspectRatio: 1,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: _mbtiTypes.length + 1,
+              itemBuilder: (context, index) {
+                if (index == _mbtiTypes.length) {
+                  // "모름" option
+                  return _buildMbtiOption('모름', null);
+                }
+                
+                return _buildMbtiOption(_mbtiTypes[index], _mbtiTypes[index]);
+              },
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMbtiOption(String label, String? value) {
+    final isSelected = _mbti == value;
+    
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() {
+          _mbti = value;
+        });
+        Future.delayed(const Duration(milliseconds: 300), _completeOnboarding);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? Colors.black : Colors.grey[300]!,
+            width: 2,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : Colors.black,
+            ),
+          ),
+        ),
+      ),
+    ).animate()
+      .fadeIn(delay: Duration(milliseconds: 300 + (value.hashCode % 10 * 50)))
+      .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
+  }
+}

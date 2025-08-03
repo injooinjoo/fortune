@@ -1,8 +1,0 @@
-lib/features/fortune/presentation/pages/fortune_list_page.dart
-lib/features/fortune/presentation/pages/love_fortune_page.dart
-lib/features/fortune/presentation/pages/lucky_color_fortune_page.dart
-lib/features/fortune/presentation/pages/lucky_food_fortune_page.dart
-lib/features/fortune/presentation/pages/lucky_number_fortune_page.dart
-lib/features/fortune/presentation/pages/lucky_place_fortune_page.dart
-lib/features/fortune/presentation/pages/mbti_fortune_page.dart
-lib/features/fortune/presentation/pages/palmistry_fortune_page.dart

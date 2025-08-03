@@ -1,6 +1,0 @@
-lib/features/fortune/presentation/pages/mbti_fortune_page.dart
-lib/features/fortune/presentation/pages/palmistry_fortune_page.dart
-lib/features/fortune/presentation/pages/physiognomy_enhanced_page.dart
-lib/features/fortune/presentation/pages/physiognomy_fortune_page.dart
-lib/features/fortune/presentation/pages/physiognomy_input_page.dart
-lib/features/fortune/presentation/pages/physiognomy_result_page.dart

@@ -1,2 +1,0 @@
-lib/screens/profile/profile_screen.dart
-lib/screens/settings/phone_management_screen.dart
