@@ -16,7 +16,7 @@ import '../../features/fortune/presentation/pages/batch_fortune_page.dart' as fo
 import '../../features/fortune/presentation/pages/fortune_snap_scroll_page.dart' as fortune_pages;
 import '../../features/fortune/presentation/pages/tarot_main_page.dart';
 import '../../features/fortune/presentation/pages/tarot_deck_selection_page.dart';
-import '../../features/fortune/presentation/pages/tarot_animated_flow_page.dart';
+// import '../../features/fortune/presentation/pages/tarot_animated_flow_page.dart';
 
 final fortuneRoutes = [
   GoRoute(
@@ -69,16 +69,16 @@ final fortuneRoutes = [
               );
             },
           ),
-          GoRoute(
-            path: 'animated-flow',
-            name: 'fortune-tarot-animated-flow',
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              return TarotAnimatedFlowPage(
-                heroTag: extra?['heroTag'],
-              );
-            },
-          ),
+          // GoRoute(
+          //   path: 'animated-flow',
+          //   name: 'fortune-tarot-animated-flow',
+          //   builder: (context, state) {
+          //     final extra = state.extra as Map<String, dynamic>?;
+          //     return TarotAnimatedFlowPage(
+          //       heroTag: extra?['heroTag'],
+          //     );
+          //   },
+          // ),
         ],
       ),
       

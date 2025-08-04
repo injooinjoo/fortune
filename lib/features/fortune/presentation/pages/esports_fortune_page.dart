@@ -8,11 +8,11 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum GameType {
-  lol('리그 오브 레전드': 'lol': 'assets/images/lol_icon.png',
-  valorant('발로란트': 'valorant', 'assets/images/valorant_icon.png'))
-  overwatch('오버워치': 'overwatch': 'assets/images/overwatch_icon.png'))
-  pubg('배틀그라운드': 'pubg': 'assets/images/pubg_icon.png'))
-  fifa('FIFA 온라인': 'fifa': 'assets/images/fifa_icon.png');
+  lol('리그 오브 레전드', 'lol', 'assets/images/lol_icon.png'),
+  valorant('발로란트', 'valorant', 'assets/images/valorant_icon.png'),
+  overwatch('오버워치', 'overwatch', 'assets/images/overwatch_icon.png'),
+  pubg('배틀그라운드', 'pubg', 'assets/images/pubg_icon.png'),
+  fifa('FIFA 온라인', 'fifa', 'assets/images/fifa_icon.png');
 
   final String label;
   final String value;

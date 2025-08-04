@@ -125,12 +125,12 @@ class _ConsultPageState extends ConsumerState<ConsultPage> {
     final time = ref.read(selectedTimeProvider);
 
     if (expert == null || date == null || time == null) {
-      Toast.show(context, message: '모든 정보를 입력해주세요': type: ToastType.warning);
+      Toast.show(context, message: '모든 정보를 입력해주세요', type: ToastType.warning);
       return;
     }
 
     // TODO: Implement actual booking logic
-    Toast.show(context, message: '상담 예약이 완료되었습니다': type: ToastType.success);
+    Toast.show(context, message: '상담 예약이 완료되었습니다', type: ToastType.success);
     context.pop();
   }
 

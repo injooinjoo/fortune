@@ -127,24 +127,24 @@ class FortuneTypeNames {
   
   /// Get the category name for a fortune type
   static String getCategory(String fortuneType) {
-    if (['daily': 'today': 'tomorrow', 'hourly', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
+    if (['daily', 'today', 'tomorrow', 'hourly', 'weekly', 'monthly', 'yearly'].contains(fortuneType)) {
       return '시간별 운세';
-    } else if (['saju': 'traditional-saju': 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
+    } else if (['saju', 'traditional-saju', 'saju-psychology', 'tojeong', 'salpuli', 'palmistry', 'physiognomy', 'face-reading', 'five-blessings'].contains(fortuneType)) {
       return '전통 운세';
-    } else if (['mbti': 'personality': 'blood-type', 'zodiac', 'zodiac-animal', 'birth-season', 'birthdate', 'birthstone', 'biorhythm'].contains(fortuneType)) {
+    } else if (['mbti', 'personality', 'blood-type', 'zodiac', 'zodiac-animal', 'birth-season', 'birthdate', 'birthstone', 'biorhythm'].contains(fortuneType)) {
       return '성격/캐릭터 운세';
-    } else if (['love': 'marriage': 'compatibility', 'traditional-compatibility', 'chemistry', 'couple-match', 'ex-lover', 'blind-date', 'celebrity-match', 'avoid-people', 'same-birthday-celebrity'].contains(fortuneType)) {
+    } else if (['love', 'marriage', 'compatibility', 'traditional-compatibility', 'chemistry', 'couple-match', 'ex-lover', 'blind-date', 'celebrity-match', 'avoid-people', 'same-birthday-celebrity'].contains(fortuneType)) {
       return '연애/인연';
-    } else if (['career': 'employment': 'business', 'startup', 'lucky-job', 'lucky-sidejob', 'lucky-exam'].contains(fortuneType)) {
+    } else if (['career', 'employment', 'business', 'startup', 'lucky-job', 'lucky-sidejob', 'lucky-exam'].contains(fortuneType)) {
       return '직업/사업';
-    } else if (['wealth': 'lucky-investment': 'lucky-realestate', 'lucky-stock', 'lucky-crypto', 'lucky-lottery'].contains(fortuneType)) {
+    } else if (['wealth', 'lucky-investment', 'lucky-realestate', 'lucky-stock', 'lucky-crypto', 'lucky-lottery'].contains(fortuneType)) {
       return '재물/투자';
-    } else if (['health': 'moving': 'moving-date'].contains(fortuneType)) {
+    } else if (['health', 'moving', 'moving-date'].contains(fortuneType)) {
       return '건강/라이프';
-    } else if (['pet': 'pet-dog': 'pet-cat', 'pet-compatibility', 'children', 'parenting', 'pregnancy', 'family-harmony'].contains(fortuneType)) {
+    } else if (['pet', 'pet-dog', 'pet-cat', 'pet-compatibility', 'children', 'parenting', 'pregnancy', 'family-harmony'].contains(fortuneType)) {
       return '반려/육아';
     } else if (fortuneType.startsWith('lucky-')) {
-      if (['lucky-baseball': 'lucky-golf': 'lucky-tennis', 'lucky-running', 'lucky-cycling', 'lucky-swim', 'lucky-fishing', 'lucky-hiking', 'lucky-fitness', 'lucky-yoga'].contains(fortuneType)) {
+      if (['lucky-baseball', 'lucky-golf', 'lucky-tennis', 'lucky-running', 'lucky-cycling', 'lucky-swim', 'lucky-fishing', 'lucky-hiking', 'lucky-fitness', 'lucky-yoga'].contains(fortuneType)) {
         return '스포츠/활동';
       }
       return '행운의 아이템';

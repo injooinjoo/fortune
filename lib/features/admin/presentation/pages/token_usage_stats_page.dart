@@ -165,7 +165,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
         ),
         StatsCard(
           title: '활성 사용자',
-          value: NumberFormat('#,###').format(summary.uniqueUsers),
+          value: NumberFormat('#,###').format(summary.activeUsers),
           icon: Icons.people,
           iconColor: Colors.purple,
           subtitle: '토큰 사용자',

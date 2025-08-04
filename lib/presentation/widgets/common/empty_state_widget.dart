@@ -17,7 +17,7 @@ class EmptyStateWidget extends StatelessWidget {
     this.subtitle,
     this.action,
     this.iconSize = 80,
-  }));
+  });
 
   @override
   Widget build(BuildContext context) {

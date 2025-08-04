@@ -13,23 +13,19 @@ import 'package:fortune/models/fortune_model.dart';
 
 /// 배치 운세 패키지 타입
 enum BatchPackageType {
-  
-  
-  onboarding('onboarding': '온보딩 완료 패키지',
-  dailyRefresh('daily_refresh': '일일 갱신 패키지',
-  loveSingle('love_single': '연애운 패키지 (솔로)'),
-  loveCouple('love_couple': '연애운 패키지 (커플)'),
-  career('career': '커리어 패키지',
-  luckyItems('lucky_items': '행운 아이템 패키지',
-  premiumComplete('premium_complete': '프리미엄 종합 패키지': 15);
+  onboarding('onboarding', '온보딩 완료 패키지', 5),
+  dailyRefresh('daily_refresh', '일일 갱신 패키지', 3),
+  loveSingle('love_single', '연애운 패키지 (솔로)', 4),
+  loveCouple('love_couple', '연애운 패키지 (커플)', 4),
+  career('career', '커리어 패키지', 5),
+  luckyItems('lucky_items', '행운 아이템 패키지', 2),
+  premiumComplete('premium_complete', '프리미엄 종합 패키지', 15);
   
   final String key;
   final String description;
   final int tokenCost;
   
   const BatchPackageType(this.key, this.description, this.tokenCost);
-  
-  
 }
 
 /// 배치 운세 결과

@@ -39,7 +39,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
   
   // Tarot data
   final List<Map<String, String>> _majorArcana = [
-    {'name': 'The Fool': 'image': 'assets/images/tarot/fool.png': 'planet': 'Uranus'},
+    {'name': 'The Fool', 'image': 'assets/images/tarot/fool.png', 'planet': 'Uranus'},
     {'name': 'The Magician', 'image': 'assets/images/tarot/magician.png', 'planet': 'Mercury'},
     {'name': 'The High Priestess', 'image': 'assets/images/tarot/priestess.png', 'planet': 'Moon'},
     // Add more cards as needed
@@ -68,7 +68,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     ).animate(CurvedAnimation(
       parent: _heroController,
       curve: Curves.easeInOut,
-    );
+    ));
     
     _heroPositionAnimation = Tween<double>(
       begin: 0.0,
@@ -76,7 +76,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     ).animate(CurvedAnimation(
       parent: _heroController,
       curve: Curves.easeInOut,
-    );
+    ));
     
     _contentSlideAnimation = Tween<double>(
       begin: 0.0,
@@ -84,7 +84,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     ).animate(CurvedAnimation(
       parent: _contentController,
       curve: Curves.easeOut,
-    );
+    ));
     
     _fadeAnimation = Tween<double>(
       begin: 1.0,
@@ -92,7 +92,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
     ).animate(CurvedAnimation(
       parent: _contentController,
       curve: Curves.easeOut,
-    );
+    ));
     
     // Add status listener
     _heroController.addStatusListener((status) {
@@ -379,8 +379,8 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildReadingOption('Love': null,
-              _buildReadingOption('Career': null,
+              _buildReadingOption('Love'),
+              _buildReadingOption('Career'),
               _buildReadingOption('Choice'),
             ],
           ),
@@ -509,7 +509,7 @@ class _TarotAnimatedFlowPageState extends State<TarotAnimatedFlowPage>
               children: [
                 _buildMetadata(Icons.stars, 'Major Arcana'),
                 const SizedBox(width: 40),
-                _buildMetadata(Icons.public, cardData['planet'],
+                _buildMetadata(Icons.public, cardData['planet'] ?? ''),
               ],
             ),
             

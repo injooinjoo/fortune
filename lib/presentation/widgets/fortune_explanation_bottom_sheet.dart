@@ -159,9 +159,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     ),
                   ],
                 ),
-              ],
-            ),
-          );
+              ),
+            ],
+          ),
+        );
         },
       );
   }
@@ -221,10 +222,10 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         children: [
           Text(
             '정확한 운세를 위해 아래 정보를 입력해주세요.',
-              ),
-              style: theme.textTheme.bodyMedium?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Name input

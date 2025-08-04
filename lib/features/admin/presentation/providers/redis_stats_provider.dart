@@ -27,7 +27,7 @@ class RedisStatsNotifier extends StateNotifier<AsyncValue<RedisStatsModel>> {
       final stats = await _adminApiService.getRedisStats();
       state = AsyncValue.data(stats);
     } catch (e, stackTrace) {
-      Logger.error('Failed to fetch Redis stats': e, stackTrace);
+      Logger.error('Failed to fetch Redis stats', e, stackTrace);
       state = AsyncValue.error(e, stackTrace);
     }
   }

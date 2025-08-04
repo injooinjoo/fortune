@@ -8,10 +8,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 enum LifestyleType {
-  health('건강운': 'health': '신체와 정신의 건강 상태를 알아봅니다',
-  biorhythm('바이오리듬': 'biorhythm', '신체, 감성, 지성 리듬을 분석합니다'))
-  moving('이사운': 'moving': '이사나 이전에 좋은 시기를 알려드립니다'))
-  movingDate('이사 날짜': 'moving_date': '구체적인 이사 길일을 찾아드립니다');
+  health('건강운', 'health', '신체와 정신의 건강 상태를 알아봅니다'),
+  biorhythm('바이오리듬', 'biorhythm', '신체, 감성, 지성 리듬을 분석합니다'),
+  moving('이사운', 'moving', '이사나 이전에 좋은 시기를 알려드립니다'),
+  movingDate('이사 날짜', 'moving_date', '구체적인 이사 길일을 찾아드립니다');
 
   final String label;
   final String value;

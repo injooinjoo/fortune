@@ -258,7 +258,7 @@ class NotificationService {
   
   /// Handle notification tap
   static void _onNotificationTap(NotificationResponse response) {
-    Logger.info('tapped: ${response.payload}'));
+    Logger.info('tapped: ${response.payload}');
     // Handle navigation based on payload
     // This should be implemented based on your navigation structure
   }

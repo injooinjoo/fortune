@@ -183,8 +183,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
         data: {
           'type': 'tarot',
           'userInfo': {
-            'question': text),
-            'spreadType': 'three': // Default to 3-card spread
+            'question': text,
+            'spreadType': 'three', // Default to 3-card spread
           },
         },
       );
@@ -197,8 +197,8 @@ class _TarotChatPageState extends ConsumerState<TarotChatPage> {
           return TarotCardInfo(
             name: card['name'] ?? '',
             meaning: card['meaning'] ?? '',
-            imageUrl: ''$1',
-    isReversed: card['isReversed'],
+            imageUrl: card['imageUrl'] ?? '',
+            isReversed: card['isReversed'] ?? false,
           );
         }).toList();
 

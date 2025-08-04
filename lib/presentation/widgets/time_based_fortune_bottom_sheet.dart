@@ -12,12 +12,10 @@ import 'package:fortune/core/theme/app_colors.dart';
 import 'package:fortune/core/theme/app_animations.dart';
 
 enum TimePeriod {
-  
-  
-  today('오늘': 'today': '오늘 하루의 시간대별 운세를 확인해보세요',
-  tomorrow('내일': 'tomorrow': '내일의 주요 시간대와 운세를 미리 확인해보세요',
-  weekly('이번 주': 'weekly': '월요일부터 일요일까지 주간 운세를 확인해보세요',
-  monthly('이번 달', 'monthly', '이번 달의 주차별 운세를 확인해보세요',
+  today('오늘', 'today', '오늘 하루의 시간대별 운세를 확인해보세요', Icons.today),
+  tomorrow('내일', 'tomorrow', '내일의 주요 시간대와 운세를 미리 확인해보세요', Icons.event),
+  weekly('이번 주', 'weekly', '월요일부터 일요일까지 주간 운세를 확인해보세요', Icons.date_range),
+  monthly('이번 달', 'monthly', '이번 달의 주차별 운세를 확인해보세요', Icons.calendar_month),
   yearly('올해', 'yearly', '올해의 계절별 운세를 확인해보세요', Icons.calendar_today);
   
   final String label;
@@ -26,8 +24,6 @@ enum TimePeriod {
   final IconData icon;
   
   const TimePeriod(this.label, this.value, this.description, this.icon);
-  
-  
 }
 
 class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {

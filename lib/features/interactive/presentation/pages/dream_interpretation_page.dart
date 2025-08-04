@@ -51,7 +51,7 @@ class DreamAnalysisResult {
       overallLuck: data['overall_luck'],
       dreamSummary: data['dream_summary'] ?? '',
       dreamInterpretation: data['dream_interpretation'] ?? '',
-      luckyElements: List<String>.from(data['lucky_elements'],
+      luckyElements: List<String>.from(data['lucky_elements'] ?? []),
       advice: data['advice'] ?? '',
     );
   }
@@ -90,9 +90,9 @@ class DreamAnalysisNotifier extends StateNotifier<AsyncValue<DreamAnalysisResult
         data: {
           'type': 'dream-interpretation',
           'userInfo': {
-            'name': input.name),
+            'name': input.name,
             'birth_date': input.birthDate.toIso8601String(),
-            'dream_content': null,
+            'dream_content': input.dreamContent,
           },
         },
       );
@@ -389,8 +389,8 @@ class _DreamInputFormState extends State<_DreamInputForm> {
                       ),
                       child: Row(
                         children: [
-                          _buildToggleButton('text': Icons.keyboard, '텍스트': null,
-                          _buildToggleButton('voice': Icons.mic, '음성',
+                          _buildToggleButton('text', Icons.keyboard, '텍스트'),
+                          _buildToggleButton('voice', Icons.mic, '음성'),
                         ],
                       ),
                     ),

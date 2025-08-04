@@ -176,8 +176,8 @@ class CustomerSupportPage extends ConsumerWidget {
           final index = entry.key;
           final faq = entry.value;
           return _buildFAQItem(
-            question: faq['question'],
-            answer: faq['answer'],
+            question: faq['question'] ?? '',
+            answer: faq['answer'] ?? '',
           ).animate().fadeIn(
             delay: Duration(milliseconds: 100 * index),
             duration: 500.ms,

@@ -10,25 +10,21 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum SportType {
-  
-  
-  golf('골프': 'golf': null,
-  tennis('테니스': 'tennis': null,
-  baseball('야구': 'baseball': null,
-  swimming('수영': 'swimming': null,
-  yoga('요가', 'yoga': null,
-  hiking('등산', 'hiking': null,
-  cycling('자전거', 'cycling': null,
-  running('러닝', 'running', null,
-  fitness('피트니스', 'fitness',
+  golf('골프', 'golf', Icons.golf_course),
+  tennis('테니스', 'tennis', Icons.sports_tennis),
+  baseball('야구', 'baseball', Icons.sports_baseball),
+  swimming('수영', 'swimming', Icons.pool),
+  yoga('요가', 'yoga', Icons.self_improvement),
+  hiking('등산', 'hiking', Icons.terrain),
+  cycling('자전거', 'cycling', Icons.directions_bike),
+  running('러닝', 'running', Icons.directions_run),
+  fitness('피트니스', 'fitness', Icons.fitness_center),
   fishing('낚시', 'fishing', Icons.phishing);
   
   final String label;
   final String value;
   final IconData icon;
   const SportType(this.label, this.value, this.icon);
-  
-  
 }
 
 class SportsFortunePage extends BaseFortunePage {
@@ -36,7 +32,7 @@ class SportsFortunePage extends BaseFortunePage {
   
   const SportsFortunePage({
     Key? key,
-    this.initialType = SportType.fitness)
+    this.initialType = SportType.fitness,
   }) : super(
           key: key,
           title: '운동/스포츠 운세',

@@ -15,19 +15,15 @@ import '../../../../presentation/widgets/birth_year_fortune_list.dart';
 import '../../../../core/utils/logger.dart';
 
 enum TimePeriod {
-  
-  
-  today('오늘': 'today': null,
-  tomorrow('내일': 'tomorrow': null,
-  weekly('이번주': 'weekly': null,
-  monthly('이번달', 'monthly',
+  today('오늘', 'today'),
+  tomorrow('내일', 'tomorrow'),
+  weekly('이번주', 'weekly'),
+  monthly('이번달', 'monthly'),
   yearly('올해', 'yearly');
   
   final String label;
   final String value;
   const TimePeriod(this.label, this.value);
-  
-  
 }
 
 class TimeBasedFortunePage extends BaseFortunePage {

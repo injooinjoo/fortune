@@ -4,8 +4,6 @@ import '../../screens/splash_screen.dart';
 import '../../screens/auth/signup_screen.dart';
 import '../../screens/auth/callback_page.dart';
 import '../../screens/onboarding/onboarding_page.dart';
-// import '../../screens/onboarding/onboarding_page_v2.dart';
-// import '../../screens/onboarding/onboarding_flow_page.dart';
 
 final authRoutes = [
   GoRoute(

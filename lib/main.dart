@@ -20,22 +20,18 @@ import 'core/config/feature_flags.dart';
 import 'core/utils/logger.dart';
 import 'core/utils/secure_storage.dart';
 import 'routes/route_config.dart';
-import 'routes/minimal_router.dart';
-import 'routes/test_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/app_theme_extensions.dart';
 import 'services/cache_service.dart';
-// // import 'screens/home/simple_home_screen.dart';
-// // import 'screens/simple_splash_screen.dart';
 // // import 'presentation/providers/app_providers.dart'; // Has syntax errors
 import 'presentation/providers/theme_provider.dart';
 import 'core/utils/url_cleaner_stub.dart';
 //     if (dart.library.html) 'core/utils/url_cleaner_web.dart';
-// // import 'services/native_features_initializer.dart';
-// // import 'services/token_monitor_service.dart';
-// // import 'services/screenshot_detection_service.dart';
-// // import 'services/ad_service.dart';
-// // import 'services/analytics_service.dart';
+import 'services/native_features_initializer.dart';
+import 'services/token_monitor_service.dart';
+import 'services/screenshot_detection_service.dart';
+import 'services/ad_service.dart';
+import 'services/analytics_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,13 +57,17 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Fortune - 운세 서비스',
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      routerConfig: ref.watch(appRouterProvider),
+      home: Scaffold(
+        body: Center(
+          child: Text('Test without router'),
+        ),
+      ),
     );
   }
 }

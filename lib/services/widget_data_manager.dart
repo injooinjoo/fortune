@@ -174,7 +174,7 @@ class WidgetDataManager {
         'success': fortune.success,
         'message': fortune.message,
         'data': fortune.data != null ? {
-          'type': fortune.data!.type),
+          'type': fortune.data!.type,
           'content': fortune.data!.content,
           'createdAt': fortune.data!.createdAt?.toIso8601String(),
           'luckyColor': fortune.data!.luckyColor,

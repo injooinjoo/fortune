@@ -36,18 +36,16 @@ final investmentStepProvider = StateNotifierProvider<InvestmentStepNotifier, int
 
 // 투자 섹터 정의
 enum InvestmentSector {
-  
-  
-  stocks('주식': '국내/해외 주식',
-  realestate('부동산': '아파트, 오피스텔, 토지',
-  crypto('암호화폐': '비트코인, 알트코인',
-  auction('경매': '부동산/물품 경매',
-  lottery('로또': '로또 번호 추천',
-  funds('펀드/ETF': '인덱스, 섹터별 펀드',
-  gold('금/원자재': '금, 은, 원유',
-  bonds('채권': '국채, 회사채',
-  startup('스타트업': '크라우드펀딩',
-  art('예술품/NFT': 'NFT, 미술품, 명품': Icons.palette_rounded, [Color(0xFF8B5CF6, Color(0xFF7C3AED)]);
+  stocks('주식', '국내/해외 주식', Icons.trending_up_rounded, [Color(0xFF059669), Color(0xFF047857)]),
+  realestate('부동산', '아파트, 오피스텔, 토지', Icons.home_rounded, [Color(0xFF0284C7), Color(0xFF0369A1)]),
+  crypto('암호화폐', '비트코인, 알트코인', Icons.currency_bitcoin_rounded, [Color(0xFFF59E0B), Color(0xFFEAB308)]),
+  auction('경매', '부동산/물품 경매', Icons.gavel_rounded, [Color(0xFFEF4444), Color(0xFFDC2626)]),
+  lottery('로또', '로또 번호 추천', Icons.confirmation_number_rounded, [Color(0xFFFFB300), Color(0xFFF57C00)]),
+  funds('펀드/ETF', '인덱스, 섹터별 펀드', Icons.account_balance_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)]),
+  gold('금/원자재', '금, 은, 원유', Icons.diamond_rounded, [Color(0xFFF59E0B), Color(0xFFEAB308)]),
+  bonds('채권', '국채, 회사채', Icons.article_rounded, [Color(0xFF475569), Color(0xFF334155)]),
+  startup('스타트업', '크라우드펀딩', Icons.rocket_launch_rounded, [Color(0xFF3B82F6), Color(0xFF2563EB)]),
+  art('예술품/NFT', 'NFT, 미술품, 명품', Icons.palette_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)]);
   
   final String label;
   final String description;
@@ -55,8 +53,6 @@ enum InvestmentSector {
   final List<Color> gradientColors;
   
   const InvestmentSector(this.label, this.description, this.icon, this.gradientColors);
-  
-  
 }
 
 // 데이터 모델

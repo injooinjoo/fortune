@@ -7,10 +7,8 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum PersonalityType {
-  
-  
-  mbti('MBTI': 'mbti': 'MBTI 성격 기반 운세',
-  bloodType('혈액형': 'blood-type': '혈액형별 성격과 운세', Icons.water_drop_rounded, [Color(0xFFDC2626, Color(0xFFEF4444)]);
+  mbti('MBTI', 'mbti', 'MBTI 성격 기반 운세', Icons.psychology_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)]),
+  bloodType('혈액형', 'blood-type', '혈액형별 성격과 운세', Icons.water_drop_rounded, [Color(0xFFDC2626), Color(0xFFEF4444)]);
   
   final String label;
   final String value;
@@ -19,8 +17,6 @@ enum PersonalityType {
   final List<Color> gradientColors;
   
   const PersonalityType(this.label, this.value, this.description, this.icon, this.gradientColors);
-  
-  
 }
 
 class PersonalityFortuneUnifiedPage extends BaseFortunePage {

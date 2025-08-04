@@ -150,7 +150,7 @@ class TodoListItem extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            todo.tags.take(2).join(': ',
+                            todo.tags.take(2).join(', '),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),

@@ -50,27 +50,26 @@ class TodoFilter {
   final String? searchQuery;
   final List<String>? tags;
 
-  const TodoFilter(
-    {
+  const TodoFilter({
     this.status,
     this.priority,
     this.searchQuery,
     this.tags,
-  )});
+  });
 
   TodoFilter copyWith({
-    TodoStatus? status,
-    TodoPriority? priority,
-    String? searchQuery,
-    List<String>? tags,
-  ),
+    TodoStatus? Function()? status,
+    TodoPriority? Function()? priority,
+    String? Function()? searchQuery,
+    List<String>? Function()? tags,
   }) {
     return TodoFilter(
-    status: status ?? this.status,
-      priority: priority ?? this.priority,
-      searchQuery: searchQuery ?? this.searchQuery,
-      tags: tags ?? this.tags,
-  )}
+      status: status != null ? status() : this.status,
+      priority: priority != null ? priority() : this.priority,
+      searchQuery: searchQuery != null ? searchQuery() : this.searchQuery,
+      tags: tags != null ? tags() : this.tags,
+    );
+  }
 }
 
 // Filter state provider
@@ -86,14 +85,13 @@ class TodosState {
   final bool hasMore;
   final int currentOffset;
 
-  const TodosState(
-    {
-    this.todos = const []
+  const TodosState({
+    this.todos = const [],
     this.isLoading = false,
     this.failure,
     this.hasMore = true,
     this.currentOffset = 0,
-  )});
+  });
 
   TodosState copyWith({
     List<Todo>? todos,
@@ -101,16 +99,15 @@ class TodosState {
     Failure? failure,
     bool? hasMore,
     int? currentOffset,
-  ),
   }) {
     return TodosState(
-    todos: todos ?? this.todos,
+      todos: todos ?? this.todos,
       isLoading: isLoading ?? this.isLoading,
       failure: failure,
       hasMore: hasMore ?? this.hasMore,
       currentOffset: currentOffset ?? this.currentOffset,
-  )}
-}
+    );
+  }
 
 // Main todos provider
 final todosProvider = StateNotifierProvider<TodosNotifier, TodosState>((ref) {
@@ -140,9 +137,10 @@ class TodosNotifier extends StateNotifier<TodosState> {
     }
 
     state = state.copyWith(
-      isLoading: true),
-        failure: null),
-        currentOffset: refresh ? 0 : state.currentOffset)
+      isLoading: true,
+      failure: null,
+      currentOffset: refresh ? 0 : state.currentOffset,
+    );
 
     final filter = _ref.read(todoFilterProvider);
     final getTodos = _ref.read(getTodosUseCaseProvider);
@@ -155,7 +153,7 @@ class TodosNotifier extends StateNotifier<TodosState> {
       tags: filter.tags,
       limit: _pageSize,
       offset: refresh ? 0 : state.currentOffset,
-    );
+    ));
 
     result.fold(
       (failure) => state = state.copyWith(
@@ -171,20 +169,19 @@ class TodosNotifier extends StateNotifier<TodosState> {
     );
   }
 
-  Future<void> createTodo(
-    {
+  Future<void> createTodo({
     required String title,
     String? description,
     TodoPriority priority = TodoPriority.medium,
     DateTime? dueDate,
     List<String>? tags,
-  )}) async {
+  }) async {
     final user = _ref.read(supabaseClientProvider).auth.currentUser;
     final userId = user?.id;
     
     if (userId == null) {
       state = state.copyWith(
-        failure: const AuthenticationFailure('User not authenticated'))
+        failure: const AuthenticationFailure('User not authenticated'));
       return;
     }
 
@@ -196,19 +193,21 @@ class TodosNotifier extends StateNotifier<TodosState> {
       description: description,
       priority: priority,
       dueDate: dueDate,
-      tags: tags);
+      tags: tags,
+    ));
 
     result.fold(
       (failure) => state = state.copyWith(failure: failure),
       (todo) {
         state = state.copyWith(
-          todos: [todo, ...state.todos]),
-        failure: null)
-      })
+          todos: [todo, ...state.todos],
+          failure: null,
+        );
+      },
+    );
   }
 
-  Future<void> updateTodo(
-    {
+  Future<void> updateTodo({
     required String todoId,
     String? title,
     String? description,
@@ -216,13 +215,13 @@ class TodosNotifier extends StateNotifier<TodosState> {
     TodoStatus? status,
     DateTime? dueDate,
     List<String>? tags,
-  )}) async {
+  }) async {
     final user = _ref.read(supabaseClientProvider).auth.currentUser;
     final userId = user?.id;
     
     if (userId == null) {
       state = state.copyWith(
-        failure: const AuthenticationFailure('User not authenticated'))
+        failure: const AuthenticationFailure('User not authenticated'));
       return;
     }
 
@@ -236,7 +235,8 @@ class TodosNotifier extends StateNotifier<TodosState> {
       priority: priority,
       status: status,
       dueDate: dueDate,
-      tags: tags);
+      tags: tags,
+    ));
 
     result.fold(
       (failure) => state = state.copyWith(failure: failure),
@@ -246,9 +246,11 @@ class TodosNotifier extends StateNotifier<TodosState> {
         }).toList();
         
         state = state.copyWith(
-          todos: updatedTodos),
-        failure: null)
-      })
+          todos: updatedTodos,
+          failure: null,
+        );
+      },
+    );
   }
 
   Future<void> toggleTodoStatus(String todoId) async {
@@ -257,7 +259,7 @@ class TodosNotifier extends StateNotifier<TodosState> {
     
     if (userId == null) {
       state = state.copyWith(
-        failure: const AuthenticationFailure('User not authenticated'))
+        failure: const AuthenticationFailure('User not authenticated'));
       return;
     }
 
@@ -280,15 +282,17 @@ class TodosNotifier extends StateNotifier<TodosState> {
 
     final result = await toggleStatus(ToggleTodoStatusParams(
       todoId: todoId,
-      userId: userId);
+      userId: userId,
+    ));
 
     result.fold(
       (failure) {
         // Revert optimistic update on failure
         loadTodos(refresh: true);
         state = state.copyWith(failure: failure);
-      }
-      (_) => state = state.copyWith(failure: null))
+      },
+      (_) => state = state.copyWith(failure: null),
+    );
   }
 
   Future<void> deleteTodo(String todoId) async {
@@ -297,7 +301,7 @@ class TodosNotifier extends StateNotifier<TodosState> {
     
     if (userId == null) {
       state = state.copyWith(
-        failure: const AuthenticationFailure('User not authenticated'))
+        failure: const AuthenticationFailure('User not authenticated'));
       return;
     }
 
@@ -309,15 +313,17 @@ class TodosNotifier extends StateNotifier<TodosState> {
 
     final result = await deleteTodo(DeleteTodoParams(
       todoId: todoId,
-      userId: userId);
+      userId: userId,
+    ));
 
     result.fold(
       (failure) {
         // Revert optimistic update on failure
         loadTodos(refresh: true);
         state = state.copyWith(failure: failure);
-      }
-      (_) => state = state.copyWith(failure: null))
+      },
+      (_) => state = state.copyWith(failure: null),
+    );
   }
 
   void setFilter(TodoFilter filter) {
@@ -345,12 +351,13 @@ final todosStreamProvider = StreamProvider.autoDispose<List<Todo>>((ref) {
 
   return repository
       .watchTodos(
-        userId: userId),
+        userId: userId,
         status: filter.status,
-    )
+      )
       .map((either) => either.fold(
-            (failure) => []
-            (todos) => todos))
+            (failure) => [],
+            (todos) => todos,
+          ));
 });
 
 // Stats provider
@@ -360,7 +367,7 @@ final todoStatsProvider = FutureProvider.autoDispose<Map<TodoStatus, int>>((ref)
   
   if (userId == null) {
     return {
-      TodoStatus.pending: 0
+      TodoStatus.pending: 0,
       TodoStatus.inProgress: 0,
       TodoStatus.completed: 0,
     };
@@ -374,6 +381,7 @@ final todoStatsProvider = FutureProvider.autoDispose<Map<TodoStatus, int>>((ref)
       TodoStatus.pending: 0,
       TodoStatus.inProgress: 0,
       TodoStatus.completed: 0,
-    }
-    (stats) => stats)
+    },
+    (stats) => stats,
+  );
 };

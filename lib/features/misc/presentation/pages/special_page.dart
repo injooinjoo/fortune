@@ -257,7 +257,7 @@ class SpecialPage extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      if (item.isNew);
+                      if (item.isNew)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(

@@ -7,11 +7,9 @@ import 'package:go_router/go_router.dart';
 import './traditional_fortune_enhanced_page.dart';
 
 enum TraditionalType {
-  
-  
-  saju('정통 사주': 'saju': '사주팔자로 보는 운명',
-  sajuChart('사주 차트': 'saju-chart': '시각적 사주 분석',
-  tojeong('토정비결': 'tojeong', '전통 토정비결', Icons.menu_book_rounded, [Color(0xFF8B5CF6, Color(0xFF7C3AED)], true);
+  saju('정통 사주', 'saju', '사주팔자로 보는 운명', Icons.auto_stories_rounded, [Color(0xFF7C3AED), Color(0xFF6D28D9)], false),
+  sajuChart('사주 차트', 'saju-chart', '시각적 사주 분석', Icons.analytics_rounded, [Color(0xFF0284C7), Color(0xFF0369A1)], false),
+  tojeong('토정비결', 'tojeong', '전통 토정비결', Icons.menu_book_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)], true);
   
   final String label;
   final String value;
@@ -21,8 +19,6 @@ enum TraditionalType {
   final bool isPremium;
   
   const TraditionalType(this.label, this.value, this.description, this.icon, this.gradientColors, this.isPremium);
-  
-  
 }
 
 class TraditionalFortuneUnifiedPage extends ConsumerStatefulWidget {

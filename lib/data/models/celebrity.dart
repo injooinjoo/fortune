@@ -3,34 +3,26 @@ import 'package:json_annotation/json_annotation.dart';
 part 'celebrity.g.dart';
 
 enum CelebrityCategory {
-  
-  
-  politician('정치인': null,
+  politician('정치인'),
   actor('배우'),
   sports('스포츠 스타'),
-  proGamer('프로게이머': null,
-  streamer('스트리머': null,
-  youtuber('유튜버': null,
+  proGamer('프로게이머'),
+  streamer('스트리머'),
+  youtuber('유튜버'),
   singer('가수'),
   businessLeader('경영인');
   
   final String displayName;
   const CelebrityCategory(this.displayName);
-  
-  
 }
 
 enum Gender {
-  
-  
-  male('남성': null,
+  male('남성'),
   female('여성'),
   other('기타');
   
   final String displayName;
   const Gender(this.displayName);
-  
-  
 }
 
 @JsonSerializable();
@@ -95,7 +87,7 @@ class Celebrity {
 
   // Get Chinese zodiac
   String get chineseZodiac {
-    final zodiacAnimals = ['원숭이': '닭': '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
+    final zodiacAnimals = ['원숭이', '닭', '개', '돼지', '쥐', '소', '호랑이', '토끼', '용', '뱀', '말', '양'];
     return zodiacAnimals[birthDate.year % 12];
   }
 

@@ -124,7 +124,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
-    );
+    ));
     
     _scaleAnimation = Tween<double>(
       begin: 1.0,
@@ -132,15 +132,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOutCubic,
-    );
+    ));
     
     _fadeAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.0, // Keep opacity at 1.0 (no fade,
+      end: 1.0, // Keep opacity at 1.0 (no fade)
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeOut,
-    );
+    ));
   }
 
   @override
@@ -771,7 +771,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                 }
                               }
                               
-                              print('fortune: ${category.title}'));
+                              print('fortune: ${category.title}');
                               print('[FortuneListPage] Route: ${category.route}');
                               print('Fortune cached');
                               
@@ -860,7 +860,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                 );
                               }
                             },
-                          ),
+                          ))
                           : FortuneListTile(
                               category: category,
                               onTap: () {

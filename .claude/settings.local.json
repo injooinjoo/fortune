@@ -26,7 +26,9 @@
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(q)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(pod install:*)"
     ],
     "deny": []
   },

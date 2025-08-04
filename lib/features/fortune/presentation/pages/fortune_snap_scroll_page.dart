@@ -23,7 +23,7 @@ class FortuneSnapScrollPage extends BaseFortunePage {
     key: key,
     title: title,
     description: description,
-    fortuneType: 'multi'),
+    fortuneType: 'multi',
     requiresUserInfo: true
   );
 

@@ -209,7 +209,6 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                       ],
                     ),
                   ),
-                ),
                 data: (stats) => Column(
                   children: [
                     // Tab Bar
@@ -289,7 +288,7 @@ class _OverviewTab extends StatelessWidget {
   });
 
   String _formatCurrency(double value) {
-    return NumberFormat.currency(locale: 'ko_KR': symbol: '₩').format(value);
+    return NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(value);
   }
 
   String _formatNumber(int value) {
@@ -681,7 +680,7 @@ class _UsageTrendTab extends StatelessWidget {
                               const SizedBox(width: 24),
                               _StatItem(
                                 label: '비용',
-                                value: NumberFormat.currency(locale: 'ko_KR': symbol: '₩').format(stat.cost),
+                                value: NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(stat.cost),
                                 color: Colors.green,
                                 fontScale: fontScale,
                               ),
@@ -769,7 +768,7 @@ class _PackageAnalysisTab extends StatelessWidget {
           const SizedBox(height: 16),
           
           ...stats.byPackage.entries.map((entry) {
-            final packageName = entry.key.replaceAll('_': ' ');
+            final packageName = entry.key.replaceAll('_', ' ');
             final stat = entry.value;
             
             return Padding(
@@ -817,7 +816,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                         ),
                         _PackageStat(
                           label: '평균 비용',
-                          value: NumberFormat.currency(locale: 'ko_KR': symbol: '₩').format(stat.avgCostPerRequest),
+                          value: NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(stat.avgCostPerRequest),
                           fontScale: fontScale,
                         ),
                         _PackageStat(
@@ -861,7 +860,7 @@ class _PackageAnalysisTab extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  NumberFormat.currency(locale: 'ko_KR': symbol: '₩').format(
+                  NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(
                     stats.byPackage.entries.fold(
                       0.0,
                       (sum, entry) => sum + (entry.value.avgCostPerRequest * 
@@ -1038,7 +1037,7 @@ class _TopUsersTab extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          NumberFormat.currency(locale: 'ko_KR': symbol: '₩').format(user.totalCost),
+                          NumberFormat.currency(locale: 'ko_KR', symbol: '₩').format(user.totalCost),
                           style: TextStyle(
                             fontSize: 12 * fontScale,
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),

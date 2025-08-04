@@ -9,18 +9,14 @@ import 'package:go_router/go_router.dart';
 
 // Sport category enum
 enum SportCategory {
-  
-  
-  ballGames('구기 종목'),
-  leisure('레저 스포츠'),
-  indoor('실내 운동'),
-  eSports('e스포츠': Icons.sports_esports);
+  ballGames('구기 종목', Icons.sports_soccer),
+  leisure('레저 스포츠', Icons.sports_golf),
+  indoor('실내 운동', Icons.fitness_center),
+  eSports('e스포츠', Icons.sports_esports);
   
   final String label;
   final IconData icon;
   const SportCategory(this.label, this.icon);
-  
-  
 }
 
 // Sport item model
@@ -71,7 +67,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_baseball,
       gradientColors: [Color(0xFFE53E3E), Color(0xFFC53030)],
       category: SportCategory.ballGames,
-      teams: ['LG': '두산': 'KT': '삼성': 'SSG', '롯데', 'NC', '한화', 'KIA', '키움',
+      teams: ['LG', '두산', 'KT', '삼성', 'SSG', '롯데', 'NC', '한화', 'KIA', '키움'],
     ,
     SportItem(
       name: '야구 (해외)',
@@ -79,7 +75,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_baseball,
       gradientColors: [Color(0xFF2B6CB0), Color(0xFF1E4E8C)],
       category: SportCategory.ballGames,
-      teams: ['양키스': '다저스': '레드삭스': '자이언츠': '컵스',
+      teams: ['양키스', '다저스', '레드삭스', '자이언츠', '컵스'],
     ,
     SportItem(
       name: '축구 (국내)',
@@ -87,7 +83,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_soccer,
       gradientColors: [Color(0xFF48BB78), Color(0xFF38A169)],
       category: SportCategory.ballGames,
-      teams: ['울산': '전북': '포항': '인천': '서울', '수원', '대구', '강원', '제주', '광주',
+      teams: ['울산', '전북', '포항', '인천', '서울', '수원', '대구', '강원', '제주', '광주'],
     ,
     SportItem(
       name: '축구 (해외)',
@@ -95,7 +91,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_soccer,
       gradientColors: [Color(0xFF805AD5), Color(0xFF6B46C1)],
       category: SportCategory.ballGames,
-      teams: ['맨유': '맨시티': '첼시': '리버풀': '아스날', '토트넘', '바르샤', '레알',
+      teams: ['맨유', '맨시티', '첼시', '리버풀', '아스날', '토트넘', '바르샤', '레알'],
     ,
     SportItem(
       name: '농구 (국내)',
@@ -103,7 +99,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_basketball,
       gradientColors: [Color(0xFFED8936), Color(0xFFDD6B20)],
       category: SportCategory.ballGames,
-      teams: ['서울SK': 'LG': '삼성': 'KT': '현대모비스', 'KCC', '한국가스공사', '원주DB', '안양정관장',
+      teams: ['서울SK', 'LG', '삼성', 'KT', '현대모비스', 'KCC', '한국가스공사', '원주DB', '안양정관장'],
     ,
     SportItem(
       name: '농구 (해외)',
@@ -111,7 +107,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_basketball,
       gradientColors: [Color(0xFF9F7AEA), Color(0xFF805AD5)],
       category: SportCategory.ballGames,
-      teams: ['레이커스': '셀틱스': '워리어스': '불스': '히트', '넷츠',
+      teams: ['레이커스', '셀틱스', '워리어스', '불스', '히트', '넷츠'],
     ,
     SportItem(
       name: '배구',
@@ -119,7 +115,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_volleyball,
       gradientColors: [Color(0xFF4299E1), Color(0xFF3182CE)],
       category: SportCategory.ballGames,
-      teams: ['현대건설': '흥국생명': 'GS칼텍스': 'IBK': '한국도로공사', 'KGC인삼공사', '페퍼저축은행',
+      teams: ['현대건설', '흥국생명', 'GS칼텍스', 'IBK', '한국도로공사', 'KGC인삼공사', '페퍼저축은행'],
     ,
     SportItem(
       name: '테니스',

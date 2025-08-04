@@ -173,7 +173,9 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary),
         ),
-        error: (error, stack) => '',
+        error: (error, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.error_outline,
@@ -481,11 +483,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _buildAchievementBadge('첫 운세'),
-                    _buildAchievementBadge('일주일 연속'),
-                    _buildAchievementBadge('운세 마스터'),
-                    _buildAchievementBadge('공유왕'),
-                    _buildAchievementBadge('100일 달성'),
+                    _buildAchievementBadge('첫 운세', true, fontScale),
+                    _buildAchievementBadge('일주일 연속', true, fontScale),
+                    _buildAchievementBadge('운세 마스터', false, fontScale),
+                    _buildAchievementBadge('공유왕', true, fontScale),
+                    _buildAchievementBadge('100일 달성', false, fontScale),
                   ],
                 ),
               ],
@@ -506,11 +508,11 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildPeriodChip('7일'),
+              _buildPeriodChip('7일', 7, fontScale),
               const SizedBox(width: 8),
-              _buildPeriodChip('30일'),
+              _buildPeriodChip('30일', 30, fontScale),
               const SizedBox(width: 8),
-              _buildPeriodChip('90일'),
+              _buildPeriodChip('90일', 90, fontScale),
             ],
           ),
           
@@ -555,7 +557,7 @@ class _StatisticsDetailPageState extends ConsumerState<StatisticsDetailPage>
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              final weekDays = ['월': '화': '수', '목', '금', '토', '일'];
+                              final weekDays = ['월', '화', '수', '목', '금', '토', '일'];
                               return Text(
                                 weekDays[value.toInt()],
                                 style: TextStyle(

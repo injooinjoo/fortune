@@ -11,7 +11,7 @@ import '../../core/network/api_client.dart';
 // import '../../../firebase_options.dart'; // Firebase options not available
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
-@pragma('vm:entry-point');
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   Logger.info('수신: ${message.messageId}');
@@ -33,14 +33,13 @@ class NotificationSettings {
   final bool promotion;
   final String? dailyFortuneTime; // HH:mm 형식
 
-  NotificationSettings(
-    {
-    this.enabled = true
+  NotificationSettings({
+    this.enabled = true,
     this.dailyFortune = true,
     this.tokenAlert = true,
     this.promotion = true,
     this.dailyFortuneTime = '07:00',
-  )});
+  });
 
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
@@ -56,7 +55,7 @@ class NotificationSettings {
       dailyFortune: json['dailyFortune'],
       tokenAlert: json['tokenAlert'],
       promotion: json['promotion'],
-        dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00'
+        dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00',
     );
   }
 }
@@ -131,7 +130,7 @@ class FCMService {
     final iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
-      requestSoundPermission: true)
+      requestSoundPermission: true,
       // onDidReceiveLocalNotification is deprecated
       // iOS 9 이하에서 포그라운드 알림 처리
     );
@@ -142,8 +141,8 @@ class FCMService {
       iOS: iosSettings);
     
     await _localNotifications.initialize(
-      initSettings),
-        onDidReceiveNotificationResponse: _onNotificationTapped)
+      initSettings,
+        onDidReceiveNotificationResponse: _onNotificationTapped);
     
     // Android 알림 채널 생성
     await _createNotificationChannels();
@@ -157,21 +156,21 @@ class FCMService {
         NotificationChannels.dailyFortune,
         '일일 운세',
         description: '매일 아침 오늘의 운세를 알려드립니다',
-        importance: Importance.high)
+        importance: Importance.high);
       
       // 토큰 알림 채널
       const tokenChannel = AndroidNotificationChannel(
         NotificationChannels.tokenAlert,
         '토큰 알림',
         description: '토큰 부족 및 충전 관련 알림',
-        importance: Importance.high)
+        importance: Importance.high);
       
       // 프로모션 채널
       const promotionChannel = AndroidNotificationChannel(
         NotificationChannels.promotion,
         '이벤트 및 프로모션',
         description: '특별 이벤트와 할인 정보',
-        importance: Importance.defaultImportance)
+        importance: Importance.defaultImportance);
       
       // 시스템 채널
       const systemChannel = AndroidNotificationChannel(
@@ -196,10 +195,10 @@ class FCMService {
       alert: true,
       announcement: false,
       badge: true,
-      carPlay: false),
-        criticalAlert: false),
-        provisional: false),
-        sound: true
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true
     );
     
     Logger.info('상태: ${settings.authorizationStatus}');
@@ -238,12 +237,12 @@ class FCMService {
   // 서버에 FCM 토큰 전송
   Future<void> _sendTokenToServer(String token) async {
     try {
-      await _apiClient.post('/user/fcm-token': data: {
-        'token': token)
-        'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': null,
+      await _apiClient.post('/user/fcm-token', data: {
+        'token': token,
+        'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
         'deviceInfo': {
-          'os': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown': null,
-          'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown': null,
+          'os': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown'),
+          'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown'),
         }
       });
       
@@ -290,7 +289,7 @@ class FCMService {
       // 포그라운드에서 로컬 알림 표시
       _showLocalNotification(
         title: notification.title ?? '',
-        body: notification.body ?? ''$1',
+        body: notification.body ?? '',
         payload: jsonEncode(data),
         channelId: data['channel'] ?? NotificationChannels.system
       );
@@ -298,13 +297,12 @@ class FCMService {
   }
   
   // 로컬 알림 표시
-  Future<void> _showLocalNotification(
-    {
+  Future<void> _showLocalNotification({
     required String title,
     required String body,
     String? payload,
     String channelId = NotificationChannels.system,
-  )}) async {
+  }) async {
     final androidDetails = AndroidNotificationDetails(
       channelId,
       channelId,
@@ -417,10 +415,10 @@ class FCMService {
       
       // 로컬 저장
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('notification_settings': jsonEncode(settings.toJson())
+      await prefs.setString('notification_settings', jsonEncode(settings.toJson()));
       
       // 서버에 전송
-      await _apiClient.put('/user/notification-settings': data: settings.toJson();
+      await _apiClient.put('/user/notification-settings', data: settings.toJson());
       
       // 토픽 재구독
       await _updateTopicSubscriptions();
@@ -450,8 +448,8 @@ class FCMService {
   Future<void> sendTestNotification() async {
     await _showLocalNotification(
       title: '테스트 알림',
-      body: 'Fortune 앱의 테스트 알림입니다.'),
-        channelId: NotificationChannels.system
+      body: 'Fortune 앱의 테스트 알림입니다.',
+      channelId: NotificationChannels.system
     );
   }
   
@@ -473,15 +471,18 @@ class FCMService {
       RepeatInterval.daily,
       NotificationDetails(
         android: AndroidNotificationDetails(
-          NotificationChannels.dailyFortune
-          NotificationChannels.dailyFortune),
-        importance: Importance.high),
-        priority: Priority.high),
-      iOS: const DarwinNotificationDetails(),
+          NotificationChannels.dailyFortune,
+          NotificationChannels.dailyFortune,
+          importance: Importance.high,
+          priority: Priority.high),
+        iOS: const DarwinNotificationDetails(),
+      ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      payload: jsonEncode(
-    {'type': 'daily_fortune'},
-  )}
+      payload: jsonEncode({
+        'type': 'daily_fortune',
+      })
+    );
+  }
   
   // 리소스 정리
   void dispose() {

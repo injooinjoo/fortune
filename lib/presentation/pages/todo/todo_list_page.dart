@@ -106,7 +106,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                           label: _getStatusLabel(filter.status!),
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(status: null),
+                                  (state) => state.copyWith(status: () => null),
                                 );
                             ref.read(todosProvider.notifier).loadTodos(refresh: true);
                           },
@@ -116,7 +116,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                           label: _getPriorityLabel(filter.priority!),
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(priority: null),
+                                  (state) => state.copyWith(priority: () => null),
                                 );
                             ref.read(todosProvider.notifier).loadTodos(refresh: true);
                           },
@@ -126,7 +126,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
                           label: '검색: ${filter.searchQuery}',
                           onDeleted: () {
                             ref.read(todoFilterProvider.notifier).update(
-                                  (state) => state.copyWith(searchQuery: null),
+                                  (state) => state.copyWith(searchQuery: () => null),
                                 );
                             ref.read(todosProvider.notifier).loadTodos(refresh: true);
                           },
@@ -323,7 +323,7 @@ class _TodoListPageState extends ConsumerState<TodoListPage> {
 
   void _showTodoDetails(Todo todo) {
     // Navigate to todo detail page or show dialog
-    Logger.debug('Deleting todo: \${todo.id}');
+    Logger.debug('Deleting todo: ${todo.id}');
   }
 
   String _getStatusLabel(TodoStatus status) {

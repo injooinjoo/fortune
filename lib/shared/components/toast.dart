@@ -32,8 +32,8 @@ class Toast {
     final theme = Theme.of(context);
 
     final toast = OverlayEntry(
-      builder: (context) => _ToastWidget(,
-      message: message,
+      builder: (context) => _ToastWidget(
+        message: message,
         type: type,
         duration: duration,
         onTap: onTap,
@@ -112,7 +112,7 @@ class _ToastWidgetState extends State<_ToastWidget>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutBack,
-    );
+    ));
 
     _fadeAnimation = Tween<double>(
       begin: 0,
@@ -120,7 +120,7 @@ class _ToastWidgetState extends State<_ToastWidget>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeIn,
-    );
+    ));
 
     _controller.forward();
   }
@@ -171,40 +171,39 @@ class _ToastWidgetState extends State<_ToastWidget>
       top: mediaQuery.padding.top + 16,
       left: 16,
       right: 16,
-      child: SlideTransition(,
-      position: _offsetAnimation,
-        child: FadeTransition(,
-      opacity: _fadeAnimation,
-          child: Material(,
-      color: Colors.transparent,
-            child: GestureDetector(,
-      onTap: widget.onTap ?? _dismiss,
+      child: SlideTransition(
+        position: _offsetAnimation,
+        child: FadeTransition(
+        opacity: _fadeAnimation,
+          child: Material(
+        color: Colors.transparent,
+            child: GestureDetector(
+        onTap: widget.onTap ?? _dismiss,
               onHorizontalDragEnd: (details) {
                 if (details.primaryVelocity!.abs() > 100) {
                   _dismiss();
                 }
               },
-              child: ShimmerGlass(,
-      shimmerColor: _color,
+              child: ShimmerGlass(
+        shimmerColor: _color,
                 borderRadius: AppDimensions.borderRadiusLarge,
-                child: GlassContainer(,
-      padding: EdgeInsets.symmetric(,
-      horizontal: AppSpacing.spacing4,
+                child: GlassContainer(
+        padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.spacing4,
                     vertical: AppSpacing.spacing3,
                   ),
                   borderRadius: AppDimensions.borderRadiusLarge,
                   blur: 20,
-                  boxShadow: GlassEffects.glassShadow(,
-      color: _color,
+                  boxShadow: GlassEffects.glassShadow(
+        color: _color,
                     elevation: 8,
                   ),
-                  child: Row(,
-      children: [
+                  child: Row(
+        children: [
                       Container(
                         padding: AppSpacing.paddingAll8,
-                        decoration: BoxDecoration(,
-      color: _color.withValues(alp,
-      ha: 0.2),
+                        decoration: BoxDecoration(
+        color: _color.withValues(alpha: 0.2),
                           borderRadius: AppDimensions.borderRadiusMedium,
                         ),
                         child: Icon(
@@ -228,8 +227,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                         icon: Icon(
                           Icons.close_rounded,
                           size: AppDimensions.iconSizeSmall,
-                          color: theme.colorScheme.onSurface.withValues(alph,
-      a: 0.6),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -279,23 +277,22 @@ class SnackBarHelper {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(,
-      children: [
+        content: Row(
+        children: [
             Icon(icon, color: AppColors.textPrimaryDark, size: AppDimensions.iconSizeSmall),
             SizedBox(width: AppSpacing.spacing3),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(colo,
-      r: AppColors.textPrimaryDark),
+                style: const TextStyle(color: AppColors.textPrimaryDark),
               ),
             ),
           ],
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(,
-      borderRadius: AppDimensions.borderRadiusMedium,
+        shape: RoundedRectangleBorder(
+        borderRadius: AppDimensions.borderRadiusMedium,
         ),
         margin: AppSpacing.paddingAll16,
         dismissDirection: DismissDirection.horizontal,

@@ -8,13 +8,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 enum InvestmentType {
-  
-  
-  wealth('재물운': 'wealth': '금전운과 재물운을 확인해보세요',
-  realestate('부동산': 'realestate': '부동산 투자 운세를 확인해보세요',
-  stock('주식': 'stock': '오늘의 주식 투자 운세를 확인해보세요',
-  crypto('암호화폐': 'crypto', '암호화폐 투자 운세를 확인해보세요',
-  lottery('로또', 'lottery', '행운의 로또 번호를 확인해보세요', Icons.confirmation_number_rounded, [Color(0xFFFFB300, Color(0xFFF57C00)]);
+  wealth('재물운', 'wealth', '금전운과 재물운을 확인해보세요', Icons.account_balance_wallet_rounded, [Color(0xFFFFD600), Color(0xFFFF6D00)]),
+  realestate('부동산', 'realestate', '부동산 투자 운세를 확인해보세요', Icons.home_rounded, [Color(0xFF0288D1), Color(0xFF0277BD)]),
+  stock('주식', 'stock', '오늘의 주식 투자 운세를 확인해보세요', Icons.trending_up_rounded, [Color(0xFF388E3C), Color(0xFF2E7D32)]),
+  crypto('암호화폐', 'crypto', '암호화폐 투자 운세를 확인해보세요', Icons.currency_bitcoin_rounded, [Color(0xFFFF9800), Color(0xFFFF6D00)]),
+  lottery('로또', 'lottery', '행운의 로또 번호를 확인해보세요', Icons.confirmation_number_rounded, [Color(0xFFFFB300), Color(0xFFF57C00)]);
   
   final String label;
   final String value;
@@ -23,8 +21,6 @@ enum InvestmentType {
   final List<Color> gradientColors;
   
   const InvestmentType(this.label, this.value, this.description, this.icon, this.gradientColors);
-  
-  
 }
 
 class InvestmentFortuneUnifiedPage extends BaseFortunePage {

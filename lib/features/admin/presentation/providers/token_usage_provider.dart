@@ -49,7 +49,7 @@ class TokenUsageNotifier
 
       state = AsyncValue.data(stats);
     } catch (e, stackTrace) {
-      Logger.error('Failed to fetch token usage stats': e, stackTrace);
+      Logger.error('Failed to fetch token usage stats', e, stackTrace);
       state = AsyncValue.error(e, stackTrace);
     }
   }

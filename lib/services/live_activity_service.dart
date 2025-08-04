@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:fortune/core/utils/logger.dart';
-import 'package:fortune/services/native_platform_service.dart' show iOS;
+import 'package:fortune/services/native_platform_service.dart';
 
 /// Service for managing iOS Live Activities and Dynamic Island
 class LiveActivityService {
@@ -25,7 +25,7 @@ class LiveActivityService {
     }
     
     try {
-      final activityId = await NativePlatformService.iOS.startLiveActivity(
+      final activityId = await NativePlatformService.ios.startLiveActivity(
         attributes: {
           'fortuneType': fortuneType,
           'startedAt': DateTime.now().toIso8601String(),
@@ -59,7 +59,7 @@ class LiveActivityService {
     }
     
     try {
-      await NativePlatformService.iOS.updateDynamicIsland(
+      await NativePlatformService.ios.updateDynamicIsland(
         activityId: activityId,
         content: updatedData,
       );
@@ -80,7 +80,7 @@ class LiveActivityService {
     }
     
     try {
-      await NativePlatformService.iOS.endLiveActivity(activityId);
+      await NativePlatformService.ios.endLiveActivity(activityId);
       _activeActivities.remove(fortuneType);
       Logger.info('Supabase initialized successfully');
     } catch (e) {

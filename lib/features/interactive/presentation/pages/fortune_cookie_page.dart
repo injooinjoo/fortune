@@ -57,7 +57,7 @@ class _FortuneCookieInputState extends State<_FortuneCookieInput>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    );
+    ));
   }
 
   @override
@@ -256,7 +256,7 @@ class _FortuneCookieResult extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        luckyNumbers.join(': ',
+                        luckyNumbers.join(', '),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: AppTheme.primaryColor,

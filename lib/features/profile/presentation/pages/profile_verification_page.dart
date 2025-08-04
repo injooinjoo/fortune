@@ -196,17 +196,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
   
   Color get verificationColor {
     switch (verificationLevel) {
-      case,
-    0:
+      case 0:
         return Colors.grey;
-      case,
-    1:
+      case 1:
         return Colors.orange;
-      case,
-    2:
+      case 2:
         return Colors.blue;
-      case,
-    3:
+      case 3:
         return Colors.green;
       default:
         return Colors.grey;
@@ -215,17 +211,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
   
   String get verificationBadge {
     switch (verificationLevel) {
-      case,
-    0:
+      case 0:
         return '미인증';
-      case,
-    1:
+      case 1:
         return '기본 인증';
-      case,
-    2:
+      case 2:
         return '신뢰 인증';
-      case,
-    3:
+      case 3:
         return '공식 인증';
       default:
         return '미인증';

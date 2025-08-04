@@ -250,22 +250,22 @@ class FortuneCardScore extends Equatable {
 /// Types of recommendations for UI display
 enum RecommendationType {
   /// Personalized based on user profile/behavior
-  personalized('personalized': '맞춤 추천',
+  personalized('personalized', '맞춤 추천'),
   
   /// Popular among all users
-  popular('popular': '인기': null,
+  popular('popular', '인기'),
   
   /// Trending upward recently
-  trending('trending': '급상승': null,
+  trending('trending', '급상승'),
   
   /// New fortune type
-  newFortune('new': '신규': null,
+  newFortune('new', '신규'),
   
   /// Seasonal recommendation
-  seasonal('seasonal': '시즌',
+  seasonal('seasonal', '시즌'),
   
   /// Based on similar users
-  collaborative('collaborative', '비슷한 사용자',
+  collaborative('collaborative', '비슷한 사용자'),
   
   /// Default/no specific reason
   general('general', '추천');

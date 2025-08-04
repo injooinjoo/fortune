@@ -182,7 +182,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
 
   void _submitWish() {
     if (_wishController.text.isEmpty || _authorController.text.isEmpty) {
-      Toast.show(context, message: '소원과 이름을 모두 입력해주세요': type: ToastType.warning);
+      Toast.show(context, message: '소원과 이름을 모두 입력해주세요', type: ToastType.warning);
       return;
     }
 
@@ -197,7 +197,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
       _authorController.clear();
     });
 
-    Toast.show(context, message: '소원이 벽에 붙여졌습니다!': type: ToastType.success);
+    Toast.show(context, message: '소원이 벽에 붙여졌습니다!', type: ToastType.success);
   }
 
   @override
@@ -589,7 +589,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   child: ElevatedButton.icon(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Toast.show(context, message: '공유 기능은 준비 중입니다': type: ToastType.info);
+                      Toast.show(context, message: '공유 기능은 준비 중입니다', type: ToastType.info);
                     },
                     icon: const Icon(Icons.share_rounded),
                     label: const Text('공유하기'),

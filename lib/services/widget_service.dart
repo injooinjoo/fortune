@@ -33,12 +33,12 @@ class WidgetService {
       final lastUpdated = '${now.hour}:${now.minute.toString().padLeft(2, '0')}';
       
       // Save data using HomeWidget
-      await HomeWidget.saveWidgetData<String>('score': score);
-      await HomeWidget.saveWidgetData<String>('message': message);
-      await HomeWidget.saveWidgetData<String>('lastUpdated': lastUpdated);
+      await HomeWidget.saveWidgetData<String>('score', score);
+      await HomeWidget.saveWidgetData<String>('message', message);
+      await HomeWidget.saveWidgetData<String>('lastUpdated', lastUpdated);
       
       if (detailedFortune != null) {
-        await HomeWidget.saveWidgetData<String>('detailedFortune': detailedFortune);
+        await HomeWidget.saveWidgetData<String>('detailedFortune', detailedFortune);
       }
       
       // Update native widget
@@ -78,10 +78,10 @@ class WidgetService {
       final lastUpdated = '${now.hour}:${now.minute.toString().padLeft(2, '0')}';
       
       // Save data using HomeWidget
-      await HomeWidget.saveWidgetData<String>('compatibilityScore': compatibilityScore);
-      await HomeWidget.saveWidgetData<String>('partnerName': partnerName);
-      await HomeWidget.saveWidgetData<String>('loveMessage': message);
-      await HomeWidget.saveWidgetData<String>('lastUpdated': lastUpdated);
+      await HomeWidget.saveWidgetData<String>('compatibilityScore', compatibilityScore);
+      await HomeWidget.saveWidgetData<String>('partnerName', partnerName);
+      await HomeWidget.saveWidgetData<String>('loveMessage', message);
+      await HomeWidget.saveWidgetData<String>('lastUpdated', lastUpdated);
       
       // Update native widget
       await NativePlatformService.updateWidget(

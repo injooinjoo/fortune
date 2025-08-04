@@ -7,12 +7,10 @@ import '../../../../presentation/providers/fortune_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 enum PetType {
-  
-  
-  general('반려동물': 'pet': '반려동물과의 교감과 건강',
-  dog('반려견': 'dog': '강아지와의 특별한 하루',
-  cat('반려묘': 'cat': '고양이와의 행복한 일상',
-  compatibility('반려동물 궁합', 'pet-compatibility', '나와 반려동물의 궁합', Icons.favorite_rounded, [Color(0xFFEC4899, Color(0xFFDB2777)]);
+  general('반려동물', 'pet', '반려동물과의 교감과 건강', Icons.pets_rounded, [Color(0xFF8B5CF6), Color(0xFF7C3AED)]),
+  dog('반려견', 'dog', '강아지와의 특별한 하루', Icons.pets_rounded, [Color(0xFFF97316), Color(0xFFEA580C)]),
+  cat('반려묘', 'cat', '고양이와의 행복한 일상', Icons.pets_rounded, [Color(0xFF0EA5E9), Color(0xFF0284C7)]),
+  compatibility('반려동물 궁합', 'pet-compatibility', '나와 반려동물의 궁합', Icons.favorite_rounded, [Color(0xFFEC4899), Color(0xFFDB2777)]);
   
   final String label;
   final String value;
@@ -21,8 +19,6 @@ enum PetType {
   final List<Color> gradientColors;
   
   const PetType(this.label, this.value, this.description, this.icon, this.gradientColors);
-  
-  
 }
 
 class PetFortuneUnifiedPage extends BaseFortunePage {
