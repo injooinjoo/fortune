@@ -499,7 +499,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           emoji: service['emoji'] as String?,
           title: service['title'] as String,
           description: service['desc'] as String,
-          gradient: service['gradient'] as List<Color>?,
+          gradient: service['gradient'] != null 
+              ? (service['gradient'] as LinearGradient).colors 
+              : null,
           onTap: () => _navigateToFortune(
             service['route'] as String,
             service['title'] as String)).animate()

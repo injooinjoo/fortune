@@ -16,6 +16,7 @@ import '../screens/settings/settings_screen.dart';
 import '../screens/settings/social_accounts_screen.dart';
 import '../screens/settings/phone_management_screen.dart';
 import '../screens/onboarding/onboarding_page.dart';
+import '../screens/onboarding/toss_style_onboarding_page.dart';
 import '../shared/layouts/main_shell.dart';
 import '../screens/premium/premium_screen.dart';
 
@@ -97,7 +98,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
-        builder: (context, state) => const OnboardingPage(),
+        builder: (context, state) => const TossStyleOnboardingPage(),
       ),
       
       // Non-authenticated routes
