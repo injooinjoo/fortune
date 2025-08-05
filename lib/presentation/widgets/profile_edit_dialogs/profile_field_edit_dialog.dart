@@ -15,15 +15,13 @@ class ProfileFieldEditDialog extends StatelessWidget {
     required this.title,
     required this.content,
     this.onSave,
-    this.isLoading = false,
-  });
+    this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: AppDimensions.borderRadiusLarge,
-      ),
+        borderRadius: AppDimensions.borderRadiusLarge),
       child: Padding(
         padding: AppSpacing.paddingAll24,
         child: Column(
@@ -33,8 +31,7 @@ class ProfileFieldEditDialog extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
+              textAlign: TextAlign.center),
             SizedBox(height: AppSpacing.spacing6),
             content,
             SizedBox(height: AppSpacing.spacing6),
@@ -45,38 +42,24 @@ class ProfileFieldEditDialog extends StatelessWidget {
                   onPressed: isLoading ? null : () => Navigator.of(context).pop(),
                   child: Text(
                     '취소',
-                    style: AppTypography.button,
-                  ),
-                ),
+                    style: AppTypography.button)),
                 SizedBox(width: AppSpacing.spacing3),
                 ElevatedButton(
                   onPressed: isLoading ? null : onSave,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: AppDimensions.borderRadiusSmall,
-                    ),
+                      borderRadius: AppDimensions.borderRadiusSmall),
                     padding: EdgeInsets.symmetric(
                       horizontal: AppSpacing.spacing6,
-                      vertical: AppSpacing.spacing3,
-                    ),
-                  ),
+                      vertical: AppSpacing.spacing3)),
                   child: isLoading
                       ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.textPrimaryDark),
-                          ),
-                        )
-                      : const Text('저장'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.textPrimaryDark)))
+                      : const Text('저장'))])])));
   }
 }

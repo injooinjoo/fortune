@@ -39,8 +39,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('AI 관상 운세'),
-        backgroundColor: AppColors.primary,
-      ),
+        backgroundColor: AppColors.primary),
       body: _isLoading
           ? const FortuneLoadingWidget()
           : _showResult && _fortuneResult != null
@@ -62,36 +61,26 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               gradient: LinearGradient(
                 colors: [AppColors.primary, AppColors.secondary],
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
+                end: Alignment.bottomRight),
+              borderRadius: BorderRadius.circular(16)),
             child: Column(
               children: [
                 Icon(
                   Icons.face,
                   size: 48,
-                  color: AppColors.surface,
-                ),
+                  color: AppColors.surface),
                 const SizedBox(height: 12),
                 Text(
                   'AI가 당신의 관상을 분석합니다',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: AppColors.surface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(
                   '사진을 업로드하거나 간단한 정보를 입력해주세요',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.surface.withValues(alpha: 0.9),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
+                    color: AppColors.surface.withValues(alpha: 0.9)),
+                  textAlign: TextAlign.center)])),
           
           const SizedBox(height: 24),
           
@@ -103,19 +92,14 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           // OR divider
           Row(
             children: [
-              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3))),
+              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   '또는',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ),
-              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3))),
-            ],
-          ),
+                    color: AppColors.onSurface.withValues(alpha: 0.6)))),
+              Expanded(child: Divider(color: AppColors.onSurface.withValues(alpha: 0.3))]),
           
           const SizedBox(height: 24),
           
@@ -126,27 +110,19 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           
           // Analyze button
           ElevatedButton(
-            onPressed: (_selectedImage != null || _isManualInputComplete()) 
+            onPressed: (_selectedImage != null || _isManualInputComplete(), 
                 ? _analyzeFaceReading 
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+                borderRadius: BorderRadius.circular(12))),
             child: Text(
               '관상 분석하기',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: AppColors.surface,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                fontWeight: FontWeight.bold)))]));
   }
   
   Widget _buildPhotoSection() {
@@ -157,9 +133,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.3),
-          width: 2,
-        ),
-      ),
+          width: 2)),
       child: Column(
         children: [
           if (_selectedImage != null) ...[
@@ -169,11 +143,8 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                 _selectedImage!,
                 height: 200,
                 width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
+                fit: BoxFit.cover)),
+            const SizedBox(height: 12)],
           
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -181,13 +152,11 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               _buildPhotoButton(
                 icon: Icons.camera_alt,
                 label: '카메라',
-                onPressed: () => _pickImage(ImageSource.camera),
-              ),
+                onPressed: () => _pickImage(ImageSource.camera)),
               _buildPhotoButton(
                 icon: Icons.photo_library,
                 label: '갤러리',
-                onPressed: () => _pickImage(ImageSource.gallery),
-              ),
+                onPressed: () => _pickImage(ImageSource.gallery)),
               if (_selectedImage != null)
                 _buildPhotoButton(
                   icon: Icons.close,
@@ -196,28 +165,19 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                     setState(() {
                       _selectedImage = null;
                     });
-                  },
-                ),
-            ],
-          ),
-        ],
-      ),
-    );
+                  })])]));
   }
   
   Widget _buildPhotoButton({
     required IconData icon,
     required String label,
-    required VoidCallback onPressed,
-  }) {
+    required VoidCallback onPressed}) {
     return TextButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, color: AppColors.primary),
       label: Text(
         label,
-        style: TextStyle(color: AppColors.primary),
-      ),
-    );
+        style: TextStyle(color: AppColors.primary)));
   }
   
   Widget _buildSimplifiedManualInput() {
@@ -225,30 +185,26 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-      ),
+        borderRadius: BorderRadius.circular(12)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '간단 입력 (선택사항)',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           
           // Face shape
           _buildDropdown(
             label: '얼굴형',
             value: _selectedFaceShape,
-            items: const ['둥근형': '계란형': '각진형': '역삼각형', '긴형',
+            items: const \['['둥근형', '계란형', '각진형', '역삼각형', '긴형',
             onChanged: (value) {
               setState(() {
                 _selectedFaceShape = value;
               });
-            },
-          ),
+            }),
           
           const SizedBox(height: 12),
           
@@ -256,13 +212,12 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           _buildDropdown(
             label: '눈 모양',
             value: _selectedEyeType,
-            items: const ['큰 눈': '작은 눈': '올라간 눈': '처진 눈', '둥근 눈',
+            items: const \['['큰 눈', '작은 눈', '올라간 눈', '처진 눈', '둥근 눈',
             onChanged: (value) {
               setState(() {
                 _selectedEyeType = value;
               });
-            },
-          ),
+            }),
           
           const SizedBox(height: 12),
           
@@ -270,39 +225,31 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
           _buildDropdown(
             label: '전체적인 인상',
             value: _selectedOverallImpression,
-            items: const ['부드러운': '날카로운': '온화한': '강인한', '중성적인',
+            items: const \['['부드러운', '날카로운', '온화한', '강인한', '중성적인',
             onChanged: (value) {
               setState(() {
                 _selectedOverallImpression = value;
               });
-            },
-          ),
-        ],
-      ),
-    );
+            })]));
   }
   
   Widget _buildDropdown({
     required String label,
     required String? value,
     required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
+    required ValueChanged<String?> onChanged}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.onSurface.withValues(alpha: 0.7),
-          ),
-        ),
+            color: AppColors.onSurface.withValues(alpha: 0.7))),
         const SizedBox(height: 4),
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.onSurface.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(8),
-          ),
+            border: Border.all(color: AppColors.onSurface.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(8)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
@@ -312,15 +259,9 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
               items: items.map((item) {
                 return DropdownMenuItem(
                   value: item,
-                  child: Text(item),
-                );
+                  child: Text(item));
               }).toList(),
-              onChanged: onChanged,
-            ),
-          ),
-        ),
-      ],
-    );
+              onChanged: onChanged)))]);
   }
   
   bool _isManualInputComplete() {
@@ -339,8 +280,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('없습니다: $e'),
-      );
+        SnackBar(content: Text('없습니다: $e'));
     }
   }
   
@@ -362,9 +302,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         onComplete: () {
           adCompleted = true;
           Navigator.of(context).pop();
-        },
-      ),
-    );
+        }));
     
     if (!adCompleted) {
       setState(() {
@@ -379,8 +317,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         if (_selectedImage != null) 'hasPhoto': null,
         if (_selectedFaceShape != null) 'faceShape': null,
         if (_selectedEyeType != null) 'eyeType': null,
-        if (_selectedOverallImpression != null) 'impression': null,
-      };
+        if (_selectedOverallImpression != null) 'impression': null};
       
       // Simulate fortune generation for now
       // In production, this would call the actual API
@@ -390,8 +327,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
         fortuneType: 'face-reading',
         mainFortune: _generateMockFaceReadingContent(inputData),
         createdAt: DateTime.now().toIso8601String(),
-        date: DateTime.now().toIso8601String(),
-      );
+        date: DateTime.now().toIso8601String());
       
       setState(() {
         _fortuneResult = result;
@@ -405,8 +341,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발생했습니다: $e'),
-        );
+          SnackBar(content: Text('발생했습니다: $e'));
       }
     }
   }
@@ -420,8 +355,7 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
             result: _fortuneResult!,
             onShare: () {
               // Implement share functionality
-            },
-          ),
+            }),
           const SizedBox(height: 24),
           
           // Action buttons
@@ -440,11 +374,8 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    side: BorderSide(color: AppColors.primary),
-                  ),
-                  child: const Text('다시 보기'),
-                ),
-              ),
+                    side: BorderSide(color: AppColors.primary)),
+                  child: const Text('다시 보기'))),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
@@ -453,16 +384,8 @@ class _FaceReadingUnifiedPageState extends ConsumerState<FaceReadingUnifiedPage>
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('운세 목록'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                    padding: const EdgeInsets.symmetric(vertical: 12)),
+                  child: const Text('운세 목록')))])]));
   }
   
   String _generateMockFaceReadingContent(Map<String, dynamic> inputData) {

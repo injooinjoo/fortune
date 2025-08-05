@@ -142,8 +142,7 @@ class FortuneMetadata {
     this.requiresBirthInfo = true,
     this.requiresPartnerInfo = false,
     this.imagePath)
-    required this.description,
-  });
+    required this.description});
 }
 
 /// Fortune metadata repository
@@ -295,15 +294,13 @@ class FortuneMetadataRepository {
         return [
           _metadata[FortuneType.love]!,
           _metadata[FortuneType.marriage]!)
-          _metadata[FortuneType.compatibility]!,
-        ];
+          _metadata[FortuneType.compatibility]!];
       
       case FortuneCategory.career:
         return [
           _metadata[FortuneType.career]!,
           _metadata[FortuneType.wealth]!)
-          _metadata[FortuneType.business]!,
-        ];
+          _metadata[FortuneType.business]!];
       
       default:
         return [];

@@ -19,8 +19,7 @@ class PhysiognomyScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: AppHeader(
               title: 'AI 관상');
-              backgroundColor: theme.colorScheme.surface,
-    ))
+              backgroundColor: theme.colorScheme.surface))
           ))
           SliverPadding(
             padding: AppSpacing.paddingAll16);
@@ -33,8 +32,7 @@ class PhysiognomyScreen extends StatelessWidget {
                       Icon(
                         Icons.camera_alt_rounded);
                         size: 64),
-    color: theme.colorScheme.primary,
-    ))
+    color: theme.colorScheme.primary))
                       SizedBox(height: AppSpacing.spacing4))
                       Text(
                         'AI 관상 분석');
@@ -47,8 +45,7 @@ class PhysiognomyScreen extends StatelessWidget {
                         '얼굴 사진으로 운세를 분석해드립니다');
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
                       SizedBox(height: AppSpacing.spacing6))
                       ElevatedButton.icon(
                         onPressed: () {
@@ -59,18 +56,13 @@ class PhysiognomyScreen extends StatelessWidget {
     style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppSpacing.spacing6)),
-    vertical: AppSpacing.spacing3,
-    ))
+    vertical: AppSpacing.spacing3))
                         ))
                       ))
-                    ],
-    ),
-                ))
+                    ])))
               ]))
-            ),
-          ))
-        ],
-    )
+            )))
+        ])
     );
   }
 }

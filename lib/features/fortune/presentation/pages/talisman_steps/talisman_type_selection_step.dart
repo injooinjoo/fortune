@@ -10,8 +10,7 @@ class TalismanTypeSelectionStep extends StatefulWidget {
 
   const TalismanTypeSelectionStep({
     super.key,
-    required this.onTypeSelected,
-  });
+    required this.onTypeSelected});
 
   @override
   State<TalismanTypeSelectionStep> createState() =>
@@ -37,28 +36,20 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                 Icon(
                   Icons.shield_rounded,
                   size: 60,
-                  color: theme.primaryColor,
-                ).animate().fadeIn(duration: 600.ms).scale(
-                    begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+                  color: theme.primaryColor).animate().fadeIn(duration: 600.ms).scale(
+                    begin: const Offset(0.5, 0.5), end: const Offset(1, 1),
                 const SizedBox(height: 16),
                 Text(
                   '어떤 부적을 만들고 싶으신가요?',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
+                    fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center).animate().fadeIn(duration: 600.ms, delay: 200.ms),
                 const SizedBox(height: 8),
                 Text(
                   '당신의 소원에 맞는 부적을 선택해주세요',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(duration: 600.ms, delay: 400.ms),
-              ],
-            ),
-          ),
+                    color: AppColors.textSecondary),
+                  textAlign: TextAlign.center).animate().fadeIn(duration: 600.ms, delay: 400.ms)])),
           const SizedBox(height: 32),
 
           // Talisman type grid
@@ -69,19 +60,14 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
               crossAxisCount: 2,
               childAspectRatio: 1.1,
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
+              mainAxisSpacing: 12),
             itemCount: TalismanType.values.length,
             itemBuilder: (context, index) {
               final type = TalismanType.values[index];
               return _buildTalismanTypeCard(type, index);
-            },
-          ),
+            }),
 
-          const SizedBox(height: 40),
-        ],
-      ),
-    );
+          const SizedBox(height: 40)]));
   }
 
   Widget _buildTalismanTypeCard(TalismanType type, int index) {
@@ -110,9 +96,7 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
             end: Alignment.bottomRight,
             colors: [
               type.gradientColors[0].withValues(alpha: 0.1),
-              type.gradientColors[1].withValues(alpha: 0.05),
-            ],
-          ),
+              type.gradientColors[1].withValues(alpha: 0.05)]),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -123,60 +107,43 @@ class _TalismanTypeSelectionStepState extends State<TalismanTypeSelectionStep> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: type.gradientColors,
-                  ),
+                    colors: type.gradientColors),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
                       color: type.gradientColors[0].withValues(alpha: 0.3),
                       blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+                      offset: const Offset(0, 4))]),
                 child: Icon(
                   type.icon,
                   color: Colors.white,
-                  size: 28,
-                ),
-              ),
+                  size: 28)),
               const SizedBox(height: 12),
               Text(
                 type.displayName,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
+                  fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center),
               const SizedBox(height: 4),
               Text(
                 type.description,
                 style: TextStyle(
                   fontSize: 12,
                   color: AppColors.textSecondary,
-                  height: 1.2,
-                ),
+                  height: 1.2),
                 textAlign: TextAlign.center,
                 maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-        ),
-      )
+                overflow: TextOverflow.ellipsis)])))
           .animate()
           .fadeIn(
             duration: 600.ms,
-            delay: Duration(milliseconds: 100 * index),
-          )
+            delay: Duration(milliseconds: 100 * index))
           .slideY(
             begin: 0.2,
             end: 0,
             duration: 600.ms,
             delay: Duration(milliseconds: 100 * index),
-            curve: Curves.easeOutCubic,
-          ),
-    );
+            curve: Curves.easeOutCubic));
   }
 }

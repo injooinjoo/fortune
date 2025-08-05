@@ -59,8 +59,7 @@ class StorageService {
     fortunes.insert(0, {
       'path': path,
       'title': title,
-      'visitedAt': null,
-    });
+      'visitedAt': null});
     
     // 최대 10개까지만 저장
     if (fortunes.length > 10) {

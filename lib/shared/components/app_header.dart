@@ -75,8 +75,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.centerTitle = false,
     this.elevation = 0,
     this.backgroundColor,
-    this.foregroundColor,
-  }) : super(key: key);
+    this.foregroundColor}) : super(key: key);
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -104,8 +103,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         await Clipboard.setData(ClipboardData(text: currentUrl));
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('링크가 복사되었습니다')),
-          );
+            const SnackBar(content: Text('링크가 복사되었습니다')));
         }
       }
     }
@@ -135,13 +133,10 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     color: isDark
                         ? AppColors.textPrimaryDark.withValues(alpha: 0.1)
                         : AppColors.textPrimary.withValues(alpha: 0.1),
-                    width: 0.5,
-                  ),
-                ),
+                    width: 0.5)),
                 boxShadow: elevation > 0
                     ? GlassEffects.glassShadow(elevation: elevation)
-                    : null,
-              ),
+                    : null),
               child: SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2),
@@ -151,10 +146,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                         IconButton(
                           icon: Icon(
                             Icons.arrow_back_ios_rounded,
-                            color: foregroundColor ?? theme.iconTheme.color,
-                          ),
-                          onPressed: () => _handleBack(context),
-                        ),
+                            color: foregroundColor ?? theme.iconTheme.color),
+                          onPressed: () => _handleBack(context)),
                       if (title != null)
                         Expanded(
                           child: Padding(
@@ -162,44 +155,26 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                             child: Text(
                               title!,
                               style: theme.textTheme.headlineSmall?.copyWith(
-                                color: foregroundColor,
-                              ),
+                                color: foregroundColor),
                               textAlign: centerTitle ? TextAlign.center : TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        )
+                              overflow: TextOverflow.ellipsis)))
                       else
                         const Spacer(),
                       if (showFontSizeSelector) ...[
                         _FontSizeSelector(
                           currentSize: currentFontSize,
-                          onSizeChanged: onFontSizeChanged,
-                        ),
-                        SizedBox(width: AppSpacing.spacing2),
-                      ],
+                          onSizeChanged: onFontSizeChanged),
+                        SizedBox(width: AppSpacing.spacing2)],
                       if (showShareButton)
                         IconButton(
                           icon: Icon(
                             Icons.share_rounded,
-                            color: foregroundColor ?? theme.iconTheme.color,
-                          ),
-                          onPressed: () => _handleShare(context),
-                        ),
+                            color: foregroundColor ?? theme.iconTheme.color),
+                          onPressed: () => _handleShare(context)),
                       if (showTokenBalance) ...[
                         const TokenBalanceWidget(),
-                        SizedBox(width: AppSpacing.spacing2),
-                      ],
-                      if (showActions && actions != null) ...actions!,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+                        SizedBox(width: AppSpacing.spacing2)],
+                      if (showActions && actions != null) ...actions!]))))))));
   }
 }
 
@@ -209,8 +184,7 @@ class _FontSizeSelector extends StatelessWidget {
 
   const _FontSizeSelector({
     required this.currentSize,
-    this.onSizeChanged,
-  });
+    this.onSizeChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +193,7 @@ class _FontSizeSelector extends StatelessWidget {
     return GlassContainer(
       padding: EdgeInsets.symmetric(
         horizontal: AppSpacing.spacing3, 
-        vertical: AppSpacing.spacing1,
-      ),
+        vertical: AppSpacing.spacing1),
       borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
       blur: 10,
       child: Row(
@@ -230,25 +203,19 @@ class _FontSizeSelector extends StatelessWidget {
             label: '가',
             size: FontSize.small,
             isSelected: currentSize == FontSize.small,
-            onTap: () => onSizeChanged?.call(FontSize.small),
-          ),
+            onTap: () => onSizeChanged?.call(FontSize.small)),
           SizedBox(width: AppSpacing.spacing2),
           _SizeButton(
             label: '가',
             size: FontSize.medium,
             isSelected: currentSize == FontSize.medium,
-            onTap: () => onSizeChanged?.call(FontSize.medium),
-          ),
+            onTap: () => onSizeChanged?.call(FontSize.medium)),
           SizedBox(width: AppSpacing.spacing2),
           _SizeButton(
             label: '가',
             size: FontSize.large,
             isSelected: currentSize == FontSize.large,
-            onTap: () => onSizeChanged?.call(FontSize.large),
-          ),
-        ],
-      ),
-    );
+            onTap: () => onSizeChanged?.call(FontSize.large))]));
   }
 }
 
@@ -262,8 +229,7 @@ class _SizeButton extends StatelessWidget {
     required this.label,
     required this.size,
     required this.isSelected,
-    this.onTap,
-  });
+    this.onTap});
 
   double get fontSize {
     switch (size) {
@@ -286,23 +252,17 @@ class _SizeButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: AppSpacing.spacing2, 
-          vertical: AppSpacing.spacing1,
-        ),
+          vertical: AppSpacing.spacing1),
         decoration: BoxDecoration(
           color: isSelected
               ? theme.primaryColor.withValues(alpha: 0.2)
               : Colors.transparent,
-          borderRadius: AppDimensions.borderRadiusMedium,
-        ),
+          borderRadius: AppDimensions.borderRadiusMedium),
         child: Text(
           label,
           style: TextStyle(
             fontSize: fontSize,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color,
-          ),
-        ),
-      ),
-    );
+            color: isSelected ? theme.primaryColor : theme.textTheme.bodyLarge?.color))));
   }
 }

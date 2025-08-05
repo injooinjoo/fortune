@@ -9,8 +9,7 @@ class AppHeader extends StatelessWidget {
     Key? key,
     this.title,
     this.actions,
-    this.showBackButton = true,
-  }) : super(key: key);
+    this.showBackButton = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

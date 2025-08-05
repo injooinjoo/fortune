@@ -11,8 +11,7 @@ class OnboardingProgressBar extends StatelessWidget {
   const OnboardingProgressBar({
     super.key,
     required this.currentStep,
-    required this.totalSteps,
-  });
+    required this.totalSteps});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +30,6 @@ class OnboardingProgressBar extends StatelessWidget {
         value: adjustedCurrentStep / adjustedTotalSteps,
         backgroundColor: context.fortuneTheme.dividerColor.withValues(alpha: 0.5),
         valueColor: AlwaysStoppedAnimation<Color>(
-          Theme.of(context).primaryColor,
-        ),
-      ),
-    );
+          Theme.of(context).primaryColor)));
   }
 }

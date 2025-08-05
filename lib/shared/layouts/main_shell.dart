@@ -17,8 +17,7 @@ class MainShell extends ConsumerStatefulWidget {
   const MainShell({
     Key? key,
     required this.child,
-    required this.state,
-  }) : super(key: key);
+    required this.state}) : super(key: key);
 
   @override
   ConsumerState<MainShell> createState() => _MainShellState();
@@ -41,18 +40,14 @@ class _MainShellState extends ConsumerState<MainShell>
     );
     _slideAnimation = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(0.0, 1.0),
-    ).animate(CurvedAnimation(
+      end: const Offset(0.0, 1.0)).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut));
     _paddingAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
+      end: 0.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut));
     
     // Set initial animation state based on current route
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -141,11 +136,8 @@ class _MainShellState extends ConsumerState<MainShell>
                 final totalNavHeight = _navBarHeight + bottomPadding;
                 return Padding(
                   padding: EdgeInsets.only(bottom: 0),
-                  child: widget.child,
-                );
-              },
-            ),
-          ),
+                  child: widget.child);
+              })),
           // Navigation bar
           Positioned(
             left: 0,
@@ -155,12 +147,6 @@ class _MainShellState extends ConsumerState<MainShell>
     child: SlideTransition(
               position: _slideAnimation,
               child: FortuneBottomNavigationBar(
-                currentIndex: selectedIndex,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                currentIndex: selectedIndex)))]));
   }
 }

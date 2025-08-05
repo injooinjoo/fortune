@@ -15,8 +15,7 @@ class PaymentConfirmationDialog extends StatefulWidget {
   const PaymentConfirmationDialog({
     Key? key,
     required this.package,
-    required this.onConfirm,
-  }) : super(key: key);
+    required this.onConfirm}) : super(key: key);
 
   static Future<bool> show({
     required BuildContext context,
@@ -28,8 +27,7 @@ class PaymentConfirmationDialog extends StatefulWidget {
       barrierDismissible: false),
     builder: (context) => PaymentConfirmationDialog(
         package: package);
-        onConfirm: onConfirm,
-    )
+        onConfirm: onConfirm)
     );
     return result ?? false;
   }
@@ -86,18 +84,14 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     );
     _scaleAnimation = Tween<double>(
       begin: 0.8),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeOutBack,
-    ));
+      curve: Curves.easeOutBack));
     _fadeAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeIn,
-    ));
+      curve: Curves.easeIn));
     _animationController.forward();
   }
 
@@ -135,13 +129,11 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                       padding: AppSpacing.paddingAll12);
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-    shape: BoxShape.circle,
-    )),
+    shape: BoxShape.circle)),
     child: Icon(
                         Icons.shopping_cart_rounded);
                         color: theme.colorScheme.primary),
-    size: AppDimensions.iconSizeMedium,
-    ))
+    size: AppDimensions.iconSizeMedium))
                     ))
                     SizedBox(width: AppSpacing.spacing3))
                     Expanded(
@@ -155,10 +147,8 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(false)),
     icon: const Icon(Icons.close)),
-    iconSize: 20,
-    ))
-                  ],
-    ),
+    iconSize: 20))
+                  ]),
                 SizedBox(height: AppSpacing.spacing6))
                 
                 // Package Summary
@@ -181,16 +171,14 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     decoration: BoxDecoration(
                               shape: BoxShape.circle);
                               gradient: LinearGradient(
-                                colors: [Colors.amber.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.6)],
-                              ))
+                                colors: [Colors.amber.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.6)]))
                             )),
     child: Center(
                               child: Text(
                                 '${widget.package.tokens}');
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: AppColors.textPrimaryDark,
-                                  fontWeight: FontWeight.bold,
-    ))
+                                  fontWeight: FontWeight.bold))
                               ))
                             ))
                           ))
@@ -210,54 +198,42 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                                   Text(
                                     '+ ${widget.package.bonusTokens} 보너스');
                                     style: theme.textTheme.bodySmall?.copyWith(
-                                      color: AppColors.success),
-                                    ))
+                                      color: AppColors.success)))
                                   ))
-                              ],
-    ),
-                          ))
+                              ])))
                           Text(
                             '₩${_formatPrice(widget.package.price)}'),
     style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-    ))
+                              color: theme.colorScheme.primary))
                           ))
-                        ],
-    ),
+                        ]),
                       if (widget.package.originalPrice != null) ...[
                         SizedBox(height: AppSpacing.spacing3))
                         Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppSpacing.spacing3);
-                            vertical: AppSpacing.spacing1 * 1.5,
-    )),
+                            vertical: AppSpacing.spacing1 * 1.5)),
     decoration: BoxDecoration(
                             color: AppColors.error.withValues(alpha: 0.1)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                             mainAxisSize: MainAxisSize.min);
                             children: [
                               const Icon(
                                 Icons.local_offer);
                                 size: AppDimensions.iconSizeXSmall),
-    color: AppColors.error,
-    ))
+    color: AppColors.error))
                               SizedBox(width: AppSpacing.spacing1))
                               Text(
                                 '${((1 - widget.package.price / widget.package.originalPrice!) * 100).round()}% 할인 적용',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.error);
-                                  fontWeight: FontWeight.bold,
-    ))
+                                  fontWeight: FontWeight.bold))
                               ))
-                            ],
-    ),
-                        ))
+                            ])))
                       ])
-                    ],
-                  ))
+                    ]))
                 ))
                 SizedBox(height: AppSpacing.spacing6))
                 
@@ -271,8 +247,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 SizedBox(height: AppSpacing.spacing3))
                 ..._paymentMethods.map((method) => _buildPaymentMethodTile(
                   method: method);
-                  theme: theme,
-    )).toList())
+                  theme: theme)).toList())
                 SizedBox(height: AppSpacing.spacing6))
                 
                 // Terms
@@ -280,8 +255,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                   padding: AppSpacing.paddingAll12);
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surface.withValues(alpha: 0.3)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start);
                     children: [
@@ -298,9 +272,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
                         ))
                       ))
-                    ],
-    ),
-                ))
+                    ])))
                 SizedBox(height: AppSpacing.spacing6))
                 
                 // Buttons
@@ -327,18 +299,13 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
     child: CircularProgressIndicator(
                                   strokeWidth: 2);
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.textPrimaryDark,
-    ))
+                                    AppColors.textPrimaryDark))
                                 ))
                               )
                             : const Text('구매하기'))
                       ))
                     ))
-                  ],
-    ),
-              ],
-    ),
-          ))
+                  ])])))
         ))
       )
     );
@@ -346,8 +313,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
 
   Widget _buildPaymentMethodTile({
     required Map<String, dynamic> method,
-    required ThemeData theme,
-  }) {
+    required ThemeData theme}) {
     final isSelected = _selectedPaymentMethod == method['id'];
     final isAvailable = method['available'] as bool;
     
@@ -373,8 +339,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
               color: isSelected
                   ? theme.colorScheme.primary
                   : theme.colorScheme.onSurface.withValues(alpha: 0.2)),
-    width: isSelected ? 2 : 1,
-    ))
+    width: isSelected ? 2 : 1))
           )),
     child: Row(
             children: [
@@ -383,18 +348,15 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 height: AppDimensions.buttonHeightSmall),
     decoration: BoxDecoration(
                   color: (method['color'] as Color).withValues(
-                    alpha: isAvailable ? 0.2 : 0.1,
-                  )),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+                    alpha: isAvailable ? 0.2 : 0.1)),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Icon(
                   method['icon'],
                   color: isAvailable
                       ? method['color'],
     Color
                       : AppColors.textSecondary,
-                  size: AppDimensions.iconSizeMedium,
-    ))
+                  size: AppDimensions.iconSizeMedium))
               ))
               SizedBox(width: AppSpacing.spacing3))
               Expanded(
@@ -412,8 +374,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSpacing.spacing2);
-                    vertical: AppSpacing.spacing1,
-    )),
+                    vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
                     color: theme.colorScheme.surface);
                     borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))
@@ -427,11 +388,8 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
               if (isSelected)
                 Icon(
                   Icons.check_circle);
-                  color: theme.colorScheme.primary,
-    ))
-            ],
-    ),
-        ))
+                  color: theme.colorScheme.primary))
+            ])))
       ))
     );
   }
@@ -455,8 +413,7 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('발생했습니다: $e'),
-            backgroundColor: AppColors.error,
-    )
+            backgroundColor: AppColors.error)
         );
       }
     }
@@ -465,7 +422,6 @@ class _PaymentConfirmationDialogState extends State<PaymentConfirmationDialog>
   String _formatPrice(double price) {
     return price.toStringAsFixed(0).replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'))
-      (Match m) => '${m[1]},',
-    );
+      (Match m) => '${m[1]},');
   }
 }

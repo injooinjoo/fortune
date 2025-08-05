@@ -119,13 +119,11 @@ class AppDimensions {
 
   static BorderRadius borderRadiusTop(double radius) => BorderRadius.only(
         topLeft: Radius.circular(radius),
-        topRight: Radius.circular(radius),
-      );
+        topRight: Radius.circular(radius));
 
   static BorderRadius borderRadiusBottom(double radius) => BorderRadius.only(
         bottomLeft: Radius.circular(radius),
-        bottomRight: Radius.circular(radius),
-      );
+        bottomRight: Radius.circular(radius));
 
   // Device type helpers
   static bool isMobile(BuildContext context) =>
@@ -144,8 +142,7 @@ class AppDimensions {
     BuildContext context, {
     required T mobile,
     T? tablet,
-    T? desktop,
-  }) {
+    T? desktop}) {
     final width = MediaQuery.of(context).size.width;
     if (width >= breakpointDesktop && desktop != null) return desktop;
     if (width >= breakpointTablet && tablet != null) return tablet;

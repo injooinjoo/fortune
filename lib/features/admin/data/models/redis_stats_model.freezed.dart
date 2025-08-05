@@ -75,8 +75,7 @@ class _$RedisStatsModelCopyWithImpl<$Res, $Val extends RedisStatsModel>
     Object? cache = null,
     Object? operations = null,
     Object? performance = null,
-    Object? rateLimits = null,
-  }) {
+    Object? rateLimits = null}) {
     return _then(_value.copyWith(
       connection: null == connection
           ? _value.connection
@@ -97,8 +96,7 @@ class _$RedisStatsModelCopyWithImpl<$Res, $Val extends RedisStatsModel>
       rateLimits: null == rateLimits
           ? _value.rateLimits
           : rateLimits // ignore: cast_nullable_to_non_nullable
-              as Map<String, RateLimitInfo>,
-    ) as $Val);
+              as Map<String, RateLimitInfo>) as $Val);
   }
 
   /// Create a copy of RedisStatsModel
@@ -184,8 +182,7 @@ class __$$RedisStatsModelImplCopyWithImpl<$Res>
     Object? cache = null,
     Object? operations = null,
     Object? performance = null,
-    Object? rateLimits = null,
-  }) {
+    Object? rateLimits = null}) {
     return _then(_$RedisStatsModelImpl(
       connection: null == connection
           ? _value.connection
@@ -206,8 +203,7 @@ class __$$RedisStatsModelImplCopyWithImpl<$Res>
       rateLimits: null == rateLimits
           ? _value._rateLimits
           : rateLimits // ignore: cast_nullable_to_non_nullable
-              as Map<String, RateLimitInfo>,
-    ));
+              as Map<String, RateLimitInfo>));
   }
 }
 
@@ -279,8 +275,7 @@ class _$RedisStatsModelImpl implements _RedisStatsModel {
   @override
   Map<String, dynamic> toJson() {
     return _$$RedisStatsModelImplToJson(
-      this,
-    );
+      this);
   }
 }
 
@@ -370,8 +365,7 @@ class _$RedisConnectionInfoCopyWithImpl<$Res, $Val extends RedisConnectionInfo>
     Object? status = null,
     Object? error = freezed,
     Object? totalConnections = null,
-    Object? activeConnections = null,
-  }) {
+    Object? activeConnections = null}) {
     return _then(_value.copyWith(
       connected: null == connected
           ? _value.connected
@@ -392,8 +386,7 @@ class _$RedisConnectionInfoCopyWithImpl<$Res, $Val extends RedisConnectionInfo>
       activeConnections: null == activeConnections
           ? _value.activeConnections
           : activeConnections // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+              as int) as $Val);
   }
 }
 
@@ -430,8 +423,7 @@ class __$$RedisConnectionInfoImplCopyWithImpl<$Res>
     Object? status = null,
     Object? error = freezed,
     Object? totalConnections = null,
-    Object? activeConnections = null,
-  }) {
+    Object? activeConnections = null}) {
     return _then(_$RedisConnectionInfoImpl(
       connected: null == connected
           ? _value.connected
@@ -452,8 +444,7 @@ class __$$RedisConnectionInfoImplCopyWithImpl<$Res>
       activeConnections: null == activeConnections
           ? _value.activeConnections
           : activeConnections // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+              as int));
   }
 }
 
@@ -518,8 +509,7 @@ class _$RedisConnectionInfoImpl implements _RedisConnectionInfo {
   @override
   Map<String, dynamic> toJson() {
     return _$$RedisConnectionInfoImplToJson(
-      this,
-    );
+      this);
   }
 }
 
@@ -608,8 +598,7 @@ class _$RedisCacheStatsCopyWithImpl<$Res, $Val extends RedisCacheStats>
     Object? misses = null,
     Object? hitRate = null,
     Object? totalKeys = null,
-    Object? memoryUsage = null,
-  }) {
+    Object? memoryUsage = null}) {
     return _then(_value.copyWith(
       hits: null == hits
           ? _value.hits
@@ -630,8 +619,7 @@ class _$RedisCacheStatsCopyWithImpl<$Res, $Val extends RedisCacheStats>
       memoryUsage: null == memoryUsage
           ? _value.memoryUsage
           : memoryUsage // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+              as String) as $Val);
   }
 }
 
@@ -668,8 +656,7 @@ class __$$RedisCacheStatsImplCopyWithImpl<$Res>
     Object? misses = null,
     Object? hitRate = null,
     Object? totalKeys = null,
-    Object? memoryUsage = null,
-  }) {
+    Object? memoryUsage = null}) {
     return _then(_$RedisCacheStatsImpl(
       hits: null == hits
           ? _value.hits
@@ -690,8 +677,7 @@ class __$$RedisCacheStatsImplCopyWithImpl<$Res>
       memoryUsage: null == memoryUsage
           ? _value.memoryUsage
           : memoryUsage // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+              as String));
   }
 }
 
@@ -755,8 +741,7 @@ class _$RedisCacheStatsImpl implements _RedisCacheStats {
   @override
   Map<String, dynamic> toJson() {
     return _$$RedisCacheStatsImplToJson(
-      this,
-    );
+      this);
   }
 }
 
@@ -841,8 +826,7 @@ class _$RedisOperationStatsCopyWithImpl<$Res, $Val extends RedisOperationStats>
     Object? writes = null,
     Object? deletes = null,
     Object? errors = null,
-    Object? totalOperations = null,
-  }) {
+    Object? totalOperations = null}) {
     return _then(_value.copyWith(
       reads: null == reads
           ? _value.reads
@@ -863,8 +847,7 @@ class _$RedisOperationStatsCopyWithImpl<$Res, $Val extends RedisOperationStats>
       totalOperations: null == totalOperations
           ? _value.totalOperations
           : totalOperations // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+              as int) as $Val);
   }
 }
 
@@ -897,8 +880,7 @@ class __$$RedisOperationStatsImplCopyWithImpl<$Res>
     Object? writes = null,
     Object? deletes = null,
     Object? errors = null,
-    Object? totalOperations = null,
-  }) {
+    Object? totalOperations = null}) {
     return _then(_$RedisOperationStatsImpl(
       reads: null == reads
           ? _value.reads
@@ -919,8 +901,7 @@ class __$$RedisOperationStatsImplCopyWithImpl<$Res>
       totalOperations: null == totalOperations
           ? _value.totalOperations
           : totalOperations // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+              as int));
   }
 }
 
@@ -983,8 +964,7 @@ class _$RedisOperationStatsImpl implements _RedisOperationStats {
   @override
   Map<String, dynamic> toJson() {
     return _$$RedisOperationStatsImplToJson(
-      this,
-    );
+      this);
   }
 }
 
@@ -1072,8 +1052,7 @@ class _$RedisPerformanceStatsCopyWithImpl<$Res,
     Object? avgResponseTime = null,
     Object? maxResponseTime = null,
     Object? minResponseTime = null,
-    Object? slowQueries = null,
-  }) {
+    Object? slowQueries = null}) {
     return _then(_value.copyWith(
       avgResponseTime: null == avgResponseTime
           ? _value.avgResponseTime
@@ -1090,8 +1069,7 @@ class _$RedisPerformanceStatsCopyWithImpl<$Res,
       slowQueries: null == slowQueries
           ? _value.slowQueries
           : slowQueries // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+              as int) as $Val);
   }
 }
 
@@ -1128,8 +1106,7 @@ class __$$RedisPerformanceStatsImplCopyWithImpl<$Res>
     Object? avgResponseTime = null,
     Object? maxResponseTime = null,
     Object? minResponseTime = null,
-    Object? slowQueries = null,
-  }) {
+    Object? slowQueries = null}) {
     return _then(_$RedisPerformanceStatsImpl(
       avgResponseTime: null == avgResponseTime
           ? _value.avgResponseTime
@@ -1146,8 +1123,7 @@ class __$$RedisPerformanceStatsImplCopyWithImpl<$Res>
       slowQueries: null == slowQueries
           ? _value.slowQueries
           : slowQueries // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+              as int));
   }
 }
 
@@ -1209,8 +1185,7 @@ class _$RedisPerformanceStatsImpl implements _RedisPerformanceStats {
   @override
   Map<String, dynamic> toJson() {
     return _$$RedisPerformanceStatsImplToJson(
-      this,
-    );
+      this);
   }
 }
 
@@ -1292,8 +1267,7 @@ class _$RateLimitInfoCopyWithImpl<$Res, $Val extends RateLimitInfo>
     Object? limit = null,
     Object? used = null,
     Object? remaining = null,
-    Object? resetAt = null,
-  }) {
+    Object? resetAt = null}) {
     return _then(_value.copyWith(
       tier: null == tier
           ? _value.tier
@@ -1314,8 +1288,7 @@ class _$RateLimitInfoCopyWithImpl<$Res, $Val extends RateLimitInfo>
       resetAt: null == resetAt
           ? _value.resetAt
           : resetAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+              as DateTime) as $Val);
   }
 }
 
@@ -1348,8 +1321,7 @@ class __$$RateLimitInfoImplCopyWithImpl<$Res>
     Object? limit = null,
     Object? used = null,
     Object? remaining = null,
-    Object? resetAt = null,
-  }) {
+    Object? resetAt = null}) {
     return _then(_$RateLimitInfoImpl(
       tier: null == tier
           ? _value.tier
@@ -1370,8 +1342,7 @@ class __$$RateLimitInfoImplCopyWithImpl<$Res>
       resetAt: null == resetAt
           ? _value.resetAt
           : resetAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+              as DateTime));
   }
 }
 
@@ -1433,8 +1404,7 @@ class _$RateLimitInfoImpl implements _RateLimitInfo {
   @override
   Map<String, dynamic> toJson() {
     return _$$RateLimitInfoImplToJson(
-      this,
-    );
+      this);
   }
 }
 

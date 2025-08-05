@@ -16,9 +16,7 @@ class GlassEffects {
       end: Alignment.bottomRight,
       colors: [
         AppColors.textPrimaryDark.withValues(alpha: opacity),
-        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5),
-      ],
-    );
+        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5)]);
   }
 
   static LinearGradient darkGradient({double opacity = 0.1}) {
@@ -27,69 +25,56 @@ class GlassEffects {
       end: Alignment.bottomRight,
       colors: [
         AppColors.textPrimaryDark.withValues(alpha: opacity),
-        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5),
-      ],
-    );
+        AppColors.textPrimaryDark.withValues(alpha: opacity * 0.5)]);
   }
 
   static LinearGradient coloredGradient({
     required Color color,
-    double opacity = 0.3,
-  }) {
+    double opacity = 0.3}) {
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: [
         color.withValues(alpha: opacity),
-        color.withValues(alpha: opacity * 0.5),
-      ],
-    );
+        color.withValues(alpha: opacity * 0.5)]);
   }
 
   static LinearGradient multiColorGradient({
     required List<Color> colors,
     List<double>? stops,
     AlignmentGeometry begin = Alignment.topLeft,
-    AlignmentGeometry end = Alignment.bottomRight,
-  }) {
+    AlignmentGeometry end = Alignment.bottomRight}) {
     return LinearGradient(
       begin: begin,
       end: end,
       colors: colors,
-      stops: stops,
-    );
+      stops: stops);
   }
 
   static List<BoxShadow> glassShadow({
     Color? color,
     double elevation = 8,
-    double spread = 0,
-  }) {
+    double spread = 0}) {
     return [
       BoxShadow(
         color: (color ?? AppColors.textPrimary).withValues(alpha: 0.1),
         blurRadius: elevation * 2,
         offset: Offset(0, elevation),
-        spreadRadius: spread,
-      ),
+        spreadRadius: spread),
       BoxShadow(
         color: (color ?? AppColors.textPrimary).withValues(alpha: 0.05),
         blurRadius: elevation,
         offset: Offset(0, elevation * 0.5),
-        spreadRadius: spread * 0.5,
-      ),
-    ];
+        spreadRadius: spread * 0.5)];
   }
 
   static Border glassBorder({
     Color? color,
     double width = 1.5,
-    double opacity = 0.2,
-  }) {
+    double opacity = 0.2}) {
     return Border.all(
       color: (color ?? AppColors.textPrimaryDark).withValues(alpha: opacity),
-      width: width,
-    );
+      width: width);
   }
 
   static ImageFilter glassBlur({double blur = defaultBlur}) {
@@ -119,8 +104,7 @@ class LiquidGlassContainer extends StatefulWidget {
     this.liquidColors = const [
       Color(0xFF7C3AED),
       AppColors.primary,
-      Color(0xFF06B6D4),
-    ]
+      Color(0xFF06B6D4)]
   }) : super(key: key);
 
   @override
@@ -137,15 +121,12 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: widget.animationDuration,
-    )..repeat(reverse: true);
+      duration: widget.animationDuration)..repeat(reverse: true);
     _animation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut));
   }
 
   @override
@@ -174,24 +155,15 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
                     end: Alignment(1 - _animation.value, 1),
                     colors: widget.liquidColors.map((color) => 
                       color.withValues(alpha: 0.1 + (_animation.value * 0.1))
-                    ).toList(),
-                  ),
+                    ).toList()),
                   borderRadius: widget.borderRadius ?? BorderRadius.circular(AppDimensions.radiusXLarge),
                   border: GlassEffects.glassBorder(
-                    opacity: 0.2 + (_animation.value * 0.1),
-                  ),
+                    opacity: 0.2 + (_animation.value * 0.1)),
                   boxShadow: GlassEffects.glassShadow(
-                    elevation: 10 + (_animation.value * 5),
-                  ),
-                ),
+                    elevation: 10 + (_animation.value * 5))),
                 padding: widget.padding,
-                child: widget.child,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                child: widget.child))));
+      });
   }
 }
 
@@ -208,8 +180,7 @@ class ShimmerGlass extends StatefulWidget {
     this.width,
     this.height,
     this.borderRadius,
-    this.shimmerColor = AppColors.textPrimaryDark,
-  }) : super(key: key);
+    this.shimmerColor = AppColors.textPrimaryDark}) : super(key: key);
 
   @override
   State<ShimmerGlass> createState() => _ShimmerGlassState();
@@ -225,15 +196,12 @@ class _ShimmerGlassState extends State<ShimmerGlass>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
+      duration: const Duration(seconds: 2))..repeat();
     _animation = Tween<double>(
       begin: -1.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
+      end: 2.0).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.linear,
-    ));
+      curve: Curves.linear));
   }
 
   @override
@@ -263,17 +231,8 @@ class _ShimmerGlassState extends State<ShimmerGlass>
                         widget.shimmerColor.withValues(alpha: 0.1),
                         widget.shimmerColor.withValues(alpha: 0.2),
                         widget.shimmerColor.withValues(alpha: 0.1),
-                        Colors.transparent,
-                      ],
-                      stops: const [0.0, 0.35, 0.5, 0.65, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                        Colors.transparent],
+                      stops: const [0.0, 0.35, 0.5, 0.65, 1.0]))))]));
+      });
   }
 }

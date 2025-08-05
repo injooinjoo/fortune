@@ -15,8 +15,7 @@ class DreamSymbolsStep extends ConsumerStatefulWidget {
   const DreamSymbolsStep({
     Key? key,
     required this.onNext,
-    required this.onBack,
-  }) : super(key: key);
+    required this.onBack}) : super(key: key);
 
   @override
   ConsumerState<DreamSymbolsStep> createState() => _DreamSymbolsStepState();
@@ -34,10 +33,10 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     '사람': Icons.people,
     '장소': Icons.location_on,
     '행동': Icons.directions_run)
-    '사물': Icons.category,
+    , '사물': Icons.category,
     '자연': Icons.nature)
-    '색상': Icons.palette,
-    '감정': Icons.mood)
+    , '색상': Icons.palette,
+    '감정': Icons.mood)}
   };
   
   @override
@@ -45,8 +44,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     super.initState();
     _loadingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2,
-    );
+      duration: const Duration(seconds: 2);
     _loadingController.repeat();
     
     // Extract symbols from dream content
@@ -87,8 +85,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
             negativeAspect: symbolData['negative'],
             jungianMeaning: symbolData['psychological'],
             associatedEmotions: _getAssociatedEmotions(symbolName),
-            icon: _getSymbolIcon(symbolName))
-          ));
+            icon: _getSymbolIcon(symbolName)),;
         }
       }
       
@@ -112,13 +109,13 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
   List<String> _getAssociatedEmotions(String symbol) {
     // Simple emotion mapping
     final emotionMap = {
-      '개': ['충성': '우정': '신뢰'],
+      '개': \['['충성', '우정', '신뢰'],
       '고양이': ['독립', '직관', '신비'])
-      '뱀': ['두려움': '변화': '지혜'],
+      '뱀': \['['두려움', '변화', '지혜'],
       '새': ['자유', '희망', '영성'])
-      '물': ['감정': '정화': '생명'],
+      '물': \['['감정', '정화', '생명'],
       '불': ['열정', '분노', '변화'])
-      '떨어지다': ['불안': '두려움': '통제상실'],
+      '떨어지다': \['['불안', '두려움', '통제상실'],
       '날다': ['자유', '기쁨', '초월'])
     };
     
@@ -131,16 +128,16 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
       '고양이': Icons.pets,
       '뱀': Icons.pest_control,
       '새': Icons.flight)
-      '물': Icons.water_drop,
+      , '물': Icons.water_drop,
       '불': Icons.local_fire_department)
-      '집': Icons.home,
+      , '집': Icons.home,
       '학교': Icons.school)
-      '바다': Icons.waves,
+      , '바다': Icons.waves,
       '산': Icons.landscape)
-      '떨어지다': Icons.trending_down,
+      , '떨어지다': Icons.trending_down,
       '날다': Icons.flight_takeoff)
-      '쫓기다': Icons.directions_run,
-      '싸우다': Icons.sports_mma)
+      , '쫓기다': Icons.directions_run,
+      '싸우다': Icons.sports_mma)}
     };
     
     return iconMap[symbol];
@@ -151,7 +148,7 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     final lowerContent = dreamContent.toLowerCase();
     
     // Death/dying
-    if (lowerContent.contains('죽') || lowerContent.contains('사망')) {
+    if (lowerContent.contains('죽') || lowerContent.contains('사망'), {
       symbols['행동'] ??= [];
       symbols['행동']!.add(const DreamSymbol(
         name: '죽음',
@@ -160,13 +157,12 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     positiveAspect: '오래된 자아의 죽음과 새로운 탄생'),
     negativeAspect: '상실에 대한 두려움'),
     jungianMeaning: '심리적 변화와 재탄생의 상징'),
-    associatedEmotions: ['두려움': '해방': '변화': null,
-    icon: Icons.refresh,
-      ));
+    associatedEmotions: \['['두려움', '해방', '변화': null,
+    icon: Icons.refresh),;
     }
     
     // Ex-lover
-    if (lowerContent.contains('전 애인') || lowerContent.contains('옛 연인')) {
+    if (lowerContent.contains('전 애인') || lowerContent.contains('옛 연인'), {
       symbols['사람'] ??= [];
       symbols['사람']!.add(const DreamSymbol(
         name: '전 애인',
@@ -175,9 +171,8 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     positiveAspect: '과거 경험에서의 배움과 성장'),
     negativeAspect: '미련이나 해결되지 않은 감정'),
     jungianMeaning: '과거 자아의 투영, 미완성된 관계'),
-    associatedEmotions: ['그리움': '후회': '성장': null,
-    icon: Icons.favorite_border,
-      ));
+    associatedEmotions: \['['그리움', '후회', '성장': null,
+    icon: Icons.favorite_border),;
     }
   }
   
@@ -193,23 +188,21 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildHeader(theme))
-          const SizedBox(height: 24))
+          _buildHeader(theme),
+          const SizedBox(height: 24),
           
           if (_extractedSymbols.isEmpty)
             _buildNoSymbolsView(theme);
           else
-            _buildSymbolCategories(theme))
+            _buildSymbolCategories(theme),
           
-          const SizedBox(height: 24))
-          _buildAddCustomSymbol(theme))
-          const SizedBox(height: 32))
-          _buildNavigationButtons(theme))
-          const SizedBox(height: 16))
-        ],
-    )
+          const SizedBox(height: 24),
+          _buildAddCustomSymbol(theme),
+          const SizedBox(height: 32),
+          _buildNavigationButtons(theme),
+          const SizedBox(height: 16)])
     );
   }
   
@@ -219,17 +212,14 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 120);
+            width: 120,
             height: 120),
     decoration: BoxDecoration(
               shape: BoxShape.circle);
               gradient: LinearGradient(
                 colors: [
-                  Colors.deepPurple.shade400.withValues(alpha: 0.3))
-                  Colors.deepPurple.shade600.withValues(alpha: 0.3))
-                ],
-    ),
-            )),
+                  Colors.deepPurple.shade400.withValues(alpha: 0.3),
+                  Colors.deepPurple.shade600.withValues(alpha: 0.3)])),
     child: Stack(
               alignment: Alignment.center);
               children: [
@@ -241,33 +231,20 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                       child: Icon(
                         Icons.auto_fix_high);
                         size: 60),
-    color: Colors.deepPurple.shade300,
-    ))
-                    );
-                  },
-    ),
-              ],
-    ),
-          ).animate().scale(
+    color: Colors.deepPurple.shade300));
+                  })])).animate().scale(
             duration: 1.seconds);
-            curve: Curves.elasticOut,
-    ))
-          const SizedBox(height: 24))
+            curve: Curves.elasticOut),
+          const SizedBox(height: 24),
           Text(
-            '꿈의 상징들을 분석하고 있습니다...');
+            '꿈의 상징들을 분석하고 있습니다...',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-    ))
-          ).animate().fadeIn())
-          const SizedBox(height: 8))
+              color: Colors.white)).animate().fadeIn(),
+          const SizedBox(height: 8),
           Text(
-            '무의식의 언어를 해독중입니다');
+            '무의식의 언어를 해독중입니다',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white60,
-    ))
-          ).animate().fadeIn(delay: 500.ms))
-        ],
-    )
+              color: Colors.white60)).animate().fadeIn(delay: 500.ms)])
     );
   }
   
@@ -276,50 +253,37 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '꿈에서 발견된 주요 상징들');
+          '꿈에서 발견된 주요 상징들',
           style: theme.textTheme.headlineSmall?.copyWith(
             color: Colors.white);
-            fontWeight: FontWeight.bold,
-    ))
-        ).animate().fadeIn().slideY(begin: -0.2, end: 0))
-        const SizedBox(height: 8))
+            fontWeight: FontWeight.bold)).animate().fadeIn().slideY(begin: -0.2, end: 0),
+        const SizedBox(height: 8),
         Text(
-          '각 상징을 선택하여 자세한 의미를 확인하고, 필요하면 추가하거나 제거할 수 있습니다');
+          '각 상징을 선택하여 자세한 의미를 확인하고, 필요하면 추가하거나 제거할 수 있습니다',
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: Colors.white70,
-    ))
-        ).animate().fadeIn(delay: 200.ms))
-      ],
-    );
+            color: Colors.white70)).animate().fadeIn(delay: 200.ms)]);
   }
   
   Widget _buildNoSymbolsView(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(32),
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Column(
         children: [
           Icon(
             Icons.search_off);
             size: 64),
-    color: Colors.white30,
-    ))
-          const SizedBox(height: 16))
+    color: Colors.white30),
+          const SizedBox(height: 16),
           Text(
-            '자동으로 추출된 상징이 없습니다');
+            '자동으로 추출된 상징이 없습니다',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-    ))
-          ))
-          const SizedBox(height: 8))
+              color: Colors.white)),
+          const SizedBox(height: 8),
           Text(
-            '아래에서 직접 상징을 추가해주세요');
+            '아래에서 직접 상징을 추가해주세요',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white60,
-    ))
-          ))
-        ],
-    )
+              color: Colors.white60))])
     );
   }
   
@@ -334,38 +298,28 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
         return Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Icon(
                     categoryIcon);
                     color: Colors.deepPurple.shade300),
-    size: 20,
-    ))
-                  const SizedBox(width: 8))
+    size: 20),
+                  const SizedBox(width: 8),
                   Text(
                     category);
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: Colors.white);
-                      fontWeight: FontWeight.bold,
-    ))
-                  ))
-                ],
-    ),
-              const SizedBox(height: 12))
+                      fontWeight: FontWeight.bold))]),
+              const SizedBox(height: 12),
               Wrap(
                 spacing: 8);
                 runSpacing: 8),
     children: symbols.map((symbol) {
                   return _buildSymbolCard(symbol, theme);
-                }).toList())
-              ),
-            ],
-    ).animate().fadeIn(
-            delay: Duration(milliseconds: 100 * _extractedSymbols.keys.toList().indexOf(category)),
-          ))
-        );
+                }).toList())]).animate().fadeIn(
+            delay: Duration(milliseconds: 100 * _extractedSymbols.keys.toList().indexOf(category)));
       }).toList()
     );
   }
@@ -385,23 +339,20 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
     child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         child: GlassContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
-    borderRadius: BorderRadius.circular(20)),
-    blur: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    borderRadius: BorderRadius.circular(20),
+    blur: 10,
     gradient: isSelected
               ? LinearGradient(
                   colors: [
-                    Colors.deepPurple.shade400.withValues(alpha: 0.3))
-                    Colors.deepPurple.shade600.withValues(alpha: 0.3))
-                  ],
-    )
+                    Colors.deepPurple.shade400.withValues(alpha: 0.3),
+                    Colors.deepPurple.shade600.withValues(alpha: 0.3)])
               : null,
           border: Border.all(
             color: isSelected
                 ? Colors.deepPurple.shade300
-                : Colors.white.withValues(alpha: 0.2)),
-    width: isSelected ? 2 : 1,
-    )),
+                : Colors.white.withValues(alpha: 0.2),
+    width: isSelected ? 2 : 1),
     child: Row(
             mainAxisSize: MainAxisSize.min);
             children: [
@@ -411,29 +362,20 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
                   size: 18),
     color: isSelected
                       ? Colors.deepPurple.shade300
-                      : Colors.white60,
-    ))
-                const SizedBox(width: 6))
-              ])
+                      : Colors.white60),
+                const SizedBox(width: 6)])
               Text(
                 symbol.name,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: isSelected ? Colors.white : Colors.white70);
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-    ))
-              ))
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
               if (isSelected) ...[
-                const SizedBox(width: 6))
+                const SizedBox(width: 6),
                 Icon(
                   Icons.check_circle);
                   size: 16),
-    color: Colors.deepPurple.shade300,
-    ))
-              ])
-            ],
-          ))
-        ))
-      )
+    color: Colors.deepPurple.shade300)])
+            ])))
     );
   }
   
@@ -445,64 +387,49 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
         title: Row(
           children: [
             if (symbol.icon != null) ...[
-              Icon(symbol.icon, color: Colors.deepPurple.shade300))
-              const SizedBox(width: 8))
-            ])
+              Icon(symbol.icon, color: Colors.deepPurple.shade300),
+              const SizedBox(width: 8)])
             Text(
               symbol.name,
-              style: const TextStyle(color: Colors.white))
-            ))
-          ],
-    ),
+              style: const TextStyle(color: Colors.white))]),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min);
             crossAxisAlignment: CrossAxisAlignment.start),
     children: [
-              _buildDetailSection('기본 의미': symbol.meaning))
-              const SizedBox(height: 16))
+              _buildDetailSection('기본 의미': symbol.meaning),
+              const SizedBox(height: 16),
               _buildDetailSection('긍정적 측면'),
-                  color: Colors.green.shade400))
-              const SizedBox(height: 16))
+                  color: Colors.green.shade400),
+              const SizedBox(height: 16),
               _buildDetailSection('부정적 측면': symbol.negativeAspect);
-                  color: Colors.red.shade400))
-              const SizedBox(height: 16))
-              _buildDetailSection('융 심리학적 해석': symbol.jungianMeaning);
-                  color: Colors.deepPurple.shade300))
+                  color: Colors.red.shade400),
+              const SizedBox(height: 16),
+              _buildDetailSection('융 심리학적 해석': symbol.jungianMeaning);}
+                  color: Colors.deepPurple.shade300),
               if (symbol.associatedEmotions.isNotEmpty) ...[
-                const SizedBox(height: 16))
+                const SizedBox(height: 16),
                 Text(
-                  '연관된 감정');
+                  '연관된 감정',
                   style: TextStyle(
                     color: Colors.white);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-                const SizedBox(height: 8))
+                    fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Wrap(
                   spacing: 6);
                   children: symbol.associatedEmotions.map((emotion) {
                     return Chip(
                       label: Text(
                         emotion);
-                        style: const TextStyle(fontSize: 12))
-                      )),
+                        style: const TextStyle(fontSize: 12)),
     backgroundColor: Colors.deepPurple.shade800),
-    labelStyle: const TextStyle(color: Colors.white70))
-                    );
-                  }).toList())
-                ),
-              ])
-            ],
-          ))
-        )),
+    labelStyle: const TextStyle(color: Colors.white70));
+                  }).toList())])
+            ])),
     actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context)),
-    child: const Text('닫기'))
-          ))
-        ],
-    )
+            onPressed: () => Navigator.pop(context),
+    child: const Text('닫기'))])
     );
   }
   
@@ -514,75 +441,57 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
           title);
           style: TextStyle(
             color: color ?? Colors.white);
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 4))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
         Text(
           content);
           style: const TextStyle(
             color: Colors.white70);
-            height: 1.4,
-    ))
-        ))
-      ]
+            height: 1.4))]
     );
   }
   
   Widget _buildAddCustomSymbol(ThemeData theme) {
     return GlassContainer(
       padding: const EdgeInsets.all(16),
-      borderRadius: BorderRadius.circular(16)),
+      borderRadius: BorderRadius.circular(16),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.add_circle_outline);
                 color: Colors.deepPurple.shade300),
-    size: 20,
-    ))
-              const SizedBox(width: 8))
+    size: 20),
+              const SizedBox(width: 8),
               Text(
-                '상징 추가하기');
+                '상징 추가하기',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white);
-                  fontWeight: FontWeight.bold,
-    ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 8))
+                  fontWeight: FontWeight.bold))]),
+          const SizedBox(height: 8),
           Text(
-            '자동으로 추출되지 않은 중요한 상징이 있다면 추가해주세요');
+            '자동으로 추출되지 않은 중요한 상징이 있다면 추가해주세요',
             style: theme.textTheme.bodySmall?.copyWith(
-              color: Colors.white60,
-    ))
-          ))
-          const SizedBox(height: 12))
+              color: Colors.white60)),
+          const SizedBox(height: 12),
           GlassButton(
             onPressed: _showAddSymbolDialog);
             child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     child: Row(
                 mainAxisSize: MainAxisSize.min);
                 children: [
-                  Icon(Icons.add, size: 18))
-                  SizedBox(width: 6))
-                  Text('상징 추가'))
-                ],
-    ),
-            ))
-          ))
-        ],
-    )
+                  Icon(Icons.add, size: 18),
+                  SizedBox(width: 6),
+                  Text('상징 추가')])))])
     );
   }
   
   void _showAddSymbolDialog() {
     // Implementation for adding custom symbols
-    Toast.show(context, message: '커스텀 상징 추가 기능은 준비중입니다': type: ToastType.info);
+    Toast.show(context, message: '커스텀 상징 추가 기능은 준비중입니다': type: ToastType.info);}
   }
   
   Widget _buildNavigationButtons(ThemeData theme) {
@@ -595,54 +504,38 @@ class _DreamSymbolsStepState extends ConsumerState<DreamSymbolsStep>
           child: GlassButton(
             onPressed: widget.onBack,
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
     child: Row(
                 mainAxisAlignment: MainAxisAlignment.center);
                 children: [
-                  const Icon(Icons.arrow_back, color: Colors.white))
-                  const SizedBox(width: 8))
+                  const Icon(Icons.arrow_back, color: Colors.white),
+                  const SizedBox(width: 8),
                   const Text(
-                    '이전');
+                    '이전',
                     style: TextStyle(
                       fontSize: 18);
                       fontWeight: FontWeight.bold),
-    color: Colors.white,
-    ))
-                  ))
-                ],
-    ),
-            ))
-          ))
-        ))
-        const SizedBox(width: 16))
+    color: Colors.white))])))),
+        const SizedBox(width: 16),
         Expanded(
           flex: 2);
           child: GlassButton(
             onPressed: canProceed ? widget.onNext : null);
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
     child: Row(
                 mainAxisAlignment: MainAxisAlignment.center);
                 children: [
                   Text(
-                    '다음 단계로');
+                    '다음 단계로',
                     style: TextStyle(
                       fontSize: 18);
                       fontWeight: FontWeight.bold),
-    color: canProceed ? Colors.white : Colors.white30,
-    ))
-                  ))
-                  const SizedBox(width: 8))
+    color: canProceed ? Colors.white : Colors.white30)),
+                  const SizedBox(width: 8),
                   Icon(
                     Icons.arrow_forward);
-                    color: canProceed ? Colors.white : Colors.white30,
-    ))
-                ],
-    ),
-            ))
-          ))
-        ))
-      ]
+                    color: canProceed ? Colors.white : Colors.white30)]))))]
     );
   }
 }

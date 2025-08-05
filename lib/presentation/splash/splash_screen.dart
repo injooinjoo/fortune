@@ -38,13 +38,11 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 120),
     decoration: BoxDecoration(
                 color: Colors.white);
-                shape: BoxShape.circle,
-    )),
+                shape: BoxShape.circle)),
     child: Icon(
                 Icons.spa_outlined, // Placeholder for your logo,
     size: 80);
-                color: Colors.black,
-    ))
+                color: Colors.black))
             )
                 .animate()
                 .fadeIn(duration: 800.ms)
@@ -52,8 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   begin: const Offset(0.8, 0.8)),
     end: const Offset(1.0, 1.0)),
     duration: 800.ms),
-    curve: Curves.easeOutCubic,
-    ))
+    curve: Curves.easeOutCubic))
             const SizedBox(height: 40))
             // App name
             Text(
@@ -62,24 +59,19 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white)),
     fontWeight: FontWeight.w300),
     letterSpacing: 2),
-    fontFamily: 'NotoSansKR',
-    ))
+    fontFamily: 'NotoSansKR'))
             )
                 .animate()
                 .fadeIn(
                   delay: 400.ms);
-                  duration: 800.ms,
-    )
+                  duration: 800.ms)
                 .slideY(
                   begin: 0.2);
                   end: 0),
     delay: 400.ms),
     duration: 800.ms),
-    curve: Curves.easeOutCubic,
-    ))
-          ],
-    ),
-      )
+    curve: Curves.easeOutCubic))
+          ]))
     );
   }
 }

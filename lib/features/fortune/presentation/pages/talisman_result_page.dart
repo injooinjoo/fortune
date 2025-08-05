@@ -19,8 +19,7 @@ class TalismanResultPage extends ConsumerStatefulWidget {
 
   const TalismanResultPage({
     super.key,
-    required this.result,
-  });
+    required this.result});
 
   @override
   ConsumerState<TalismanResultPage> createState() => _TalismanResultPageState();
@@ -38,8 +37,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
-    )..repeat();
+      duration: const Duration(seconds: 4))..repeat();
   }
 
   @override
@@ -93,9 +91,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             platform: platform,
             talismanType: widget.result.type.displayName,
             userName: widget.result.design.userName ?? '');
-        },
-      
-    );
+        });
   }
 
   @override
@@ -115,13 +111,9 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
+                    child: CircularProgressIndicator(strokeWidth: 2)),
                 : const Icon(Icons.share),
-            onPressed: _isCapturing ? null : _captureTalisman,
-          ),
-        ],
-      ),
+            onPressed: _isCapturing ? null : _captureTalisman)]),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -133,17 +125,13 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 key: _talismanKey,
                 child: TalismanDesignCanvas(
                   result: widget.result,
-                  size: 300,
-                ),
-              ),
-            ).animate()
+                  size: 300))).animate()
                   .fadeIn(duration: 800.ms,
               .scale(
                 begin: const Offset(0.8, 0.8),
                 end: const Offset(1, 1),
                 duration: 800.ms,
-                curve: Curves.easeOutBack,
-              ),
+                curve: Curves.easeOutBack),
             
             const SizedBox(height: 32),
             
@@ -151,8 +139,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             _buildSectionCard(
               title: '부적의 의미',
               icon: Icons.auto_awesome,
-              content: widget.result.meaning,
-            ).animate()
+              content: widget.result.meaning).animate()
                   .fadeIn(duration: 600.ms, delay: 400.ms,
               .slideY(begin: 0.2, end: 0),
             
@@ -162,8 +149,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             _buildSectionCard(
               title: '사용 방법',
               icon: Icons.info_outline,
-              content: widget.result.usage,
-            ).animate()
+              content: widget.result.usage).animate()
                   .fadeIn(duration: 600.ms, delay: 600.ms,
               .slideY(begin: 0.2, end: 0),
             
@@ -173,8 +159,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             _buildSectionCard(
               title: '효과',
               icon: Icons.star_outline,
-              content: widget.result.effectiveness,
-            ).animate()
+              content: widget.result.effectiveness).animate()
                   .fadeIn(duration: 600.ms, delay: 800.ms,
               .slideY(begin: 0.2, end: 0),
             
@@ -192,18 +177,13 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             _buildActionButtons().animate()
                   .fadeIn(duration: 600.ms, delay: 1200.ms),
             
-            const SizedBox(height: 40),
-          ],
-        ),
-      
-    );
+            const SizedBox(height: 40)]));
   }
   
   Widget _buildSectionCard({
     required String title,
     required IconData icon,
-    required String content,
-  }) {
+    required String content}) {
     final theme = Theme.of(context);
     
     return GlassContainer(
@@ -216,28 +196,18 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             children: [
               Icon(
                 icon,
-                color: widget.result.type.gradientColors[0],
-              ),
+                color: widget.result.type.gradientColors[0]),
               const SizedBox(width: 8),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyLarge?.copyWith(
               height: 1.6,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
+              color: AppColors.textSecondary))]));
   }
   
   Widget _buildPrecautionsCard() {
@@ -249,9 +219,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
       gradient: LinearGradient(
         colors: [
           Colors.orange.withValues(alpha: 0.1),
-          Colors.orange.withValues(alpha: 0.05),
-        ],
-      ),
+          Colors.orange.withValues(alpha: 0.05)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -259,18 +227,13 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
             children: [
               Icon(
                 Icons.warning_amber_outlined,
-                color: Colors.orange[700],
-              ),
+                color: Colors.orange[700]),
               const SizedBox(width: 8),
               Text(
                 '주의사항',
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.orange[700],
-                ),
-              ),
-            ],
-          ),
+                  color: Colors.orange[700]))]),
           const SizedBox(height: 12),
           ...widget.result.precautions.map((precaution) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -281,23 +244,12 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                   '• ',
                   style: TextStyle(
                     color: Colors.orange[700],
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 Expanded(
                   child: Text(
                     precaution,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: Colors.orange[700],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
-        ],
-      ),
-    );
+                      color: Colors.orange[700])))])).toList()]));
   }
   
   Widget _buildActionButtons() {
@@ -311,10 +263,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
+              borderRadius: BorderRadius.circular(12)))),
         const SizedBox(height: 12),
         OutlinedButton.icon(
           onPressed: () async {
@@ -336,9 +285,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('부적이 갤러리에 저장되었습니다'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                      duration: Duration(seconds: 2)));
                 }
               }
             } catch (e) {
@@ -347,9 +294,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('저장 중 오류가 발생했습니다'),
-                    duration: Duration(seconds: 2),
-                  ),
-                );
+                    duration: Duration(seconds: 2)));
               }
             } finally {
               setState(() => _isCapturing = false);
@@ -360,10 +305,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
+              borderRadius: BorderRadius.circular(12)))),
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
@@ -371,10 +313,7 @@ class _TalismanResultPageState extends ConsumerState<TalismanResultPage>
           },
           child: const Text('홈으로 돌아가기'),
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
-        ),
-      ]
+            padding: const EdgeInsets.symmetric(vertical: 16)))]
     );
   }
 }

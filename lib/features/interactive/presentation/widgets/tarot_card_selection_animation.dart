@@ -17,8 +17,7 @@ class TarotCardSelectionAnimation extends StatefulWidget {
     required this.cardImagePath,
     required this.onAnimationComplete,
     this.cardWidth = 200,
-    this.cardHeight = 350,
-  }) : super(key: key);
+    this.cardHeight = 350}) : super(key: key);
 
   @override
   State<TarotCardSelectionAnimation> createState() => _TarotCardSelectionAnimationState();
@@ -46,55 +45,45 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
     // Card pick animation
     _pickController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+      vsync: this);
     
     // Card flip animation
     _flipController = AnimationController(
       duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
+      vsync: this);
     
     // Other cards fade animation
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+      vsync: this);
     
     // Glow animation
     _glowController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
+      vsync: this)..repeat(reverse: true);
     
     // Set up animations
     _pickAnimation = CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOutBack,
-    );
+      curve: Curves.easeOutBack);
     
     _flipAnimation = CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     _fadeAnimation = CurvedAnimation(
       parent: _fadeController,
-      curve: Curves.easeOut,
-    );
+      curve: Curves.easeOut);
     
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: 1.3,
-    ).animate(CurvedAnimation(
+      end: 1.3).animate(CurvedAnimation(
       parent: _pickController,
-      curve: Curves.easeOut,
-    );
+      curve: Curves.easeOut);
     
     _glowAnimation = Tween<double>(
       begin: 0.3,
-      end: 0.7,
-    ).animate(_glowController);
+      end: 0.7).animate(_glowController);
     
     // Add listener for flip timing
     _flipAnimation.addStatusListener((status) {
@@ -145,10 +134,8 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           animation: _fadeAnimation,
           builder: (context, child) {
             return Container(
-              color: Colors.black.withValues(alpha: _fadeAnimation.value * 0.7),
-            );
-          },
-        ),
+              color: Colors.black.withValues(alpha: _fadeAnimation.value * 0.7));
+          }),
         
         // Other cards fading out
         ..._buildOtherCards(),
@@ -159,8 +146,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             _pickAnimation,
             _flipAnimation,
             _scaleAnimation,
-            _glowAnimation,
-          ]),
+            _glowAnimation]),
           builder: (context, child) {
             final pickOffset = _pickAnimation.value * -100;
             final flipAngle = _flipAnimation.value * math.pi;
@@ -186,24 +172,13 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                           BoxShadow(
                             color: Theme.of(context).primaryColor.withValues(alpha: _glowAnimation.value),
                             blurRadius: 40,
-                            spreadRadius: 20,
-                          ),
-                        ],
-                      ),
-                    ),
+                            spreadRadius: 20)])),
                   
                   // Card
                   GestureDetector(
                     onTap: () {}, // Prevent interaction during animation,
-    child: _buildCard(),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
-    );
+    child: _buildCard())]));
+          })]);
   }
 
   List<Widget> _buildOtherCards() {
@@ -229,19 +204,11 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                     end: Alignment.bottomRight,
                     colors: [
                       Theme.of(context).primaryColor.withValues(alpha: 0.6),
-                      Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6),
-                    ],
-                  ),
+                      Theme.of(context).colorScheme.secondary.withValues(alpha: 0.6)]),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      );
+                    width: 2)))));
+        });
     });
   }
 
@@ -257,10 +224,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
+            offset: const Offset(0, 5))]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Stack(
@@ -282,17 +246,8 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
                       colors: [
                         Colors.white.withValues(alpha: 0),
                         Colors.white.withValues(alpha: 0.3),
-                        Colors.white.withValues(alpha: 0),
-                      ],
-                      transform: GradientRotation(_flipAnimation.value * math.pi),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
+                        Colors.white.withValues(alpha: 0)],
+                      transform: GradientRotation(_flipAnimation.value * math.pi)))))])));
   }
 
   Widget _buildCardBack() {
@@ -303,10 +258,7 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
           end: Alignment.bottomRight,
           colors: [
             Theme.of(context).primaryColor,
-            Theme.of(context).colorScheme.secondary,
-          ],
-        ),
-      ),
+            Theme.of(context).colorScheme.secondary])),
       child: Stack(
         children: [
           // Mandala pattern
@@ -314,22 +266,14 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: CustomPaint(
               painter: AnimatedMandalaPainter(
                 color: Colors.white.withValues(alpha: 0.2),
-                progress: _pickAnimation.value,
-              ),
-            ),
-          ),
+                progress: _pickAnimation.value))),
           
           // Center icon
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 60,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      ),
-    );
+              color: Colors.white.withValues(alpha: 0.8)))]));
   }
 
   Widget _buildCardFront() {
@@ -343,12 +287,8 @@ class _TarotCardSelectionAnimationState extends State<TarotCardSelectionAnimatio
             child: Icon(
               Icons.image_not_supported,
               size: 60,
-              color: Colors.white,
-            ),
-          ),
-        );
-      },
-    );
+              color: Colors.white)));
+      });
   }
 }
 
@@ -382,12 +322,10 @@ class AnimatedMandalaPainter extends CustomPainter {
       final lineLength = maxRadius * progress;
       final start = Offset(
         center.dx + lineLength * 0.3 * math.cos(angle),
-        center.dy + lineLength * 0.3 * math.sin(angle),
-      );
+        center.dy + lineLength * 0.3 * math.sin(angle));
       final end = Offset(
         center.dx + lineLength * math.cos(angle),
-        center.dy + lineLength * math.sin(angle),
-      );
+        center.dy + lineLength * math.sin(angle));
       canvas.drawLine(start, end, paint);
     }
 

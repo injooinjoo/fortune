@@ -16,8 +16,7 @@ class GameSchedule {
     required this.awayTeam,
     required this.gameTime,
     required this.stadium,
-    required this.status,
-  });
+    required this.status});
 }
 
 class EsportsMatch {
@@ -34,8 +33,7 @@ class EsportsMatch {
     required this.matchTime,
     required this.tournament,
     required this.gameType,
-    this.stats,
-  });
+    this.stats});
 }
 
 class GolfCourse {
@@ -54,8 +52,7 @@ class GolfCourse {
     required this.holes,
     required this.difficulty,
     required this.courseType,
-    this.additionalInfo,
-  });
+    this.additionalInfo});
 }
 
 class ExternalApiService {
@@ -163,18 +160,15 @@ class ExternalApiService {
           'change24h': 2.5,
           'volume': 1000000000,
           'volatility': 'medium',
-          'trend': 'bullish',
-        },
+          'trend': 'bullish'},
         'ethereum': {
           'price': 3000000,
           'change24h': -1.2,
           'volume': 500000000,
           'volatility': 'high',
-          'trend': 'neutral',
-        },
+          'trend': 'neutral'},
         'marketSentiment': 'greed',
-        'fearGreedIndex': null,
-      };
+        'fearGreedIndex': null};
       
       // Update cache
       _updateCache(cacheKey, marketData);
@@ -245,8 +239,7 @@ class ExternalApiService {
       'NC': '창원',
       '롯데': '부산',
       '삼성': '대구',
-      'KIA': '광주',
-    };
+      'KIA': '광주'};
     
     final schedule = <GameSchedule>[];
     final now = DateTime.now();
@@ -260,8 +253,7 @@ class ExternalApiService {
         awayTeam: isHome ? opponent : team,
         gameTime: now.add(Duration(days: i, hours: 18, minutes: 30)),
         stadium: stadiums[isHome ? team : opponent] ?? '잠실',
-        status: i == 0 ? 'today' : 'scheduled',
-      ));
+        status: i == 0 ? 'today' : 'scheduled'));
     }
     
     return schedule;
@@ -286,9 +278,7 @@ class ExternalApiService {
           stats: {
             'team1_winrate': 0.65,
             'team2_winrate': 0.58,
-            'recent_matches': '${team1} 2-1 ${team2}',
-          },
-        ));
+            'recent_matches': '${team1} 2-1 ${team2}'}));
       }
     }
     
@@ -305,8 +295,7 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.2,
           courseType: 'Members',
-          additionalInfo: {'greenFee': 250000, 'cart'),
-        ),
+          additionalInfo: {'greenFee': 250000, 'cart')),
         GolfCourse(
           name: '레이크우드CC',
           region: '경기',
@@ -314,9 +303,7 @@ class ExternalApiService {
           holes: 27,
           difficulty: 4.5,
           courseType: 'Public',
-          additionalInfo: {'greenFee': 180000, 'cart'),
-        ),
-      ],
+          additionalInfo: {'greenFee': 180000, 'cart'))],
       '강원': [
         GolfCourse(
           name: '비발디파크CC',
@@ -325,9 +312,7 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.0,
           courseType: 'Resort',
-          additionalInfo: {'greenFee': 200000, 'cart'),
-        ),
-      ],
+          additionalInfo: {'greenFee': 200000, 'cart'))],
       '제주': [
         GolfCourse(
           name: '나인브릿지',
@@ -336,10 +321,7 @@ class ExternalApiService {
           holes: 18,
           difficulty: 4.8,
           courseType: 'Premium',
-          additionalInfo: {'greenFee': 450000, 'cart'),
-        ),
-      ],
-    };
+          additionalInfo: {'greenFee': 450000, 'cart'))]};
     
     return courses[region] ?? [];
   }

@@ -16,8 +16,7 @@ class TarotDeckFanWidget extends StatefulWidget {
     this.cardHeight = 200,
     required this.onCardTap,
     this.scrollController,
-    this.selectedIndex,
-  }) : super(key: key);
+    this.selectedIndex}) : super(key: key);
 
   @override
   State<TarotDeckFanWidget> createState() => _TarotDeckFanWidgetState();
@@ -39,31 +38,25 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
     // Fan out animation
     _fanController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
+      vsync: this);
 
     // Floating animation for hovered card
     _floatController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
-    )..repeat(reverse: true);
+      vsync: this)..repeat(reverse: true);
 
     // Create staggered animations for each card
     _fanAnimations = List.generate(widget.cardCount, (index) {
       final delay = index / widget.cardCount;
       return Tween<double>(
         begin: 0.0,
-        end: 1.0,
-      ).animate(
+        end: 1.0).animate(
         CurvedAnimation(
           parent: _fanController,
           curve: Interval(
             delay * 0.5,
             0.5 + delay * 0.5,
-            curve: Curves.easeOutBack,
-          ),
-        ),
-      );
+            curve: Curves.easeOutBack)));
     });
 
     // Start fan animation
@@ -147,25 +140,12 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
                                   BoxShadow(
                                     color: Theme.of(context).primaryColor.withValues(alpha: 0.4),
                                     blurRadius: 20,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    spreadRadius: 5)])),
                           
                           // Card back
-                          _buildCardBack(context, index, isHovered, isSelected),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
+                          _buildCardBack(context, index, isHovered, isSelected)])))));
+            });
+        }));
   }
 
   Widget _buildCardBack(BuildContext context, int index, bool isHovered, bool isSelected) {
@@ -180,16 +160,12 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
           colors: [
             Theme.of(context).primaryColor.withValues(alpha: 0.8),
             Theme.of(context).primaryColor.withValues(alpha: 0.6),
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
-          ],
-        ),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8)]),
         border: Border.all(
           color: isHovered 
               ? Theme.of(context).colorScheme.secondary 
               : Colors.white.withValues(alpha: 0.3),
-          width: isHovered ? 3 : 2,
-        ),
-      ),
+          width: isHovered ? 3 : 2)),
       child: Stack(
         children: [
           // Mandala pattern
@@ -197,22 +173,14 @@ class _TarotDeckFanWidgetState extends State<TarotDeckFanWidget>
             child: CustomPaint(
               painter: MandalaPainter(
                 color: Colors.white.withValues(alpha: 0.1),
-                isAnimated: isHovered,
-              ),
-            ),
-          ),
+                isAnimated: isHovered))),
           
           // Center symbol
           Center(
             child: Icon(
               Icons.auto_awesome,
               size: 40,
-              color: Colors.white.withValues(alpha: isHovered ? 0.9 : 0.7),
-            ),
-          ),
-        ],
-      ),
-    );
+              color: Colors.white.withValues(alpha: isHovered ? 0.9 : 0.7)))]));
   }
 }
 
@@ -244,12 +212,10 @@ class MandalaPainter extends CustomPainter {
       final angle = i * math.pi / 4;
       final start = Offset(
         center.dx + radius * 0.3 * math.cos(angle),
-        center.dy + radius * 0.3 * math.sin(angle),
-      );
+        center.dy + radius * 0.3 * math.sin(angle));
       final end = Offset(
         center.dx + radius * math.cos(angle),
-        center.dy + radius * math.sin(angle),
-      );
+        center.dy + radius * math.sin(angle));
       canvas.drawLine(start, end, paint);
     }
   }

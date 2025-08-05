@@ -12,8 +12,7 @@ class HealingProgressWidget extends StatefulWidget {
     Key? key,
     required this.currentStage,
     required this.progress,
-    this.onTap,
-  }) : super(key: key);
+    this.onTap}) : super(key: key);
 
   @override
   State<HealingProgressWidget> createState() => _HealingProgressWidgetState();
@@ -25,12 +24,11 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
   late Animation<double> _progressAnimation;
   
   final stages = [
-    {'name': '부정': 'icon': Icons.block, 'color'},
-    {'name': '분노': 'icon': Icons.bolt, 'color'},
-    {'name': '타협', 'icon': Icons.handshake, 'color'},
-    {'name': '우울', 'icon': Icons.water_drop, 'color'},
-    {'name': '수용', 'icon': Icons.favorite, 'color'},
-  ];
+    {'name', '부정':  , 'icon': Icons.block, 'color'},
+    {'name', '분노':  , 'icon': Icons.bolt, 'color'},
+    {'name', '타협', 'icon': Icons.handshake, 'color'},
+    {'name', '우울', 'icon': Icons.water_drop, 'color'},
+    {'name', '수용', 'icon': Icons.favorite, 'color'}];
 
   @override
   void initState() {
@@ -42,11 +40,9 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
 
     _progressAnimation = Tween<double>(
       begin: 0,
-      end: widget.progress / 100,
-    ).animate(CurvedAnimation(
+      end: widget.progress / 100).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutCubic,
-    );
+      curve: Curves.easeOutCubic);
 
     _controller.forward();
 }
@@ -57,11 +53,9 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
     if (oldWidget.progress != widget.progress) {
       _progressAnimation = Tween<double>(
         begin: _progressAnimation.value,
-        end: widget.progress / 100,
-      ).animate(CurvedAnimation(
+        end: widget.progress / 100).animate(CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCubic,
-      );
+        curve: Curves.easeOutCubic);
       _controller.forward(from: 0);
 }
   }
@@ -87,9 +81,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
-              offset: const Offset(0, 4),
-          ],
-        ),
+              offset: const Offset(0, 4)]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,8 +91,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 Text(
                   '치유 진행도',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold),
-                ),
+                    fontWeight: FontWeight.bold)),
                 AnimatedBuilder(
                   animation: _progressAnimation,
                   builder: (context, child) {
@@ -109,10 +100,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold);
-},
-                ),
-              ],
-            ),
+})]),
             const SizedBox(height: AppSpacing.spacing6),
             
             // Progress bar with stages
@@ -123,8 +111,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                   height: AppSpacing.spacing2,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadiusSmall,
-                  ),
+                    borderRadius: AppDimensions.borderRadiusSmall),
                 
                 // Animated progress
                 AnimatedBuilder(
@@ -138,14 +125,9 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary,
-                            theme.colorScheme.secondary,
-                          ],
-                        ),
-                        borderRadius: AppDimensions.borderRadiusSmall,
-                      
-                    );
-},
-                ),
+                            theme.colorScheme.secondary]),
+                        borderRadius: AppDimensions.borderRadiusSmall);
+}),
                 
                 // Stage markers
                 ...stages.asMap().entries.map((entry) {
@@ -171,29 +153,22 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                           color: isCompleted || isCurrent
                               ? (stage['color'],
                               : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                          width: 3,
-                        ),
+                          width: 3),
                         boxShadow: isCurrent
                             ? [
                                 BoxShadow(
                                   color: (stage['color'],
                                   blurRadius: 8,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                            : null,
-                      ),
+                                  spreadRadius: 2)]
+                            : null),
                       child: Center(
                         child: Icon(
                           stage['icon'],
                           size: 20,
                           color: isCompleted || isCurrent
                               ? Colors.white
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                      ));
-}).toList(),
-              ],
-            ),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.5)),;
+}).toList()]),
             
             const SizedBox(height: AppSpacing.spacing8),
             
@@ -214,9 +189,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                       color: isCompleted || isCurrent
                           ? (stage['color'],
                           : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                    ),
-                );
+                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal));
 }).toList(),
             
             const SizedBox(height: AppSpacing.spacing4),
@@ -229,26 +202,18 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
                 padding: AppSpacing.paddingAll12,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: AppDimensions.borderRadiusSmall,
-                ),
+                  borderRadius: AppDimensions.borderRadiusSmall),
                 child: Row(
                   children: [
                     Icon(
                       Icons.info_outline,
                       size: 20,
-                      color: theme.colorScheme.primary,
-                    ),
+                      color: theme.colorScheme.primary),
                     const SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
                         _getStageDescription(widget.currentStage),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                  ],
-                ),
-            ),
-          ],
-        ));
+                        style: theme.textTheme.bodySmall)]))]),;
 }
 
   String _getStageDescription(int stage) {
@@ -257,8 +222,7 @@ class _HealingProgressWidgetState extends State<HealingProgressWidget>
       '감정이 격해질 수 있어요. 이것도 자연스러운 과정입니다.',
       '조금씩 상황을 이해하기 시작하는 단계입니다.',
       '깊은 슬픔을 느낄 수 있지만, 치유의 과정입니다.',
-      '새로운 시작을 준비할 수 있는 단계에 도달했습니다.',
-    ];
+      '새로운 시작을 준비할 수 있는 단계에 도달했습니다.'];
     
     if (stage > 0 && stage <= descriptions.length) {
       return descriptions[stage - 1];

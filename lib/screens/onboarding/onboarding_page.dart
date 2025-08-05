@@ -73,8 +73,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           if (existingProfile['gender'] != null) {
             _gender = Gender.values.firstWhere(
               (g) => g.value == existingProfile['gender'],
-              orElse: () => Gender.other,
-            );
+              orElse: () => Gender.other);
           }
         });
       } else if (_currentUser != null) {
@@ -99,8 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       });
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+        curve: Curves.easeInOut);
     }
   }
 
@@ -111,8 +109,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       });
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+        curve: Curves.easeInOut);
     }
   }
 
@@ -124,8 +121,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       final isoDate = FortuneDateUtils.koreanToIsoDate(
         _birthYear,
         _birthMonth,
-        _birthDay,
-      );
+        _birthDay);
       
       // 프로필 데이터 준비
       final profile = UserProfile(
@@ -143,8 +139,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         fortuneCount: 0,
         premiumFortunesCount: 0,
         createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+        updatedAt: DateTime.now());
 
       // 로컬 스토리지에 저장
       await _storageService.saveUserProfile(profile.toJson());
@@ -163,8 +158,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             'onboarding_completed': true,
             'zodiac_sign': profile.zodiacSign,
             'chinese_zodiac': profile.chineseZodiac,
-            'updated_at': DateTime.now().toIso8601String(),
-          });
+            'updated_at': DateTime.now().toIso8601String()});
           debugPrint('Supabase에 프로필 동기화 완료');
         } catch (e) {
           debugPrint('Supabase 프로필 동기화 오류: $e');
@@ -181,9 +175,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필 저장 중 오류가 발생했습니다. 다시 시도해주세요.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     } finally {
       if (mounted) {
@@ -201,8 +193,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
+            child: const Text('취소')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -215,8 +206,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 'onboarding_completed': false,
                 'onboarding_skipped': true,
                 'created_at': DateTime.now().toIso8601String(),
-                'updated_at': DateTime.now().toIso8601String(),
-              };
+                'updated_at': DateTime.now().toIso8601String()};
               
               await _storageService.saveUserProfile(minimalProfile);
               
@@ -224,11 +214,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 context.go('/home');
               }
             },
-            child: const Text('건너뛰기'),
-          ),
-        ],
-      ),
-    );
+            child: const Text('건너뛰기'))]));
   }
 
   @override
@@ -241,10 +227,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             end: Alignment.bottomRight,
             colors: [
               Colors.grey.shade50,
-              Colors.grey.shade100,
-            ],
-          ),
-        ),
+              Colors.grey.shade100])),
         child: SafeArea(
           child: Column(
             children: [
@@ -260,10 +243,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             value: _currentStep / 3,
                             backgroundColor: Colors.grey[300],
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
+                              Theme.of(context).primaryColor))),
                         const SizedBox(width: 16),
                         TextButton(
                           onPressed: _skipOnboarding,
@@ -272,23 +252,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                              color: Theme.of(context).primaryColor)))]),
                     const SizedBox(height: 8),
                     Text(
                       '$_currentStep / 3 단계',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        color: Colors.grey[600]))])),
               
               // 메인 콘텐츠
               Expanded(
@@ -302,10 +272,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
+                        offset: const Offset(0, 4))]),
                   child: Column(
                     children: [
                       // 뒤로가기 버튼
@@ -314,9 +281,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           alignment: Alignment.centerLeft,
                           child: IconButton(
                             onPressed: _previousStep,
-                            icon: const Icon(Icons.arrow_back),
-                          ),
-                        ),
+                            icon: const Icon(Icons.arrow_back))),
                       
                       // 페이지 뷰
                       Expanded(
@@ -339,8 +304,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   if (_birthDay.isNotEmpty) {
                                     final maxDays = FortuneDateUtils.getDayOptions(
                                       int.parse(value),
-                                      _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                                    ).length;
+                                      _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null).length;
                                     if (int.parse(_birthDay) > maxDays) {
                                       _birthDay = '';
                                     }
@@ -354,8 +318,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                   if (_birthDay.isNotEmpty && _birthYear.isNotEmpty) {
                                     final maxDays = FortuneDateUtils.getDayOptions(
                                       int.parse(_birthYear),
-                                      int.parse(value),
-                                    ).length;
+                                      int.parse(value)).length;
                                     if (int.parse(_birthDay) > maxDays) {
                                       _birthDay = '';
                                     }
@@ -368,8 +331,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               onBirthTimePeriodChanged: (value) {
                                 setState(() => _birthTimePeriod = value);
                               },
-                              onNext: _nextStep,
-                            ),
+                              onNext: _nextStep),
                             
                             // Step 2: MBTI
                             OnboardingStepTwo(
@@ -377,8 +339,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               onMbtiChanged: (value) {
                                 setState(() => _mbti = value);
                               },
-                              onNext: _nextStep,
-                            ),
+                              onNext: _nextStep),
                             
                             // Step 3: 성별
                             OnboardingStepThree(
@@ -387,20 +348,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                                 setState(() => _gender = value);
                               },
                               onSubmit: _handleSubmit,
-                              isLoading: _isLoading,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                              isLoading: _isLoading)]))])))]))));
   }
   
   @override

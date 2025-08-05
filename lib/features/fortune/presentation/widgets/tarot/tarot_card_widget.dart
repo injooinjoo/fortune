@@ -30,8 +30,7 @@ class TarotCardWidget extends StatefulWidget {
     this.isHovered = false,
     this.onTap,
     this.flipDuration = AppAnimations.durationXLong,
-    this.enableFlipAnimation = true,
-  }) : super(key: key);
+    this.enableFlipAnimation = true}) : super(key: key);
 
   @override
   State<TarotCardWidget> createState() => _TarotCardWidgetState();
@@ -50,16 +49,13 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     
     _flipController = AnimationController(
       duration: widget.flipDuration,
-      vsync: this,
-    );
+      vsync: this);
     
     _flipAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _flipController,
-      curve: Curves.easeInOutCubic,
-    );
+      curve: Curves.easeInOutCubic);
 
     if (widget.showFront) {
       _flipController.value = 1.0;
@@ -115,54 +111,41 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: AppDimensions.borderRadiusMedium,
-                  boxShadow: _buildBoxShadow(),
-                ),
+                  boxShadow: _buildBoxShadow()),
                 child: ClipRRect(
                   borderRadius: AppDimensions.borderRadiusMedium,
                   child: isShowingFront
                       ? Transform(
                           alignment: Alignment.center,
                           transform: Matrix4.identity()..rotateY(math.pi),
-                          child: _buildCardFront(),
-                        )
-                      : _buildCardBack(),
-                ),
-              ),
-            );
-          },
-        ),
-      );
+                          child: _buildCardFront())
+                      : _buildCardBack())));
+          }));
   }
 
   List<BoxShadow> _buildBoxShadow() {
     print('[TarotCard] Building box shadow - isSelected: ${widget.isSelected}, isHovered: ${widget.isHovered}');
     if (widget.isSelected) {
-      print('alpha: 0.6'));
+      print('alpha: 0.6'),;
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.6),
           blurRadius: 20,
-          spreadRadius: 5,
-        ),
-      ];
+          spreadRadius: 5)];
 } else if (widget.isHovered) {
-      print('alpha: 0.4'));
+      print('alpha: 0.4'),;
       return [
         BoxShadow(
           color: widget.deck.primaryColor.withValues(alpha: 0.4),
           blurRadius: 15,
-          spreadRadius: 2,
-        ),
-      ];
+          spreadRadius: 2)];
     } else {
-      print('alpha: 0.3'));
+      print('alpha: 0.3'),;
       return [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 10,
-          offset: const Offset(0, 5),
-        ),
-      ];
+          offset: const Offset(0, 5))];
     }
   }
 
@@ -174,10 +157,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           end: Alignment.bottomRight,
           colors: [
             widget.deck.primaryColor,
-            widget.deck.secondaryColor,
-          ],
-        ),
-      ),
+            widget.deck.secondaryColor])),
       child: Stack(
         children: [
           // Pattern overlay
@@ -185,10 +165,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             painter: TarotCardBackPainter(
               primaryColor: widget.deck.primaryColor,
               secondaryColor: widget.deck.secondaryColor,
-              isHighlighted: widget.isHovered || widget.isSelected,
-            ),
-            size: Size(widget.width, widget.height),
-          ),
+              isHighlighted: widget.isHovered || widget.isSelected),
+            size: Size(widget.width, widget.height)),
           // Center emblem
           Center(
             child: Column(
@@ -198,10 +176,9 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                   Icons.auto_awesome,
                   size: widget.width * 0.33,
                   color: (() {
-                    print('alpha: 0.8'));
+                    print('alpha: 0.8'),;
                     return Colors.white.withValues(alpha: 0.8);
-                  })(),
-                ),
+                  })()),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   widget.deck.koreanName,
@@ -209,16 +186,8 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                     fontSize: widget.width * 0.12,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    letterSpacing: 1),
+                  textAlign: TextAlign.center)]))]));
   }
 
   Widget _buildCardFront() {
@@ -230,10 +199,7 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           end: Alignment.bottomCenter,
           colors: [
             Colors.white,
-            Colors.grey[100]!,
-          ],
-        ),
-      ),
+            Colors.grey[100]!])),
       child: Stack(
         children: [
           // Card content area
@@ -244,19 +210,14 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                 Icon(
                   Icons.auto_awesome,
                   size: widget.width * 0.5,
-                  color: widget.deck.primaryColor,
-                ),
+                  color: widget.deck.primaryColor),
                 const SizedBox(height: AppSpacing.spacing4),
                 Text(
                   'Card ${widget.cardIndex + 1}',
                   style: TextStyle(
                     fontSize: widget.width * 0.15,
                     fontWeight: FontWeight.bold,
-                    color: widget.deck.primaryColor,
-                  ),
-                ),
-              ],
-            ),
+                    color: widget.deck.primaryColor))]),
           // Card number
           Positioned(
             top: 8,
@@ -265,17 +226,10 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
                 color: widget.deck.primaryColor.withValues(alpha: 0.1),
-                borderRadius: AppDimensions.borderRadiusMedium,
-              ),
+                borderRadius: AppDimensions.borderRadiusMedium),
               child: Text(
                 '${widget.cardIndex + 1}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                style: Theme.of(context).textTheme.bodyMedium)))]));
   }
 
 /// Custom painter for tarot card back patterns
@@ -287,8 +241,7 @@ class TarotCardBackPainter extends CustomPainter {
   TarotCardBackPainter({
     required this.primaryColor,
     required this.secondaryColor,
-    this.isHighlighted = false,
-  });
+    this.isHighlighted = false});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -358,15 +311,13 @@ class TarotCardBackPainter extends CustomPainter {
     final rect = Rect.fromCenter(
       center: Offset(x + dx * size / 2, y + dy * size / 2),
       width: size,
-      height: size,
-    );
+      height: size);
     canvas.drawArc(
       rect,
       flipX && !flipY ? math.pi : flipX && flipY ? math.pi / 2 : flipY ? 3 * math.pi / 2 : 0,
       math.pi / 2,
       false,
-      paint,
-    );
+      paint);
   }
 
   @override

@@ -142,8 +142,7 @@ class Environment {
   static void _validateRequiredVariables() {
     final requiredVars = [
       'SUPABASE_URL',
-      'SUPABASE_ANON_KEY',
-    ];
+      'SUPABASE_ANON_KEY'];
     
     for (final varName in requiredVars) {
       if (dotenv.env[varName] == null || dotenv.env[varName]!.isEmpty) {
@@ -159,8 +158,7 @@ class Environment {
         'OPENAI_API_KEY',
         'ENCRYPTION_KEY',
         'JWT_SECRET',
-        'INTERNAL_API_KEY',
-      ];
+        'INTERNAL_API_KEY'];
       
       for (final varName in productionVars) {
         if (dotenv.env[varName] == null || dotenv.env[varName]!.isEmpty) {

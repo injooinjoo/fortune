@@ -10,15 +10,13 @@ import 'package:fl_chart/fl_chart.dart';
 class ZodiacFortunePage extends BaseFortunePage {
   const ZodiacFortunePage({
     Key? key,
-    Map<String, dynamic>? initialParams,
-  }) : super(
+    Map<String, dynamic>? initialParams}) : super(
           key: key,
           title: '별자리 운세',
           description: '당신의 별자리로 알아보는 오늘의 운세',
           fortuneType: 'zodiac',
           requiresUserInfo: true,
-          initialParams: initialParams,
-        );
+          initialParams: initialParams);
 
   @override
   ConsumerState<ZodiacFortunePage> createState() => _ZodiacFortunePageState();
@@ -30,19 +28,18 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
   String _selectedPeriod = 'today';
 
   final List<Map<String, dynamic>> _zodiacSigns = [
-    {'name': '양자리': 'period': '3.21 - 4.19': 'symbol': '♈', 'element': '불', 'color'},
-    {'name': '황소자리', 'period': '4.20 - 5.20', 'symbol': '♉', 'element': '땅', 'color'},
-    {'name': '쌍둥이자리', 'period': '5.21 - 6.21', 'symbol': '♊', 'element': '공기', 'color'},
-    {'name': '게자리', 'period': '6.22 - 7.22', 'symbol': '♋', 'element': '물', 'color'},
-    {'name': '사자자리', 'period': '7.23 - 8.22', 'symbol': '♌', 'element': '불', 'color'},
-    {'name': '처녀자리', 'period': '8.23 - 9.22', 'symbol': '♍', 'element': '땅', 'color'},
-    {'name': '천칭자리', 'period': '9.23 - 10.23', 'symbol': '♎', 'element': '공기', 'color'},
-    {'name': '전갈자리', 'period': '10.24 - 11.21', 'symbol': '♏', 'element': '물', 'color'},
-    {'name': '사수자리', 'period': '11.22 - 12.21', 'symbol': '♐', 'element': '불', 'color'},
-    {'name': '염소자리', 'period': '12.22 - 1.19', 'symbol': '♑', 'element': '땅', 'color'},
-    {'name': '물병자리', 'period': '1.20 - 2.18', 'symbol': '♒', 'element': '공기', 'color'},
-    {'name': '물고기자리', 'period': '2.19 - 3.20', 'symbol': '♓', 'element': '물', 'color'},
-  ];
+    {'name', '양자리': 'period', '3.21 - 4.19': 'symbol', '♈', 'element', '불', 'color'},
+    {'name', '황소자리', 'period', '4.20 - 5.20', 'symbol', '♉', 'element', '땅', 'color'},
+    {'name', '쌍둥이자리', 'period', '5.21 - 6.21', 'symbol', '♊', 'element', '공기', 'color'},
+    {'name', '게자리', 'period', '6.22 - 7.22', 'symbol', '♋', 'element', '물', 'color'},
+    {'name', '사자자리', 'period', '7.23 - 8.22', 'symbol', '♌', 'element', '불', 'color'},
+    {'name', '처녀자리', 'period', '8.23 - 9.22', 'symbol', '♍', 'element', '땅', 'color'},
+    {'name', '천칭자리', 'period', '9.23 - 10.23', 'symbol', '♎', 'element', '공기', 'color'},
+    {'name', '전갈자리', 'period', '10.24 - 11.21', 'symbol', '♏', 'element', '물', 'color'},
+    {'name', '사수자리', 'period', '11.22 - 12.21', 'symbol', '♐', 'element', '불', 'color'},
+    {'name', '염소자리', 'period', '12.22 - 1.19', 'symbol', '♑', 'element', '땅', 'color'},
+    {'name', '물병자리', 'period', '1.20 - 2.18', 'symbol', '♒', 'element', '공기', 'color'},
+    {'name', '물고기자리', 'period', '2.19 - 3.20', 'symbol', '♓', 'element', '물', 'color'}];
 
   @override
   void initState() {
@@ -92,8 +89,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
     final fortuneService = ref.read(fortuneServiceProvider);
     final fortune = await fortuneService.getZodiacFortune(
       userId: user.id,
-      zodiacSign: _selectedZodiac!,
-    );
+      zodiacSign: _selectedZodiac!);
 
     final zodiacInfo = _zodiacSigns.firstWhere((z) => z['name'] == _selectedZodiac);
 
@@ -109,42 +105,37 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       description: fortune.description,
       luckyItems: fortune.luckyItems ?? {
         '행운의 색': zodiacInfo['color'].toString().split('(0x')[1].split(')')[0],
-        '행운의 숫자': '${DateTime.now().day % 9 + 1}',
+        '행운의 숫자', '${DateTime.now().day % 9 + 1}',
         '행운의 방향': _getLuckyDirection(zodiacInfo['element']),
-        '행운의 시간': '${(DateTime.now().day % 12) + 10}시',
-      },
+        '행운의 시간', '${(DateTime.now().day % 12) + 10}시'},
       recommendations: fortune.recommendations,
       metadata: {
         ...?fortune.metadata,
         'zodiacInfo': zodiacInfo,
         'compatibility': _getCompatibility(_selectedZodiac!),
         'monthlyTrend': _getMonthlyTrend(),
-        'elementalBalance': _getElementalBalance(zodiacInfo['element'],
-      },
-    );
+        'elementalBalance': _getElementalBalance(zodiacInfo['element']});
 
     return enrichedFortune;
   }
 
   String _getLuckyDirection(String element) {
     switch (element) {
-      case '불':
-        return '남쪽';
+      case '불': return '남쪽';
       case '물':
         return '북쪽';
       case '땅':
         return '중앙';
-      case '공기':
-        return '동쪽';
+      case , '공기': return '동쪽';
       default:
-        return '서쪽';
+        return '서쪽';}
     }
   }
 
   Map<String, dynamic> _getCompatibility(String zodiac) {
     final compatibleSigns = {
-      '양자리': ['사자자리': '사수자리': '쌍둥이자리'],
-      '황소자리': ['처녀자리': '염소자리', '게자리'],
+      '양자리': \['['사자자리', '사수자리', '쌍둥이자리'],
+      '황소자리': ['처녀자리', '염소자리', '게자리'],
       '쌍둥이자리': ['천칭자리', '물병자리', '양자리'],
       '게자리': ['전갈자리', '물고기자리', '황소자리'],
       '사자자리': ['양자리', '사수자리', '쌍둥이자리'],
@@ -154,8 +145,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       '사수자리': ['양자리', '사자자리', '천칭자리'],
       '염소자리': ['황소자리', '처녀자리', '전갈자리'],
       '물병자리': ['쌍둥이자리', '천칭자리', '사수자리'],
-      '물고기자리': ['게자리', '전갈자리', '염소자리': null,
-    };
+      '물고기자리': ['게자리', '전갈자리', '염소자리': null};
 
     return {
       'best': compatibleSigns[zodiac]![0],
@@ -163,13 +153,12 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       'challenging': _zodiacSigns
           .where((z) => !compatibleSigns[zodiac]!.contains(z['name']) && z['name'] != zodiac)
           .take(2)
-          .map((z) => z['name'])
-          .toList(),
-    };
+          .map((z) => z['name'])}
+          .toList()};
   }
 
   List<double> _getMonthlyTrend() {
-    return List.generate(30, (index) => 60 + (index * 2.5 % 30));
+    return List.generate(30, (index) => 60 + (index * 2.5 % 30),;
   }
 
   Map<String, double> _getElementalBalance(String primaryElement) {
@@ -177,8 +166,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       '불': 0.0,
       '물': 0.0,
       '땅': 0.0,
-      '공기': null,
-    };
+      '공기': null};
 
     balance[primaryElement] = 0.8;
 
@@ -197,9 +185,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       children: [
         _buildZodiacSelector(),
         const SizedBox(height: 16),
-        _buildPeriodSelector(),
-      ],
-    );
+        _buildPeriodSelector()]);
   }
 
   @override
@@ -211,9 +197,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
         _buildCompatibilitySection(),
         _buildMonthlyTrendChart(),
         _buildElementalBalance(),
-        const SizedBox(height: 32),
-      ],
-    );
+        const SizedBox(height: 32)]);
   }
 
   Widget _buildZodiacSelector() {
@@ -224,17 +208,13 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
         children: [
           Text(
             '별자리 선택',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           if (_birthDate != null) ...[
             const SizedBox(height: 8),
             Text(
               '생년월일: ${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                  ),
-            ),
-          ],
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))],
           const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
@@ -243,8 +223,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
               crossAxisCount: 3,
               childAspectRatio: 1,
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-            ),
+              mainAxisSpacing: 12),
             itemCount: _zodiacSigns.length,
             itemBuilder: (context, index) {
               final zodiac = _zodiacSigns[index];
@@ -263,9 +242,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                         ? LinearGradient(
                             colors: [
                               zodiac['color'],
-                              (zodiac['color'],
-                            ],
-                          )
+                              (zodiac['color']])
                         : null,
                     color: !isSelected
                         ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
@@ -275,52 +252,36 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                       color: isSelected
                           ? (zodiac['color'] as Color)
                           : Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                      width: isSelected ? 2 : 1,
-                    ),
-                  ),
+                      width: isSelected ? 2 : 1)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         zodiac['symbol'],
                         style: const TextStyle(fontSize: 32),
-                        color: isSelected ? Colors.white : null,
-                      ),
+                        color: isSelected ? Colors.white : null),
                       const SizedBox(height: 4),
                       Text(
                         zodiac['name'],
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? Colors.white : null,
-                        ),
-                      ),
+                          color: isSelected ? Colors.white : null)),
                       Text(
                         zodiac['period'],
                         style: TextStyle(
                           fontSize: 10,
                           color: isSelected
                               ? Colors.white.withOpacity(0.8)
-                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+                              : Theme.of(context).colorScheme.onSurface.withOpacity(0.5)))])));
+            })]));
   }
 
   Widget _buildPeriodSelector() {
     final periods = [
-      {'value': 'today': 'label': '오늘'},
-      {'value': 'week': 'label': '이번 주'},
-      {'value': 'month': 'label': '이번 달'},
-    ];
+      {'value', 'today': 'label', '오늘'},
+      {'value', 'week': 'label', '이번 주'},
+      {'value', 'month': 'label', '이번 달'}];
 
     return GlassCard(
       padding: const EdgeInsets.all(20,
@@ -329,8 +290,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
         children: [
           Text(
             '기간 선택',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+            style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           Row(
             children: periods.map((period) {
@@ -352,33 +312,19 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                             ? LinearGradient(
                                 colors: [
                                   Theme.of(context).colorScheme.primary,
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                                ],
-                              )
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.8)])
                             : null,
                         color: !isSelected
                             ? Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3)
                             : null,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                        borderRadius: BorderRadius.circular(12)),
                       child: Center(
                         child: Text(
                           period['label'],
                           style: TextStyle(
                             color: isSelected ? Colors.white : null,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))))));
+            }).toList())]));
   }
 
   Widget _buildZodiacProfile() {
@@ -394,9 +340,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
         gradient: LinearGradient(
           colors: [
             (zodiacInfo['color'],
-            (zodiacInfo['color'],
-          ],
-        ),
+            (zodiacInfo['color']]),
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -405,8 +349,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
               children: [
                 Text(
                   zodiacInfo['symbol'],
-                  style: const TextStyle(fontSize: 48),
-                ),
+                  style: const TextStyle(fontSize: 48)),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,32 +357,18 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                     Text(
                       zodiacInfo['name'],
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+                            fontWeight: FontWeight.bold)),
                     Text(
                       zodiacInfo['period'],
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))])]),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildInfoChip('원소': zodiacInfo['element'], zodiacInfo['color'],
                 _buildInfoChip('지배성': _getRulingPlanet(zodiacInfo['name'], zodiacInfo['color'],
-                _buildInfoChip('특성': _getCharacteristic(zodiacInfo['name'], zodiacInfo['color'],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                _buildInfoChip('특성': _getCharacteristic(zodiacInfo['name'], zodiacInfo['color']])])));
   }
 
   Widget _buildInfoChip(String label, String value, Color color) {
@@ -448,61 +377,51 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              ),
-        ),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
         const SizedBox(height: 4),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             color: color.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(20),
-          ),
+            borderRadius: BorderRadius.circular(20)),
           child: Text(
             value,
             style: TextStyle(
               color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
+              fontWeight: FontWeight.bold)))]);
   }
 
   String _getRulingPlanet(String zodiac) {
     final planets = {
-      '양자리': '화성',
-      '황소자리': '금성',
-      '쌍둥이자리': '수성',
-      '게자리': '달',
-      '사자자리': '태양',
-      '처녀자리': '수성',
-      '천칭자리': '금성',
-      '전갈자리': '명왕성',
-      '사수자리': '목성',
-      '염소자리': '토성',
-      '물병자리': '천왕성',
-      '물고기자리': '해왕성',
-    };
+      '양자리', '화성',
+      '황소자리', '금성',
+      '쌍둥이자리', '수성',
+      '게자리', '달',
+      '사자자리', '태양',
+      '처녀자리', '수성',
+      '천칭자리', '금성',
+      '전갈자리', '명왕성',
+      '사수자리', '목성',
+      '염소자리', '토성',
+      '물병자리', '천왕성',
+      '물고기자리', '해왕성'};
     return planets[zodiac] ?? '알 수 없음';
   }
 
   String _getCharacteristic(String zodiac) {
     final characteristics = {
-      '양자리': '열정적',
-      '황소자리': '실용적',
-      '쌍둥이자리': '호기심',
-      '게자리': '감성적',
-      '사자자리': '리더십',
-      '처녀자리': '완벽주의',
-      '천칭자리': '조화',
-      '전갈자리': '신비',
-      '사수자리': '자유',
-      '염소자리': '야망',
-      '물병자리': '혁신',
-      '물고기자리': '상상력',
-    };
+      '양자리', '열정적',
+      '황소자리', '실용적',
+      '쌍둥이자리', '호기심',
+      '게자리', '감성적',
+      '사자자리', '리더십',
+      '처녀자리', '완벽주의',
+      '천칭자리', '조화',
+      '전갈자리', '신비',
+      '사수자리', '자유',
+      '염소자리', '야망',
+      '물병자리', '혁신',
+      '물고기자리', '상상력'};
     return characteristics[zodiac] ?? '특별함';
   }
 
@@ -524,40 +443,29 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
               children: [
                 Icon(
                   Icons.favorite,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '별자리 궁합',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 20),
             _buildCompatibilityRow(
               '최고의 궁합',
               compatibility['best'],
               Colors.pink,
-              Icons.favorite,
-            ),
+              Icons.favorite),
             const SizedBox(height: 12),
             _buildCompatibilityRow(
               '좋은 궁합',
-              (compatibility['good'] as List).join(': ',
+              (compatibility['good'] as List).join(', ',
               Colors.green,
-              Icons.thumb_up,
-            ),
+              Icons.thumb_up),
             const SizedBox(height: 12),
             _buildCompatibilityRow(
               '도전적인 궁합',
-              (compatibility['challenging'] as List).join(': ',
+              (compatibility['challenging'] as List).join(', ',
               Colors.orange,
-              Icons.warning,
-            ),
-          ],
-        ),
-      ),
-    );
+              Icons.warning)])));
   }
 
   Widget _buildCompatibilityRow(String label, String value, Color color, IconData icon) {
@@ -568,10 +476,8 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
+            borderRadius: BorderRadius.circular(8)),
+          child: Icon(icon, color: color, size: 20)),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -579,18 +485,11 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: color),
-              ),
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: color)),
               const SizedBox(height: 4),
               Text(
                 value,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                style: Theme.of(context).textTheme.bodyMedium)]))]);
   }
 
   Widget _buildMonthlyTrendChart() {
@@ -609,8 +508,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
           children: [
             Text(
               '이번 달 운세 흐름',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+              style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
             SizedBox(
               height: 150,
@@ -620,12 +518,11 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                     show: true,
                     drawVerticalLine: true,
                     horizontalInterval: 20,
-                    verticalInterval: 5,
-                  ),
+                    verticalInterval: 5),
                   titlesData: FlTitlesData(
                     show: true,
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -634,13 +531,10 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                           if (value.toInt() % 5 == 0) {
                             return Text(
                               '${value.toInt() + 1}일',
-                              style: const TextStyle(fontSize: 10),
-                            );
+                              style: const TextStyle(fontSize: 10));
                           }
                           return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
+                        })),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -648,18 +542,12 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}',
-                            style: const TextStyle(fontSize: 10),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                            style: const TextStyle(fontSize: 10));
+                        }))),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
-                    ),
-                  ),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2))),
                   minX: 0,
                   maxX: monthlyTrend.length - 1,
                   minY: 40,
@@ -669,15 +557,13 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                       spots: monthlyTrend
                           .asMap()
                           .entries
-                          .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
+                          .map((entry) => FlSpot(entry.key.toDouble(), entry.value),
                           .toList(),
                       isCurved: true,
                       gradient: LinearGradient(
                         colors: [
                           Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.secondary,
-                        ],
-                      ),
+                          Theme.of(context).colorScheme.secondary]),
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(show: false),
@@ -686,21 +572,9 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                         gradient: LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary.withOpacity(0.3),
-                            Theme.of(context).colorScheme.primary.withOpacity(0.0),
-                          ],
+                            Theme.of(context).colorScheme.primary.withOpacity(0.0)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                          end: Alignment.bottomCenter)))])))])));
   }
 
   Widget _buildElementalBalance() {
@@ -714,8 +588,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
       '불': Colors.red,
       '물': Colors.blue,
       '땅': Colors.brown,
-      '공기': null,
-    };
+      '공기': null};
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -726,8 +599,7 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
           children: [
             Text(
               '원소 밸런스',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+              style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
             ...balance.entries.map((entry) {
               final color = elementColors[entry.key]!;
@@ -741,30 +613,17 @@ class _ZodiacFortunePageState extends BaseFortunePageState<ZodiacFortunePage> {
                       children: [
                         Text(
                           entry.key,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
+                          style: Theme.of(context).textTheme.bodyMedium),
                         Text(
                           '${(entry.value * 100).toInt()}%',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: color,
-                              ),
-                        ),
-                      ],
-                    ),
+                                color: color))]),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: entry.value,
                       backgroundColor: color.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                      valueColor: AlwaysStoppedAnimation<Color>(color))]));
+            }).toList()])));
   }
 }

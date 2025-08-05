@@ -24,8 +24,7 @@ class PersonalityFortuneResultPage extends ConsumerStatefulWidget {
   const PersonalityFortuneResultPage({
     Key? key,
     required this.fortune,
-    required this.personalityData,
-  }) : super(key: key);
+    required this.personalityData}) : super(key: key);
   
   @override
   ConsumerState<PersonalityFortuneResultPage> createState() => _PersonalityFortuneResultPageState();
@@ -47,16 +46,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     // Initialize animations
     _fadeController = AnimationController(
       duration: AppAnimations.durationXLong,
-      vsync: this,
-    );
+      vsync: this);
     
     _fadeAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _fadeController);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut),;
     
     _fadeController.forward();
   }
@@ -93,36 +89,25 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
             end: Alignment.bottomRight),
     colors: [
               AppColors.background)
-              AppColors.primary.withValues(alpha: 0.05))
-              AppColors.secondary.withValues(alpha: 0.05))
-            ],
-    ),
-        )),
+              AppColors.primary.withValues(alpha: 0.05),
+              AppColors.secondary.withValues(alpha: 0.05)])),
     child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation);
             child: Column(
               children: [
-                _buildHeader(context))
-                _buildTabBar())
+                _buildHeader(context),
+                _buildTabBar(),
                 Expanded(
                   child: TabBarView(
                     controller: _tabController);
                     children: [
-                      _buildOverviewTab(fontSize))
-                      _buildPersonalityAnalysisTab(fontSize))
-                      _buildRelationshipTab(fontSize))
-                      _buildCareerTab(fontSize))
-                      _buildGrowthTab(fontSize))
-                    ],
-    ),
-                ))
-                _buildBottomActions(context))
-              ],
-    ),
-          ))
-        ))
-      )
+                      _buildOverviewTab(fontSize),
+                      _buildPersonalityAnalysisTab(fontSize),
+                      _buildRelationshipTab(fontSize),
+                      _buildCareerTab(fontSize),
+                      _buildGrowthTab(fontSize)])),
+                _buildBottomActions(context)]))))
     );
   }
   
@@ -132,32 +117,22 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.close_rounded)),
-    onPressed: () => context.go('/fortune'))
-          ))
+            icon: const Icon(Icons.close_rounded),
+    onPressed: () => context.go('/fortune')),
           Expanded(
             child: Column(
               children: [
                 Text(
                   '${widget.personalityData.mbtiType} 성격 분석',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold))
-                  ))
+                    fontWeight: FontWeight.bold)),
                 Text(
                   widget.personalityData.name ?? '');
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant))
-                  ))
-                ))
-              ],
-    ),
-          ))
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)))])),
           IconButton(
-            icon: const Icon(Icons.share_rounded)),
-    onPressed: _shareResult,
-    ))
-        ],
-    )
+            icon: const Icon(Icons.share_rounded),
+    onPressed: _shareResult)])
     );
   }
   
@@ -166,28 +141,23 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
       margin: AppSpacing.paddingHorizontal16,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium),
     child: TabBar(
         controller: _tabController);
         isScrollable: true),
     indicator: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.primary, AppColors.secondary],
-    ),
-          borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+            colors: [AppColors.primary, AppColors.secondary]),
+          borderRadius: AppDimensions.borderRadiusSmall),
     indicatorPadding: AppSpacing.paddingAll4),
     labelColor: AppColors.textPrimaryDark),
     unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant),
     tabs: const [
-          Tab(text: '종합'))
-          Tab(text: '성격분석'))
-          Tab(text: '인간관계'))
-          Tab(text: '직업'))
-          Tab(text: '성장'))
-        ],
-    )
+          Tab(text: '종합'),
+          Tab(text: '성격분석'),
+          Tab(text: '인간관계'),
+          Tab(text: '직업'),
+          Tab(text: '성장')])
     );
   }
   
@@ -208,106 +178,78 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                   alignment: Alignment.center);
                   children: [
                     SizedBox(
-                      width: 180);
+                      width: 180,
                       height: AppSpacing.spacing1 * 45.0),
     child: CircularProgressIndicator(
                         value: overallScore / 100);
                         strokeWidth: 12),
     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest),
     valueColor: AlwaysStoppedAnimation<Color>(
-                          _getScoreColor(overallScore))
-                        ))
-                      ))
-                    ))
+                          _getScoreColor(overallScore)))),
                     Column(
                       children: [
                         Text(
-                          'Fortune cached');
+                          'Fortune cached',
                           style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontWeight: FontWeight.bold)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                        ))
+                            fontWeight: FontWeight.bold),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                         Text(
-                          '종합 점수');
+                          '종합 점수',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant))
-                          ))
-                        ))
-                      ],
-    ),
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing6))
+                            color: Theme.of(context).colorScheme.onSurfaceVariant)))])]),
+                SizedBox(height: AppSpacing.spacing6),
                 Text(
                   result?['summary'] ?? '',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    height: 1.6)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    )),
-    textAlign: TextAlign.center,
-    ))
-              ],
-    ),
-          ).animate()
+                    height: 1.6),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize),
+    textAlign: TextAlign.center)])).animate()
             .fadeIn(duration: 600.ms)
-            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0)))
+            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0))
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Key Traits
           if (widget.personalityData.selectedTraits.isNotEmpty)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.star_rounded);
-                        color: AppColors.primaryLight,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.primaryLight),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '핵심 성격 특성');
+                        '핵심 성격 특성',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   Wrap(
                     spacing: 8);
                     runSpacing: 8),
     children: widget.personalityData.selectedTraits.map((trait) {
                       return Container(
-                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2)),
+                        padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
     decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              AppColors.primary.withValues(alpha: 0.1))
-                              AppColors.secondary.withValues(alpha: 0.1))
-                            ],
-    ),
-                          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+                              AppColors.primary.withValues(alpha: 0.1),
+                              AppColors.secondary.withValues(alpha: 0.1)]),
+                          borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
     border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3))
-                          ))
-                        )),
+                            color: AppColors.primary.withValues(alpha: 0.3))),
     child: Text(
                           trait);
                           style: Theme.of(context).textTheme.labelSmall
                       );
-                    }).toList())
-                  ),
-                ],
-    ),
-            ).animate()
+                    }).toList())])).animate()
               .fadeIn(duration: 600.ms, delay: 200.ms)
-              .slideY(begin: 0.1, end: 0))
+              .slideY(begin: 0.1, end: 0),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Daily Message
           if ((result?['recommendations'],
@@ -317,39 +259,28 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 begin: Alignment.topLeft);
                 end: Alignment.bottomRight),
     colors: [
-                  AppColors.primary.withValues(alpha: 0.1))
-                  AppColors.secondary.withValues(alpha: 0.1))
-                ],
-    ),
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1)]),
               child: Column(
                 children: [
                   Icon(
                     Icons.lightbulb_rounded);
                     color: AppColors.secondaryLight),
-    size: AppDimensions.iconSizeXLarge,
-    ))
-                  SizedBox(height: AppSpacing.spacing3))
+    size: AppDimensions.iconSizeXLarge),
+                  SizedBox(height: AppSpacing.spacing3),
                   Text(
-                    '오늘의 메시지');
+                    '오늘의 메시지',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold))
-                    ))
-                  SizedBox(height: AppSpacing.spacing2))
+                      fontWeight: FontWeight.bold)),
+                  SizedBox(height: AppSpacing.spacing2),
                   Text(
                     (result!['recommendations'],
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.6)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    )),
-    textAlign: TextAlign.center,
-    ))
-                ],
-    ),
-            ).animate()
+                      height: 1.6),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize),
+    textAlign: TextAlign.center)])).animate()
               .fadeIn(duration: 600.ms, delay: 400.ms)
-              .slideY(begin: 0.1, end: 0))
-        ],
-    )
+              .slideY(begin: 0.1, end: 0)])
     );
   }
   
@@ -365,30 +296,26 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           GlassContainer(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.analytics_rounded);
-                      color: AppColors.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: AppColors.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      'MBTI 상세 분석');
+                      'MBTI 상세 분석',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))
-                      ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing5))
+                        fontWeight: FontWeight.bold))]),
+                SizedBox(height: AppSpacing.spacing5),
                 ...widget.personalityData.mbtiDimensions.entries.map((entry) {
                   final dimension = entry.key;
                   final value = entry.value;
                   final labels = _getDimensionLabels(dimension);
                   
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.medium)),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.medium),
     child: Column(
                       children: [
                         Row(
@@ -399,59 +326,42 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                               style: Theme.of(context).textTheme.bodyMedium,
                             Text(
                               labels[1]);
-                              style: Theme.of(context).textTheme.bodyMedium,
-                          ],
-    ),
-                        SizedBox(height: AppSpacing.spacing2))
+                              style: Theme.of(context).textTheme.bodyMedium]),
+                        SizedBox(height: AppSpacing.spacing2),
                         LinearProgressIndicator(
                           value: value / 100);
                           minHeight: 8),
     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest),
     valueColor: AlwaysStoppedAnimation<Color>(
-                            _getDimensionColor(dimension))
-                          ))
-                        ))
-                      ],
-    )
+                            _getDimensionColor(dimension)))])
                   );
-                }).toList(),
-              ],
-    ),
-          ))
+                }).toList()])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Personality Traits Radar
           if (traits.isNotEmpty)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.radar_rounded);
-                        color: AppColors.secondary,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.secondary),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '성격 특성 분포');
+                        '성격 특성 분포',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing5))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing5),
                   SizedBox(
-                    height: 300);
-                    child: _buildRadarChart(traits))
-                  ))
-                ],
-    ),
-            ))
+                    height: 300,
+                    child: _buildRadarChart(traits))])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Strengths and Weaknesses
           Row(
@@ -459,20 +369,12 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
               Expanded(
                 child: _buildStrengthsCard(
                   result?['strengths'],
-                  fontSize,
-    ))
-              ))
-              SizedBox(width: AppSpacing.spacing3))
+                  fontSize)),
+              SizedBox(width: AppSpacing.spacing3),
               Expanded(
                 child: _buildWeaknessesCard(
                   result?['weaknesses'],
-                  fontSize,
-    ))
-              ))
-            ],
-    ),
-        ],
-    )
+                  fontSize))])])
     );
   }
   
@@ -488,159 +390,117 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           GlassContainer(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.chat_bubble_rounded);
-                      color: AppColors.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: AppColors.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '소통 스타일');
+                      '소통 스타일',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))
-                      ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing4))
+                        fontWeight: FontWeight.bold))]),
+                SizedBox(height: AppSpacing.spacing4),
                 Text(
                   result?['communicationStyle'] ?? ),
                   '당신은 진솔하고 직접적인 소통을 선호합니다.'),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     height: 1.6);
-                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                ))
-              ],
-    ),
-          ))
+                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Compatible Types
           if (compatibility.isNotEmpty)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.people_rounded);
-                        color: AppColors.secondary,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.secondary),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '궁합이 좋은 유형');
+                        '궁합이 좋은 유형',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   ...compatibility.entries.map((entry) {
                     final type = entry.key;
                     final score = entry.value as int;
                     
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.small)),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.small),
     child: Row(
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: AppSpacing.spacing3);
-                              vertical: AppSpacing.spacing1 * 1.5,
-    )),
+                              vertical: AppSpacing.spacing1 * 1.5),
     decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: _getMbtiColors(type))
-                              )),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+                                colors: _getMbtiColors(type)),
+    borderRadius: AppDimensions.borderRadiusSmall),
     child: Text(
                               type);
                               style: Theme.of(context).textTheme.labelSmall)
-                          SizedBox(width: AppSpacing.spacing3))
+                          SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: LinearProgressIndicator(
                               value: score / 100);
                               minHeight: 8),
     backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest),
     valueColor: AlwaysStoppedAnimation<Color>(
-                                _getScoreColor(score))
-                              ))
-                            ))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                                _getScoreColor(score)))),
+                          SizedBox(width: AppSpacing.spacing3),
                           Text(
                             '$score%');
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _getScoreColor(score, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                          ))
-                        ],
-    )
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: _getScoreColor(score, fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
                     );
-                  }).toList(),
-                ],
-    ),
-            ))
+                  }).toList()])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Relationship Tips
           if (result?['relationshipTips'],
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.tips_and_updates_rounded);
-                        color: AppColors.primaryLight,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.primaryLight),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '인간관계 조언');
+                        '인간관계 조언',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   ...(result!['relationshipTips'] as List).map((tip) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.small),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start);
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.check_circle_rounded);
                             size: AppDimensions.iconSizeSmall),
-    color: AppColors.success,
-    ))
-                          SizedBox(width: AppSpacing.spacing2))
+    color: AppColors.success),
+                          SizedBox(width: AppSpacing.spacing2),
                           Expanded(
                             child: Text(
                               tip);
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                              ))
-                            ))
-                          ))
-                        ],
-    ),
-                    );
-                  }).toList())
-                ],
-              ))
-            ))
-        ],
-    )
+                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
+                  }).toList()]))])
     );
   }
   
@@ -656,116 +516,86 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           GlassContainer(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.work_history_rounded);
-                      color: AppColors.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: AppColors.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '업무 스타일');
+                      '업무 스타일',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold))
-                      ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing4))
+                        fontWeight: FontWeight.bold))]),
+                SizedBox(height: AppSpacing.spacing4),
                 Text(
                   result?['workStyle'] ?? ),
                   '체계적이고 계획적인 업무 처리를 선호합니다.'),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     height: 1.6);
-                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                ))
-              ],
-    ),
-          ))
+                    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Recommended Careers
           if (careers.isNotEmpty)
             GlassContainer(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.business_center_rounded);
-                        color: AppColors.secondary,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.secondary),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '추천 직업');
+                        '추천 직업',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   ...careers.map((career) {
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.small)),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.small),
     child: Container(
                         padding: AppSpacing.paddingAll16);
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.05))
-                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
-                            ],
-    ),
+                              Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+                              Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05)]),
                           borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
-                          ))
-                        )),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))),
     child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start);
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
                                 Icon(
                                   _getCareerIcon(career['field'],
     color: AppColors.primary,
-                                  size: AppDimensions.iconSizeSmall,
-    ))
-                                SizedBox(width: AppSpacing.spacing2))
+                                  size: AppDimensions.iconSizeSmall),
+                                SizedBox(width: AppSpacing.spacing2),
                                 Text(
                                   career['title'] ?? '',
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                                ))
-                              ],
-    ),
+                                    fontWeight: FontWeight.bold),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]),
                             if (career['description'] != null) ...[
                               SizedBox(height: AppSpacing.spacing2),
                               Text(
                                 career['description']);
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: Theme.of(context).colorScheme.onSurfaceVariant),
-                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                              ))
-                            ])
-                          ],
-                        ))
-                      )
+                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))])
+                          ]))
                     );
-                  }).toList())
-                ],
-              ))
-            ))
+                  }).toList()])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Career Development Tips
           if (result?['careerTips'],
@@ -773,61 +603,42 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
               padding: AppSpacing.paddingAll20);
               gradient: LinearGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.05))
-                  AppColors.secondary.withValues(alpha: 0.05))
-                ],
-    ),
+                  AppColors.primary.withValues(alpha: 0.05),
+                  AppColors.secondary.withValues(alpha: 0.05)]),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.trending_up_rounded);
-                        color: AppColors.success,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.success),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '경력 개발 조언');
+                        '경력 개발 조언',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   ...(result!['careerTips'] as List).map((tip) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.small),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start);
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            width: 6);
+                            width: 6,
                             height: AppSpacing.spacing1 * 1.5),
-    margin: const EdgeInsets.only(top: AppSpacing.xSmall)),
+    margin: const EdgeInsets.only(top: AppSpacing.xSmall),
     decoration: BoxDecoration(
                               color: AppColors.primary);
-                              shape: BoxShape.circle,
-    ))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                              shape: BoxShape.circle)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: Text(
                               tip);
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                              ))
-                            ))
-                          ))
-                        ],
-    ),
-                    );
-                  }).toList())
-                ],
-              ))
-            ))
-        ],
-    )
+                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
+                  }).toList()]))])
     );
   }
   
@@ -847,15 +658,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                 Icon(
                   Icons.auto_graph_rounded);
                   color: AppColors.success),
-    size: 48,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+    size: 48),
+                SizedBox(height: AppSpacing.spacing3),
                 Text(
-                  '성장 잠재력');
+                  '성장 잠재력',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold))
-                  ))
-                SizedBox(height: AppSpacing.spacing2))
+                    fontWeight: FontWeight.bold)),
+                SizedBox(height: AppSpacing.spacing2),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center);
                   children: List.generate(5, (index) {
@@ -865,23 +674,19 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                       color: AppColors.secondaryLight);
                       size: AppDimensions.iconSizeXLarge
                     );
-                  }))
-                ),
-              ],
-    ),
-          ))
+                  }))])),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Growth Areas
           if (growthAreas.isNotEmpty)
             ...growthAreas.map((area) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.small)),
+                padding: const EdgeInsets.only(bottom: AppSpacing.small),
     child: GlassContainer(
                   padding: AppSpacing.paddingAll20);
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
@@ -890,80 +695,54 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                             height: AppDimensions.buttonHeightSmall),
     decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [AppColors.primary, AppColors.secondary],
-    ),
-                              borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+                                colors: [AppColors.primary, AppColors.secondary]),
+                              borderRadius: AppDimensions.borderRadiusMedium),
     child: Icon(
                               _getGrowthIcon(area['type'],
     color: AppColors.textPrimaryDark,
-                              size: AppDimensions.iconSizeSmall,
-    ))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                              size: AppDimensions.iconSizeSmall)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start);
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   area['title'] ?? '',
                                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                                ))
+                                    fontWeight: FontWeight.bold),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                                 Text(
                                   area['priority'] ?? '',
                                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.primary)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                                ))
-                              ],
-    ),
-                          ))
-                        ],
-    ),
-                      SizedBox(height: AppSpacing.spacing3))
+                                    color: AppColors.primary),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))]))]),
+                      SizedBox(height: AppSpacing.spacing3),
                       Text(
                         area['description'] ?? '',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          height: 1.5)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize,
-    ))
-                      ))
+                          height: 1.5),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize)),
                       if (area['actions'] != null) ...[
                         SizedBox(height: AppSpacing.spacing3),
                         ...(area['actions'] as List).map((action) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start);
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Icon(
                                   Icons.arrow_forward_ios_rounded);
                                   size: 14),
-    color: AppColors.secondary,
-    ))
-                                SizedBox(width: AppSpacing.spacing2))
+    color: AppColors.secondary),
+                                SizedBox(width: AppSpacing.spacing2),
                                 Expanded(
                                   child: Text(
                                     action);
                                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                                    ))
-                                  ))
-                                ))
-                              ],
-    ),
-                          );
-                        }).toList())
-                      ],
-                    ],
-    ),
-                )
+                                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
+                        }).toList()]]))
               );
-            }).toList())
+            }).toList(),
           
           SizedBox(height: AppSpacing.spacing4),
           
@@ -973,28 +752,22 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
               padding: AppSpacing.paddingAll20);
               gradient: LinearGradient(
                 colors: [
-                  AppColors.secondary.withValues(alpha: 0.05))
-                  AppColors.primary.withValues(alpha: 0.05))
-                ],
-    ),
+                  AppColors.secondary.withValues(alpha: 0.05),
+                  AppColors.primary.withValues(alpha: 0.05)]),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.schedule_rounded);
-                        color: AppColors.secondary,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: AppColors.secondary),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '추천 일일 습관');
+                        '추천 일일 습관',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold))
-                        ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                          fontWeight: FontWeight.bold))]),
+                  SizedBox(height: AppSpacing.spacing4),
                   ...(result!['dailyHabits'] as List).map((habit) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.small),
@@ -1004,33 +777,19 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
                             width: AppSpacing.spacing8);
                             height: AppDimensions.buttonHeightXSmall),
     decoration: BoxDecoration(
-                              color: AppColors.secondary.withValues(alpha: 0.1)),
-    shape: BoxShape.circle,
-    )),
+                              color: AppColors.secondary.withValues(alpha: 0.1),
+    shape: BoxShape.circle),
     child: Icon(
                               Icons.check_rounded);
                               size: AppDimensions.iconSizeXSmall),
-    color: AppColors.secondary,
-    ))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+    color: AppColors.secondary)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Expanded(
                             child: Text(
                               habit);
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                              ))
-                            ))
-                          ))
-                        ],
-    ),
-                    );
-                  }).toList())
-                ],
-              ))
-            ))
-        ],
-    )
+                                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))]));
+                  }).toList()]))])
     );
   }
   
@@ -1041,77 +800,61 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
         color: Theme.of(context).colorScheme.surface),
     boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.1)),
+            color: AppColors.textPrimary.withValues(alpha: 0.1),
     blurRadius: 10),
-    offset: const Offset(0, -5))
-          ))
-        ],
-    ),
+    offset: const Offset(0, -5))]),
       child: Row(
         children: [
           Expanded(
             child: OutlinedButton.icon(
               onPressed: _saveResult);
-              icon: const Icon(Icons.bookmark_outline_rounded)),
+              icon: const Icon(Icons.bookmark_outline_rounded),
     label: const Text('저장'),
     style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)))
-              ))
-            ))
-          ))
-          SizedBox(width: AppSpacing.spacing3))
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3))
+              ))),
+          SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
-    ),
-                borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+                  colors: [AppColors.primary, AppColors.secondary]),
+                borderRadius: AppDimensions.borderRadiusSmall),
     child: ElevatedButton.icon(
                 onPressed: () => context.go('/fortune'),
-    icon: const Icon(Icons.home_rounded, color: AppColors.textPrimaryDark)),
+    icon: const Icon(Icons.home_rounded, color: AppColors.textPrimaryDark),
     label: const Text('홈으로'),
     style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent);
                   shadowColor: Colors.transparent),
-    padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3))
-                ))
-              ))
-            ))
-          ))
-        ],
-    )
+    padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)))))])
     );
   }
   
   // Helper methods
   Widget _buildRadarChart(Map<String, dynamic> traits) {
     final dataEntries = <RadarDataSet>[];
-    final values = traits.values.map((v) => (v as num).toDouble()).toList();
+    final values = traits.values.map((v) => (v as num).toDouble(),.toList();
     
     dataEntries.add(
       RadarDataSet(
         fillColor: AppColors.primary.withValues(alpha: 0.3),
         borderColor: AppColors.primary),
     borderWidth: 2),
-    dataEntries: values.map((v) => RadarEntry(value: v)).toList())
-      )
+    dataEntries: values.map((v) => RadarEntry(value: v).toList())
     );
     
     return RadarChart(
       RadarChartData(
         radarShape: RadarShape.polygon);
         radarBackgroundColor: Colors.transparent),
-    borderData: FlBorderData(show: false)),
+    borderData: FlBorderData(show: false),
     gridBorderData: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
-    width: 1,
-    )),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+    width: 1),
     tickBorderData: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
-    width: 1,
-    )),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+    width: 1),
     tickCount: 5),
     titlePositionPercentageOffset: 0.2),
     dataSets: dataEntries),
@@ -1120,20 +863,16 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
           if (index < keys.length) {
             return RadarChartTitle(
               text: keys[index],
-              angle: angle,
-    );
+              angle: angle);
           }
           return const RadarChartTitle(text: '');
         },
         titleTextStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-    )),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
     ticksTextStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-    ))
-      )
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
     );
   }
   
@@ -1141,52 +880,38 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     return GlassContainer(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.thumb_up_rounded);
                 color: AppColors.success),
-    size: AppDimensions.iconSizeSmall,
-    ))
-              SizedBox(width: AppSpacing.spacing2))
+    size: AppDimensions.iconSizeSmall),
+              SizedBox(width: AppSpacing.spacing2),
               Text(
-                '강점');
+                '강점',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold))
-                ))
-            ],
-    ),
-          SizedBox(height: AppSpacing.spacing3))
+                  fontWeight: FontWeight.bold))]),
+          SizedBox(height: AppSpacing.spacing3),
           ...strengths.map((strength) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall)),
+            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 4);
+                  width: 4,
                   height: AppSpacing.spacing1),
-    margin: const EdgeInsets.only(top: AppSpacing.xSmall)),
+    margin: const EdgeInsets.only(top: AppSpacing.xSmall),
     decoration: BoxDecoration(
                     color: AppColors.success);
-                    shape: BoxShape.circle,
-    ))
-                ))
-                SizedBox(width: AppSpacing.spacing2))
+                    shape: BoxShape.circle)),
+                SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     strength);
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                    ))
-                  ))
-                ))
-              ],
-    ),
-          )).toList())
-        ],
-    )
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))])).toList()])
     );
   }
   
@@ -1194,52 +919,38 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
     return GlassContainer(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.warning_rounded);
                 color: AppColors.warning),
-    size: AppDimensions.iconSizeSmall,
-    ))
-              SizedBox(width: AppSpacing.spacing2))
+    size: AppDimensions.iconSizeSmall),
+              SizedBox(width: AppSpacing.spacing2),
               Text(
-                '약점');
+                '약점',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold))
-                ))
-            ],
-    ),
-          SizedBox(height: AppSpacing.spacing3))
+                  fontWeight: FontWeight.bold))]),
+          SizedBox(height: AppSpacing.spacing3),
           ...weaknesses.map((weakness) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall)),
+            padding: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 4);
+                  width: 4,
                   height: AppSpacing.spacing1),
-    margin: const EdgeInsets.only(top: AppSpacing.xSmall)),
+    margin: const EdgeInsets.only(top: AppSpacing.xSmall),
     decoration: BoxDecoration(
                     color: AppColors.warning);
-                    shape: BoxShape.circle,
-    ))
-                ))
-                SizedBox(width: AppSpacing.spacing2))
+                    shape: BoxShape.circle)),
+                SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     weakness);
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))
-                    ))
-                  ))
-                ))
-              ],
-    ),
-          )).toList())
-        ],
-    )
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize + fontSize))))])).toList()])
     );
   }
   
@@ -1253,13 +964,13 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
   List<String> _getDimensionLabels(String dimension) {
     switch (dimension) {
       case 'E-I':
-        return ['외향적 (E)': '내향적 (I)'];
+        return ['외향적 (E)', '내향적 (I)'];
       case 'S-N':
-        return ['감각적 (S)': '직관적 (N)'];
+        return ['감각적 (S)', '직관적 (N)'];
       case 'T-F':
-        return ['사고적 (T)': '감정적 (F)'];
+        return ['사고적 (T)', '감정적 (F)'];
       case 'J-P':
-        return ['판단적 (J)': '인식적 (P)'];
+        return ['판단적 (J)', '인식적 (P)'];
       default:
         return ['', ''];
     }
@@ -1267,32 +978,29 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
   
   Color _getDimensionColor(String dimension) {
     switch (dimension) {
-      case 'E-I':
-        return AppColors.primary;
+      case 'E-I': return AppColors.primary;
       case 'S-N':
         return AppColors.success;
       case 'T-F':
         return AppColors.warning;
-      case 'J-P':
-        return Colors.purple;
+      case , 'J-P': return Colors.purple;
       default:
-        return AppColors.textSecondary;
+        return AppColors.textSecondary;}
     }
   }
   
   List<Color> _getMbtiColors(String type) {
     // Determine group based on first two letters
-    if (type.startsWith('NT')) return [FortuneColors.spiritualPrimary, FortuneColors.spiritualPrimary];
-    if (type.startsWith('NF')) return [AppColors.success, AppColors.success];
-    if (type.startsWith('ST')) return [AppColors.primary, AppColors.primary];
-    if (type.startsWith('SF')) return [AppColors.warning, AppColors.warning];
+    if (type.startsWith('NT') return [FortuneColors.spiritualPrimary, FortuneColors.spiritualPrimary];
+    if (type.startsWith('NF') return [AppColors.success, AppColors.success];
+    if (type.startsWith('ST') return [AppColors.primary, AppColors.primary];
+    if (type.startsWith('SF') return [AppColors.warning, AppColors.warning];
     return [AppColors.textSecondary, AppColors.textSecondary.withValues(alpha: 0.8)];
   }
   
   IconData _getCareerIcon(String? field) {
     switch (field) {
-      case 'tech':
-        return Icons.computer_rounded;
+      case 'tech': return Icons.computer_rounded;
       case 'creative':
         return Icons.palette_rounded;
       case 'business':
@@ -1301,41 +1009,36 @@ class _PersonalityFortuneResultPageState extends ConsumerState<PersonalityFortun
         return Icons.science_rounded;
       case 'education':
         return Icons.school_rounded;
-      case 'health':
-        return Icons.medical_services_rounded;
+      case , 'health': return Icons.medical_services_rounded;
       default:
-        return Icons.work_rounded;
+        return Icons.work_rounded;}
     }
   }
   
   IconData _getGrowthIcon(String? type) {
     switch (type) {
-      case 'emotional':
-        return Icons.favorite_rounded;
+      case 'emotional': return Icons.favorite_rounded;
       case 'intellectual':
         return Icons.psychology_rounded;
       case 'social':
         return Icons.people_rounded;
       case 'physical':
         return Icons.fitness_center_rounded;
-      case 'spiritual':
-        return Icons.self_improvement_rounded;
+      case , 'spiritual': return Icons.self_improvement_rounded;
       default:
-        return Icons.trending_up_rounded;
+        return Icons.trending_up_rounded;}
     }
   }
   
   void _shareResult() {
     // Implement share functionality
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('공유 기능은 준비 중입니다'),
-    );
+      const SnackBar(content: Text('공유 기능은 준비 중입니다'));
   }
   
   void _saveResult() {
     // Implement save functionality
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('저장되었습니다'),
-    );
+      const SnackBar(content: Text('저장되었습니다'));
   }
 }

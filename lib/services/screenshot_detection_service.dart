@@ -92,8 +92,7 @@ class ScreenshotDetectionService {
     required String fortuneTitle,
     required String fortuneContent,
     String? userName,
-    Map<String, dynamic>? additionalInfo,
-  }) async {
+    Map<String, dynamic>? additionalInfo}) async {
     // First capture preview image
     final previewImage = await _captureFortuneImage(
       fortuneType: fortuneType,
@@ -101,8 +100,7 @@ class ScreenshotDetectionService {
       content: fortuneContent,
       userName: userName,
       additionalInfo: additionalInfo,
-      template: ShareCardTemplate.modern,
-    );
+      template: ShareCardTemplate.modern);
 
     if (!context.mounted) return;
 
@@ -124,11 +122,8 @@ class ScreenshotDetectionService {
             fortuneContent: fortuneContent,
             userName: userName,
             additionalInfo: additionalInfo,
-            context: context,
-          );
-        },
-      ),
-    );
+            context: context);
+        }));
   }
 
   /// Capture fortune as image with specific template
@@ -138,8 +133,7 @@ class ScreenshotDetectionService {
     required String content,
     String? userName,
     Map<String, dynamic>? additionalInfo,
-    required ShareCardTemplate template,
-  }) async {
+    required ShareCardTemplate template}) async {
     try {
       final image = await _screenshotController.captureFromWidget(
         EnhancedShareableFortuneCard(
@@ -149,11 +143,9 @@ class ScreenshotDetectionService {
           userName: userName,
           date: DateTime.now(),
           additionalInfo: additionalInfo,
-          template: template,
-        ),
+          template: template),
         delay: const Duration(milliseconds: 100),
-        pixelRatio: 3.0,
-      );
+        pixelRatio: 3.0);
       return image;
     } catch (e) {
       Logger.error('Failed to capture fortune image', e);
@@ -169,8 +161,7 @@ class ScreenshotDetectionService {
     required String fortuneContent,
     String? userName,
     Map<String, dynamic>? additionalInfo,
-    required BuildContext context,
-  }) async {
+    required BuildContext context}) async {
     try {
       // Show loading
       if (context.mounted) {
@@ -178,9 +169,7 @@ class ScreenshotDetectionService {
           context: context,
           barrierDismissible: false,
           builder: (context) => const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+            child: CircularProgressIndicator()));
       }
 
       ShareCardTemplate template = ShareCardTemplate.modern;
@@ -195,8 +184,7 @@ class ScreenshotDetectionService {
         content: fortuneContent,
         userName: userName,
         additionalInfo: additionalInfo,
-        template: template,
-      );
+        template: template);
 
       if (image == null) {
         throw Exception('Failed to capture image');
@@ -296,8 +284,7 @@ class ScreenshotDetectionService {
       if (context.mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('운세 공유 중 오류가 발생했습니다')),
-        );
+          const SnackBar(content: Text('운세 공유 중 오류가 발생했습니다')));
       }
     }
   }
@@ -376,8 +363,7 @@ class ScreenshotDetectionService {
       final result = await ImageGallerySaver.saveImage(
         image,
         quality: 100,
-        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}',
-      );
+        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
       
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -385,11 +371,8 @@ class ScreenshotDetectionService {
             content: Text(
               result['isSuccess'] == true 
                 ? '이미지가 갤러리에 저장되었습니다'
-                : '저장 중 오류가 발생했습니다',
-            ),
-            backgroundColor: result['isSuccess'] == true ? AppColors.success : AppColors.error,
-          ),
-        );
+                : '저장 중 오류가 발생했습니다'),
+            backgroundColor: result['isSuccess'] == true ? AppColors.success : AppColors.error));
       }
     } catch (e) {
       Logger.error('Failed to save to gallery', e);
@@ -406,9 +389,7 @@ class ScreenshotDetectionService {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세가 클립보드에 복사되었습니다'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+            backgroundColor: AppColors.success));
       }
     } catch (e) {
       Logger.error('Failed to copy to clipboard', e);
@@ -422,16 +403,14 @@ class ScreenshotDetectionService {
     required String fortuneTitle,
     required String fortuneContent,
     String? userName,
-    BuildContext? context,
-  }) async {
+    BuildContext? context}) async {
     if (context != null && context.mounted) {
       await showScreenshotSharingDialog(
         context: context,
         fortuneType: 'daily',
         fortuneTitle: fortuneTitle,
         fortuneContent: fortuneContent,
-        userName: userName,
-      );
+        userName: userName);
     }
   }
   /// Save fortune image to gallery (legacy method for compatibility,
@@ -440,24 +419,21 @@ class ScreenshotDetectionService {
     required String fortuneTitle,
     required String fortuneContent,
     String? userName,
-    BuildContext? context,
-  }) async {
+    BuildContext? context}) async {
     try {
       final image = await _captureFortuneImage(
         fortuneType: 'daily',
         title: fortuneTitle,
         content: fortuneContent,
         userName: userName,
-        template: ShareCardTemplate.modern,
-      );
+        template: ShareCardTemplate.modern);
       
       if (image == null) return false;
       
       final result = await ImageGallerySaver.saveImage(
         image,
         quality: 100,
-        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}',
-      );
+        name: 'fortune_${DateTime.now().millisecondsSinceEpoch}');
       
       return result['isSuccess'] ?? false;
     } catch (e) {

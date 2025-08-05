@@ -17,8 +17,7 @@ class SoulEarnAnimation {
     required BuildContext context,
     required int soulAmount,
     Offset? startPosition,
-    Offset? endPosition,
-  )}) {
+    Offset? endPosition)}) {
     // Remove any existing overlay
     _currentOverlay?.remove();
     _currentOverlay = null;
@@ -62,8 +61,7 @@ class _SoulEarnAnimationWidget extends StatefulWidget {
     required this.soulAmount,
     required this.startPosition,
     required this.endPosition,
-    required this.onComplete,
-  });
+    required this.onComplete});
 
   @override
   State<_SoulEarnAnimationWidget> createState() => _SoulEarnAnimationWidgetState();
@@ -190,14 +188,12 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
               child: FadeTransition(,
       opacity: Tween<double>(,
       begin: 0.0,
-                  end: 1.0,
-    ).animate(CurvedAnimation(
+                  end: 1.0).animate(CurvedAnimation(
                   parent: _particleController,
                   curve: Interval(
                     0.0)
                     0.6),
-        curve: Curves.easeOut,
-    ))),
+        curve: Curves.easeOut))),
     child: Transform.translate(,
       offset: Offset(
                     math.cos(particle.angle) * particle.distance * _particleController.value,
@@ -230,8 +226,7 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
       scale: _scaleAnimation,
                   child: GlassContainer(,
       width: 120,
-                    height: AppSpacing.spacing15,
-        ),
+                    height: AppSpacing.spacing15),
         padding: EdgeInsets.symmetric(horizonta,
       l: AppSpacing.spacing4, vertical: AppSpacing.spacing3),
                     borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
@@ -243,21 +238,17 @@ class _SoulEarnAnimationWidgetState extends State<_SoulEarnAnimationWidget>
                         Icon(
                           Icons.auto_awesome_rounded,
                           color: Colors.amber,
-                          size: AppDimensions.iconSizeMedium,
-    ).animate(onPlay: (controller) => controller.repeat())
+                          size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 2000.ms)
                           .shimmer(duration: 1500.ms, color: AppColors.textPrimaryDark),
                         SizedBox(width: AppSpacing.spacing2),
                         Text(
                           '+${widget.soulAmount}'),
         style: theme.textTheme.titleMedium?.copyWith(,
-      color: Colors.amber,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))).animate()
+      color: Colors.amber),
+        fontWeight: FontWeight.bold))).animate()
                           .fadeIn(delay: 200.ms, duration: 300.ms)
-                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms),
-                      ])))).animate()
+                          .slideY(begin: 0.2, end: 0, delay: 200.ms, duration: 300.ms)])))).animate()
                     .custom(
                       duration: 1000.ms),
         builder: (context, value, child) {
@@ -281,6 +272,5 @@ class _Particle {
     required this.angle,
     required this.distance,
     required this.delay,
-    required this.size,
-  });
+    required this.size});
 }

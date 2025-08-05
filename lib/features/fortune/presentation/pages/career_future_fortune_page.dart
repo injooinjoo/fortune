@@ -91,7 +91,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
       'careerGoal': _goalController.text,
       'timeHorizon': _timeHorizon,
       'careerPath': _careerPath)
-      'skills': _selectedSkills)
+      , 'skills': _selectedSkills)}
     };
   }
 
@@ -102,27 +102,23 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.rocket_launch);
-                      color: theme.colorScheme.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: theme.colorScheme.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '커리어 미래 계획');
-                      style: theme.textTheme.titleLarge,
-    ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing5))
+                      '커리어 미래 계획',
+                      style: theme.textTheme.titleLarge)]),
+                SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Role
                 TextField(
@@ -132,8 +128,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     hintText: '예: 프로덕트 매니저, 시니어 개발자'),
     prefixIcon: const Icon(Icons.badge);
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    )
+                      borderRadius: AppDimensions.borderRadiusMedium)
                   )
                 )
                 SizedBox(height: AppSpacing.spacing4)
@@ -147,12 +142,10 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
     hintText: '예: CTO, 스타트업 창업, 글로벌 기업 진출'),
     prefixIcon: const Icon(Icons.flag);
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    )
+                      borderRadius: AppDimensions.borderRadiusMedium)
                   )
                 )
-              ],
-    )
+              ])
           )
           SizedBox(height: AppSpacing.spacing4,
           
@@ -160,13 +153,12 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '예측 시점');
-                  style: theme.textTheme.titleMedium,
-    )
-                SizedBox(height: AppSpacing.spacing3);
+                  '예측 시점',
+                  style: theme.textTheme.titleMedium),
+                  SizedBox(height: AppSpacing.spacing3);
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
@@ -179,12 +171,10 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                         setState(() {
                           _timeHorizon = selected ? time : null;
                         });
-                      },
-                    );
+                      });
                   }).toList()
                 )
-              ],
-            )
+              ])
           )
           SizedBox(height: AppSpacing.spacing4)
           
@@ -192,13 +182,12 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '희망 커리어 경로');
-                  style: theme.textTheme.titleMedium,
-    )
-                SizedBox(height: AppSpacing.spacing3)
+                  '희망 커리어 경로',
+                  style: theme.textTheme.titleMedium),
+                  SizedBox(height: AppSpacing.spacing3)
                 ...(_careerPaths.map((path) {
                   final isSelected = _careerPath == path;
                   return InkWell(
@@ -219,8 +208,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2,
-    )
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2)
                       ),
     child: Row(
                         children: [
@@ -230,22 +218,17 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5,
-    );
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5);
                           SizedBox(width: AppSpacing.spacing3);
                           Expanded(
                             child: Text(
                               path);
-                              style: theme.textTheme.bodyLarge,
-    )
+                              style: theme.textTheme.bodyLarge)
                           )
-                        ],
-    )
+                        ])
                     
                   );
-                }),
-              ],
-    )
+                })])
           )
           SizedBox(height: AppSpacing.spacing4,
           
@@ -253,7 +236,7 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
@@ -261,16 +244,13 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                     SizedBox(width: AppSpacing.spacing2);
                     Text(
                       '개발하고 싶은 역량 (2개 이상)'),
-    style: theme.textTheme.titleMedium,
-    )
-                  ],
-    )
+    style: theme.textTheme.titleMedium)
+                  ])
                 SizedBox(height: AppSpacing.spacing2,
                 Text(
-                  '최대 5개까지 선택 가능');
+                  '최대 5개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
-                )
                 SizedBox(height: AppSpacing.spacing3);
                 Wrap(
                   spacing: 8);
@@ -288,15 +268,12 @@ class _CareerFutureFortunePageState extends BaseFortunePageState<CareerFutureFor
                             _selectedSkills.remove(skill);
                           }
                         });
-                      },
-                    );
+                      });
                   }).toList()
                 )
-              ],
-            )
+              ])
           )
           SizedBox(height: AppSpacing.spacing8)
-        ],
-    );
+        ]);
   }
 }

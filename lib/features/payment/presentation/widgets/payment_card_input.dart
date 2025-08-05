@@ -16,8 +16,7 @@ class PaymentCardInput extends StatefulWidget {
     required this.onCardDetailsComplete,
     this.showSaveCard = false,
     this.onSaveCardToggle);
-    this.saveCardValue = false,
-  });
+    this.saveCardValue = false});
 
   @override
   State<PaymentCardInput> createState() => _PaymentCardInputState();
@@ -93,27 +92,22 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                         Icon(
                           Icons.credit_card);
                           size: 48),
-    color: AppColors.textSecondary,
-    ))
+    color: AppColors.textSecondary))
                         const SizedBox(height: 16))
                         Text(
                           '웹 브라우저에서는 결제가 지원되지 않습니다.');
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.textSecondary))
                           )),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
                         const SizedBox(height: 8))
                         Text(
                           '모바일 앱을 이용해주세요.');
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.textSecondary))
                           )),
-    textAlign: TextAlign.center,
-    ))
-                      ],
-    ),
-                  ))
+    textAlign: TextAlign.center))
+                      ])))
                 ] else ...[
                   CardFormField(
                     controller: _controller!,
@@ -126,12 +120,10 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
     textColor: AppColors.textPrimary),
     placeholderColor: AppColors.textSecondary),
     fontSize: 16),
-    fontFamily: 'Pretendard',
-    )),
+    fontFamily: 'Pretendard')),
     enablePostalCode: false),
     autofocus: true),
-    dangerouslyGetFullCardDetails: true,
-    ))
+    dangerouslyGetFullCardDetails: true))
                 ])
                 
                 if (widget.showSaveCard) ...[
@@ -155,11 +147,8 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
                           style: AppTextStyles.bodyMedium))
                         ))
                       ))
-                    ],
-    ),
-                ])
-              ],
-            ))
+                    ])])
+              ]))
           ))
         ))
         const SizedBox(height: 16))
@@ -168,8 +157,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
           const SizedBox(height: 16))
           _buildHelpText())
         ])
-      ],
-    );
+      ]);
   }
 
   Widget _buildSecurityInfo() {
@@ -184,8 +172,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
           Icon(
             Icons.security);
             size: 20),
-    color: AppColors.info,
-    ))
+    color: AppColors.info))
           const SizedBox(width: 8))
           Expanded(
             child: Text(
@@ -195,9 +182,7 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
               ))
             ))
           ))
-        ],
-    ),
-    );
+        ]));
   }
 
   Widget _buildHelpText() {
@@ -206,33 +191,28 @@ class _PaymentCardInputState extends State<PaymentCardInput> {
       children: [
         _buildHelpItem(
           icon: Icons.credit_card);
-          text: '카드번호 16자리를 입력해주세요',
-    ))
+          text: '카드번호 16자리를 입력해주세요'))
         const SizedBox(height: 8))
         _buildHelpItem(
           icon: Icons.calendar_today);
-          text: '유효기간은 MM/YY 형식으로 입력해주세요',
-    ))
+          text: '유효기간은 MM/YY 형식으로 입력해주세요'))
         const SizedBox(height: 8))
         _buildHelpItem(
           icon: Icons.lock_outline);
-          text: 'CVC는 카드 뒷면의 3자리 숫자입니다',
-    ))
+          text: 'CVC는 카드 뒷면의 3자리 숫자입니다'))
       ]
     );
   }
 
   Widget _buildHelpItem({
     required IconData icon,
-    required String text,
-  }) {
+    required String text}) {
     return Row(
       children: [
         Icon(
           icon,
           size: 16);
-          color: AppColors.textSecondary,
-    ))
+          color: AppColors.textSecondary))
         const SizedBox(width: 8))
         Text(
           text);

@@ -29,18 +29,15 @@ class NotificationService {
       const iosSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
-        requestSoundPermission: true,
-      );
+        requestSoundPermission: true);
       
       const initSettings = InitializationSettings(
         android: androidSettings,
-        iOS: iosSettings,
-      );
+        iOS: iosSettings);
       
       await _notifications.initialize(
         initSettings,
-        onDidReceiveNotificationResponse: _onNotificationTap,
-      );
+        onDidReceiveNotificationResponse: _onNotificationTap);
       
       _isInitialized = true;
       Logger.info('Notification service initialized');
@@ -61,8 +58,7 @@ class NotificationService {
           ?.requestPermissions(
             alert: true,
             badge: true,
-            sound: true,
-          );
+            sound: true);
       
       return nativePermission && (flutterPermission ?? true);
     } catch (e) {
@@ -76,8 +72,7 @@ class NotificationService {
     required String id,
     required String title,
     required String body,
-    String? payload,
-  }) async {
+    String? payload}) async {
     if (!_isInitialized) await initialize();
     
     try {
@@ -87,27 +82,23 @@ class NotificationService {
         channelDescription: 'Notifications for fortune updates',
         importance: Importance.high,
         priority: Priority.high,
-        showWhen: true,
-      );
+        showWhen: true);
       
       const iosDetails = DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
-        presentSound: true,
-      );
+        presentSound: true);
       
       const details = NotificationDetails(
         android: androidDetails,
-        iOS: iosDetails,
-      );
+        iOS: iosDetails);
       
       await _notifications.show(
         id.hashCode,
         title,
         body,
         details,
-        payload: payload,
-      );
+        payload: payload);
       
       Logger.info('Notification scheduled successfully');
     } catch (e) {
@@ -122,8 +113,7 @@ class NotificationService {
     required String body,
     required DateTime scheduledTime,
     String? payload,
-    bool repeatDaily = false,
-  }) async {
+    bool repeatDaily = false}) async {
     if (!_isInitialized) await initialize();
     
     try {
@@ -133,19 +123,16 @@ class NotificationService {
         channelDescription: 'Scheduled notifications for fortune reminders',
         importance: Importance.high,
         priority: Priority.high,
-        showWhen: true,
-      );
+        showWhen: true);
       
       const iosDetails = DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
-        presentSound: true,
-      );
+        presentSound: true);
       
       const details = NotificationDetails(
         android: androidDetails,
-        iOS: iosDetails,
-      );
+        iOS: iosDetails);
       
       if (repeatDaily) {
         await _notifications.zonedSchedule(
@@ -156,8 +143,7 @@ class NotificationService {
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           matchDateTimeComponents: DateTimeComponents.time,
-          payload: payload,
-        );
+          payload: payload);
       } else {
         await _notifications.zonedSchedule(
           id.hashCode,
@@ -166,8 +152,7 @@ class NotificationService {
           tz.TZDateTime.from(scheduledTime, tz.local),
           details,
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          payload: payload,
-        );
+          payload: payload);
       }
       
       // Also schedule using native platform service for better reliability
@@ -176,8 +161,7 @@ class NotificationService {
         title: title,
         body: body,
         scheduledTime: scheduledTime,
-        payload: payload != null ? {'payload': payload} : null,
-      );
+        payload: payload != null ? {'payload': payload} : null);
       
       Logger.info('Notification scheduled successfully');
     } catch (e) {
@@ -209,8 +193,7 @@ class NotificationService {
   /// Schedule daily fortune reminder
   static Future<void> scheduleDailyFortuneReminder({
     required TimeOfDay time,
-    bool enabled = true,
-  }) async {
+    bool enabled = true}) async {
     const notificationId = 'daily_fortune_reminder';
     
     if (!enabled) {
@@ -224,8 +207,7 @@ class NotificationService {
       now.month,
       now.day,
       time.hour,
-      time.minute,
-    );
+      time.minute);
     
     await scheduleNotification(
       id: notificationId,
@@ -233,8 +215,7 @@ class NotificationService {
       body: '오늘의 운세와 행운의 숫자를 확인해보세요!',
       scheduledTime: scheduledTime,
       repeatDaily: true,
-      payload: 'daily_fortune',
-    );
+      payload: 'daily_fortune');
   }
   
   /// Helper method to get next instance of time
@@ -246,8 +227,7 @@ class NotificationService {
       now.month,
       now.day,
       dateTime.hour,
-      dateTime.minute,
-    );
+      dateTime.minute);
     
     if (scheduledDate.isBefore(now)) {
       scheduledDate = scheduledDate.add(const Duration(days: 1));

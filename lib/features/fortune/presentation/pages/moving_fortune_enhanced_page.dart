@@ -22,14 +22,11 @@ class MovingFortuneEnhancedPage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF3A7BD5), Color(0xFF00D2FF)],
-      ),
+        colors: [Color(0xFF3A7BD5), Color(0xFF00D2FF)]),
       inputBuilder: (context, onSubmit) => _EnhancedMovingInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _EnhancedMovingFortuneResult(
         result: result,
-        onShare: onShare,
-      ),
-    );
+        onShare: onShare));
   }
 }
 
@@ -72,8 +69,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
     '건강',
     '가족과 함께',
     '독립',
-    '기타',
-  ];
+    '기타'];
   
   final List<String> _movingTypes = [
     '아파트',
@@ -83,15 +79,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
     '원룸',
     '기숙사',
     '전원주택',
-    '기타',
-  ];
+    '기타'];
   
   final List<String> _urgencyLevels = [
     '여유있게 (3개월 이상)',
     '보통 (1-3개월)',
     '급하게 (1개월 이내)',
-    '매우 급하게 (2주 이내)',
-  ];
+    '매우 급하게 (2주 이내)'];
 
   @override
   void initState() {
@@ -124,12 +118,11 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       // Calculate lucky scores for each day
       final lastDay = DateTime(targetMonth.year, targetMonth.month + 1, 0);
       for (var day = targetMonth; 
-           day.isBefore(lastDay.add(const Duration(days: 1))); 
-           day = day.add(const Duration(days: 1))) {
+           day.isBefore(lastDay.add(const Duration(days: 1)); 
+           day = day.add(const Duration(days: 1)) {
         _luckyScores[day] = AuspiciousDaysCalculator.getMovingLuckScore(
           day, 
-          _birthDate?.toIso8601String(),
-        );
+          _birthDate?.toIso8601String());
       }
     }
     
@@ -147,33 +140,26 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           '상세한 이사 운세 진단을 위해 정보를 입력해주세요.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Tab Bar
         Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+            borderRadius: BorderRadius.circular(12)),
           child: TabBar(
             controller: _tabController,
             indicatorSize: TabBarIndicatorSize.tab,
             indicator: BoxDecoration(
               color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             labelColor: Colors.white,
             unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             tabs: const [
               Tab(text: '기본정보'),
               Tab(text: '위치선택'),
-              Tab(text: '날짜선택'),
-            ],
-          ),
-        ),
+              Tab(text: '날짜선택')])),
         const SizedBox(height: 24),
         
         // Tab Views
@@ -189,10 +175,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               _buildLocationTab(theme),
               
               // Date Tab
-              _buildDateTab(theme),
-            ],
-          ),
-        ),
+              _buildDateTab(theme)])),
         
         const SizedBox(height: 32),
         
@@ -204,20 +187,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              backgroundColor: theme.colorScheme.primary,
-            ),
+                borderRadius: BorderRadius.circular(12)),
+              backgroundColor: theme.colorScheme.primary),
             child: Text(
               '상세 이사운세 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 
@@ -230,9 +206,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           Text(
             '이름',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -240,19 +214,14 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+                borderRadius: BorderRadius.circular(12)))),
           const SizedBox(height: 20),
           
           // Birth Date Selection
           Text(
             '생년월일',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
             onTap: () async {
@@ -260,8 +229,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                 context: context,
                 initialDate: _birthDate ?? DateTime(1990, 1, 1),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now());
               if (picked != null) {
                 setState(() {
                   _birthDate = picked;
@@ -272,32 +240,24 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+                  Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   const SizedBox(width: 12),
                   Text(
                     _birthDate != null
                         ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
                         : '생년월일을 선택하세요',
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                ],
-              ),
-            ),
-          ),
+                    style: theme.textTheme.bodyLarge)]))),
           const SizedBox(height: 20),
           
           // Moving Reason
           Text(
             '이사 이유',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -311,19 +271,15 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                   setState(() {
                     _selectedReason = selected ? reason : null;
                   });
-                },
-              );
-            }).toList(),
-          ),
+                });
+            }).toList()),
           const SizedBox(height: 20),
           
           // Housing Type
           Text(
             '희망 주거 형태',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -337,19 +293,15 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                   setState(() {
                     _selectedType = selected ? type : null;
                   });
-                },
-              );
-            }).toList(),
-          ),
+                });
+            }).toList()),
           const SizedBox(height: 20),
           
           // Urgency Level
           Text(
             '이사 시급성',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Column(
             children: _urgencyLevels.map((level) {
@@ -361,13 +313,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                   setState(() {
                     _urgencyLevel = value;
                   });
-                },
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                });
+            }).toList())]));
   }
 
   Widget _buildLocationTab(ThemeData theme) {
@@ -377,16 +324,13 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
         Text(
           '현재 거주지',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(12),
-          ),
+            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
@@ -397,25 +341,19 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
                 });
               },
               initialLocation: _currentLocation,
-              initialAddress: _currentAddress,
-            ),
-          ),
-        ),
+              initialAddress: _currentAddress))),
         const SizedBox(height: 20),
         
         Text(
           '이사 희망 지역',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         Container(
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(12),
-          ),
+            border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: MapLocationPicker(
@@ -428,12 +366,8 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
               initialLocation: _targetLocation,
               initialAddress: _targetAddress,
               showDirectionOverlay: true,
-              auspiciousDirections: const ['동쪽': '남동쪽'], // This will be calculated
-            ,
-          ),
-        ),
-      ],
-    );
+              auspiciousDirections: const ['동쪽', '남동쪽'], // This will be calculated
+            ))]);
   }
 
   Widget _buildDateTab(ThemeData theme) {
@@ -444,20 +378,16 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
           Text(
             '이사 날짜 선택',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
             '손없는날과 길일을 확인하여 최적의 이사 날짜를 선택하세요.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
           const SizedBox(height: 16),
           
           EnhancedDatePicker(
-            initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30)),
+            initialDate: _plannedDate ?? DateTime.now().add(const Duration(days: 30),
             onDateSelected: (date) {
               setState(() {
                 _plannedDate = date;
@@ -467,11 +397,7 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
             auspiciousDays: _auspiciousDays,
             holidayMap: {
               // Add Korean holidays here
-            },
-          ),
-        ],
-      ),
-    );
+            })]));
   }
 
   void _validateAndSubmit() {
@@ -504,12 +430,12 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'currentAddress': _currentAddress,
-      'currentLocation': _currentLocation != null 
+      'currentLocation': _currentLocation != null }
           ? {'lat': _currentLocation!.latitude, 'lng': _currentLocation!.longitude}
           : null,
       'targetAddress': _targetAddress,
       'targetLocation': _targetLocation != null 
-          ? {'lat': _targetLocation!.latitude, 'lng': _targetLocation!.longitude}
+          ? {, 'lat': _targetLocation!.latitude, 'lng': _targetLocation!.longitude}
           : null,
       'plannedDate': _plannedDate!.toIso8601String(),
       'isAuspiciousDay': isAuspicious,
@@ -518,14 +444,12 @@ class _EnhancedMovingInputFormState extends State<_EnhancedMovingInputForm>
       'reason': _selectedReason ?? '기타',
       'housingType': _selectedType ?? '아파트',
       'urgencyLevel': _urgencyLevel ?? '보통 (1-3개월)',
-      'luckyScore': null,
-    });
+      'luckyScore': null});
   }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+      SnackBar(content: Text(message));
   }
 }
 
@@ -535,8 +459,7 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
 
   const _EnhancedMovingFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -557,17 +480,16 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
     
     return {
       'overallScore': result.overallScore ?? 75,
-      'auspiciousDirections': additionalInfo['auspiciousDirections'] ?? ['동쪽': '남쪽'],
+      'auspiciousDirections': additionalInfo['auspiciousDirections'] ?? ['동쪽', '남쪽'],
       'avoidDirections': additionalInfo['avoidDirections'] ?? ['서쪽'],
       'primaryDirection': additionalInfo['bestDirection']?['direction'],
       'areaAnalysis': {
-        'scores': {
+        , 'scores': {}
           '교통': 85,
           '교육': 75,
           '편의시설': 80,
           '의료': 70,
-          '발전성': null,
-        },
+          '발전성': null},
         'transportation': additionalInfo['areaAnalysis']?['transportation'] ?? 
             '대중교통이 편리하고 접근성이 좋습니다.',
         'education': additionalInfo['areaAnalysis']?['education'] ?? 
@@ -577,25 +499,21 @@ class _EnhancedMovingFortuneResult extends ConsumerWidget {
         'medical': additionalInfo['areaAnalysis']?['medical'] ?? 
             '의료 시설 접근성이 양호합니다.',
         'development': additionalInfo['areaAnalysis']?['development'] ?? 
-            '향후 발전 가능성이 높은 지역입니다.',
-      },
+            '향후 발전 가능성이 높은 지역입니다.'},
       'dateAnalysis': {
-        'isAuspicious': additionalInfo['isAuspiciousDay'] ?? false,
-        'lunarDate': additionalInfo['lunarDate']?['lunarMonthInChinese'] != null
+        , 'isAuspicious': additionalInfo['isAuspiciousDay'] ?? false,
+        'lunarDate': additionalInfo['lunarDate']?['lunarMonthInChinese'] != null}
             ? '${additionalInfo['lunarDate']['lunarMonthInChinese']}월 ${additionalInfo['lunarDate']['lunarDayInChinese']}'
             : null,
         'solarTerm': additionalInfo['solarTerm'],
-        'fiveElements': additionalInfo['lunarDate']?['dayGanZhi'],
-      },
+        'fiveElements': additionalInfo['lunarDate']?['dayGanZhi']},
       'detailedScores': result.scoreBreakdown ?? {
-        '날짜 길흉': 85,
+        , '날짜 길흉': 85,
         '방위 조화': 75,
         '지역 적합성': 90,
         '가족 운': 80,
-        '재물 운',
-      },
+        '재물 운'},
       'recommendations': result.recommendations ?? [],
-      'cautions': additionalInfo['cautions'],
-    };
+      'cautions': additionalInfo['cautions']};
   }
 }

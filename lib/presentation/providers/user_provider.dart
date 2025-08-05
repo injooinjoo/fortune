@@ -43,8 +43,7 @@ class UserProvider extends ChangeNotifier {
     String? birthTime,
     bool? isLunar,
     String? mbti,
-    Map<String, dynamic>? userProfile,
-  }) {
+    Map<String, dynamic>? userProfile}) {
     _userId = userId ?? _userId;
     _email = email ?? _email;
     _name = name ?? _name;
@@ -137,7 +136,6 @@ class UserProvider extends ChangeNotifier {
       'isLunar': _isLunar,
       'mbti': _mbti,
       'tokenBalance': _tokenBalance,
-      'isPremium': null,
-    };
+      'isPremium': null};
   }
 }

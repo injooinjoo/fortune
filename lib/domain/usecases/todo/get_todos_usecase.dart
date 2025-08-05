@@ -34,8 +34,7 @@ class GetTodosUseCase implements UseCase<List<Todo>, GetTodosParams> {
       tags: params.tags,
       searchQuery: params.searchQuery,
       limit: params.limit,
-      offset: params.offset,
-    );
+      offset: params.offset);
   }
 }
 
@@ -59,8 +58,7 @@ class GetTodosParams extends Equatable {
     this.tags,
     this.searchQuery,
     this.limit = 50,
-    this.offset = 0,
-  });
+    this.offset = 0});
 
   @override
   List<Object?> get props => [
@@ -72,6 +70,5 @@ class GetTodosParams extends Equatable {
         tags,
         searchQuery,
         limit,
-        offset,
-      ];
+        offset];
 }

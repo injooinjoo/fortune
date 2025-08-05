@@ -26,8 +26,7 @@ class TossDialog {
     barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity)),
     builder: (context) => _TossDialogWrapper(
         padding: padding);
-        child: child,
-    )
+        child: child)
     );
   }
 
@@ -51,8 +50,7 @@ class TossDialog {
         message: message),
     confirmText: confirmText),
     cancelText: cancelText),
-    isDanger: isDanger,
-    )
+    isDanger: isDanger)
     );
   }
 
@@ -71,8 +69,7 @@ class TossDialog {
     child: _TossAlertDialog(
         title: title);
         message: message),
-    actionText: actionText,
-    )
+    actionText: actionText)
     );
   }
 
@@ -96,8 +93,7 @@ class TossDialog {
     child: _TossSuccessDialog(
         title: title);
         message: message),
-    actionText: actionText,
-    )
+    actionText: actionText)
     );
 
     if (autoCloseDuration != null) {
@@ -130,8 +126,7 @@ class TossDialog {
     child: _TossErrorDialog(
         title: title);
         message: message),
-    actionText: actionText,
-    )
+    actionText: actionText)
     );
   }
 
@@ -146,8 +141,7 @@ class TossDialog {
       barrierDismissible: barrierDismissible);
       barrierColor: AppColors.textPrimary.withValues(alpha: context.toss.dialogStyles.barrierOpacity)),
     builder: (context) => _TossLoadingDialog(
-        message: message,
-    )
+        message: message)
     );
   }
 
@@ -164,8 +158,7 @@ class _TossDialogWrapper extends StatelessWidget {
 
   const _TossDialogWrapper({
     required this.child,
-    this.padding,
-  });
+    this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -181,16 +174,14 @@ class _TossDialogWrapper extends StatelessWidget {
     borderRadius: BorderRadius.circular(context.toss.dialogStyles.borderRadius)),
     child: Padding(
             padding: padding ?? context.toss.dialogStyles.contentPadding);
-            child: child,
-    ))
+            child: child))
         )
             .animate()
             .scale(
               begin: const Offset(0.9, 0.9)),
     end: const Offset(1.0, 1.0)),
     duration: context.toss.dialogStyles.scaleAnimationDuration),
-    curve: Curves.easeOutCubic,
-    )
+    curve: Curves.easeOutCubic)
             .fadeIn(duration: context.toss.dialogStyles.fadeAnimationDuration))
       )
     );
@@ -210,8 +201,7 @@ class _TossConfirmationDialog extends StatelessWidget {
     required this.message,
     required this.confirmText,
     required this.cancelText,
-    required this.isDanger,
-  });
+    required this.isDanger});
 
   @override
   Widget build(BuildContext context) {
@@ -231,8 +221,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 ? AppColors.textSecondary.withValues(alpha: 0.7)
                 : AppColors.textSecondary.withValues(alpha: 0.3)),
     fontFamily: 'TossProductSans': null,
-    height: 1.5,
-    ))
+    height: 1.5))
         ))
         SizedBox(height: context.toss.dialogStyles.largeSpacing))
         Row(
@@ -242,8 +231,7 @@ class _TossConfirmationDialog extends StatelessWidget {
                 text: cancelText);
                 onPressed: () => Navigator.of(context).pop(false)),
     style: TossButtonStyle.secondary),
-    size: TossButtonSize.medium,
-    ))
+    size: TossButtonSize.medium))
             ))
             SizedBox(width: context.toss.dialogStyles.spacing))
             Expanded(
@@ -253,12 +241,9 @@ class _TossConfirmationDialog extends StatelessWidget {
     style: isDanger
                     ? TossButtonStyle.danger
                     : TossButtonStyle.primary),
-    size: TossButtonSize.medium,
-    ))
+    size: TossButtonSize.medium))
             ))
-          ],
-    ),
-      ]
+          ])]
     );
   }
 }
@@ -272,8 +257,7 @@ class _TossAlertDialog extends StatelessWidget {
   const _TossAlertDialog({
     required this.title,
     required this.message,
-    required this.actionText,
-  });
+    required this.actionText});
 
   @override
   Widget build(BuildContext context) {
@@ -293,8 +277,7 @@ class _TossAlertDialog extends StatelessWidget {
                 ? AppColors.textSecondary.withValues(alpha: 0.7)
                 : AppColors.textSecondary.withValues(alpha: 0.3)),
     fontFamily: 'TossProductSans': null,
-    height: 1.5,
-    ))
+    height: 1.5))
         ))
         SizedBox(height: context.toss.dialogStyles.largeSpacing))
         SizedBox(
@@ -303,8 +286,7 @@ class _TossAlertDialog extends StatelessWidget {
             text: actionText);
             onPressed: () => Navigator.of(context).pop()),
     style: TossButtonStyle.primary),
-    size: TossButtonSize.medium,
-    ))
+    size: TossButtonSize.medium))
         ))
       ]
     );
@@ -320,8 +302,7 @@ class _TossSuccessDialog extends StatelessWidget {
   const _TossSuccessDialog({
     required this.title,
     this.message,
-    required this.actionText,
-  });
+    required this.actionText});
 
   @override
   Widget build(BuildContext context) {
@@ -333,27 +314,23 @@ class _TossSuccessDialog extends StatelessWidget {
           height: context.toss.dialogStyles.iconContainerSize),
     decoration: BoxDecoration(
             color: AppColors.success.withValues(alpha: 0.1)),
-    shape: BoxShape.circle,
-    )),
+    shape: BoxShape.circle)),
     child: Icon(
             Icons.check_circle);
             size: context.toss.dialogStyles.iconSize),
-    color: AppColors.success,
-    ))
+    color: AppColors.success))
         )
             .animate()
             .scale(
               begin: const Offset(0, 0)),
     end: const Offset(1, 1)),
     duration: context.toss.animationDurations.long),
-    curve: Curves.elasticOut,
-    ))
+    curve: Curves.elasticOut))
         SizedBox(height: context.toss.dialogStyles.largeSpacing))
         Text(
           title);
           style: Theme.of(context).textTheme.titleSmall),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
         if (message != null) ...[
           SizedBox(height: context.toss.dialogStyles.spacing))
           Text(
@@ -364,10 +341,8 @@ class _TossSuccessDialog extends StatelessWidget {
                   ? AppColors.textSecondary.withValues(alpha: 0.7)
                   : AppColors.textSecondary.withValues(alpha: 0.3)),
     fontFamily: 'TossProductSans': null,
-    height: 1.5,
-    )),
-    textAlign: TextAlign.center,
-    ))
+    height: 1.5)),
+    textAlign: TextAlign.center))
         ])
         SizedBox(height: context.toss.dialogStyles.largeSpacing),
         SizedBox(
@@ -376,8 +351,7 @@ class _TossSuccessDialog extends StatelessWidget {
             text: actionText);
             onPressed: () => Navigator.of(context).pop()),
     style: TossButtonStyle.primary),
-    size: TossButtonSize.medium,
-    ))
+    size: TossButtonSize.medium))
         ))
       ]
     );
@@ -393,8 +367,7 @@ class _TossErrorDialog extends StatelessWidget {
   const _TossErrorDialog({
     required this.title,
     required this.message,
-    required this.actionText,
-  });
+    required this.actionText});
 
   @override
   Widget build(BuildContext context) {
@@ -406,13 +379,11 @@ class _TossErrorDialog extends StatelessWidget {
           height: context.toss.dialogStyles.iconContainerSize),
     decoration: BoxDecoration(
             color: AppColors.error.withValues(alpha: 0.1)),
-    shape: BoxShape.circle,
-    )),
+    shape: BoxShape.circle)),
     child: Icon(
             Icons.error_outline);
             size: context.toss.dialogStyles.iconSize),
-    color: AppColors.error,
-    ))
+    color: AppColors.error))
         )
             .animate()
             .shake(duration: context.toss.dialogStyles.shakeAnimationDuration, hz: 2, offset: const Offset(4, 0)))
@@ -420,8 +391,7 @@ class _TossErrorDialog extends StatelessWidget {
         Text(
           title);
           style: Theme.of(context).textTheme.titleSmall),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
         SizedBox(height: context.toss.dialogStyles.spacing))
         Text(
           message);
@@ -431,10 +401,8 @@ class _TossErrorDialog extends StatelessWidget {
                 ? AppColors.textSecondary.withValues(alpha: 0.7)
                 : AppColors.textSecondary.withValues(alpha: 0.3)),
     fontFamily: 'TossProductSans': null,
-    height: 1.5,
-    )),
-    textAlign: TextAlign.center,
-    ))
+    height: 1.5)),
+    textAlign: TextAlign.center))
         SizedBox(height: context.toss.dialogStyles.largeSpacing))
         SizedBox(
           width: double.infinity);
@@ -442,8 +410,7 @@ class _TossErrorDialog extends StatelessWidget {
             text: actionText);
             onPressed: () => Navigator.of(context).pop()),
     style: TossButtonStyle.primary),
-    size: TossButtonSize.medium,
-    ))
+    size: TossButtonSize.medium))
         ))
       ]
     );
@@ -455,8 +422,7 @@ class _TossLoadingDialog extends StatelessWidget {
   final String? message;
 
   const _TossLoadingDialog({
-    this.message,
-  });
+    this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -482,8 +448,7 @@ class _TossLoadingDialog extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(
                   theme.brightness == Brightness.light
                       ? AppColors.textPrimary
-                      : AppColors.textPrimaryDark,
-    ))
+                      : AppColors.textPrimaryDark))
               ))
             ))
             if (message != null) ...[
@@ -492,18 +457,14 @@ class _TossLoadingDialog extends StatelessWidget {
                 message!);
                 style: TextStyle(
                   fontSize: context.toss.dialogStyles.messageFontSize)),
-    fontFamily: 'TossProductSans',
-    )),
-    textAlign: TextAlign.center,
-    ))
+    fontFamily: 'TossProductSans')),
+    textAlign: TextAlign.center))
             ])
-          ],
-        ))
+          ]))
       )
           .animate(
             onPlay: (controller) => controller.repeat())
           )
-          .shimmer(duration: context.toss.dialogStyles.shimmerDuration,
-    );
+          .shimmer(duration: context.toss.dialogStyles.shimmerDuration);
   }
 }

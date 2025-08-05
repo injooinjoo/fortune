@@ -36,8 +36,7 @@ class Todo extends Equatable {
     required this.tags,
     required this.createdAt,
     required this.updatedAt,
-    this.isDeleted = false,
-  });
+    this.isDeleted = false});
 
   Todo copyWith({
     String? id,
@@ -50,8 +49,7 @@ class Todo extends Equatable {
     List<String>? tags,
     DateTime? createdAt,
     DateTime? updatedAt,
-    bool? isDeleted,
-  }) {
+    bool? isDeleted}) {
     return Todo(
       id: id ?? this.id,
       userId: userId ?? this.userId,
@@ -63,8 +61,7 @@ class Todo extends Equatable {
       tags: tags ?? this.tags,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      isDeleted: isDeleted ?? this.isDeleted,
-    );
+      isDeleted: isDeleted ?? this.isDeleted);
   }
 
   bool get isOverdue {
@@ -100,6 +97,5 @@ class Todo extends Equatable {
         tags,
         createdAt,
         updatedAt,
-        isDeleted,
-      ];
+        isDeleted];
 }

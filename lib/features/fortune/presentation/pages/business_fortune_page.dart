@@ -16,11 +16,9 @@ class BusinessFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-      ),
+        colors: [Color(0xFF0891B2), Color(0xFF0E7490)]),
       inputBuilder: (context, onSubmit) => _BusinessInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _BusinessFortuneResult(result: result,
-    );
+      resultBuilder: (context, result, onShare) => _BusinessFortuneResult(result: result);
   }
 }
 
@@ -50,18 +48,14 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
           '오늘의 사업 운세를 확인하고\n성공적인 비즈니스를 이끌어보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Business Type
         Text(
           '사업 상태',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildBusinessType(theme),
         const SizedBox(height: 24),
@@ -70,9 +64,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
         Text(
           '업종',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildIndustry(theme),
         const SizedBox(height: 24),
@@ -81,9 +73,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
         Text(
           '사업 단계',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildBusinessStage(theme),
         const SizedBox(height: 24),
@@ -92,9 +82,7 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
         Text(
           '주요 관심사',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildMainConcern(theme),
         const SizedBox(height: 32),
@@ -109,37 +97,28 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
                 'businessType': _businessType,
                 'industry': _industry,
                 'businessStage': _businessStage,
-                'mainConcern': null,
-              });
+                'mainConcern': null});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF0891B2),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
+                borderRadius: BorderRadius.circular(16)),
+              elevation: 0),
             child: const Text(
               '사업 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 
   Widget _buildBusinessType(ThemeData theme) {
     final types = [
-      {'id': 'current': 'name': '운영중': 'icon'},
-      {'id': 'planning': 'name': '준비중': 'icon'},
-      {'id': 'expansion', 'name': '확장중', 'icon'},
-      {'id': 'pivot', 'name': '전환중', 'icon'},
-    ];
+      {'id', 'current': 'name', '운영중': 'icon'},
+      {'id', 'planning': 'name', '준비중': 'icon'},
+      {'id', 'expansion', 'name', '확장중', 'icon'},
+      {'id', 'pivot', 'name', '전환중', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -166,48 +145,37 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-                    )
+                      colors: [Color(0xFF0891B2), Color(0xFF0E7490)])
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   type['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   type['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
 
   Widget _buildIndustry(ThemeData theme) {
     final industries = [
-      {'id': 'tech': 'name': 'IT/테크'},
-      {'id': 'retail': 'name': '유통/판매'},
-      {'id': 'service', 'name': '서비스업'},
-      {'id': 'manufacturing', 'name': '제조업'},
-    ];
+      {'id', 'tech': 'name', 'IT/테크'},
+      {'id', 'retail': 'name', '유통/판매'},
+      {'id', 'service', 'name', '서비스업'},
+      {'id', 'manufacturing', 'name', '제조업'}];
 
     return Row(
       children: industries.map((industry) {
@@ -221,45 +189,33 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: industry != industries.last ? 8 : 0,
-              ),
+                right: industry != industries.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-                      )
+                        colors: [Color(0xFF0891B2), Color(0xFF0E7490)])
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   industry['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+      }).toList());
   }
 
   Widget _buildBusinessStage(ThemeData theme) {
     final stages = [
-      {'id': 'startup': 'name': '스타트업'},
-      {'id': 'growth': 'name': '성장기'},
-      {'id': 'mature', 'name': '안정기'},
-      {'id': 'renewal', 'name': '재도약기'},
-    ];
+      {'id', 'startup': 'name', '스타트업'},
+      {'id', 'growth': 'name', '성장기'},
+      {'id', 'mature', 'name', '안정기'},
+      {'id', 'renewal', 'name', '재도약기'}];
 
     return Row(
       children: stages.map((stage) {
@@ -273,45 +229,33 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: stage != stages.last ? 8 : 0,
-              ),
+                right: stage != stages.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-                      )
+                        colors: [Color(0xFF0891B2), Color(0xFF0E7490)])
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   stage['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+      }).toList());
   }
 
   Widget _buildMainConcern(ThemeData theme) {
     final concerns = [
-      {'id': 'revenue': 'name': '매출증대': 'icon'},
-      {'id': 'expansion': 'name': '사업확장': 'icon'},
-      {'id': 'partnership', 'name': '파트너십', 'icon'},
-      {'id': 'innovation', 'name': '혁신전략', 'icon'},
-    ];
+      {'id', 'revenue': 'name', '매출증대': 'icon'},
+      {'id', 'expansion': 'name', '사업확장': 'icon'},
+      {'id', 'partnership', 'name', '파트너십', 'icon'},
+      {'id', 'innovation', 'name', '혁신전략', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -338,37 +282,27 @@ class _BusinessInputFormState extends State<_BusinessInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-                    )
+                      colors: [Color(0xFF0891B2), Color(0xFF0E7490)])
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   concern['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   concern['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
@@ -402,16 +336,12 @@ class _BusinessFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF0891B2), Color(0xFF0E7490)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          colors: [Color(0xFF0891B2), Color(0xFF0E7490)]),
+                        borderRadius: BorderRadius.circular(12)),
                       child: const Icon(
                         Icons.business,
                         color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -420,31 +350,16 @@ class _BusinessFortuneResult extends StatelessWidget {
                           Text(
                             '오늘의 사업 운세',
                             style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                    height: 1.6))]))),
         const SizedBox(height: 16),
 
         // Business Opportunities
@@ -454,12 +369,9 @@ class _BusinessFortuneResult extends StatelessWidget {
             title: '비즈니스 기회',
             icon: Icons.lightbulb,
             gradient: const LinearGradient(
-              colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-            ),
-            content: result.details!['opportunities'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+            content: result.details!['opportunities']),
+          const SizedBox(height: 16)],
 
         // Partnership Luck
         if (result.details?['partnership'] != null) ...[
@@ -468,12 +380,9 @@ class _BusinessFortuneResult extends StatelessWidget {
             title: '파트너십 운',
             icon: Icons.handshake,
             gradient: const LinearGradient(
-              colors: [Color(0xFF10B981), Color(0xFF059669)],
-            ),
-            content: result.details!['partnership'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF10B981), Color(0xFF059669)]),
+            content: result.details!['partnership']),
+          const SizedBox(height: 16)],
 
         // Financial Outlook
         if (result.details?['financial'] != null) ...[
@@ -482,12 +391,9 @@ class _BusinessFortuneResult extends StatelessWidget {
             title: '재무 전망',
             icon: Icons.account_balance,
             gradient: const LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-            ),
-            content: result.details!['financial'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
+            content: result.details!['financial']),
+          const SizedBox(height: 16)],
 
         // Strategic Advice
         if (result.details?['strategy'] != null) ...[
@@ -496,12 +402,8 @@ class _BusinessFortuneResult extends StatelessWidget {
             title: '전략적 조언',
             icon: Icons.psychology,
             gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
-            ),
-            content: result.details!['strategy'],
-          ),
-        ],
-      ]
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
+            content: result.details!['strategy'])]]
     );
   }
 
@@ -510,8 +412,7 @@ class _BusinessFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content,
-  }) {
+    required String content}) {
     final theme = Theme.of(context);
 
     return GlassContainer(
@@ -526,32 +427,20 @@ class _BusinessFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
-                ),
-              ),
+                  size: 20)),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
+              height: 1.5))]));
   }
 }

@@ -17,8 +17,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
     Key? key,
     required this.fortune,
     this.onTap,
-    this.isExpanded = false,
-  )}) : super(key: key);
+    this.isExpanded = false)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,42 +37,36 @@ class TimeSpecificFortuneCard extends StatelessWidget {
       borderRadius: AppDimensions.borderRadiusMedium,
             gradient: LinearGradient(,
       begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-        ),
+              end: Alignment.bottomRight),
         colors: [
                 _getScoreColor(fortune.score).withValues(alpha: 0.1),
-                _getScoreColor(fortune.score).withValues(alpha: 0.05),
-              ]))),
-    child: Column(,
+                _getScoreColor(fortune.score).withValues(alpha: 0.05)]))),
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Column(,
+                    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          fortune.time,
-              ),
+                          fortune.time),
               style: Theme.of(context).textTheme.titleMedium,
                         SizedBox(height: AppSpacing.spacing1),
                         Text(
                           fortune.title,
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
       color: AppColors.textSecondary)
-                      ],
-                          )))
-                  _buildScoreIndicator(),
-                ])
+                      ])))
+                  _buildScoreIndicator()])
               if (isExpanded) ...[
                 SizedBox(height: AppSpacing.spacing3),
                 Text(
                   fortune.description),
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(,
-      color: AppColors.textPrimary,
-                          ),), height: 1.5),
+      color: AppColors.textPrimary)), height: 1.5),
                 if (fortune.recommendation != null) ...[
                   SizedBox(height: AppSpacing.spacing2),
                   Container(
@@ -92,12 +85,10 @@ class TimeSpecificFortuneCard extends StatelessWidget {
                         SizedBox(width: AppSpacing.spacing2),
                         Expanded(
                           child: Text(
-                            fortune.recommendation!,
-        ),
+                            fortune.recommendation!),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
       color: AppColors.textPrimary)
-                      ],
-                          )))
+                      ])))
                 ]
               ]
             ])))))))
@@ -108,15 +99,14 @@ class TimeSpecificFortuneCard extends StatelessWidget {
       width: 60,
       height: AppSpacing.spacing15,
       decoration: BoxDecoration(,
-      shape: BoxShape.circle,
-        ),
+      shape: BoxShape.circle),
         color: _getScoreColor(fortune.score).withValues(alph,
       a: 0.2),
         border: Border.all(,
       color: _getScoreColor(fortune.score),
           width: 3)),
       child: Center(,
-      child: Column(,
+      child: Column(
       mainAxisSize: MainAxisSize.min,
           children: [
             Text(
@@ -126,8 +116,7 @@ class TimeSpecificFortuneCard extends StatelessWidget {
               '점'),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(colo,
       r: _getScoreColor(fortune.score)
-          ],
-    )
+          ])
   }
 
   Color _getScoreColor(int score) {
@@ -147,8 +136,7 @@ class TimeSpecificFortuneList extends StatefulWidget {
     {
     Key? key,
     required this.fortunes,
-    this.title,
-  )}) : super(key: key);
+    this.title)}) : super(key: key);
 
   @override
   _TimeSpecificFortuneListState createState() => _TimeSpecificFortuneListState();
@@ -168,8 +156,7 @@ class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {
       l: AppSpacing.spacing1, vertical: AppSpacing.spacing2),
             child: Text(
               widget.title!),
-        style: Theme.of(context).textTheme.titleLarge,
-        ]
+        style: Theme.of(context).textTheme.titleLarge]
         ...widget.fortunes.asMap().entries.map((entry) {
           final index = entry.key;
           final fortune = entry.value;
@@ -183,8 +170,7 @@ class _TimeSpecificFortuneListState extends State<TimeSpecificFortuneList> {
                 expandedIndex = isExpanded ? null : index;
               });
             })
-        }).toList(),
-      ]
+        }).toList()]
     );
   }
 }

@@ -34,8 +34,7 @@ class BaseCard extends StatelessWidget {
     this.onTap,
     this.backgroundColor,
     this.border,
-    this.gradient,
-  });
+    this.gradient});
 
   @override
   Widget build(BuildContext context) {
@@ -55,14 +54,10 @@ class BaseCard extends StatelessWidget {
         boxShadow: boxShadow ?? defaultShadow,
         border: border ?? Border.all(
           color: fortuneTheme.dividerColor.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Padding(
         padding: padding ?? AppSpacing.paddingAll16,
-        child: child,
-      ),
-    );
+        child: child));
     
     if (onTap != null) {
       return Material(
@@ -70,9 +65,7 @@ class BaseCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium,
-          child: content,
-        ),
-      );
+          child: content));
     }
     
     return content;
@@ -95,8 +88,7 @@ class PremiumCard extends StatelessWidget {
     this.margin,
     this.width,
     this.height,
-    this.onTap,
-  });
+    this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +106,10 @@ class PremiumCard extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [
           fortuneTheme.fortuneGradientStart,
-          fortuneTheme.fortuneGradientEnd,
-        ],
-      ),
+          fortuneTheme.fortuneGradientEnd]),
       border: Border.all(
         color: fortuneTheme.fortuneGradientStart.withOpacity(0.3),
-        width: 1,
-      ),
-    );
+        width: 1));
   }
 }
 
@@ -139,8 +127,7 @@ class InfoCard extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.trailing,
-    this.onTap,
-  });
+    this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -152,8 +139,7 @@ class InfoCard extends StatelessWidget {
         children: [
           if (leading != null) ...[
             leading!,
-            SizedBox(width: AppSpacing.spacing4),
-          ],
+            SizedBox(width: AppSpacing.spacing4)],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,24 +147,13 @@ class InfoCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 if (subtitle != null) ...[
                   SizedBox(height: AppSpacing.spacing1),
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          if (trailing != null) trailing!,
-        ],
-      ),
-    );
+                      color: theme.colorScheme.onSurface.withOpacity(0.6)))]])),
+          if (trailing != null) trailing!]));
   }
 }

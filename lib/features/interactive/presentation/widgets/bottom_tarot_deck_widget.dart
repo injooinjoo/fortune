@@ -7,8 +7,7 @@ class BottomTarotDeckWidget extends StatefulWidget {
   
   const BottomTarotDeckWidget({
     Key? key,
-    required this.onCardSelected,
-  }) : super(key: key);
+    required this.onCardSelected}) : super(key: key);
 
   @override
   State<BottomTarotDeckWidget> createState() => _BottomTarotDeckWidgetState();
@@ -40,44 +39,35 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     // Slide up animation
     _slideUpController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+      vsync: this);
     
     _slideUpAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
+      end: 0.0).animate(CurvedAnimation(
       parent: _slideUpController,
-      curve: Curves.easeOutCubic,
-    );
+      curve: Curves.easeOutCubic);
     
     // Fan animation
     _fanController = AnimationController(
       duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
+      vsync: this);
     
     _fanAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _fanController,
-      curve: Curves.easeOutBack,
-    );
+      curve: Curves.easeOutBack);
     
     // Rotation animation for drag gestures
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
+      vsync: this);
     
     _rotationAnimation = Tween<double>(
       begin: 0.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
+      end: 0.0).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut,
-    );
+      curve: Curves.easeOut);
     
     // Start animations
     _startAnimations();
@@ -127,13 +117,8 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 alignment: Alignment.bottomCenter,
                 children: List.generate(cardCount, (index) {
                   return _buildCard(index, screenWidth);
-                }),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                })))));
+      });
   }
   
   Widget _buildCard(int index, double screenWidth) {
@@ -178,11 +163,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                 _animateToCard(index);
               }
             },
-            child: _buildTarotCard(isCenter),
-          ),
-        ),
-      ),
-    );
+            child: _buildTarotCard(isCenter)))));
   }
   
   void _animateToCard(int index) {
@@ -190,11 +171,9 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
     
     _rotationAnimation = Tween<double>(
       begin: _currentRotation,
-      end: targetRotation,
-    ).animate(CurvedAnimation(
+      end: targetRotation).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: Curves.easeOut,
-    );
+      curve: Curves.easeOut);
     
     _rotationController.forward(from: 0).then((_) {
       setState(() {
@@ -223,16 +202,11 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
           BoxShadow(
             color: Colors.blue.withValues(alpha: 0.6),
             blurRadius: 20,
-            spreadRadius: 5,
-          ),
-        ] : [
+            spreadRadius: 5)] : [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
+            offset: const Offset(0, 3))]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Stack(
@@ -246,20 +220,13 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   colors: [
                     const Color(0xFF1E3A5F),
                     const Color(0xFF0D1B2A),
-                    const Color(0xFF415A77),
-                  ],
-                ),
-              ),
-            ),
+                    const Color(0xFF415A77)]))),
             
             // Card pattern
             Positioned.fill(
               child: CustomPaint(
                 painter: TarotCardBackPainter(
-                  isHighlighted: isCenter,
-                ),
-              ),
-            ),
+                  isHighlighted: isCenter))),
             
             // Card border
             Container(
@@ -269,14 +236,7 @@ class _BottomTarotDeckWidgetState extends State<BottomTarotDeckWidget>
                   color: isCenter 
                       ? Colors.white.withValues(alpha: 0.5)
                       : Colors.white.withValues(alpha: 0.2),
-                  width: isCenter ? 2 : 1,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  width: isCenter ? 2 : 1)))])));
   }
 }
 
@@ -307,8 +267,7 @@ class TarotCardBackPainter extends CustomPainter {
       final angle = i * math.pi / 3;
       final starPos = Offset(
         center.dx + size.width * 0.25 * math.cos(angle),
-        center.dy + size.width * 0.25 * math.sin(angle),
-      );
+        center.dy + size.width * 0.25 * math.sin(angle));
       _drawStar(canvas, starPos, size.width * 0.08, paint);
     }
     
@@ -317,8 +276,7 @@ class TarotCardBackPainter extends CustomPainter {
       size.width * 0.1,
       size.height * 0.05,
       size.width * 0.8,
-      size.height * 0.9,
-    );
+      size.height * 0.9);
     paint.strokeWidth = 1.0;
     canvas.drawRect(borderRect, paint);
     
@@ -327,8 +285,7 @@ class TarotCardBackPainter extends CustomPainter {
       size.width * 0.15,
       size.height * 0.08,
       size.width * 0.7,
-      size.height * 0.84,
-    );
+      size.height * 0.84);
     paint.strokeWidth = 0.5;
     canvas.drawRect(innerRect, paint);
   }

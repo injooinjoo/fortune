@@ -26,73 +26,57 @@ class SajuCalculationService {
     '병': '화', '정': '화',
     '무': '토', '기': '토',
     '경': '금', '신': '금',
-    '임': '수', '계': '수',
-  };
+    '임': '수', '계': '수'};
   
   static const Map<String, String> branchElements = {
     '자': '수', '축': '토', '인': '목', '묘': '목',
     '진': '토', '사': '화', '오': '화', '미': '토',
-    '신': '금', '유': '금', '술': '토', '해': '수',
-  };
+    '신': '금', '유': '금', '술': '토', '해': '수'};
   
   // 절기 날짜 (24 Solar Terms) - 대략적인 날짜
   static const Map<int, List<Map<String, dynamic>>> solarTerms = {
     1: [
       {'name': '소한': 'day'},
-      {'name': '대한': 'day'},
-    ],
+      {'name': '대한': 'day'}],
     2: [
       {'name': '입춘', 'day'},
-      {'name': '우수', 'day'},
-    ],
+      {'name': '우수', 'day'}],
     3: [
       {'name': '경칩', 'day'},
-      {'name': '춘분', 'day'},
-    ],
+      {'name': '춘분', 'day'}],
     4: [
       {'name': '청명', 'day'},
-      {'name': '곡우', 'day'},
-    ],
+      {'name': '곡우', 'day'}],
     5: [
       {'name': '입하', 'day'},
-      {'name': '소만', 'day'},
-    ],
+      {'name': '소만', 'day'}],
     6: [
       {'name': '망종', 'day'},
-      {'name': '하지', 'day'},
-    ],
+      {'name': '하지', 'day'}],
     7: [
       {'name': '소서', 'day'},
-      {'name': '대서', 'day'},
-    ],
+      {'name': '대서', 'day'}],
     8: [
       {'name': '입추', 'day'},
-      {'name': '처서', 'day'},
-    ],
+      {'name': '처서', 'day'}],
     9: [
       {'name': '백로', 'day'},
-      {'name': '추분', 'day'},
-    ],
+      {'name': '추분', 'day'}],
     10: [
       {'name': '한로', 'day'},
-      {'name': '상강', 'day'},
-    ],
+      {'name': '상강', 'day'}],
     11: [
       {'name': '입동', 'day'},
-      {'name': '소설', 'day'},
-    ],
+      {'name': '소설', 'day'}],
     12: [
       {'name': '대설', 'day'},
-      {'name': '동지', 'day'},
-    ],
-  };
+      {'name': '동지', 'day'}]};
   
   /// 생년월일시를 받아서 사주팔자를 계산합니다.
   static Map<String, dynamic> calculateSaju({
     required DateTime birthDate,
     String? birthTime,
-    bool isLunar = false,
-  }) {
+    bool isLunar = false}) {
     // 음력인 경우 양력으로 변환 (실제 구현시에는 정확한 음양력 변환 라이브러리 사용,
     DateTime solarDate = isLunar ? _convertLunarToSolar(birthDate) : birthDate;
     
@@ -125,33 +109,28 @@ class SajuCalculationService {
         'branch': yearPillar['branch'],
         'stemHanja': yearPillar['stemHanja'],
         'branchHanja': yearPillar['branchHanja'],
-        'element': stemElements[yearPillar['stem'],
-      },
+        'element': stemElements[yearPillar['stem']},
       'month': {
         'stem': monthPillar['stem'],
         'branch': monthPillar['branch'],
         'stemHanja': monthPillar['stemHanja'],
         'branchHanja': monthPillar['branchHanja'],
-        'element': stemElements[monthPillar['stem'],
-      },
+        'element': stemElements[monthPillar['stem']},
       'day': {
         'stem': dayPillar['stem'],
         'branch': dayPillar['branch'],
         'stemHanja': dayPillar['stemHanja'],
         'branchHanja': dayPillar['branchHanja'],
-        'element': stemElements[dayPillar['stem'],
-      },
+        'element': stemElements[dayPillar['stem']},
       'hour': hourPillar != null ? {
         'stem': hourPillar['stem'],
         'branch': hourPillar['branch'],
         'stemHanja': hourPillar['stemHanja'],
         'branchHanja': hourPillar['branchHanja'],
-        'element': stemElements[hourPillar['stem'],
-      } : null,
+        'element': stemElements[hourPillar['stem']} : null,
       'elementBalance': elementBalance,
       'tenGods': tenGods,
-      'daeunInfo': null,
-    };
+      'daeunInfo': null};
   }
   
   /// 년주 계산
@@ -170,8 +149,7 @@ class SajuCalculationService {
       'stemHanja': heavenlyStemsHanja[stemIndex],
       'branchHanja': earthlyBranchesHanja[branchIndex],
       'stemIndex': stemIndex,
-      'branchIndex': null,
-    };
+      'branchIndex': null};
   }
   
   /// 월주 계산 (절기 기준,
@@ -221,8 +199,7 @@ class SajuCalculationService {
       'stemHanja': heavenlyStemsHanja[stemIndex],
       'branchHanja': earthlyBranchesHanja[branchIndex],
       'stemIndex': stemIndex,
-      'branchIndex': null,
-    };
+      'branchIndex': null};
   }
   
   /// 절기에 따른 월 인덱스 계산
@@ -230,30 +207,18 @@ class SajuCalculationService {
     // 간단한,
     구현: 절입 시각을 고려하지 않고 대략적인 날짜로 계산
     if (date.month == 1 || (date.month == 2 && date.day < 4)) {
-      return 11; // 축월 (12월,
-    } else if (date.month == 2 || (date.month == 3 && date.day < 6)) {
-      return 0; // 인월 (1월,
-    } else if (date.month == 3 || (date.month == 4 && date.day < 5)) {
-      return 1; // 묘월 (2월,
-    } else if (date.month == 4 || (date.month == 5 && date.day < 6)) {
-      return 2; // 진월 (3월,
-    } else if (date.month == 5 || (date.month == 6 && date.day < 6)) {
-      return 3; // 사월 (4월,
-    } else if (date.month == 6 || (date.month == 7 && date.day < 7)) {
-      return 4; // 오월 (5월,
-    } else if (date.month == 7 || (date.month == 8 && date.day < 8)) {
-      return 5; // 미월 (6월,
-    } else if (date.month == 8 || (date.month == 9 && date.day < 8)) {
-      return 6; // 신월 (7월,
-    } else if (date.month == 9 || (date.month == 10 && date.day < 8)) {
-      return 7; // 유월 (8월,
-    } else if (date.month == 10 || (date.month == 11 && date.day < 8)) {
-      return 8; // 술월 (9월,
-    } else if (date.month == 11 || (date.month == 12 && date.day < 7)) {
-      return 9; // 해월 (10월,
-    } else {
-      return 10; // 자월 (11월,
-    }
+      return 11; // 축월 (12월} else if (date.month == 2 || (date.month == 3 && date.day < 6)) {
+      return 0; // 인월 (1월} else if (date.month == 3 || (date.month == 4 && date.day < 5)) {
+      return 1; // 묘월 (2월} else if (date.month == 4 || (date.month == 5 && date.day < 6)) {
+      return 2; // 진월 (3월} else if (date.month == 5 || (date.month == 6 && date.day < 6)) {
+      return 3; // 사월 (4월} else if (date.month == 6 || (date.month == 7 && date.day < 7)) {
+      return 4; // 오월 (5월} else if (date.month == 7 || (date.month == 8 && date.day < 8)) {
+      return 5; // 미월 (6월} else if (date.month == 8 || (date.month == 9 && date.day < 8)) {
+      return 6; // 신월 (7월} else if (date.month == 9 || (date.month == 10 && date.day < 8)) {
+      return 7; // 유월 (8월} else if (date.month == 10 || (date.month == 11 && date.day < 8)) {
+      return 8; // 술월 (9월} else if (date.month == 11 || (date.month == 12 && date.day < 7)) {
+      return 9; // 해월 (10월} else {
+      return 10; // 자월 (11월}
   }
   
   /// 일주 계산 (만세력 기준,
@@ -273,8 +238,7 @@ class SajuCalculationService {
       'stemHanja': heavenlyStemsHanja[stemIndex],
       'branchHanja': earthlyBranchesHanja[branchIndex],
       'stemIndex': stemIndex,
-      'branchIndex': null,
-    };
+      'branchIndex': null};
   }
   
   /// 시주 계산
@@ -325,8 +289,7 @@ class SajuCalculationService {
       'stemHanja': heavenlyStemsHanja[stemIndex],
       'branchHanja': earthlyBranchesHanja[hourIndex],
       'stemIndex': stemIndex,
-      'branchIndex': null,
-    };
+      'branchIndex': null};
   }
   
   /// 시진 인덱스 계산
@@ -352,8 +315,7 @@ class SajuCalculationService {
     Map<String, dynamic> year,
     Map<String, dynamic> month,
     Map<String, dynamic> day,
-    Map<String, dynamic>? hour,
-  ) {
+    Map<String, dynamic>? hour) {
     final elements = {'목': 0, '화': 0, '토': 0, '금': 0, '수': 0};
     
     // 년주 오행
@@ -382,8 +344,7 @@ class SajuCalculationService {
     String dayStem,
     Map<String, dynamic> year,
     Map<String, dynamic> month,
-    Map<String, dynamic>? hour,
-  ) {
+    Map<String, dynamic>? hour) {
     // 일간을 기준으로 다른 천간과의 관계 계산
     final tenGods = <String, List<String>>{};
     
@@ -461,8 +422,7 @@ class SajuCalculationService {
       'stem': heavenlyStems[stemIndex],
       'branch': earthlyBranches[branchIndex],
       'stemHanja': heavenlyStemsHanja[stemIndex],
-      'branchHanja': null,
-    };
+      'branchHanja': null};
   }
   
   /// 음력을 양력으로 변환 (간단한 구현)
@@ -494,7 +454,6 @@ class SajuCalculationService {
       'element_balance': saju['elementBalance'],
       'ten_gods': saju['tenGods'],
       'daeun_info': saju['daeunInfo'],
-      'current_daeun': '${saju['daeunInfo']['stem']}${saju['daeunInfo']['branch']}',
-    };
+      'current_daeun': '${saju['daeunInfo']['stem']}${saju['daeunInfo']['branch']}'};
   }
 }

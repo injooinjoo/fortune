@@ -21,8 +21,7 @@ class MapLocationPicker extends StatefulWidget {
     this.initialLocation,
     this.initialAddress,
     this.showDirectionOverlay = false,
-    this.auspiciousDirections,
-  }) : super(key: key);
+    this.auspiciousDirections}) : super(key: key);
 
   @override
   State<MapLocationPicker> createState() => _MapLocationPickerState();
@@ -142,7 +141,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message));
+      SnackBar(content: Text(message),;
 }
 
   Widget _buildDirectionOverlay() {
@@ -151,21 +150,17 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
 }
     
     final directions = {
-      '동쪽': {'angle': 0.0, 'color': Colors.blue},
-      '서쪽': {'angle': 180.0, 'color': Colors.orange},
-      '남쪽': {'angle': 90.0, 'color': Colors.red},
-      '북쪽': {'angle': 270.0, 'color': null,
-    };
+      '동쪽': {, 'angle': 0.0, 'color': Colors.blue},
+      '서쪽': {, 'angle': 180.0, 'color': Colors.orange},
+      '남쪽': {, 'angle': 90.0, 'color': Colors.red},
+      '북쪽': {, 'angle': 270.0, 'color': null};
     
     return Positioned.fill(
       child: IgnorePointer(
         child: CustomPaint(
           painter: DirectionOverlayPainter(
             auspiciousDirections: widget.auspiciousDirections!,
-            directions: directions,
-          ),
-      
-    );
+            directions: directions));
 }
 
   @override
@@ -187,25 +182,19 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                       icon: const Icon(Icons.clear),
                       onPressed: () {
                         _searchController.clear();
-},
-                    ),
+}),
                     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-                    ),
+                      borderRadius: AppDimensions.borderRadiusMedium),
                     filled: true,
                     fillColor: Colors.grey.withValues(alpha: 0.9),
-                  onSubmitted: _searchLocation,
-                ),
+                  onSubmitted: _searchLocation),
               const SizedBox(width: AppSpacing.spacing2),
               IconButton(
                 icon: Icon(Icons.my_location),
                 onPressed: _isLoading ? null : _getCurrentLocation,
                 style: IconButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                ),
-            ],
-          ),
+                  foregroundColor: Colors.white)]),
         
         // 지도
         Expanded(
@@ -220,8 +209,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                 children: [
                   TileLayer(
                     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'com.fortune.app',
-                  ),
+                    userAgentPackageName: 'com.fortune.app'),
                   MarkerLayer(
                     markers: [
                       if (_selectedLocation != null), Marker(
@@ -231,20 +219,12 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
                           child: Icon(
                             Icons.location_pin,
                             color: Theme.of(context).primaryColor,
-                            size: 40,
-                          ),
-                    ],
-                  ),
-                ],
-              ),
+                            size: 40)])]),
               _buildDirectionOverlay(),
               if (_isLoading), Container(
                   color: Colors.black26,
                   child: Center(
-                    child: CircularProgressIndicator(),
-                ),
-            ],
-          ),
+                    child: CircularProgressIndicator())]),
         
         // 선택된 주소 표시
         if (_selectedAddress.isNotEmpty), Container(
@@ -254,24 +234,17 @@ class _MapLocationPickerState extends State<MapLocationPicker> {
               color: Colors.grey.withValues(alpha: 0.9),
               border: Border(
                 top: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '선택된 주소',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+                  style: Theme.of(context).textTheme.labelMedium),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   _selectedAddress,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-              ],
-            ),
-      ],
-    );
+                    fontWeight: FontWeight.w500)])]);
 }
 }
 
@@ -281,8 +254,7 @@ class DirectionOverlayPainter extends CustomPainter {
   
   DirectionOverlayPainter({
     required this.auspiciousDirections,
-    required this.directions,
-  });
+    required this.directions});
   
   @override
   void paint(Canvas canvas, Size size) {
@@ -321,8 +293,7 @@ class DirectionOverlayPainter extends CustomPainter {
         text: TextSpan(
           text: direction,
           style: Theme.of(context).textTheme.bodyMedium,
-        textDirection: TextDirection.ltr,
-      );
+        textDirection: TextDirection.ltr);
       textPainter.layout();
       
       final textAngle = angle * (3.14159 / 180);

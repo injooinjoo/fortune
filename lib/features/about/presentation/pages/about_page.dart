@@ -51,16 +51,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
                       const SizedBox(height: 32),
                       _buildTeamSection(),
                       const SizedBox(height: 32),
-                      _buildVersionInfo(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      _buildVersionInfo()])))]))));
   }
 
   Widget _buildHeroSection() {
@@ -68,11 +59,9 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       gradient: LinearGradient(
         colors: [
           Colors.purple.withValues(alpha: 0.3),
-          Colors.blue.withValues(alpha: 0.1),
-        ],
+          Colors.blue.withValues(alpha: 0.1)],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -84,53 +73,38 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               gradient: const LinearGradient(
                 colors: [Colors.purple, Colors.blue],
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+                end: Alignment.bottomRight),
               borderRadius: BorderRadius.circular(25),
               boxShadow: [
                 BoxShadow(
                   color: Colors.purple.withValues(alpha: 0.5),
                   blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
+                  offset: const Offset(0, 10))]),
             child: const Icon(
               Icons.auto_awesome,
               size: 50,
-              color: Colors.white,
-            ),
-          ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
+              color: Colors.white)).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
           const SizedBox(height: 24),
           const Text(
             'Fortune',
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ).animate().fadeIn(delay: 200.ms),
+              color: Colors.white)).animate().fadeIn(delay: 200.ms),
           const SizedBox(height: 8),
           Text(
             'AI가 읽어주는 나만의 운세',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.white.withValues(alpha: 0.9),
-            ),
-          ).animate().fadeIn(delay: 400.ms),
+              color: Colors.white.withValues(alpha: 0.9))).animate().fadeIn(delay: 400.ms),
           const SizedBox(height: 16),
           Text(
             '매일 새로운 인사이트와 함께\n더 나은 하루를 시작하세요',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.7),
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ).animate().fadeIn(delay: 600.ms),
-        ],
-      ),
-    );
+              height: 1.5),
+            textAlign: TextAlign.center).animate().fadeIn(delay: 600.ms)]));
   }
 
   Widget _buildFeatureSection() {
@@ -139,39 +113,32 @@ class _AboutPageState extends ConsumerState<AboutPage> {
         'icon': Icons.psychology_rounded,
         'title': 'AI 기반 운세',
         'description': '최신 AI 기술로 생성되는\n개인 맞춤형 운세',
-        'color': Colors.purple,
-      },
+        'color': Colors.purple},
       {
         'icon': Icons.calendar_today_rounded,
         'title': '다양한 운세',
         'description': '일일, 주간, 월간부터\n사주, 타로까지',
-        'color': Colors.blue,
-      },
+        'color': Colors.blue},
       {
         'icon': Icons.favorite_rounded,
         'title': '궁합 & 연애운',
         'description': '상대방과의 궁합부터\n연애 조언까지',
-        'color': Colors.pink,
-      },
+        'color': Colors.pink},
       {
         'icon': Icons.trending_up_rounded,
         'title': '재테크 운세',
         'description': '투자, 부동산, 사업\n재물운 상세 분석',
-        'color': Colors.green,
-      },
+        'color': Colors.green},
       {
         'icon': Icons.sports_soccer_rounded,
         'title': '스포츠 운세',
         'description': '골프, 테니스, 운동\n오늘의 컨디션 체크',
-        'color': Colors.orange,
-      },
+        'color': Colors.orange},
       {
         'icon': Icons.offline_bolt_rounded,
         'title': '오프라인 지원',
         'description': '인터넷 없이도\n저장된 운세 확인',
-        'color': Colors.teal,
-      },
-    ];
+        'color': Colors.teal}];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,9 +148,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+            color: Colors.white)),
         const SizedBox(height: 16),
         GridView.builder(
           shrinkWrap: true,
@@ -192,8 +157,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             crossAxisCount: 2,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
-            childAspectRatio: 1.2,
-          ),
+            childAspectRatio: 1.2),
           itemCount: features.length,
           itemBuilder: (context, index) {
             final feature = features[index];
@@ -201,33 +165,25 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               icon: feature['icon'] as IconData,
               title: feature['title'] as String,
               description: feature['description'] as String,
-              color: feature['color'] as Color,
-            ).animate().scale(
+              color: feature['color'] as Color).animate().scale(
               delay: Duration(milliseconds: 100 * index),
               duration: 500.ms,
-              curve: Curves.easeOutBack,
-            );
-          },
-        ),
-      ],
-    );
+              curve: Curves.easeOutBack);
+          })]);
   }
 
   Widget _buildFeatureCard({
     required IconData icon,
     required String title,
     required String description,
-    required Color color,
-  }) {
+    required Color color}) {
     return GlassContainer(
       gradient: LinearGradient(
         colors: [
           color.withValues(alpha: 0.2),
-          color.withValues(alpha: 0.05),
-        ],
+          color.withValues(alpha: 0.05)],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -240,22 +196,15 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
+              fontSize: 14)),
           const SizedBox(height: 4),
           Text(
             description,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
               fontSize: 11,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+              height: 1.3),
+            textAlign: TextAlign.center)]));
   }
 
   Widget _buildTeamSection() {
@@ -263,9 +212,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
       gradient: LinearGradient(
         colors: [
           Colors.indigo.withValues(alpha: 0.2),
-          Colors.indigo.withValues(alpha: 0.05),
-        ],
-      ),
+          Colors.indigo.withValues(alpha: 0.05)]),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -275,9 +222,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+              color: Colors.white)),
           const SizedBox(height: 16),
           Text(
             'Fortune은 AI 기술과 전통적인 운세를 결합하여\n'
@@ -286,10 +231,8 @@ class _AboutPageState extends ConsumerState<AboutPage> {
             '일상의 작은 행복이 되기를 바랍니다.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
+              height: 1.6),
+            textAlign: TextAlign.center),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -298,12 +241,7 @@ class _AboutPageState extends ConsumerState<AboutPage> {
               const SizedBox(width: 40),
               _buildStatItem('10만+', '활성 사용자'),
               const SizedBox(width: 40),
-              _buildStatItem('4.8', '평점'),
-            ],
-          ),
-        ],
-      ),
-    );
+              _buildStatItem('4.8', '평점')])]));
   }
 
   Widget _buildStatItem(String value, String label) {
@@ -314,18 +252,12 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+            color: Colors.white)),
         Text(
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
-    );
+            color: Colors.white.withValues(alpha: 0.7)))]);
   }
 
   Widget _buildVersionInfo() {
@@ -336,19 +268,13 @@ class _AboutPageState extends ConsumerState<AboutPage> {
           '버전 $_version',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.5),
-            fontSize: 12,
-          ),
-        ),
+            fontSize: 12)),
         const SizedBox(height: 8),
         Text(
           '© 2025 Fortune. All rights reserved.',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.5),
-            fontSize: 12,
-          ),
-        ),
-        const SizedBox(height: 32),
-      ],
-    );
+            fontSize: 12)),
+        const SizedBox(height: 32)]);
   }
 }

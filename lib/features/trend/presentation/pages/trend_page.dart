@@ -18,8 +18,7 @@ class _TrendPageState extends State<TrendPage> {
       'subtitle': '뱀띠가 대박나는 해?',
       'image': 'trend1',
       'likes': 1234,
-      'views': '0',
-    },
+      'views': '0'},
     {
       'type': 'test',
       'emoji': '💕',
@@ -27,8 +26,7 @@ class _TrendPageState extends State<TrendPage> {
       'subtitle': '나의 진짜 연애 스타일은?',
       'image': 'test1',
       'likes': 892,
-      'views': '0',
-    },
+      'views': '0'},
     {
       'type': 'trend',
       'emoji': '🌟',
@@ -36,8 +34,7 @@ class _TrendPageState extends State<TrendPage> {
       'subtitle': 'ENFP는 이번달 대박!',
       'image': 'trend2',
       'likes': 567,
-      'views': '0',
-    },
+      'views': '0'},
     {
       'type': 'test',
       'emoji': '🧠',
@@ -45,8 +42,7 @@ class _TrendPageState extends State<TrendPage> {
       'subtitle': '내 안의 잠재력 발견하기',
       'image': 'test2',
       'likes': 445,
-      'views': '0',
-    },
+      'views': '0'},
     {
       'type': 'trend',
       'emoji': '💸',
@@ -54,9 +50,7 @@ class _TrendPageState extends State<TrendPage> {
       'subtitle': 'O형 로또 당첨 확률 UP!',
       'image': 'trend3',
       'likes': 789,
-      'views': '0',
-    },
-  ];
+      'views': '0'}];
 
   @override
   Widget build(BuildContext context) {
@@ -70,25 +64,17 @@ class _TrendPageState extends State<TrendPage> {
             colors: [
               Color(0xFFF58529),
               Color(0xFFDD2A7B),
-              Color(0xFF8134AF),
-            ],
-          ).createShader(bounds),
+              Color(0xFF8134AF)]).createShader(bounds),
           child: Text(
             '트렌드 & 테스트',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ),
+              color: Colors.white))),
         actions: [
           IconButton(
             icon: Icon(Icons.notifications_outlined, color: Colors.black87),
-            onPressed: () {},
-          ),
-        ],
-      ),
+            onPressed: () {})]),
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
@@ -101,10 +87,7 @@ class _TrendPageState extends State<TrendPage> {
             return _buildTrendCard(item).animate()
               .fadeIn(delay: Duration(milliseconds: 100 * index))
               .slideY(begin: 0.1, end: 0);
-          },
-        ),
-      ),
-    );
+          })));
   }
 
   Widget _buildTrendCard(Map<String, dynamic> item) {
@@ -130,18 +113,14 @@ class _TrendPageState extends State<TrendPage> {
               end: Alignment.bottomRight,
               colors: isTrend
                 ? [Color(0xFFF58529), Color(0xFFDD2A7B)]
-                : [Color(0xFF8134AF), Color(0xFF515BD4)],
-            ),
+                : [Color(0xFF8134AF), Color(0xFF515BD4)]),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: (isTrend ? Color(0xFFF58529) : Color(0xFF8134AF))
                     .withValues(alpha: 0.3),
                 blurRadius: 12,
-                offset: Offset(0, 6),
-              ),
-            ],
-          ),
+                offset: Offset(0, 6))]),
           child: Stack(
             children: [
               // Content
@@ -155,25 +134,20 @@ class _TrendPageState extends State<TrendPage> {
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                        borderRadius: BorderRadius.circular(20)),
                       child: Text(
                         isTrend ? '트렌드' : '테스트',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                          fontWeight: FontWeight.w600))),
                     SizedBox(height: 12),
                     // Emoji and title
                     Row(
                       children: [
                         Text(
                           item['emoji'],
-                          style: TextStyle(fontSize: 32),
-                        ),
+                          style: TextStyle(fontSize: 32)),
                         SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -185,23 +159,14 @@ class _TrendPageState extends State<TrendPage> {
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
+                                  letterSpacing: -0.5)),
                               SizedBox(height: 4),
                               Text(
                                 item['subtitle'],
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                                  fontWeight: FontWeight.w400))]))]),
                     Spacer(),
                     // Stats
                     Row(
@@ -209,37 +174,26 @@ class _TrendPageState extends State<TrendPage> {
                         Icon(
                           Icons.favorite,
                           color: Colors.white,
-                          size: 16,
-                        ),
+                          size: 16),
                         SizedBox(width: 4),
                         Text(
                           '${item['likes']}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                            fontWeight: FontWeight.w500)),
                         SizedBox(width: 16),
                         Icon(
                           Icons.visibility,
                           color: Colors.white,
-                          size: 16,
-                        ),
+                          size: 16),
                         SizedBox(width: 4),
                         Text(
                           '${item['views']}',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+                            fontWeight: FontWeight.w500))])])),
               // Decorative elements
               Positioned(
                 right: -20,
@@ -249,10 +203,7 @@ class _TrendPageState extends State<TrendPage> {
                   height: 100,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.1),
-                  ),
-                ),
-              ),
+                    color: Colors.white.withValues(alpha: 0.1)))),
               Positioned(
                 right: 20,
                 bottom: 20,
@@ -261,14 +212,6 @@ class _TrendPageState extends State<TrendPage> {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.15),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                    color: Colors.white.withValues(alpha: 0.15))))]))));
   }
 }

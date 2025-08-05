@@ -65,10 +65,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               actions: [
                 IconButton(
                   icon: Icon(Icons.filter_list),
-                  onPressed: _showFilterOptions,
-                ),
-              ],
-            ),
+                  onPressed: _showFilterOptions)]),
             
             // Tab Bar
             Container(
@@ -80,29 +77,21 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   BoxShadow(
                     color: theme.colorScheme.shadow.withOpacity(0.05),
                     blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+                    offset: const Offset(0, 2))]),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 labelColor: Colors.white,
                 unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.6),
                 labelStyle: TextStyle(
                   fontSize: 14 * fontScale,
-                  fontWeight: FontWeight.bold,
-                ),
+                  fontWeight: FontWeight.bold),
                 tabs: const [
                   Tab(text: '타임라인'),
                   Tab(text: '통계'),
-                  Tab(text: '차트'),
-                ],
-              ),
-            ),
+                  Tab(text: '차트')])),
             
             // Tab Content
             Expanded(
@@ -123,17 +112,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                         child: TimelineView(
                           history: filteredHistory,
                           fontScale: fontScale,
-                          onItemTap: _showFortuneDetail,
-                        ),
-                      ),
+                          onItemTap: _showFortuneDetail)),
                       
                       // Statistics Tab
                       SingleChildScrollView(
                         child: StatisticsDashboard(
                           statistics: statistics,
-                          fontScale: fontScale,
-                        ),
-                      ),
+                          fontScale: fontScale)),
                       
                       // Charts Tab
                       SingleChildScrollView(
@@ -142,35 +127,19 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                           children: [
                             CategoryPieChart(
                               history: filteredHistory,
-                              fontScale: fontScale,
-                            ),
+                              fontScale: fontScale),
                             const SizedBox(height: 32),
                             MonthlyTrendChart(
                               history: filteredHistory,
-                              fontScale: fontScale,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
+                              fontScale: fontScale)]))]);
                 },
                 loading: () => const Center(child: LoadingIndicator()),
                 error: (error, stack) => Center(
                   child: Text(
                     '운세 기록을 불러올 수 없습니다',
-                    style: TextStyle(fontSize: 16 * fontScale),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+                    style: TextStyle(fontSize: 16 * fontScale)))))])),
       bottomNavigationBar: const FortuneBottomNavigationBar(
-        currentIndex: 3,
-      ),
-    );
+        currentIndex: 3));
   }
 
   Widget _buildEmptyState(double fontScale) {
@@ -181,27 +150,19 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
           Icon(
             Icons.history,
             size: 80,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-          ),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
           const SizedBox(height: 16),
           Text(
             '아직 운세 기록이 없습니다',
             style: TextStyle(
               fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(
             '운세를 보고 나면 여기에 기록됩니다',
             style: TextStyle(
               fontSize: 14 * fontScale,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]));
   }
 
   List<FortuneHistory> _filterHistory(List<FortuneHistory> history) {
@@ -254,8 +215,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         averageScore: 0,
         categoryCount: {},
         mostFrequentCategory: '',
-        lastFortuneDate: DateTime.now(),
-      );
+        lastFortuneDate: DateTime.now());
     }
     
     // Calculate total and monthly count
@@ -296,16 +256,14 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
       averageScore: averageScore,
       categoryCount: categoryCount,
       mostFrequentCategory: mostFrequentCategory,
-      lastFortuneDate: history.first.createdAt,
-    );
+      lastFortuneDate: history.first.createdAt);
   }
 
   void _showFilterOptions() {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => _buildFilterSheet(),
-    );
+      builder: (context) => _buildFilterSheet());
   }
 
   Widget _buildFilterSheet() {
@@ -316,8 +274,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -330,9 +287,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 '필터 옵션',
                 style: TextStyle(
                   fontSize: 20 * fontScale,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               TextButton(
                 onPressed: () {
                   setState(() {
@@ -341,10 +296,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                   });
                   Navigator.pop(context);
                 },
-                child: Text('초기화'),
-              ),
-            ],
-          ),
+                child: Text('초기화'))]),
           const SizedBox(height: 20),
           
           // Category Filter
@@ -352,9 +304,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             '카테고리',
             style: TextStyle(
               fontSize: 16 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -367,9 +317,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               _buildFilterChip('love', '연애운', fontScale),
               _buildFilterChip('money', '금전운', fontScale),
               _buildFilterChip('career', '직장운', fontScale),
-              _buildFilterChip('health', '건강운', fontScale),
-            ],
-          ),
+              _buildFilterChip('health', '건강운', fontScale)]),
           const SizedBox(height: 20),
           
           // Date Range Filter
@@ -377,9 +325,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
             '기간',
             style: TextStyle(
               fontSize: 16 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: () async {
@@ -387,8 +333,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
                 context: context,
                 firstDate: DateTime(2020),
                 lastDate: DateTime.now(),
-                initialDateRange: _selectedDateRange,
-              );
+                initialDateRange: _selectedDateRange);
               if (range != null) {
                 setState(() {
                   _selectedDateRange = range;
@@ -400,9 +345,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               _selectedDateRange != null
                   ? '${DateFormat('yyyy.MM.dd').format(_selectedDateRange!.start)} - ${DateFormat('yyyy.MM.dd').format(_selectedDateRange!.end)}'
                   : '기간 선택',
-              style: TextStyle(fontSize: 14 * fontScale),
-            ),
-          ),
+              style: TextStyle(fontSize: 14 * fontScale))),
           const SizedBox(height: 20),
           
           // Apply Button
@@ -412,13 +355,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
               onPressed: () => Navigator.pop(context),
               child: Text(
                 '적용',
-                style: TextStyle(fontSize: 16 * fontScale),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                style: TextStyle(fontSize: 16 * fontScale))))]));
   }
 
   Widget _buildFilterChip(String value, String label, double fontScale) {
@@ -427,15 +364,13 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
     return FilterChip(
       label: Text(
         label,
-        style: TextStyle(fontSize: 14 * fontScale),
-      ),
+        style: TextStyle(fontSize: 14 * fontScale)),
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
           _selectedFilter = value;
         });
-      },
-    );
+      });
   }
 
   void _showFortuneDetail(FortuneHistory item) {
@@ -451,9 +386,7 @@ class _FortuneHistoryPageState extends ConsumerState<FortuneHistoryPage>
         luckyItems: item.summary['luckyItems'] as Map<String, dynamic>? ?? {},
         advice: item.summary['advice'] as String? ?? '',
         score: item.summary['score'] as int? ?? 0,
-        onShare: () => _shareFortuneDetail(item),
-      ),
-    );
+        onShare: () => _shareFortuneDetail(item)));
   }
 
   Future<void> _shareFortuneDetail(FortuneHistory item) async {
@@ -475,7 +408,6 @@ $content
     
     await Share.share(
       shareText,
-      subject: '${item.title} - Fortune 운세',
-    );
+      subject: '${item.title} - Fortune 운세');
   }
 }

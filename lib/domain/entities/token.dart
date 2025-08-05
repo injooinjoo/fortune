@@ -15,8 +15,7 @@ class TokenBalance extends Equatable {
     required this.usedTokens,
     required this.remainingTokens,
     required this.lastUpdated,
-    this.hasUnlimitedAccess = false,
-  });
+    this.hasUnlimitedAccess = false});
 
   @override
   List<Object?> get props => [
@@ -37,16 +36,14 @@ class TokenBalance extends Equatable {
     int? usedTokens,
     int? remainingTokens,
     DateTime? lastUpdated,
-    bool? hasUnlimitedAccess,
-  }) {
+    bool? hasUnlimitedAccess}) {
     return TokenBalance(
       userId: userId ?? this.userId,
       totalTokens: totalTokens ?? this.totalTokens,
       usedTokens: usedTokens ?? this.usedTokens,
       remainingTokens: remainingTokens ?? this.remainingTokens,
       lastUpdated: lastUpdated ?? this.lastUpdated,
-      hasUnlimitedAccess: hasUnlimitedAccess ?? this.hasUnlimitedAccess,
-    );
+      hasUnlimitedAccess: hasUnlimitedAccess ?? this.hasUnlimitedAccess);
   }
 }
 
@@ -69,8 +66,7 @@ class TokenTransaction extends Equatable {
     this.description,
     this.referenceId,
     required this.createdAt,
-    this.balanceAfter,
-  });
+    this.balanceAfter});
 
   @override
   List<Object?> get props => [
@@ -103,8 +99,7 @@ class TokenPackage extends Equatable {
     this.bonusTokens,
     this.description,
     this.isPopular = false,
-    this.isBestValue = false,
-  });
+    this.isBestValue = false});
 
   double get discountPercentage {
     if (originalPrice == null || originalPrice! <= price) return 0;
@@ -129,8 +124,7 @@ class TokenConsumption extends Equatable {
   const TokenConsumption({
     required this.fortuneType,
     required this.requiredTokens,
-    this.description,
-  });
+    this.description});
 
   @override
   List<Object?> get props => [fortuneType, requiredTokens, description];
@@ -155,8 +149,7 @@ class UnlimitedSubscription extends Equatable {
     required this.status,
     required this.plan,
     required this.price,
-    required this.currency,
-  });
+    required this.currency});
 
   bool get isActive => status == 'active' && endDate.isAfter(DateTime.now());
 

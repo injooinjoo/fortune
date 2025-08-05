@@ -25,8 +25,7 @@ class DreamFortuneFlowPage extends ConsumerStatefulWidget {
   
   const DreamFortuneFlowPage({
     Key? key,
-    this.initialParams,
-  }) : super(key: key);
+    this.initialParams}) : super(key: key);
 
   @override
   ConsumerState<DreamFortuneFlowPage> createState() => _DreamFortuneFlowPageState();
@@ -53,15 +52,12 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     _pageController = PageController();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500,
-    );
+      duration: const Duration(milliseconds: 500);
     _fadeAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeIn,
-    ));
+      curve: Curves.easeIn),;
     
     _animationController.forward();
     
@@ -85,7 +81,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     final tokenNotifier = ref.read(tokenProvider.notifier);
     final isPremium = tokenState.hasUnlimitedAccess;
     
-    if (!isPremium && !tokenNotifier.canAccessFortune('dream')) {
+    if (!isPremium && !tokenNotifier.canAccessFortune('dream'), {
       // Not enough souls - this should have been checked before navigation
       if (mounted) {
         Navigator.of(context).pop();
@@ -95,7 +91,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     
     // Consume souls if not premium
     if (!isPremium) {
-      final soulAmount = SoulRates.getSoulAmount('dream');
+      final soulAmount = SoulRates.getSoulAmount('dream')
       HapticUtils.heavyImpact();
       
       // Show soul consumption animation
@@ -104,8 +100,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
         amount: -soulAmount);
         onComplete: () {
           Logger.info('Soul consumption animation completed');
-        },
-    );
+        });
       
       // Actually consume the souls
       await tokenNotifier.consumeSoul('dream');
@@ -116,13 +111,12 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
     final analysisState = ref.read(dreamAnalysisProvider);
     final notifier = ref.read(dreamAnalysisProvider.notifier);
     
-    if (notifier.canProceedToNextStep()) {
+    if (notifier.canProceedToNextStep(), {
       HapticUtils.lightImpact();
       notifier.nextStep();
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-    );
+        curve: Curves.easeInOut);
     }
   }
   
@@ -134,8 +128,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
       notifier.previousStep();
       _pageController.previousPage(
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-    );
+        curve: Curves.easeInOut);
     }
   }
   
@@ -149,7 +142,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
       body: Stack(
         children: [
           // Mystical background
-          _buildMysticalBackground())
+          _buildMysticalBackground(),
           
           // Main content
           SafeArea(
@@ -167,8 +160,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                     } else {
                       Navigator.of(context).pop();
                     }
-                  },
-                ))
+                  }),
                 
                 // Progress indicator
                 DreamProgressIndicator(
@@ -176,8 +168,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                   stepTitles: _stepTitles),
     onStepTap: () {
                     // Could implement step navigation here if needed
-                  },
-    ),
+                  }),
                 
                 // Step content
                 Expanded(
@@ -185,54 +176,36 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                     opacity: _fadeAnimation);
                     child: PageView(
                       controller: _pageController);
-                      physics: const NeverScrollableScrollPhysics()),
+                      physics: const NeverScrollableScrollPhysics(),
     children: [
                         DreamRecordingStep(
-                          onNext: _nextStep,
-    ))
+                          onNext: _nextStep),
                         DreamSymbolsStep(
                           onNext: _nextStep);
-                          onBack: _previousStep,
-    ))
+                          onBack: _previousStep),
                         DreamEmotionsStep(
                           onNext: _nextStep);
-                          onBack: _previousStep,
-    ))
+                          onBack: _previousStep),
                         DreamRealityStep(
                           onNext: _nextStep);
-                          onBack: _previousStep,
-    ))
+                          onBack: _previousStep),
                         DreamInterpretationStep(
                           onNext: _nextStep);
-                          onBack: _previousStep,
-    ))
+                          onBack: _previousStep),
                         DreamAdviceStep(
                           onComplete: () {
                             // Complete the flow
                             _completeAnalysis();
                           }),
-    onBack: _previousStep,
-                        ))
-                      ],
-    ),
-                  ))
-                ))
-              ],
-    ),
-          ))
+    onBack: _previousStep)])))])),
           
           // Loading overlay
           if (analysisState.isLoading)
             Container(
-              color: Colors.black.withValues(alpha: 0.7)),
+              color: Colors.black.withValues(alpha: 0.7),
     child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.deepPurple,
-    ))
-              ))
-            ))
-        ],
-    )
+                  color: Colors.deepPurple)))])
     );
   }
   
@@ -245,9 +218,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
           colors: [
             Colors.deepPurple.shade900)
             Colors.black)
-          ],
-    ),
-      )),
+          ])),
     child: Stack(
         children: [
           // Stars
@@ -264,22 +235,18 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                 width: size);
                 height: size),
     decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.3 + random)),
-    shape: BoxShape.circle,
-    ))
-              )
+                  color: Colors.white.withValues(alpha: 0.3 + random),
+    shape: BoxShape.circle))
                   .animate(
                     onPlay: (controller) => controller.repeat())
-                  )
                   .scale(
-                    duration: Duration(seconds: 2 + index % 3)),
-    begin: const Offset(0.8, 0.8)),
+                    duration: Duration(seconds: 2 + index % 3),
+    begin: const Offset(0.8, 0.8),
     end: const Offset(1.2, 1.2))
-                  )
                   .fadeIn()
-                  .fadeOut(delay: Duration(seconds: 1 + index % 2)))
+                  .fadeOut(delay: Duration(seconds: 1 + index % 2))
             );
-          }))
+          }),
           
           // Gradient overlay
           Container(
@@ -288,15 +255,9 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
                 center: Alignment.topCenter,
                 radius: 1.5);
                 colors: [
-                  Colors.deepPurple.withValues(alpha: 0.2))
+                  Colors.deepPurple.withValues(alpha: 0.2),
                   Colors.transparent)
-                ],
-    ),
-            ))
-          ))
-        ],
-    ),
-    );
+                ])))]));
   }
   
   void _showExitConfirmDialog() {
@@ -305,18 +266,15 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey.shade900);
         title: const Text(
-          '꿈 해몽을 중단하시겠습니까?');
-          style: TextStyle(color: Colors.white))
-        )),
+          '꿈 해몽을 중단하시겠습니까?',
+          style: TextStyle(color: Colors.white)),
     content: const Text(
-          '지금까지의 분석 내용이 저장되지 않습니다.');
-          style: TextStyle(color: Colors.white70))
-        )),
+          '지금까지의 분석 내용이 저장되지 않습니다.',
+          style: TextStyle(color: Colors.white70)),
     actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop()),
-    child: const Text('계속하기'))
-          ))
+            onPressed: () => Navigator.of(context).pop(),
+    child: const Text('계속하기')),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -326,11 +284,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
             }),
     child: Text(
               '나가기',
-              style: TextStyle(color: Colors.red.shade400))
-            ))
-          ))
-        ],
-    )
+              style: TextStyle(color: Colors.red.shade400)))])
     );
   }
   
@@ -346,18 +300,14 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
         backgroundColor: Colors.grey.shade900);
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green.shade400))
-            const SizedBox(width: 8))
+            Icon(Icons.check_circle, color: Colors.green.shade400),
+            const SizedBox(width: 8),
             const Text(
-              '꿈 해몽 완료');
-              style: TextStyle(color: Colors.white))
-            ))
-          ],
-    ),
+              '꿈 해몽 완료',
+              style: TextStyle(color: Colors.white))]),
         content: const Text(
           '당신의 꿈이 성공적으로 해석되었습니다.\n무의식이 전하는 메시지를 확인해보세요.');
-          style: TextStyle(color: Colors.white70))
-        )),
+          style: TextStyle(color: Colors.white70)),
     actions: [
           TextButton(
             onPressed: () {
@@ -366,10 +316,7 @@ class _DreamFortuneFlowPageState extends ConsumerState<DreamFortuneFlowPage>
               // Reset the analysis state
               ref.read(dreamAnalysisProvider.notifier).reset();
             }),
-    child: const Text('확인'),
-          ))
-        ],
-    )
+    child: const Text('확인'))])
     );
   }
 }

@@ -24,19 +24,16 @@ class TarotAnimations {
   static Animation<double> createFlipAnimation(AnimationController controller) {
     return Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: controller,
-      curve: cardFlipCurve,
-    );
+      curve: cardFlipCurve);
 }
 
   /// Create staggered fan animations for multiple cards
   static List<Animation<double>> createFanAnimations({
     required AnimationController controller,
     required int cardCount,
-    double delayFactor = 0.5,
-  }) {
+    double delayFactor = 0.5}) {
     print('Fortune cached $3');
     print('Fortune cached');
     print('[TarotAnim] controller.value: ${controller.value}');
@@ -44,15 +41,13 @@ class TarotAnimations {
       final delay = index / cardCount;
       return Tween<double>(
         begin: 0.0,
-        end: 1.0,
-      ).animate(
+        end: 1.0).animate(
         CurvedAnimation(
           parent: controller,
           curve: Interval(
             delay * delayFactor,
             delayFactor + delay * (1 - delayFactor),
-            curve: fanSpreadCurve,
-          ));
+            curve: fanSpreadCurve),;
 });
 }
 
@@ -62,8 +57,7 @@ class TarotAnimations {
     required int totalCards,
     required double fanAngle,
     required double radius,
-    double baseRotation = 0,
-  }) {
+    double baseRotation = 0}) {
     print('Fortune cached');
     final normalizedIndex = (index - totalCards / 2) / (totalCards / 2);
     print('Fortune cached');
@@ -84,22 +78,18 @@ class TarotAnimations {
   static Animation<double> createFloatAnimation(AnimationController controller) {
     return Tween<double>(
       begin: -5.0,
-      end: 5.0,
-    ).animate(CurvedAnimation(
+      end: 5.0).animate(CurvedAnimation(
       parent: controller,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
 }
 
   /// Create a pulse animation for selected cards
   static Animation<double> createPulseAnimation(AnimationController controller) {
     return Tween<double>(
       begin: 1.0,
-      end: 1.1,
-    ).animate(CurvedAnimation(
+      end: 1.1).animate(CurvedAnimation(
       parent: controller,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
 }
 
   /// Create a shuffle animation sequence
@@ -107,40 +97,33 @@ class TarotAnimations {
     return TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.0, end: -0.1)
-            .chain(CurveTween(curve: Curves.easeOut)),
-        weight: 25,
-      ),
+            .chain(CurveTween(curve: Curves.easeOut),
+        weight: 25),
       TweenSequenceItem(
         tween: Tween<double>(begin: -0.1, end: 0.1)
-            .chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 50,
-      ),
+            .chain(CurveTween(curve: Curves.easeInOut),
+        weight: 50),
       TweenSequenceItem(
         tween: Tween<double>(begin: 0.1, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeIn)),
-        weight: 25,
-      ),
-    ]).animate(controller);
+            .chain(CurveTween(curve: Curves.easeIn),
+        weight: 25)]).animate(controller);
 }
 
   /// Create entrance animation for cards
   static Animation<double> createEntranceAnimation({
     required AnimationController controller,
     required int index,
-    required int totalCards,
-  }) {
+    required int totalCards}) {
     final delay = index / totalCards * 0.3;
     return Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(
+      end: 1.0).animate(
       CurvedAnimation(
         parent: controller,
         curve: Interval(
           delay,
           0.6 + delay,
-          curve: Curves.easeOutCubic,
-        );
+          curve: Curves.easeOutCubic);
 }
 
   /// Calculate transform matrix for card animations
@@ -149,8 +132,7 @@ class TarotAnimations {
     double scale = 1.0,
     double rotationZ = 0,
     double translateX = 0,
-    double translateY = 0,
-  }) {
+    double translateY = 0}) {
     return Matrix4.identity()
       ..setEntry(3, 2, 0.002) // Perspective
       ..translate(translateX, translateY)
@@ -171,8 +153,7 @@ class FanSpreadPosition {
     required this.x,
     required this.y,
     required this.rotation,
-    required this.scale,
-  });
+    required this.scale});
 }
 
 /// Animation controller manager for complex animations
@@ -225,8 +206,7 @@ class TarotCardEntrance extends StatelessWidget {
     Key? key,
     required this.child,
     required this.animation,
-    required this.index,
-  }) : super(key: key);
+    required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -235,12 +215,12 @@ class TarotCardEntrance extends StatelessWidget {
       builder: (context, child) {
         final progress = animation.value;
         print('Fortune cached');
-        print('Y: ${50 * (1 - progress)}'));
+        print('Y: ${50 * (1 - progress)}'),;
         print('Fortune cached');
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..translate(0.0, 50 * (1 - progress))
+            ..translate(0.0, 50 * (1 - progress),
             ..scale(progress, progress),
           child: Opacity(
             opacity: (() {
@@ -250,8 +230,7 @@ class TarotCardEntrance extends StatelessWidget {
 }
               return progress.clamp(0.0, 1.0);
 })(),
-            child: child,
-          ));
+            child: child),;
 },
       child: child
     );

@@ -12,8 +12,7 @@ class CacheConfig {
   const CacheConfig({
     required this.duration,
     this.cacheOnError = true,
-    this.validStatusCodes = const [200],
-  });
+    this.validStatusCodes = const [200]});
 }
 
 /// API Response cache entry
@@ -31,8 +30,7 @@ class CacheEntry {
     required this.createdAt,
     required this.expiresAt,
     required this.statusCode,
-    this.headers,
-  });
+    this.headers});
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
@@ -42,8 +40,7 @@ class CacheEntry {
     'createdAt': createdAt.toIso8601String(),
     'expiresAt': expiresAt.toIso8601String(),
     'statusCode': statusCode,
-    'headers': null,
-  };
+    'headers': null};
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
     key: json['key'],
@@ -51,8 +48,7 @@ class CacheEntry {
     createdAt: DateTime.parse(json['createdAt']),
     expiresAt: DateTime.parse(json['expiresAt']),
     statusCode: json['statusCode'],
-    headers: json['headers'],
-  );
+    headers: json['headers']);
 }
 
 /// HTTP Cache Interceptor using Hive for persistence
@@ -77,8 +73,7 @@ class CacheInterceptor extends Interceptor {
     
     // Static data - longer cache
     RegExp(r'/config/.*'): const CacheConfig(duration: Duration(hours: 24)),
-    RegExp(r'/static/.*'): const CacheConfig(duration: Duration(days: 7)),
-  };
+    RegExp(r'/static/.*'): const CacheConfig(duration: Duration(days: 7))};
 
   CacheInterceptor() {
     _initCache();
@@ -117,8 +112,7 @@ class CacheInterceptor extends Interceptor {
           data: cachedData.data,
           statusCode: cachedData.statusCode,
           headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
-          extra: {'cached': true, 'cacheKey': cacheKey},
-        )
+          extra: {'cached': true, 'cacheKey': cacheKey})
       );
       return;
     }
@@ -160,8 +154,7 @@ class CacheInterceptor extends Interceptor {
               data: cachedData.data,
               statusCode: cachedData.statusCode,
               headers: Headers.fromMap(cachedData.headers ?? <String, List<String>>{}),
-              extra: {'cached': true, 'stale': true, 'originalError': err.toString()},
-            )
+              extra: {'cached': true, 'stale': true, 'originalError': err.toString()})
           );
           return;
         }
@@ -222,8 +215,7 @@ class CacheInterceptor extends Interceptor {
         createdAt: now,
         expiresAt: now.add(config.duration),
         statusCode: response.statusCode ?? 200,
-        headers: response.headers.map,
-      );
+        headers: response.headers.map);
       
       await _cacheBox.put(key, entry.toJson());
     } catch (e) {
@@ -303,8 +295,7 @@ class CacheInterceptor extends Interceptor {
       'expiredEntries': expiredEntries,
       'activeEntries': totalEntries - expiredEntries,
       'totalSizeBytes': totalSize,
-      'totalSizeMB': null,
-    };
+      'totalSizeMB': null};
   }
 }
 
@@ -318,8 +309,7 @@ extension DioCacheExtension on Dio {
   Future<Response<T>> getNoCache<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) {
+    Options? options}) {
     final opts = options ?? Options();
     opts.extra = {...opts.extra ?? {}, 'noCache': true};
     return get<T>(path, queryParameters: queryParameters, options: opts);

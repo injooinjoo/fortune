@@ -35,14 +35,12 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 // Data source providers
 final fortuneRemoteDataSourceProvider = Provider<FortuneRemoteDataSource>((ref) {
   return FortuneRemoteDataSourceImpl(
-    apiClient: ref.watch(apiClientProvider),
-  );
+    apiClient: ref.watch(apiClientProvider));
 });
 
 final tokenRemoteDataSourceProvider = Provider<TokenRemoteDataSource>((ref) {
   return TokenRemoteDataSourceImpl(
-    apiClient: ref.watch(apiClientProvider),
-  );
+    apiClient: ref.watch(apiClientProvider));
 });
 
 // Service providers
@@ -114,8 +112,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 1,
       iconName: 'sun',
       color: 'orange',
-      gradient: 'from-orange-50 to-yellow-50',
-    ),
+      gradient: 'from-orange-50 to-yellow-50'),
     const FortuneTypeInfo(
       id: 'today',
       title: '오늘의 운세',
@@ -124,8 +121,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 1,
       iconName: 'calendar',
       color: 'blue',
-      gradient: 'from-blue-50 to-indigo-50',
-    ),
+      gradient: 'from-blue-50 to-indigo-50'),
     const FortuneTypeInfo(
       id: 'tomorrow',
       title: '내일의 운세',
@@ -134,8 +130,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 1,
       iconName: 'sunrise',
       color: 'purple',
-      gradient: 'from-purple-50 to-pink-50',
-    ),
+      gradient: 'from-purple-50 to-pink-50'),
     const FortuneTypeInfo(
       id: 'hourly',
       title: '시간대별 운세',
@@ -144,8 +139,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'clock',
       color: 'green',
-      gradient: 'from-green-50 to-emerald-50',
-    ),
+      gradient: 'from-green-50 to-emerald-50'),
     
     // 전통 운세
     const FortuneTypeInfo(
@@ -157,8 +151,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       iconName: 'sun',
       color: 'orange',
       gradient: 'from-orange-50 to-yellow-50',
-      isPopular: true,
-    ),
+      isPopular: true),
     const FortuneTypeInfo(
       id: 'tojeong',
       title: '토정비결',
@@ -167,8 +160,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'scroll',
       color: 'amber',
-      gradient: 'from-amber-50 to-orange-50',
-    ),
+      gradient: 'from-amber-50 to-orange-50'),
     const FortuneTypeInfo(
       id: 'palmistry',
       title: '손금',
@@ -177,8 +169,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 2,
       iconName: 'hand',
       color: 'amber',
-      gradient: 'from-amber-50 to-yellow-50',
-    ),
+      gradient: 'from-amber-50 to-yellow-50'),
     const FortuneTypeInfo(
       id: 'physiognomy',
       title: '관상',
@@ -187,8 +178,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'face',
       color: 'indigo',
-      gradient: 'from-indigo-50 to-purple-50',
-    ),
+      gradient: 'from-indigo-50 to-purple-50'),
     const FortuneTypeInfo(
       id: 'salpuli',
       title: '살풀이',
@@ -197,8 +187,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 3,
       iconName: 'shield',
       color: 'red',
-      gradient: 'from-red-50 to-orange-50',
-    ),
+      gradient: 'from-red-50 to-orange-50'),
     
     // MBTI/성격
     const FortuneTypeInfo(
@@ -210,8 +199,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       iconName: 'brain',
       color: 'violet',
       gradient: 'from-violet-50 to-purple-50',
-      isNew: true,
-    ),
+      isNew: true),
     
     // 별자리/띠
     const FortuneTypeInfo(
@@ -222,8 +210,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 1,
       iconName: 'star',
       color: 'cyan',
-      gradient: 'from-cyan-50 to-blue-50',
-    ),
+      gradient: 'from-cyan-50 to-blue-50'),
     const FortuneTypeInfo(
       id: 'zodiac-animal',
       title: '띠 운세',
@@ -232,8 +219,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       tokenCost: 1,
       iconName: 'crown',
       color: 'orange',
-      gradient: 'from-orange-50 to-yellow-50',
-    ),
+      gradient: 'from-orange-50 to-yellow-50'),
     
     // 연애/결혼
     const FortuneTypeInfo(
@@ -331,8 +317,7 @@ final fortuneTypesProvider = Provider<List<FortuneTypeInfo>>((ref) {
       iconName: 'coins',
       color: 'yellow',
       gradient: 'from-yellow-50 to-orange-50',
-      isPopular: true),
-  ];
+      isPopular: true)];
 });
 
 // Recent fortunes provider
@@ -348,8 +333,7 @@ class RecentFortune {
   RecentFortune({
     required this.path,
     required this.title,
-    required this.visitedAt,
-  });
+    required this.visitedAt});
 }
 
 class RecentFortunesNotifier extends StateNotifier<List<RecentFortune>> {
@@ -360,10 +344,8 @@ class RecentFortunesNotifier extends StateNotifier<List<RecentFortune>> {
       RecentFortune(
         path: path,
         title: title,
-        visitedAt: DateTime.now(),
-      ),
-      ...state.where((f) => f.path != path).take(9),
-    ];
+        visitedAt: DateTime.now()),
+      ...state.where((f) => f.path != path).take(9)];
   }
 
   void clearAll() {

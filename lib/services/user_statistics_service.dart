@@ -17,8 +17,7 @@ class UserStatistics {
     this.favoriteFortuneType,
     required this.fortuneTypeCount,
     required this.totalTokensUsed,
-    required this.totalTokensEarned,
-  });
+    required this.totalTokensEarned});
 
   factory UserStatistics.empty() {
     return UserStatistics(
@@ -26,8 +25,7 @@ class UserStatistics {
       consecutiveDays: 0,
       fortuneTypeCount: {},
       totalTokensUsed: 0,
-      totalTokensEarned: 0,
-    );
+      totalTokensEarned: 0);
   }
 
   factory UserStatistics.fromJson(Map<String, dynamic> json) {
@@ -38,8 +36,7 @@ class UserStatistics {
       favoriteFortuneType: json['favorite_fortune_type'],
       fortuneTypeCount: Map<String, int>.from(json['fortune_type_count'] ?? {}),
       totalTokensUsed: json['total_tokens_used'],
-      totalTokensEarned: json['total_tokens_earned'],
-    );
+      totalTokensEarned: json['total_tokens_earned']);
   }
 
   Map<String, dynamic> toJson() {
@@ -50,8 +47,7 @@ class UserStatistics {
       'favorite_fortune_type': favoriteFortuneType,
       'fortune_type_count': fortuneTypeCount,
       'total_tokens_used': totalTokensUsed,
-      'total_tokens_earned': null,
-    };
+      'total_tokens_earned': null};
   }
 }
 
@@ -76,8 +72,7 @@ class Achievement {
     required this.earnedAt,
     required this.type,
     required this.progress,
-    required this.maxProgress,
-  });
+    required this.maxProgress});
 
   factory Achievement.fromJson(Map<String, dynamic> json) {
     return Achievement(
@@ -88,11 +83,9 @@ class Achievement {
       earnedAt: DateTime.parse(json['earned_at'],
       type: AchievementType.values.firstWhere(
         (t) => t.name == json['type'],
-        orElse: () => AchievementType.general,
-      ),
+        orElse: () => AchievementType.general),
       progress: json['progress'],
-      maxProgress: json['max_progress'],
-    );
+      maxProgress: json['max_progress']);
   }
 
   Map<String, dynamic> toJson() {
@@ -104,8 +97,7 @@ class Achievement {
       'earned_at': earnedAt.toIso8601String(),
       'type': type.name,
       'progress': progress,
-      'max_progress': null,
-    };
+      'max_progress': null};
   }
 
   bool get isCompleted => progress >= maxProgress;
@@ -119,10 +111,7 @@ enum AchievementType {
   consecutiveDays,
   tokenUsage,
   specialEvent,
-  social,
-  
-  
-}
+  social}
 */
 
 class UserStatisticsService {
@@ -166,8 +155,7 @@ class UserStatisticsService {
       await _supabase.from('user_statistics').insert({
         'user_id': userId,
         ...initialStats.toJson(),
-        'created_at': null,
-      });
+        'created_at': null});
       
       return initialStats;
     } catch (e) {
@@ -199,8 +187,7 @@ class UserStatisticsService {
         'total_fortunes': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
         'favorite_fortune_type': favoriteType,
-        'updated_at': null,
-      }).eq('user_id', userId);
+        'updated_at': null}).eq('user_id', userId);
       
       // TODO: Implement achievements when user_achievements table is created
       
@@ -208,8 +195,7 @@ class UserStatisticsService {
       await _storageService.saveUserStatistics({
         'total_fortunes': stats.totalFortunes + 1,
         'fortune_type_count': newFortuneTypeCount,
-        'favorite_fortune_type': null,
-      });
+        'favorite_fortune_type': null});
     } catch (e) {
       Logger.error('Failed to increment fortune count', e);
     }
@@ -227,8 +213,7 @@ class UserStatisticsService {
         final lastLoginDate = DateTime(
           stats.lastLogin!.year,
           stats.lastLogin!.month,
-          stats.lastLogin!.day,
-        );
+          stats.lastLogin!.day);
         
         final daysDifference = today.difference(lastLoginDate).inDays;
         
@@ -248,21 +233,18 @@ class UserStatisticsService {
       if (stats.lastLogin == null || today.isAfter(DateTime(
         stats.lastLogin!.year,
         stats.lastLogin!.month,
-        stats.lastLogin!.day,
-      ))) {
+        stats.lastLogin!.day))) {
         await _supabase.from('user_statistics').update({
           'consecutive_days': newConsecutiveDays,
           'last_login': now.toIso8601String(),
-          'updated_at': null,
-        }).eq('user_id', userId);
+          'updated_at': null}).eq('user_id', userId);
         
         // TODO: Implement achievements when user_achievements table is created
         
         // Update local storage
         await _storageService.saveUserStatistics({
           'consecutive_days': newConsecutiveDays,
-          'last_login': null,
-        });
+          'last_login': null});
       }
     } catch (e) {
       Logger.error('Failed to update consecutive days', e);
@@ -276,8 +258,7 @@ class UserStatisticsService {
       await _supabase.from('user_statistics').update({
         'total_tokens_used': stats.totalTokensUsed + tokensUsed,
         'total_tokens_earned': stats.totalTokensEarned + tokensEarned,
-        'updated_at': null,
-      }).eq('user_id', userId);
+        'updated_at': null}).eq('user_id', userId);
       
       // TODO: Implement achievements when user_achievements table is created
     } catch (e) {

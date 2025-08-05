@@ -92,7 +92,7 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
       'duration': _durationController.text,
       'crisisType': _crisisType,
       'severity': _severity)
-      'symptoms': _selectedSymptoms)
+      , 'symptoms': _selectedSymptoms)}
     };
   }
 
@@ -103,124 +103,97 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Card(
-            color: theme.colorScheme.errorContainer.withValues(alpha: 0.5)),
+            color: theme.colorScheme.errorContainer.withValues(alpha: 0.5),
     child: Padding(
               padding: AppSpacing.paddingAll16);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.healing);
-                        color: theme.colorScheme.error,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: theme.colorScheme.error),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '커리어 위기 진단');
-                        style: theme.textTheme.titleLarge,
-    ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing2))
+                        '커리어 위기 진단',
+                        style: theme.textTheme.titleLarge)]),
+                  SizedBox(height: AppSpacing.spacing2),
                   Text(
-                    '현재의 어려움을 극복할 방법을 찾아드립니다');
+                    '현재의 어려움을 극복할 방법을 찾아드립니다',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant))
-                    ))
-                  ))
-                ],
-    ),
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      color: theme.colorScheme.onSurfaceVariant)))]))),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Situation Description
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '현재 상황');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '현재 상황',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 TextField(
                   controller: _situationController);
                   maxLines: 3),
     decoration: InputDecoration(
                     labelText: '현재 상황 설명');
                     hintText: '어떤 어려움을 겪고 계신가요?'),
-    prefixIcon: const Icon(Icons.description)),
+    prefixIcon: const Icon(Icons.description),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-                SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium))),
+                SizedBox(height: AppSpacing.spacing4),
                 TextField(
                   controller: _durationController);
                   decoration: InputDecoration(
                     labelText: '지속 기간 (선택사항)'),
     hintText: '예: 3개월, 1년'),
-    prefixIcon: const Icon(Icons.timer)),
+    prefixIcon: const Icon(Icons.timer),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium)))])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Crisis Type
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '위기 유형');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '위기 유형',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _crisisTypes.map((type) {
                     final isSelected = _crisisType == type;
                     return ChoiceChip(
-                      label: Text(type)),
+                      label: Text(type),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
                           _crisisType = selected ? type : null;
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Severity Level
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '심각도');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '심각도',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 ...(_severityLevels.map((level) {
                   final isSelected = _severity == level;
                   return InkWell(
@@ -232,18 +205,16 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                     borderRadius: AppDimensions.borderRadiusMedium),
     child: Container(
                       padding: AppSpacing.paddingAll16);
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall)),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3)),
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))
-                        ))
-                      )),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -252,53 +223,43 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level);
-                            style: theme.textTheme.bodyLarge,
-    ))
-                        ],
-    ),
-                    )
+                            style: theme.textTheme.bodyLarge)]))
                   );
-                })))
-              ],
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                }))
+              ])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Symptoms
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.checklist, color: AppColors.error))
-                    SizedBox(width: AppSpacing.spacing2))
+                    const Icon(Icons.checklist, color: AppColors.error),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '겪고 있는 증상 (2개 이상)'),
-    style: theme.textTheme.titleMedium,
-    ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing2))
+    style: theme.textTheme.titleMedium)]),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '최대 5개까지 선택 가능');
+                  '최대 5개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
-                ))
-                SizedBox(height: AppSpacing.spacing3))
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                ),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _symptomOptions.map((symptom) {
                     final isSelected = _selectedSymptoms.contains(symptom);
                     return FilterChip(
-                      label: Text(symptom)),
+                      label: Text(symptom),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
@@ -308,16 +269,9 @@ class _CareerCrisisFortunePageState extends BaseFortunePageState<CareerCrisisFor
                             _selectedSymptoms.remove(symptom);
                           }
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing8))
-        ],
-    )
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing8)])
     );
   }
 }

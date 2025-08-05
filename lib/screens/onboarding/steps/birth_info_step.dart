@@ -19,8 +19,7 @@ class BirthInfoStep extends StatefulWidget {
     super.key,
     required this.onBirthInfoChanged,
     required this.onNext,
-    required this.onBack,
-  });
+    required this.onBack});
 
   @override
   State<BirthInfoStep> createState() => _BirthInfoStepState();
@@ -34,8 +33,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
   void _selectDate() async {
     final date = await CustomCalendarPicker.show(
       context,
-      initialDate: _selectedDate ?? DateTime(1980, 1, 1),
-    );
+      initialDate: _selectedDate ?? DateTime(1980, 1, 1));
     
     if (date != null) {
       setState(() {
@@ -52,8 +50,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
   void _selectTime() async {
     final time = await BottomSheetTimePicker.show(
       context,
-      initialTime: _selectedTime,
-    );
+      initialTime: _selectedTime);
     
     if (time != null) {
       setState(() {
@@ -71,8 +68,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-      ),
+        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
       child: Column(
         children: [
           // Back button
@@ -81,9 +77,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
             child: IconButton(
               onPressed: widget.onBack,
               icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
-              padding: EdgeInsets.zero,
-            ),
-          ),
+              padding: EdgeInsets.zero)),
           
           Expanded(
             child: Column(
@@ -95,29 +89,21 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                     fontSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
-                    color: context.fortuneTheme.primaryText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(
-                  duration: 600.ms,
-                ).shimmer(
+                    color: context.fortuneTheme.primaryText),
+                  textAlign: TextAlign.center).animate().fadeIn(
+                  duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3),
-                ),
+                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
                 Text(
                   '정확한 운세를 위해 필요해요',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.fortuneTheme.subtitleText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate(
-                  delay: 300.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ),
+                    color: context.fortuneTheme.subtitleText),
+                  textAlign: TextAlign.center).animate(
+                  delay: 300.ms).fadeIn(
+                  duration: 600.ms),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
                 
@@ -126,8 +112,7 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                 
                 if (_hasSelectedDate) ...[
                   SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2),
-                  _buildTimeSelector(),
-                ],
+                  _buildTimeSelector()],
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5),
                 
@@ -141,28 +126,14 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                       backgroundColor: context.fortuneTheme.primaryText,
                       foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4),
-                      ),
-                      elevation: 0,
-                    ),
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
+                      elevation: 0),
                     child: Text(
                       '다음',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ).animate(
-                  delay: 700.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                        fontWeight: FontWeight.w600)))).animate(
+                  delay: 700.ms).fadeIn(
+                  duration: 600.ms)]))]));
   }
   
   Widget _buildDateSelector() {
@@ -175,16 +146,12 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-          vertical: context.fortuneTheme.formStyles.inputPadding.horizontal,
-        ),
+          vertical: context.fortuneTheme.formStyles.inputPadding.horizontal),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
               color: context.fortuneTheme.dividerColor,
-              width: context.fortuneTheme.formStyles.inputBorderWidth,
-            ),
-          ),
-        ),
+              width: context.fortuneTheme.formStyles.inputBorderWidth))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -194,26 +161,16 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                 color: _selectedDate != null
                     ? context.fortuneTheme.primaryText
                     : context.fortuneTheme.subtitleText,
-                fontWeight: _selectedDate != null ? FontWeight.w500 : FontWeight.normal,
-              ),
-            ),
+                fontWeight: _selectedDate != null ? FontWeight.w500 : FontWeight.normal)),
             Icon(
               Icons.calendar_today,
               color: context.fortuneTheme.subtitleText,
-              size: AppDimensions.iconSizeMedium,
-            ),
-          ],
-        ),
-      ),
-    ).animate(
-      delay: 500.ms,
-    ).fadeIn(
-      duration: 600.ms,
-    ).slideY(
+              size: AppDimensions.iconSizeMedium)]))).animate(
+      delay: 500.ms).fadeIn(
+      duration: 600.ms).slideY(
       begin: 0.1,
       end: 0,
-      curve: Curves.easeOutQuart,
-    );
+      curve: Curves.easeOutQuart);
   }
   
   Widget _buildTimeSelector() {
@@ -224,16 +181,12 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-          vertical: context.fortuneTheme.formStyles.inputPadding.horizontal,
-        ),
+          vertical: context.fortuneTheme.formStyles.inputPadding.horizontal),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
               color: context.fortuneTheme.dividerColor,
-              width: context.fortuneTheme.formStyles.inputBorderWidth,
-            ),
-          ),
-        ),
+              width: context.fortuneTheme.formStyles.inputBorderWidth))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -243,23 +196,14 @@ class _BirthInfoStepState extends State<BirthInfoStep> {
                 color: _selectedTime != null
                     ? context.fortuneTheme.primaryText
                     : context.fortuneTheme.subtitleText,
-                fontWeight: _selectedTime != null ? FontWeight.w500 : FontWeight.normal,
-              ),
-            ),
+                fontWeight: _selectedTime != null ? FontWeight.w500 : FontWeight.normal)),
             Icon(
               Icons.access_time,
               color: context.fortuneTheme.subtitleText,
-              size: AppDimensions.iconSizeMedium,
-            ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(
-      duration: 600.ms,
-    ).slideY(
+              size: AppDimensions.iconSizeMedium)]))).animate().fadeIn(
+      duration: 600.ms).slideY(
       begin: 0.1,
       end: 0,
-      curve: Curves.easeOutQuart,
-    );
+      curve: Curves.easeOutQuart);
   }
 }

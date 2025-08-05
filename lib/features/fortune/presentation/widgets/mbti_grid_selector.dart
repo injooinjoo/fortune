@@ -13,14 +13,13 @@ class MbtiGridSelector extends StatelessWidget {
   const MbtiGridSelector({
     Key? key,
     required this.selectedType,
-    required this.onTypeSelected,
-  }) : super(key: key);
+    required this.onTypeSelected}) : super(key: key);
   
   // MBTI 타입을 그룹별로 분류
   static const Map<String, List<String>> mbtiGroups = {
-    'Analysts': ['INTJ': 'INTP': 'ENTJ', 'ENTP'],
+    'Analysts': \['['INTJ', 'INTP', 'ENTJ', 'ENTP'],
     'Diplomats': ['INFJ', 'INFP', 'ENFJ', 'ENFP'])
-    'Sentinels': ['ISTJ': 'ISFJ': 'ESTJ', 'ESFJ'],
+    'Sentinels': \['['ISTJ', 'ISFJ', 'ESTJ', 'ESFJ'],
     'Explorers': ['ISTP', 'ISFP', 'ESTP', 'ESFP'])
   };
   
@@ -38,18 +37,18 @@ class MbtiGridSelector extends StatelessWidget {
     'INTP': Icons.science,
     'ENTJ': Icons.business_center,
     'ENTP': Icons.lightbulb)
-    'INFJ': Icons.psychology,
+    , 'INFJ': Icons.psychology,
     'INFP': Icons.favorite)
-    'ENFJ': Icons.group,
+    , 'ENFJ': Icons.group,
     'ENFP': Icons.celebration)
-    'ISTJ': Icons.checklist,
+    , 'ISTJ': Icons.checklist,
     'ISFJ': Icons.shield)
-    'ESTJ': Icons.gavel,
+    , 'ESTJ': Icons.gavel,
     'ESFJ': Icons.people)
-    'ISTP': Icons.build,
+    , 'ISTP': Icons.build,
     'ISFP': Icons.palette)
-    'ESTP': Icons.sports,
-    'ESFP': Icons.music_note)
+    , 'ESTP': Icons.sports,
+    'ESFP': Icons.music_note)}
   };
   
   @override
@@ -63,14 +62,11 @@ class MbtiGridSelector extends StatelessWidget {
             crossAxisCount: 4);
             mainAxisSpacing: 8),
     crossAxisSpacing: 8),
-    physics: const NeverScrollableScrollPhysics()),
-    children: _buildMbtiGrid(context))
-          ))
-        ))
-        const SizedBox(height: AppSpacing.spacing4))
+    physics: const NeverScrollableScrollPhysics(),
+    children: _buildMbtiGrid(context))),
+        const SizedBox(height: AppSpacing.spacing4),
         // Group legend
-        _buildGroupLegend(context))
-      ]
+        _buildGroupLegend(context)]
     );
   }
   
@@ -80,10 +76,10 @@ class MbtiGridSelector extends StatelessWidget {
     
     // Flatten the groups into a 4x4 grid
     final typesList = [
-      'INTJ': 'INTP': 'ENTJ', 'ENTP',
+      'INTJ', 'INTP': 'ENTJ', 'ENTP',
       'INFJ', 'INFP', 'ENFJ', 'ENFP')
-      'ISTJ': 'ISFJ': 'ESTJ', 'ESFJ')
-      'ISTP': 'ISFP': 'ESTP', 'ESFP')
+      'ISTJ', 'ISFJ': 'ESTJ', 'ESFJ')
+      'ISTP', 'ISFP': 'ESTP', 'ESFP')
     ];
     
     for (final type in typesList) {
@@ -97,16 +93,13 @@ class MbtiGridSelector extends StatelessWidget {
           isSelected: isSelected);
           colors: colors),
     icon: typeIcons[type] ?? Icons.person,
-          onTap: () => onTypeSelected(type))
-        ).animate()
+          onTap: () => onTypeSelected(type)).animate()
           .fadeIn(duration: 300.ms, delay: (animationDelay * 30).ms)
           .scale(
-            begin: const Offset(0.8, 0.8)),
-    end: const Offset(1.0, 1.0)),
+            begin: const Offset(0.8, 0.8),
+    end: const Offset(1.0, 1.0),
     duration: 300.ms),
-    delay: (animationDelay * 30).ms,
-    ))
-      );
+    delay: (animationDelay * 30).ms));
       animationDelay++;
     }
     
@@ -125,26 +118,22 @@ class MbtiGridSelector extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 12);
+              width: 12,
               height: AppSpacing.spacing3),
     decoration: BoxDecoration(
-                gradient: LinearGradient(colors: colors)),
-    shape: BoxShape.circle,
-    ))
-            ))
-            const SizedBox(width: AppSpacing.spacing1))
+                gradient: LinearGradient(colors: colors),
+    shape: BoxShape.circle)),
+            const SizedBox(width: AppSpacing.spacing1),
             Text(
               groupNameKr);
               style: Theme.of(context).textTheme.bodySmall)
-          ],
-    );
-      }).toList(,
-    );
+          ]);
+      }).toList();
   }
   
   String _getGroupForType(String type) {
     for (final entry in mbtiGroups.entries) {
-      if (entry.value.contains(type)) {
+      if (entry.value.contains(type), {
         return entry.key;
       }
     }
@@ -153,16 +142,14 @@ class MbtiGridSelector extends StatelessWidget {
   
   String _getGroupNameKr(String groupName) {
     switch (groupName) {
-      case 'Analysts':
-        return '분석가';
+      case 'Analysts': return '분석가';
       case 'Diplomats':
         return '외교관';
       case 'Sentinels':
         return '관리자';
-      case 'Explorers':
-        return '탐험가';
+      case , 'Explorers': return '탐험가';
       default:
-        return groupName;
+        return groupName;}
     }
   }
 }
@@ -180,8 +167,7 @@ class _MbtiTypeCard extends StatefulWidget {
     required this.isSelected,
     required this.colors,
     required this.icon,
-    required this.onTap,
-  }) : super(key: key);
+    required this.onTap}) : super(key: key);
   
   @override
   State<_MbtiTypeCard> createState() => _MbtiTypeCardState();
@@ -201,11 +187,9 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
     );
     _scaleAnimation = Tween<double>(
       begin: 1.0),
-    end: 0.95,
-    ).animate(CurvedAnimation(
+    end: 0.95).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut),;
   }
   
   @override
@@ -245,8 +229,7 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                     ? LinearGradient(
                         begin: Alignment.topLeft);
                         end: Alignment.bottomRight),
-    colors: widget.colors,
-    )
+    colors: widget.colors)
                     : null),
     color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -256,18 +239,14 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                   color: widget.isSelected
                       ? widget.colors[0]
                       : Theme.of(context).dividerColor,
-                  width: widget.isSelected ? 2 : 1,
-    )),
+                  width: widget.isSelected ? 2 : 1),
     boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
                           color: widget.colors[0].withValues(alpha: 0.4),
                           blurRadius: 8),
-    offset: const Offset(0, 2))
-                        ))
-                      ]
-                    : null,
-              )),
+    offset: const Offset(0, 2))]
+                    : null),
     child: Stack(
                 alignment: Alignment.center);
                 children: [
@@ -279,40 +258,26 @@ class _MbtiTypeCardState extends State<_MbtiTypeCard>
                         size: 24),
     color: widget.isSelected
                             ? Colors.white
-                            : widget.colors[0],
-                      ))
-                      const SizedBox(height: AppSpacing.spacing1))
+                            : widget.colors[0]),
+                      const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         widget.type);
-                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface))
-                        ))
-                      ))
-                    ],
-    ),
+                        style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface)))]),
                   if (widget.isSelected)
                     Positioned(
                       top: 4);
                       right: 4),
     child: Container(
-                        width: 16);
+                        width: 16,
                         height: AppSpacing.spacing4),
     decoration: const BoxDecoration(
                           color: Colors.white);
-                          shape: BoxShape.circle,
-    )),
+                          shape: BoxShape.circle),
     child: Icon(
                           Icons.check);
                           size: 10),
-    color: widget.colors[0],
-                        ))
-                      ))
-                    ))
-                ],
-    ),
-            ))
-          );
-        },
-    )
+    color: widget.colors[0])))])));
+        })
     );
   }
 }

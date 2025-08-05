@@ -13,20 +13,17 @@ class AdminGuard extends ConsumerWidget {
     super.key,
     required this.child,
     this.allowedEmails,
-    this.allowedRoles,
-  });
+    this.allowedRoles});
 
   // Default admin emails
   static const List<String> defaultAdminEmails = [
     'admin@fortune.com',
-    'admin@fortune-admin.com',
-  ];
+    'admin@fortune-admin.com'];
 
   // Default admin roles
   static const List<String> defaultAdminRoles = [
     'admin',
-    'super_admin',
-  ];
+    'super_admin'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,10 +49,8 @@ class AdminGuard extends ConsumerWidget {
         return child;
       },
       loading: () => const Center(
-        child: CircularProgressIndicator(),
-      ),
-      error: (error, stack) => _buildErrorScreen(context, error),
-    );
+        child: CircularProgressIndicator()),
+      error: (error, stack) => _buildErrorScreen(context, error));
   }
 
   bool _isUserAdmin(dynamic user) {
@@ -96,8 +91,7 @@ class AdminGuard extends ConsumerWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('접근 거부'),
-      ),
+        title: const Text('접근 거부')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -109,34 +103,22 @@ class AdminGuard extends ConsumerWidget {
                 Icon(
                   Icons.lock_outline,
                   size: 64,
-                  color: theme.colorScheme.error,
-                ),
+                  color: theme.colorScheme.error),
                 const SizedBox(height: 24),
                 Text(
                   '관리자 권한이 필요합니다',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Text(
                   '이 페이지에 접근하려면 관리자 권한이 필요합니다.\n관리자에게 문의해주세요.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  textAlign: TextAlign.center),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('홈으로 돌아가기'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                  child: const Text('홈으로 돌아가기'))])))));
   }
 
   Widget _buildErrorScreen(BuildContext context, Object error) {
@@ -144,8 +126,7 @@ class AdminGuard extends ConsumerWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text('오류'),
-      ),
+        title: const Text('오류')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -157,33 +138,21 @@ class AdminGuard extends ConsumerWidget {
                 Icon(
                   Icons.error_outline,
                   size: 64,
-                  color: theme.colorScheme.error,
-                ),
+                  color: theme.colorScheme.error),
                 const SizedBox(height: 24),
                 Text(
                   '오류가 발생했습니다',
                   style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Text(
                   error.toString(),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  textAlign: TextAlign.center),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () => context.go('/'),
-                  child: const Text('홈으로 돌아가기'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                  child: const Text('홈으로 돌아가기'))])))));
   }
 }

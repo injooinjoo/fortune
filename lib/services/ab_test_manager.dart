@@ -20,8 +20,7 @@ class ABTestManager {
       
       await _analytics.setUserProperty(
         name: 'exp_$experimentName',
-        value: variant,
-      );
+        value: variant);
       
       Logger.info('Supabase initialized successfully');
     } catch (e) {
@@ -37,8 +36,7 @@ class ABTestManager {
   /// 이벤트 로깅 with A/B 테스트 컨텍스트
   Future<void> logEvent({
     required String eventName,
-    Map<String, dynamic>? parameters,
-  }) async {
+    Map<String, dynamic>? parameters}) async {
     try {
       final params = parameters ?? {};
       
@@ -59,8 +57,7 @@ class ABTestManager {
       
       await _analytics.logEvent(
         name: eventName,
-        parameters: params,
-      );
+        parameters: params);
       
       Logger.debug('Fortune cached');
     } catch (e) {
@@ -72,12 +69,10 @@ class ABTestManager {
   Future<void> logScreenView({
     required String screenName,
     String? screenClass,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     await _analytics.logScreenView(
       screenName: screenName,
-      screenClass: screenClass,
-    );
+      screenClass: screenClass);
     
     // 추가 파라미터와 함께 커스텀 이벤트도 로깅
     await logEvent(
@@ -85,9 +80,7 @@ class ABTestManager {
       parameters: {
         'screen_name': screenName,
         'screen_class': null,
-        ...?additionalParams,
-      },
-    );
+        ...?additionalParams});
   }
   
   /// 전환 이벤트 로깅
@@ -95,8 +88,7 @@ class ABTestManager {
     required String conversionType,
     required dynamic value,
     String? currency,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     final params = additionalParams ?? {};
     params['conversion_type'] = conversionType;
     params['conversion_value'] = value;
@@ -115,18 +107,14 @@ class ABTestManager {
               itemId: 'subscription_monthly',
               itemName: RemoteConfigService().getSubscriptionTitle(),
               price: value.toDouble(),
-              quantity: 1,
-            ),
-          ],
-        );
+              quantity: 1)]);
         break;
         
       case 'token_purchase':
         await _analytics.logPurchase(
           value: value.toDouble(),
           currency: currency ?? 'KRW',
-          parameters: params,
-        );
+          parameters: params);
         break;
         
       case 'signup':
@@ -137,15 +125,13 @@ class ABTestManager {
         // 커스텀 전환 이벤트
         await logEvent(
           eventName: 'custom_conversion',
-          parameters: params,
-        );
+          parameters: params);
     }
     
     // 추가로 커스텀 전환 이벤트도 로깅
     await logEvent(
       eventName: 'conversion_${conversionType}',
-      parameters: params,
-    );
+      parameters: params);
   }
   
   /// 사용자 행동 이벤트
@@ -153,8 +139,7 @@ class ABTestManager {
     required String action,
     String? target,
     String? value,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     final params = additionalParams ?? {};
     params['action'] = action;
     if (target != null) params['target'] = target;
@@ -162,8 +147,7 @@ class ABTestManager {
     
     await logEvent(
       eventName: 'user_action',
-      parameters: params,
-    );
+      parameters: params);
   }
   
   /// 퍼널 이벤트 로깅
@@ -171,8 +155,7 @@ class ABTestManager {
     required String funnelName,
     required int step,
     required String stepName,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     final params = additionalParams ?? {};
     params['funnel_name'] = funnelName;
     params['funnel_step'] = step;
@@ -180,8 +163,7 @@ class ABTestManager {
     
     await logEvent(
       eventName: 'funnel_step',
-      parameters: params,
-    );
+      parameters: params);
   }
   
   /// 에러 이벤트 로깅
@@ -189,8 +171,7 @@ class ABTestManager {
     required String errorType,
     required String errorMessage,
     String? errorCode,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     final params = additionalParams ?? {};
     params['error_type'] = errorType;
     params['error_message'] = errorMessage;
@@ -198,8 +179,7 @@ class ABTestManager {
     
     await logEvent(
       eventName: 'app_error',
-      parameters: params,
-    );
+      parameters: params);
   }
   
   /// 성능 이벤트 로깅
@@ -207,8 +187,7 @@ class ABTestManager {
     required String metricName,
     required double value,
     String? unit,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     final params = additionalParams ?? {};
     params['metric_name'] = metricName;
     params['metric_value'] = value;
@@ -216,8 +195,7 @@ class ABTestManager {
     
     await logEvent(
       eventName: 'performance_metric',
-      parameters: params,
-    );
+      parameters: params);
   }
   
   /// 사용자 속성 설정
@@ -226,8 +204,7 @@ class ABTestManager {
       for (final entry in properties.entries) {
         await _analytics.setUserProperty(
           name: entry.key,
-          value: entry.value,
-        );
+          value: entry.value);
       }
       Logger.info('properties: ${properties.keys.join('), ')}');
     } catch (e) {
@@ -249,8 +226,7 @@ class ABTestManager {
   Future<void> logExperimentExposure({
     required String experimentName,
     required String variant,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     await setExperimentGroup(experimentName, variant);
     
     await logEvent(
@@ -258,9 +234,7 @@ class ABTestManager {
       parameters: {
         'experiment_name': experimentName,
         'variant': null,
-        ...?additionalParams,
-      },
-    );
+        ...?additionalParams});
   }
 }
 

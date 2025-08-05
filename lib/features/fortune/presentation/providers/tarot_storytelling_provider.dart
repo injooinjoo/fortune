@@ -15,8 +15,7 @@ class TarotInterpretationRequest {
     required this.cardIndex,
     required this.position,
     required this.spreadType,
-    this.question,
-  });
+    this.question});
 }
 
 final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpretationRequest>(
@@ -33,8 +32,7 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
     final cardInfo = _getCardInfo(request.cardIndex);
     final positionMeaning = TarotHelper.getPositionDescription(
       request.spreadType,
-      request.position,
-    );
+      request.position);
     
     // Create interpretation prompt
     final prompt = _createInterpretationPrompt(
@@ -53,8 +51,7 @@ final tarotInterpretationProvider = FutureProvider.family<String, TarotInterpret
       return _generateLocalInterpretation(
         cardInfo: cardInfo,
         position: positionMeaning,
-        question: request.question,
-      );
+        question: request.question);
 }
   }
 );
@@ -76,7 +73,7 @@ final tarotFullInterpretationProvider = FutureProvider.family<Map<String, dynami
     final question = params['question'] as String?;
 
     // Prepare card information
-    final cardInfoList = cards.map((cardIndex) => _getCardInfo(cardIndex)).toList();
+    final cardInfoList = cards.map((cardIndex) => _getCardInfo(cardIndex),.toList();
 
     try {
       // TODO: Implement full tarot reading via Edge Functions
@@ -87,8 +84,7 @@ final tarotFullInterpretationProvider = FutureProvider.family<Map<String, dynami
       return _generateLocalSummary(
         cards: cardInfoList,
         spreadType: spreadType,
-        question: question,
-      );
+        question: question);
 }
   }
 );
@@ -101,13 +97,12 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
     if (majorCard != null) {
       return {
         'index': cardIndex,
-        'type': 'major',
+        'type', 'major',
         'name': majorCard.name,
         'keywords': majorCard.keywords,
         'element': majorCard.element,
         'meaning': majorCard.uprightMeaning,
-        'advice': null,
-      };
+        'advice': null};
 }
   }
   
@@ -155,33 +150,30 @@ Map<String, dynamic> _getCardInfo(int cardIndex) {
   if (minorCard != null) {
     return {
       'index': cardIndex,
-      'type': 'minor',
+      'type', 'minor',
       'name': minorCard.name,
       'keywords': minorCard.keywords,
       'element': minorCard.element,
       'meaning': minorCard.uprightMeaning,
       'advice': minorCard.advice,
-      'suit': null,
-    };
+      'suit': null};
 }
   
   // Fallback
   return {
     'index': cardIndex,
-    'type': 'unknown',
-    'name': 'Unknown Card',
+    'type', 'unknown',
+    'name', 'Unknown Card',
     'keywords': [],
-    'element': 'Unknown',
-    'meaning': 'Card information not available',
-  };
+    'element', 'Unknown',
+    'meaning', 'Card information not available'};
 }
 
 String _createInterpretationPrompt({
   required Map<String, dynamic> cardInfo,
   required String position,
   required String? question,
-  required bool isFirstCard,
-}) {
+  required bool isFirstCard}) {
   final buffer = StringBuffer();
   
   buffer.writeln('타로 카드 해석을 스토리텔링 방식으로 작성해주세요.');
@@ -189,7 +181,7 @@ String _createInterpretationPrompt({
   buffer.writeln('정보:');
   buffer.writeln('이름: ${cardInfo['name']}');
   buffer.writeln('Fortune cached');
-  buffer.writeln('- 키워드: ${(cardInfo['keywords'] as List).join(': ')}');
+  buffer.writeln('- 키워드: ${(cardInfo['keywords'] as List).join(', ')}');
   buffer.writeln('- 원소: ${cardInfo['element']}');
   
   if (question != null && question.isNotEmpty) {
@@ -220,8 +212,7 @@ String _createInterpretationPrompt({
 String _generateLocalInterpretation({
   required Map<String, dynamic> cardInfo,
   required String position,
-  required String? question,
-}) {
+  required String? question}) {
   final buffer = StringBuffer();
   
   // Opening
@@ -254,8 +245,7 @@ String _generateLocalInterpretation({
 Map<String, dynamic> _generateLocalSummary({
   required List<Map<String, dynamic>> cards,
   required String spreadType,
-  required String? question,
-}) {
+  required String? question}) {
   // Count elements
   final elementCounts = <String, int>{};
   final majorCount = cards.where((card) => card['type'] == 'major').length;
@@ -276,23 +266,21 @@ Map<String, dynamic> _generateLocalSummary({
   });
   
   return {
-    'summary': '이번 리딩에서는 ${cards.length}장의 카드가 당신의 상황을 보여주고 있습니다.',
+    'summary', '이번 리딩에서는 ${cards.length}장의 카드가 당신의 상황을 보여주고 있습니다.',
     'elementBalance': elementCounts,
     'dominantElement': dominantElement,
     'majorArcanaCount': majorCount,
     'advice': [
       '카드들이 보여준 메시지를 종합해보면, 지금은 신중하면서도 적극적인 행동이 필요한 시기입니다.',
       '내면의 목소리에 귀 기울이되, 현실적인 계획도 함께 세워보세요.',
-      '변화를 두려워하지 말고, 새로운 기회를 받아들일 준비를 하세요.',
-    ],
-    'timeline': '앞으로 3-6개월 동안 중요한 변화가 예상됩니다.',
-  };
+      '변화를 두려워하지 말고, 새로운 기회를 받아들일 준비를 하세요.'],
+    'timeline', '앞으로 3-6개월 동안 중요한 변화가 예상됩니다.'};
 }
 
 List<String> _getMinorArcanaKeywords(String suit, int number) {
   switch (suit) {
     case 'Wands':
-      return ['열정': '창의성': '영감', '행동'];
+      return \['['열정', '창의성', '영감', '행동'];
     case 'Cups':
       return ['감정', '직관', '관계', '사랑'];
     case 'Swords':
@@ -306,31 +294,27 @@ List<String> _getMinorArcanaKeywords(String suit, int number) {
 
 String _getSuitElement(String suit) {
   switch (suit) {
-    case 'Wands':
-      return '불';
+    case 'Wands': return '불';
     case 'Cups':
       return '물';
     case 'Swords':
       return '공기';
-    case 'Pentacles':
-      return '땅';
+    case , 'Pentacles': return '땅';
     default:
-      return '영혼';
+      return '영혼';}
 }
 }
 
 String _getSuitMeaning(String suit) {
   switch (suit) {
-    case 'Wands':
-      return '열정과 창의적 에너지';
+    case 'Wands': return '열정과 창의적 에너지';
     case 'Cups':
       return '감정과 인간관계';
     case 'Swords':
       return '지성과 의사소통';
-    case 'Pentacles':
-      return '물질적 안정과 성취';
+    case , 'Pentacles': return '물질적 안정과 성취';
     default:
-      return '삶의 변화';
+      return '삶의 변화';}
 }
 }
 

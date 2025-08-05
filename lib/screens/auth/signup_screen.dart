@@ -37,8 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
         final response = await supabase.auth.signUp(
           email: email,
           password: password,
-          data: {'name': name},
-        );
+          data: {'name': name});
         
         if (!mounted) return;
         
@@ -48,15 +47,12 @@ class _SignupScreenState extends State<SignupScreen> {
             'id': response.user!.id,
             'name': name,
             'email': email,
-            'created_at': DateTime.now().toIso8601String(),
-          });
+            'created_at': DateTime.now().toIso8601String()});
           
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('회원가입이 완료되었습니다!'),
-              backgroundColor: AppColors.success,
-            ),
-          );
+              backgroundColor: AppColors.success));
           
           context.go('/onboarding');
         }
@@ -65,17 +61,13 @@ class _SignupScreenState extends State<SignupScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.message),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       } catch (error) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('회원가입 중 오류가 발생했습니다.'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       } finally {
         if (mounted) {
           setState(() => _isLoading = false);
@@ -90,9 +82,7 @@ class _SignupScreenState extends State<SignupScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
-        ),
-      ),
+          onPressed: () => context.go('/'))),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: AppSpacing.paddingAll24,
@@ -102,16 +92,12 @@ class _SignupScreenState extends State<SignupScreen> {
               Text(
                 '회원가입',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
+                      fontWeight: FontWeight.bold)),
               SizedBox(height: AppSpacing.spacing2),
               Text(
                 'Fortune과 함께 운명을 만나보세요',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-              ),
+                      color: AppColors.textSecondary)),
               SizedBox(height: AppSpacing.spacing8),
               FormBuilder(
                 key: _formKey,
@@ -121,35 +107,25 @@ class _SignupScreenState extends State<SignupScreen> {
                       name: 'name',
                       decoration: const InputDecoration(
                         labelText: '이름',
-                        prefixIcon: Icon(Icons.person_outline),
-                      ),
+                        prefixIcon: Icon(Icons.person_outline)),
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                          errorText: '이름을 입력해주세요',
-                        ),
+                          errorText: '이름을 입력해주세요'),
                         FormBuilderValidators.minLength(
                           2,
-                          errorText: '이름은 2자 이상이어야 합니다',
-                        ),
-                      ]),
-                    ),
+                          errorText: '이름은 2자 이상이어야 합니다')])),
                     SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'email',
                       decoration: const InputDecoration(
                         labelText: '이메일',
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
+                        prefixIcon: Icon(Icons.email_outlined)),
                       keyboardType: TextInputType.emailAddress,
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                          errorText: '이메일을 입력해주세요',
-                        ),
+                          errorText: '이메일을 입력해주세요'),
                         FormBuilderValidators.email(
-                          errorText: '올바른 이메일 형식이 아닙니다',
-                        ),
-                      ]),
-                    ),
+                          errorText: '올바른 이메일 형식이 아닙니다')])),
                     SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'password',
@@ -160,26 +136,19 @@ class _SignupScreenState extends State<SignupScreen> {
                           icon: Icon(
                             _obscurePassword
                                 ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
+                                : Icons.visibility),
                           onPressed: () {
                             setState(() {
                               _obscurePassword = !_obscurePassword;
                             });
-                          },
-                        ),
-                      ),
+                          })),
                       obscureText: _obscurePassword,
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                          errorText: '비밀번호를 입력해주세요',
-                        ),
+                          errorText: '비밀번호를 입력해주세요'),
                         FormBuilderValidators.minLength(
                           6,
-                          errorText: '비밀번호는 6자 이상이어야 합니다',
-                        ),
-                      ]),
-                    ),
+                          errorText: '비밀번호는 6자 이상이어야 합니다')])),
                     SizedBox(height: AppSpacing.spacing4),
                     FormBuilderTextField(
                       name: 'confirmPassword',
@@ -190,15 +159,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           icon: Icon(
                             _obscureConfirmPassword
                                 ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
+                                : Icons.visibility),
                           onPressed: () {
                             setState(() {
                               _obscureConfirmPassword = !_obscureConfirmPassword;
                             });
-                          },
-                        ),
-                      ),
+                          })),
                       obscureText: _obscureConfirmPassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -208,8 +174,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           return '비밀번호가 일치하지 않습니다';
                         }
                         return null;
-                      },
-                    ),
+                      }),
                     SizedBox(height: AppSpacing.spacing6),
                     SizedBox(
                       height: AppDimensions.buttonHeightMedium,
@@ -222,25 +187,11 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.textPrimaryDark,
-                                  ),
-                                ),
-                              )
-                            : const Text('회원가입'),
-                      ),
-                    ),
+                                    AppColors.textPrimaryDark)))
+                            : const Text('회원가입'))),
                     SizedBox(height: AppSpacing.spacing4),
                     TextButton(
                       onPressed: () => context.go('/'),
-                      child: const Text('이미 계정이 있으신가요? 처음으로'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      child: const Text('이미 계정이 있으신가요? 처음으로'))]))]))));
   }
 }

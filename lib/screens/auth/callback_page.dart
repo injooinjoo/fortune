@@ -68,8 +68,7 @@ class _CallbackPageState extends State<CallbackPage> {
             'primary_provider': user.appMetadata['provider'] ?? 'google',
             'linked_providers': [user.appMetadata['provider'] ?? 'google'],
             'created_at': DateTime.now().toIso8601String(),
-            'updated_at': DateTime.now().toIso8601String(),
-          };
+            'updated_at': DateTime.now().toIso8601String()};
           
           // Add additional info from user metadata if available
           if (user.userMetadata != null) {
@@ -150,9 +149,7 @@ class _CallbackPageState extends State<CallbackPage> {
             SnackBar(
               content: Text('실패: ${errorDescription ?? error}'),
               backgroundColor: AppColors.error,
-              duration: const Duration(seconds: 5),
-            ),
-          );
+              duration: const Duration(seconds: 5)));
           context.go('/');
           return;
         }
@@ -191,9 +188,7 @@ class _CallbackPageState extends State<CallbackPage> {
               const SnackBar(
                 content: Text('Supabase API 키가 유효하지 않습니다. 관리자에게 문의하세요.'),
                 backgroundColor: AppColors.error,
-                duration: Duration(seconds: 5),
-              ),
-            );
+                duration: Duration(seconds: 5)));
           }
         }
         rethrow;
@@ -249,28 +244,19 @@ class _CallbackPageState extends State<CallbackPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [AppColors.surface!, AppColors.textPrimaryDark, AppColors.surface!],
-          ),
-        ),
+            colors: [AppColors.surface!, AppColors.textPrimaryDark, AppColors.surface!])),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FortuneCompassIcon(
                 size: 64,
-                color: AppColors.textPrimary.withValues(alpha: 0.87),
-              ),
+                color: AppColors.textPrimary.withValues(alpha: 0.87)),
               SizedBox(height: AppSpacing.spacing6),
               const CircularProgressIndicator(),
               SizedBox(height: AppSpacing.spacing4),
               Text(
                 '로그인 처리 중...',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.textSecondary))]))));
   }
 }

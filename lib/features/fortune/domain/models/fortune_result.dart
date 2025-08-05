@@ -31,8 +31,7 @@ class FortuneResult {
     this.scoreBreakdown,
     this.luckyItems,
     this.recommendations,
-    this.additionalInfo,
-  });
+    this.additionalInfo});
 
   // Getter for fortune object - returns self for compatibility
   FortuneResult get fortune => this;
@@ -67,8 +66,7 @@ class FortuneResult {
           : null,
       additionalInfo: map['additionalInfo'] != null 
           ? Map<String, dynamic>.from(map['additionalInfo']) 
-          : null,
-    );
+          : null);
   }
 
   Map<String, dynamic> toMap() {
@@ -87,7 +85,6 @@ class FortuneResult {
       'scoreBreakdown': scoreBreakdown,
       'luckyItems': luckyItems,
       'recommendations': recommendations,
-      'additionalInfo': null,
-    };
+      'additionalInfo': null};
   }
 }

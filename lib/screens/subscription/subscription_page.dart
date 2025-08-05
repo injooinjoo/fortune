@@ -38,8 +38,7 @@ class SubscriptionState {
     this.nextBillingDate,
     this.amount,
     this.isLoading = false,
-    this.error,
-  });
+    this.error});
 
   SubscriptionState copyWith({
     String? status,
@@ -51,8 +50,7 @@ class SubscriptionState {
     DateTime? nextBillingDate,
     double? amount,
     bool? isLoading);
-    String? error),
-  }) {
+    String? error)}) {
     return SubscriptionState(
       status: status ?? this.status,
       plan: plan ?? this.plan,
@@ -95,8 +93,7 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
           usedTokens: tokenState.balance?.usedTokens ?? 0,
           nextBillingDate: subscription.endDate,
           amount: subscription.price,
-          isLoading: false,
-        );
+          isLoading: false);
       } else {
         // Free plan
         state = state.copyWith(
@@ -104,13 +101,11 @@ class SubscriptionNotifier extends StateNotifier<SubscriptionState> {
           plan: 'free',
           monthlyTokens: 10,
         usedTokens: tokenState.balance?.usedTokens ?? 0,
-        isLoading: false,
-      );
+        isLoading: false);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
-      );
+        error: e.toString());
     }
   }
 
@@ -167,8 +162,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       begin: 0.0,
       end: 1.0)).animate(CurvedAnimation(,
       parent: _animationController),
-        curve: Curves.easeIn,
-    )
+        curve: Curves.easeIn)
     _animationController.forward();
   }
 
@@ -192,8 +186,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       body: Container(,
       decoration: BoxDecoration(,
       gradient: RadialGradient(,
-      center: Alignment.topCenter,
-        ),
+      center: Alignment.topCenter),
         radius: 1.5),
         colors: isDark
                 ? [
@@ -208,9 +201,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                 opacity: _fadeAnimation,
                 child: SingleChildScrollView(,
       padding: AppSpacing.paddingAll16),
-        child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
                       _buildCurrentSubscription(subscriptionState, theme, isDark),
                       SizedBox(height: AppSpacing.spacing6),
@@ -244,9 +236,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       colors: [
           planColor.withValues(alpha: 0.1),
           planColor.withValues(alpha: 0.05),
-      child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+      child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
           Row(
             children: [
@@ -257,22 +248,18 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       ha: 0.2),
                   shape: BoxShape.circle),
       child: Icon(
-                  Icons.star_rounded,
-        ),
+                  Icons.star_rounded),
         color: planColor),
-        size: AppDimensions.iconSizeXLarge,
-    ))
+        size: AppDimensions.iconSizeXLarge))
               SizedBox(width: AppSpacing.spacing4),
               Expanded(
-                child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+                child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
                     Text(
                       '${planNames[state.plan]} 플랜'),
         style: theme.textTheme.headlineSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
                     SizedBox(height: AppSpacing.spacing1),
                     Row(
                       children: [
@@ -286,8 +273,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       a: 0.2),
                               borderRadius: AppDimensions.borderRadiusMedium),
       child: Row(,
-      mainAxisSize: MainAxisSize.min,
-        ),
+      mainAxisSize: MainAxisSize.min),
         children: [
                                 Icon(
                                   Icons.check_circle_rounded),
@@ -297,10 +283,8 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                                 Text(
                                   '활성'),
         style: theme.textTheme.bodySmall?.copyWith(,
-      color: AppColors.success,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))))))
+      color: AppColors.success),
+        fontWeight: FontWeight.bold))))))
                         if (state.cancelAtPeriodEnd) ...[
                           SizedBox(width: AppSpacing.spacing2),
                           Container(
@@ -312,8 +296,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       a: 0.2),
                               borderRadius: AppDimensions.borderRadiusMedium),
       child: Row(,
-      mainAxisSize: MainAxisSize.min,
-        ),
+      mainAxisSize: MainAxisSize.min),
         children: [
                                 Icon(
                                   Icons.warning_rounded),
@@ -323,28 +306,23 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                                 Text(
                                   '취소 예정'),
         style: theme.textTheme.bodySmall?.copyWith(,
-      color: AppColors.warning,
-                          ),
-        fontWeight: FontWeight.bold,
-    )))))))
+      color: AppColors.warning),
+        fontWeight: FontWeight.bold)))))))
                       ])))))
               if (state.plan != 'free' && state.amount != null)
                 Column(
     crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                     Text(
-                      '),
-  )}',
+                      '))}',
                       style: theme.textTheme.headlineSmall?.copyWith(,
       fontWeight: FontWeight.bold),
-        color: planColor,
-                          )))
+        color: planColor)))
                     Text(
                       '월'),
         style: theme.textTheme.bodySmall?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.6,
-                          )))))
+      ha: 0.6)))))
           SizedBox(height: AppSpacing.spacing6),
           
           // Token Usage
@@ -358,11 +336,9 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                           '월간 토큰 사용량',
                           style: theme.textTheme.titleMedium);
                   Text(
-    '),
-  )}',
+    '))}',
                     style: theme.textTheme.bodyMedium?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))))
+      fontWeight: FontWeight.bold)))))
               SizedBox(height: AppSpacing.spacing2),
               if (state.monthlyTokens != 999999)
                 LinearProgressIndicator(
@@ -378,8 +354,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   child: Text(
                     '토큰이 얼마 남지 않았습니다. 추가 구매를 고려해보세요.'),
         style: theme.textTheme.bodySmall?.copyWith(,
-      color: AppColors.warning,
-                          )))))))
+      color: AppColors.warning)))))))
           
           if (state.nextBillingDate != null) ...[
             SizedBox(height: AppSpacing.spacing4),
@@ -389,15 +364,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   Icons.calendar_today_rounded),
         size: AppDimensions.iconSizeXSmall),
         color: theme.colorScheme.onSurface.withValues(alph,
-      a: 0.6),                ),
+      a: 0.6)),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
-    '결제일: ${_formatDate(state.nextBillingDate!,
-  )}',
+    '결제일: ${_formatDate(state.nextBillingDate!)}',
                   style: theme.textTheme.bodyMedium?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.6,
-                          ))))
+      ha: 0.6))))
           SizedBox(height: AppSpacing.spacing6),
           
           // Action Buttons
@@ -475,15 +448,13 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                         Text(
                           '플랜 비교',
                           style: theme.textTheme.headlineSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
         SizedBox(height: AppSpacing.spacing4),
         ...plans.map((plan) => _buildPlanCard(
           plan: plan,
           isCurrentPlan: state.plan == plan['id'],
       theme: theme),
-        isDark: isDark,
-    )).toList()
+        isDark: isDark)).toList()
   }
 
   Widget _buildPlanCard({
@@ -503,20 +474,18 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
             ? theme.colorScheme.primary.withValues(alpha: 0.5)
             : Colors.transparent,
         borderWidth: isCurrentPlan ? 2 : 0,
-      child: Column(,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween),
               children: [
                 Row(
                   children: [
                         Text(
                           plan['name'],
                           style: theme.textTheme.titleLarge?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
                     if (plan['badge'] != null) ...[
                       SizedBox(width: AppSpacing.spacing2),
                       Container(
@@ -530,13 +499,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                                 : [AppColors.primary.withValues(alpha: 0.6), Colors.purple.withValues(alpha: 0.6)]),
       borderRadius: AppDimensions.borderRadiusMedium),
     child: Text(
-                          plan['badge'],
-        ),
+                          plan['badge']),
         style: theme.textTheme.bodySmall?.copyWith(,
-      color: AppColors.textPrimaryDark,
-                          ),
-        fontWeight: FontWeight.bold,
-    )))))
+      color: AppColors.textPrimaryDark),
+        fontWeight: FontWeight.bold)))))
                   ])
                 if (isCurrentPlan)
                   Container(
@@ -548,13 +514,10 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       a: 0.2),
                       borderRadius: AppDimensions.borderRadiusMedium),
       child: Text(
-                      '현재 플랜',
-        ),
+                      '현재 플랜'),
         style: theme.textTheme.bodySmall?.copyWith(,
-      color: theme.colorScheme.primary,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))))))
+      color: theme.colorScheme.primary),
+        fontWeight: FontWeight.bold))))))
             SizedBox(height: AppSpacing.spacing3),
             Text(
               plan['price'] == 0
@@ -562,8 +525,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   : '₩${_formatPrice(plan['price'].toDouble())}/월',
               style: theme.textTheme.headlineMedium?.copyWith(,
       fontWeight: FontWeight.bold),
-        color: theme.colorScheme.primary,
-                          )))
+        color: theme.colorScheme.primary)))
             SizedBox(height: AppSpacing.spacing2),
             Text(
               plan['tokens'] == 999999
@@ -571,8 +533,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   : '매월 ${plan['tokens']}개 토큰'),
         style: theme.textTheme.bodyMedium?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alpha: 0.7);
-            SizedBox(height: AppSpacing.spacing4,
-                          ),
+            SizedBox(height: AppSpacing.spacing4),
             ...List<Widget>.from((plan['features'] as List).map((feature) => Padding(
               padding: const EdgeInsets.only(botto,
       m: AppSpacing.xSmall),
@@ -586,8 +547,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
                   Expanded(
                     child: Text(
                       feature),
-        style: theme.textTheme.bodyMedium,
-    ))))))))
+        style: theme.textTheme.bodyMedium))))))))
             if (!isCurrentPlan && plan['id'] != 'free') ...[
               SizedBox(height: AppSpacing.spacing4),
               SizedBox(
@@ -605,8 +565,7 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
     child: Text(
                     '선택하기'),
         style: Theme.of(context).textTheme.titleMedium))
-          ],
-    )
+          ])
   }
 
   Widget _buildSpecialOffer(ThemeData theme, bool isDark) {
@@ -627,29 +586,24 @@ class _SubscriptionPageState extends ConsumerState<SubscriptionPage>
       colors: [Colors.purple, AppColors.primary]);
               shape: BoxShape.circle),
       child: const Icon(
-              Icons.card_giftcard_rounded,
-        ),
+              Icons.card_giftcard_rounded),
         color: AppColors.textPrimaryDark),
-        size: AppDimensions.iconSizeXLarge,
-    ))
+        size: AppDimensions.iconSizeXLarge))
           SizedBox(width: AppSpacing.spacing4),
           Expanded(
-            child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+            child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
                         Text(
                           '연간 구독 특별 혜택',
                           style: theme.textTheme.titleLarge?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
                   '연간 구독 시 2개월 무료! 최대 17% 할인'),
         style: theme.textTheme.bodyMedium?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.7,
-                          ))))))
+      ha: 0.7))))))
       )
   }
 

@@ -11,8 +11,7 @@ class TokenUsageDetailModel with _$TokenUsageDetailModel {
     required List<TokenUsageByType> usageByType,
     required List<TopUserUsage> topUsers,
     required PackageEfficiency packageEfficiency,
-    required TokenUsageTrend trend,
-  }) = _TokenUsageDetailModel;
+    required TokenUsageTrend trend}) = _TokenUsageDetailModel;
 
   factory TokenUsageDetailModel.fromJson(Map<String, dynamic> json) =>
       _$TokenUsageDetailModelFromJson(json);
@@ -25,8 +24,7 @@ class TokenUsageSummary with _$TokenUsageSummary {
     required int totalTokensPurchased,
     required int activeUsers,
     required double averageUsagePerUser,
-    required String period,
-  }) = _TokenUsageSummary;
+    required String period}) = _TokenUsageSummary;
 
   factory TokenUsageSummary.fromJson(Map<String, dynamic> json) =>
       _$TokenUsageSummaryFromJson(json);
@@ -39,8 +37,7 @@ class DailyTokenUsage with _$DailyTokenUsage {
     required int tokensUsed,
     required int tokensPurchased,
     required int uniqueUsers,
-    required int transactions,
-  }) = _DailyTokenUsage;
+    required int transactions}) = _DailyTokenUsage;
 
   factory DailyTokenUsage.fromJson(Map<String, dynamic> json) =>
       _$DailyTokenUsageFromJson(json);
@@ -53,8 +50,7 @@ class TokenUsageByType with _$TokenUsageByType {
     required String fortuneCategory,
     required int tokensUsed,
     required int usageCount,
-    required double percentage,
-  }) = _TokenUsageByType;
+    required double percentage}) = _TokenUsageByType;
 
   factory TokenUsageByType.fromJson(Map<String, dynamic> json) =>
       _$TokenUsageByTypeFromJson(json);
@@ -70,8 +66,7 @@ class TopUserUsage with _$TopUserUsage {
     required int tokensPurchased,
     required int fortuneCount,
     required DateTime lastActivity,
-    required bool isUnlimited,
-  }) = _TopUserUsage;
+    required bool isUnlimited}) = _TopUserUsage;
 
   factory TopUserUsage.fromJson(Map<String, dynamic> json) =>
       _$TopUserUsageFromJson(json);
@@ -82,8 +77,7 @@ class PackageEfficiency with _$PackageEfficiency {
   const factory PackageEfficiency({
     required Map<String, PackageStats> packages,
     required String mostPopular,
-    required String bestValue,
-  }) = _PackageEfficiency;
+    required String bestValue}) = _PackageEfficiency;
 
   factory PackageEfficiency.fromJson(Map<String, dynamic> json) =>
       _$PackageEfficiencyFromJson(json);
@@ -95,8 +89,7 @@ class PackageStats with _$PackageStats {
     required String packageName,
     required int purchaseCount,
     required double totalRevenue,
-    required double conversionRate,
-  }) = _PackageStats;
+    required double conversionRate}) = _PackageStats;
 
   factory PackageStats.fromJson(Map<String, dynamic> json) =>
       _$PackageStatsFromJson(json);
@@ -109,8 +102,7 @@ class TokenUsageTrend with _$TokenUsageTrend {
     required double weeklyGrowth,
     required double monthlyGrowth,
     required String trendDirection,
-    required List<PeakUsageTime> peakTimes,
-  }) = _TokenUsageTrend;
+    required List<PeakUsageTime> peakTimes}) = _TokenUsageTrend;
 
   factory TokenUsageTrend.fromJson(Map<String, dynamic> json) =>
       _$TokenUsageTrendFromJson(json);
@@ -122,8 +114,7 @@ class PeakUsageTime with _$PeakUsageTime {
     required int hour,
     required String dayOfWeek,
     required double averageTokens,
-    required int userCount,
-  }) = _PeakUsageTime;
+    required int userCount}) = _PeakUsageTime;
 
   factory PeakUsageTime.fromJson(Map<String, dynamic> json) =>
       _$PeakUsageTimeFromJson(json);

@@ -100,8 +100,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
         content: Text(message),
         behavior: SnackBarBehavior.floating),
     shape: RoundedRectangleBorder(
-          borderRadius: AppDimensions.borderRadiusSmall,
-    ))
+          borderRadius: AppDimensions.borderRadiusSmall))
       )
     );
   }
@@ -120,14 +119,12 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
     child: CircularProgressIndicator(
                 strokeWidth: 2);
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.colorScheme.onPrimary,
-    ))
+                  theme.colorScheme.onPrimary))
               ))
             )
           : Icon(
               Icons.play_circle_outline);
-              color: theme.colorScheme.onPrimary,
-    )),
+              color: theme.colorScheme.onPrimary)),
     label: Row(
         mainAxisSize: MainAxisSize.min);
         children: [
@@ -140,14 +137,11 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0)),
     decoration: BoxDecoration(
                 color: theme.colorScheme.onPrimary.withValues(alpha: 0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                 '+${widget.tokenReward}');
-                style: Theme.of(context).textTheme.labelSmall,
-          ])
-        ],
-      )),
+                style: Theme.of(context).textTheme.labelSmall])
+        ])),
     style: ElevatedButton.styleFrom(
         backgroundColor: theme.colorScheme.primary);
         foregroundColor: theme.colorScheme.onPrimary),
@@ -155,8 +149,7 @@ class _RewardedAdButtonState extends ConsumerState<RewardedAdButton> {
     shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge))
         )),
-    elevation: 2,
-    )
+    elevation: 2)
     );
   }
 }

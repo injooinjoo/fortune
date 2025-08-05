@@ -16,22 +16,19 @@ class TarotCardDetailModal extends StatefulWidget {
   const TarotCardDetailModal({
     Key? key,
     required this.cardIndex,
-    this.position,
-  }) : super(key: key);
+    this.position}) : super(key: key);
 
   static Future<void> show({
     required BuildContext context,
     required int cardIndex,
-    String? position,
-  }) {
+    String? position}) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) => TarotCardDetailModal(
         cardIndex: cardIndex,
-        position: position,
-      ));
+        position: position),;
 }
 
   @override
@@ -58,19 +55,15 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
-    );
+      curve: Curves.easeOutBack);
     
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn,
-    );
+      curve: Curves.easeIn);
     
     _animationController.forward();
 }
@@ -96,15 +89,14 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             height: screenHeight * 0.9,
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.9),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(24),
             child: Stack(
               children: [
                 // Background blur
                 Positioned.fill(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: Colors.transparent),
-                ),
+                    child: Container(color: Colors.transparent)),
                 
                 // Content
                 Column(
@@ -116,8 +108,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
-                    ),
+                        borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
                     
                     // Header
                     _buildHeader(cardInfo),
@@ -141,9 +132,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               _buildDeepInterpretationPage(cardInfo),
                               _buildPracticalGuidePage(cardInfo),
                               _buildRelationshipsPage(cardInfo),
-                              _buildAdvicePage(cardInfo),
-                            ],
-                          ),
+                              _buildAdvicePage(cardInfo)]),
                           
                           // Left arrow
                           if (_currentPage > 0), Positioned(
@@ -156,20 +145,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                     padding: AppSpacing.paddingAll8,
                                     decoration: BoxDecoration(
                                       color: Colors.black.withValues(alpha: 0.5),
-                                      shape: BoxShape.circle,
-                                    ),
+                                      shape: BoxShape.circle),
                                     child: const Icon(
                                       Icons.arrow_back_ios,
                                       color: Colors.white,
-                                      size: 20,
-                                    ),
+                                      size: 20),
                                   onPressed: () {
                                     _pageController.previousPage(
                                       duration: AppAnimations.durationMedium,
                                       curve: Curves.easeInOut);
-},
-                                ),
-                            ),
+})),
                           
                           // Right arrow
                           if (_currentPage < 7), Positioned(
@@ -182,22 +167,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                                     padding: AppSpacing.paddingAll8,
                                     decoration: BoxDecoration(
                                       color: Colors.black.withValues(alpha: 0.5),
-                                      shape: BoxShape.circle,
-                                    ),
+                                      shape: BoxShape.circle),
                                     child: const Icon(
                                       Icons.arrow_forward_ios,
                                       color: Colors.white,
-                                      size: 20,
-                                    ),
+                                      size: 20),
                                   onPressed: () {
                                     _pageController.nextPage(
                                       duration: AppAnimations.durationMedium,
                                       curve: Curves.easeInOut);
-},
-                                ),
-                            ),
-                        ],
-                      ),
+}))]),
                     
                     // Page indicator
                     _buildPageIndicator(),
@@ -215,18 +194,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               backgroundColor: Colors.purple,
                               padding: AppSpacing.paddingVertical16,
                               shape: RoundedRectangleBorder(
-                                borderRadius: AppDimensions.borderRadiusMedium,
-                              ),
+                                borderRadius: AppDimensions.borderRadiusMedium),
                             child: Text(
                               '닫기',
-                              style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-        );
+                              style: Theme.of(context).textTheme.titleMedium))])]));
 }
     );
 }
@@ -240,8 +211,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       '심화 해석',
       '실천 가이드',
       '관계성',
-      '조언',
-    ];
+      '조언'];
     
     return Container(
       padding: AppSpacing.md.all,
@@ -259,15 +229,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
               child: Text(
                 widget.position!,
-                style: Theme.of(context).textTheme.bodyLarge,
-          ],
+                style: Theme.of(context).textTheme.bodyLarge],
           const SizedBox(height: AppSpacing.spacing2),
           Text(
             pageNames[_currentPage],
-            style: Theme.of(context).textTheme.titleMedium,
-        ],
-      
-    );
+            style: Theme.of(context).textTheme.titleMedium]);
 }
 
   Widget _buildCardImagePage(Map<String, dynamic> cardInfo) {
@@ -290,18 +256,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       BoxShadow(
                         color: Colors.purple.withValues(alpha: 0.3),
                         blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
+                        spreadRadius: 5)]),
                   child: ClipRRect(
                     borderRadius: AppDimensions.borderRadiusLarge,
                     child: Image.asset(
                       'assets/images/tarot/$imagePath',
-                      fit: BoxFit.contain,
-                    ),
-                ),
-            ),
+                      fit: BoxFit.contain))),
             
             const SizedBox(height: AppSpacing.spacing5),
             
@@ -311,30 +271,22 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withValues(alpha: 0.1),
-                  Colors.indigo.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.indigo.withValues(alpha: 0.1)]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildInfoItem(
                     icon: Icons.local_fire_department,
                     label: '원소',
-                    value: cardInfo['element'] ?? 'Unknown',
-                  ),
+                    value: cardInfo['element'] ?? 'Unknown'),
                   if (cardInfo['astrology'] != null), _buildInfoItem(
                       icon: Icons.stars,
                       label: '점성술',
-                      value: cardInfo['astrology'],
-                    ),
+                      value: cardInfo['astrology']),
                   if (cardInfo['numerology'] != null), _buildInfoItem(
                       icon: Icons.looks_one,
                       label: '수비학',
-                      value: cardInfo['numerology'],
-                ],
-              ),
-          ],
-        ));
+                      value: cardInfo['numerology']])]),;
 }
 
   Widget _buildSymbolismPage(Map<String, dynamic> cardInfo) {
@@ -363,15 +315,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
                     border: Border.all(
                       color: Colors.purple.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
+                      width: 1),
                   child: Text(
                     keyword,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                );
+                    style: Theme.of(context).textTheme.bodyLarge);
 }).toList(),
-            const SizedBox(height: AppSpacing.spacing6),
-          ],
+            const SizedBox(height: AppSpacing.spacing6)],
           
           // Imagery
           if (cardInfo['imagery'] != null) ...[
@@ -382,16 +331,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               child: Text(
                 cardInfo['imagery'],
                 style: Theme.of(context).textTheme.bodyLarge,
-            const SizedBox(height: AppSpacing.spacing6),
-          ],
+            const SizedBox(height: AppSpacing.spacing6)],
           
           // Element meaning
           _buildSectionTitle('원소의 의미'),
           const SizedBox(height: AppSpacing.spacing2),
-          _buildElementMeaning(cardInfo['element'],
-        ],
-      
-    );
+          _buildElementMeaning(cardInfo['element']]);
 }
 
   Widget _buildMeaningsPage(Map<String, dynamic> cardInfo) {
@@ -411,10 +356,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               title: '정방향',
               meaning: cardInfo['uprightMeaning'],
               icon: Icons.arrow_upward,
-              color: Colors.green,
-            ),
-            const SizedBox(height: AppSpacing.spacing4),
-          ],
+              color: Colors.green),
+            const SizedBox(height: AppSpacing.spacing4)],
           
           // Reversed meaning
           if (cardInfo['reversedMeaning'] != null) ...[
@@ -422,10 +365,8 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               title: '역방향',
               meaning: cardInfo['reversedMeaning'],
               icon: Icons.arrow_downward,
-              color: Colors.orange,
-            ),
-            const SizedBox(height: AppSpacing.spacing4),
-          ],
+              color: Colors.orange),
+            const SizedBox(height: AppSpacing.spacing4)],
           
           // Related cards
           if (cardInfo['relatedCards'] != null) ...[
@@ -440,14 +381,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       card,
-                      style: const TextStyle(color: Colors.white70)),
-                  ],
-                ),
-            ).toList(),
-          ],
-        ],
-      
-    );
+                      style: const TextStyle(color: Colors.white70)])).toList()]]);
 }
 
   Widget _buildAdvicePage(Map<String, dynamic> cardInfo) {
@@ -468,26 +402,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.amber.withValues(alpha: 0.1),
-                  Colors.orange.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.orange.withValues(alpha: 0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.lightbulb,
                     size: 48,
-                    color: Colors.amber,
-                  ),
+                    color: Colors.amber),
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     cardInfo['advice'],
                     style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            const SizedBox(height: AppSpacing.spacing6),
-          ],
+                    textAlign: TextAlign.center)]),
+            const SizedBox(height: AppSpacing.spacing6)],
           
           // Questions for reflection
           if (cardInfo['questions'] != null) ...[
@@ -502,28 +429,20 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   borderRadius: AppDimensions.borderRadiusMedium,
                   border: Border.all(
                     color: Colors.indigo.withValues(alpha: 0.3),
-                    width: 1,
-                  ),
+                    width: 1),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(
                       Icons.help_outline,
                       size: 20,
-                      color: Colors.indigo,
-                    ),
+                      color: Colors.indigo),
                     const SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Text(
                         question,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                  ],
-                ));
-}).toList(),
-          ],
-        ],
-      
-    );
+                        style: Theme.of(context).textTheme.bodyLarge]),;
+}).toList()]]);
 }
 
   Widget _buildPageIndicator() {
@@ -535,8 +454,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
       '심화해석',
       '실천',
       '관계',
-      '조언',
-    ];
+      '조언'];
     
     return Container(
       padding: AppSpacing.paddingVertical16,
@@ -546,9 +464,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withValues(alpha: 0.3),
-          ],
-        ),
+            Colors.black.withValues(alpha: 0.3)]),
       child: Column(
         children: [
           // Page dots with labels
@@ -582,37 +498,27 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                               color: isActive
                                   ? Colors.purple.withValues(alpha: 0.5)
                                   : Colors.white.withValues(alpha: 0.3),
-                              width: 2,
-                            ),
+                              width: 2),
                             boxShadow: isActive
                                 ? [
                                     BoxShadow(
                                       color: Colors.purple.withValues(alpha: 0.5),
                                       blurRadius: 8,
-                                      spreadRadius: 2,
-                                    ),
-                                  ]
-                                : null,
-                          ),
+                                      spreadRadius: 2)]
+                                : null),
                           child: Center(
                             child: Text(
                               '${index + 1}',
                               style: TextStyle(
                                 color: isActive ? Colors.white : Colors.white.withValues(alpha: 0.7),
                                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                                fontSize: isActive ? 14 : 12,
-                              ),
-                          ),
+                                fontSize: isActive ? 14 : 12)),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           pageNames[index],
                           style: Theme.of(context).textTheme.titleMedium,
-                            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                          ),
-                      ],
-                    ));
-}),
-          ),
+                            fontWeight: isActive ? FontWeight.bold : FontWeight.normal)]),;
+})),
           
           // Swipe hint with animation
           if (_currentPage == 0) ...[
@@ -630,29 +536,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                       child: Icon(
                         Icons.swipe,
                         size: 20,
-                        color: Colors.white.withValues(alpha: 0.7),
-                    ),
+                        color: Colors.white.withValues(alpha: 0.7)),
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '좌우로 스와이프하거나 숫자를 탭하세요',
                       style: Theme.of(context).textTheme.titleMedium,
-                        fontWeight: FontWeight.w500,
-                      ),
-                  ],
-                );
-},
-            ),
-          ],
-        ],
-      
-    );
+                        fontWeight: FontWeight.w500)]);
+})]]);
 }
 
   Widget _buildInfoItem({
     required IconData icon,
     required String label,
-    required String value,
-  }) {
+    required String value}) {
     return Column(
       children: [
         Icon(icon, color: Colors.purple, size: 24),
@@ -661,14 +557,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           label,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.7),
-            fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-          ),
+            fontSize: Theme.of(context).textTheme.bodySmall!.fontSize),
         const SizedBox(height: AppSpacing.spacing0 * 0.5),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyLarge,
-      ],
-    );
+          style: Theme.of(context).textTheme.bodyLarge]);
 }
 
   Widget _buildSectionTitle(String title) {
@@ -682,8 +575,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     required String title,
     required String meaning,
     required IconData icon,
-    required Color color,
-  }) {
+    required Color color}) {
     return GlassContainer(
       padding: AppSpacing.sm.all,
       child: Column(
@@ -695,56 +587,43 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.titleMedium]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             meaning,
-            style: Theme.of(context).textTheme.bodyLarge,
-        ],
-      
-    );
+            style: Theme.of(context).textTheme.bodyLarge]);
 }
 
   Widget _buildElementMeaning(String? element) {
     final elementData = {
-      '불': {
+      '불': {}
         'color': Colors.red,
-        'meaning': '열정, 창의성, 행동력, 영감',
-        'description': '불의 원소는 적극적이고 역동적인 에너지를 상징합니다.',
-      },
+        'meaning', '열정, 창의성, 행동력, 영감',
+        'description', '불의 원소는 적극적이고 역동적인 에너지를 상징합니다.'},
       '물': {
-        'color': Colors.blue,
-        'meaning': '감정, 직관, 치유, 흐름',
-        'description': '물의 원소는 감정의 깊이와 직관적 지혜를 나타냅니다.',
-      },
+        , 'color': Colors.blue,
+        'meaning', '감정, 직관, 치유, 흐름',
+        'description', '물의 원소는 감정의 깊이와 직관적 지혜를 나타냅니다.'},
       '공기': {
-        'color': Colors.yellow,
-        'meaning': '지성, 소통, 아이디어, 자유',
-        'description': '공기의 원소는 명확한 사고와 의사소통을 상징합니다.',
-      },
+        , 'color': Colors.yellow,
+        'meaning', '지성, 소통, 아이디어, 자유',
+        'description', '공기의 원소는 명확한 사고와 의사소통을 상징합니다.'},
       '땅': {
-        'color': Colors.green,
-        'meaning': '안정, 실용성, 물질, 인내',
-        'description': '땅의 원소는 현실적이고 안정적인 기반을 나타냅니다.',
-      },
-    };
+        , 'color': Colors.green,
+        'meaning', '안정, 실용성, 물질, 인내',
+        'description', '땅의 원소는 현실적이고 안정적인 기반을 나타냅니다.'}};
 
     final data = elementData[element] ?? {
       'color': Colors.purple,
-      'meaning': '신비, 변화, 가능성',
-      'description': '이 카드는 특별한 에너지를 담고 있습니다.',
-    };
+      'meaning', '신비, 변화, 가능성',
+      'description', '이 카드는 특별한 에너지를 담고 있습니다.'};
 
     return GlassContainer(
       padding: AppSpacing.sm.all,
       gradient: LinearGradient(
         colors: [
           (data['color'],
-          (data['color'],
-        ],
-      ),
+          (data['color']]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -753,14 +632,11 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               Icon(
                 TarotHelper.getElementIcon(element ?? ''$1',
                 color: data['color'],
-                size: 24,
-              ),
+                size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 element ?? '특별한 원소',
-                style: Theme.of(context).textTheme.titleMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.titleMedium]),
           const SizedBox(height: AppSpacing.spacing2),
           Text(
             data['meaning'],
@@ -770,11 +646,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             data['description'],
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.7),
-              fontSize: Theme.of(context).textTheme.bodySmall!.fontSize,
-            ),
-        ],
-      
-    );
+              fontSize: Theme.of(context).textTheme.bodySmall!.fontSize)]);
 }
 
   Map<String, dynamic> _getCardInfo() {
@@ -793,8 +665,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           'reversedMeaning': majorCard.reversedMeaning,
           'advice': majorCard.advice,
           'questions': majorCard.questions,
-          'relatedCards': null,
-        };
+          'relatedCards': null};
 }
     }
     
@@ -846,15 +717,13 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
         'reversedMeaning': minorCard.reversedMeaning,
         'advice': minorCard.advice,
         'questions': minorCard.questions,
-        'relatedCards': null,
-      };
+        'relatedCards': null};
 }
     
     // Fallback
     return {
-      'name': 'Unknown Card',
-      'element': 'Mystery',
-    };
+      'name', 'Unknown Card',
+      'element', 'Mystery'};
 }
 
   String _getCardImagePath() {
@@ -864,11 +733,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     if (widget.cardIndex < 22) {
       // Major Arcana
       final cardNames = [
-        'fool': 'magician': 'high_priestess', 'empress', 'emperor',
+        'fool', 'magician': 'high_priestess', 'empress', 'emperor',
         'hierophant', 'lovers', 'chariot', 'strength', 'hermit',
         'wheel_of_fortune', 'justice', 'hanged_man', 'death', 'temperance',
-        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world',
-];
+        'devil', 'tower', 'star', 'moon', 'sun', 'judgement', 'world'];
       return '$deckPath/major/${widget.cardIndex.toString().padLeft(2, '0')}_${cardNames[widget.cardIndex]}.jpg';
 } else if (widget.cardIndex < 36) {
       // Wands
@@ -914,7 +782,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
         : null;
     
     if (tarotCardInfo?.story == null) {
-      return _buildComingSoonPage('스토리': '곧 업데이트됩니다');
+      return _buildComingSoonPage('스토리', '곧 업데이트됩니다');
 }
     
     return SingleChildScrollView(
@@ -932,9 +800,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
             gradient: LinearGradient(
               colors: [
                 Colors.deepPurple.withValues(alpha: 0.1),
-                Colors.indigo.withValues(alpha: 0.1),
-              ],
-            ),
+                Colors.indigo.withValues(alpha: 0.1)]),
             child: Text(
               tarotCardInfo!.story!,
               style: Theme.of(context).textTheme.bodyLarge,
@@ -950,13 +816,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.amber.withValues(alpha: 0.1),
-                  Colors.orange.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.orange.withValues(alpha: 0.1)]),
               child: Text(
                 tarotCardInfo.mythology!,
-                style: Theme.of(context).textTheme.bodyLarge,
-          ],
+                style: Theme.of(context).textTheme.bodyLarge],
           
           if (tarotCardInfo.historicalContext != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -969,16 +832,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.teal.withValues(alpha: 0.1),
-                  Colors.cyan.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.cyan.withValues(alpha: 0.1)]),
               child: Text(
                 tarotCardInfo.historicalContext!,
-                style: Theme.of(context).textTheme.bodyLarge,
-          ],
-        ],
-      
-    );
+                style: Theme.of(context).textTheme.bodyLarge]]);
 }
 
   Widget _buildDeepInterpretationPage(Map<String, dynamic> cardInfo) {
@@ -988,7 +845,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     
     if (tarotCardInfo?.psychologicalMeaning == null && 
         tarotCardInfo?.spiritualMeaning == null) {
-      return _buildComingSoonPage('심화 해석': '곧 업데이트됩니다');
+      return _buildComingSoonPage('심화 해석', '곧 업데이트됩니다');
 }
     
     return SingleChildScrollView(
@@ -1006,23 +863,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.purple.withValues(alpha: 0.1),
-                  Colors.pink.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.pink.withValues(alpha: 0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.psychology,
                     size: 48,
-                    color: Colors.purple,
-                  ),
+                    color: Colors.purple),
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     tarotCardInfo!.psychologicalMeaning!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                ],
-              ),
-          ],
+                    style: Theme.of(context).textTheme.bodyLarge])],
           
           if (tarotCardInfo?.spiritualMeaning != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1035,26 +886,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.indigo.withValues(alpha: 0.1),
-                  Colors.deepPurple.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.deepPurple.withValues(alpha: 0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.self_improvement,
                     size: 48,
-                    color: Colors.indigo,
-                  ),
+                    color: Colors.indigo),
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     tarotCardInfo!.spiritualMeaning!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                ],
-              ),
-          ],
-        ],
-      
-    );
+                    style: Theme.of(context).textTheme.bodyLarge])]]);
 }
 
   Widget _buildPracticalGuidePage(Map<String, dynamic> cardInfo) {
@@ -1065,7 +907,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
     if (tarotCardInfo?.dailyApplications == null && 
         tarotCardInfo?.meditation == null &&
         tarotCardInfo?.affirmations == null) {
-      return _buildComingSoonPage('실천 가이드': '곧 업데이트됩니다');
+      return _buildComingSoonPage('실천 가이드', '곧 업데이트됩니다');
 }
     
     return SingleChildScrollView(
@@ -1086,26 +928,19 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   gradient: LinearGradient(
                     colors: [
                       Colors.green.withValues(alpha: 0.1),
-                      Colors.teal.withValues(alpha: 0.1),
-                    ],
-                  ),
+                      Colors.teal.withValues(alpha: 0.1)]),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Icon(
                         Icons.check_circle,
                         color: Colors.green,
-                        size: 20,
-                      ),
+                        size: 20),
                       const SizedBox(width: AppSpacing.spacing3),
                       Expanded(
                         child: Text(
                           application,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                    ],
-                  ),
-              )).toList(),
-          ],
+                          style: Theme.of(context).textTheme.bodyLarge])).toList()],
           
           if (tarotCardInfo?.meditation != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1118,23 +953,17 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.blue.withValues(alpha: 0.1),
-                  Colors.cyan.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.cyan.withValues(alpha: 0.1)]),
               child: Column(
                 children: [
                   const Icon(
                     Icons.spa,
                     size: 48,
-                    color: Colors.blue,
-                  ),
+                    color: Colors.blue),
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     tarotCardInfo!.meditation!,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                ],
-              ),
-          ],
+                    style: Theme.of(context).textTheme.bodyLarge])],
           
           if (tarotCardInfo?.affirmations != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1150,21 +979,12 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   gradient: LinearGradient(
                     colors: [
                       Colors.pink.withValues(alpha: 0.1),
-                      Colors.purple.withValues(alpha: 0.1),
-                    ],
-                  ),
+                      Colors.purple.withValues(alpha: 0.1)]),
                   child: Center(
                     child: Text(
                       '"$affirmation"',
                       style: Theme.of(context).textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
-                    ),
-                ),
-            ).toList(),
-          ],
-        ],
-      
-    );
+                      textAlign: TextAlign.center))).toList()]]);
 }
 
   Widget _buildRelationshipsPage(Map<String, dynamic> cardInfo) {
@@ -1173,7 +993,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
         : null;
     
     if (tarotCardInfo?.cardCombinations == null) {
-      return _buildComingSoonPage('카드 조합': '곧 업데이트됩니다');
+      return _buildComingSoonPage('카드 조합', '곧 업데이트됩니다');
 }
     
     return SingleChildScrollView(
@@ -1194,9 +1014,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                 gradient: LinearGradient(
                   colors: [
                     Colors.deepPurple.withValues(alpha: 0.1),
-                    Colors.purple.withValues(alpha: 0.1),
-                  ],
-                ),
+                    Colors.purple.withValues(alpha: 0.1)]),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1205,22 +1023,16 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                         const Icon(
                           Icons.link,
                           color: Colors.purple,
-                          size: 24,
-                        ),
+                          size: 24),
                         const SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                      ],
-                    ),
+                            style: Theme.of(context).textTheme.bodyLarge]),
                     const SizedBox(height: AppSpacing.spacing3),
                     Text(
                       entry.value,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                  ],
-                ),
-            )).toList(),
+                      style: Theme.of(context).textTheme.bodyLarge])).toList(),
           
           if (tarotCardInfo.colorSymbolism != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1233,13 +1045,10 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
               gradient: LinearGradient(
                 colors: [
                   Colors.orange.withValues(alpha: 0.1),
-                  Colors.yellow.withValues(alpha: 0.1),
-                ],
-              ),
+                  Colors.yellow.withValues(alpha: 0.1)]),
               child: Text(
                 tarotCardInfo.colorSymbolism!,
-                style: Theme.of(context).textTheme.bodyLarge,
-          ],
+                style: Theme.of(context).textTheme.bodyLarge],
           
           if (tarotCardInfo.crystals != null) ...[
             const SizedBox(height: AppSpacing.spacing6),
@@ -1255,28 +1064,18 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
                   gradient: LinearGradient(
                     colors: [
                       Colors.cyan.withValues(alpha: 0.1),
-                      Colors.blue.withValues(alpha: 0.1),
-                    ],
-                  ),
+                      Colors.blue.withValues(alpha: 0.1)]),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.diamond,
                         color: Colors.cyan,
-                        size: 20,
-                      ),
+                        size: 20),
                       const SizedBox(width: AppSpacing.spacing3),
                       Expanded(
                         child: Text(
                           crystal,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                    ],
-                  ),
-              )).toList(),
-          ],
-        ],
-      
-    );
+                          style: Theme.of(context).textTheme.bodyLarge])).toList()]]);
 }
 
   Widget _buildComingSoonPage(String title, String message) {
@@ -1287,8 +1086,7 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           const Icon(
             Icons.hourglass_empty,
             size: 64,
-            color: Colors.purple,
-          ),
+            color: Colors.purple),
           const SizedBox(height: AppSpacing.spacing6),
           Text(
             title,
@@ -1296,9 +1094,6 @@ class _TarotCardDetailModalState extends State<TarotCardDetailModal>
           const SizedBox(height: AppSpacing.spacing4),
           Text(
             message,
-            style: Theme.of(context).textTheme.titleMedium,
-        ],
-      
-    );
+            style: Theme.of(context).textTheme.titleMedium]);
 }
 }

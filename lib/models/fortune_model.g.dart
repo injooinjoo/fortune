@@ -14,8 +14,7 @@ class FortuneModelAdapter extends TypeAdapter<FortuneModel> {
   FortuneModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
     return FortuneModel(
       id: fields[0] as String,
       userId: fields[1] as String,
@@ -24,8 +23,7 @@ class FortuneModelAdapter extends TypeAdapter<FortuneModel> {
       createdAt: fields[4] as DateTime,
       metadata: (fields[5] as Map?)?.cast<String, dynamic>(),
       tokenCost: fields[6] as int,
-      rawResponse: fields[7] as String?,
-    );
+      rawResponse: fields[7] as String?);
   }
 
   @override
@@ -69,8 +67,7 @@ class DailyFortuneModelAdapter extends TypeAdapter<DailyFortuneModel> {
   DailyFortuneModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
     return DailyFortuneModel(
       score: fields[0] as int,
       keywords: (fields[1] as List).cast<String>(),
@@ -83,8 +80,7 @@ class DailyFortuneModelAdapter extends TypeAdapter<DailyFortuneModel> {
       caution: fields[8] as String,
       bestTime: fields[9] as String,
       compatibility: fields[10] as String,
-      elements: fields[11] as FortuneElementsModel,
-    );
+      elements: fields[11] as FortuneElementsModel);
   }
 
   @override
@@ -136,14 +132,12 @@ class FortuneElementsModelAdapter extends TypeAdapter<FortuneElementsModel> {
   FortuneElementsModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
     return FortuneElementsModel(
       love: fields[0] as int,
       career: fields[1] as int,
       money: fields[2] as int,
-      health: fields[3] as int,
-    );
+      health: fields[3] as int);
   }
 
   @override
@@ -183,8 +177,7 @@ FortuneModel _$FortuneModelFromJson(Map<String, dynamic> json) => FortuneModel(
       createdAt: DateTime.parse(json['createdAt'] as String),
       metadata: json['metadata'] as Map<String, dynamic>?,
       tokenCost: (json['tokenCost'] as num?)?.toInt() ?? 1,
-      rawResponse: json['rawResponse'] as String?,
-    );
+      rawResponse: json['rawResponse'] as String?);
 
 Map<String, dynamic> _$FortuneModelToJson(FortuneModel instance) =>
     <String, dynamic>{
@@ -195,8 +188,7 @@ Map<String, dynamic> _$FortuneModelToJson(FortuneModel instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'metadata': instance.metadata,
       'tokenCost': instance.tokenCost,
-      'rawResponse': instance.rawResponse,
-    };
+      'rawResponse': instance.rawResponse};
 
 DailyFortuneModel _$DailyFortuneModelFromJson(Map<String, dynamic> json) =>
     DailyFortuneModel(
@@ -213,8 +205,7 @@ DailyFortuneModel _$DailyFortuneModelFromJson(Map<String, dynamic> json) =>
       bestTime: json['bestTime'] as String,
       compatibility: json['compatibility'] as String,
       elements: FortuneElementsModel.fromJson(
-          json['elements'] as Map<String, dynamic>),
-    );
+          json['elements'] as Map<String, dynamic>));
 
 Map<String, dynamic> _$DailyFortuneModelToJson(DailyFortuneModel instance) =>
     <String, dynamic>{
@@ -229,8 +220,7 @@ Map<String, dynamic> _$DailyFortuneModelToJson(DailyFortuneModel instance) =>
       'caution': instance.caution,
       'bestTime': instance.bestTime,
       'compatibility': instance.compatibility,
-      'elements': instance.elements,
-    };
+      'elements': instance.elements};
 
 FortuneElementsModel _$FortuneElementsModelFromJson(
         Map<String, dynamic> json) =>
@@ -238,8 +228,7 @@ FortuneElementsModel _$FortuneElementsModelFromJson(
       love: (json['love'] as num).toInt(),
       career: (json['career'] as num).toInt(),
       money: (json['money'] as num).toInt(),
-      health: (json['health'] as num).toInt(),
-    );
+      health: (json['health'] as num).toInt());
 
 Map<String, dynamic> _$FortuneElementsModelToJson(
         FortuneElementsModel instance) =>
@@ -247,5 +236,4 @@ Map<String, dynamic> _$FortuneElementsModelToJson(
       'love': instance.love,
       'career': instance.career,
       'money': instance.money,
-      'health': instance.health,
-    };
+      'health': instance.health};

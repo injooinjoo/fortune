@@ -15,14 +15,11 @@ class WishFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFFF4081), Color(0xFFF50057)],
-      ),
+        colors: [Color(0xFFFF4081), Color(0xFFF50057)]),
       inputBuilder: (context, onSubmit) => _WishInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _WishFortuneResult(
         result: result,
-        onShare: onShare,
-      ),
-    );
+        onShare: onShare));
   }
 }
 
@@ -42,18 +39,14 @@ class _WishInputForm extends StatelessWidget {
           '소원 성취 가능성을 확인해보세요!\n소원을 이루기 위한 방법을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.star,
             size: 120,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
-        ),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
         
         const SizedBox(height: 32),
         
@@ -65,13 +58,7 @@ class _WishInputForm extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+                borderRadius: BorderRadius.circular(30)))))]);
   }
 }
 
@@ -81,8 +68,7 @@ class _WishFortuneResult extends StatelessWidget {
 
   const _WishFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -105,29 +91,16 @@ class _WishFortuneResult extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.star,
-                      color: theme.colorScheme.primary,
-                    ),
+                      color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       '소원 성취 운세',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    height: 1.6))]))]));
   }
 }

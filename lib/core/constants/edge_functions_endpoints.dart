@@ -295,8 +295,7 @@ class EdgeFunctionsEndpoints {
       'children': childrenFortune,
       'parenting': parentingFortune,
       'pregnancy': pregnancyFortune,
-      'family-harmony': familyHarmonyFortune,
-    };
+      'family-harmony': familyHarmonyFortune};
 
     return endpointMap[fortuneType] ?? '/fortune-$fortuneType';
   }

@@ -13,8 +13,7 @@ class CustomCalendarDatePicker extends StatefulWidget {
     required this.firstDate,
     required this.lastDate,
     required this.onDateChanged,
-    this.onConfirm,
-  });
+    this.onConfirm});
 
   @override
   State<CustomCalendarDatePicker> createState() => _CustomCalendarDatePickerState();
@@ -34,8 +33,7 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
     // 임시로 기본 날짜 선택기 사용
     return Theme(
       data: Theme.of(context).copyWith(
-        colorScheme: Theme.of(context).colorScheme,
-      ),
+        colorScheme: Theme.of(context).colorScheme),
       child: CalendarDatePicker(
         initialDate: _selectedDate,
         firstDate: widget.firstDate,
@@ -45,8 +43,6 @@ class _CustomCalendarDatePickerState extends State<CustomCalendarDatePicker> {
             _selectedDate = date;
           });
           widget.onDateChanged(date);
-        },
-      ),
-    );
+        }));
   }
 }

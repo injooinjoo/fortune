@@ -4,11 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/components/app_header.dart';
 import '../widgets/fortune_list_card.dart';
 import '../widgets/fortune_list_tile.dart';
-import '../../../../presentation/widgets/simple_fortune_info_sheet.dart';
+// import '../../../../presentation/widgets/simple_fortune_info_sheet.dart'; // File doesn't exist
 import '../../../../presentation/screens/ad_loading_screen.dart';
 import '../../../../presentation/providers/providers.dart';
 import '../widgets/tarot_fortune_list_card.dart';
-// import './tarot_enhanced_page.dart'; // No longer needed - using tarot chat page
 import '../../../../core/constants/fortune_card_images.dart';
 import '../../../../core/constants/soul_rates.dart';
 import '../../../../presentation/widgets/ads/cross_platform_ad_widget.dart';
@@ -39,8 +38,7 @@ class FortuneCategory {
     required this.description,
     required this.category,
     this.isNew = false,
-    this.isPremium = false,
-  });
+    this.isPremium = false});
   
   // 영혼 정보 가져오기
   int get soulAmount => SoulRates.getSoulAmount(type);
@@ -61,19 +59,13 @@ enum FortuneCategoryType {
   traditional,
   lifestyle,
   interactive,
-  petFamily,
-  
-  
-}
+  petFamily}
 
 enum ViewMode {
   
   
   trend,
-  list,
-  
-  
-}
+  list}
 
 class FilterCategory {
   final FortuneCategoryType type;
@@ -85,8 +77,7 @@ class FilterCategory {
     required this.type,
     required this.name,
     required this.icon,
-    required this.color,
-  });
+    required this.color});
 }
 
 class FortuneListPage extends ConsumerStatefulWidget {
@@ -123,24 +114,21 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       end: 1.0, // Will be used as a progress indicator
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+      curve: Curves.easeOutCubic));
     
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 1.0, // No scaling for now, will calculate dynamically
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+      curve: Curves.easeOutCubic));
     
     _fadeAnimation = Tween<double>(
       begin: 1.0,
       end: 1.0, // Keep opacity at 1.0 (no fade)
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
   }
 
   @override
@@ -210,10 +198,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.3 * (1 - progress * 0.5)),
                       blurRadius: 20 + (10 * progress),
-                      offset: Offset(0, 10 * (1 - progress)),
-                    ),
-                  ],
-                ),
+                      offset: Offset(0, 10 * (1 - progress)))]),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(borderRadius),
                   child: Image.asset(
@@ -225,16 +210,9 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                         child: const Icon(
                           Icons.image,
                           size: 60,
-                          color: Colors.grey,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        );
+                          color: Colors.grey));
+                    }))));
+          });
       }
     );
 
@@ -264,57 +242,47 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       type: FortuneCategoryType.all,
       name: '전체',
       icon: Icons.star_rounded,
-      color: Color(0xFF7C3AED),
-    ),
+      color: Color(0xFF7C3AED)),
     FilterCategory(
       type: FortuneCategoryType.love,
       name: '연애·인연',
       icon: Icons.favorite_rounded,
-      color: Color(0xFFEC4899),
-    ),
+      color: Color(0xFFEC4899)),
     FilterCategory(
       type: FortuneCategoryType.career,
       name: '취업·사업',
       icon: Icons.work_rounded,
-      color: Color(0xFF3B82F6),
-    ),
+      color: Color(0xFF3B82F6)),
     FilterCategory(
       type: FortuneCategoryType.money,
       name: '재물·투자',
       icon: Icons.attach_money_rounded,
-      color: Color(0xFFF59E0B),
-    ),
+      color: Color(0xFFF59E0B)),
     FilterCategory(
       type: FortuneCategoryType.health,
       name: '건강·라이프',
       icon: Icons.spa_rounded,
-      color: Color(0xFF10B981),
-    ),
+      color: Color(0xFF10B981)),
     FilterCategory(
       type: FortuneCategoryType.traditional,
       name: '전통·사주',
       icon: Icons.auto_awesome_rounded,
-      color: Color(0xFFEF4444),
-    ),
+      color: Color(0xFFEF4444)),
     FilterCategory(
       type: FortuneCategoryType.lifestyle,
       name: '생활·운세',
       icon: Icons.calendar_today_rounded,
-      color: Color(0xFF06B6D4),
-    ),
+      color: Color(0xFF06B6D4)),
     FilterCategory(
       type: FortuneCategoryType.interactive,
       name: '인터랙티브',
       icon: Icons.touch_app_rounded,
-      color: Color(0xFF9333EA),
-    ),
+      color: Color(0xFF9333EA)),
     FilterCategory(
       type: FortuneCategoryType.petFamily,
       name: '반려·육아',
       icon: Icons.family_restroom_rounded,
-      color: Color(0xFFE11D48),
-    ),
-  ];
+      color: Color(0xFFE11D48))];
 
   static const List<FortuneCategory> _categories = [
     // ==================== Time-based Fortunes (통합) ====================
@@ -326,8 +294,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
       description: '오늘/내일/주간/월간/연간 운세',
       category: 'lifestyle',
-      isNew: true,
-    ),
+      isNew: true),
     
 
     // ==================== Traditional Fortunes (통합) ====================
@@ -338,8 +305,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.auto_awesome_rounded,
       gradientColors: [Color(0xFFEF4444), Color(0xFFEC4899)],
       description: '사주/토정비결',
-      category: 'traditional',
-    ),
+      category: 'traditional'),
     
     // ==================== Tarot Fortune ====================
     FortuneCategory(
@@ -350,8 +316,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
       description: '카드가 전하는 오늘의 메시지',
       category: 'traditional',
-      isNew: true,
-    ),
+      isNew: true),
     
     // ==================== Dream Interpretation ====================
     FortuneCategory(
@@ -362,8 +327,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
       description: '꿈이 전하는 숨겨진 의미',
       category: 'traditional',
-      isNew: true,
-    ),
+      isNew: true),
     
     // ==================== Physiognomy ====================
     FortuneCategory(
@@ -373,8 +337,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.face_rounded,
       gradientColors: [Color(0xFFEF4444), Color(0xFFDC2626)],
       description: '얼굴에 나타난 운명의 징표',
-      category: 'traditional',
-    ),
+      category: 'traditional'),
     
     // ==================== Talisman ====================
     FortuneCategory(
@@ -384,8 +347,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.shield_rounded,
       gradientColors: [Color(0xFFF59E0B), Color(0xFFD97706)],
       description: '액운을 막고 행운을 부르는 부적',
-      category: 'traditional',
-    ),
+      category: 'traditional'),
 
     // ==================== Personal/Character-based Fortunes (통합) ====================
     FortuneCategory(
@@ -396,8 +358,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF6366F1), Color(0xFF3B82F6)],
       description: 'MBTI/혈액형',
       category: 'lifestyle',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '바이오리듬',
       route: '/fortune/lifestyle?type=biorhythm',
@@ -406,8 +367,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
       description: '신체, 감정, 지성 리듬 분석',
       category: 'health',
-      isNew: true,
-    ),
+      isNew: true),
 
     // ==================== Relationship/Love Fortunes ====================
     FortuneCategory(
@@ -417,8 +377,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.favorite_rounded,
       gradientColors: [Color(0xFFEC4899), Color(0xFFDB2777)],
       description: '사랑과 연애의 운세',
-      category: 'love',
-    ),
+      category: 'love'),
     FortuneCategory(
       title: '궁합',
       route: '/fortune/relationship?type=compatibility',
@@ -426,8 +385,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.people_rounded,
       gradientColors: [Color(0xFFBE185D), Color(0xFF9333EA)],
       description: '두 사람의 궁합 보기',
-      category: 'love',
-    ),
+      category: 'love'),
     FortuneCategory(
       title: '피해야 할 사람',
       route: '/fortune/relationship?type=avoid-people',
@@ -436,8 +394,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFFDC2626), Color(0xFFB91C1C)],
       description: '오늘 피해야 할 사람의 특징',
       category: 'love',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '헤어진 애인',
       route: '/fortune/ex-lover-enhanced',
@@ -446,8 +403,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF6B7280), Color(0xFF374151)],
       description: '헤어진 연인과의 재회 가능성',
       category: 'love',
-      isNew: true,
-    ),
+      isNew: true),
 
     // ==================== Career/Work Fortunes (통합) ====================
     FortuneCategory(
@@ -458,8 +414,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF2563EB), Color(0xFF1D4ED8)],
       description: '취업/직업/사업/창업 종합',
       category: 'career',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '시험 운세',
       route: '/fortune/career?type=exam',
@@ -467,8 +422,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.school_rounded,
       gradientColors: [Color(0xFF03A9F4), Color(0xFF0288D1)],
       description: '시험과 자격증 합격 운세',
-      category: 'career',
-    ),
+      category: 'career'),
 
     // ==================== Investment/Money Fortunes (통합) ====================
     FortuneCategory(
@@ -480,8 +434,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       description: '주식/부동산/코인/경매 등 10개 섹터',
       category: 'money',
       isPremium: true,
-      isNew: true,
-    ),
+      isNew: true),
 
     // ==================== Lifestyle/Lucky Items (통합) ====================
     FortuneCategory(
@@ -491,8 +444,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.auto_awesome_rounded,
       gradientColors: [Color(0xFF7C3AED), Color(0xFF3B82F6)],
       description: '색깔/숫자/음식/아이템',
-      category: 'lifestyle',
-    ),
+      category: 'lifestyle'),
     FortuneCategory(
       title: '재능 발견',
       route: '/fortune/lifestyle?type=talent',
@@ -500,8 +452,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.stars_rounded,
       gradientColors: [Color(0xFFFFB300), Color(0xFFFF8F00)],
       description: '숨겨진 재능 발견',
-      category: 'lifestyle',
-    ),
+      category: 'lifestyle'),
     FortuneCategory(
       title: '소원 성취',
       route: '/fortune/lifestyle?type=wish',
@@ -509,8 +460,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.star_rounded,
       gradientColors: [Color(0xFFFF4081), Color(0xFFF50057)],
       description: '소원 성취 가능성',
-      category: 'lifestyle',
-    ),
+      category: 'lifestyle'),
 
     // ==================== Health/Sports Fortunes (통합) ====================
     FortuneCategory(
@@ -521,8 +471,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF10B981), Color(0xFF059669)],
       description: '건강/피트니스/요가/스포츠',
       category: 'health',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '스포츠 운세',
       route: '/fortune/enhanced-sports',
@@ -531,8 +480,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFFEA580C), Color(0xFFDC2626)],
       description: '모든 스포츠 종목별 운세와 팀 승부운',
       category: 'health',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '이사운',
       route: '/fortune/lifestyle?type=moving',
@@ -540,8 +488,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       icon: Icons.home_work_rounded,
       gradientColors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
       description: '이사 길일과 방향',
-      category: 'lifestyle',
-    ),
+      category: 'lifestyle'),
     FortuneCategory(
       title: '이사운세 상세진단',
       route: '/fortune/lifestyle?type=moving-enhanced',
@@ -550,8 +497,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
       description: '손없는날과 지역분석까지',
       category: 'lifestyle',
-      isNew: true,
-    ),
+      isNew: true),
 
     // ==================== Interactive Fortunes ====================
     FortuneCategory(
@@ -562,8 +508,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF9333EA), Color(0xFF7C3AED)],
       description: '오늘의 행운 메시지',
       category: 'interactive',
-      isNew: true,
-    ),
+      isNew: true),
     FortuneCategory(
       title: '유명인 운세',
       route: '/fortune/celebrity',
@@ -572,8 +517,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFFFF1744), Color(0xFFE91E63)],
       description: '좋아하는 유명인과 나의 오늘 운세',
       category: 'interactive',
-      isNew: true,
-    ),
+      isNew: true),
     
     // ==================== Fortune History (프로필로 이동) ====================
     FortuneCategory(
@@ -584,8 +528,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF795548), Color(0xFF5D4037)],
       description: '과거 운세 기록 및 통계',
       category: 'lifestyle',
-      isNew: true,
-    ),
+      isNew: true),
 
     // ==================== Pet Fortunes (통합) ====================
     FortuneCategory(
@@ -596,8 +539,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFFE11D48), Color(0xFFBE123C)],
       description: '반려동물/반려견/반려묘/궁합',
       category: 'petFamily',
-      isNew: true,
-    ),
+      isNew: true),
     // ==================== Family Fortunes (통합) ====================
     FortuneCategory(
       title: '가족 운세',
@@ -607,17 +549,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       gradientColors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
       description: '자녀/육아/태교/가족화합',
       category: 'petFamily',
-      isNew: true,
-    ),
-  ];
+      isNew: true)];
 
   List<FortuneCategory> _filterCategories(String searchQuery, FortuneCategoryType selectedType) {
     // Check if we have recommendations
     final recommendationsState = ref.watch(fortuneRecommendationProvider);
     
-    if (recommendationsState.hasValue && selectedType == FortuneCategoryType.all) {
+    if (recommendationsState?.hasValue == true && selectedType == FortuneCategoryType.all) {
       // Use recommendations for 'all' category
-      final recommendations = recommendationsState.value!;
+      final recommendations = recommendationsState!.value!;
       final recommendedCategories = <FortuneCategory>[];
       
       for (final score in recommendations) {
@@ -646,7 +586,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
     // Search filter is disabled - search bar has been removed
     // if (searchQuery.isNotEmpty) {
     //   filtered = filtered.where((category) {
-    //     return category.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+    //     return category.title.toLowerCase().contains(searchQuery.toLowerCase(), ||
     //            category.description.toLowerCase().contains(searchQuery.toLowerCase();
     //   }).toList();
     // }
@@ -668,8 +608,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
       backgroundColor: AppColors.cardBackground,
       appBar: const AppHeader(
         showBackButton: false,
-        centerTitle: true,
-      ),
+        centerTitle: true),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -682,30 +621,21 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (selectedCategory != FortuneCategoryType.all);
+                      if (selectedCategory != FortuneCategoryType.all)
                         TextButton(
                           onPressed: () {
                             ref.read(_selectedCategoryProvider.notifier).state = FortuneCategoryType.all;
                           },
-                          child: const Text('전체 보기'),
-                        ),
+                          child: const Text('전체 보기'))
                       else
                         const SizedBox.shrink(),
-                      _buildViewModeToggle(context, ref),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+                      _buildViewModeToggle(context, ref)])]))),
           // Banner Ad for non-premium users
           if (Environment.enableAds && !(ref.watch(userProfileProvider).value?.isPremiumActive ?? false))
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: CommonAdPlacements.listBottomAd(),
-              ),
-            ),
+                child: CommonAdPlacements.listBottomAd())),
           // Show loading indicator when recommendations are loading for the first time
           if (isLoadingRecommendations && !recommendationsReady && selectedCategory == FortuneCategoryType.all)
             SliverToBoxAdapter(
@@ -721,14 +651,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       Text(
                         '맞춤 운세를 준비하고 있어요...',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                          color: theme.colorScheme.onSurfaceVariant))])))),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
@@ -750,8 +673,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                   },
                                   isPremium: category.isPremium,
                                   soulCost: category.soulCost,
-                                  route: category.route,
-                                ),
+                                  route: category.route)
                               : FortuneListCard(
                                   category: category,
                                   thumbnailKey: _getThumbnailKey(category.route),
@@ -807,14 +729,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                 });
                                 
                                 // Show regular bottom sheet
-                                SimpleFortunInfoSheet.show(
-                                  context,
-                                  fortuneType: fortuneType,
-                                  onDismiss: () {
-                                    // Call the dismiss callback to remove the overlay
-                                    _currentDismissCallback?.call();
-                                  },
-                                  onFortuneButtonPressed: () {
+                                // TODO: SimpleFortunInfoSheet doesn't exist
+                                // SimpleFortunInfoSheet.show(
+                                //   context,
+                                //   fortuneType: fortuneType,
+                                //   onDismiss: () {
+                                //     // Call the dismiss callback to remove the overlay
+                                //     _currentDismissCallback?.call();
+                                //   },
+                                //   onFortuneButtonPressed: () {
                                     print('[FortuneListPage] Fortune button pressed, navigating to AdLoadingScreen');
                                     
                                     // Remove overlay immediately before navigation
@@ -844,23 +767,18 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                           onSkip: () {
                                             // Navigate to premium page or handle skip
                                             context.push('/subscription');
-                                          },
-                                        ),
+                                          }),
                                         transitionsBuilder: (context, animation, secondaryAnimation, child) {
                                           // Use a fade transition for smoother navigation
                                           return FadeTransition(
                                             opacity: animation,
-                                            child: child,
-                                          );
+                                            child: child);
                                         },
-                                        transitionDuration: const Duration(milliseconds: 300),
-                                      ),
-                                    );
-                                  },
-                                );
+                                        transitionDuration: const Duration(milliseconds: 300)));
+                                  // });
+                              // }
                               }
-                            },
-                          ))
+                            }))
                           : FortuneListTile(
                               category: category,
                               onTap: () {
@@ -875,8 +793,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                       context,
                                       onDismiss: () {
                                         // No overlay to dismiss in list view
-                                      },
-                                    );
+                                      });
                                   } else {
                                     // Same logic as FortuneListCard
                                     String fortuneType = category.type;
@@ -891,71 +808,46 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                                       }
                                     }
                                     
-                                    SimpleFortunInfoSheet.show(
-                                      context,
-                                      fortuneType: fortuneType,
-                                      onDismiss: () {
-                                        // No overlay to dismiss in list view
-                                      },
-                                      onFortuneButtonPressed: () {
-                                      // Remove overlay immediately before navigation
-                                      _removeOverlay();
-                                      
-                                      // Record visit for recommendation system
-                                      ref.read(fortuneRecommendationProvider.notifier).recordVisit(
-                                        fortuneType,
-                                        category.category
-                                      );
-                                      
-                                      final isPremium = ref.read(hasUnlimitedAccessProvider);
-                                      
-                                      // Push the AdLoadingScreen onto the navigation stack
-                                      // It will replace itself with the fortune page after the ad
-                                      Navigator.of(context).push(
-                                        PageRouteBuilder(
-                                          pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
-                                            fortuneType: fortuneType,
-                                            fortuneTitle: category.title,
-                                            fortuneRoute: category.route,
-                                            isPremium: isPremium,
-                                            onComplete: () {},
-                                            onSkip: () {
-                                              context.push('/subscription');
-                                            },
-                                          ),
-                                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                            // Use a fade transition for smoother navigation
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                          transitionDuration: const Duration(milliseconds: 300),
-                                        ),
-                                      );
-                                    },
-                                  );
+                                    // SimpleFortunInfoSheet doesn't exist, navigate directly
+                                    // Record visit for recommendation system
+                                    ref.read(fortuneRecommendationProvider.notifier).recordVisit(
+                                      fortuneType,
+                                      category.category
+                                    );
+                                    
+                                    final isPremium = ref.read(hasUnlimitedAccessProvider);
+                                    
+                                    // Push the AdLoadingScreen onto the navigation stack
+                                    // It will replace itself with the fortune page after the ad
+                                    Navigator.of(context).push(
+                                      PageRouteBuilder(
+                                        pageBuilder: (context, animation, secondaryAnimation) => AdLoadingScreen(
+                                          fortuneType: fortuneType,
+                                          fortuneTitle: category.title,
+                                          fortuneRoute: category.route,
+                                          isPremium: isPremium,
+                                          onComplete: () {},
+                                          onSkip: () {
+                                            context.push('/subscription');
+                                          }),
+                                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                          // Use a fade transition for smoother navigation
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child);
+                                        },
+                                        transitionDuration: const Duration(milliseconds: 300)));
                                   }
                                 }
-                              },
-                            ),
+                              }),
                       if (!isLastItem && viewMode == ViewMode.list) 
                         Divider(
                           height: 1,
                           thickness: 0.5,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-                        ),
-                    ],
-                  );
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.08))]);
                 },
-                childCount: filteredCategories.length,
-              ),
-            ),
-          ),
-          const SliverPadding(padding: EdgeInsets.only(bottom: 16)),
-        ],
-      ),
-    );
+                childCount: filteredCategories.length))),
+          const SliverPadding(padding: EdgeInsets.only(bottom: 16))]));
   }
 
   // Search bar removed as per request
@@ -1006,19 +898,13 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
             color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: theme.colorScheme.outline.withValues(alpha: 0.2),
-            ),
-          ),
+              color: theme.colorScheme.outline.withValues(alpha: 0.2))),
           child: Icon(
             viewMode == ViewMode.trend 
                 ? Icons.grid_view_rounded 
                 : Icons.view_list_rounded,
             size: 20,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-      ),
-    );
+            color: theme.colorScheme.onSurface))));
   }
 
   Widget _buildCategoryFilter(BuildContext context, WidgetRef ref) {
@@ -1045,17 +931,15 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? LinearGradient(
-                        colors: [filter.color, filter.color.withValues(alpha: 0.8)],
-                      ),
+                        colors: [filter.color, filter.color.withValues(alpha: 0.8)]
+                      )
                     : null,
                 color: isSelected ? null : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3))),
               child: Row(
                 children: [
                   Icon(
@@ -1063,8 +947,7 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                     size: 18,
                     color: isSelected
                         ? Colors.white
-                        : theme.colorScheme.onSurface,
-                  ),
+                        : theme.colorScheme.onSurface),
                   const SizedBox(width: 6),
                   Text(
                     filter.name,
@@ -1072,16 +955,8 @@ class _FortuneListPageState extends ConsumerState<FortuneListPage>
                       color: isSelected
                           ? Colors.white
                           : theme.colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
+        }));
   }
 
 }

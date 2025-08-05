@@ -12,8 +12,7 @@ class NavigationFlowHelper {
     required String destinationRoute,
     required String fortuneType,
     Map<String, dynamic>? extra,
-    bool canSkipAd = false,
-  }) async {
+    bool canSkipAd = false}) async {
     final user = ref.read(userProvider).value;
     final isPremium = user?.userMetadata?['isPremium'] ?? false;
 
@@ -42,17 +41,13 @@ class NavigationFlowHelper {
             } else {
               context.pushNamed(destinationRoute);
             }
-          },
-        ),
+          }),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: animation,
-            child: child,
-          );
+            child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
+        transitionDuration: const Duration(milliseconds: 300)));
   }
 
   /// Replace current route with a new route after showing an ad
@@ -62,8 +57,7 @@ class NavigationFlowHelper {
     required String destinationRoute,
     required String fortuneType,
     Map<String, dynamic>? extra,
-    bool canSkipAd = false,
-  }) async {
+    bool canSkipAd = false}) async {
     final user = ref.read(userProvider).value;
     final isPremium = user?.userMetadata?['isPremium'] ?? false;
 
@@ -92,17 +86,13 @@ class NavigationFlowHelper {
             } else {
               context.goNamed(destinationRoute);
             }
-          },
-        ),
+          }),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: animation,
-            child: child,
-          );
+            child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
+        transitionDuration: const Duration(milliseconds: 300)));
   }
 
   /// Show an interstitial ad and execute a callback
@@ -111,8 +101,7 @@ class NavigationFlowHelper {
     required WidgetRef ref,
     required String fortuneType,
     required VoidCallback onComplete,
-    bool canSkipAd = false,
-  }) async {
+    bool canSkipAd = false}) async {
     final user = ref.read(userProvider).value;
     final isPremium = user?.userMetadata?['isPremium'] ?? false;
 
@@ -132,16 +121,12 @@ class NavigationFlowHelper {
           onComplete: () {
             Navigator.of(context).pop();
             onComplete();
-          },
-        ),
+          }),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: animation,
-            child: child,
-          );
+            child: child);
         },
-        transitionDuration: const Duration(milliseconds: 300),
-      ),
-    );
+        transitionDuration: const Duration(milliseconds: 300)));
   }
 }

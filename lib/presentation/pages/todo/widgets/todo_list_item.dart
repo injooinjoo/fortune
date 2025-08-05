@@ -13,8 +13,7 @@ class TodoListItem extends StatelessWidget {
     required this.todo,
     required this.onToggle,
     required this.onDelete,
-    required this.onTap,
-  });
+    required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +31,7 @@ class TodoListItem extends StatelessWidget {
         color: colorScheme.error,
         child: const Icon(
           Icons.delete,
-          color: Colors.white,
-        ),
-      ),
+          color: Colors.white)),
       confirmDismiss: (direction) async {
         // Show confirmation dialog
         return await showDialog<bool>(
@@ -45,18 +42,12 @@ class TodoListItem extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('취소'),
-              ),
+                child: const Text('취소')),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
                 style: TextButton.styleFrom(
-                  foregroundColor: colorScheme.error,
-                ),
-                child: const Text('삭제'),
-              ),
-            ],
-          ),
-        );
+                  foregroundColor: colorScheme.error),
+                child: const Text('삭제'))]));
       },
       onDismissed: (direction) => onDelete(),
       child: InkWell(
@@ -67,10 +58,7 @@ class TodoListItem extends StatelessWidget {
             border: Border(
               bottom: BorderSide(
                 color: colorScheme.outlineVariant,
-                width: 0.5,
-              ),
-            ),
-          ),
+                width: 0.5))),
           child: Row(
             children: [
               // Checkbox
@@ -86,10 +74,7 @@ class TodoListItem extends StatelessWidget {
                     color: isCompleted
                         ? colorScheme.primary
                         : colorScheme.onSurfaceVariant,
-                    size: 24,
-                  ),
-                ),
-              ),
+                    size: 24))),
               const SizedBox(width: 8),
 
               // Content
@@ -109,16 +94,11 @@ class TodoListItem extends StatelessWidget {
                                   : null,
                               color: isCompleted
                                   ? colorScheme.onSurfaceVariant
-                                  : null,
-                            ),
+                                  : null),
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                            overflow: TextOverflow.ellipsis)),
                         if (todo.priority == TodoPriority.high)
-                          _buildPriorityBadge(context, todo.priority),
-                      ],
-                    ),
+                          _buildPriorityBadge(context, todo.priority)]),
 
                     // Description
                     if (todo.description != null &&
@@ -130,12 +110,9 @@ class TodoListItem extends StatelessWidget {
                           color: colorScheme.onSurfaceVariant,
                           decoration: isCompleted
                               ? TextDecoration.lineThrough
-                              : null,
-                        ),
+                              : null),
                         maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                        overflow: TextOverflow.ellipsis)],
 
                     // Tags and due date
                     const SizedBox(height: 8),
@@ -146,32 +123,25 @@ class TodoListItem extends StatelessWidget {
                           Icon(
                             Icons.label_outline,
                             size: 16,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                            color: colorScheme.onSurfaceVariant),
                           const SizedBox(width: 4),
                           Text(
                             todo.tags.take(2).join(', '),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
+                              color: colorScheme.onSurfaceVariant)),
                           if (todo.tags.length > 2)
                             Text(
                               ' +${todo.tags.length - 2}',
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          const SizedBox(width: 12),
-                        ],
+                                color: colorScheme.onSurfaceVariant)),
+                          const SizedBox(width: 12)],
 
                         // Due date
                         if (todo.dueDate != null) ...[
                           Icon(
                             Icons.calendar_today,
                             size: 16,
-                            color: _getDueDateColor(context, todo),
-                          ),
+                            color: _getDueDateColor(context, todo)),
                           const SizedBox(width: 4),
                           Text(
                             _getDueDateText(todo, dateFormat),
@@ -179,20 +149,7 @@ class TodoListItem extends StatelessWidget {
                               color: _getDueDateColor(context, todo),
                               fontWeight: todo.isOverdue && !isCompleted
                                   ? FontWeight.bold
-                                  : null,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                                  : null))]])]))]))));
   }
 
   Widget _buildPriorityBadge(BuildContext context, TodoPriority priority) {
@@ -220,17 +177,13 @@ class TodoListItem extends StatelessWidget {
       margin: const EdgeInsets.only(left: 8),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        borderRadius: BorderRadius.circular(12)),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 12,
           color: color,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
+          fontWeight: FontWeight.w500)));
   }
 
   Color _getDueDateColor(BuildContext context, Todo todo) {

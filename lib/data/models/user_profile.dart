@@ -40,8 +40,7 @@ class UserProfile extends Equatable {
     required this.updatedAt,
     this.isTestAccount = false,
     this.testAccountFeatures,
-    this.fortunePreferences,
-  });
+    this.fortunePreferences});
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
@@ -95,8 +94,7 @@ class UserProfile extends Equatable {
       'updated_at': updatedAt.toIso8601String(),
       'is_test_account': isTestAccount,
       'test_account_features': testAccountFeatures,
-      'fortune_preferences': null,
-    };
+      'fortune_preferences': null};
   }
 
   // Check if user has premium access
@@ -131,8 +129,7 @@ class UserProfile extends Equatable {
     DateTime? updatedAt,
     bool? isTestAccount,
     Map<String, dynamic>? testAccountFeatures,
-    FortunePreferences? fortunePreferences,
-  }) {
+    FortunePreferences? fortunePreferences}) {
     return UserProfile(
       id: id ?? this.id,
       userId: userId ?? this.userId,
@@ -152,8 +149,7 @@ class UserProfile extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt,
       isTestAccount: isTestAccount ?? this.isTestAccount,
       testAccountFeatures: testAccountFeatures ?? this.testAccountFeatures,
-      fortunePreferences: fortunePreferences ?? this.fortunePreferences,
-    );
+      fortunePreferences: fortunePreferences ?? this.fortunePreferences);
   }
 
   @override
@@ -176,8 +172,7 @@ class UserProfile extends Equatable {
     updatedAt,
     isTestAccount,
     testAccountFeatures,
-    fortunePreferences,
-  ];
+    fortunePreferences];
 }
 
 /// User's fortune preferences for personalized recommendations
@@ -221,8 +216,7 @@ class FortunePreferences extends Equatable {
     this.preferredHour,
     this.languagePreference = 'ko',
     this.showTrending = true,
-    this.showPersonalized = true,
-  });
+    this.showPersonalized = true});
 
   factory FortunePreferences.fromJson(Map<String, dynamic> json) {
     return FortunePreferences(
@@ -233,8 +227,7 @@ class FortunePreferences extends Equatable {
               ?.map((k, v) => MapEntry(k, v as int)) ??
           {},
       lastVisited: (json['last_visited'] as Map<String, dynamic>?)?.map(
-            (k, v) => MapEntry(k, DateTime.parse(v as String)),
-          ) ??
+            (k, v) => MapEntry(k, DateTime.parse(v as String))) ??
           {},
       favorites: (json['favorites'] as List<dynamic>?)
               ?.map((e) => e as String)
@@ -261,8 +254,7 @@ class FortunePreferences extends Equatable {
       'preferred_hour': preferredHour,
       'language_preference': languagePreference,
       'show_trending': showTrending,
-      'show_personalized': null,
-    };
+      'show_personalized': null};
   }
 
   FortunePreferences copyWith({
@@ -274,8 +266,7 @@ class FortunePreferences extends Equatable {
     int? preferredHour,
     String? languagePreference,
     bool? showTrending,
-    bool? showPersonalized,
-  }) {
+    bool? showPersonalized}) {
     return FortunePreferences(
       categoryWeights: categoryWeights ?? this.categoryWeights,
       visitedFortunes: visitedFortunes ?? this.visitedFortunes,
@@ -285,8 +276,7 @@ class FortunePreferences extends Equatable {
       preferredHour: preferredHour ?? this.preferredHour,
       languagePreference: languagePreference ?? this.languagePreference,
       showTrending: showTrending ?? this.showTrending,
-      showPersonalized: showPersonalized ?? this.showPersonalized,
-    );
+      showPersonalized: showPersonalized ?? this.showPersonalized);
   }
 
   /// Update visit information for a fortune type
@@ -363,6 +353,5 @@ class FortunePreferences extends Equatable {
         preferredHour,
         languagePreference,
         showTrending,
-        showPersonalized,
-      ];
+        showPersonalized];
 }

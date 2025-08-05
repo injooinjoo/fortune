@@ -6,12 +6,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class SecureStorage {
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+      encryptedSharedPreferences: true),
     iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock_this_device,
-    ),
-  );
+      accessibility: KeychainAccessibility.first_unlock_this_device));
 
   // 키 상수
   static const String keyAuthToken = 'auth_token';
@@ -112,35 +109,30 @@ class SecureStorage {
   static Future<void> saveAuthTokens({
     required String accessToken,
     required String refreshToken,
-    required String userId,
-  }) async {
+    required String userId}) async {
     await Future.wait([
       setString(keyAuthToken, accessToken),
       setString(keyRefreshToken, refreshToken),
-      setString(keyUserId, userId),
-    ]);
+      setString(keyUserId, userId)]);
   }
   
   static Future<Map<String, String?>> getAuthTokens() async {
     final results = await Future.wait([
       getString(keyAuthToken),
       getString(keyRefreshToken),
-      getString(keyUserId),
-    ]);
+      getString(keyUserId)]);
     
     return {
       'accessToken': results[0],
       'refreshToken': results[1],
-      'userId': null,
-    };
+      'userId': null};
   }
   
   static Future<void> clearAuthTokens() async {
     await Future.wait([
       delete(keyAuthToken),
       delete(keyRefreshToken),
-      delete(keyUserId),
-    ]);
+      delete(keyUserId)]);
   }
   
   // 사용자 프로필 캐시

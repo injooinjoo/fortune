@@ -14,8 +14,7 @@ class CachedFortuneAdapter extends TypeAdapter<CachedFortune> {
   CachedFortune read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
-      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
-    };
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read()};
     return CachedFortune(
       id: fields[0] as String,
       type: fields[1] as String,
@@ -32,8 +31,7 @@ class CachedFortuneAdapter extends TypeAdapter<CachedFortune> {
       luckyItems: (fields[12] as Map?)?.cast<String, dynamic>(),
       recommendations: (fields[13] as List?)?.cast<String>(),
       summary: fields[14] as String?,
-      additionalInfo: (fields[15] as Map?)?.cast<String, dynamic>(),
-    );
+      additionalInfo: (fields[15] as Map?)?.cast<String, dynamic>());
   }
 
   @override

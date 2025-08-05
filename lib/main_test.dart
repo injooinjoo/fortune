@@ -14,14 +14,11 @@ void main() async {
   
   await Supabase.initialize(
     url: Environment.supabaseUrl,
-    anonKey: Environment.supabaseAnonKey,
-  );
+    anonKey: Environment.supabaseAnonKey);
   
   runApp(
     const ProviderScope(
-      child: TestApp(),
-    ),
-  );
+      child: TestApp()));
 }
 
 class TestApp extends StatelessWidget {
@@ -34,9 +31,6 @@ class TestApp extends StatelessWidget {
       home: Scaffold(
         appBar: AppBar(title: const Text('Test')),
         body: const Center(
-          child: Text('테스트 화면입니다'),
-        ),
-      ),
-    );
+          child: Text('테스트 화면입니다'))));
   }
 }

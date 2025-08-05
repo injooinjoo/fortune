@@ -14,8 +14,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
   TokenRefreshInterceptor({
     required this.dio,
-    required this.supabase,
-  });
+    required this.supabase});
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
@@ -81,8 +80,7 @@ class TokenRefreshInterceptor extends Interceptor {
             // Retry failed, pass through the error
             handler.next(DioException(
               requestOptions: options,
-              error: retryError,
-            ));
+              error: retryError));
             return;
           }
         }
@@ -152,7 +150,6 @@ extension DioTokenRefresh on Dio {
   void addTokenRefreshInterceptor(SupabaseClient supabase) {
     interceptors.add(TokenRefreshInterceptor(
       dio: this,
-      supabase: supabase,
-    ));
+      supabase: supabase));
   }
 }

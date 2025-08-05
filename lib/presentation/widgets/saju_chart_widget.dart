@@ -15,8 +15,7 @@ class SajuChartWidget extends ConsumerStatefulWidget {
   
   const SajuChartWidget({
     super.key,
-    required this.userProfile,
-  });
+    required this.userProfile});
 
   @override
   ConsumerState<SajuChartWidget> createState() => _SajuChartWidgetState();
@@ -117,31 +116,23 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         padding: AppSpacing.paddingAll20,
         decoration: BoxDecoration(
           color: theme.colorScheme.errorContainer,
-          borderRadius: AppDimensions.borderRadiusMedium,
-        ),
+          borderRadius: AppDimensions.borderRadiusMedium),
         child: Column(
           children: [
             Icon(
               Icons.error_outline,
               color: theme.colorScheme.onErrorContainer,
-              size: 48,
-            ),
+              size: 48),
             SizedBox(height: AppSpacing.spacing4),
             Text(
               sajuState.error!,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-              textAlign: TextAlign.center,
-            ),
+                color: theme.colorScheme.onErrorContainer),
+              textAlign: TextAlign.center),
             SizedBox(height: AppSpacing.spacing4),
             ElevatedButton(
               onPressed: _initializeSaju,
-              child: const Text('다시 시도'),
-            ),
-          ],
-        ),
-      );
+              child: const Text('다시 시도'))]));
     }
     
     final sajuData = sajuState.sajuData;
@@ -154,32 +145,23 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
+            width: 1)),
         child: Column(
           children: [
             Icon(
               Icons.info_outline,
               color: theme.colorScheme.primary,
-              size: 48,
-            ),
+              size: 48),
             SizedBox(height: AppSpacing.spacing4),
             Text(
               '사주 정보가 없습니다',
-              style: theme.textTheme.titleMedium,
-            ),
+              style: theme.textTheme.titleMedium),
             SizedBox(height: AppSpacing.spacing2),
             Text(
               '생년월일시를 입력하면 정확한 사주팔자를 계산해드립니다.',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
+                color: theme.colorScheme.onSurface.withOpacity(0.7)),
+              textAlign: TextAlign.center)]));
     }
     
     return Container(
@@ -189,9 +171,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -201,9 +181,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               Text(
                 '나의 사주팔자',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               IconButton(
                 onPressed: () {
                   HapticFeedback.lightImpact();
@@ -211,11 +189,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 },
                 icon: Icon(
                   Icons.refresh,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
+                  color: theme.colorScheme.primary))]),
           SizedBox(height: AppSpacing.spacing6),
           
           // Four Pillars
@@ -225,17 +199,12 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               _buildPillar(context, '시주\n時柱', sajuData['hour']),
               _buildPillar(context, '일주\n日柱', sajuData['day']),
               _buildPillar(context, '월주\n月柱', sajuData['month']),
-              _buildPillar(context, '년주\n年柱', sajuData['year']),
-            ],
-          ),
+              _buildPillar(context, '년주\n年柱', sajuData['year'])]),
           
           SizedBox(height: AppSpacing.spacing6),
           
           // Summary info
-          _buildSummaryInfo(context, sajuData),
-        ],
-      ),
-    );
+          _buildSummaryInfo(context, sajuData)]));
   }
   
   Widget _buildPillar(BuildContext context, String title, Map<String, dynamic>? pillarData) {
@@ -247,9 +216,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           Text(
             title,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           SizedBox(height: AppSpacing.spacing2),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -257,16 +224,10 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               color: theme.colorScheme.surface,
               borderRadius: AppDimensions.borderRadiusSmall,
               border: Border.all(
-                color: theme.colorScheme.outline.withOpacity(0.1),
-              ),
-            ),
+                color: theme.colorScheme.outline.withOpacity(0.1))),
             child: Text(
               '?',
-              style: theme.textTheme.titleLarge,
-            ),
-          ),
-        ],
-      );
+              style: theme.textTheme.titleLarge))]);
     }
     
     final heavenlyStem = pillarData['heavenly_stem'] ?? {};
@@ -293,9 +254,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           Text(
             title,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
+              color: theme.colorScheme.onSurface.withOpacity(0.7))),
           SizedBox(height: AppSpacing.spacing2),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -305,40 +264,25 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 end: Alignment.bottomRight,
                 colors: [
                   _getColorForElement(heavenlyStem['element'] ?? '').withOpacity(0.8),
-                  _getColorForElement(earthlyBranch['element'] ?? '').withOpacity(0.6),
-                ],
-              ),
+                  _getColorForElement(earthlyBranch['element'] ?? '').withOpacity(0.6)]),
               borderRadius: AppDimensions.borderRadiusSmall,
               boxShadow: [
                 BoxShadow(
                   color: _getColorForElement(heavenlyStem['element'] ?? '').withOpacity(0.3),
                   blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
+                  offset: const Offset(0, 4))]),
             child: Column(
               children: [
                 Text(
                   heavenlyStem['character'] ?? '',
                   style: AppTypography.headlineMedium.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 Text(
                   earthlyBranch['character'] ?? '',
                   style: AppTypography.headlineMedium.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    fontWeight: FontWeight.bold))]))]));
   }
   
   Widget _buildSummaryInfo(BuildContext context, Map<String, dynamic> sajuData) {
@@ -350,18 +294,14 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
         color: theme.colorScheme.surface,
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.1),
-        ),
-      ),
+          color: theme.colorScheme.outline.withOpacity(0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '오행 구성',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           SizedBox(height: AppSpacing.spacing4),
           _buildElementBalance(sajuData['element_balance'] ?? {}),
           
@@ -370,14 +310,9 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
           Text(
             '주요 특성',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           SizedBox(height: AppSpacing.spacing4),
-          _buildCharacteristics(sajuData['characteristics'] ?? {}),
-        ],
-      ),
-    );
+          _buildCharacteristics(sajuData['characteristics'] ?? {})]));
   }
   
   Widget _buildElementBalance(Map<String, dynamic> elementBalance) {
@@ -387,8 +322,7 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
       'fire': '화(火)', 
       'earth': '토(土)',
       'metal': '금(金)',
-      'water': '수(水)',
-    };
+      'water': '수(水)'};
     
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -401,27 +335,18 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
               height: 40,
               decoration: BoxDecoration(
                 color: _getColorForElement(element),
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: Center(
                 child: Text(
                   count.toString(),
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+                    fontWeight: FontWeight.bold)))),
             SizedBox(height: AppSpacing.spacing1),
             Text(
               elementNames[element] ?? '',
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-          ],
-        );
-      }).toList(),
-    );
+              style: Theme.of(context).textTheme.labelSmall)]);
+      }).toList());
   }
   
   Widget _buildCharacteristics(Map<String, dynamic> characteristics) {
@@ -439,26 +364,18 @@ class _SajuChartWidgetState extends ConsumerState<SajuChartWidget> {
                 Icon(
                   Icons.check_circle,
                   color: theme.colorScheme.primary,
-                  size: 16,
-                ),
+                  size: 16),
                 SizedBox(width: AppSpacing.spacing2),
                 Expanded(
                   child: Text(
                     value.toString(),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    style: theme.textTheme.bodyMedium))])));
       }
     });
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: items,
-    );
+      children: items);
   }
   
   Color _getColorForElement(String? element) {

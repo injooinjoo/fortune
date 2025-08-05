@@ -74,8 +74,7 @@ class AppAnimations {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
+    Widget child) {
     return FadeTransition(opacity: animation, child: child);
   }
 
@@ -83,15 +82,13 @@ class AppAnimations {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
+    Widget child) {
     const begin = Offset(1.0, 0.0);
     const end = Offset.zero;
     const curve = curvePageTransition;
 
     var tween = Tween(begin: begin, end: end).chain(
-      CurveTween(curve: curve),
-    );
+      CurveTween(curve: curve));
 
     return SlideTransition(position: animation.drive(tween), child: child);
   }
@@ -100,28 +97,24 @@ class AppAnimations {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
+    Widget child) {
     const curve = curveScale;
 
     var tween = Tween(begin: 0.9, end: 1.0).chain(
-      CurveTween(curve: curve),
-    );
+      CurveTween(curve: curve));
 
     return ScaleTransition(
         scale: animation.drive(tween),
         child: FadeTransition(
           opacity: animation,
-          child: child,
-        ));
+          child: child));
   }
 
   // Common animated widgets
   static Widget animatedContainer({
     required Widget child,
     Duration duration = durationMedium,
-    Curve curve = curveStandard,
-  }) {
+    Curve curve = curveStandard}) {
     return AnimatedContainer(duration: duration, curve: curve, child: child);
   }
 
@@ -129,8 +122,7 @@ class AppAnimations {
     required Widget child,
     required double opacity,
     Duration duration = durationShort,
-    Curve curve = curveFade,
-  }) {
+    Curve curve = curveFade}) {
     return AnimatedOpacity(
         opacity: opacity, duration: duration, curve: curve, child: child);
   }
@@ -139,8 +131,7 @@ class AppAnimations {
     required Widget child,
     required double scale,
     Duration duration = durationMicro,
-    Curve curve = curveScale,
-  }) {
+    Curve curve = curveScale}) {
     return AnimatedScale(
         scale: scale, duration: duration, curve: curve, child: child);
   }
@@ -154,22 +145,19 @@ class AppAnimations {
   static Widget shimmerLoading({
     required double width,
     required double height,
-    BorderRadius? borderRadius,
-  }) {
+    BorderRadius? borderRadius}) {
     return Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
           color: Colors.grey.withValues(alpha: 0.3),
-          borderRadius: borderRadius ?? BorderRadius.circular(4),
-        ));
+          borderRadius: borderRadius ?? BorderRadius.circular(4)));
   }
 
   // Pulse animation for loading states
   static Widget pulseAnimation({
     required Widget child,
-    Duration duration = durationSkeleton,
-  }) {
+    Duration duration = durationSkeleton}) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 1.0, end: 0.5),
       duration: duration,
@@ -177,14 +165,12 @@ class AppAnimations {
       builder: (context, value, child) {
         return Opacity(
           opacity: value,
-          child: child,
-        );
+          child: child);
       },
       child: child,
       onEnd: () {
         // Loop animation
-      },
-    );
+      });
   }
 
   // Hero animation tag generator

@@ -39,8 +39,7 @@ class FortuneModel extends HiveObject {
     required this.createdAt,
     this.metadata,
     this.tokenCost = 1,
-    this.rawResponse,
-  });
+    this.rawResponse});
 
   factory FortuneModel.fromJson(Map<String, dynamic> json) => 
       _$FortuneModelFromJson(json);
@@ -117,8 +116,7 @@ class DailyFortuneModel extends HiveObject {
     required this.caution,
     required this.bestTime,
     required this.compatibility,
-    required this.elements,
-  });
+    required this.elements});
 
   factory DailyFortuneModel.fromJson(Map<String, dynamic> json) => 
       _$DailyFortuneModelFromJson(json);
@@ -137,8 +135,7 @@ class DailyFortuneModel extends HiveObject {
     caution: caution,
     bestTime: bestTime,
     compatibility: compatibility,
-    elements: elements.toEntity(),
-  );
+    elements: elements.toEntity());
 }
 
 @HiveType(typeId: 3)
@@ -160,8 +157,7 @@ class FortuneElementsModel extends HiveObject {
     required this.love,
     required this.career,
     required this.money,
-    required this.health,
-  });
+    required this.health});
 
   factory FortuneElementsModel.fromJson(Map<String, dynamic> json) => 
       _$FortuneElementsModelFromJson(json);

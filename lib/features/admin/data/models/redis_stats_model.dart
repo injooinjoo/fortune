@@ -10,8 +10,7 @@ class RedisStatsModel with _$RedisStatsModel {
     required RedisCacheStats cache,
     required RedisOperationStats operations,
     required RedisPerformanceStats performance,
-    required Map<String, RateLimitInfo> rateLimits,
-  }) = _RedisStatsModel;
+    required Map<String, RateLimitInfo> rateLimits}) = _RedisStatsModel;
 
   factory RedisStatsModel.fromJson(Map<String, dynamic> json) =>
       _$RedisStatsModelFromJson(json);
@@ -24,8 +23,7 @@ class RedisConnectionInfo with _$RedisConnectionInfo {
     required String status,
     String? error,
     required int totalConnections,
-    required int activeConnections,
-  }) = _RedisConnectionInfo;
+    required int activeConnections}) = _RedisConnectionInfo;
 
   factory RedisConnectionInfo.fromJson(Map<String, dynamic> json) =>
       _$RedisConnectionInfoFromJson(json);
@@ -38,8 +36,7 @@ class RedisCacheStats with _$RedisCacheStats {
     required int misses,
     required double hitRate,
     required int totalKeys,
-    required String memoryUsage,
-  }) = _RedisCacheStats;
+    required String memoryUsage}) = _RedisCacheStats;
 
   factory RedisCacheStats.fromJson(Map<String, dynamic> json) =>
       _$RedisCacheStatsFromJson(json);
@@ -52,8 +49,7 @@ class RedisOperationStats with _$RedisOperationStats {
     required int writes,
     required int deletes,
     required int errors,
-    required int totalOperations,
-  }) = _RedisOperationStats;
+    required int totalOperations}) = _RedisOperationStats;
 
   factory RedisOperationStats.fromJson(Map<String, dynamic> json) =>
       _$RedisOperationStatsFromJson(json);
@@ -65,8 +61,7 @@ class RedisPerformanceStats with _$RedisPerformanceStats {
     required double avgResponseTime,
     required double maxResponseTime,
     required double minResponseTime,
-    required int slowQueries,
-  }) = _RedisPerformanceStats;
+    required int slowQueries}) = _RedisPerformanceStats;
 
   factory RedisPerformanceStats.fromJson(Map<String, dynamic> json) =>
       _$RedisPerformanceStatsFromJson(json);
@@ -79,8 +74,7 @@ class RateLimitInfo with _$RateLimitInfo {
     required int limit,
     required int used,
     required int remaining,
-    required DateTime resetAt,
-  }) = _RateLimitInfo;
+    required DateTime resetAt}) = _RateLimitInfo;
 
   factory RateLimitInfo.fromJson(Map<String, dynamic> json) =>
       _$RateLimitInfoFromJson(json);

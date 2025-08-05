@@ -30,8 +30,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         usedTokens: response['usedTokens'],
         remainingTokens: response['tokenBalance'],
         lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: response['isPremium'],
-      );
+        hasUnlimitedAccess: response['isPremium']);
     } catch (e) {
       throw _handleError(e);
     }
@@ -43,8 +42,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiEndpoints.tokenHistory,
         queryParameters: {
-          if (limit != null) 'limit': null,
-        }
+          if (limit != null) 'limit': null}
       );
       
       final List<dynamic> data = response['data'] ?? [];
@@ -56,8 +54,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         balanceAfter: json['balanceAfter'],
         description: json['description'],
         referenceId: json['fortuneType'],
-        createdAt: DateTime.parse(json['createdAt']),
-      )).toList();
+        createdAt: DateTime.parse(json['createdAt']))).toList();
     } catch (e) {
       throw _handleError(e);
     }
@@ -70,9 +67,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         '/api/tokens/consume',
         data: {
           'amount': amount,
-          'fortuneType': null,
-        },
-      );
+          'fortuneType': null});
       
       return TokenBalance(
         userId: response['userId'] ?? '',
@@ -80,8 +75,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         usedTokens: response['usedTokens'],
         remainingTokens: response['remainingBalance'],
         lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: response['isPremium'],
-      );
+        hasUnlimitedAccess: response['isPremium']);
     } catch (e) {
       throw _handleError(e);
     }
@@ -106,8 +100,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         bonusTokens: json['bonusTokens'],
         description: json['description'],
         isBestValue: json['isBestValue'],
-        isPopular: json['isPopular'],
-      )).toList();
+        isPopular: json['isPopular'])).toList();
     } catch (e) {
       throw _handleError(e);
     }
@@ -121,8 +114,7 @@ class TokenRemoteDataSourceImpl implements TokenRemoteDataSource {
         data: {
           'packageId': packageId,
           'type': 'token'
-        },
-      );
+        });
       
       return response;
     } catch (e) {

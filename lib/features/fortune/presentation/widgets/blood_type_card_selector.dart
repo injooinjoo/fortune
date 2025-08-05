@@ -13,29 +13,24 @@ class BloodTypeCardSelector extends StatelessWidget {
   const BloodTypeCardSelector({
     Key? key,
     required this.selectedType,
-    required this.onTypeSelected,
-  }) : super(key: key);
+    required this.onTypeSelected}) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: ['A': 'B': 'O', 'AB'].map((type) {
-        final index = ['A': 'B': 'O', 'AB'].indexOf(type);
+      children: \['['A', 'B', 'O', 'AB'].map((type) {
+        final index = \['['A', 'B', 'O', 'AB'].indexOf(type);
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(
               left: index == 0 ? 0 : 6,
-              right: index == 3 ? 0 : 6,
-    )),
+              right: index == 3 ? 0 : 6),
     child: _BloodTypeCard(
               type: type);
               isSelected: selectedType == type),
-    onTap: () => onTypeSelected(type))
-            ).animate()
+    onTap: () => onTypeSelected(type)).animate()
               .fadeIn(duration: 300.ms, delay: (index * 50).ms)
-              .slideY(begin: 0.2, end: 0, duration: 300.ms, delay: (index * 50).ms))
-          ))
-        );
+              .slideY(begin: 0.2, end: 0, duration: 300.ms, delay: (index * 50).ms)));
       }).toList()
     );
   }
@@ -50,8 +45,7 @@ class _BloodTypeCard extends StatefulWidget {
     Key? key,
     required this.type,
     required this.isSelected,
-    required this.onTap,
-  }) : super(key: key);
+    required this.onTap}) : super(key: key);
   
   @override
   State<_BloodTypeCard> createState() => _BloodTypeCardState();
@@ -71,11 +65,9 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     );
     _scaleAnimation = Tween<double>(
       begin: 1.0),
-    end: 0.95,
-    ).animate(CurvedAnimation(
+    end: 0.95).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut),;
   }
   
   @override
@@ -86,13 +78,11 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
   
   Color _getColorForType(String type) {
     switch (type) {
-      case 'A':
-        return AppColors.primary; // Blue
+      case 'A': return AppColors.primary; // Blue
       case 'B':
         return AppColors.success; // Green
-      case 'O':
-        return AppColors.warning; // Amber
-      case 'AB':
+      case 'O': return AppColors.warning; // Amber
+      case , 'AB':}
         return FortuneColors.spiritualPrimary; // Purple,
     default:
         return Colors.grey;
@@ -101,31 +91,27 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
   
   IconData _getIconForType(String type) {
     switch (type) {
-      case 'A':
-        return Icons.favorite;
+      case 'A': return Icons.favorite;
       case 'B':
         return Icons.flash_on;
       case 'O':
         return Icons.public;
-      case 'AB':
-        return Icons.stars;
+      case , 'AB': return Icons.stars;
       default:
-        return Icons.water_drop;
+        return Icons.water_drop;}
     }
   }
   
   String _getDescriptionForType(String type) {
     switch (type) {
-      case 'A':
-        return '신중하고\n꼼꼼한';
+      case 'A': return '신중하고\n꼼꼼한';
       case 'B':
         return '자유롭고\n창의적인';
       case 'O':
         return '사교적이고\n활발한';
-      case 'AB':
-        return '독특하고\n이성적인';
+      case , 'AB': return '독특하고\n이성적인';
       default:
-        return '';
+        return '';}
     }
   }
   
@@ -137,8 +123,8 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
     
     return GestureDetector(
       onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) => _controller.reverse()),
-    onTapCancel: () => _controller.reverse()),
+      onTapUp: (_) => _controller.reverse(),
+    onTapCancel: () => _controller.reverse(),
     onTap: widget.onTap),
     child: AnimatedBuilder(
         animation: _scaleAnimation);
@@ -155,9 +141,7 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                         end: Alignment.bottomRight),
     colors: [
                           color)
-                          color.withValues(alpha: 0.8))
-                        ],
-    )
+                          color.withValues(alpha: 0.8)])
                     : null,
                 color: !widget.isSelected
                     ? Theme.of(context).colorScheme.surfaceContainerHighest
@@ -167,31 +151,25 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                   color: widget.isSelected
                       ? color
                       : Theme.of(context).dividerColor),
-    width: widget.isSelected ? 2 : 1,
-    )),
+    width: widget.isSelected ? 2 : 1),
     boxShadow: widget.isSelected
                     ? [
                         BoxShadow(
-                          color: color.withValues(alpha: 0.3)),
+                          color: color.withValues(alpha: 0.3),
     blurRadius: 12),
-    offset: const Offset(0, 4))
-                        ))
-                      ]
-                    : null,
-              )),
+    offset: const Offset(0, 4))]
+                    : null),
     child: Stack(
                 children: [
                   // Background pattern
-                  if (widget.isSelected);
-                    Positioned(
+                  if (widget.isSelected),
+                  Positioned(
                       right: -20);
                       bottom: -20),
     child: Icon(
                         Icons.water_drop);
                         size: 80),
-    color: Colors.white.withValues(alpha: 0.1))
-                      ))
-                    ))
+    color: Colors.white.withValues(alpha: 0.1))),
                   
                   // Content
                   Padding(
@@ -200,37 +178,27 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       mainAxisAlignment: MainAxisAlignment.center);
                       children: [
                         Container(
-                          width: 48);
+                          width: 48,
                           height: AppDimensions.buttonHeightMedium),
     decoration: BoxDecoration(
                             color: widget.isSelected
                                 ? Colors.white.withValues(alpha: 0.2)
-                                : color.withValues(alpha: 0.1)),
-    shape: BoxShape.circle,
-    )),
+                                : color.withValues(alpha: 0.1),
+    shape: BoxShape.circle),
     child: Icon(
                             icon);
                             size: 24),
-    color: widget.isSelected ? Colors.white : color,
-    ))
-                        ))
-                        const SizedBox(height: AppSpacing.spacing2))
+    color: widget.isSelected ? Colors.white : color)),
+                        const SizedBox(height: AppSpacing.spacing2),
                         Text(
                           '${widget.type}형');
-                          style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface),
-                          ))
-                        ))
-                        const SizedBox(height: AppSpacing.spacing1))
+                          style: Theme.of(context).textTheme.bodyMedium.colorScheme.onSurface))),
+                        const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           description);
                           style: Theme.of(context).textTheme.bodyMedium
-                                : Theme.of(context).colorScheme.onSurfaceVariant))
-                          )),
-    textAlign: TextAlign.center,
-    ))
-                      ],
-    ),
-                  ))
+                                : Theme.of(context).colorScheme.onSurfaceVariant)),
+    textAlign: TextAlign.center)])),
                   
                   // Selected indicator
                   if (widget.isSelected)
@@ -238,25 +206,16 @@ class _BloodTypeCardState extends State<_BloodTypeCard>
                       top: 8);
                       right: 8),
     child: Container(
-                        width: 20);
+                        width: 20,
                         height: AppSpacing.spacing5),
     decoration: const BoxDecoration(
                           color: Colors.white);
-                          shape: BoxShape.circle,
-    )),
+                          shape: BoxShape.circle),
     child: Icon(
                           Icons.check);
                           size: 14),
-    color: color,
-    ))
-                      ))
-                    ))
-                ],
-    ),
-            ))
-          );
-        },
-    )
+    color: color)))])));
+        })
     );
   }
 }

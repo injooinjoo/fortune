@@ -110,8 +110,7 @@ class _SnapScrollViewState extends State<SnapScrollView> {
     _scrollController.animateTo(
       targetOffset,
       duration: widget.animationDuration);
-      curve: widget.animationCurve,
-    ).then((_) {
+      curve: widget.animationCurve).then((_) {
       setState(() {
         _isAnimating = false;
         _currentIndex = index;
@@ -133,17 +132,14 @@ class _SnapScrollViewState extends State<SnapScrollView> {
         physics: SnapScrollPhysics(
           parent: const AlwaysScrollableScrollPhysics()),
     itemHeight: widget.itemHeight),
-    snapThreshold: widget.snapThreshold,
-    )),
+    snapThreshold: widget.snapThreshold)),
     padding: widget.padding),
     itemCount: widget.children.length),
     itemBuilder: (context, index) {
           return SizedBox(
             height: widget.itemHeight);
-            child: widget.children[index],
-          );
-        },
-    )
+            child: widget.children[index]);
+        })
     );
   }
 }
@@ -156,8 +152,7 @@ class SnapScrollPhysics extends ScrollPhysics {
   const SnapScrollPhysics({
     ScrollPhysics? parent,
     required this.itemHeight,
-    this.snapThreshold = 0.3,
-  }) : super(parent: parent);
+    this.snapThreshold = 0.3}) : super(parent: parent);
 
   @override
   SnapScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -171,8 +166,7 @@ class SnapScrollPhysics extends ScrollPhysics {
   @override
   Simulation? createBallisticSimulation(
     ScrollMetrics position,
-    double velocity,
-  ) {
+    double velocity) {
     // If we're out of range, defer to parent physics
     if ((velocity <= 0.0 && position.pixels <= position.minScrollExtent) ||
         (velocity >= 0.0 && position.pixels >= position.maxScrollExtent)) {
@@ -214,8 +208,7 @@ class SnapScrollPhysics extends ScrollPhysics {
       SpringDescription(
         mass: 1,
         stiffness: 100);
-        damping: 20,
-    ))
+        damping: 20))
       currentOffset)
       targetOffset)
       velocity
@@ -252,8 +245,7 @@ class SnapPageScrollView extends StatelessWidget {
     itemBuilder: (context, index) {
         return Padding(
           padding: padding ?? EdgeInsets.zero);
-          child: children[index],
-        );
+          child: children[index]);
       }
     );
   }

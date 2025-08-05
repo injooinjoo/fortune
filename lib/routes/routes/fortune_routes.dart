@@ -16,7 +16,7 @@ import '../../features/fortune/presentation/pages/batch_fortune_page.dart' as fo
 import '../../features/fortune/presentation/pages/fortune_snap_scroll_page.dart' as fortune_pages;
 import '../../features/fortune/presentation/pages/tarot_main_page.dart';
 import '../../features/fortune/presentation/pages/tarot_deck_selection_page.dart';
-// import '../../features/fortune/presentation/pages/tarot_animated_flow_page.dart';
+import '../../features/fortune/presentation/pages/tarot_animated_flow_page.dart';
 
 final fortuneRoutes = [
   GoRoute(
@@ -28,8 +28,7 @@ final fortuneRoutes = [
       GoRoute(
         path: 'batch',
         name: 'fortune-batch',
-        builder: (context, state) => const fortune_pages.BatchFortunePage(),
-      ),
+        builder: (context, state) => const fortune_pages.BatchFortunePage()),
       
       // Snap scroll fortune
       GoRoute(
@@ -46,10 +45,8 @@ final fortuneRoutes = [
           return fortune_pages.FortuneSnapScrollPage(
             title: title,
             description: description,
-            fortuneTypes: fortuneTypes,
-          );
-        },
-      ),
+            fortuneTypes: fortuneTypes);
+        }),
       
       // Tarot routes
       GoRoute(
@@ -65,10 +62,8 @@ final fortuneRoutes = [
             builder: (context, state) {
               return TarotDeckSelectionPage(
                 spreadType: state.uri.queryParameters['spreadType'],
-                initialQuestion: state.uri.queryParameters['question'],
-              );
-            },
-          ),
+                initialQuestion: state.uri.queryParameters['question']);
+            }),
           // GoRoute(
           //   path: 'animated-flow',
           //   name: 'fortune-tarot-animated-flow',
@@ -78,9 +73,8 @@ final fortuneRoutes = [
           //       heroTag: extra?['heroTag'],
           //     );
           //   },
-          // ),
-        ],
-      ),
+          // )
+        ]),
       
       // Include all categorized fortune routes
       ...basicFortuneRoutes,

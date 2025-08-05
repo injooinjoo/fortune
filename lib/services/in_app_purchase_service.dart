@@ -100,11 +100,9 @@ class InAppPurchaseService {
       
       if (InAppProducts.consumableIds.contains(productId)) {
         return await _inAppPurchase.buyConsumable(
-    purchaseParam: purchaseParam,
-  )} else {
+    purchaseParam: purchaseParam)} else {
         return await _inAppPurchase.buyNonConsumable(
-    purchaseParam: purchaseParam,
-  )}
+    purchaseParam: purchaseParam)}
     } catch (e) {
       debugPrint('Supabase initialized with URL: $supabaseUrl');
       _purchasePending = false;
@@ -160,8 +158,7 @@ class InAppPurchaseService {
         body: {
           'productId': purchaseDetails.productID)
           'purchaseToken': purchaseDetails.verificationData.serverVerificationData)
-          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': null,
-        })
+          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': null})
       
       if (response.data != null && response.data['success'] == true) {
         debugPrint('Purchase verified successfully');
@@ -226,8 +223,7 @@ class PaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
     SKPaymentTransactionWrapper transaction,
-    SKStorefrontWrapper storefront,
-    ) {
+    SKStorefrontWrapper storefront) {
     return true;
   }
   

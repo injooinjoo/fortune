@@ -13,8 +13,7 @@ class TojeongFortunePage extends BaseFortunePage {
           title: '토정비결',
           description: '전통 64괘로 보는 한 해 운세',
           fortuneType: 'tojeong',
-          requiresUserInfo: true,
-        );
+          requiresUserInfo: true);
 
   @override
   ConsumerState<TojeongFortunePage> createState() => _TojeongFortunePageState();
@@ -31,34 +30,29 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
       'meaning': '하늘',
       'description': '강건함과 창조의 기운이 충만한 때입니다. 모든 일이 순조롭게 진행될 것입니다.',
       'element': '금(金)',
-      'color': null,
-    },
+      'color': Colors.amber},
     '000000': {
       'name': '곤위지(坤爲地)',
       'symbol': '☷',
       'meaning': '땅',
       'description': '포용력과 수용의 자세가 필요한 때입니다. 겸손함으로 성공을 이룰 수 있습니다.',
       'element': '토(土)',
-      'color': null,
-    },
+      'color': Colors.brown},
     '100010': {
       'name': '수뢰둔(水雷屯)',
       'symbol': '☵',
       'meaning': '어려움',
       'description': '시작의 어려움이 있으나 인내하면 좋은 결과를 얻을 것입니다.',
       'element': '수(水)',
-      'color': null,
-    },
+      'color': Colors.blue},
     '010001': {
       'name': '산수몽(山水蒙)',
       'symbol': '☶',
       'meaning': '계몽',
       'description': '배움과 깨달음의 시기입니다. 스승을 찾아 가르침을 받으세요.',
       'element': '토(土)',
-      'color': null,
-    },
+      'color': Colors.grey}
   };
-
   final List<String> _monthlyMeanings = [
     '새로운 시작의 기운이 강합니다. 계획을 세우기 좋은 때입니다.',
     '인내가 필요한 시기입니다. 조급해하지 마세요.',
@@ -71,22 +65,18 @@ class _TojeongFortunePageState extends BaseFortunePageState<TojeongFortunePage> 
     '정리와 마무리가 필요한 때입니다.',
     '새로운 도전을 준비하는 시기입니다.',
     '지혜가 필요한 달입니다. 신중하게 결정하세요.',
-    '한 해를 마무리하고 다음을 준비하는 시기입니다.',
-  ];
+    '한 해를 마무리하고 다음을 준비하는 시기입니다.'];
 
   @override
   void initState() {
     super.initState();
     _hexagramController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
-    );
+      duration: const Duration(seconds: 2));
     _hexagramAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _hexagramController,
-        curve: Curves.easeInOut,
-      ),
-    );
+        curve: Curves.easeInOut));
   }
 
   @override
@@ -152,31 +142,26 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         '전체운': overallScore,
         '상반기': 75 + (upperTrigram.hashCode % 20),
         '하반기': 70 + (lowerTrigram.hashCode % 25),
-        '변화운': null,
-      },
+        '변화운': null},
       description: description,
       luckyItems: {
         '주괘': hexagram['name'],
         '원소': hexagram['element'],
         '방향': _getDirectionFromElement(hexagram['element']),
         '행운의 달': '${_getBestMonth(monthlyFortunes)}월',
-        '주의할 달': '${_getWorstMonth(monthlyFortunes)}월',
-      },
+        '주의할 달': '${_getWorstMonth(monthlyFortunes)}월'},
       recommendations: [
         '${hexagram['element']}의 기운을 강화하는 활동을 하세요',
         '${_getDirectionFromElement(hexagram['element'])} 방향으로 여행을 가면 좋습니다',
         '${_getColorName(hexagram['color'] as Color)}색 물건을 소지하세요',
-        '매월 초에 월별 운세를 확인하고 계획을 세우세요',
-      ],
+        '매월 초에 월별 운세를 확인하고 계획을 세우세요'],
       metadata: {
         'hexagram': hexagram,
         'upperTrigram': upperTrigram,
         'lowerTrigram': lowerTrigram,
         'changingLine': changingLine,
         'monthlyFortunes': monthlyFortunes,
-        'year': null,
-      },
-    );
+        'year': currentYear});
   }
 
   String _calculateUpperTrigram(DateTime birthDate, int currentYear) {
@@ -200,8 +185,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       '011',
       '010',
       '001',
-      '000',
-    ];
+      '000'];
     return trigrams[index % 8];
   }
 
@@ -216,8 +200,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       '변화와 도전',
       '안정과 조화',
       '리더십과 책임',
-      '완성과 새로운 시작',
-    ];
+      '완성과 새로운 시작'];
     return advices[line - 1];
   }
 
@@ -229,14 +212,13 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         'month': month,
         'score': score,
         'meaning': _monthlyMeanings[month - 1],
-        'element': null,
-      });
+        'element': _getMonthElement(month)});
     }
     return fortunes;
   }
 
   String _getMonthElement(int month) {
-    final elements = ['목': '목': '토', '화', '화', '토', '금', '금', '토', '수', '수', '토'];
+    final elements = ['목', '목', '토', '화', '화', '토', '금', '금', '토', '수', '수', '토'];
     return elements[month - 1];
   }
 
@@ -267,8 +249,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       '화(火)': '남쪽',
       '토(土)': '중앙',
       '금(金)': '서쪽',
-      '수(水)': '북쪽',
-    };
+      '수(水)': '북쪽'};
     return directions[element] ?? '중앙';
   }
 
@@ -295,10 +276,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
           _buildElementBalance(),
           _buildChangingLineInfo(),
           _buildTojeongTips(),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+          const SizedBox(height: 32)]));
   }
 
   Widget _buildHexagramDisplay() {
@@ -326,8 +304,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                 children: [
                   Text(
                     '괘상',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
+                    style: Theme.of(context).textTheme.headlineSmall),
                   const SizedBox(height: 24),
                   Container(
                     width: 150,
@@ -336,58 +313,37 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          (hexagram['color'],
-                          (hexagram['color'],
-                        ],
-                      ),
+                          (hexagram['color'] as Color).withOpacity(0.2),
+                          (hexagram['color'] as Color).withOpacity(0.6)]),
                       boxShadow: [
                         BoxShadow(
-                          color: (hexagram['color'],
+                          color: (hexagram['color'] as Color).withOpacity(0.3),
                           blurRadius: 30,
-                          spreadRadius: 10,
-                        ),
-                      ],
-                    ),
+                          spreadRadius: 10)]),
                     child: Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _buildTrigram(upperTrigram, '상괘'),
                           const SizedBox(height: 16),
-                          _buildTrigram(lowerTrigram, '하괘'),
-                        ],
-                      ),
-                    ),
-                  ),
+                          _buildTrigram(lowerTrigram, '하괘')]))),
                   const SizedBox(height: 16),
                   Text(
                     hexagram['name'],
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: (hexagram['color'],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                      color: (hexagram['color'] as Color).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       '${hexagram['meaning']} • ${hexagram['element']}',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: hexagram['color'],
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                            color: hexagram['color'] as Color,
+                            fontWeight: FontWeight.w600)))]))));
+      });
   }
 
   Widget _buildTrigram(String trigram, String label) {
@@ -395,8 +351,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+          style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 4),
         Column(
           children: trigram.split('').map((bit) {
@@ -411,16 +366,10 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                 border: bit == '0'
                     ? Border.all(
                         color: Theme.of(context).colorScheme.primary,
-                        width: 2,
-                      )
+                        width: 2)
                     : null,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
+                borderRadius: BorderRadius.circular(4)));
+          }).toList())]);
   }
 
   Widget _buildMonthlyChart() {
@@ -442,15 +391,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               children: [
                 Icon(
                   Icons.calendar_month,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '월별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -476,30 +421,14 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                                   end: Alignment.topCenter,
                                   colors: [
                                     _getScoreColor(score),
-                                    _getScoreColor(score).withOpacity(0.5),
-                                  ],
-                                ),
+                                    _getScoreColor(score).withOpacity(0.5)]),
                                 borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(4),
-                                ),
-                              ),
-                          ),
+                                  top: Radius.circular(4)))),
                           const SizedBox(height: 8),
                           Text(
                             '$month월',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                            style: Theme.of(context).textTheme.bodySmall)])));
+                }).toList()))])));
   }
 
   Color _getScoreColor(int score) {
@@ -534,15 +463,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               children: [
                 Icon(
                   Icons.balance,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '오행 균형',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...elementCounts.entries.map((entry) {
               final element = entry.key;
@@ -561,32 +486,19 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
+                              ?.copyWith(fontWeight: FontWeight.bold)),
                         Text(
                           '$count개월',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
+                          style: Theme.of(context).textTheme.bodyMedium)]),
                     const SizedBox(height: 4),
                     LinearProgressIndicator(
                       value: percentage,
                       backgroundColor:
                           Theme.of(context).colorScheme.primary.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        _getElementColor(element),
-                      ),
-                      minHeight: 8,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                        _getElementColor(element)),
+                      minHeight: 8)]));
+            }).toList()])));
   }
 
   Color _getElementColor(String element) {
@@ -595,8 +507,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       '화': Colors.red,
       '토': Colors.brown,
       '금': Colors.amber,
-      '수': null,
-    };
+      '수': Colors.blue};
     return colors[element] ?? Colors.grey;
   }
 
@@ -613,9 +524,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
         gradient: LinearGradient(
           colors: [
             Colors.purple.withOpacity(0.1),
-            Colors.purple.withOpacity(0.05),
-          ],
-        ),
+            Colors.purple.withOpacity(0.05)]),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -624,15 +533,11 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
               children: [
                 Icon(
                   Icons.change_circle,
-                  color: Colors.purple,
-                ),
+                  color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
                   '변효 해석',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -640,23 +545,18 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                 color: Colors.purple.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.purple.withOpacity(0.3),
-                ),
-              ),
+                  color: Colors.purple.withOpacity(0.3))),
               child: Column(
                 children: [
                   Text(
                     '제${changingLine}효',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.purple,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
+                          fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
                     _getChangingLineAdvice(changingLine),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                    style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(height: 12),
                   Text(
                     _getChangingLineDetail(changingLine),
@@ -665,16 +565,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.7),
-                        ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                              .withOpacity(0.7)))]))])));
   }
 
   String _getChangingLineDetail(int line) {
@@ -684,8 +575,7 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
       '변화의 시기입니다. 유연하게 대처하되 중심을 잃지 마세요.',
       '안정과 조화를 추구하며 주변과의 관계를 돈독히 하세요.',
       '리더십을 발휘할 때입니다. 책임감을 가지고 행동하세요.',
-      '한 사이클이 끝나고 새로운 시작을 준비하는 시기입니다.',
-    ];
+      '한 사이클이 끝나고 새로운 시작을 준비하는 시기입니다.'];
     return details[line - 1];
   }
 
@@ -699,23 +589,18 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
             children: [
               Icon(
                 Icons.tips_and_updates,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 '토정비결 활용법',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
             '매월 초에 해당 월의 운세를 다시 확인하고 계획을 세우세요',
             '변효가 나타내는 시기에는 특히 신중하게 행동하세요',
             '본인의 오행과 맞는 색상, 방향, 음식을 활용하세요',
             '좋은 달에는 적극적으로, 주의할 달에는 보수적으로 행동하세요',
-            '토정비결은 참고용이며, 본인의 노력이 가장 중요합니다',
-          ].map((tip) {
+            '토정비결은 참고용이며, 본인의 노력이 가장 중요합니다'].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -724,21 +609,12 @@ ${_formatMonthlyFortunes(monthlyFortunes)}
                   Icon(
                     Icons.check_circle,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                    color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                      style: Theme.of(context).textTheme.bodyMedium))]));
+          }).toList()]));
   }
 }

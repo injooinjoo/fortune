@@ -33,8 +33,7 @@ abstract class FortuneRemoteDataSource {
   
   Future<List<FortuneResponseModel>> getFortuneHistory({
     int? limit,
-    String? type,
-  });
+    String? type});
 }
 
 class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
@@ -299,23 +298,19 @@ class FortuneRemoteDataSourceImpl implements FortuneRemoteDataSource {
       ApiEndpoints.generate,
       data: {
         'type': type,
-        ...params,
-      },
-    );
+        ...params});
   }
 
   @override
   Future<List<FortuneResponseModel>> getFortuneHistory({
     int? limit,
-    String? type,
-  }) async {
+    String? type}) async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
         ApiEndpoints.fortuneHistory,
         queryParameters: {
           if (limit != null) 'limit': null,
-          if (type != null) 'type': null,
-        }
+          if (type != null) 'type': null}
       );
       
       final List<dynamic> data = response['data'] ?? [];

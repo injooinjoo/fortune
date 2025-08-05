@@ -27,13 +27,11 @@ class WallWish {
     required this.color,
     required this.rotation,
     required this.position,
-    this.isLiked = false,
-  });
+    this.isLiked = false});
 
   WallWish copyWith({
     int? likes,
-    bool? isLiked,
-  }) {
+    bool? isLiked}) {
     return WallWish(
       id: id,
       text: text,
@@ -43,8 +41,7 @@ class WallWish {
       color: color,
       rotation: rotation,
       position: position,
-      isLiked: isLiked ?? this.isLiked,
-    );
+      isLiked: isLiked ?? this.isLiked);
   }
 }
 
@@ -60,8 +57,7 @@ final List<Color> wishColors = [
 
 // Providers
 final wishesProvider = StateNotifierProvider<WishesNotifier, List<WallWish>>(
-  (ref) => WishesNotifier(),
-);
+  (ref) => WishesNotifier());
 
 class WishesNotifier extends StateNotifier<List<WallWish>> {
   WishesNotifier() : super([]) {
@@ -79,8 +75,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
         likes: 23,
         color: wishColors[0],
         rotation: random.nextDouble() * 0.2 - 0.1,
-        position: const Offset(0.1, 0.1),
-      ),
+        position: const Offset(0.1, 0.1)),
       WallWish(
         id: '2',
         text: '가족 모두 건강하게 지내길 🙏',
@@ -89,8 +84,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
         likes: 45,
         color: wishColors[1],
         rotation: random.nextDouble() * 0.2 - 0.1,
-        position: const Offset(0.6, 0.2),
-      ),
+        position: const Offset(0.6, 0.2)),
       WallWish(
         id: '3',
         text: '사랑하는 사람과 결혼하고 싶어요 💕',
@@ -99,8 +93,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
         likes: 67,
         color: wishColors[2],
         rotation: random.nextDouble() * 0.2 - 0.1,
-        position: const Offset(0.3, 0.4),
-      ),
+        position: const Offset(0.3, 0.4)),
       WallWish(
         id: '4',
         text: '부자가 되고 싶어요! 로또 1등 당첨!',
@@ -109,9 +102,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
         likes: 89,
         color: wishColors[3],
         rotation: random.nextDouble() * 0.2 - 0.1,
-        position: const Offset(0.7, 0.6),
-      ),
-    ];
+        position: const Offset(0.7, 0.6))];
   }
 
   void addWish(String text, String author) {
@@ -126,9 +117,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
       rotation: random.nextDouble() * 0.2 - 0.1,
       position: Offset(
         random.nextDouble() * 0.8,
-        random.nextDouble() * 0.8,
-      ),
-    );
+        random.nextDouble() * 0.8));
     state = [newWish, ...state];
   }
 
@@ -137,8 +126,7 @@ class WishesNotifier extends StateNotifier<List<WallWish>> {
       if (wish.id == wishId) {
         return wish.copyWith(
           likes: wish.isLiked ? wish.likes - 1 : wish.likes + 1,
-          isLiked: !wish.isLiked,
-        );
+          isLiked: !wish.isLiked);
       }
       return wish;
     }).toList();
@@ -168,8 +156,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
   }
 
   @override
@@ -188,8 +175,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
 
     ref.read(wishesProvider.notifier).addWish(
           _wishController.text,
-          _authorController.text,
-        );
+          _authorController.text);
 
     setState(() {
       _showWriteForm = false;
@@ -217,10 +203,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
               setState(() {
                 _showWriteForm = !_showWriteForm;
               });
-            },
-          ),
-        ],
-      ),
+            })]),
       body: Stack(
         children: [
           // Background gradient
@@ -231,11 +214,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 end: Alignment.bottomRight,
                 colors: [
                   theme.colorScheme.primary.withValues(alpha: 0.05),
-                  theme.colorScheme.secondary.withValues(alpha: 0.05),
-                ],
-              ),
-            ),
-          ),
+                  theme.colorScheme.secondary.withValues(alpha: 0.05)]))),
 
           // Floating stars background
           ...List.generate(10, (index) {
@@ -251,12 +230,8 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     child: Icon(
                       Icons.star_rounded,
                       size: 20 + random.nextDouble() * 20,
-                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                    ),
-                  );
-                },
-              ),
-            );
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1)));
+                }));
           }),
 
           // Wish notes
@@ -268,19 +243,13 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   Icon(
                     Icons.note_add_rounded,
                     size: 80,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                  ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   Text(
                     '첫 번째 소원을 적어보세요',
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: fontSize.value + 2,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
-              ),
-            )
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))
           else
             ...wishes.map((wish) => _buildWishNote(context, theme, fontSize.value, wish)),
 
@@ -289,20 +258,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
             Container(
               color: Colors.black.withValues(alpha: 0.5),
               child: Center(
-                child: _buildWriteForm(theme, fontSize.value),
-              ),
-            ),
-        ],
-      ),
-    );
+                child: _buildWriteForm(theme, fontSize.value)))]));
   }
 
   Widget _buildWishNote(
     BuildContext context,
     ThemeData theme,
     double fontSize,
-    WallWish wish,
-  ) {
+    WallWish wish) {
     final screenSize = MediaQuery.of(context).size;
     final left = wish.position.dx * screenSize.width;
     final top = wish.position.dy * screenSize.height;
@@ -324,10 +287,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 4,
-                  offset: const Offset(2, 2),
-                ),
-              ],
-            ),
+                  offset: const Offset(2, 2))]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -337,11 +297,9 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   style: TextStyle(
                     fontSize: fontSize - 2,
                     color: Colors.black87,
-                    height: 1.4,
-                  ),
+                    height: 1.4),
                   maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -351,35 +309,20 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       style: TextStyle(
                         fontSize: fontSize - 4,
                         color: Colors.black54,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
+                        fontStyle: FontStyle.italic)),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           wish.isLiked ? Icons.favorite : Icons.favorite_border,
                           size: 16,
-                          color: wish.isLiked ? Colors.red : Colors.black54,
-                        ),
+                          color: wish.isLiked ? Colors.red : Colors.black54),
                         const SizedBox(width: 4),
                         Text(
                           wish.likes.toString(),
                           style: TextStyle(
                             fontSize: fontSize - 4,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                            color: Colors.black54))])])])))));
   }
 
   Widget _buildWriteForm(ThemeData theme, double fontSize) {
@@ -400,19 +343,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                   '소원 적기',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontSize: fontSize + 4,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () {
                     setState(() {
                       _showWriteForm = false;
                     });
-                  },
-                ),
-              ],
-            ),
+                  })]),
             const SizedBox(height: 16),
             
             // Wish input
@@ -425,10 +363,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 labelText: '소원',
                 hintText: '이루고 싶은 소원을 적어주세요',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+                  borderRadius: BorderRadius.circular(12)))),
             const SizedBox(height: 16),
             
             // Author input
@@ -440,10 +375,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 labelText: '이름',
                 hintText: '닉네임을 입력하세요',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+                  borderRadius: BorderRadius.circular(12)))),
             const SizedBox(height: 24),
             
             // Submit button
@@ -456,23 +388,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    borderRadius: BorderRadius.circular(12)))))])));
   }
 
   void _showWishDetail(
     BuildContext context,
     ThemeData theme,
     double fontSize,
-    WallWish wish,
-  ) {
+    WallWish wish) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -480,8 +403,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,18 +416,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 margin: const EdgeInsets.only(bottom: 20),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+                  borderRadius: BorderRadius.circular(2)))),
             
             // Content
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: wish.color,
-                borderRadius: BorderRadius.circular(12),
-              ),
+                borderRadius: BorderRadius.circular(12)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -514,21 +432,14 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                     style: TextStyle(
                       fontSize: fontSize + 2,
                       color: Colors.black87,
-                      height: 1.5,
-                    ),
-                  ),
+                      height: 1.5)),
                   const SizedBox(height: 12),
                   Text(
                     '- ${wish.author}',
                     style: TextStyle(
                       fontSize: fontSize,
                       color: Colors.black54,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      fontStyle: FontStyle.italic))])),
             const SizedBox(height: 16),
             
             // Info
@@ -537,36 +448,26 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                 Icon(
                   Icons.access_time_rounded,
                   size: 16,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                 const SizedBox(width: 4),
                 Text(
                   _getTimeAgo(wish.createdAt),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontSize: fontSize - 2,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                 const Spacer(),
                 Row(
                   children: [
                     Icon(
                       Icons.favorite,
                       size: 16,
-                      color: Colors.red,
-                    ),
+                      color: Colors.red),
                     const SizedBox(width: 4),
                     Text(
                       '${wish.likes}명이 응원해요',
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: fontSize - 2,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])]),
             const SizedBox(height: 20),
             
             // Actions
@@ -579,11 +480,8 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       Navigator.of(context).pop();
                     },
                     icon: Icon(
-                      wish.isLiked ? Icons.favorite : Icons.favorite_border,
-                    ),
-                    label: Text(wish.isLiked ? '응원 취소' : '응원하기'),
-                  ),
-                ),
+                      wish.isLiked ? Icons.favorite : Icons.favorite_border),
+                    label: Text(wish.isLiked ? '응원 취소' : '응원하기'))),
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton.icon(
@@ -592,15 +490,7 @@ class _WishWallPageState extends ConsumerState<WishWallPage>
                       Toast.show(context, message: '공유 기능은 준비 중입니다', type: ToastType.info);
                     },
                     icon: const Icon(Icons.share_rounded),
-                    label: const Text('공유하기'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                    label: const Text('공유하기')))])])));
   }
 
   String _getTimeAgo(DateTime dateTime) {

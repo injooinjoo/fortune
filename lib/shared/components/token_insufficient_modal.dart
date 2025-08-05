@@ -20,8 +20,7 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
     {
     Key? key,
     required this.requiredTokens,
-    required this.fortuneType,
-  )}) : super(key: key);
+    required this.fortuneType)}) : super(key: key);
 
   @override
   ConsumerState<TokenInsufficientModal> createState() => _TokenInsufficientModalState();
@@ -31,15 +30,13 @@ class TokenInsufficientModal extends ConsumerStatefulWidget {
     required BuildContext context,
     required int,
     requiredTokens,
-    required String fortuneType,
-  )}) async {
+    required String fortuneType)}) async {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
       builder: (context) => TokenInsufficientModal(,
       requiredTokens: requiredTokens,
-        fortuneType: fortuneType,
-    ))
+        fortuneType: fortuneType))
     return result ?? false;
   }
 }
@@ -61,14 +58,12 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       begin: 0.8,
       end: 1.0)).animate(CurvedAnimation(,
       parent: _animationController),
-        curve: Curves.easeOutBack,
-    )
+        curve: Curves.easeOutBack)
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0)).animate(CurvedAnimation(,
       parent: _animationController),
-        curve: Curves.easeIn,
-    )
+        curve: Curves.easeIn)
     _animationController.forward();
   }
 
@@ -97,7 +92,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
             padding: AppSpacing.paddingAll24,
             borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
             blur: 20,
-            child: Column(,
+            child: Column(
       mainAxisSize: MainAxisSize.min,
               children: [
                 // Icon
@@ -105,24 +100,20 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                   width: 80,
                   height: AppSpacing.spacing20,
                   decoration: BoxDecoration(,
-      shape: BoxShape.circle,
-        ),
+      shape: BoxShape.circle),
         color: theme.colorScheme.error.withValues(alp,
       ha: 0.2),
       child: Icon(
                     Icons.auto_awesome_outlined,
                     size: 40,
-                    color: theme.colorScheme.error,
-    ))
+                    color: theme.colorScheme.error))
                 SizedBox(height: AppSpacing.spacing4),
                 
                 // Title
                 Text(
-                  '영혼이 부족합니다',
-              ),
+                  '영혼이 부족합니다'),
               style: theme.textTheme.headlineSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
                 SizedBox(height: AppSpacing.spacing2),
                 
                 // Description
@@ -148,8 +139,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                         color: theme.colorScheme.primary);
                       Container(
                         width: 1,
-                        height: AppDimensions.buttonHeightSmall,
-        ),
+                        height: AppDimensions.buttonHeightSmall),
         color: theme.colorScheme.onSurface.withValues(alph,
       a: 0.2))
                       _buildTokenInfo(
@@ -209,15 +199,13 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       gradient: LinearGradient(
                       colors: [
                         theme.colorScheme.secondary.withValues(alpha: 0.2),
-                        theme.colorScheme.primary.withValues(alpha: 0.2),
-                      ]),
+                        theme.colorScheme.primary.withValues(alpha: 0.2)]),
     borderRadius: AppDimensions.borderRadiusMedium,
                     border: Border.all(,
       color: theme.colorScheme.primary.withValues(alp,
       ha: 0.5))),
       child: Material(,
-      color: Colors.transparent,
-        ),
+      color: Colors.transparent),
         child: InkWell(,
       onTap: () {
                         context.pop();
@@ -233,21 +221,18 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                               color: theme.colorScheme.primary);
                             SizedBox(width: AppSpacing.spacing3),
                             Expanded(
-                              child: Column(,
+                              child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                         Text(
-                          '무제한 이용권',
-              ),
+                          '무제한 이용권'),
               style: theme.textTheme.bodyLarge?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          )))
+      fontWeight: FontWeight.bold)))
                                   Text(
                                     '월 ₩30,000으로 모든 프리미엄 운세 무제한',
                           style: theme.textTheme.bodySmall?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.7,
-                          ))))
+      ha: 0.7))))
                                 ])))
                             Icon(
                               Icons.arrow_forward_rounded,
@@ -260,8 +245,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                   onPressed: () => context.pop(),
                   child: Text(
                     '나중에 하기',
-                    style: AppTypography.button,
-    ))
+                    style: AppTypography.button))
               ])))))))))
   }
 
@@ -269,8 +253,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
     {
     required String label,
     required String value,
-    required Color color,
-  )}) {
+    required Color color)}) {
     final theme = Theme.of(context);
     
     return Column(
@@ -279,16 +262,13 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
                           label,
                           style: theme.textTheme.bodySmall?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.6,
-                          ))
+      ha: 0.6))
         SizedBox(height: AppSpacing.spacing1),
         Text(
           value),
         style: theme.textTheme.headlineSmall?.copyWith(,
-      color: color,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
+      color: color),
+        fontWeight: FontWeight.bold))
       ])
   }
 
@@ -297,8 +277,7 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
     required IconData icon,
     required String label,
     required Color color,
-    required VoidCallback onTap,
-  )}) {
+    required VoidCallback onTap)}) {
     final theme = Theme.of(context);
     
     return Container(
@@ -313,23 +292,19 @@ class _TokenInsufficientModalState extends ConsumerState<TokenInsufficientModal>
       color: Colors.transparent,
         child: InkWell(,
       onTap: onTap,
-          borderRadius: AppDimensions.borderRadiusMedium,
-        ),
+          borderRadius: AppDimensions.borderRadiusMedium),
         child: Padding(,
       padding: EdgeInsets.symmetric(vertic,
       al: AppSpacing.spacing3),
-            child: Column(,
+            child: Column(
       children: [
                 Icon(icon, color: color, size: AppDimensions.iconSizeMedium),
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
-                  label,
-              ),
+                  label),
               style: theme.textTheme.bodySmall?.copyWith(,
-      color: color,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
+      color: color),
+        fontWeight: FontWeight.bold))
               ])))))))))
   }
 

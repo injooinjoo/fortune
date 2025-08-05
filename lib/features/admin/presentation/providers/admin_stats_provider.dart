@@ -36,8 +36,7 @@ class AdminStatsState {
       isLoading: isLoading ?? this.isLoading,
       stats: stats ?? this.stats,
       error: error,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
-    );
+      lastUpdated: lastUpdated ?? this.lastUpdated);
   }
 }
 
@@ -53,14 +52,12 @@ class AdminStatsNotifier extends StateNotifier<AdminStatsState> {
     try {
       final stats = await _apiService.getAdminStats(
         startDate: startDate,
-        endDate: endDate,
-      );
+        endDate: endDate);
 
       state = state.copyWith(
         isLoading: false,
         stats: stats,
-        lastUpdated: DateTime.now(),
-      );
+        lastUpdated: DateTime.now());
     } catch (e) {
       Logger.error('Failed to load admin stats', e);
       state = state.copyWith(
@@ -126,8 +123,7 @@ final mockAdminStatsProvider = Provider<AdminStatsModel>((ref) {
         fortunes: 1000 + (index * 100)),
     users: 300 + (index * 50)),
     tokens: 2000 + (index * 200)),
-    revenue: 50000 + (index * 10000,
-    );
+    revenue: 50000 + (index * 10000);
     })),
     tokenUsageStats: List.generate(10, (index) {
       return TokenUsageModel(
@@ -136,8 +132,6 @@ final mockAdminStatsProvider = Provider<AdminStatsModel>((ref) {
         tokensUsed: 1000 - (index * 50),
         fortuneCount: 100 - (index * 5)),
     lastActivity: now.subtract(Duration(hours: index))),
-    isSubscribed: index % 3 == 0,
-    );
-    },
-    );
+    isSubscribed: index % 3 == 0);
+    });
 };

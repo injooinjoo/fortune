@@ -29,16 +29,14 @@ class ProductIds {
     tokens50,
     tokens100,
     tokens200,
-    monthlySubscription,
-  ];
+    monthlySubscription];
   
   // 토큰 수량 매핑
   static const Map<String, int> tokenAmounts = {
     tokens10: 10,
     tokens50: 50,
     tokens100: 100,
-    tokens200: 200,
-  };
+    tokens200: 200};
 }
 
 class InAppPurchaseService {
@@ -70,8 +68,7 @@ class InAppPurchaseService {
   void setCallbacks({
     void Function()? onPurchaseStarted,
     void Function(String message)? onPurchaseSuccess,
-    void Function(String error)? onPurchaseError,
-  }) {
+    void Function(String error)? onPurchaseError}) {
     this.onPurchaseStarted = onPurchaseStarted;
     this.onPurchaseSuccess = onPurchaseSuccess;
     this.onPurchaseError = onPurchaseError;
@@ -93,8 +90,7 @@ class InAppPurchaseService {
       _subscription = purchaseUpdated.listen(
         _onPurchaseUpdate,
         onDone: _onPurchaseDone,
-        onError: _onPurchaseError,
-      );
+        onError: _onPurchaseError);
       
       // 상품 정보 로드
       await loadProducts();
@@ -116,8 +112,7 @@ class InAppPurchaseService {
   Future<void> loadProducts() async {
     try {
       final ProductDetailsResponse response = await _inAppPurchase.queryProductDetails(
-        ProductIds.allProductIds.toSet(),
-      );
+        ProductIds.allProductIds.toSet());
       
       if (response.error != null) {
         Logger.error('오류: ${response.error}');
@@ -149,8 +144,7 @@ class InAppPurchaseService {
     // 상품 찾기
     final ProductDetails? productDetails = _products.firstWhere(
       (product) => product.id == productId,
-      orElse: () => throw Exception('없습니다: $productId'),
-    );
+      orElse: () => throw Exception('없습니다: $productId'));
     
     if (productDetails == null) {
       throw Exception('상품 정보를 찾을 수 없습니다.');
@@ -158,8 +152,7 @@ class InAppPurchaseService {
     
     // 구매 파라미터 설정
     final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: productDetails,
-    );
+      productDetails: productDetails);
     
     try {
       _purchasePending = true;
@@ -167,12 +160,10 @@ class InAppPurchaseService {
       // 소모성 상품인지 구독 상품인지 확인
       if (_isConsumable(productId)) {
         return await _inAppPurchase.buyConsumable(
-          purchaseParam: purchaseParam,
-        );
+          purchaseParam: purchaseParam);
       } else {
         return await _inAppPurchase.buyNonConsumable(
-          purchaseParam: purchaseParam,
-        );
+          purchaseParam: purchaseParam);
       }
     } catch (e) {
       _purchasePending = false;
@@ -277,8 +268,7 @@ class InAppPurchaseService {
       // 서버에 검증 요청
       final response = await _apiClient.post<Map<String, dynamic>>(
         '/payment/verify-purchase',
-        data: verificationData,
-      );
+        data: verificationData);
       
       return response['valid'] ?? false;
       
@@ -296,9 +286,7 @@ class InAppPurchaseService {
         data: {
           'productId': purchaseDetails.productID,
           'purchaseId': purchaseDetails.purchaseID,
-          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': value),
-        },
-      );
+          'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android': value)});
       
       Logger.info('활성화되었습니다: ${purchaseDetails.productID}');
     } catch (e) {
@@ -321,8 +309,7 @@ class InAppPurchaseService {
   Future<bool> isSubscriptionActive() async {
     try {
       final response = await _apiClient.get<Map<String, dynamic>>(
-        '/subscription/status',
-      );
+        '/subscription/status');
       
       return response['active'] ?? false;
     } catch (e) {
@@ -366,8 +353,7 @@ class InAppPurchaseService {
       Toast.show(
         context: _context!,
         message: '구매가 진행 중입니다...',
-        type: ToastType.info,
-      );
+        type: ToastType.info);
     }
   }
   
@@ -383,8 +369,7 @@ class InAppPurchaseService {
       Toast.show(
         context: _context!,
         message: errorMessage,
-        type: ToastType.error,
-      );
+        type: ToastType.error);
     }
   }
   
@@ -394,8 +379,7 @@ class InAppPurchaseService {
     // Get product name
     final product = _products.firstWhere(
       (p) => p.id == productId,
-      orElse: () => _products.first,
-    );
+      orElse: () => _products.first);
     final productName = _getProductName(productId);
     final message = '$productName 구매가 완료되었습니다!';
     
@@ -406,8 +390,7 @@ class InAppPurchaseService {
       Toast.show(
         context: _context!,
         message: message,
-        type: ToastType.success,
-      );
+        type: ToastType.success);
     }
   }
   
@@ -464,8 +447,7 @@ class InAppPurchaseStoreKitDelegate extends SKPaymentQueueDelegateWrapper {
   @override
   bool shouldContinueTransaction(
     SKPaymentTransactionWrapper transaction,
-    SKStorefrontWrapper storefront,
-  ) {
+    SKStorefrontWrapper storefront) {
     return true;
   }
   

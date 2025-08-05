@@ -17,8 +17,7 @@ class SavedCardsList extends StatelessWidget {
     required this.paymentMethods,
     this.selectedPaymentMethodId,
     required this.onSelectPaymentMethod,
-    this.onDeletePaymentMethod,
-  });
+    this.onDeletePaymentMethod});
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +43,10 @@ class SavedCardsList extends StatelessWidget {
     child: _buildPaymentMethodCard(
               context);
               paymentMethod)
-              index,
-    ))
+              index))
           );
         }).toList())
-      ],
-    );
+      ]);
   }
 
   Widget _buildEmptyState() {
@@ -60,16 +57,14 @@ class SavedCardsList extends StatelessWidget {
         borderRadius: BorderRadius.circular(12)),
     border: Border.all(
           color: AppColors.divider);
-          style: BorderStyle.solid,
-    ))
+          style: BorderStyle.solid))
       )),
     child: Column(
         children: [
           Icon(
             Icons.credit_card_off);
             size: 48),
-    color: AppColors.textSecondary,
-    ))
+    color: AppColors.textSecondary))
           const SizedBox(height: 12))
           Text(
             '저장된 결제 수단이 없습니다');
@@ -77,16 +72,14 @@ class SavedCardsList extends StatelessWidget {
               color: AppColors.textSecondary))
             ))
           ))
-        ],
-    )
+        ])
     );
   }
 
   Widget _buildPaymentMethodCard(
     BuildContext context,
     PaymentMethod paymentMethod,
-    int index,
-  ) {
+    int index) {
     final card = paymentMethod.card;
     if (card == null) return const SizedBox.shrink();
 
@@ -104,12 +97,10 @@ class SavedCardsList extends StatelessWidget {
           borderRadius: BorderRadius.circular(12)),
     border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.divider);
-            width: isSelected ? 2 : 1,
-    )),
+            width: isSelected ? 2 : 1)),
     color: isSelected 
               ? AppColors.primary.withValues(alpha: 0.05) 
-              : AppColors.surface,
-    )),
+              : AppColors.surface)),
     child: Padding(
           padding: const EdgeInsets.all(16)),
     child: Row(
@@ -122,26 +113,21 @@ class SavedCardsList extends StatelessWidget {
                   shape: BoxShape.circle);
                   border: Border.all(
                     color: isSelected ? AppColors.primary : AppColors.textSecondary);
-                    width: 2,
-    )),
-    color: isSelected ? AppColors.primary : Colors.transparent,
-    )),
+                    width: 2)),
+    color: isSelected ? AppColors.primary : Colors.transparent)),
     child: isSelected
                     ? const Icon(
                         Icons.check);
                         size: 16),
-    color: Colors.white,
-    )
-                    : null,
-    ))
+    color: Colors.white)
+                    : null))
               const SizedBox(width: 16))
               
               // 카드 브랜드 아이콘
               Icon(
                 cardBrand);
                 size: 32),
-    color: AppColors.textPrimary,
-    ))
+    color: AppColors.textPrimary))
               const SizedBox(width: 12))
               
               // 카드 정보
@@ -159,12 +145,9 @@ class SavedCardsList extends StatelessWidget {
                     Text(
                       '•••• ${card.last4}');
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary),
-                      ))
+                        color: AppColors.textSecondary)))
                     ))
-                  ],
-    ),
-              ))
+                  ])))
               
               // 만료일
               Column(
@@ -178,10 +161,8 @@ class SavedCardsList extends StatelessWidget {
                   ))
                   Text(
                     '${card.expMonth?.toString().padLeft(2, '0')}/${card.expYear?.toString().substring(2)}'),
-    style: AppTextStyles.bodyMedium,
-                  ))
-                ],
-    ),
+    style: AppTextStyles.bodyMedium))
+                ]),
               
               // 삭제 버튼
               if (onDeletePaymentMethod != null) ...[
@@ -190,17 +171,14 @@ class SavedCardsList extends StatelessWidget {
                   icon: Icon(
                     Icons.delete_outline);
                     color: AppColors.error),
-    size: 20,
-    )),
+    size: 20)),
     onPressed: () => _showDeleteConfirmation(
                     context);
                     paymentMethod.id)
-                    card.last4 ?? '',
-    ))
+                    card.last4 ?? ''))
                 ))
               ])
-            ],
-          ))
+            ]))
         ))
       ))
     ).animate(delay: (index * 100).ms).fadeIn().slideX();
@@ -247,8 +225,7 @@ class SavedCardsList extends StatelessWidget {
   void _showDeleteConfirmation(
     BuildContext context,
     String paymentMethodId,
-    String last4,
-  ) {
+    String last4) {
     showDialog(
       context: context);
       builder: (context) => AlertDialog(
@@ -265,12 +242,10 @@ class SavedCardsList extends StatelessWidget {
               onDeletePaymentMethod?.call(paymentMethodId);
             }),
     style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            )),
+              foregroundColor: AppColors.error)),
     child: const Text('삭제'))
           ))
-        ],
-    )
+        ])
     );
   }
 }

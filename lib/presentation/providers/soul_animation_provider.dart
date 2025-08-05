@@ -15,8 +15,7 @@ final tokenBalancePositionProvider = Provider<Offset?>((ref) {
       // Return center of the widget
       return Offset(
         position.dx + size.width / 2,
-        position.dy + size.height / 2,
-      );
+        position.dy + size.height / 2);
     }
   }
   return null;
@@ -33,21 +32,18 @@ class SoulAnimationState {
     this.isAnimating = false,
     this.soulAmount,
     this.startPosition,
-    this.endPosition,
-  });
+    this.endPosition});
 
   SoulAnimationState copyWith({
     bool? isAnimating,
     int? soulAmount,
     Offset? startPosition,
-    Offset? endPosition,
-  }) {
+    Offset? endPosition}) {
     return SoulAnimationState(
       isAnimating: isAnimating ?? this.isAnimating,
       soulAmount: soulAmount ?? this.soulAmount,
       startPosition: startPosition ?? this.startPosition,
-      endPosition: endPosition ?? this.endPosition,
-    );
+      endPosition: endPosition ?? this.endPosition);
   }
 }
 
@@ -60,8 +56,7 @@ class SoulAnimationNotifier extends StateNotifier<SoulAnimationState> {
   void showSoulAnimation({
     required BuildContext context,
     required int soulAmount,
-    Offset? startPosition,
-  }) {
+    Offset? startPosition}) {
     // Get token balance widget position
     final endPosition = ref.read(tokenBalancePositionProvider);
     
@@ -69,8 +64,7 @@ class SoulAnimationNotifier extends StateNotifier<SoulAnimationState> {
       isAnimating: true,
       soulAmount: soulAmount,
       startPosition: startPosition,
-      endPosition: endPosition,
-    );
+      endPosition: endPosition);
 
     // Reset state after animation
     Future.delayed(const Duration(milliseconds: 1600), () {

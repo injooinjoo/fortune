@@ -15,8 +15,7 @@ class CacheService {
     'yearly': 8760,
     'zodiac': 720,
     'personality': 8760,
-    'default': 60,
-  };
+    'default': 60};
 
   late Box<FortuneModel> _fortuneBox;
   late Box<CacheEntry> _cacheMetaBox;
@@ -45,8 +44,7 @@ class CacheService {
     final userId = params['userId'] ?? 'anonymous';
     final sortedParams = Map.fromEntries(
       params.entries.where((e) => e.key != 'userId').toList()
-        ..sort((a, b) => a.key.compareTo(b.key)),
-    );
+        ..sort((a, b) => a.key.compareTo(b.key)));
     final dateKey = _getDateKeyForType(fortuneType);
     final paramsString = sortedParams.isEmpty ? '' : ':${sortedParams.toString()}';
 
@@ -81,8 +79,7 @@ class CacheService {
 
   Future<FortuneModel?> getCachedFortune(
     String fortuneType,
-    Map<String, dynamic> params,
-  ) async {
+    Map<String, dynamic> params) async {
     try {
       final key = _generateCacheKey(fortuneType, params);
       final cacheEntry = _cacheMetaBox.get(key);
@@ -104,8 +101,7 @@ class CacheService {
   Future<void> cacheFortune(
     String fortuneType,
     Map<String, dynamic> params,
-    FortuneModel fortune,
-  ) async {
+    FortuneModel fortune) async {
     try {
       final key = _generateCacheKey(fortuneType, params);
       final duration = _cacheDuration[fortuneType] ?? _cacheDuration['default']!;
@@ -117,8 +113,7 @@ class CacheService {
         key: key,
         fortuneType: fortuneType,
         createdAt: DateTime.now(),
-        expiresAt: expiryDate,
-      );
+        expiresAt: expiryDate);
       await _cacheMetaBox.put(key, cacheEntry);
     } catch (e) {
       debugPrint('Cache operation error: $e');
@@ -127,8 +122,7 @@ class CacheService {
 
   Future<void> removeCachedFortune(
     String fortuneType,
-    Map<String, dynamic> params,
-  ) async {
+    Map<String, dynamic> params) async {
     try {
       final key = _generateCacheKey(fortuneType, params);
       await _fortuneBox.delete(key);
@@ -183,16 +177,14 @@ class CacheService {
         'expired': expiredCount,
         'sizeInBytes': _fortuneBox.path != null
             ? await _calculateBoxSize(_fortuneBox.path!)
-            : 0,
-      };
+            : 0};
     } catch (e) {
       debugPrint('Cache operation error: $e');
       return {
         'total': 0,
         'valid': 0,
         'expired': 0,
-        'sizeInBytes': 0,
-      };
+        'sizeInBytes': 0};
     }
   }
 

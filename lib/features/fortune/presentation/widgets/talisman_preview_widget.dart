@@ -21,8 +21,7 @@ class TalismanPreviewWidget extends StatefulWidget {
     required this.secondaryColor,
     required this.symbol,
     required this.userName,
-    this.size = 200,
-  });
+    this.size = 200});
 
   @override
   State<TalismanPreviewWidget> createState() => _TalismanPreviewWidgetState();
@@ -37,7 +36,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3))..repeat();
+      duration: const Duration(seconds: 3),..repeat();
 }
 
   @override
@@ -57,9 +56,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
           BoxShadow(
             color: widget.primaryColor.withValues(alpha: 0.3),
             blurRadius: 20,
-            offset: const Offset(0, 10),
-        ],
-      ),
+            offset: const Offset(0, 10)]),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -72,26 +69,18 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                 end: Alignment.bottomRight,
                 colors: [
                   widget.primaryColor,
-                  widget.secondaryColor,
-                ],
-              ),
-            ),
-          ),
+                  widget.secondaryColor]))),
           
           // Pattern overlay
           Container(
             decoration: BoxDecoration(
               borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
-              color: Colors.black.withValues(alpha: 0.1),
-            ),
+              color: Colors.black.withValues(alpha: 0.1)),
             child: CustomPaint(
               size: Size(widget.size, widget.size),
               painter: _TalismanPatternPainter(
                 style: widget.symbol,
-                color: Colors.white.withValues(alpha: 0.2),
-              ),
-            ),
-          ),
+                color: Colors.white.withValues(alpha: 0.2)))),
           
           // Central symbol
           AnimatedBuilder(
@@ -109,21 +98,13 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 10,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
+                        spreadRadius: 2)]),
                   child: Center(
                     child: Icon(
                       widget.type.icon,
                       size: widget.size * 0.3,
-                      color: widget.primaryColor,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+                      color: widget.primaryColor))));
+            }),
           
           // User name at bottom
           Positioned(
@@ -137,21 +118,14 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
-                    offset: const Offset(0, 2),
-                ],
-              ),
+                    offset: const Offset(0, 2)]),
               child: Text(
                 widget.userName,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ),
-          ),
+                style: Theme.of(context).textTheme.bodyMedium))),
           
           // Decorative corners
-          ..._buildCornerDecorations(),
-        ],
-      ).animate()
-        .fadeIn(duration: const Duration(milliseconds: 600))
+          ..._buildCornerDecorations()]).animate()
+        .fadeIn(duration: const Duration(milliseconds: 600),
         .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
 }
   
@@ -161,8 +135,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
       (top: 10.0, left: 10.0, right: null, bottom: null),
       (top: 10.0, left: null, right: 10.0, bottom: null),
       (top: null, left: 10.0, right: null, bottom: 10.0),
-      (top: null, left: null, right: 10.0, bottom: 10.0),
-    ];
+      (top: null, left: null, right: 10.0, bottom: 10.0)];
     
     for (final pos in positions) {
       decorations.add(
@@ -188,12 +161,7 @@ class _TalismanPreviewWidgetState extends State<TalismanPreviewWidget>
                     : const Radius.circular(15),
                 bottomRight: pos.bottom != null && pos.right != null 
                     ? const Radius.circular(0) 
-                    : const Radius.circular(15),
-              ),
-            ),
-          ),
-        ),
-      );
+                    : const Radius.circular(15))))));
     }
     
     return decorations;
@@ -206,8 +174,7 @@ class _TalismanPatternPainter extends CustomPainter {
 
   _TalismanPatternPainter({
     required this.style,
-    required this.color,
-  });
+    required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -298,7 +265,7 @@ class _TalismanPatternPainter extends CustomPainter {
       
       final start = Offset(
         center.dx + startRadius * math.cos(angle),
-        center.dy + startRadius * math.sin(angle));
+        center.dy + startRadius * math.sin(angle),;
       final end = Offset(
         center.dx + endRadius * math.cos(angle),
         center.dy + endRadius * math.sin(angle);

@@ -24,8 +24,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
             children: [
               const AppHeader(
                 title: '토큰 사용량 통계',
-                showBackButton: true,
-              ),
+                showBackButton: true),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () => ref.read(tokenUsageProvider.notifier).fetchTokenUsageStats(),
@@ -62,12 +61,9 @@ class TokenUsageStatsPage extends ConsumerWidget {
                               const SizedBox(height: 16),
                               
                               // Top Users
-                              _buildTopUsers(context, stats.topUsers),
-                            ],
-                          ),
+                              _buildTopUsers(context, stats.topUsers)]),
                           loading: () => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                            child: CircularProgressIndicator()),
                           error: (error, stack) => Center(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
@@ -75,38 +71,20 @@ class TokenUsageStatsPage extends ConsumerWidget {
                                 Icon(
                                   Icons.error_outline,
                                   size: 48,
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
+                                  color: Theme.of(context).colorScheme.error),
                                 const SizedBox(height: 16),
                                 Text(
                                   '토큰 사용량 통계를 불러올 수 없습니다',
-                                  style: Theme.of(context).textTheme.titleMedium,
-                                ),
+                                  style: Theme.of(context).textTheme.titleMedium),
                                 const SizedBox(height: 8),
                                 Text(
                                   error.toString(),
                                   style: Theme.of(context).textTheme.bodySmall,
-                                  textAlign: TextAlign.center,
-                                ),
+                                  textAlign: TextAlign.center),
                                 const SizedBox(height: 16),
                                 ElevatedButton(
                                   onPressed: () => ref.read(tokenUsageProvider.notifier).fetchTokenUsageStats(),
-                                  child: const Text('다시 시도'),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                                  child: const Text('다시 시도'))])))]))))]))));
   }
 
   Widget _buildPeriodSelector(BuildContext context, WidgetRef ref, String selectedPeriod) {
@@ -121,23 +99,17 @@ class TokenUsageStatsPage extends ConsumerWidget {
             label: '7일',
             value: '7d',
             isSelected: selectedPeriod == '7d',
-            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('7d'),
-          ),
+            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('7d')),
           _PeriodButton(
             label: '30일',
             value: '30d',
             isSelected: selectedPeriod == '30d',
-            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('30d'),
-          ),
+            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('30d')),
           _PeriodButton(
             label: '90일',
             value: '90d',
             isSelected: selectedPeriod == '90d',
-            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d'),
-          ),
-        ],
-      ),
-    );
+            onTap: () => ref.read(tokenUsageProvider.notifier).changePeriod('90d'))]));
   }
 
   Widget _buildSummaryCards(TokenUsageSummary summary) {
@@ -154,31 +126,25 @@ class TokenUsageStatsPage extends ConsumerWidget {
           value: NumberFormat('#,###').format(summary.totalTokensUsed),
           icon: Icons.token,
           iconColor: Colors.blue,
-          subtitle: summary.period,
-        ),
+          subtitle: summary.period),
         StatsCard(
           title: '총 구매 토큰',
           value: NumberFormat('#,###').format(summary.totalTokensPurchased),
           icon: Icons.shopping_cart,
           iconColor: Colors.green,
-          subtitle: summary.period,
-        ),
+          subtitle: summary.period),
         StatsCard(
           title: '활성 사용자',
           value: NumberFormat('#,###').format(summary.activeUsers),
           icon: Icons.people,
           iconColor: Colors.purple,
-          subtitle: '토큰 사용자',
-        ),
+          subtitle: '토큰 사용자'),
         StatsCard(
           title: '평균 사용량',
           value: summary.averageUsagePerUser.toStringAsFixed(1),
           icon: Icons.analytics,
           iconColor: Colors.orange,
-          subtitle: '사용자당',
-        ),
-      ],
-    );
+          subtitle: '사용자당')]);
   }
 
   Widget _buildDailyUsageChart(BuildContext context, List<DailyTokenUsage> dailyUsage) {
@@ -192,16 +158,12 @@ class TokenUsageStatsPage extends ConsumerWidget {
             toY: entry.value.tokensUsed.toDouble(),
             color: theme.colorScheme.primary,
             width: 8,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-          ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(4))),
           BarChartRodData(
             toY: entry.value.tokensPurchased.toDouble(),
             color: Colors.green,
             width: 8,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-          ),
-        ],
-      );
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)))]);
     }).toList();
 
     return ChartCard(
@@ -221,9 +183,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                     return Text('${(value / 1000).toStringAsFixed(0)}k');
                   }
                   return Text(value.toInt().toString());
-                },
-              ),
-            ),
+                })),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -232,29 +192,19 @@ class TokenUsageStatsPage extends ConsumerWidget {
                     final date = dailyUsage[value.toInt()].date;
                     return Text(
                       DateFormat('MM/dd').format(date),
-                      style: const TextStyle(fontSize: 10),
-                    );
+                      style: const TextStyle(fontSize: 10));
                   }
                   return const Text('');
-                },
-              ),
-            ),
+                })),
             rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
+              sideTitles: SideTitles(showTitles: false)),
             topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-          ),
+              sideTitles: SideTitles(showTitles: false))),
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
-            horizontalInterval: 1000,
-          ),
-          borderData: FlBorderData(show: false),
-        ),
-      ),
-    );
+            horizontalInterval: 1000),
+          borderData: FlBorderData(show: false))));
   }
 
   Widget _buildUsageByType(BuildContext context, List<TokenUsageByType> usageByType) {
@@ -269,9 +219,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '운세별 사용량 TOP 10',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           ...topTypes.map((type) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -283,44 +231,26 @@ class TokenUsageStatsPage extends ConsumerWidget {
                     children: [
                       Text(
                         type.fortuneType,
-                        style: theme.textTheme.titleSmall,
-                      ),
+                        style: theme.textTheme.titleSmall),
                       Text(
                         type.fortuneCategory,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])),
                 Text(
                   '${NumberFormat('#,###').format(type.tokensUsed)} 토큰',
                   style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(width: 12),
                 Container(
                   width: 60,
                   height: 20,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                    borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Text(
                       '${type.percentage.toStringAsFixed(1)}%',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
-        ],
-      ),
-    );
+                      style: theme.textTheme.bodySmall)))]))).toList()]));
   }
 
   Widget _buildPackageEfficiency(BuildContext context, PackageEfficiency efficiency) {
@@ -334,9 +264,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '패키지 효율성',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -345,20 +273,14 @@ class TokenUsageStatsPage extends ConsumerWidget {
                   title: '가장 인기 있는 패키지',
                   value: efficiency.mostPopular,
                   icon: Icons.star,
-                  iconColor: Colors.amber,
-                ),
-              ),
+                  iconColor: Colors.amber)),
               const SizedBox(width: 16),
               Expanded(
                 child: _InfoCard(
                   title: '가장 가치 있는 패키지',
                   value: efficiency.bestValue,
                   icon: Icons.attach_money,
-                  iconColor: Colors.green,
-                ),
-              ),
-            ],
-          ),
+                  iconColor: Colors.green))]),
           const SizedBox(height: 16),
           ...efficiency.packages.entries.map((entry) {
             final stats = entry.value;
@@ -369,32 +291,19 @@ class TokenUsageStatsPage extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       stats.packageName,
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ),
+                      style: theme.textTheme.titleSmall)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         '${stats.purchaseCount}회 구매',
-                        style: theme.textTheme.bodySmall,
-                      ),
+                        style: theme.textTheme.bodySmall),
                       Text(
                         '₩${NumberFormat('#,###').format(stats.totalRevenue)}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                          fontWeight: FontWeight.bold))])]));
+          }).toList()]));
   }
 
   Widget _buildUsageTrend(BuildContext context, TokenUsageTrend trend) {
@@ -407,20 +316,14 @@ class TokenUsageStatsPage extends ConsumerWidget {
             title: '일일 성장률',
             value: '${trend.dailyGrowth > 0 ? '+' : ''}${trend.dailyGrowth.toStringAsFixed(1)}%',
             icon: Icons.trending_up,
-            iconColor: trend.dailyGrowth > 0 ? Colors.green : Colors.red,
-          ),
-        ),
+            iconColor: trend.dailyGrowth > 0 ? Colors.green : Colors.red)),
         const SizedBox(width: 16),
         Expanded(
           child: StatsCard(
             title: '주간 성장률',
             value: '${trend.weeklyGrowth > 0 ? '+' : ''}${trend.weeklyGrowth.toStringAsFixed(1)}%',
             icon: Icons.show_chart,
-            iconColor: trend.weeklyGrowth > 0 ? Colors.green : Colors.red,
-          ),
-        ),
-      ],
-    );
+            iconColor: trend.weeklyGrowth > 0 ? Colors.green : Colors.red))]);
   }
 
   Widget _buildTopUsers(BuildContext context, List<TopUserUsage> topUsers) {
@@ -434,9 +337,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
           Text(
             '상위 사용자',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -446,8 +347,7 @@ class TokenUsageStatsPage extends ConsumerWidget {
                 DataColumn(label: Text('사용 토큰')),
                 DataColumn(label: Text('구매 토큰')),
                 DataColumn(label: Text('운세 횟수')),
-                DataColumn(label: Text('상태')),
-              ],
+                DataColumn(label: Text('상태'))],
               rows: topUsers.map((user) => DataRow(
                 cells: [
                   DataCell(
@@ -457,17 +357,11 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       children: [
                         Text(
                           user.displayName ?? 'Unknown',
-                          style: theme.textTheme.bodyMedium,
-                        ),
+                          style: theme.textTheme.bodyMedium),
                         Text(
                           user.email,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])),
                   DataCell(Text(NumberFormat('#,###').format(user.tokensUsed))),
                   DataCell(Text(NumberFormat('#,###').format(user.tokensPurchased))),
                   DataCell(Text(user.fortuneCount.toString())),
@@ -476,24 +370,12 @@ class TokenUsageStatsPage extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: user.isUnlimited ? Colors.purple.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                        borderRadius: BorderRadius.circular(12)),
                       child: Text(
                         user.isUnlimited ? '무제한' : '일반',
                         style: TextStyle(
                           color: user.isUnlimited ? Colors.purple : Colors.blue,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )).toList(),
-            ),
-          ),
-        ],
-      ),
-    );
+                          fontSize: 12))))])).toList()))]));
   }
 }
 
@@ -507,8 +389,7 @@ class _PeriodButton extends StatelessWidget {
     required this.label,
     required this.value,
     required this.isSelected,
-    required this.onTap,
-  });
+    required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -521,17 +402,12 @@ class _PeriodButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
+          borderRadius: BorderRadius.circular(8)),
         child: Text(
           label,
           style: TextStyle(
             color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ),
-    );
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
   }
 }
 
@@ -545,8 +421,7 @@ class _InfoCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.icon,
-    required this.iconColor,
-  });
+    required this.iconColor});
 
   @override
   Widget build(BuildContext context) {
@@ -558,9 +433,7 @@ class _InfoCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.1),
-        ),
-      ),
+          color: theme.colorScheme.primary.withValues(alpha: 0.1))),
       child: Column(
         children: [
           Icon(icon, color: iconColor, size: 32),
@@ -568,17 +441,11 @@ class _InfoCard extends StatelessWidget {
           Text(
             title,
             style: theme.textTheme.bodySmall,
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Text(
             value,
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+              fontWeight: FontWeight.bold))]));
   }
 }

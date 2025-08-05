@@ -154,8 +154,7 @@ class AuspiciousDaysCalculator {
       'yearGanZhi': '${lunar.getYearGan()}${lunar.getYearZhi()}',
       'monthGanZhi': '${lunar.getMonthGan()}${lunar.getMonthZhi()}',
       'dayGanZhi': '${lunar.getDayGan()}${lunar.getDayZhi()}',
-      'isLeapMonth': lunar.getMonthInChinese().startsWith('闰'),
-    };
+      'isLeapMonth': lunar.getMonthInChinese().startsWith('闰')};
   }
   
   /// 절기 정보 가져오기

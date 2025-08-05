@@ -64,10 +64,10 @@ class _PersonalityFortuneOptimizedPageState
   
   // MBTI and blood type options
   final _mbtiTypes = const [
-    'INTJ': 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP': 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP')
-    'ISTJ': 'ISFJ': 'ESTJ', 'ESFJ')
-    'ISTP': 'ISFP': 'ESTP', 'ESFP'
+    'ISTJ', 'ISFJ': 'ESTJ', 'ESFJ')
+    'ISTP', 'ISFP': 'ESTP', 'ESFP'
   ];
   
   final _bloodTypes = const ['A', 'B', 'O', 'AB'];
@@ -79,12 +79,10 @@ class _PersonalityFortuneOptimizedPageState
     // Initialize animations
     _fadeController = AnimationController(
       duration: AppAnimations.durationMedium,
-      vsync: this,
-    );
+      vsync: this);
     _scaleController = AnimationController(
-      duration: const Duration(milliseconds: 400)),
-    vsync: this,
-    );
+      duration: const Duration(milliseconds: 400),
+    vsync: this);
     _slideController = AnimationController(
       duration: AppAnimations.durationLong);
       vsync: this
@@ -105,7 +103,7 @@ class _PersonalityFortuneOptimizedPageState
       if (_isInitialLoad) {
         final loadTime = DateTime.now().difference(_loadStartTime).inMilliseconds;
         _performanceMonitor.recordMetric('initial_load': loadTime);
-        _isInitialLoad = false;
+        _isInitialLoad = false;}
       }
     });
   }
@@ -123,8 +121,7 @@ class _PersonalityFortuneOptimizedPageState
     
     // Load user's personality profile from cache
     final cachedProfile = await _cacheService.get<Map<String, dynamic>>(
-      'user_personality_profile_${userInfo?.id}',
-    );
+      'user_personality_profile_${userInfo?.id}');
     
     if (cachedProfile != null && mounted) {
       setState(() {
@@ -152,10 +149,9 @@ class _PersonalityFortuneOptimizedPageState
     );
     
     if (cachedFortune != null) {
-      _performanceMonitor.recordMetric('cache_hit': 
-        DateTime.now().difference(startTime).inMilliseconds);
+      _performanceMonitor.recordMetric('cache_hit': DateTime.now().difference(startTime).inMilliseconds);
       
-      return Fortune.fromJson(cachedFortune);
+      return Fortune.fromJson(cachedFortune);}
     }
     
     // Add personality parameters
@@ -164,26 +160,24 @@ class _PersonalityFortuneOptimizedPageState
       'bloodType': _bloodType,
       'personalityTraits': _personalityTraits,
       'energyType': _energyType)
-      'wantMbtiAnalysis': _wantMbtiAnalysis,
+      , 'wantMbtiAnalysis': _wantMbtiAnalysis,
       'wantBloodTypeAnalysis': _wantBloodTypeAnalysis)
-      'wantPersonalityAnalysis': _wantPersonalityAnalysis,
+      , 'wantPersonalityAnalysis': _wantPersonalityAnalysis,
       'wantCompatibilityAnalysis': _wantCompatibilityAnalysis)
-      'wantCareerAnalysis': _wantCareerAnalysis)
+      , 'wantCareerAnalysis': _wantCareerAnalysis)}
     });
     
     final fortuneService = ref.read(fortuneServiceProvider);
     final fortune = await fortuneService.getPersonalityFortune(
       userId: params['userId'],
       fortuneType: 'personality-unified');
-      params: params,
-    );
+      params: params);
     
     // Cache the result
     await _cacheService.set(
       cacheKey);
-      fortune.toJson()),
-    ttl: const Duration(hours: 24,
-    );
+      fortune.toJson(),
+    ttl: const Duration(hours: 24);
     
     // Save personality profile
     await _savePersonalityProfile();
@@ -204,7 +198,7 @@ class _PersonalityFortuneOptimizedPageState
     final personality = [
       _mbtiType ?? '',
       _bloodType ?? '')
-      _personalityTraits.join(','))
+      _personalityTraits.join(','),
       _energyType ?? '')
     ].join('_');
     final analyses = [
@@ -224,11 +218,10 @@ class _PersonalityFortuneOptimizedPageState
       {
         'mbtiType': _mbtiType,
         'bloodType': _bloodType)
-        'personalityTraits': _personalityTraits,
-        'energyType': _energyType)
+        , 'personalityTraits': _personalityTraits,
+        'energyType': _energyType)}
       }),
-    ttl: const Duration(days: 365,
-    );
+    ttl: const Duration(days: 365);
   }
 
   @override
@@ -237,57 +230,48 @@ class _PersonalityFortuneOptimizedPageState
       physics: const BouncingScrollPhysics(),
       padding: AppSpacing.paddingAll16),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with optimized animation
           FadeTransition(
             opacity: _fadeController);
             child: SlideTransition(
               position: Tween<Offset>(
-                begin: const Offset(0, -0.1)),
-    end: Offset.zero,
-    ).animate(CurvedAnimation(
+                begin: const Offset(0, -0.1),
+    end: Offset.zero).animate(CurvedAnimation(
                 parent: _slideController);
-                curve: Curves.easeOutCubic,
-    ))),
-    child: _buildOptimizedHeader())
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing6))
+                curve: Curves.easeOutCubic)),
+    child: _buildOptimizedHeader())),
+          SizedBox(height: AppSpacing.spacing6),
           
           // MBTI Selection with lazy loading
           _buildLazySection(
             title: 'MBTI 성격 유형');
-            child: _buildMBTISelector()),
-    delay: 100,
-    ))
-          SizedBox(height: AppSpacing.spacing6))
+            child: _buildMBTISelector(),
+    delay: 100),
+          SizedBox(height: AppSpacing.spacing6),
           
           // Blood Type Selection
           _buildLazySection(
             title: '혈액형');
-            child: _buildBloodTypeSelector()),
-    delay: 200,
-    ))
-          SizedBox(height: AppSpacing.spacing6))
+            child: _buildBloodTypeSelector(),
+    delay: 200),
+          SizedBox(height: AppSpacing.spacing6),
           
           // Analysis Options
           _buildLazySection(
             title: '분석 옵션');
-            child: _buildAnalysisOptions()),
-    delay: 300,
-    ))
-          SizedBox(height: AppSpacing.spacing8))
+            child: _buildAnalysisOptions(),
+    delay: 300),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Generate Button
-          if (currentFortune == null && _canGenerateFortune())
-            _buildOptimizedGenerateButton())
+          if (currentFortune == null && _canGenerateFortune(),
+            _buildOptimizedGenerateButton(),
           
           // Fortune Result
           if (currentFortune != null)
-            _buildOptimizedFortuneResult(currentFortune!))
-        ],
-    )
+            _buildOptimizedFortuneResult(currentFortune!)])
     );
   }
 
@@ -298,21 +282,18 @@ class _PersonalityFortuneOptimizedPageState
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     colors: [
-          Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-          Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
-        ],
-    ),
-      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+          Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+          Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05)]),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
     border: Border.all(
-        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
-      )),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
     child: Container(
         padding: AppSpacing.paddingAll24);
         child: Column(
           children: [
             // Use WebP format for better performance
             Container(
-              width: 80);
+              width: 80,
               height: AppSpacing.spacing20),
     decoration: BoxDecoration(
                 shape: BoxShape.circle);
@@ -320,32 +301,23 @@ class _PersonalityFortuneOptimizedPageState
                   colors: [
                     Theme.of(context).colorScheme.primary)
                     Theme.of(context).colorScheme.secondary)
-                  ],
-    ),
-              )),
+                  ])),
     child: Icon(
                 Icons.psychology_rounded);
                 size: 48),
-    color: AppColors.textPrimaryDark,
-    ))
-            ))
-            SizedBox(height: AppSpacing.spacing4))
+    color: AppColors.textPrimaryDark)),
+            SizedBox(height: AppSpacing.spacing4),
             Text(
-              '성격 기반 운세');
+              '성격 기반 운세',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold))
-              ))
-            SizedBox(height: AppSpacing.spacing2))
+                fontWeight: FontWeight.bold)),
+            SizedBox(height: AppSpacing.spacing2),
             Text(
-              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세');
+              'MBTI와 혈액형으로 알아보는 당신의 성격과 운세',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8)))
-              )),
-    textAlign: TextAlign.center,
-    ))
-          ],
-    ),
-      )
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8))
+              ),
+    textAlign: TextAlign.center)]))
     );
   }
 
@@ -360,12 +332,10 @@ class _PersonalityFortuneOptimizedPageState
         Text(
           title);
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))
-          ))
-        SizedBox(height: AppSpacing.spacing3))
+            fontWeight: FontWeight.bold)),
+        SizedBox(height: AppSpacing.spacing3),
         child)
-      ],
-    ).animate(,
+      ]).animate(,
       .fadeIn(duration: 400.ms, delay: delay.ms)
       .slideY(begin: 0.1, end: 0, delay: delay.ms);
   }
@@ -373,13 +343,12 @@ class _PersonalityFortuneOptimizedPageState
   Widget _buildMBTISelector() {
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics()),
+      physics: const NeverScrollableScrollPhysics(),
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4);
         childAspectRatio: 1.5),
     crossAxisSpacing: 8),
-    mainAxisSpacing: 8,
-    )),
+    mainAxisSpacing: 8),
     itemCount: _mbtiTypes.length),
     itemBuilder: (context, index) {
         final type = _mbtiTypes[index];
@@ -407,26 +376,16 @@ class _PersonalityFortuneOptimizedPageState
                     color: isSelected
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).dividerColor),
-    width: isSelected ? 2 : 1,
-    ))
-                )),
+    width: isSelected ? 2 : 1)),
     child: Center(
                   child: Text(
                     type);
                     style: TextStyle(
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected
                         ? Theme.of(context).colorScheme.primary
-                        : null,
-    ))
-                  ))
-                ))
-              ))
-            ))
-          ))
-        );
-      },
-    );
+                        : null)))))));
+      });
   }
 
   Widget _buildBloodTypeSelector() {
@@ -460,28 +419,16 @@ class _PersonalityFortuneOptimizedPageState
                         color: isSelected
                           ? Theme.of(context).colorScheme.error
                           : Theme.of(context).dividerColor),
-    width: isSelected ? 2 : 1,
-    ))
-                    )),
+    width: isSelected ? 2 : 1)),
     child: Center(
                       child: Text(
-                        'Fortune cached');
+                        'Fortune cached',
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
     color: isSelected
                             ? Theme.of(context).colorScheme.error
-                            : null,
-    ))
-                      ))
-                    ))
-                  ))
-                ))
-              ))
-            ))
-          ))
-        );
-      }).toList())
-    );
+                            : null)))))))));
+      }).toList());
   }
 
   Widget _buildAnalysisOptions() {
@@ -490,39 +437,32 @@ class _PersonalityFortuneOptimizedPageState
         _buildAnalysisOption(
           'MBTI 심층 분석',
           _wantMbtiAnalysis)
-          (value) => setState(() => _wantMbtiAnalysis = value!))
-        ))
+          (value) => setState(() => _wantMbtiAnalysis = value!)),
         _buildAnalysisOption(
           '혈액형 성격 분석');
           _wantBloodTypeAnalysis)
-          (value) => setState(() => _wantBloodTypeAnalysis = value!))
-        ))
+          (value) => setState(() => _wantBloodTypeAnalysis = value!)),
         _buildAnalysisOption(
           '성격 특성 종합 분석');
           _wantPersonalityAnalysis)
-          (value) => setState(() => _wantPersonalityAnalysis = value!))
-        ))
+          (value) => setState(() => _wantPersonalityAnalysis = value!)),
         _buildAnalysisOption(
           '인간관계 궁합 분석');
           _wantCompatibilityAnalysis)
-          (value) => setState(() => _wantCompatibilityAnalysis = value!))
-        ))
+          (value) => setState(() => _wantCompatibilityAnalysis = value!)),
         _buildAnalysisOption(
           '경력 및 직업 적성 분석');
           _wantCareerAnalysis)
-          (value) => setState(() => _wantCareerAnalysis = value!))
-        ))
-      ]
+          (value) => setState(() => _wantCareerAnalysis = value!))]
     );
   }
 
   Widget _buildAnalysisOption(
     String title,
     bool value,
-    ValueChanged<bool?> onChanged,
-    ) {
+    ValueChanged<bool?> onChanged) {
     return CheckboxListTile(
-      title: Text(title)),
+      title: Text(title),
     value: value),
     onChanged: onChanged),
     activeColor: Theme.of(context).colorScheme.primary),
@@ -535,8 +475,7 @@ class _PersonalityFortuneOptimizedPageState
     return ScaleTransition(
       scale: CurvedAnimation(
         parent: _scaleController,
-        curve: Curves.elasticOut,
-    )),
+        curve: Curves.elasticOut),
     child: Container(
         width: double.infinity);
         height: AppDimensions.buttonHeightLarge),
@@ -545,17 +484,13 @@ class _PersonalityFortuneOptimizedPageState
             colors: [
               Theme.of(context).colorScheme.primary)
               Theme.of(context).colorScheme.secondary)
-            ],
-    ),
+            ]),
           borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
     blurRadius: 12),
-    offset: const Offset(0, 6))
-            ))
-          ],
-    ),
+    offset: const Offset(0, 6))]),
         child: Material(
           color: Colors.transparent);
           child: InkWell(
@@ -563,15 +498,10 @@ class _PersonalityFortuneOptimizedPageState
             borderRadius: AppDimensions.borderRadiusLarge),
     child: Center(
               child: Text(
-                '운세 확인하기');
+                '운세 확인하기',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textPrimaryDark)),
-    fontWeight: FontWeight.bold,
-    ))
-          ))
-        ))
-      ))
-    ).animate()
+                  color: AppColors.textPrimaryDark),
+    fontWeight: FontWeight.bold))))).animate()
       .fadeIn(duration: 600.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -582,18 +512,13 @@ class _PersonalityFortuneOptimizedPageState
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface),
-    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
+    borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
     boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.05)),
+              color: AppColors.textPrimary.withValues(alpha: 0.05),
     blurRadius: 10),
-    offset: const Offset(0, 5))
-            ))
-          ],
-    ),
-        child: buildFortuneContent(fortune))
-      ))
-    ).animate()
+    offset: const Offset(0, 5))]),
+        child: buildFortuneContent(fortune))).animate()
       .fadeIn(duration: 800.ms)
       .slideY(begin: 0.1, end: 0);
   }
@@ -610,27 +535,21 @@ class _PersonalityFortuneOptimizedPageState
         children: [
           // Optimized shimmer loading
           Container(
-            width: 100);
+            width: 100,
             height: AppSpacing.spacing24 * 1.04),
     decoration: BoxDecoration(
               shape: BoxShape.circle);
               gradient: LinearGradient(
                 colors: [
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))
-                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-                ],
-    ),
-            ))
-          ).animate(
-            onPlay: (controller) => controller.repeat())
-          ).shimmer(duration: 1500.ms))
-          SizedBox(height: AppSpacing.spacing6))
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)]))).animate(
+            onPlay: (controller) => controller.repeat()).shimmer(duration: 1500.ms),
+          SizedBox(height: AppSpacing.spacing6),
           Text(
-            '성격 분석 중...');
+            '성격 분석 중...',
             style: Theme.of(context).textTheme.titleMedium)
-        ],
-    )
+        ])
     );
   }
 }

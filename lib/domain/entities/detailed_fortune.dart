@@ -115,7 +115,6 @@ class DetailedFortune extends Fortune {
       description: json['description'],
       scoreBreakdown: Map<String, dynamic>.from(json['scoreBreakdown'],
       luckyItems: json['luckyItems'],
-      recommendations: List<String>.from(json['recommendations'],
-    );
+      recommendations: List<String>.from(json['recommendations']);
   }
 }

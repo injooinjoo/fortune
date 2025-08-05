@@ -16,8 +16,7 @@ class EnhancedMovingResult extends StatelessWidget {
     required this.fortuneData,
     this.selectedDate,
     this.fromAddress,
-    this.toAddress,
-  }) : super(key: key);
+    this.toAddress}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +60,7 @@ class EnhancedMovingResult extends StatelessWidget {
           
           // 주의사항
           if (fortuneData['cautions'] != null)
-            _buildCautionsSection(context),
-        ],
-      ),
-    );
+            _buildCautionsSection(context)]));
   }
 
   Widget _buildOverallScoreCard(BuildContext context) {
@@ -74,8 +70,7 @@ class EnhancedMovingResult extends StatelessWidget {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: AppDimensions.borderRadiusLarge,
-      ),
+        borderRadius: AppDimensions.borderRadiusLarge),
       child: Container(
         padding: AppSpacing.paddingAll24,
         decoration: BoxDecoration(
@@ -83,20 +78,15 @@ class EnhancedMovingResult extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               scoreColor.withValues(alpha: 0.1),
-              scoreColor.withValues(alpha: 0.05),
-            ],
+              scoreColor.withValues(alpha: 0.05)],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+            end: Alignment.bottomRight)),
         child: Column(
           children: [
             Text(
               '이사 운세 종합 점수',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.spacing5),
             SizedBox(
               height: 150,
@@ -108,36 +98,23 @@ class EnhancedMovingResult extends StatelessWidget {
                     value: overallScore / 100,
                     strokeWidth: 15,
                     backgroundColor: Colors.grey.withValues(alpha: 0.3),
-                    valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
-                  ),
+                    valueColor: AlwaysStoppedAnimation<Color>(scoreColor)),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         '$overallScore',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                        style: Theme.of(context).textTheme.bodyMedium),
                       Text(
                         '점',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                        style: Theme.of(context).textTheme.titleMedium)])])),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               _getScoreDescription(overallScore),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: scoreColor,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      )
+                fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center)]))
     );
   }
 
@@ -155,11 +132,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '이사 정보',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             if (fromAddress != null) ...[
               Row(
@@ -169,13 +142,8 @@ class EnhancedMovingResult extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '출발: $fromAddress',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.spacing2),
-            ],
+                      style: Theme.of(context).textTheme.bodyMedium))]),
+              const SizedBox(height: AppSpacing.spacing2)],
             if (toAddress != null) ...[
               Row(
                 children: [
@@ -184,13 +152,8 @@ class EnhancedMovingResult extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '도착: $toAddress',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.spacing2),
-            ],
+                      style: Theme.of(context).textTheme.bodyMedium))]),
+              const SizedBox(height: AppSpacing.spacing2)],
             if (selectedDate != null) ...[
               Row(
                 children: [
@@ -198,21 +161,12 @@ class EnhancedMovingResult extends StatelessWidget {
                   const SizedBox(width: AppSpacing.spacing2),
                   Text(
                     '예정일: $selectedDate',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+                    style: Theme.of(context).textTheme.bodyMedium)])]])));
   }
 
   Widget _buildDirectionSection(BuildContext context) {
     final auspiciousDirections = List<String>.from(
-      fortuneData['auspiciousDirections'],
-    );
+      fortuneData['auspiciousDirections']);
     final avoidDirections = List<String>.from(
       fortuneData['avoidDirections'] ?? []
     );
@@ -231,23 +185,13 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '방위 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing5),
             Center(
               child: DirectionCompass(
                 auspiciousDirections: auspiciousDirections,
                 avoidDirections: avoidDirections,
-                primaryDirection: primaryDirection,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                primaryDirection: primaryDirection))])));
   }
 
   Widget _buildAreaAnalysisSection(BuildContext context) {
@@ -267,11 +211,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '지역 상세 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing5),
             
             // 지역 점수 차트
@@ -286,8 +226,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.directions_bus,
                 '교통',
                 areaAnalysis['transportation'],
-                Colors.blue,
-              ),
+                Colors.blue),
             
             // 교육
             if (areaAnalysis['education'] != null)
@@ -296,8 +235,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.school,
                 '교육',
                 areaAnalysis['education'],
-                Colors.green,
-              ),
+                Colors.green),
             
             // 편의시설
             if (areaAnalysis['convenience'] != null)
@@ -306,8 +244,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.shopping_cart,
                 '편의시설',
                 areaAnalysis['convenience'],
-                Colors.orange,
-              ),
+                Colors.orange),
             
             // 의료
             if (areaAnalysis['medical'] != null)
@@ -316,8 +253,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.local_hospital,
                 '의료',
                 areaAnalysis['medical'],
-                Colors.red,
-              ),
+                Colors.red),
             
             // 미래 발전성
             if (areaAnalysis['development'] != null)
@@ -326,18 +262,13 @@ class EnhancedMovingResult extends StatelessWidget {
                 Icons.trending_up,
                 '발전 가능성',
                 areaAnalysis['development'],
-                Colors.purple,
-              ),
-          ],
-        ),
-      )
+                Colors.purple)]))
     );
   }
 
   Widget _buildAreaScoreChart(BuildContext context, Map<String, dynamic> scores) {
     final radarData = scores.entries.map((e) => 
-      RadarEntry(value: (e.value as num).toDouble())
-    ).toList();
+      RadarEntry(value: (e.value as num).toDouble()).toList();
     
     return Container(
       height: 200,
@@ -355,9 +286,7 @@ class EnhancedMovingResult extends StatelessWidget {
               fillColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
               borderColor: Theme.of(context).primaryColor,
               borderWidth: 2,
-              entryRadius: 4,
-            ),
-          ],
+              entryRadius: 4)],
           getTitle: (index, angle) {
             final titles = scores.keys.toList();
             return RadarChartTitle(
@@ -367,9 +296,7 @@ class EnhancedMovingResult extends StatelessWidget {
           },
           tickCount: 5,
           ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
-          tickBorderData: const BorderSide(color: Colors.grey, width: 0.5),
-        ),
-      )
+          tickBorderData: const BorderSide(color: Colors.grey, width: 0.5)))
     );
   }
 
@@ -378,8 +305,7 @@ class EnhancedMovingResult extends StatelessWidget {
     IconData icon,
     String title,
     String description,
-    Color color,
-  ) {
+    Color color) {
     return Padding(
       padding: AppSpacing.paddingVertical8,
       child: Row(
@@ -389,10 +315,8 @@ class EnhancedMovingResult extends StatelessWidget {
             padding: AppSpacing.paddingAll8,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: AppDimensions.borderRadiusSmall,
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
+              borderRadius: AppDimensions.borderRadiusSmall),
+            child: Icon(icon, color: color, size: 24)),
           const SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -401,19 +325,11 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: AppSpacing.spacing1),
                 Text(
                   description,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ],
-      )
+                  style: Theme.of(context).textTheme.bodyMedium)]))])
     );
   }
 
@@ -434,11 +350,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '날짜 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             
             // 손없는날 여부
@@ -448,8 +360,7 @@ class EnhancedMovingResult extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.amber.withValues(alpha: 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
-                  border: Border.all(color: Colors.amber),
-                ),
+                  border: Border.all(color: Colors.amber)),
                 child: Row(
                   children: [
                     Icon(Icons.star, color: Colors.amber),
@@ -458,13 +369,7 @@ class EnhancedMovingResult extends StatelessWidget {
                       child: Text(
                         '손없는날 - 모든 방향으로 이사하기 좋은 최고의 날입니다!',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                          fontWeight: FontWeight.bold)))])),
             const SizedBox(height: AppSpacing.spacing3),
             
             // 음력 정보
@@ -472,27 +377,21 @@ class EnhancedMovingResult extends StatelessWidget {
               _buildDateInfoRow(
                 context,
                 '음력',
-                dateAnalysis['lunarDate'],
-              ),
+                dateAnalysis['lunarDate']),
             
             // 절기
             if (dateAnalysis['solarTerm'] != null)
               _buildDateInfoRow(
                 context,
                 '절기',
-                dateAnalysis['solarTerm'],
-              ),
+                dateAnalysis['solarTerm']),
             
             // 오행
             if (dateAnalysis['fiveElements'] != null)
               _buildDateInfoRow(
                 context,
                 '오행',
-                dateAnalysis['fiveElements'],
-              ),
-          ],
-        ),
-      )
+                dateAnalysis['fiveElements'])]))
     );
   }
 
@@ -506,18 +405,11 @@ class EnhancedMovingResult extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
-              ),
-            ),
-          ),
+                color: Colors.grey))),
           Text(
             value,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      )
+              fontWeight: FontWeight.w500))])
     );
   }
 
@@ -527,8 +419,7 @@ class EnhancedMovingResult extends StatelessWidget {
       '방위 조화': 75,
       '지역 적합성': 90,
       '가족 운': 80,
-      '재물 운'),
-    };
+      '재물 운')};
     
     return Card(
       child: Padding(
@@ -543,25 +434,17 @@ class EnhancedMovingResult extends StatelessWidget {
                 Text(
                   '상세 운세 분석',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) => _buildScoreBar(
               context,
               entry.key,
-              entry.value.toDouble(),
-            )),
-          ],
-        ),
-      )
+              entry.value.toDouble())]))
     );
   }
 
   Widget _buildScoreBar(BuildContext context, String label, double score) {
-    final color = _getScoreColor(score.toInt());
+    final color = _getScoreColor(score.toInt(),;
     
     return Padding(
       padding: AppSpacing.paddingVertical8,
@@ -573,17 +456,12 @@ class EnhancedMovingResult extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+                style: Theme.of(context).textTheme.bodyMedium),
               Text(
                 '${score.toInt()}점',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
+                  color: color))]),
           const SizedBox(height: AppSpacing.spacing1),
           ClipRRect(
             borderRadius: AppDimensions.borderRadiusSmall,
@@ -591,12 +469,7 @@ class EnhancedMovingResult extends StatelessWidget {
               value: score / 100,
               minHeight: 8,
               backgroundColor: Colors.grey.withValues(alpha: 0.3),
-              valueColor: AlwaysStoppedAnimation<Color>(color),
-            ),
-          ),
-        ],
-      ),
-    );
+              valueColor: AlwaysStoppedAnimation<Color>(color)))]));
   }
 
   Widget _buildRecommendationsSection(BuildContext context) {
@@ -614,16 +487,12 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber.withValues(alpha: 0.9)),
+                Icon(Icons.lightbulb, color: Colors.amber.withValues(alpha: 0.9),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '추천사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...recommendations.map((rec) => Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
@@ -632,22 +501,12 @@ class EnhancedMovingResult extends StatelessWidget {
                 children: [
                   Icon(Icons.check_circle, 
                     color: Colors.green, 
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       rec,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            )),
-          ],
-        ),
-      ),
-    );
+                      style: Theme.of(context).textTheme.bodyMedium))]))])));
   }
 
   Widget _buildCautionsSection(BuildContext context) {
@@ -666,17 +525,13 @@ class EnhancedMovingResult extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.warning, color: Colors.red.withValues(alpha: 0.9)),
+                Icon(Icons.warning, color: Colors.red.withValues(alpha: 0.9),
                 const SizedBox(width: AppSpacing.spacing2),
                 Text(
                   '주의사항',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.red.withValues(alpha: 0.9),
-                  ),
-                ),
-              ],
-            ),
+                    color: Colors.red.withValues(alpha: 0.9)))]),
             const SizedBox(height: AppSpacing.spacing4),
             ...cautions.map((caution) => Padding(
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.spacing1),
@@ -685,24 +540,13 @@ class EnhancedMovingResult extends StatelessWidget {
                 children: [
                   Icon(Icons.error_outline, 
                     color: Colors.red.withValues(alpha: 0.9), 
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       caution,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red.withValues(alpha: 0.9),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )),
-          ],
-        ),
-      ),
-    );
+                        color: Colors.red.withValues(alpha: 0.9))))]))])));
   }
 
   Color _getScoreColor(int score) {

@@ -45,13 +45,11 @@ class NativePlatformService {
   /// Update widget data on the native side
   static Future<void> updateWidget({
     required String widgetType,
-    required Map<String, dynamic> data,
-  }) async {
+    required Map<String, dynamic> data}) async {
     try {
       await _channel.invokeMethod('updateWidget', {
         'widgetType': widgetType,
-        'data': data,
-      });
+        'data': data});
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
       Logger.error('Failed to update widget', e);
@@ -75,16 +73,14 @@ class NativePlatformService {
     required String title,
     required String body,
     required DateTime scheduledTime,
-    Map<String, dynamic>? payload,
-  }) async {
+    Map<String, dynamic>? payload}) async {
     try {
       await _channel.invokeMethod('scheduleNotification', {
         'id': id,
         'title': title,
         'body': body,
         'scheduledTime': scheduledTime.millisecondsSinceEpoch,
-        'payload': payload,
-      });
+        'payload': payload});
       Logger.info('Native platform initialized successfully');
     } on PlatformException catch (e) {
       Logger.error('Failed to schedule notification', e);
@@ -119,15 +115,13 @@ class iOS {
   /// Update Dynamic Island content
   Future<void> updateDynamicIsland({
       required String activityId,
-      required Map<String, dynamic> content,
-    }) async {
+      required Map<String, dynamic> content}) async {
       if (const String.fromEnvironment('PLATFORM') != 'ios') return;
       
       try {
         await NativePlatformService.iosChannel.invokeMethod('updateDynamicIsland', {
           'activityId': activityId,
-          'content': content,
-        });
+          'content': content});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
         Logger.error('Failed to update Dynamic Island', e);
@@ -137,15 +131,13 @@ class iOS {
     /// Start a Live Activity
   Future<String?> startLiveActivity({
       required Map<String, dynamic> attributes,
-      required Map<String, dynamic> contentState,
-    }) async {
+      required Map<String, dynamic> contentState}) async {
       if (const String.fromEnvironment('PLATFORM') != 'ios') return null;
       
       try {
         final activityId = await NativePlatformService.iosChannel.invokeMethod<String>('startLiveActivity', {
           'attributes': attributes,
-          'contentState': contentState,
-        });
+          'contentState': contentState});
         Logger.info('Native platform initialized successfully');
         return activityId;
       } on PlatformException catch (e) {
@@ -171,8 +163,7 @@ class iOS {
       required String shortcutId,
       required String title,
       required String phrase,
-      required Map<String, dynamic> userInfo,
-    }) async {
+      required Map<String, dynamic> userInfo}) async {
       if (const String.fromEnvironment('PLATFORM') != 'ios') return;
       
       try {
@@ -180,8 +171,7 @@ class iOS {
           'shortcutId': shortcutId,
           'title': title,
           'phrase': phrase,
-          'userInfo': userInfo,
-        });
+          'userInfo': userInfo});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
         Logger.error('Failed to add Siri shortcut', e);
@@ -196,15 +186,13 @@ class Android {
   /// Update home screen widget
   Future<void> updateHomeWidget({
       required int widgetId,
-      required Map<String, dynamic> data,
-    }) async {
+      required Map<String, dynamic> data}) async {
       if (const String.fromEnvironment('PLATFORM') != 'android') return;
       
       try {
         await NativePlatformService.androidChannel.invokeMethod('updateHomeWidget', {
           'widgetId': widgetId,
-          'data': data,
-        });
+          'data': data});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
         Logger.error('Failed to update home widget', e);
@@ -230,8 +218,7 @@ class Android {
       required String channelId,
       required String channelName,
       required String channelDescription,
-      required int importance,
-    }) async {
+      required int importance}) async {
       if (const String.fromEnvironment('PLATFORM') != 'android') return;
       
       try {
@@ -239,8 +226,7 @@ class Android {
           'channelId': channelId,
           'channelName': channelName,
           'channelDescription': channelDescription,
-          'importance': null,
-        });
+          'importance': null});
         Logger.info('Native platform initialized successfully');
       } on PlatformException catch (e) {
         Logger.error('Failed to create notification channel', e);

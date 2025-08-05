@@ -20,8 +20,7 @@ class CacheEntry extends HiveObject {
     required this.key,
     required this.fortuneType,
     required this.createdAt,
-    required this.expiresAt,
-  });
+    required this.expiresAt});
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
   

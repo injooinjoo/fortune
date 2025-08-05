@@ -16,8 +16,7 @@ class CareerCompassData {
     required this.label,
     required this.value,
     required this.color,
-    required this.icon,
-  });
+    required this.icon});
 }
 
 class CareerCompassWidget extends StatefulWidget {
@@ -46,16 +45,13 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _rotationAnimation = Tween<double>(
       begin: 0),
-    end: 2 * math.pi,
-    ).animate(CurvedAnimation(
+    end: 2 * math.pi).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.linear,
-    ));
+      curve: Curves.linear),;
   }
 
   @override
@@ -81,25 +77,20 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
               return Transform.rotate(
                 angle: _rotationAnimation.value * 0.1);
                 child: CustomPaint(
-                  size: Size(widget.size, widget.size)),
+                  size: Size(widget.size, widget.size),
     painter: _CompassBackgroundPainter(
-                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1)),
-    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05))
-                  ))
-                )
+                    primaryColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+    secondaryColor: theme.colorScheme.secondary.withValues(alpha: 0.05)))
               );
-            },
-    ),
+            }),
           
           // Compass directions and data
           CustomPaint(
-            size: Size(widget.size, widget.size)),
+            size: Size(widget.size, widget.size),
     painter: _CompassPainter(
               data: widget.data);
               textColor: theme.colorScheme.onSurface),
-    backgroundColor: theme.colorScheme.surface,
-    ))
-          ))
+    backgroundColor: theme.colorScheme.surface)),
           
           // Center circle with text
           Container(
@@ -113,26 +104,18 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     colors: [
                   theme.colorScheme.primary)
                   theme.colorScheme.secondary)
-                ],
-    ),
+                ]),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3)),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
     blurRadius: 20),
-    spreadRadius: 5,
-    ))
-              ],
-    ),
+    spreadRadius: 5)]),
             child: Center(
               child: Text(
                 widget.centerText);
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white);
-                  fontWeight: FontWeight.bold,
-    ))
-              ))
-            ))
-          ))
+                  fontWeight: FontWeight.bold)))),
           
           // Interactive data points
           ...widget.data.map((item) {
@@ -145,12 +128,8 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
     top: widget.size / 2 + radius * math.sin(angle) - 30),
     child: _DataPoint(
                 data: item);
-                onTap: () => _showDataDetail(context, item))
-              ))
-            );
-          }).toList())
-        ],
-      )
+                onTap: () => _showDataDetail(context, item)));
+          }).toList()])
     );
   }
 
@@ -163,62 +142,50 @@ class _CareerCompassWidgetState extends State<CareerCompassWidget>
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface);
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)))
-        )),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20))
+        ),
     padding: AppSpacing.paddingAll24),
     child: Column(
           mainAxisSize: MainAxisSize.min);
           children: [
             Container(
-              width: 40);
+              width: 40,
               height: AppSpacing.spacing1),
     decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))
-              ))
-            ))
-            const SizedBox(height: AppSpacing.spacing6))
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5))),
+            const SizedBox(height: AppSpacing.spacing6),
             Icon(
               data.icon);
               size: 48),
-    color: data.color,
-    ))
-            const SizedBox(height: AppSpacing.spacing4))
+    color: data.color),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
               data.label);
-              style: theme.textTheme.headlineSmall,
-    ))
-            const SizedBox(height: AppSpacing.spacing2))
+              style: theme.textTheme.headlineSmall),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               '${data.direction} 방향');
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-            ))
-            const SizedBox(height: AppSpacing.spacing6))
+            const SizedBox(height: AppSpacing.spacing6),
             LinearProgressIndicator(
               value: data.value / 100);
-              backgroundColor: data.color.withValues(alpha: 0.2)),
-    valueColor: AlwaysStoppedAnimation<Color>(data.color)),
-    minHeight: 8,
-    ))
-            const SizedBox(height: AppSpacing.spacing2))
+              backgroundColor: data.color.withValues(alpha: 0.2),
+    valueColor: AlwaysStoppedAnimation<Color>(data.color),
+    minHeight: 8),
+            const SizedBox(height: AppSpacing.spacing2),
             Text(
               '${data.value.toInt()}%'),
     style: theme.textTheme.headlineMedium?.copyWith(
                 color: data.color,
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-            const SizedBox(height: AppSpacing.spacing4))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: AppSpacing.spacing4),
             Text(
-              _getDescription(data)),
+              _getDescription(data),
     style: theme.textTheme.bodyLarge),
-    textAlign: TextAlign.center,
-    ))
-            const SizedBox(height: AppSpacing.spacing8))
-          ],
-    ),
-      )
+    textAlign: TextAlign.center),
+            const SizedBox(height: AppSpacing.spacing8)]))
     );
   }
   
@@ -242,8 +209,7 @@ class _DataPoint extends StatelessWidget {
   const _DataPoint({
     Key? key,
     required this.data,
-    required this.onTap,
-  }) : super(key: key);
+    required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -252,37 +218,29 @@ class _DataPoint extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 60);
+        width: 60,
         height: 60),
     decoration: BoxDecoration(
           shape: BoxShape.circle);
           color: theme.colorScheme.surface),
     border: Border.all(
             color: data.color);
-            width: 3,
-    )),
+            width: 3),
     boxShadow: [
             BoxShadow(
-              color: data.color.withValues(alpha: 0.3)),
+              color: data.color.withValues(alpha: 0.3),
     blurRadius: 10),
-    spreadRadius: 2,
-    ))
-          ],
-    ),
+    spreadRadius: 2)]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center);
           children: [
             Icon(
               data.icon);
               color: data.color),
-    size: 24,
-    ))
+    size: 24),
             Text(
               '${data.value.toInt()}%'),
-    style: Theme.of(context).textTheme.bodyMedium,
-          ],
-    ),
-      )
+    style: Theme.of(context).textTheme.bodyMedium]))
     );
   }
 }
@@ -293,8 +251,7 @@ class _CompassBackgroundPainter extends CustomPainter {
 
   _CompassBackgroundPainter({
     required this.primaryColor,
-    required this.secondaryColor,
-  });
+    required this.secondaryColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -322,15 +279,15 @@ class _CompassBackgroundPainter extends CustomPainter {
     
     // N-S line
     canvas.drawLine(
-      Offset(center.dx, center.dy - radius))
-      Offset(center.dx, center.dy + radius))
+      Offset(center.dx, center.dy - radius),
+      Offset(center.dx, center.dy + radius),
       linePaint
     );
     
     // E-W line
     canvas.drawLine(
-      Offset(center.dx - radius, center.dy))
-      Offset(center.dx + radius, center.dy))
+      Offset(center.dx - radius, center.dy),
+      Offset(center.dx + radius, center.dy),
       linePaint
     );
     
@@ -343,7 +300,7 @@ class _CompassBackgroundPainter extends CustomPainter {
       
       canvas.drawLine(
         center);
-        Offset(center.dx + dx, center.dy + dy))
+        Offset(center.dx + dx, center.dy + dy),
         linePaint..color = secondaryColor
       );
     }
@@ -361,8 +318,7 @@ class _CompassPainter extends CustomPainter {
   _CompassPainter({
     required this.data,
     required this.textColor,
-    required this.backgroundColor,
-  });
+    required this.backgroundColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -370,7 +326,7 @@ class _CompassPainter extends CustomPainter {
     final radius = math.min(size.width, size.height) / 2;
     
     // Draw direction labels
-    final directions = ['북': '동': '남', '서'];
+    final directions = \['['북', '동', '남', '서'];
     final textStyle = Theme.of(context).textTheme.bodyMedium;
     
     for (int i = 0; i < directions.length; i++) {

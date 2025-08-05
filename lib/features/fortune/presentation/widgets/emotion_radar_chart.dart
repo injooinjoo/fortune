@@ -14,8 +14,7 @@ class EmotionRadarChart extends StatelessWidget {
     required this.emotions,
     this.size = 200,
     this.primaryColor = FortuneColors.spiritualPrimary,
-    this.backgroundColor = AppColors.divider,
-  }) : super(key: key);
+    this.backgroundColor = AppColors.divider}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +35,7 @@ class _RadarChartPainter extends CustomPainter {
   _RadarChartPainter({
     required this.emotions,
     required this.primaryColor,
-    required this.backgroundColor,
-  });
+    required this.backgroundColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -76,8 +74,7 @@ class _RadarChartPainter extends CustomPainter {
         text: TextSpan(
           text: _getEmotionLabel(key),
           style: Theme.of(context).textTheme.bodyMedium,
-        textDirection: TextDirection.ltr,
-      );
+        textDirection: TextDirection.ltr);
       textPainter.layout();
 
       final labelOffset = Offset(
@@ -132,13 +129,12 @@ class _RadarChartPainter extends CustomPainter {
 
   String _getEmotionLabel(String key) {
     final labels = {
-      'healing': '치유',
-      'acceptance': '수용',
-      'growth': '성장',
-      'peace': '평화',
-      'hope': '희망',
-      'strength': '강인함',
-    };
+      'healing', '치유',
+      'acceptance', '수용',
+      'growth', '성장',
+      'peace', '평화',
+      'hope', '희망',
+      'strength', '강인함'};
     return labels[key] ?? key;
 }
 

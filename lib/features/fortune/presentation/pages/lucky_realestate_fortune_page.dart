@@ -16,11 +16,9 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         colors: [Color(0xFF8B4513), Color(0xFFD2691E)],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        end: Alignment.bottomRight),
       inputBuilder: (context, onSubmit) => _buildInputSection(context, onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare,
-    );
+      resultBuilder: (context, result, onShare) => _buildResultSection(context, result, onShare);
   }
 
   Widget _buildInputSection(BuildContext context, Function(Map<String, dynamic>) onSubmit) {
@@ -30,7 +28,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -40,9 +38,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
               '부동산 투자 정보를 입력해주세요',
               style: TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 24),
             TextField(
               controller: investmentTypeController,
@@ -51,10 +47,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                 hintText: '예: 아파트, 오피스텔, 상가, 토지',
                 prefixIcon: const Icon(Icons.home_work),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+                  borderRadius: BorderRadius.circular(12)))),
             const SizedBox(height: 16),
             TextField(
               controller: budgetController,
@@ -63,11 +56,8 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                 hintText: '예: 3, 5, 10',
                 prefixIcon: const Icon(Icons.attach_money),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-            ),
+                  borderRadius: BorderRadius.circular(12))),
+              keyboardType: TextInputType.number),
             const SizedBox(height: 16),
             TextField(
               controller: locationController,
@@ -76,10 +66,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                 hintText: '예: 강남, 판교, 해운대',
                 prefixIcon: const Icon(Icons.location_on),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
+                  borderRadius: BorderRadius.circular(12)))),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -91,34 +78,24 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                     onSubmit({
                       'investmentType': investmentTypeController.text,
                       'budget': budgetController.text,
-                      'location': null,
-                    });
+                      'location': null});
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('모든 정보를 입력해주세요'),
                         backgroundColor: Colors.orange,
-                      ,
-                    );
+                      );
                   }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  backgroundColor: const Color(0xFF8B4513),
-                ),
+                    borderRadius: BorderRadius.circular(12)),
+                  backgroundColor: const Color(0xFF8B4513)),
                 child: const Text(
                   '부동산 운세 확인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ,
-    );
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))))]),
+      );
   }
 
   Widget _buildResultSection(BuildContext context, FortuneResult result, VoidCallback onShare) {
@@ -133,29 +110,25 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             title: '투자 타이밍',
             content: sections['timing'] ?? '현재 부동산 투자 타이밍을 분석 중입니다.',
             icon: Icons.access_time,
-            color: Colors.blue,
-          ),
+            color: Colors.blue),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '추천 지역',
             content: sections['recommended_areas'] ?? '투자하기 좋은 지역을 분석 중입니다.',
             icon: Icons.map,
-            color: Colors.green,
-          ),
+            color: Colors.green),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '투자 전략',
             content: sections['strategy'] ?? '최적의 투자 전략을 준비 중입니다.',
             icon: Icons.trending_up,
-            color: Colors.orange,
-          ),
+            color: Colors.orange),
           const SizedBox(height: 16),
           _buildMainResultCard(
             title: '주의사항',
             content: sections['cautions'] ?? '투자 시 주의할 점을 확인 중입니다.',
             icon: Icons.warning,
-            color: Colors.red,
-          ),
+            color: Colors.red),
           const SizedBox(height: 16),
           _buildPropertyTypeAnalysis(sections['property_analysis'],
           const SizedBox(height: 16),
@@ -168,20 +141,15 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-        ],
-      ,
-    );
+                borderRadius: BorderRadius.circular(12)))),
+          const SizedBox(height: 24)],
+      );
   }
 
   Widget _buildSummaryCard(String summary) {
     return Card(
       elevation: 8,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(24),
@@ -190,9 +158,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [Colors.brown.shade50, Colors.orange.shade50],
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+            end: Alignment.bottomRight)),
         child: Column(
           children: [
             Icon(Icons.apartment, size: 48, color: Colors.brown.shade700),
@@ -202,30 +168,23 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.brown.shade800,
-              ),
-            ),
+                color: Colors.brown.shade800)),
             const SizedBox(height: 16),
             Text(
               summary,
               style: const TextStyle(fontSize: 16, height: 1.6),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ,
-    );
+              textAlign: TextAlign.center)]),
+      );
   }
 
   Widget _buildMainResultCard({
     required String title,
     required String content,
     required IconData icon,
-    required Color color,
-  }) {
+    required Color color}) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -237,31 +196,20 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: color, size: 28),
-                ),
+                    borderRadius: BorderRadius.circular(12)),
+                  child: Icon(icon, color: color, size: 28)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                      fontWeight: FontWeight.bold)))]),
             const SizedBox(height: 16),
             Text(
               content,
-              style: const TextStyle(fontSize: 16, height: 1.6),
-            ),
-          ],
-        ),
-      ,
-    );
+              style: const TextStyle(fontSize: 16, height: 1.6))]),
+      );
   }
 
   Widget _buildPropertyTypeAnalysis(String? analysis) {
@@ -269,7 +217,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -281,29 +229,19 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.purple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.analytics, color: Colors.purple, size: 28),
-                ),
+                    borderRadius: BorderRadius.circular(12)),
+                  child: const Icon(Icons.analytics, color: Colors.purple, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
                   '부동산 유형별 분석',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               analysis,
-              style: const TextStyle(fontSize: 16, height: 1.6),
-            ),
-          ],
-        ),
-      ,
-    );
+              style: const TextStyle(fontSize: 16, height: 1.6))]),
+      );
   }
 
   Widget _buildMonthlyForecast(String? forecast) {
@@ -311,7 +249,7 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
 
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -323,28 +261,18 @@ class LuckyRealEstateFortunePage extends ConsumerWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.teal.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(Icons.calendar_month, color: Colors.teal, size: 28),
-                ),
+                    borderRadius: BorderRadius.circular(12)),
+                  child: const Icon(Icons.calendar_month, color: Colors.teal, size: 28)),
                 const SizedBox(width: 16),
                 const Text(
                   '월별 투자 전망',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.bold))]),
             const SizedBox(height: 16),
             Text(
               forecast,
-              style: const TextStyle(fontSize: 16, height: 1.6),
-            ),
-          ],
-        ),
-      ,
-    );
+              style: const TextStyle(fontSize: 16, height: 1.6))]),
+      );
   }
 }

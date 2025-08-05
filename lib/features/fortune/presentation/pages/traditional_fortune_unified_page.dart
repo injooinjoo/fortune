@@ -35,16 +35,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const TraditionalFortuneEnhancedPage(),
-      );
+          builder: (context) => const TraditionalFortuneEnhancedPage());
 });
     
     // Show loading while navigating
     return Scaffold(
       body: Center(
         child: CircularProgressIndicator(
-          color: Color(0xFFEF4444),
-      ));
+          color: Color(0xFFEF4444)),;
 }
 
   Widget _buildHeaderCard() {
@@ -61,8 +59,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFFEF4444).withValues(alpha: 0.3),
-          width: 1,
-        ),
+          width: 1),
       child: Column(
         children: [
           Icon(
@@ -75,16 +72,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             style: TextStyle(
               fontSize: 20),
                   fontWeight: FontWeight.bold),
-                  color: Color(0xFFEF4444),
-          ),
+                  color: Color(0xFFEF4444)),
           const SizedBox(height: 8),
           Text(
             '5000년 역사의 동양 철학으로 보는 운명',
             style: TextStyle(
               fontSize: 14),
                   color: AppTheme.textSecondaryColor),
-            textAlign: TextAlign.center,
-          ));
+            textAlign: TextAlign.center),;
 }
 
   Widget _buildTraditionalGrid() {
@@ -94,7 +89,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         final type = entry.value;
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: _buildEnhancedTraditionalCard(type, index));
+          child: _buildEnhancedTraditionalCard(type, index),;
 }).toList();
 }
 
@@ -125,15 +120,13 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             BoxShadow(
               color: type.gradientColors[0].withValues(alpha: 0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10),
-        ),
+              offset: const Offset(0, 10)),
         child: Stack(
           children: [
             // Background pattern
             Positioned.fill(
               child: CustomPaint(
-                painter: SajuPatternPainter(),
-            ),
+                painter: SajuPatternPainter()),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -156,15 +149,12 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                               style: const TextStyle(
                                 fontSize: 20),
                   fontWeight: FontWeight.bold),
-                  color: Colors.white,
-    ),
+                  color: Colors.white),
                             Text(
                               type.description),
                   style: TextStyle(
                                 fontSize: 14),
-                  color: Colors.white.withValues(alpha: 0.9),
-                            ),
-                      ),
+                  color: Colors.white.withValues(alpha: 0.9))),
                   const Spacer(),
                   // Preview elements
                   Row(
@@ -194,10 +184,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white),
-                  fontWeight: FontWeight.w500,
-    ),
-                    ),
-              ),
+                  fontWeight: FontWeight.w500))),
             // Premium badge
             if (type.isPremium), Positioned(
                 top: 16,
@@ -212,11 +199,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold),
-                  color: Colors.black87,
-    ),
-                ),
-        ),
-    ).animate(delay: (100 * index).ms,
+                  color: Colors.black87)))).animate(delay: (100 * index).ms,
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
 }
@@ -237,8 +220,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             BoxShadow(
               color: type.gradientColors[0].withValues(alpha: 0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10),
-        ),
+              offset: const Offset(0, 10)),
         child: Stack(
           children: [
             // Chart preview
@@ -250,11 +232,9 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                   height: 150),
                   decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
+                  shape: BoxShape.circle),
                 child: CustomPaint(
-                  painter: ChartPreviewPainter(),
-              ),
+                  painter: ChartPreviewPainter()),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -271,15 +251,13 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
-                  color: Colors.white,
-    ),
+                  color: Colors.white),
                   const SizedBox(height: 4),
                   Text(
                     type.description),
                   style: TextStyle(
                       fontSize: 14),
-                  color: Colors.white.withValues(alpha: 0.9),
-                  ),
+                  color: Colors.white.withValues(alpha: 0.9)),
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -299,12 +277,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white),
-                  fontWeight: FontWeight.w500,
-    ),
-                    ),
-              ),
-        ),
-    ).animate(delay: (100 * index).ms,
+                  fontWeight: FontWeight.w500))))).animate(delay: (100 * index).ms,
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
 }
@@ -325,15 +298,13 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             BoxShadow(
               color: type.gradientColors[0].withValues(alpha: 0.4),
               blurRadius: 20,
-              offset: const Offset(0, 10),
-        ),
+              offset: const Offset(0, 10)),
         child: Stack(
           children: [
             // Traditional pattern
             Positioned.fill(
               child: CustomPaint(
-                painter: TojeongPatternPainter(),
-            ),
+                painter: TojeongPatternPainter()),
             // Content
             Padding(
               padding: const EdgeInsets.all(24),
@@ -356,15 +327,12 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                               style: const TextStyle(
                                 fontSize: 20),
                   fontWeight: FontWeight.bold),
-                  color: Colors.white,
-    ),
+                  color: Colors.white),
                             Text(
                               type.description),
                   style: TextStyle(
                                 fontSize: 14),
-                  color: Colors.white.withValues(alpha: 0.9),
-                            ),
-                      ),
+                  color: Colors.white.withValues(alpha: 0.9))),
                   const Spacer(),
                   // 64괘 preview
                   Row(
@@ -390,10 +358,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white),
-                  fontWeight: FontWeight.w500,
-    ),
-                    ),
-              ),
+                  fontWeight: FontWeight.w500))),
             // Premium badge
             if (type.isPremium), Positioned(
                 top: 16,
@@ -408,11 +373,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold),
-                  color: Colors.black87,
-    ),
-                ),
-        ),
-    ).animate(delay: (100 * index).ms,
+                  color: Colors.black87)))).animate(delay: (100 * index).ms,
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
 }
@@ -426,17 +387,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         shape: BoxShape.circle,
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.5),
-          width: 1,
-        ),
+          width: 1),
       child: Center(
         child: Text(
           element,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold),
-                  fontSize: 14,
-    ),
-      ));
+                  fontSize: 14)),;
 }
 
   Widget _buildHexagramPreview() {
@@ -451,18 +409,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             '☰'),
                   style: TextStyle(
               fontSize: 24),
-                  color: Colors.white,
-    ),
+                  color: Colors.white),
           const SizedBox(height: 4),
           Text(
             '건위천',
             style: TextStyle(
               fontSize: 12,
               color: Colors.white),
-                  fontWeight: FontWeight.w500,
-    ),
-      
-    );
+                  fontWeight: FontWeight.w500));
 }
 
   // Original grid card method (kept for reference,
@@ -481,8 +435,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
             BoxShadow(
               color: type.gradientColors[0].withValues(alpha: 0.3),
               blurRadius: 12,
-              offset: const Offset(0, 4),
-        ),
+              offset: const Offset(0, 4)),
         child: Stack(
           children: [
             // Content
@@ -502,17 +455,14 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                   color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
+                    textAlign: TextAlign.center),
                   const SizedBox(height: 4),
                   Text(
                     type.description),
                   style: TextStyle(
                       fontSize: 12),
                   color: Colors.white.withValues(alpha: 0.8),
-                    textAlign: TextAlign.center,
-                  ),
-            ),
+                    textAlign: TextAlign.center)),
             // Premium Badge
             if (type.isPremium), Positioned(
                 top: 8,
@@ -527,11 +477,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold),
-                  color: Colors.black87,
-    ),
-                ),
-        ),
-    ).animate(delay: (50 * index).ms,
+                  color: Colors.black87)))).animate(delay: (50 * index).ms,
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0);
 }
@@ -549,8 +495,7 @@ class _TraditionalFortuneUnifiedPageState extends ConsumerState<TraditionalFortu
         context.push('/fortune/tojeong');
         break;
 }
-  },
-}
+  }}
 
 // Custom painter for Saju background pattern
 class SajuPatternPainter extends CustomPainter {
@@ -634,8 +579,7 @@ class ChartPreviewPainter extends CustomPainter {
         final firstY = center.dy + radius * sin(firstAngle);
         canvas.drawLine(Offset(x, y), Offset(firstX, firstY), paint);
 }
-    },
-}
+    }}
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
@@ -667,8 +611,7 @@ class TojeongPatternPainter extends CustomPainter {
         if (y + spacing < size.height) {
           canvas.drawLine(Offset(x, y), Offset(x, y + spacing / 2), paint);
 }
-      },
-}
+      }}
   }
 
   @override

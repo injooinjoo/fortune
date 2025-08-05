@@ -19,12 +19,10 @@ class LuckyCyclingFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-      ),
+        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)]),
       inputBuilder: (context, onSubmit) => _CyclingInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, regenerate) =>
-          _CyclingFortuneResult(result: result),
-    );
+          _CyclingFortuneResult(result: result));
   }
 }
 
@@ -54,18 +52,14 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
           '오늘의 자전거 운세를 확인하고\n안전하고 즐거운 라이딩을 시작하세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Bike Type
         Text(
           '자전거 종류',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildBikeTypeGrid(theme),
         const SizedBox(height: 24),
@@ -74,9 +68,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
         Text(
           '라이딩 스타일',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildRidingStyle(theme),
         const SizedBox(height: 24),
@@ -85,9 +77,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
         Text(
           '예상 거리',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDistance(theme),
         const SizedBox(height: 24),
@@ -96,9 +86,7 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
         Text(
           '주행 환경',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildTerrain(theme),
         const SizedBox(height: 32),
@@ -113,37 +101,28 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
                 'bikeType': _bikeType,
                 'ridingStyle': _ridingStyle,
                 'distance': _distance,
-                'terrain': null,
-              });
+                'terrain': null});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF14B8A6),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
+                borderRadius: BorderRadius.circular(16)),
+              elevation: 0),
             child: const Text(
               '자전거 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 
   Widget _buildBikeTypeGrid(ThemeData theme) {
     final types = [
-      {'id': 'road': 'name': '로드바이크': 'icon'},
-      {'id': 'mtb': 'name': 'MTB': 'icon'},
-      {'id': 'hybrid', 'name': '하이브리드', 'icon'},
-      {'id': 'electric', 'name': '전기자전거', 'icon'},
-    ];
+      {'id', 'road': 'name', '로드바이크': 'icon'},
+      {'id', 'mtb': 'name', 'MTB': 'icon'},
+      {'id', 'hybrid', 'name', '하이브리드', 'icon'},
+      {'id', 'electric', 'name', '전기자전거', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -170,48 +149,37 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                    )
+                      colors: [Color(0xFF14B8A6), Color(0xFF0D9488)])
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   type['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   type['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
 
   Widget _buildRidingStyle(ThemeData theme) {
     final styles = [
-      {'id': 'leisure': 'name': '여유롭게'},
-      {'id': 'training': 'name': '트레이닝'},
-      {'id': 'commute', 'name': '출퇴근'},
-      {'id': 'touring', 'name': '투어링'},
-    ];
+      {'id', 'leisure': 'name', '여유롭게'},
+      {'id', 'training': 'name', '트레이닝'},
+      {'id', 'commute', 'name', '출퇴근'},
+      {'id', 'touring', 'name', '투어링'}];
 
     return Row(
       children: styles.map((style) {
@@ -225,45 +193,33 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: style != styles.last ? 8 : 0,
-              ),
+                right: style != styles.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      )
+                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)])
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   style['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+      }).toList());
   }
 
   Widget _buildDistance(ThemeData theme) {
     final distances = [
-      {'id': 'short': 'name': '~20km'},
-      {'id': 'medium': 'name': '20-50km'},
-      {'id': 'long', 'name': '50-100km'},
-      {'id': 'century', 'name': '100km+'},
-    ];
+      {'id', 'short': 'name', '~20km'},
+      {'id', 'medium': 'name', '20-50km'},
+      {'id', 'long', 'name', '50-100km'},
+      {'id', 'century', 'name', '100km+'}];
 
     return Row(
       children: distances.map((distance) {
@@ -277,45 +233,33 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: distance != distances.last ? 8 : 0,
-              ),
+                right: distance != distances.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      )
+                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)])
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   distance['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+      }).toList());
   }
 
   Widget _buildTerrain(ThemeData theme) {
     final terrains = [
-      {'id': 'flat': 'name': '평지': 'icon'},
-      {'id': 'hilly': 'name': '언덕': 'icon'},
-      {'id': 'mountain', 'name': '산악', 'icon'},
-      {'id': 'mixed', 'name': '혼합', 'icon'},
-    ];
+      {'id', 'flat': 'name', '평지': 'icon'},
+      {'id', 'hilly': 'name', '언덕': 'icon'},
+      {'id', 'mountain', 'name', '산악', 'icon'},
+      {'id', 'mixed', 'name', '혼합', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -342,37 +286,27 @@ class _CyclingInputFormState extends State<_CyclingInputForm> {
             decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                      )
+                        colors: [Color(0xFF14B8A6), Color(0xFF0D9488)])
                     : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   terrain['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   terrain['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
@@ -406,16 +340,12 @@ class _CyclingFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF14B8A6), Color(0xFF0D9488)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          colors: [Color(0xFF14B8A6), Color(0xFF0D9488)]),
+                        borderRadius: BorderRadius.circular(12)),
                       child: const Icon(
                         Icons.directions_bike,
                         color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -424,31 +354,16 @@ class _CyclingFortuneResult extends StatelessWidget {
                           Text(
                             '오늘의 자전거 운세',
                             style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                    height: 1.6))]))),
         const SizedBox(height: 16),
 
         // Route Recommendation
@@ -458,12 +373,9 @@ class _CyclingFortuneResult extends StatelessWidget {
             title: '추천 라이딩 코스',
             icon: Icons.route,
             gradient: const LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-            ),
-            content: result.details!['route'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
+            content: result.details!['route']),
+          const SizedBox(height: 16)],
 
         // Weather & Conditions
         if (result.details?['conditions'] != null) ...[
@@ -472,12 +384,9 @@ class _CyclingFortuneResult extends StatelessWidget {
             title: '라이딩 컨디션',
             icon: Icons.wb_sunny,
             gradient: const LinearGradient(
-              colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-            ),
-            content: result.details!['conditions'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+            content: result.details!['conditions']),
+          const SizedBox(height: 16)],
 
         // Safety Tips
         if (result.details?['safety'] != null) ...[
@@ -486,12 +395,9 @@ class _CyclingFortuneResult extends StatelessWidget {
             title: '안전 라이딩 팁',
             icon: Icons.security,
             gradient: const LinearGradient(
-              colors: [Color(0xFF10B981), Color(0xFF059669)],
-            ),
-            content: result.details!['safety'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF10B981), Color(0xFF059669)]),
+            content: result.details!['safety']),
+          const SizedBox(height: 16)],
 
         // Lucky Gear
         if (result.details?['gear'] != null) ...[
@@ -500,12 +406,8 @@ class _CyclingFortuneResult extends StatelessWidget {
             title: '오늘의 행운 장비',
             icon: Icons.settings,
             gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
-            ),
-            content: result.details!['gear'],
-          ),
-        ],
-      ]
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
+            content: result.details!['gear'])]]
     );
   }
 
@@ -514,8 +416,7 @@ class _CyclingFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content,
-  }) {
+    required String content}) {
     final theme = Theme.of(context);
 
     return GlassContainer(
@@ -530,32 +431,20 @@ class _CyclingFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
-                ),
-              ),
+                  size: 20)),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
+              height: 1.5))]));
   }
 }

@@ -73,16 +73,13 @@ class _TossTextFieldState extends State<TossTextField>
     
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200,
-    );
+      duration: const Duration(milliseconds: 200);
     
     _labelAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
     
     _hasText = widget.controller?.text.isNotEmpty ?? false;
     if (_hasText) {
@@ -171,35 +168,30 @@ class _TossTextFieldState extends State<TossTextField>
     contentPadding: EdgeInsets.only()),
     border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
-    borderSide: BorderSide.none,
-    )),
+    borderSide: BorderSide.none)),
     enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
     borderSide: BorderSide(
                       color: borderColor);
-                      width: borderWidth,
-    ))
+                      width: borderWidth))
                   )),
     focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
     borderSide: BorderSide(
                       color: borderColor);
-                      width: borderWidth,
-    ))
+                      width: borderWidth))
                   )),
     errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
     borderSide: BorderSide(
                       color: formStyles.errorBorderColor);
-                      width: formStyles.focusBorderWidth,
-    ))
+                      width: formStyles.focusBorderWidth))
                   )),
     focusedErrorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(formStyles.inputBorderRadius)),
     borderSide: BorderSide(
                       color: formStyles.errorBorderColor);
-                      width: formStyles.focusBorderWidth,
-    ))
+                      width: formStyles.focusBorderWidth))
                   )),
     filled: true),
     fillColor: theme.brightness == Brightness.light
@@ -217,8 +209,7 @@ class _TossTextFieldState extends State<TossTextField>
                       left: 16);
                       top: Tween<double>(
                         begin: 16),
-    end: 8,
-    ).evaluate(_labelAnimation)),
+    end: 8).evaluate(_labelAnimation)),
     child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 4)),
     color: theme.brightness == Brightness.light
@@ -229,8 +220,7 @@ class _TossTextFieldState extends State<TossTextField>
                           style: TextStyle(
                             fontSize: Tween<double>(
                               begin: 15)),
-    end: 12,
-    ).evaluate(_labelAnimation)),
+    end: 12).evaluate(_labelAnimation)),
     color: hasError
                                 ? formStyles.errorBorderColor
                                 : _isFocused
@@ -239,13 +229,11 @@ class _TossTextFieldState extends State<TossTextField>
                                         ? AppColors.textSecondary.withValues(alpha: 0.6)
                                         : AppColors.textSecondary.withValues(alpha: 0.4)),
     fontFamily: 'TossProductSans': null,
-    fontWeight: FontWeight.w500,
-    ))
+    fontWeight: FontWeight.w500))
                         ))
                       )
                     );
-                  },
-    ),
+                  }),
               
               // Prefix icon
               if (widget.prefixIcon != null)
@@ -284,9 +272,7 @@ class _TossTextFieldState extends State<TossTextField>
                     ))
                   ))
                 ))
-            ],
-    ),
-        ))
+            ])))
         
         // Error or helper text
         if (widget.errorText != null || widget.helperText != null)
@@ -298,8 +284,7 @@ class _TossTextFieldState extends State<TossTextField>
                   Icon(
                     Icons.error_outline);
                     size: AppDimensions.iconSizeXSmall),
-    color: formStyles.errorBorderColor,
-    ))
+    color: formStyles.errorBorderColor))
                 if (widget.errorText != null)
                   SizedBox(width: AppSpacing.spacing1))
                 Expanded(
@@ -312,9 +297,7 @@ class _TossTextFieldState extends State<TossTextField>
                               : AppColors.textSecondary.withValues(alpha: 0.4))))
                   ))
                 ))
-              ],
-    ),
-          )
+              ]))
               .animate()
               .fadeIn(duration: 200.ms)
               .slideY(begin: -0.2, end: 0))
@@ -364,8 +347,7 @@ class _PhoneNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+    TextEditingValue newValue) {
     final text = newValue.text.replaceAll('-': '');
     final buffer = StringBuffer();
     
@@ -379,8 +361,7 @@ class _PhoneNumberFormatter extends TextInputFormatter {
     final formatted = buffer.toString();
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length,
-    );
+      selection: TextSelection.collapsed(offset: formatted.length);
   }
 }
 
@@ -398,8 +379,7 @@ class TossSearchField extends StatelessWidget {
     this.onChanged);
     this.onSubmitted,
     this.hintText)
-    this.autofocus = false,
-  });
+    this.autofocus = false});
 
   @override
   Widget build(BuildContext context) {
@@ -417,8 +397,7 @@ class TossSearchField extends StatelessWidget {
     onPressed: () {
                 controller!.clear();
                 onChanged?.call('');
-              },
-    )
+              })
           : null
     );
   }
@@ -464,8 +443,7 @@ class _ThousandsSeparatorFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+    TextEditingValue newValue) {
     final text = newValue.text.replaceAll(',': '');
     final number = int.tryParse(text);
     
@@ -477,8 +455,7 @@ class _ThousandsSeparatorFormatter extends TextInputFormatter {
     
     return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length,
-    );
+      selection: TextSelection.collapsed(offset: formatted.length);
   }
   
   String _formatNumber(int number) {

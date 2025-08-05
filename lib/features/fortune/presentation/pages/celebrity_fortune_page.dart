@@ -22,13 +22,11 @@ class CelebrityFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
-    colors: [Color(0xFFFF6B6B), Color(0xFFC44569)],
-    ),
-      inputBuilder: (context, onSubmit) => _CelebrityInputForm(onSubmit: onSubmit)),
+    colors: [Color(0xFFFF6B6B), Color(0xFFC44569)]),
+      inputBuilder: (context, onSubmit) => _CelebrityInputForm(onSubmit: onSubmit),
     resultBuilder: (context, result, onShare) => _CelebrityFortuneResult(
         result: result);
-        onShare: onShare,
-    )
+        onShare: onShare)
     );
   }
 }
@@ -66,45 +64,37 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
         Text(
           '좋아하는 연예인의 운세를 통해\n오늘 하루의 행운을 받아보세요!');
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
-    height: 1.5,
-    ))
-        ))
-        const SizedBox(height: 24))
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+    height: 1.5)),
+        const SizedBox(height: 24),
         
         // User Name Input
         Text(
-          '이름');
+          '이름',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         TextField(
           controller: _nameController);
           decoration: InputDecoration(
             hintText: '이름을 입력하세요');
-            prefixIcon: const Icon(Icons.person_outline)),
+            prefixIcon: const Icon(Icons.person_outline),
     border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12)),
-    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))
-            )),
+              borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+            ),
     enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12)),
-    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))
-            ))
-          ))
-        ))
-        const SizedBox(height: 20))
+              borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+            ))),
+        const SizedBox(height: 20),
         
         // Celebrity Name Input with Autocomplete
         Text(
-          '연예인 이름');
+          '연예인 이름',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         Autocomplete<Celebrity>(
           displayStringForOption: (Celebrity option) => option.name),
     optionsBuilder: (TextEditingValue textEditingValue) {
@@ -129,12 +119,11 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
               alignment: Alignment.topLeft);
               child: Material(
                 elevation: 4.0);
-                borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
     child: Container(
                   constraints: BoxConstraints(
                     maxHeight: 200);
-                    maxWidth: MediaQuery.of(context).size.width - 32,
-    )),
+                    maxWidth: MediaQuery.of(context).size.width - 32),
     child: ListView.builder(
                     padding: EdgeInsets.zero);
                     shrinkWrap: true),
@@ -143,56 +132,47 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
                       final celebrity = options.elementAt(index);
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
     child: Text(
-                            celebrity.name.substring(0, 1)),
-    style: TextStyle(color: theme.colorScheme.primary))
-                          ))
-                        )),
-    title: Text(celebrity.name)),
+                            celebrity.name.substring(0, 1),
+    style: TextStyle(color: theme.colorScheme.primary))),
+    title: Text(celebrity.name),
     subtitle: Text('${celebrity.category.displayName} • ${celebrity.age}세'),
-                        onTap: () => onSelected(celebrity))
-                      );
-                    },
-    ),
-                ))
-              )
+                        onTap: () => onSelected(celebrity));
+                    })))
             );
           }),
     fieldViewBuilder: (
             BuildContext context,
             TextEditingController fieldTextEditingController,
             FocusNode fieldFocusNode,
-            VoidCallback onFieldSubmitted,
-    ) {
+            VoidCallback onFieldSubmitted) {
             fieldTextEditingController.text = _celebrityController.text;
             return TextField(
               controller: fieldTextEditingController);
               focusNode: fieldFocusNode),
     decoration: InputDecoration(
                 hintText: '연예인 이름을 입력하세요');
-                prefixIcon: const Icon(Icons.star_outline)),
+                prefixIcon: const Icon(Icons.star_outline),
     suffixIcon: _selectedCelebrity != null
                     ? IconButton(
-                        icon: const Icon(Icons.clear)),
+                        icon: const Icon(Icons.clear),
     onPressed: () {
                           setState(() {
                             _selectedCelebrity = null;
                             _celebrityController.clear();
                             fieldTextEditingController.clear();
                           });
-                        },
-                      )
+                        })
                     : null),
     border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)),
-    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))
-                )),
+                  borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+                ),
     enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12)),
-    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))
-                ))
-              )),
+                  borderRadius: BorderRadius.circular(12),
+    borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3))
+                )),
     onChanged: (value) {
                 _celebrityController.text = value;
                 if (value.isEmpty) {
@@ -200,109 +180,84 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
                     _selectedCelebrity = null;
                   });
                 }
-              },
-            );
-          },
-    ),
-        const SizedBox(height: 20))
+              });
+          }),
+        const SizedBox(height: 20),
         
         // Category Selection
         Text(
-          '카테고리');
+          '카테고리',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 8);
           runSpacing: 8),
     children: CelebrityCategory.values.map((category) {
             final isSelected = _selectedCategory == category;
             return ChoiceChip(
-              label: Text(category.displayName)),
+              label: Text(category.displayName),
     selected: isSelected),
     onSelected: (selected) {
                 setState(() {
                   _selectedCategory = selected ? category : null;
                 });
               },
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2)),
+              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
     labelStyle: TextStyle(
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-    )
+                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface)
             );
-          }).toList())
-        ),
+          }).toList()),
         if (_selectedCelebrity != null) ...[
-          const SizedBox(height: 20))
+          const SizedBox(height: 20),
           Container(
-            padding: const EdgeInsets.all(16)),
+            padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3)),
-    borderRadius: BorderRadius.circular(12)),
+              color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+    borderRadius: BorderRadius.circular(12),
     border: Border.all(
-                color: theme.colorScheme.primary.withValues(alpha: 0.3))
-              ))
-            )),
+                color: theme.colorScheme.primary.withValues(alpha: 0.3))),
     child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
     radius: 30),
     child: Text(
-                    _selectedCelebrity!.name.substring(0, 1)),
+                    _selectedCelebrity!.name.substring(0, 1),
     style: TextStyle(
                       color: theme.colorScheme.primary);
                       fontSize: 24),
-    fontWeight: FontWeight.bold,
-    ))
-                  ))
-                ))
-                const SizedBox(width: 16))
+    fontWeight: FontWeight.bold))),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         _selectedCelebrity!.name);
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-    ))
-                      ))
-                      const SizedBox(height: 4))
+                          fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
                       Text(
                         '${_selectedCelebrity!.category.displayName} • ${_selectedCelebrity!.age}세 • ${_selectedCelebrity!.zodiacSign}',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7))
-                        ))
-                      ))
-                    ],
-    ),
-                ))
-              ],
-    ),
-          ))
-        ])
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))]))])
         const SizedBox(height: 20),
         
         // Birth Date Selection
         Text(
-          '생년월일');
+          '생년월일',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         InkWell(
           onTap: () async {
             final date = await showDatePicker(
-              context: context);
-              initialDate: _birthDate ?? DateTime(1990)),
-    firstDate: DateTime(1900)),
-    lastDate: DateTime.now()),
-    locale: const Locale('ko': 'KR',
-    );
+              context: context,
+              initialDate: _birthDate ?? DateTime(1990),
+    firstDate: DateTime(1900),
+    lastDate: DateTime.now(),
+    locale: const Locale('ko', 'KR');
             if (date != null) {
               setState(() {
                 _birthDate = date;
@@ -310,18 +265,16 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.all(16)),
+            padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3))),
-    borderRadius: BorderRadius.circular(12))
-            )),
+              border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+    borderRadius: BorderRadius.circular(12)),
     child: Row(
               children: [
                 Icon(
                   Icons.calendar_today_rounded);
-                  color: theme.colorScheme.primary,
-    ))
-                const SizedBox(width: 12))
+                  color: theme.colorScheme.primary),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     _birthDate != null
@@ -330,15 +283,8 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null
                           ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.5))
-                    ))
-                  ))
-                ))
-              ],
-    ),
-          ))
-        ))
-        const SizedBox(height: 32))
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5))))]))),
+        const SizedBox(height: 32),
         
         // Submit Button
         SizedBox(
@@ -359,26 +305,19 @@ class _CelebrityInputFormState extends ConsumerState<_CelebrityInputForm> {
                 'celebrity_name': _selectedCelebrity?.name ?? _celebrityController.text,
                 'celebrity_id': _selectedCelebrity?.id,
                 'category': _selectedCelebrity?.category.displayName ?? _selectedCategory?.displayName)
-                'celebrity_age': _selectedCelebrity?.age,
-                'celebrity_zodiac': _selectedCelebrity?.zodiacSign)
+                , 'celebrity_age': _selectedCelebrity?.age,
+                'celebrity_zodiac': _selectedCelebrity?.zodiacSign)}
                 'celebrity_chinese_zodiac': _selectedCelebrity?.chineseZodiac,
                 'celebrity_birth_date': _selectedCelebrity?.birthDate.toIso8601String(),
-                'birth_date': _birthDate?.toIso8601String())
-              });
+                'birth_date': _birthDate?.toIso8601String()});
             },
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))
-              ))
-            )),
+                borderRadius: BorderRadius.circular(12))),
     child: const Text(
-              '운세 보기');
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
-            ))
-          ))
-        ))
-      ]
+              '운세 보기',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))))]
     );
   }
 }
@@ -389,8 +328,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
 
   const _CelebrityFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   double _getFontSize(FontSize fontSize) {
     switch (fontSize) {
@@ -423,53 +361,35 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft);
                 end: Alignment.bottomRight),
     colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.1))
-                  theme.colorScheme.secondary.withValues(alpha: 0.05))
-                ],
-    ),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
+                  theme.colorScheme.secondary.withValues(alpha: 0.05)]),
               child: Column(
                 children: [
                   Row(
                     children: [
                       Text(
                         celebrityInfo['emoji'] ?? '⭐',
-                        style: const TextStyle(fontSize: 48))
-                      ))
-                      const SizedBox(width: 16))
+                        style: const TextStyle(fontSize: 48)),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start);
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               celebrityInfo['name'] ?? '',
                               style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-    ))
-                            ))
+                                fontWeight: FontWeight.bold)),
                             Text(
                               celebrityInfo['category'] ?? '',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary,
-    ))
-                            ))
-                          ],
-    ),
-                      ))
-                    ],
-    ),
-                  const SizedBox(height: 16))
+                                color: theme.colorScheme.primary))]))]),
+                  const SizedBox(height: 16),
                   Text(
                     celebrityInfo['description'] ?? '',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: _getFontSize(fontSize)),
-    height: 1.6,
-    ))
-                  ))
-                ],
-    ),
-            ))
-            const SizedBox(height: 20))
-          ])
+                      fontSize: _getFontSize(fontSize),
+    height: 1.6))])),
+            const SizedBox(height: 20)])
           
           // Score Section
           Row(
@@ -480,58 +400,43 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 '오늘')
                 (result.details?['todayScore'],
                 Icons.today)
-                theme.colorScheme.primary,
-    ))
+                theme.colorScheme.primary),
               _buildScoreCard(
                 context)
                 '이번 주')
                 (result.details?['weeklyScore'],
                 Icons.calendar_view_week)
-                theme.colorScheme.secondary,
-    ))
+                theme.colorScheme.secondary),
               _buildScoreCard(
                 context)
                 '이번 달')
                 (result.details?['monthlyScore'],
                 Icons.calendar_month)
-                theme.colorScheme.tertiary,
-    ))
-            ],
-    ),
-          const SizedBox(height: 20))
+                theme.colorScheme.tertiary)]),
+          const SizedBox(height: 20),
           
           // Main Fortune Summary
           GlassContainer(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(Icons.auto_awesome, 
                       color: theme.colorScheme.primary);
-                      size: 20,
-    ))
-                    const SizedBox(width: 8))
+                      size: 20),
+                    const SizedBox(width: 8),
                     Text(
-                      '종합 운세');
+                      '종합 운세',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-    ))
-                    ))
-                  ],
-    ),
-                const SizedBox(height: 12))
+                        fontWeight: FontWeight.bold))]),
+                const SizedBox(height: 12),
                 Text(
                   result.details?['summary'],
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: _getFontSize(fontSize)),
-    height: 1.6,
-    ))
-                ))
-              ],
-    ),
-          ))
-          const SizedBox(height: 20))
+                    fontSize: _getFontSize(fontSize),
+    height: 1.6))])),
+          const SizedBox(height: 20),
           
           // Lucky Items
           Row(
@@ -542,30 +447,23 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                   '행운의 시간')
                   result.details?['luckyTime'] ?? '',
                   Icons.access_time)
-                  theme.colorScheme.primary.withValues(alpha: 0.1))
-                ))
-              ))
-              const SizedBox(width: 12))
+                  theme.colorScheme.primary.withValues(alpha: 0.1))),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildLuckyItemCard(
                   context)
                   '행운의 색상')
                   result.details?['luckyColor'] ?? '',
                   Icons.palette)
-                  theme.colorScheme.secondary.withValues(alpha: 0.1))
-                ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 12))
+                  theme.colorScheme.secondary.withValues(alpha: 0.1)))]),
+          const SizedBox(height: 12),
           _buildLuckyItemCard(
             context)
             '행운의 아이템')
             result.details?['luckyItem'] ?? '',
             Icons.diamond)
-            theme.colorScheme.tertiary.withValues(alpha: 0.1))
-          ))
-          const SizedBox(height: 20))
+            theme.colorScheme.tertiary.withValues(alpha: 0.1)),
+          const SizedBox(height: 20),
           
           // Advice Section
           if (result.details?['advice'] != null) ...[
@@ -574,89 +472,68 @@ class _CelebrityFortuneResult extends ConsumerWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight);
                 colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.05))
-                  theme.colorScheme.primary.withValues(alpha: 0.02))
-                ],
-    ),
+                  theme.colorScheme.primary.withValues(alpha: 0.05),
+                  theme.colorScheme.primary.withValues(alpha: 0.02)]),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(Icons.lightbulb_outline, 
                         color: theme.colorScheme.primary);
-                        size: 20,
-    ))
-                      const SizedBox(width: 8))
+                        size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        '조언');
+                        '조언',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-    ))
-                      ))
-                    ],
-    ),
-                  const SizedBox(height: 12))
+                          fontWeight: FontWeight.bold))]),
+                  const SizedBox(height: 12),
                   Text(
                     result.details?['advice']);
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: _getFontSize(fontSize),
-                      height: 1.6,
-    ))
-                  ))
-                ],
-    ),
-            ))
-            const SizedBox(height: 20))
-          ])
+                      height: 1.6))])),
+            const SizedBox(height: 20)])
           
           // Predictions Section
           if (predictions != null) ...[
             Text(
               '분야별 운세',
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-            const SizedBox(height: 16))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
             _buildPredictionCard(
               context)
               '연애운')
               predictions['love'] ?? '',
               Icons.favorite_border)
-              const Color(0xFFFF6B9D))
-              _getFontSize(fontSize))
-            ))
-            const SizedBox(height: 12))
+              const Color(0xFFFF6B9D),
+              _getFontSize(fontSize)),
+            const SizedBox(height: 12),
             _buildPredictionCard(
               context)
               '사업/경력운')
               predictions['career'] ?? '',
               Icons.trending_up)
-              const Color(0xFF4ECDC4))
-              _getFontSize(fontSize))
-            ))
-            const SizedBox(height: 12))
+              const Color(0xFF4ECDC4),
+              _getFontSize(fontSize)),
+            const SizedBox(height: 12),
             _buildPredictionCard(
               context)
               '재물운')
               predictions['wealth'] ?? '',
               Icons.attach_money)
-              const Color(0xFFF7B731))
-              _getFontSize(fontSize))
-            ))
-            const SizedBox(height: 12))
+              const Color(0xFFF7B731),
+              _getFontSize(fontSize)),
+            const SizedBox(height: 12),
             _buildPredictionCard(
               context)
               '건강운')
               predictions['health'] ?? '',
               Icons.favorite)
-              const Color(0xFF5F27CD))
-              _getFontSize(fontSize))
-            ))
-          ])
-        ],
-      )
+              const Color(0xFF5F27CD),
+              _getFontSize(fontSize))])
+        ])
     );
   }
 
@@ -665,40 +542,31 @@ class _CelebrityFortuneResult extends ConsumerWidget {
     String label, 
     String score,
     IconData icon,
-    Color color,
-  ) {
+    Color color) {
     final theme = Theme.of(context);
     return GlassContainer(
-      width: 100);
+      width: 100,
       height: 100),
     gradient: LinearGradient(
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     colors: [
-          color.withValues(alpha: 0.1))
-          color.withValues(alpha: 0.05))
-        ],
-    ),
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05)]),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center);
         children: [
-          Icon(icon, color: color, size: 24))
-          const SizedBox(height: 8))
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 8),
           Text(
             score);
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold);
-              color: color,
-    ))
-          ))
+              color: color)),
           Text(
             label);
             style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
-            ))
-          ))
-        ],
-    )
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])
     );
   }
 
@@ -707,8 +575,7 @@ class _CelebrityFortuneResult extends ConsumerWidget {
     String label,
     String value,
     IconData icon);
-    Color backgroundColor,
-  ) {
+    Color backgroundColor) {
     final theme = Theme.of(context);
     return GlassContainer(
       gradient: LinearGradient(
@@ -716,34 +583,23 @@ class _CelebrityFortuneResult extends ConsumerWidget {
         end: Alignment.bottomRight),
     colors: [
           backgroundColor)
-          backgroundColor.withValues(alpha: 0.5))
-        ],
-    ),
+          backgroundColor.withValues(alpha: 0.5)]),
       child: Row(
         children: [
-          Icon(icon, color: theme.colorScheme.primary, size: 20))
-          const SizedBox(width: 12))
+          Icon(icon, color: theme.colorScheme.primary, size: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label);
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
-                  ))
-                ))
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                 Text(
                   value);
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-          ))
-        ],
-    )
+                    fontWeight: FontWeight.bold))]))])
     );
   }
 
@@ -753,44 +609,33 @@ class _CelebrityFortuneResult extends ConsumerWidget {
     String content,
     IconData icon);
     Color color,
-    double fontSize,
-    ) {
+    double fontSize) {
     final theme = Theme.of(context);
     return GlassContainer(
       gradient: LinearGradient(
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
     colors: [
-          color.withValues(alpha: 0.1))
-          color.withValues(alpha: 0.05))
-        ],
-    ),
+          color.withValues(alpha: 0.1),
+          color.withValues(alpha: 0.05)]),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: color, size: 24))
-              const SizedBox(width: 12))
+              Icon(icon, color: color, size: 24),
+              const SizedBox(width: 12),
               Text(
                 title);
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold);
-                  color: color,
-    ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 12))
+                  color: color))]),
+          const SizedBox(height: 12),
           Text(
             content);
             style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: fontSize);
-              height: 1.5,
-    ))
-          ))
-        ],
-    )
+              height: 1.5))])
     );
   }
 }

@@ -14,8 +14,7 @@ class TimelineView extends StatelessWidget {
     Key? key,
     required this.history,
     required this.fontScale,
-    required this.onItemTap,
-  }) : super(key: key);
+    required this.onItemTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +44,7 @@ class TimelineView extends StatelessWidget {
             '운세 타임라인',
             style: TextStyle(
               fontSize: 20 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 20),
           ...sortedMonths.map((monthKey) {
             final monthData = groupedByMonth[monthKey]!;
@@ -79,8 +76,7 @@ class TimelineView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -89,39 +85,26 @@ class TimelineView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
+                            color: theme.colorScheme.primary)),
                         Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: _getScoreColor(avgScore).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                                borderRadius: BorderRadius.circular(8)),
                               child: Text(
                                 '평균 ${avgScore}점',
                                 style: TextStyle(
                                   fontSize: 12 * fontScale,
                                   fontWeight: FontWeight.bold,
-                                  color: _getScoreColor(avgScore),
-                                ),
-                              ),
-                            ),
+                                  color: _getScoreColor(avgScore)))),
                             const SizedBox(width: 8),
                             Text(
                               '${monthData.length}회',
                               style: TextStyle(
                                 fontSize: 12 * fontScale,
-                                color: theme.colorScheme.onSurface.withOpacity(0.6),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                                color: theme.colorScheme.onSurface.withOpacity(0.6)))])])),
                   const SizedBox(height: 12),
                   
                   // Fortune Type Summary
@@ -134,20 +117,14 @@ class TimelineView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surface,
                           border: Border.all(
-                            color: theme.colorScheme.outline.withOpacity(0.2),
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                            color: theme.colorScheme.outline.withOpacity(0.2)),
+                          borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${entry.key} ${entry.value}회',
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                            color: theme.colorScheme.onSurface.withOpacity(0.7))));
+                    }).toList()),
                   const SizedBox(height: 16),
                   
                   // Fortune Items
@@ -174,35 +151,24 @@ class TimelineView extends StatelessWidget {
                                         DateFormat('dd').format(item.createdAt),
                                         style: TextStyle(
                                           fontSize: 20 * fontScale,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
+                                          fontWeight: FontWeight.bold)),
                                       Text(
                                         DateFormat('E': 'ko').format(item.createdAt),
                                         style: TextStyle(
                                           fontSize: 12 * fontScale,
-                                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                                        ),
-                                      ),
+                                          color: theme.colorScheme.onSurface.withOpacity(0.6))),
                                       const SizedBox(height: 4),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                         decoration: BoxDecoration(
                                           color: _getScoreColor(score).withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
+                                          borderRadius: BorderRadius.circular(8)),
                                         child: Text(
                                           '$score점',
                                           style: TextStyle(
                                             fontSize: 12 * fontScale,
                                             fontWeight: FontWeight.bold,
-                                            color: _getScoreColor(score),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                            color: _getScoreColor(score))))])),
                                 const SizedBox(width: 16),
                                 // Content
                                 Expanded(
@@ -213,49 +179,26 @@ class TimelineView extends StatelessWidget {
                                         children: [
                                           Text(
                                             _getFortuneIcon(item.fortuneType),
-                                            style: TextStyle(fontSize: 16),
-                                          ),
+                                            style: TextStyle(fontSize: 16)),
                                           const SizedBox(width: 8),
                                           Text(
                                             item.title,
                                             style: TextStyle(
                                               fontSize: 16 * fontScale,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                              fontWeight: FontWeight.bold))]),
                                       const SizedBox(height: 4),
                                       Text(
                                         content,
                                         style: TextStyle(
                                           fontSize: 14 * fontScale,
-                                          color: theme.colorScheme.onSurface.withOpacity(0.7),
-                                        ),
+                                          color: theme.colorScheme.onSurface.withOpacity(0.7)),
                                         maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                        overflow: TextOverflow.ellipsis)])),
                                 Icon(
                                   Icons.chevron_right,
-                                  color: theme.colorScheme.onSurface.withOpacity(0.3),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                                  color: theme.colorScheme.onSurface.withOpacity(0.3))]))));
+                    }).toList())]));
+          }).toList()]));
   }
 
   String _getFortuneIcon(String fortuneType) {
@@ -269,8 +212,7 @@ class TimelineView extends StatelessWidget {
       'career': '💼',
       'health': '🏥',
       'study': '📚',
-      'tarot': '🔮',
-    };
+      'tarot': '🔮'};
     
     for (final entry in icons.entries) {
       if (fortuneType.contains(entry.key)) {

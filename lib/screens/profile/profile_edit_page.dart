@@ -105,8 +105,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         if (profile['gender'] != null) {
           _gender = Gender.values.firstWhere(
             (g) => g.value == profile['gender'],
-            orElse: () => Gender.other,
-          );
+            orElse: () => Gender.other);
         }
       }
       
@@ -119,9 +118,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필을 불러오는 중 오류가 발생했습니다.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     }
   }
@@ -140,15 +137,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     try {
       final imageUrl = await _storageService2.uploadProfileImage(
         userId: _currentUser!.id,
-        imageFile: _pendingImageFile!,
-      );
+        imageFile: _pendingImageFile!);
       
       if (imageUrl != null) {
         // Clean up old images
         await _storageService2.cleanupOldProfileImages(
           userId: _currentUser!.id,
-          currentImageUrl: imageUrl,
-        );
+          currentImageUrl: imageUrl);
       }
       
       return imageUrl;
@@ -158,9 +153,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필 이미지 업로드에 실패했습니다.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
       return _profileImageUrl;
     } finally {
@@ -187,8 +180,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       final isoDate = FortuneDateUtils.koreanToIsoDate(
         _birthYear,
         _birthMonth,
-        _birthDay,
-      );
+        _birthDay);
       
       // Prepare profile data
       final profile = UserProfile(
@@ -213,8 +205,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         createdAt: _originalProfile?['created_at'] != null 
             ? DateTime.parse(_originalProfile!['created_at']) 
             : DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+        updatedAt: DateTime.now());
 
       // Save to local storage
       await _storageService.saveUserProfile(profile.toJson());
@@ -247,9 +238,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필이 성공적으로 업데이트되었습니다.'),
-            backgroundColor: Colors.green,
-          ),
-        );
+            backgroundColor: Colors.green));
         context.pop();
       }
     } catch (e) {
@@ -258,9 +247,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     } finally {
       if (mounted) {
@@ -277,9 +264,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         body: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+          child: CircularProgressIndicator()));
     }
     
     return Scaffold(
@@ -289,9 +274,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           SliverToBoxAdapter(
             child: AppHeader(
               title: '프로필 편집',
-              backgroundColor: theme.colorScheme.surface,
-            ),
-          ),
+              backgroundColor: theme.colorScheme.surface)),
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
@@ -304,25 +287,17 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       ProfileImagePicker(
                         currentImageUrl: _profileImageUrl,
                         onImageSelected: _handleImageSelected,
-                        isLoading: _isUploadingImage,
-                      ),
+                        isLoading: _isUploadingImage),
                       const SizedBox(height: 16),
                       Text(
                         '프로필 사진',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Text(
                         '카메라 또는 갤러리에서 사진을 선택하세요',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
                 const SizedBox(height: 16),
                 
                 GlassContainer(
@@ -337,14 +312,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           labelText: '이름',
                           hintText: '홍길동',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                      ),
+                            vertical: 12))),
                       const SizedBox(height: 20),
 
                       // Birth year
@@ -353,17 +324,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생년',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                            vertical: 12)),
                         items: FortuneDateUtils.getYearOptions().map((year) => DropdownMenuItem(
                           value: year.toString(),
-                          child: Text('$year년'),
-                        )).toList(),
+                          child: Text('$year년'))).toList(),
                         onChanged: (value) {
                           setState(() {
                             _birthYear = value ?? '';
@@ -371,16 +338,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             if (_birthDay.isNotEmpty) {
                               final maxDays = FortuneDateUtils.getDayOptions(
                                 int.parse(value!),
-                                _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                              ).length;
+                                _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null).length;
                               if (int.parse(_birthDay) > maxDays) {
                                 _birthDay = '';
                               }
                             }
                           });
                         },
-                        hint: const Text('년도 선택'),
-                      ),
+                        hint: const Text('년도 선택')),
                       const SizedBox(height: 16),
 
                       // Birth month
@@ -389,17 +354,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생월',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                            vertical: 12)),
                         items: FortuneDateUtils.getMonthOptions().map((month) => DropdownMenuItem(
                           value: month.toString(),
-                          child: Text('$month월'),
-                        )).toList(),
+                          child: Text('$month월'))).toList(),
                         onChanged: (value) {
                           setState(() {
                             _birthMonth = value ?? '';
@@ -407,16 +368,14 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             if (_birthDay.isNotEmpty && _birthYear.isNotEmpty) {
                               final maxDays = FortuneDateUtils.getDayOptions(
                                 int.parse(_birthYear),
-                                int.parse(value!),
-                              ).length;
+                                int.parse(value!)).length;
                               if (int.parse(_birthDay) > maxDays) {
                                 _birthDay = '';
                               }
                             }
                           });
                         },
-                        hint: const Text('월 선택'),
-                      ),
+                        hint: const Text('월 선택')),
                       const SizedBox(height: 16),
 
                       // Birth day
@@ -425,25 +384,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '생일',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                            vertical: 12)),
                         items: FortuneDateUtils.getDayOptions(
                           _birthYear.isNotEmpty ? int.parse(_birthYear) : null,
-                          _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null,
-                        ).map((day) => DropdownMenuItem(
+                          _birthMonth.isNotEmpty ? int.parse(_birthMonth) : null).map((day) => DropdownMenuItem(
                           value: day.toString(),
-                          child: Text('$day일'),
-                        )).toList(),
+                          child: Text('$day일'))).toList(),
                         onChanged: (value) {
                           setState(() => _birthDay = value ?? '');
                         },
-                        hint: const Text('일 선택'),
-                      ),
+                        hint: const Text('일 선택')),
                       const SizedBox(height: 16),
 
                       // Birth time period
@@ -452,13 +405,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         decoration: InputDecoration(
                           labelText: '태어난 시진 (선택사항)',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
+                            vertical: 12)),
                         items: timePeriods.map((period) => DropdownMenuItem(
                           value: period.value,
                           child: Column(
@@ -470,17 +420,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 period.description,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
+                                  color: Colors.grey[600]))]))).toList(),
                         onChanged: (value) {
                           setState(() => _birthTimePeriod = value);
                         },
-                        hint: const Text('시진 선택'),
-                      ),
+                        hint: const Text('시진 선택')),
                       const SizedBox(height: 20),
 
                       // Birth date preview
@@ -489,24 +433,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           birthYear: _birthYear,
                           birthMonth: _birthMonth,
                           birthDay: _birthDay,
-                          birthTimePeriod: _birthTimePeriod,
-                        ),
+                          birthTimePeriod: _birthTimePeriod),
                       const SizedBox(height: 20),
 
                       // MBTI Selection
                       Text(
                         'MBTI 성격 유형',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Text(
                         'MBTI를 모르시나요? 온라인 테스트를 통해 확인해보세요.',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
-                      ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                       const SizedBox(height: 16),
                       GridView.builder(
                         shrinkWrap: true,
@@ -515,8 +454,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           crossAxisCount: 4,
                           crossAxisSpacing: 8,
                           mainAxisSpacing: 8,
-                          childAspectRatio: 2,
-                        ),
+                          childAspectRatio: 2),
                         itemCount: mbtiTypes.length,
                         itemBuilder: (context, index) {
                           final type = mbtiTypes[index];
@@ -535,10 +473,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                 border: Border.all(
                                   color: isSelected
                                       ? theme.colorScheme.primary
-                                      : theme.colorScheme.outline,
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                                      : theme.colorScheme.outline),
+                                borderRadius: BorderRadius.circular(8)),
                               child: Center(
                                 child: Text(
                                   type,
@@ -546,23 +482,15 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                     color: isSelected
                                         ? theme.colorScheme.onPrimary
                                         : theme.colorScheme.onSurface,
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))));
+                        }),
                       const SizedBox(height: 24),
 
                       // Gender Selection
                       Text(
                         '성별',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 16),
                       Row(
                         children: Gender.values.map((gender) {
@@ -571,8 +499,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           return Expanded(
                             child: Padding(
                               padding: EdgeInsets.only(
-                                right: gender != Gender.values.last ? 8 : 0,
-                              ),
+                                right: gender != Gender.values.last ? 8 : 0),
                               child: InkWell(
                                 onTap: () {
                                   setState(() => _gender = gender);
@@ -587,10 +514,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                     border: Border.all(
                                       color: isSelected
                                           ? theme.colorScheme.primary
-                                          : theme.colorScheme.outline,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
+                                          : theme.colorScheme.outline),
+                                    borderRadius: BorderRadius.circular(8)),
                                   child: Column(
                                     children: [
                                       Icon(
@@ -598,8 +523,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                         size: 32,
                                         color: isSelected
                                             ? theme.colorScheme.onPrimary
-                                            : theme.colorScheme.onSurface,
-                                      ),
+                                            : theme.colorScheme.onSurface),
                                       const SizedBox(height: 8),
                                       Text(
                                         gender.label,
@@ -609,17 +533,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                                               : theme.colorScheme.onSurface,
                                           fontWeight: isSelected
                                               ? FontWeight.bold
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                                              : FontWeight.normal))])))));
+                        }).toList()),
                       const SizedBox(height: 32),
 
                       // Save button
@@ -628,38 +543,22 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                            borderRadius: BorderRadius.circular(8))),
                         child: _isSaving
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text('저장'),
-                      ),
+                                  strokeWidth: 2))
+                            : const Text('저장')),
                       const SizedBox(height: 16),
 
                       // Cancel button
                       TextButton(
                         onPressed: _isSaving ? null : () => context.pop(),
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text('취소'),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
-            ),
-          ),
-        ],
-      ),
-    );
+                          padding: const EdgeInsets.symmetric(vertical: 16)),
+                        child: const Text('취소'))]))])))]));
   }
   
   @override

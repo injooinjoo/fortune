@@ -15,8 +15,7 @@ final cachedFortuneProvider =
   final cacheService = ref.watch(cacheServiceProvider);
   return await cacheService.getCachedFortune(
     params.fortuneType,
-    params.parameters,
-  );
+    params.parameters);
 });
 
 class CachedFortuneParams {
@@ -25,8 +24,7 @@ class CachedFortuneParams {
 
   CachedFortuneParams({
     required this.fortuneType,
-    required this.parameters,
-  });
+    required this.parameters});
 
   @override
   bool operator ==(Object other) {

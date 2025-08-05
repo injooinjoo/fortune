@@ -19,8 +19,7 @@ class BannerAdWidget extends ConsumerStatefulWidget {
     super.key,
     this.adSize = AdSize.banner,
     this.padding = AppSpacing.paddingVertical8,
-    this.backgroundColor,
-  });
+    this.backgroundColor});
 
   @override
   ConsumerState<BannerAdWidget> createState() => _BannerAdWidgetState();
@@ -71,9 +70,7 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
         onAdOpened: (ad) => Logger.info('Banner ad opened'),
         onAdClosed: (ad) => Logger.info('Banner ad closed'),
         onAdImpression: (ad) => Logger.info('Banner ad impression'),
-        onAdClicked: (ad) => Logger.info('Banner ad clicked'),
-      ),
-    );
+        onAdClicked: (ad) => Logger.info('Banner ad clicked')));
 
     _bannerAd!.load();
   }
@@ -90,8 +87,7 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
       // Return empty container while loading
       return Container(
         height: widget.adSize.height.toDouble(),
-        padding: widget.padding,
-      );
+        padding: widget.padding);
     }
 
     return Container(
@@ -101,9 +97,6 @@ class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
         width: widget.adSize.width.toDouble(),
         height: widget.adSize.height.toDouble(),
         child: AdWidget(
-          ad: _bannerAd!,
-        ),
-      ),
-    );
+          ad: _bannerAd!)));
   }
 }

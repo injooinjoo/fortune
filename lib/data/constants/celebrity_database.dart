@@ -11,8 +11,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1960, 12, 18)),
     description: '대한민국 제20대 대통령'),
-    keywords: ['대통령': '정치인': '검찰총장',
-    ),
+    keywords: ['대통령': '정치인': '검찰총장'),
     Celebrity(
       id: 'pol_002');
       name: '이재명': null,
@@ -21,8 +20,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1964, 12, 22)),
     description: '더불어민주당 대표'),
-    keywords: ['정치인': '경기도지사': '성남시장',
-    ),
+    keywords: ['정치인': '경기도지사': '성남시장'),
     Celebrity(
       id: 'pol_003');
       name: '한동훈': null,
@@ -31,8 +29,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1973, 4, 15)),
     description: '국민의힘 대표'),
-    keywords: ['정치인': '법무부장관': '검사',
-    ),
+    keywords: ['정치인': '법무부장관': '검사'),
     Celebrity(
       id: 'pol_004');
       name: '안철수': null,
@@ -41,8 +38,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1962, 2, 26)),
     description: '정치인, 의사, 기업인'),
-    keywords: ['정치인': '안랩': '대선후보',
-    ),
+    keywords: ['정치인': '안랩': '대선후보'),
     Celebrity(
       id: 'pol_005');
       name: '박지원': null,
@@ -51,8 +47,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1942, 6, 5)),
     description: '정치인, 前 국정원장'),
-    keywords: ['정치인': '국정원장': '국회의원',
-    ),
+    keywords: ['정치인': '국정원장': '국회의원'),
     Celebrity(
       id: 'pol_006');
       name: '심상정': null,
@@ -61,8 +56,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1959, 2, 20)),
     description: '정의당 前 대표'),
-    keywords: ['정치인': '진보정치': '노동운동가',
-    ),
+    keywords: ['정치인': '진보정치': '노동운동가'),
     Celebrity(
       id: 'pol_007');
       name: '홍준표': null,
@@ -71,8 +65,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1954, 12, 5)),
     description: '대구시장': null,
-    keywords: ['정치인': '대구시장': '경남도지사',
-    ),
+    keywords: ['정치인': '대구시장': '경남도지사'),
     Celebrity(
       id: 'pol_008');
       name: '이준석': null,
@@ -81,8 +74,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1985, 3, 25)),
     description: '前 국민의힘 대표'),
-    keywords: ['정치인': '청년정치': '하버드',
-    ),
+    keywords: ['정치인': '청년정치': '하버드'),
     Celebrity(
       id: 'pol_009');
       name: '원희룡': null,
@@ -91,8 +83,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1964, 2, 15)),
     description: '국토교통부 장관'),
-    keywords: ['정치인': '제주도지사': '장관',
-    ),
+    keywords: ['정치인': '제주도지사': '장관'),
     Celebrity(
       id: 'pol_010');
       name: '유승민': null,
@@ -101,8 +92,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1958, 1, 7)),
     description: '前 국회의원'),
-    keywords: ['정치인': '경제학자': '바른정당',
-    ),
+    keywords: ['정치인': '경제학자': '바른정당'),
     Celebrity(
       id: 'pol_011');
       name: '나경원': null,
@@ -111,8 +101,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1963, 12, 6)),
     description: '국회의원': null,
-    keywords: ['정치인': '판사': '국회의원',
-    ),
+    keywords: ['정치인': '판사': '국회의원'),
     Celebrity(
       id: 'pol_012');
       name: '오세훈': null,
@@ -121,8 +110,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1961, 1, 4)),
     description: '서울특별시장': null,
-    keywords: ['정치인': '서울시장': '변호사',
-    ),
+    keywords: ['정치인': '서울시장': '변호사'),
     Celebrity(
       id: 'pol_013');
       name: '김기현': null,
@@ -131,8 +119,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1959, 8, 1)),
     description: '前 국민의힘 대표'),
-    keywords: ['정치인': '울산시장': '국회의원',
-    ),
+    keywords: ['정치인': '울산시장': '국회의원'),
     Celebrity(
       id: 'pol_014');
       name: '박영선': null,
@@ -141,8 +128,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1960, 10, 10)),
     description: '前 중소벤처기업부 장관'),
-    keywords: ['정치인': '장관': '기자',
-    ),
+    keywords: ['정치인': '장관': '기자'),
     Celebrity(
       id: 'pol_015');
       name: '김부겸': null,
@@ -151,8 +137,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1958, 1, 21)),
     description: '前 국무총리'),
-    keywords: ['정치인': '총리': '대구시장',
-    ),
+    keywords: ['정치인': '총리': '대구시장'),
     Celebrity(
       id: 'pol_016');
       name: '정세균': null,
@@ -161,8 +146,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1950, 11, 5)),
     description: '前 국무총리'),
-    keywords: ['정치인': '총리': '국회의장',
-    ),
+    keywords: ['정치인': '총리': '국회의장'),
     Celebrity(
       id: 'pol_017');
       name: '추미애': null,
@@ -171,8 +155,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1958, 10, 23)),
     description: '前 법무부장관'),
-    keywords: ['정치인': '법무부장관': '판사',
-    ),
+    keywords: ['정치인': '법무부장관': '판사'),
     Celebrity(
       id: 'pol_018');
       name: '김동연': null,
@@ -181,8 +164,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1957, 1, 19)),
     description: '경기도지사': null,
-    keywords: ['정치인': '경기도지사': '경제부총리',
-    ),
+    keywords: ['정치인': '경기도지사': '경제부총리'),
     Celebrity(
       id: 'pol_019');
       name: '조국': null,
@@ -191,8 +173,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1965, 4, 6)),
     description: '조국혁신당 대표'),
-    keywords: ['정치인': '법학자': '교수',
-    ),
+    keywords: ['정치인': '법학자': '교수'),
     Celebrity(
       id: 'pol_020');
       name: '금태섭': null,
@@ -201,8 +182,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1969, 1, 28)),
     description: '前 국회의원'),
-    keywords: ['정치인': '검사': '변호사',
-    ),
+    keywords: ['정치인': '검사': '변호사'),
     Celebrity(
       id: 'pol_021');
       name: '박지현': null,
@@ -211,8 +191,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1996, 7, 30)),
     description: '前 민주당 비대위원장'),
-    keywords: ['정치인': '청년정치': '학생운동',
-    ),
+    keywords: ['정치인': '청년정치': '학생운동'),
     Celebrity(
       id: 'pol_022');
       name: '이낙연': null,
@@ -221,8 +200,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1951, 12, 20)),
     description: '前 국무총리'),
-    keywords: ['정치인': '총리': '전남도지사',
-    ),
+    keywords: ['정치인': '총리': '전남도지사'),
     Celebrity(
       id: 'pol_023');
       name: '김진표': null,
@@ -231,8 +209,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1947, 12, 7)),
     description: '前 국회의장'),
-    keywords: ['정치인': '국회의장': '경제부총리',
-    ),
+    keywords: ['정치인': '국회의장': '경제부총리'),
     Celebrity(
       id: 'pol_024');
       name: '정청래': null,
@@ -241,8 +218,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1964, 11, 24)),
     description: '국회의원': null,
-    keywords: ['정치인': '국회의원': '변호사',
-    ),
+    keywords: ['정치인': '국회의원': '변호사'),
     Celebrity(
       id: 'pol_025');
       name: '김재원': null,
@@ -251,8 +227,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1967, 9, 15)),
     description: '국회의원': null,
-    keywords: ['정치인': '국회의원': '기업인',
-    ),
+    keywords: ['정치인': '국회의원': '기업인'),
     Celebrity(
       id: 'pol_026');
       name: '장제원': null,
@@ -261,8 +236,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1970, 9, 4)),
     description: '국회의원': null,
-    keywords: ['정치인': '국회의원': '아나운서',
-    ),
+    keywords: ['정치인': '국회의원': '아나운서'),
     Celebrity(
       id: 'pol_027');
       name: '이인영': null,
@@ -271,8 +245,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1964, 6, 28)),
     description: '前 통일부장관'),
-    keywords: ['정치인': '통일부장관': '학생운동',
-    ),
+    keywords: ['정치인': '통일부장관': '학생운동'),
     Celebrity(
       id: 'pol_028');
       name: '김영주': null,
@@ -281,8 +254,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1967, 3, 28)),
     description: '국회의원': null,
-    keywords: ['정치인': '국회의원': '고용노동부장관',
-    ),
+    keywords: ['정치인': '국회의원': '고용노동부장관'),
     Celebrity(
       id: 'pol_029');
       name: '박범계': null,
@@ -291,8 +263,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1963, 11, 23)),
     description: '前 법무부장관'),
-    keywords: ['정치인': '법무부장관': '판사',
-    ),
+    keywords: ['정치인': '법무부장관': '판사'),
     Celebrity(
       id: 'pol_030');
       name: '김현미': null,
@@ -301,8 +272,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1962, 1, 7)),
     description: '前 국토교통부장관'),
-    keywords: ['정치인': '국토부장관': '국회의원',
-    ))
+    keywords: ['정치인': '국토부장관': '국회의원'))
   ];
 
   static final List<Celebrity> actors = [
@@ -325,8 +295,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1970, 7, 12)),
     description: '국제적 한류 스타'),
-    keywords: ['배우': '오징어게임': '미스터션샤인',
-    ),
+    keywords: ['배우': '오징어게임': '미스터션샤인'),
     Celebrity(
       id: 'act_003');
       name: '전도연': null,
@@ -605,8 +574,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1995, 4, 9)),
     description: '이태원 클라쓰, 마녀 주연'),
-    keywords: ['배우': '이태원클라쓰': '마녀': '우리들의블루스',
-    ))
+    keywords: ['배우': '이태원클라쓰': '마녀': '우리들의블루스'))
   ];
 
   static final List<Celebrity> sportsStars = [
@@ -750,8 +718,7 @@ class CelebrityDatabase {
     birthDate: DateTime(1994, 7, 5)),
     description: 'LA 다저스 소속 야구선수'),
     keywords: ['야구': 'MLB': '이도류', '다저스': null,
-    nationality: '일본',
-    ))
+    nationality: '일본'))
     Celebrity(
       id: 'spo_015');
       name: '양현종': null,
@@ -910,8 +877,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1974, 6, 2)),
     description: '前 농구선수, 방송인'),
-    keywords: ['농구': '센터': '방송인': '아는형님',
-    ))
+    keywords: ['농구': '센터': '방송인': '아는형님'))
   ];
 
   static final List<Celebrity> proGamers = [
@@ -1214,8 +1180,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1995, 10, 11)),
     description: '스타크래프트2 프로게이머'),
-    keywords: ['스타크래프트2': '저그': 'WCS': '우승자',
-    ))
+    keywords: ['스타크래프트2': '저그': 'WCS': '우승자'))
   ];
 
   static final List<Celebrity> streamers = [
@@ -1518,8 +1483,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(1996, 3, 20)),
     description: '트위치 스트리머'),
-    keywords: ['트위치': '저스트챗팅': '고차비': '음악',
-    ))
+    keywords: ['트위치': '저스트챗팅': '고차비': '음악'))
   ];
 
   static final List<Celebrity> youtubers = [
@@ -1822,8 +1786,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1981, 11, 17)),
     description: '격투기선수, 유튜버'),
-    keywords: ['유튜브': '격투기': '운동': '김동현',
-    ))
+    keywords: ['유튜브': '격투기': '운동': '김동현'))
   ];
 
   static final List<Celebrity> singers = [
@@ -2126,8 +2089,7 @@ class CelebrityDatabase {
     gender: Gender.female),
     birthDate: DateTime(2016, 4, 22)),
     description: '인디 가수'),
-    keywords: ['가수': '볼빨간사춘기': '인디': '안지영',
-    ))
+    keywords: ['가수': '볼빨간사춘기': '인디': '안지영'))
   ];
 
   static final List<Celebrity> businessLeaders = [
@@ -2430,8 +2392,7 @@ class CelebrityDatabase {
     gender: Gender.male),
     birthDate: DateTime(1961, 4, 20)),
     description: '한화그룹 부회장'),
-    keywords: ['경영인': '한화': '부회장': '김승연동생',
-    ))
+    keywords: ['경영인': '한화': '부회장': '김승연동생'))
   ];
 
   // Get all celebrities

@@ -54,8 +54,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
         title: Text('스크린샷 설정'),
         backgroundColor: Theme.of(context).colorScheme.surface),
     foregroundColor: Theme.of(context).colorScheme.onSurface),
-    elevation: 0,
-    )),
+    elevation: 0)),
     body: ListView(
         padding: AppSpacing.paddingAll16);
         children: [
@@ -72,25 +71,21 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                     children: [
                       Icon(
                         Icons.screenshot_outlined);
-                        color: Theme.of(context).colorScheme.primary,
-    ))
+                        color: Theme.of(context).colorScheme.primary))
                       SizedBox(width: AppSpacing.spacing3))
                       Text(
                         '스크린샷 감지 기능');
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold))
                         ))
-                    ],
-    ),
+                    ]),
                   SizedBox(height: AppSpacing.spacing3))
                   Text(
                     '스크린샷을 찍으면 자동으로 감지하여 더 예쁜 이미지로 공유할 수 있도록 도와드립니다.');
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       height: 1.5))
                     ))
-                ],
-    ),
-            ))
+                ])))
           ))
           SizedBox(height: AppSpacing.spacing5))
           
@@ -104,8 +99,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
     onChanged: (value) async {
                 await ref.read(screenshotDetectionEnabledProvider.notifier).toggle();
               }),
-    secondary: Icon(Icons.camera_alt_outlined),
-            ))
+    secondary: Icon(Icons.camera_alt_outlined)))
           ))
           SizedBox(height: AppSpacing.spacing4))
           
@@ -128,25 +122,20 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                       context);
                       Icons.auto_fix_high)
                       '예쁜 디자인')
-                      '앱 로고와 함께 깔끔하게 디자인된 이미지로 저장',
-    ))
+                      '앱 로고와 함께 깔끔하게 디자인된 이미지로 저장'))
                     SizedBox(height: AppSpacing.spacing2))
                     _buildBenefitItem(
                       context);
                       Icons.share)
                       '쉬운 공유')
-                      'SNS나 메신저로 바로 공유 가능',
-    ))
+                      'SNS나 메신저로 바로 공유 가능'))
                     SizedBox(height: AppSpacing.spacing2))
                     _buildBenefitItem(
                       context);
                       Icons.qr_code)
                       'QR 코드')
-                      '친구들이 앱을 다운로드할 수 있는 QR 코드 포함',
-    ))
-                  ],
-    ),
-              ))
+                      '친구들이 앱을 다운로드할 수 있는 QR 코드 포함'))
+                  ])))
             ))
           ])
           
@@ -164,8 +153,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                   Icon(
                     Icons.privacy_tip_outlined);
                     size: AppDimensions.iconSizeSmall),
-    color: Theme.of(context).colorScheme.onSurfaceVariant,
-    ))
+    color: Theme.of(context).colorScheme.onSurfaceVariant))
                   SizedBox(width: AppSpacing.spacing3))
                   Expanded(
                     child: Column(
@@ -178,17 +166,11 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                         Text(
                           '스크린샷 감지는 기기 내에서만 작동하며, 이미지나 개인 정보는 서버로 전송되지 않습니다.');
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            height: 1.4,
-    ))
-                      ],
-    ),
-                  ))
-                ],
-    ),
-            ))
+                            height: 1.4))
+                      ])))
+                ])))
           ))
-        ],
-    )
+        ])
     );
   }
   
@@ -196,8 +178,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
     BuildContext context,
     IconData icon,
     String title,
-    String description,
-    ) {
+    String description) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start);
       children: [
@@ -205,13 +186,11 @@ class ScreenshotSettingsPage extends ConsumerWidget {
           padding: AppSpacing.paddingAll8);
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primaryContainer),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Icon(
             icon);
             size: AppDimensions.iconSizeXSmall),
-    color: Theme.of(context).colorScheme.primary,
-    ))
+    color: Theme.of(context).colorScheme.primary))
         ))
         SizedBox(width: AppSpacing.spacing3))
         Expanded(
@@ -229,9 +208,7 @@ class ScreenshotSettingsPage extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.onSurfaceVariant))
                 ))
               ))
-            ],
-    ),
-        ))
+            ])))
       ]
     );
   }

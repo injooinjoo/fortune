@@ -20,8 +20,7 @@ class BloodTypeCompatibilityMatrix extends StatefulWidget {
     this.selectedType2,
     this.selectedRh2,
     required this.onPairSelected,
-    this.showAnimation = true,
-  }) : super(key: key);
+    this.showAnimation = true}) : super(key: key);
 
   @override
   State<BloodTypeCompatibilityMatrix> createState() => _BloodTypeCompatibilityMatrixState();
@@ -35,7 +34,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
   int? _hoveredRow;
   int? _hoveredCol;
   
-  final List<String> _bloodTypes = ['A': 'B': 'O', 'AB'];
+  final List<String> _bloodTypes = \['['A', 'B', 'O', 'AB'];
   final List<String> _rhTypes = ['+', '-'];
 
   @override
@@ -47,11 +46,9 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
     
     _fadeAnimation = Tween<double>(
       begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
+      end: 1).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -76,9 +73,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         const SizedBox(height: AppSpacing.spacing5),
         _buildSelectedInfo(),
         const SizedBox(height: AppSpacing.spacing5),
-        _buildLegend(),
-      ],
-    );
+        _buildLegend()]);
 }
 
   Widget _buildHeader() {
@@ -88,13 +83,11 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         Icon(
           Icons.bloodtype,
           color: Colors.red,
-          size: 24,
-        ),
+          size: 24),
         const SizedBox(width: AppSpacing.spacing2),
         Text(
           '혈액형 궁합 매트릭스',
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: Theme.of(context).textTheme.bodyMedium]
     );
 }
 
@@ -110,16 +103,11 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
               Row(
                 children: [
                   const SizedBox(width: AppSpacing.spacing12 * 1.04), // 왼쪽 여백
-                  ..._buildColumnHeaders(),
-                ],
-              ),
+                  ..._buildColumnHeaders()]),
               const SizedBox(height: AppSpacing.spacing2 * 1.25),
               // 매트릭스 본체
-              ..._buildMatrixRows(),
-            ],
-          ));
-},
-    );
+              ..._buildMatrixRows()]),;
+});
 }
 
   List<Widget> _buildColumnHeaders() {
@@ -133,9 +121,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             child: Center(
               child: Text(
                 '$bloodType$rh',
-                style: Theme.of(context).textTheme.bodySmall,
-          
-        );
+                style: Theme.of(context).textTheme.bodySmall);
 }
     }
     
@@ -158,19 +144,14 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                 child: Center(
                   child: Text(
                     '$bloodType1$rh1',
-                    style: Theme.of(context).textTheme.bodySmall,
-              ),
+                    style: Theme.of(context).textTheme.bodySmall),
               // 셀들
-              ..._buildMatrixCells(bloodType1, rh1, row),
-            ],
-          
-        );
+              ..._buildMatrixCells(bloodType1, rh1, row)]);
         
         if (row < 7) {
           rows.add(const SizedBox(height: AppSpacing.spacing0 * 0.5);
 }
-      },
-}
+      }}
     
     return rows;
 }
@@ -217,17 +198,13 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                       color: isSelected
                           ? Colors.white
                           : Colors.transparent,
-                      width: isSelected ? 2 : 0,
-                    ),
+                      width: isSelected ? 2 : 0),
                     boxShadow: (isSelected || isHovered) ? [
                       BoxShadow(
                         color: _getCompatibilityColor(compatibility,
                             .withValues(alpha: 0.5),
                         blurRadius: 8,
-                        spreadRadius: 2,
-                      ),
-                    ] : [],
-                  ),
+                        spreadRadius: 2)] : []),
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -239,16 +216,10 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                             fontWeight: isHovered
                                 ? FontWeight.bold
                                 : FontWeight.normal,
-                            color: Colors.white,
-                          ),
+                            color: Colors.white),
                         if (isHovered), Text(
                             '$bloodType1$rh1 × $bloodType2$rh2',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                      ],
-                    ),
-                ),
-            ),
-        );
+                            style: Theme.of(context).textTheme.bodyMedium]))));
 }
     }
     
@@ -263,10 +234,8 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           '매트릭스에서 두 혈액형을 선택하면 상세 궁합을 확인할 수 있습니다',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.6),
-            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-          ),
-          textAlign: TextAlign.center,
-        ));
+            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
+          textAlign: TextAlign.center),;
 }
 
     final compatibility = BloodTypeAnalysisService.calculateCompatibility(
@@ -303,17 +272,12 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                     Icon(
                       Icons.favorite,
                       color: _getCompatibilityColor(compatibility),
-                      size: 32,
-                    ),
+                      size: 32),
                     const SizedBox(height: AppSpacing.spacing1),
                     Text(
                       '${(compatibility * 100).toInt()}%',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                  ],
-                ),
-              _buildBloodTypeInfo(widget.selectedType2!, widget.selectedRh2!),
-            ],
-          ),
+                      style: Theme.of(context).textTheme.bodyMedium]),
+              _buildBloodTypeInfo(widget.selectedType2!, widget.selectedRh2!)]),
           const SizedBox(height: AppSpacing.spacing5),
           Container(
             padding: AppSpacing.paddingAll16,
@@ -322,8 +286,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
               borderRadius: AppDimensions.borderRadiusMedium,
               border: Border.all(
                 color: _getCompatibilityColor(compatibility).withValues(alpha: 0.3),
-                width: 1,
-              ),
+                width: 1),
             child: Column(
               children: [
                 Text(
@@ -333,15 +296,9 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
                 Text(
                   synergy['description'],
                   style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
+                  textAlign: TextAlign.center)]),
           const SizedBox(height: AppSpacing.spacing4),
-          _buildDynamicsInfo(dynamics),
-        ],
-      
-    );
+          _buildDynamicsInfo(dynamics)]);
 }
 
   Widget _buildBloodTypeInfo(String bloodType, String rh) {
@@ -358,27 +315,20 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             gradient: LinearGradient(
               colors: [
                 Colors.red.withValues(alpha: 0.6),
-                Colors.red.withValues(alpha: 0.8),
-              ],
-            ),
+                Colors.red.withValues(alpha: 0.8)]),
             boxShadow: [
               BoxShadow(
                 color: Colors.red.withValues(alpha: 0.4),
                 blurRadius: 10,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
+                spreadRadius: 2)]),
           child: Center(
             child: Text(
               '$bloodType$rh',
-              style: Theme.of(context).textTheme.bodyMedium,
-        ),
+              style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: AppSpacing.spacing2),
         Text(
           characteristics['element'],
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: Theme.of(context).textTheme.bodyMedium]
     );
 }
 
@@ -396,45 +346,34 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
               '소통',
               communication['compatibility'],
               Icons.chat,
-              Colors.blue,
-            ),
+              Colors.blue),
             _buildDynamicItem(
               '갈등해결',
               conflict['compatibility'],
               Icons.handshake,
-              Colors.green,
-            ),
+              Colors.green),
             _buildDynamicItem(
               '성장가능성',
               growth['score'],
               Icons.trending_up,
-              Colors.purple,
-            ),
-          ],
-        ),
+              Colors.purple)]),
         const SizedBox(height: AppSpacing.spacing4),
         Container(
           padding: AppSpacing.paddingAll12,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.05),
-            borderRadius: AppDimensions.borderRadiusSmall,
-          ),
+            borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [
               Icon(
                 Icons.lightbulb,
                 color: Colors.amber,
-                size: 20,
-              ),
+                size: 20),
               const SizedBox(width: AppSpacing.spacing2),
               Expanded(
                 child: Text(
                   dynamics['advice'],
-                  style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-      ]
+                  style: Theme.of(context).textTheme.bodyMedium)])]
     );
 }
 
@@ -448,8 +387,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
             shape: BoxShape.circle,
             color: color.withValues(alpha: 0.2),
           child: Center(
-            child: Icon(icon, color: color, size: 24),
-        ),
+            child: Icon(icon, color: color, size: 24)),
         const SizedBox(height: AppSpacing.spacing1),
         Text(
           label,
@@ -457,8 +395,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         const SizedBox(height: AppSpacing.spacing0 * 0.5),
         Text(
           '${(value * 100).toInt()}%',
-          style: Theme.of(context).textTheme.bodyMedium,
-      ]
+          style: Theme.of(context).textTheme.bodyMedium]
     );
 }
 
@@ -470,8 +407,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
+          width: 1),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -482,10 +418,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           const SizedBox(width: AppSpacing.spacing5),
           _buildLegendItem('보통 궁합': Colors.amber, '50-69%',
           const SizedBox(width: AppSpacing.spacing5),
-          _buildLegendItem('도전적 관계': Colors.orange, '50% 미만',
-        ],
-      
-    );
+          _buildLegendItem('도전적 관계': Colors.orange, '50% 미만']);
 }
 
   Widget _buildLegendItem(String label, Color color, String range) {
@@ -496,8 +429,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
           height: AppSpacing.spacing3,
           decoration: BoxDecoration(
             color: color,
-            shape: BoxShape.circle,
-          ),
+            shape: BoxShape.circle),
         const SizedBox(width: AppSpacing.spacing1),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,11 +441,7 @@ class _BloodTypeCompatibilityMatrixState extends State<BloodTypeCompatibilityMat
               range,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.6),
-                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-              ),
-          ],
-        ),
-      ]
+                fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)])]
     );
 }
 

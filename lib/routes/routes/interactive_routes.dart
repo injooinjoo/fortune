@@ -23,18 +23,15 @@ final interactiveRoutes = [
       GoRoute(
         path: 'fortune-cookie',
         name: 'interactive-fortune-cookie',
-        builder: (context, state) => const FortuneCookiePage(),
-      ),
+        builder: (context, state) => const FortuneCookiePage()),
       GoRoute(
         path: 'dream',
         name: 'interactive-dream',
-        builder: (context, state) => const DreamInterpretationPage(),
-      ),
+        builder: (context, state) => const DreamInterpretationPage()),
       GoRoute(
         path: 'psychology-test',
         name: 'interactive-psychology-test',
-        builder: (context, state) => const PsychologyTestPage(),
-      ),
+        builder: (context, state) => const PsychologyTestPage()),
       GoRoute(
         path: 'tarot',
         name: 'interactive-tarot',
@@ -51,10 +48,8 @@ final interactiveRoutes = [
               return TarotStorytellingPage(
                 selectedCards: extra?['selectedCards'],
                 spreadType: extra?['spreadType'] ?? 'three',
-                question: extra?['question'],
-              );
-            },
-          ),
+                question: extra?['question']);
+            }),
           GoRoute(
             path: 'summary',
             name: 'tarot-summary',
@@ -64,52 +59,37 @@ final interactiveRoutes = [
                 cards: extra?['cards'],
                 interpretations: extra?['interpretations'],
                 spreadType: extra?['spreadType'] ?? 'three',
-                question: extra?['question'],
-              );
-            },
-          ),
+                question: extra?['question']);
+            }),
           GoRoute(
             path: 'deck-selection',
             name: 'interactive-tarot-deck-selection',
             builder: (context, state) {
               return TarotDeckSelectionPage(
                 spreadType: state.uri.queryParameters['spreadType'],
-                initialQuestion: state.uri.queryParameters['question'],
-              );
-            },
-          ),
+                initialQuestion: state.uri.queryParameters['question']);
+            }),
           GoRoute(
             path: 'animated-flow',
             name: 'tarot-animated-flow',
             builder: (context, state) {
               final extra = state.extra as Map<String, dynamic>?;
               return TarotAnimatedFlowPage(
-                heroTag: extra?['heroTag'],
-              );
-            },
-          ),
-        ],
-      ),
+                heroTag: extra?['heroTag']);
+            })]),
       GoRoute(
         path: 'face-reading',
         name: 'interactive-face-reading',
-        builder: (context, state) => const FaceReadingPage(),
-      ),
+        builder: (context, state) => const FaceReadingPage()),
       GoRoute(
         path: 'taemong',
         name: 'interactive-taemong',
-        builder: (context, state) => const TaemongPage(),
-      ),
+        builder: (context, state) => const TaemongPage()),
       GoRoute(
         path: 'worry-bead',
         name: 'interactive-worry-bead',
-        builder: (context, state) => const WorryBeadPage(),
-      ),
+        builder: (context, state) => const WorryBeadPage()),
       GoRoute(
         path: 'dream-journal',
         name: 'interactive-dream-journal',
-        builder: (context, state) => const DreamPage(),
-      ),
-    ],
-  ),
-];
+        builder: (context, state) => const DreamPage())])];

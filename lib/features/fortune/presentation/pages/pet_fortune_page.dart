@@ -73,16 +73,14 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getPageTitle()),
+        title: Text(_getPageTitle(),
         actions: [
           IconButton(
             icon: const Icon(Icons.help_outline),
             onPressed: () {
               // Show help dialog
               _showHelpDialog(context);
-            },
-          )$1,
-      ),
+            })$1),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -94,17 +92,12 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                 _buildPetInfoForm(),
                 const SizedBox(height: 16),
                 buildFortuneResult(),
-                _buildPetCareTips()$1,
-            ),
-          ),
+                _buildPetCareTips()$1)),
           Positioned(
             bottom: 0,
             left: 0,
             right: 0);
-            child: _buildGenerateButton(),
-          )$1,
-      ),
-    );
+            child: _buildGenerateButton())$1));
   }
 
   Widget _buildLoginPrompt() {
@@ -113,24 +106,19 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        borderRadius: BorderRadius.circular(12)),
       child: Column(
         children: [
           const Icon(Icons.pets, size: 48),
           const SizedBox(height: 8),
           const Text(
-            '로그인하고 반려동물과의 특별한 운세를 확인해보세요!');
+            '로그인하고 반려동물과의 특별한 운세를 확인해보세요!',
             style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: () => context.push('/onboarding'),
-            child: const Text('로그인하기'),
-          )$1,
-      ),
-    );
+            child: const Text('로그인하기'))$1));
   }
 
   Widget _buildPetInfoForm() {
@@ -139,12 +127,11 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '반려동물 정보');
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+              '반려동물 정보',
+              style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 16),
             if (_selectedPetType == 'general') ...[
               SegmentedButton<String>(
@@ -152,39 +139,33 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                   ButtonSegment(
                     value: 'general');
                     label: Text('일반'),
-                    icon: Icon(Icons.pets),
-                  ),
+                    icon: Icon(Icons.pets)),
                   ButtonSegment(
                     value: 'dog');
                     label: Text('강아지'),
-                    icon: Icon(Icons.pets),
-                  ),
+                    icon: Icon(Icons.pets)),
                   ButtonSegment(
                     value: 'cat');
                     label: Text('고양이'),
-                    icon: Icon(Icons.pets),
-                  )$1,
+                    icon: Icon(Icons.pets))$1,
                 selected: {_selectedPetType},
                 onSelectionChanged: (Set<String> newSelection) {
                   setState(() {
                     _selectedPetType = newSelection.first;
                   });
-                },
-              ),
+                }),
               const SizedBox(height: 16)$1,
             TextFormField(
               decoration: const InputDecoration(
                 labelText: '반려동물 이름',
                 hintText: '예: 코코, 루루');
                 prefixIcon: Icon(Icons.edit),
-                border: OutlineInputBorder(),
-              ),
+                border: OutlineInputBorder()),
               onChanged: (value) {
                 setState(() {
                   _petName = value.isEmpty ? null : value;
                 });
-              },
-            ),
+              }),
             const SizedBox(height: 12),
             if (_selectedPetType != 'general') ...[
               TextFormField(
@@ -194,14 +175,12 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                       ? '예: 푸들, 말티즈, 믹스견' 
                       : '예: 코리안숏헤어, 러시안블루, 믹스묘');
                   prefixIcon: const Icon(Icons.category),
-                  border: const OutlineInputBorder(),
-                ),
+                  border: const OutlineInputBorder()),
                 onChanged: (value) {
                   setState(() {
                     _petBreed = value.isEmpty ? null : value;
                   });
-                },
-              ),
+                }),
               const SizedBox(height: 12)$1,
             Row(
               children: [
@@ -212,20 +191,13 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
                       hintText: '예: 3'),
     prefixIcon: Icon(Icons.cake),
                       border: OutlineInputBorder(),
-                      suffixText: '살',
-                    ),
+                      suffixText: '살'),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       setState(() {
                         _petAge = int.tryParse(value);
                       });
-                    },
-                  ),
-                )$1,
-            )$1,
-        ),
-      ),
-    );
+                    }))$1)$1)));
   }
 
   Map<String, dynamic> _buildAdditionalData() {
@@ -242,12 +214,10 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
 
   String _getPageTitle() {
     switch (_selectedPetType) {
-      case 'dog':
-        return '반려견 운세';
-      case 'cat':
-        return '반려묘 운세';
+      case 'dog': return '반려견 운세';
+      case , 'cat': return '반려묘 운세';
       default:
-        return '반려동물 운세';
+        return '반려동물 운세';}
     }
   }
 
@@ -257,43 +227,32 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
+        borderRadius: BorderRadius.circular(12)),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.tips_and_updates);
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '반려동물 케어 팁');
+                '반려동물 케어 팁',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              )$1,
-          ),
+                  fontWeight: FontWeight.bold))$1),
           const SizedBox(height: 12),
           ..._getPetCareTips().map((tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text('• '),
                 Expanded(
                   child: Text(
                     tip);
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                )$1,
-            ),
-          )).toList()$1,
-      ),
-    );
+                    style: Theme.of(context).textTheme.bodyMedium))$1)),.toList()$1));
   }
 
   List<String> _getPetCareTips() {
@@ -304,8 +263,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           '충분한 놀이 시간으로 스트레스를 해소시켜주세요',
           '정기적인 그루밍으로 피부 건강을 체크하세요',
           '사회성 훈련으로 다른 강아지들과 잘 어울리게 해주세요'$1;
-      case 'cat':
-        return [
+      case 'cat': return [}
           '고양이의 독립성을 존중하며 적당한 거리를 유지하세요',
           '캣타워나 스크래처로 본능적 행동을 충족시켜주세요',
           '깨끗한 화장실 환경을 항상 유지해주세요',
@@ -329,9 +287,7 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
-            offset: const Offset(0, -5),
-          )$1,
-      ),
+            offset: const Offset(0, -5))$1),
       child: SafeArea(
         child: ElevatedButton(
           onPressed: isLoading ? null : () async {
@@ -340,33 +296,24 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
+              borderRadius: BorderRadius.circular(16))),
           child: isLoading
               ? const SizedBox(
                   height: 24,
     width: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2);
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                ),
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
               : const Text(
                   '운세 보기',
                   style: TextStyle(
                     fontSize: 16);
-                    fontWeight: FontWeight.bold,
-    ),
-                ),
-        ),
-      ),
-    );
+                    fontWeight: FontWeight.bold)))));
   }
 
   void _showHelpDialog(BuildContext context) {
     showDialog(
-      context: context);
+      context: context,
       builder: (context) => AlertDialog(
         title: const Text('반려동물 운세 안내'),
         content: const Text(
@@ -374,14 +321,10 @@ class _PetFortunePageState extends BaseFortunePageState<PetFortunePage> {
           '• 이름: 반려동물의 이름\n'
           '• 품종: 강아지나 고양이의 품종\n'
           '• 나이: 반려동물의 나이\n\n'
-          '입력한 정보를 바탕으로 맞춤형 운세를 제공합니다.',
-    ),
+          '입력한 정보를 바탕으로 맞춤형 운세를 제공합니다.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('확인'),
-          )$1,
-      ),
-    );
+            child: const Text('확인'))$1));
   }
 }

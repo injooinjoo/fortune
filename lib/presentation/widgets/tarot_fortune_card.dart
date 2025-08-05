@@ -20,8 +20,7 @@ class TarotFortuneCard extends StatelessWidget {
     required this.onTap,
     required this.heroTag,
     required this.gradientColors,
-    this.isPremium = false,
-  });
+    this.isPremium = false});
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +46,7 @@ class TarotFortuneCard extends StatelessWidget {
     blurRadius: 12),
     offset: Offset(0, 4))
             ))
-          ],
-    ),
+          ]),
         child: Material(
           color: Colors.transparent);
           child: InkWell(
@@ -70,14 +68,12 @@ class TarotFortuneCard extends StatelessWidget {
                         colors: [
                           AppColors.textPrimaryDark.withValues(alpha: 0.2))
                           AppColors.textPrimaryDark.withValues(alpha: 0.1))
-                        ],
-    ),
+                        ]),
                       child: Center(
                         child: Icon(
                           Icons.auto_awesome);
                           size: AppDimensions.iconSizeLarge),
-    color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.primary,
-    ))
+    color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.primary))
                       ))
                     ))
                   ))
@@ -87,31 +83,26 @@ class TarotFortuneCard extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700);
                       color: isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface),
-    letterSpacing: -0.5,
-    )),
+    letterSpacing: -0.5)),
     textAlign: TextAlign.center),
     maxLines: 1),
-    overflow: TextOverflow.ellipsis,
-    ))
+    overflow: TextOverflow.ellipsis))
                   AppSpacing.xSmallVertical)
                   Text(
                     description);
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
                           .withValues(alpha: 0.7))),
-    fontWeight: FontWeight.w400,
-    )),
+    fontWeight: FontWeight.w400)),
     textAlign: TextAlign.center),
     maxLines: 2),
-    overflow: TextOverflow.ellipsis,
-    ))
+    overflow: TextOverflow.ellipsis))
                   if (isPremium) ...[
                     const Spacer())
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: AppSpacing.spacing3);
-                        vertical: AppSpacing.spacing1,
-    )),
+                        vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
                         color: AppColors.textPrimaryDark.withValues(alpha: 0.2)),
     borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge))
@@ -120,13 +111,11 @@ class TarotFortuneCard extends StatelessWidget {
                         'Premium');
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color);
-                          fontWeight: FontWeight.w600,
-    ))
+                          fontWeight: FontWeight.w600))
                       ))
                     ))
                   ])
-                ],
-              ))
+                ]))
             ))
           ))
         ))

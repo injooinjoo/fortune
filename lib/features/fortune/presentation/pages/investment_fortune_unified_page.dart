@@ -25,8 +25,7 @@ enum InvestmentType {
 
 class InvestmentFortuneUnifiedPage extends BaseFortunePage {
   const InvestmentFortuneUnifiedPage({
-    Key? key,
-  }) : super(
+    Key? key}) : super(
           key: key,
           title: '투자 운세',
           description: '재물, 부동산, 주식, 암호화폐, 로또 운세를 확인해보세요',
@@ -87,11 +86,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           // Fortune Result (if available,
           if (_fortuneCache[_selectedType] != null) ...[
             const SizedBox(height: 24),
-            _buildFortuneResult(_fortuneCache[_selectedType]!),
-          ],
-        ],
-      ),
-    );
+            _buildFortuneResult(_fortuneCache[_selectedType]!)]]));
   }
 
   Widget _buildTypeSelector() {
@@ -101,9 +96,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
         Text(
           '투자 유형 선택',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         SizedBox(
           height: 120,
@@ -116,8 +109,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               
               return Padding(
                 padding: EdgeInsets.only(
-                  right: index < InvestmentType.values.length - 1 ? 12 : 0,
-                ),
+                  right: index < InvestmentType.values.length - 1 ? 12 : 0),
                 child: InkWell(
                   onTap: () {
                     setState(() {
@@ -135,49 +127,33 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                         end: Alignment.bottomRight,
                         colors: isSelected
                             ? type.gradientColors
-                            : [Colors.grey[200]!, Colors.grey[300]!],
-                      ),
+                            : [Colors.grey[200]!, Colors.grey[300]!]),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
                                 color: type.gradientColors[0].withValues(alpha: 0.4),
                                 blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : [],
-                    ),
+                                offset: const Offset(0, 4))]
+                          : []),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
                           type.icon,
                           size: 32,
-                          color: isSelected ? Colors.white : Colors.grey[600],
-                        ),
+                          color: isSelected ? Colors.white : Colors.grey[600]),
                         const SizedBox(height: 8),
                         Text(
                           type.label,
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.grey[600],
                             fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ).animate(delay: (50 * index).ms,
+                            fontSize: 12),
+                          textAlign: TextAlign.center)])))).animate(delay: (50 * index).ms,
                 .fadeIn(duration: 300.ms,
                 .slideX(begin: 0.2, end: 0);
-            },
-          ),
-        ),
-      ],
-    );
+            }))]);
   }
 
   Widget _buildDescriptionCard() {
@@ -189,22 +165,17 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           end: Alignment.bottomRight,
           colors: [
             _selectedType.gradientColors[0].withValues(alpha: 0.1),
-            _selectedType.gradientColors[1].withValues(alpha: 0.05),
-          ],
-        ),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Row(
         children: [
           Icon(
             _selectedType.icon,
             size: 40,
-            color: _selectedType.gradientColors[0],
-          ),
+            color: _selectedType.gradientColors[0]),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -215,23 +186,13 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0],
-                  ),
-                ),
+                    color: _selectedType.gradientColors[0])),
                 const SizedBox(height: 4),
                 Text(
                   _selectedType.description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    color: AppTheme.textSecondaryColor))]))]));
   }
 
   Widget _buildGenerateButton() {
@@ -242,30 +203,21 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: _selectedType.gradientColors[0],
-        ),
+            borderRadius: BorderRadius.circular(12)),
+          backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               _selectedType.icon,
-              color: Colors.white,
-            ),
+              color: Colors.white),
             const SizedBox(width: 8),
             Text(
               '${_selectedType.label} 보기',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                color: Colors.white))])));
   }
 
   void _onGenerateFortune() {
@@ -275,8 +227,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null,
-      };
+        'gender': null};
       generateFortuneAction(params: params);
     }
   }
@@ -291,15 +242,11 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           end: Alignment.bottomRight,
           colors: [
             _selectedType.gradientColors[0].withValues(alpha: 0.1),
-            _selectedType.gradientColors[1].withValues(alpha: 0.05),
-          ],
-        ),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -308,8 +255,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               Icon(
                 _selectedType.icon,
                 color: _selectedType.gradientColors[0],
-                size: 28,
-              ),
+                size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -317,27 +263,18 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0],
-                  ),
-                ),
-              ),
+                    color: _selectedType.gradientColors[0]))),
               if (fortune.score != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                    borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+                      fontWeight: FontWeight.bold)))]),
           const SizedBox(height: 20),
           
           // Main message
@@ -346,20 +283,16 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
             style: TextStyle(
               fontSize: 16,
               height: 1.6,
-              color: AppTheme.textColor,
-            ),
-          ),
+              color: AppTheme.textColor)),
           
           // Special content based on type
           if (_selectedType == InvestmentType.lottery && fortune.additionalInfo?['luckyNumbers'] != null) ...[
             const SizedBox(height: 20),
-            _buildLotteryNumbers(List<int>.from(fortune.additionalInfo!['luckyNumbers'],
-          ],
+            _buildLotteryNumbers(List<int>.from(fortune.additionalInfo!['luckyNumbers']],
           
           if (_selectedType == InvestmentType.stock && fortune.additionalInfo?['stockPicks'] != null) ...[
             const SizedBox(height: 20),
-            _buildStockPicks(List<Map<String, dynamic>>.from(fortune.additionalInfo!['stockPicks'],
-          ],
+            _buildStockPicks(List<Map<String, dynamic>>.from(fortune.additionalInfo!['stockPicks']],
           
           if (fortune.advice != null) ...[
             const SizedBox(height: 20),
@@ -367,33 +300,21 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
+                borderRadius: BorderRadius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     color: Colors.amber,
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    ).animate(,
+                        color: AppTheme.textColor)))]))]])).animate(,
       .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
@@ -407,9 +328,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: _selectedType.gradientColors[0],
-          ),
-        ),
+            color: _selectedType.gradientColors[0])),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -419,24 +338,16 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               height: 45,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: _selectedType.gradientColors,
-                ),
-                shape: BoxShape.circle,
-              ),
+                  colors: _selectedType.gradientColors),
+                shape: BoxShape.circle),
               child: Center(
                 child: Text(
                   number.toString(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ]
+                    fontSize: 18))));
+          }).toList())]
     );
   }
 
@@ -449,9 +360,7 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: _selectedType.gradientColors[0],
-          ),
-        ),
+            color: _selectedType.gradientColors[0])),
         const SizedBox(height: 12),
         ...picks.map((pick) {
           return Container(
@@ -461,28 +370,19 @@ class _InvestmentFortuneUnifiedPageState extends BaseFortunePageState<Investment
               color: AppTheme.surfaceColor,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withValues(alpha: 0.2),
-              ),
-            ),
+                color: _selectedType.gradientColors[0].withValues(alpha: 0.2))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   pick['sector'] ?? '',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(
                   pick['trend'] ?? '',
                   style: TextStyle(
                     color: pick['trend'] == '상승'),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ]
+                    fontWeight: FontWeight.bold))]));
+        }).toList()]
     );
   }
 

@@ -19,11 +19,9 @@ class LuckyHikingFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF10B981), Color(0xFF059669)],
-      ),
+        colors: [Color(0xFF10B981), Color(0xFF059669)]),
       inputBuilder: (context, onSubmit) => _HikingInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, onShare) => _HikingFortuneResult(result: result,
-    );
+      resultBuilder: (context, result, onShare) => _HikingFortuneResult(result: result);
   }
 }
 
@@ -61,18 +59,14 @@ class _HikingInputFormState extends State<_HikingInputForm> {
           '오늘의 등산 운세를 확인하고\n안전하고 즐거운 산행을 즐기세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Difficulty Level
         Text(
           '난이도',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDifficulty(theme),
         const SizedBox(height: 24),
@@ -81,9 +75,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
         Text(
           '예상 시간',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildDuration(theme),
         const SizedBox(height: 24),
@@ -92,9 +84,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
         Text(
           '등산 목적',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildPurpose(theme),
         const SizedBox(height: 24),
@@ -103,9 +93,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
         Text(
           '계절',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSeason(theme),
         const SizedBox(height: 32),
@@ -120,37 +108,28 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 'difficulty': _difficulty,
                 'duration': _duration,
                 'purpose': _purpose,
-                'season': null,
-              });
+                'season': null});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF10B981),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
+                borderRadius: BorderRadius.circular(16)),
+              elevation: 0),
             child: const Text(
               '등산 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 
   Widget _buildDifficulty(ThemeData theme) {
     final levels = [
-      {'id': 'easy': 'name': '초급': 'icon'},
-      {'id': 'moderate': 'name': '중급': 'icon'},
-      {'id': 'hard', 'name': '상급', 'icon'},
-      {'id': 'extreme', 'name': '전문가', 'icon'},
-    ];
+      {'id', 'easy': 'name', '초급': 'icon'},
+      {'id', 'moderate': 'name', '중급': 'icon'},
+      {'id', 'hard', 'name', '상급', 'icon'},
+      {'id', 'extreme', 'name', '전문가', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -184,41 +163,31 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   level['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   level['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
 
   Widget _buildDuration(ThemeData theme) {
     final durations = [
-      {'id': 'short': 'name': '2시간 이내'},
-      {'id': 'halfday': 'name': '반나절'},
-      {'id': 'fullday', 'name': '종일'},
-      {'id': 'overnight', 'name': '1박2일'},
-    ];
+      {'id', 'short': 'name', '2시간 이내'},
+      {'id', 'halfday': 'name', '반나절'},
+      {'id', 'fullday', 'name', '종일'},
+      {'id', 'overnight', 'name', '1박2일'}];
 
     return Row(
       children: durations.map((duration) {
@@ -232,8 +201,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: duration != durations.last ? 8 : 0,
-              ),
+                right: duration != durations.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
@@ -244,34 +212,24 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   duration['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(,
-    );
+                    fontSize: 12))))));
+      }).toList();
   }
 
   Widget _buildPurpose(ThemeData theme) {
     final purposes = [
-      {'id': 'recreation': 'name': '휴식': 'icon'},
-      {'id': 'exercise': 'name': '운동': 'icon'},
-      {'id': 'photography', 'name': '사진', 'icon'},
-      {'id': 'meditation', 'name': '명상', 'icon'},
-    ];
+      {'id', 'recreation': 'name', '휴식': 'icon'},
+      {'id', 'exercise': 'name', '운동': 'icon'},
+      {'id', 'photography', 'name', '사진', 'icon'},
+      {'id', 'meditation', 'name', '명상', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -305,41 +263,31 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   purpose['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   purpose['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
 
   Widget _buildSeason(ThemeData theme) {
     final seasons = [
-      {'id': 'spring': 'name': '봄': 'icon'},
-      {'id': 'summer', 'name': '여름', 'icon'},
-      {'id': 'autumn', 'name': '가을', 'icon'},
-      {'id': 'winter', 'name': '겨울', 'icon'},
-    ];
+      {'id', 'spring': 'name', '봄': 'icon'},
+      {'id', 'summer', 'name', '여름', 'icon'},
+      {'id', 'autumn', 'name', '가을', 'icon'},
+      {'id', 'winter', 'name', '겨울', 'icon'}];
 
     return Row(
       children: seasons.map((season) {
@@ -353,8 +301,7 @@ class _HikingInputFormState extends State<_HikingInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: season != seasons.last ? 8 : 0,
-              ),
+                right: season != seasons.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
@@ -365,32 +312,21 @@ class _HikingInputFormState extends State<_HikingInputForm> {
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: [
                   Icon(
                     season['icon'],
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(height: 4),
                   Text(
                     season['name'],
                     style: TextStyle(
                       color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(,
-    );
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))]))));
+      }).toList();
   }
 }
 
@@ -422,16 +358,12 @@ class _HikingFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF10B981), Color(0xFF059669)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          colors: [Color(0xFF10B981), Color(0xFF059669)]),
+                        borderRadius: BorderRadius.circular(12)),
                       child: const Icon(
                         Icons.terrain,
                         color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -440,31 +372,16 @@ class _HikingFortuneResult extends StatelessWidget {
                           Text(
                             '오늘의 등산 운세',
                             style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                    height: 1.6))]))),
         const SizedBox(height: 16),
 
         // Best Trail
@@ -474,12 +391,9 @@ class _HikingFortuneResult extends StatelessWidget {
             title: '추천 등산로',
             icon: Icons.route,
             gradient: const LinearGradient(
-              colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-            ),
-            content: result.details!['bestTrail'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+            content: result.details!['bestTrail']),
+          const SizedBox(height: 16)],
 
         // Safety Tips
         if (result.details?['safety'] != null) ...[
@@ -488,12 +402,9 @@ class _HikingFortuneResult extends StatelessWidget {
             title: '안전 수칙',
             icon: Icons.security,
             gradient: const LinearGradient(
-              colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-            ),
-            content: result.details!['safety'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFFEF4444), Color(0xFFDC2626)]),
+            content: result.details!['safety']),
+          const SizedBox(height: 16)],
 
         // Weather Conditions
         if (result.details?['weather'] != null) ...[
@@ -502,12 +413,9 @@ class _HikingFortuneResult extends StatelessWidget {
             title: '날씨 및 산행 조건',
             icon: Icons.cloud_queue,
             gradient: const LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-            ),
-            content: result.details!['weather'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
+            content: result.details!['weather']),
+          const SizedBox(height: 16)],
 
         // Equipment
         if (result.details?['equipment'] != null) ...[
@@ -516,12 +424,8 @@ class _HikingFortuneResult extends StatelessWidget {
             title: '필수 장비',
             icon: Icons.backpack,
             gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
-            ),
-            content: result.details!['equipment'],
-          ),
-        ],
-      ]
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
+            content: result.details!['equipment'])]]
     );
   }
 
@@ -530,8 +434,7 @@ class _HikingFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content,
-  }) {
+    required String content}) {
     final theme = Theme.of(context);
 
     return GlassContainer(
@@ -546,32 +449,21 @@ class _HikingFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
-                ),
-              ),
+                  size: 20)),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-            ),
-          ),
-        ],
-      ,
-    );
+              height: 1.5))],
+      );
   }
 }

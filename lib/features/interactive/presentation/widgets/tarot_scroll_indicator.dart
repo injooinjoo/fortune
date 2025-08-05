@@ -8,8 +8,7 @@ class TarotScrollIndicator extends StatefulWidget {
   const TarotScrollIndicator({
     Key? key,
     this.isVisible = true,
-    this.text = 'Tap to pick your card',
-  }) : super(key: key);
+    this.text = 'Tap to pick your card'}) : super(key: key);
 
   @override
   State<TarotScrollIndicator> createState() => _TarotScrollIndicatorState();
@@ -27,24 +26,19 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
     
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _bounceAnimation = Tween<double>(
       begin: 0,
-      end: 10,
-    ).animate(CurvedAnimation(
+      end: 10).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     _fadeAnimation = Tween<double>(
       begin: 0.3,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
   }
 
   @override
@@ -73,9 +67,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 children: [
                   _buildArrow(true),
                   const SizedBox(width: 40),
-                  _buildArrow(false),
-                ],
-              ),
+                  _buildArrow(false)]),
               const SizedBox(height: 16),
               
               // Text
@@ -88,32 +80,21 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
+                      width: 1)),
                   child: Text(
                     widget.text,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                      fontWeight: FontWeight.w500))))]));
+      });
   }
 
   Widget _buildArrow(bool isLeft) {
     return Transform.translate(
       offset: Offset(
         isLeft ? -_bounceAnimation.value : _bounceAnimation.value,
-        0,
-      ),
+        0),
       child: Opacity(
         opacity: _fadeAnimation.value,
         child: Stack(
@@ -129,11 +110,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                   BoxShadow(
                     color: Theme.of(context).primaryColor.withValues(alpha: 0.5),
                     blurRadius: 15,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-            ),
+                    spreadRadius: 2)])),
             
             // Arrow icon
             Transform.rotate(
@@ -142,14 +119,7 @@ class _TarotScrollIndicatorState extends State<TarotScrollIndicator>
                 size: const Size(30, 30),
                 painter: ArrowPainter(
                   color: Colors.white,
-                  strokeWidth: 3,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  strokeWidth: 3)))])));
   }
 }
 
@@ -159,8 +129,7 @@ class ArrowPainter extends CustomPainter {
 
   ArrowPainter({
     required this.color,
-    this.strokeWidth = 3,
-  });
+    this.strokeWidth = 3});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -192,8 +161,7 @@ class TarotScrollHint extends StatefulWidget {
   
   const TarotScrollHint({
     Key? key,
-    this.isVisible = true,
-  }) : super(key: key);
+    this.isVisible = true}) : super(key: key);
 
   @override
   State<TarotScrollHint> createState() => _TarotScrollHintState();
@@ -210,16 +178,13 @@ class _TarotScrollHintState extends State<TarotScrollHint>
     
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
+      vsync: this)..repeat(reverse: true);
     
     _slideAnimation = Tween<double>(
       begin: -20,
-      end: 20,
-    ).animate(CurvedAnimation(
+      end: 20).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
   }
 
   @override
@@ -252,15 +217,7 @@ class _TarotScrollHintState extends State<TarotScrollHint>
                     BoxShadow(
                       color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       blurRadius: 8,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                      spreadRadius: 2)])))));
+      });
   }
 }

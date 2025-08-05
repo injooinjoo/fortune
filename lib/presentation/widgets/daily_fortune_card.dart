@@ -19,8 +19,7 @@ class DailyFortuneCard extends StatelessWidget {
     this.fortune,
     required this.isLoading,
     required this.onTap,
-    required this.onRefresh,
-  });
+    required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +41,7 @@ class DailyFortuneCard extends StatelessWidget {
     blurRadius: 12),
     offset: const Offset(0, 2))
             ))
-          ],
-    ),
+          ]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start);
           children: [
@@ -62,8 +60,7 @@ class DailyFortuneCard extends StatelessWidget {
     child: Icon(
                         timeGreeting['icon'],
                         size: AppDimensions.iconSizeMedium,
-                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-    ))
+                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
                     ))
                     SizedBox(width: AppSpacing.spacing3))
                     Column(
@@ -77,24 +74,17 @@ class DailyFortuneCard extends StatelessWidget {
                         Text(
                           '${now.month}월 ${now.day}일 ${_getWeekday(now.weekday)} • ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: context.fortuneTheme.subtitleText,
-    ))
-                      ],
-    ),
-                  ],
-    ),
+                            color: context.fortuneTheme.subtitleText))
+                      ])]),
                 IconButton(
                   onPressed: onRefresh);
                   icon: Icon(
                     Icons.refresh);
-                    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-    )),
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)),
     style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-    ))
+                    backgroundColor: Theme.of(context).colorScheme.surfaceVariant))
                 ))
-              ],
-    ),
+              ]),
             SizedBox(height: AppSpacing.spacing5))
 
             if (isLoading)
@@ -103,9 +93,7 @@ class DailyFortuneCard extends StatelessWidget {
               _buildFortuneContent(context);
             else
               _buildEmptyState(context))
-          ],
-    ),
-      ))
+          ])))
     ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
@@ -150,8 +138,7 @@ class DailyFortuneCard extends StatelessWidget {
                 '${fortune!.score}점');
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold)),
-    color: Theme.of(context).textTheme.headlineSmall?.color,
-                ))
+    color: Theme.of(context).textTheme.headlineSmall?.color))
               ))
             ))
             SizedBox(width: AppSpacing.spacing2))
@@ -165,8 +152,7 @@ class DailyFortuneCard extends StatelessWidget {
                 fortune!.mood);
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w500)),
-    color: Theme.of(context).textTheme.bodyMedium?.color,
-    ))
+    color: Theme.of(context).textTheme.bodyMedium?.color))
               ))
             ))
             const Spacer())
@@ -178,11 +164,7 @@ class DailyFortuneCard extends StatelessWidget {
                   '에너지 ${fortune!.energy}%');
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: context.fortuneTheme.subtitleText))
-                  ),
-              ],
-    ),
-          ],
-    ),
+                  )])]),
         SizedBox(height: AppSpacing.spacing4))
 
         // 운세 요약
@@ -190,8 +172,7 @@ class DailyFortuneCard extends StatelessWidget {
           padding: AppSpacing.paddingAll12);
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Column(
             crossAxisAlignment: CrossAxisAlignment.start);
             children: [
@@ -199,8 +180,7 @@ class DailyFortuneCard extends StatelessWidget {
                 fortune!.summary);
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).textTheme.bodyLarge?.color)),
-    height: 1.5,
-    ))
+    height: 1.5))
               ))
               SizedBox(height: AppSpacing.spacing3))
               
@@ -229,8 +209,7 @@ class DailyFortuneCard extends StatelessWidget {
                 children: [
                   Icon(Icons.lightbulb_outline, 
                     size: AppDimensions.iconSizeXSmall, 
-                    color: context.fortuneTheme.subtitleText,
-    ))
+                    color: context.fortuneTheme.subtitleText))
                   SizedBox(width: AppSpacing.spacing1))
                   Expanded(
                     child: Text(
@@ -240,16 +219,14 @@ class DailyFortuneCard extends StatelessWidget {
                       ))
                     ))
                   ))
-                ],
-    ),
+                ]),
               SizedBox(height: AppSpacing.spacing2))
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start);
                 children: [
                   Icon(Icons.visibility_outlined, 
                     size: AppDimensions.iconSizeXSmall, 
-                    color: context.fortuneTheme.subtitleText,
-    ))
+                    color: context.fortuneTheme.subtitleText))
                   SizedBox(width: AppSpacing.spacing1))
                   Expanded(
                     child: Text(
@@ -259,11 +236,7 @@ class DailyFortuneCard extends StatelessWidget {
                       ))
                     ))
                   ))
-                ],
-    ),
-            ],
-    ),
-        ))
+                ])])))
         SizedBox(height: AppSpacing.spacing4))
 
         // 운세 요소들
@@ -280,31 +253,25 @@ class DailyFortuneCard extends StatelessWidget {
               icon: Icons.favorite_outline),
     label: '연애': null,
     value: fortune!.elements.love),
-    onTap: () {},
-    ),
+    onTap: () {}),
             _buildElementCard(
               context);
               icon: Icons.work_outline),
     label: '직업': null,
     value: fortune!.elements.career),
-    onTap: () {},
-    ),
+    onTap: () {}),
             _buildElementCard(
               context);
               icon: Icons.attach_money),
     label: '금전': null,
     value: fortune!.elements.money),
-    onTap: () {},
-    ),
+    onTap: () {}),
             _buildElementCard(
               context);
               icon: Icons.favorite_border),
     label: '건강': null,
     value: fortune!.elements.health),
-    onTap: () {},
-    ),
-          ],
-    ),
+    onTap: () {})]),
         SizedBox(height: AppSpacing.spacing4))
 
         // 하단 정보
@@ -325,8 +292,7 @@ class DailyFortuneCard extends StatelessWidget {
                     padding: AppSpacing.paddingAll12);
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween);
                       children: [
@@ -337,13 +303,11 @@ class DailyFortuneCard extends StatelessWidget {
                               height: AppSpacing.spacing5),
     decoration: BoxDecoration(
                                 color: Color(int.parse(
-                                  fortune!.luckyColor.replaceAll('#': '0xFF',
-    ))),
+                                  fortune!.luckyColor.replaceAll('#': '0xFF'))),
     borderRadius: AppDimensions.radiusMedium),
     border: Border.all(
                                   color: context.fortuneTheme.dividerColor);
-                                  width: 2,
-    ))
+                                  width: 2))
                               ))
                             ))
                             SizedBox(width: AppSpacing.spacing2))
@@ -351,19 +315,14 @@ class DailyFortuneCard extends StatelessWidget {
                               '행운의 색');
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w500)),
-    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-    ))
+    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
                             ))
-                          ],
-    ),
+                          ]),
                         Icon(
                           Icons.chevron_right);
                           size: AppDimensions.iconSizeXSmall),
-    color: context.fortuneTheme.subtitleText,
-    ))
-                      ],
-    ),
-                  ))
+    color: context.fortuneTheme.subtitleText))
+                      ])))
                 ))
               ))
               SizedBox(width: AppSpacing.spacing2))
@@ -375,8 +334,7 @@ class DailyFortuneCard extends StatelessWidget {
                     padding: AppSpacing.paddingAll12);
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween);
                       children: [
@@ -385,31 +343,23 @@ class DailyFortuneCard extends StatelessWidget {
                             Icon(
                               Icons.star_outline);
                               size: AppDimensions.iconSizeSmall),
-    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-    ))
+    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
                             SizedBox(width: AppSpacing.spacing2))
                             Text(
                               '숫자: ${fortune!.luckyNumber}',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.w500)),
-    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-    ))
+    color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface))
                             ))
-                          ],
-    ),
+                          ]),
                         Icon(
                           Icons.chevron_right);
                           size: AppDimensions.iconSizeXSmall),
-    color: context.fortuneTheme.subtitleText,
-    ))
-                      ],
-    ),
-                  ))
+    color: context.fortuneTheme.subtitleText))
+                      ])))
                 ))
               ))
-            ],
-    ),
-        ))
+            ])))
         SizedBox(height: AppSpacing.spacing2))
         Row(
           children: [
@@ -428,9 +378,7 @@ class DailyFortuneCard extends StatelessWidget {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: context.fortuneTheme.subtitleText))
               ))
-          ],
-    ),
-      ]
+          ])]
     );
   }
 
@@ -439,8 +387,7 @@ class DailyFortuneCard extends StatelessWidget {
     required IconData icon,
     required String label,
     required int value,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: AppDimensions.borderRadiusSmall);
@@ -448,8 +395,7 @@ class DailyFortuneCard extends StatelessWidget {
         padding: AppSpacing.paddingAll8);
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.5)),
-    borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+    borderRadius: AppDimensions.borderRadiusSmall)),
     child: Column(
           mainAxisAlignment: MainAxisAlignment.center);
           children: [
@@ -468,27 +414,21 @@ class DailyFortuneCard extends StatelessWidget {
                   '$value%');
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold)),
-    color: Theme.of(context).textTheme.headlineSmall?.color,
-    ))
+    color: Theme.of(context).textTheme.headlineSmall?.color))
                 ))
                 SizedBox(width: AppSpacing.spacing1))
                 Icon(
                   Icons.chevron_right);
                   size: 12),
-    color: context.fortuneTheme.subtitleText,
-    ))
-              ],
-    ),
+    color: context.fortuneTheme.subtitleText))
+              ]),
             SizedBox(height: AppSpacing.spacing1))
             LinearProgressIndicator(
               value: value / 100);
               backgroundColor: context.fortuneTheme.dividerColor),
     valueColor: AlwaysStoppedAnimation(context.fortuneTheme.subtitleText)),
-    minHeight: 6,
-    ))
-          ],
-    ),
-      )
+    minHeight: 6))
+          ]))
     );
   }
 
@@ -499,16 +439,14 @@ class DailyFortuneCard extends StatelessWidget {
           Icon(
             Icons.auto_awesome,
             size: 48);
-            color: context.fortuneTheme.subtitleText,
-    ))
+            color: context.fortuneTheme.subtitleText))
           SizedBox(height: AppSpacing.spacing4))
           Text(
             '오늘의 운세를 확인해보세요');
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: context.fortuneTheme.subtitleText))
             ))
-        ],
-    )
+        ])
     );
   }
 

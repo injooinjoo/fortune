@@ -7,8 +7,7 @@ class TodoFilterChip extends StatelessWidget {
   const TodoFilterChip({
     super.key,
     required this.label,
-    required this.onDeleted,
-  });
+    required this.onDeleted});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +22,6 @@ class TodoFilterChip extends StatelessWidget {
         backgroundColor: colorScheme.secondaryContainer,
         deleteIconColor: colorScheme.onSecondaryContainer,
         labelStyle: TextStyle(
-          color: colorScheme.onSecondaryContainer,
-        ),
-      ),
-    );
+          color: colorScheme.onSecondaryContainer)));
   }
 }

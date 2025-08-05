@@ -18,46 +18,40 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
   
   final List<Map<String, dynamic>> blessingGoals = [
     {
-      'id': 'longevity',
-      'title': '수(壽) - 장수',
-      'subtitle': '건강하고 오래 사는 삶',
+      'id', 'longevity',
+      'title', '수(壽) - 장수',
+      'subtitle', '건강하고 오래 사는 삶',
       'icon': Icons.favorite,
       'color': Colors.green,
-      'description': '무병장수하며 건강한 노년을 보내는 축복',
-    },
+      'description', '무병장수하며 건강한 노년을 보내는 축복'},
     {
-      'id': 'wealth',
-      'title': '부(富) - 재물',
-      'subtitle': '풍족하고 넉넉한 삶',
+      'id', 'wealth',
+      'title', '부(富) - 재물',
+      'subtitle', '풍족하고 넉넉한 삶',
       'icon': Icons.monetization_on,
       'color': Colors.amber,
-      'description': '경제적으로 풍요롭고 여유로운 삶의 축복',
-    },
+      'description', '경제적으로 풍요롭고 여유로운 삶의 축복'},
     {
-      'id': 'health',
-      'title': '강녕(康寧) - 건강',
-      'subtitle': '몸과 마음이 편안한 삶',
+      'id', 'health',
+      'title', '강녕(康寧) - 건강',
+      'subtitle', '몸과 마음이 편안한 삶',
       'icon': Icons.spa,
       'color': Colors.blue,
-      'description': '심신이 건강하고 평온한 상태를 유지하는 축복',
-    },
+      'description', '심신이 건강하고 평온한 상태를 유지하는 축복'},
     {
-      'id': 'virtue',
-      'title': '유호덕(攸好德) - 덕행',
-      'subtitle': '덕을 쌓고 베푸는 삶',
+      'id', 'virtue',
+      'title', '유호덕(攸好德) - 덕행',
+      'subtitle', '덕을 쌓고 베푸는 삶',
       'icon': Icons.volunteer_activism,
       'color': Colors.purple,
-      'description': '선행을 쌓고 타인에게 존경받는 삶의 축복',
-    },
+      'description', '선행을 쌓고 타인에게 존경받는 삶의 축복'},
     {
-      'id': 'peaceful_death',
-      'title': '고종명(考終命) - 편안한 임종',
-      'subtitle': '평화롭게 마무리하는 삶',
+      'id', 'peaceful_death',
+      'title', '고종명(考終命) - 편안한 임종',
+      'subtitle', '평화롭게 마무리하는 삶',
       'icon': Icons.nature_people,
       'color': Colors.indigo,
-      'description': '천수를 다하고 편안하게 생을 마감하는 축복',
-    },
-  ];
+      'description', '천수를 다하고 편안하게 생을 마감하는 축복'}];
   
   @override
   void initState() {
@@ -83,11 +77,9 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-      ),
+        colors: [Color(0xFFE91E63), Color(0xFF9C27B0)]),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result,
-    );
+      resultBuilder: (context, result, onShare) => _buildResult(context, result);
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
@@ -99,17 +91,13 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             '오복(五福) 운세',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
             '전통 오복 중 당신이 가장 원하는 복을 선택하면, 그 복을 받을 수 있는 방법을 알려드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
+              color: Colors.grey)),
           const SizedBox(height: 24),
           
           // Birth date input
@@ -120,8 +108,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[300]!),
-              ),
+                border: Border.all(color: Colors.grey[300]!)),
               child: Row(
                 children: [
                   const Icon(Icons.calendar_today, color: Colors.grey),
@@ -133,15 +120,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
                         fontSize: 16,
-                        color: _birthdate != null ? Colors.black : Colors.grey,
-                      ),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_drop_down, color: Colors.grey),
-                ],
-              ),
-            ),
-          ),
+                        color: _birthdate != null ? Colors.black : Colors.grey))),
+                  const Icon(Icons.arrow_drop_down, color: Colors.grey)]))),
           
           const SizedBox(height: 24),
           
@@ -150,9 +130,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             '원하시는 복을 선택하세요',
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           
           ...blessingGoals.map((blessing) => Padding(
@@ -177,9 +155,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         ? blessing['color'],
     Color
                         : Colors.grey[300]!,
-                    width: _selectedGoal == blessing['id'],
-                  ),
-                ),
+                    width: _selectedGoal == blessing['id'])),
                 child: Row(
                   children: [
                     Container(
@@ -187,14 +163,11 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       height: 48,
                       decoration: BoxDecoration(
                         color: (blessing['color'],
-                        shape: BoxShape.circle,
-                      ),
+                        shape: BoxShape.circle),
                       child: Icon(
                         blessing['icon'],
                         color: blessing['color'],
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -208,29 +181,16 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                               color: _selectedGoal == blessing['id']
                                   ? blessing['color'],
     Color
-                                  : Colors.black,
-                            ),
-                          ),
+                                  : Colors.black)),
                           Text(
                             blessing['subtitle'],
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              color: Colors.grey[600]))])),
                     if (_selectedGoal == blessing['id'])
                       Icon(
                         Icons.check_circle,
-                        color: blessing['color'],
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          )),
+                        color: blessing['color'])])))),
           
           // Selected blessing description
           if (_selectedGoal != null) ...[
@@ -240,16 +200,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
+                border: Border.all(color: Colors.grey[200]!)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.info_outline,
                     size: 20,
-                    color: Colors.grey[600],
-                  ),
+                    color: Colors.grey[600]),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -257,14 +215,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                        height: 1.4)))]))],
           
           const SizedBox(height: 24),
           
@@ -276,15 +227,12 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               onPressed: _selectedGoal != null && _birthdate != null
                   ? () => onSubmit({
                         'blessing_type': _selectedGoal,
-                        'birthdate': null,
-                      },
+                        'birthdate': null},
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -294,16 +242,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                     '오복 운세 확인하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                      fontWeight: FontWeight.bold))])))]));
   }
   
   Future<void> _selectDate(BuildContext context) async {
@@ -311,8 +250,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       context: context,
       initialDate: _birthdate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(,
-    );
+      lastDate: DateTime.now();
     if (picked != null) {
       setState(() {
         _birthdate = picked;
@@ -336,37 +274,26 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             gradient: LinearGradient(
               colors: [
                 (selectedBlessing['color'],
-                (selectedBlessing['color'],
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
+                (selectedBlessing['color']]),
+            borderRadius: BorderRadius.circular(16)),
           child: Column(
             children: [
               Icon(
                 selectedBlessing['icon'],
                 size: 64,
-                color: selectedBlessing['color'],
-              ),
+                color: selectedBlessing['color']),
               const SizedBox(height: 16),
               Text(
                 selectedBlessing['title'],
                 style: const TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(
                 selectedBlessing['subtitle'],
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
-          ),
-        ),
+                  color: Colors.grey[700]))])),
         
         const SizedBox(height: 20),
         
@@ -377,8 +304,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+              border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -390,24 +316,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       '당신의 오복 운세',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                    height: 1.6))])),
+          const SizedBox(height: 20)],
         
         // Blessing Score
         if (result.overallScore != null) ...[
@@ -416,17 +332,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+              border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               children: [
                 Text(
                   '${selectedBlessing['title']} 달성 가능성',
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Stack(
                   alignment: Alignment.center,
@@ -439,10 +352,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         strokeWidth: 12,
                         backgroundColor: Colors.grey[200],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          selectedBlessing['color'],
-                        ),
-                      ),
-                    ),
+                          selectedBlessing['color']))),
                     Column(
                       children: [
                         Text(
@@ -450,25 +360,13 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: selectedBlessing['color'],
-                          ),
-                        ),
+                            color: selectedBlessing['color'])),
                         Text(
                           '달성 가능성',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                            color: Colors.grey[600]))])])])),
+          const SizedBox(height: 20)],
         
         // Methods to Achieve Blessing
         if (result.sections != null && result.sections!['methods'] != null) ...[
@@ -477,8 +375,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+              border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -490,24 +387,14 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       '복을 받는 방법',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   result.sections!['methods'] ?? '',
                   style: const TextStyle(
                     fontSize: 14,
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                    height: 1.6))])),
+          const SizedBox(height: 20)],
         
         // Lucky Elements
         if (result.luckyItems != null) ...[
@@ -517,11 +404,8 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
               gradient: LinearGradient(
                 colors: [
                   Colors.yellow[50]!,
-                  Colors.orange[50]!,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                  Colors.orange[50]!]),
+              borderRadius: BorderRadius.circular(12)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -533,11 +417,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       '행운을 부르는 요소',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Wrap(
                   spacing: 12,
@@ -547,33 +427,21 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.orange[200]!),
-                    ),
+                      border: Border.all(color: Colors.orange[200]!)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           _getLuckyItemIcon(entry.key),
                           size: 16,
-                          color: Colors.orange,
-                        ),
+                          color: Colors.orange),
                         const SizedBox(width: 6),
                         Text(
                           '${_translateLuckyItem(entry.key)}: ${entry.value.toString()}',
                           style: const TextStyle(
                             fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                            fontWeight: FontWeight.w500))])).toList())])),
+          const SizedBox(height: 20)],
         
         // Daily Practice
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -581,8 +449,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.purple[50],
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -594,11 +461,7 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                       '매일 실천하기',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 ...result.recommendations!.map((rec) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -610,29 +473,16 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
                         height: 24,
                         decoration: BoxDecoration(
                           color: Colors.purple.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
+                          shape: BoxShape.circle),
                         child: const Icon(
                           Icons.check,
                           size: 16,
-                          color: Colors.purple,
-                        ),
-                      ),
+                          color: Colors.purple)),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           rec,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
-        ],
-      ]
+                          style: const TextStyle(fontSize: 14)))]))]))]]
     );
   }
   
@@ -642,19 +492,17 @@ class _FiveBlessingsFortunePageState extends ConsumerState<FiveBlessingsFortuneP
       'direction': Icons.explore,
       'number': Icons.looks_one,
       'time': Icons.access_time,
-      'element': null,
-    };
+      'element': null};
     return icons[key] ?? Icons.star;
   }
   
   String _translateLuckyItem(String key) {
     final translations = {
-      'color': '색상',
-      'direction': '방향',
-      'number': '숫자',
-      'time': '시간',
-      'element': '원소',
-    };
+      'color', '색상',
+      'direction', '방향',
+      'number', '숫자',
+      'time', '시간',
+      'element', '원소'};
     return translations[key] ?? key;
   }
 }

@@ -30,8 +30,7 @@ abstract class BaseFortuneScreen extends ConsumerStatefulWidget {
     required this.fortuneType,
     required this.title,
     required this.description,
-    this.tokenCost = 1,
-  });
+    this.tokenCost = 1});
 
   @override
   ConsumerState<BaseFortuneScreen> createState();
@@ -105,8 +104,7 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
       setState(() => _isLoading = false);
 
       Logger.analytics('fortune_viewed': {
-        'type',
-      });
+        'type'});
     } catch (error) {
       Logger.error('Failed to load fortune', error);
       setState(() {
@@ -139,8 +137,7 @@ abstract class BaseFortuneScreenState<T extends BaseFortuneScreen>
       );
 
       Logger.analytics('fortune_shared': {
-        'type',
-      });
+        'type'});
     } catch (error) {
       Logger.error('Failed to share fortune', error);
     }
@@ -172,8 +169,7 @@ https://fortune.app
         if (_fortuneData == null && !_isLoading) {
           _loadFortune();
         }
-      },
-    );
+      });
   }
 
   @override
@@ -210,11 +206,9 @@ https://fortune.app
               widget.description);
               style: TextStyle(
                 color: Colors.grey.withValues(alpha: 0.8)),
-    fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize,
-              ))
+    fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
             ))
-          ],
-    ),
+          ]),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline, color: Colors.black87)),
@@ -223,12 +217,10 @@ https://fortune.app
           if (_fortuneData != null) ...[
             IconButton(
               icon: const Icon(Icons.share_outlined, color: Colors.black87)),
-    onPressed: _shareFortune,
-    ))
+    onPressed: _shareFortune))
             buildSaveButton())
           ])
-        ],
-      )),
+        ])),
     body: _buildBody()
     );
   }
@@ -266,9 +258,7 @@ https://fortune.app
             
             // 하단 액션
             _buildBottomActions())
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -282,8 +272,7 @@ https://fortune.app
     colors: [
             Theme.of(context).colorScheme.primary.withValues(alpha: 0.8))
             Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8))
-          ],
-    ),
+          ]),
         borderRadius: AppDimensions.borderRadiusLarge),
     boxShadow: [
           BoxShadow(
@@ -291,31 +280,25 @@ https://fortune.app
     blurRadius: 12),
     offset: const Offset(0, 6))
           ))
-        ],
-    ),
+        ]),
       child: Column(
         children: [
           Icon(
             _getFortuneIcon()),
     size: 48),
-    color: Colors.white,
-    ))
+    color: Colors.white))
           const SizedBox(height: AppSpacing.spacing4))
           Text(
             widget.title);
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               color: Colors.white)),
-    fontWeight: FontWeight.bold,
-    ))
+    fontWeight: FontWeight.bold))
           const SizedBox(height: AppSpacing.spacing2))
           Text(
             DateTime.now().toString().substring(0, 10)),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white70,
-    ))
-        ],
-    ),
-    ).animate()
+              color: Colors.white70))
+        ])).animate()
       .fadeIn(duration: 400.ms)
       .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1);
   }
@@ -338,8 +321,7 @@ https://fortune.app
           Text(
             _errorMessage!);
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.grey.withValues(alpha: 0.8, textAlign: TextAlign.center,
-    ))
+              color: Colors.grey.withValues(alpha: 0.8, textAlign: TextAlign.center))
           const SizedBox(height: AppSpacing.spacing6))
           ElevatedButton(
             onPressed: () {
@@ -350,11 +332,9 @@ https://fortune.app
               }
             },
             child: Text(
-              _errorMessage!.contains('토큰') ? '토큰 구매하기' : '다시 시도',
-    ))
+              _errorMessage!.contains('토큰') ? '토큰 구매하기' : '다시 시도'))
           ))
-        ],
-    )
+        ])
     );
   }
 
@@ -366,8 +346,7 @@ https://fortune.app
           padding: const AppSpacing.paddingAll20,
           decoration: BoxDecoration(
             color: Colors.grey.withValues(alpha: 0.08)),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Column(
             children: [
               Text(
@@ -385,15 +364,11 @@ https://fortune.app
                     onPressed: () {
                       Navigator.pushReplacementNamed(
                         context);
-                        fortune['route'],
-                      );
+                        fortune['route']);
                     }
                   );
-                }).toList(),
-              ))
-            ],
-    ),
-        ))
+                }).toList()))
+            ])))
         const SizedBox(height: AppSpacing.spacing4))
         
         // 토큰 정보
@@ -419,24 +394,17 @@ https://fortune.app
                         '남은 토큰');
                         style: TextStyle(
                           color: Colors.grey.withValues(alpha: 0.8);
-                          fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize,
-                        ))
+                          fontSize: Theme.of(context).textTheme.${getTextThemeForSize(size)}!.fontSize))
                       ))
                       Text(
                         '${tokenBalance.balance} 토큰');
-                        style: Theme.of(context).textTheme.bodyMedium,
-                    ],
-    ),
+                        style: Theme.of(context).textTheme.bodyMedium]),
                   TextButton(
                     onPressed: () => Navigator.pushNamed(context, '/tokens'),
     child: const Text('토큰 충전'))
                   ))
-                ],
-    ),
-            );
-          },
-    ),
-      ]
+                ]));
+          })]
     );
   }
 
@@ -471,7 +439,6 @@ https://fortune.app
     return [
       {'title': '오늘의 운세', 'route': '/fortune/today'},
       {'title': '연애운', 'route': '/fortune/love'},
-      {'title': '금전운', 'route': '/fortune/wealth'},
-    ];
+      {'title': '금전운', 'route': '/fortune/wealth'}];
   }
 }

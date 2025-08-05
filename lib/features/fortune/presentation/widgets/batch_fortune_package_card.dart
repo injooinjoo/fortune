@@ -13,8 +13,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
   const BatchFortunePackageCard({
     Key? key,
     required this.packageType,
-    this.onTap,
-  }) : super(key: key);
+    this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,8 +27,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
         borderRadius: AppDimensions.borderRadiusLarge,
         side: isGenerated
             ? BorderSide(color: Theme.of(context).primaryColor, width: 2,
-            : BorderSide.none,
-      ),
+            : BorderSide.none),
       child: InkWell(
         onTap: isLoading ? null : (onTap ?? () => _generatePackage(context, ref),
         borderRadius: AppDimensions.borderRadiusLarge,
@@ -49,14 +47,11 @@ class BatchFortunePackageCard extends ConsumerWidget {
                         Text(
                           packageType.description,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold),
-                          ),
+                            fontWeight: FontWeight.bold)),
                         const SizedBox(height: AppSpacing.spacing1),
                         Text(
                           '${_getFortuneCount(packageType)}개 운세 묶음',
-                          style: Theme.of(context).textTheme.bodySmall,
-                      ],
-                    ),
+                          style: Theme.of(context).textTheme.bodySmall]),
                   if (isLoading)
                     const SizedBox(
                       width: 20,
@@ -65,20 +60,12 @@ class BatchFortunePackageCard extends ConsumerWidget {
                     ,
                   else if (isGenerated), Icon(
                       Icons.check_circle,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                ],
-              ),
+                      color: Theme.of(context).primaryColor)]),
               const SizedBox(height: AppSpacing.spacing4),
               _buildTokenInfo(context, ref),
               if (isGenerated) ...[
                 const SizedBox(height: AppSpacing.spacing3),
-                _buildGeneratedInfo(context, ref),
-              ],
-            ],
-          ),
-      
-    );
+                _buildGeneratedInfo(context, ref)]]));
 }
 
   Widget _buildTokenInfo(BuildContext context, WidgetRef ref) {
@@ -88,8 +75,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-        borderRadius: AppDimensions.borderRadiusSmall,
-      ),
+        borderRadius: AppDimensions.borderRadiusSmall),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -98,29 +84,21 @@ class BatchFortunePackageCard extends ConsumerWidget {
               Icon(
                 Icons.toll,
                 size: 16,
-                color: Theme.of(context).primaryColor,
-              ),
+                color: Theme.of(context).primaryColor),
               const SizedBox(width: AppSpacing.spacing1),
               Text(
                 '${packageType.tokenCost} 토큰',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor),
-                  fontWeight: FontWeight.bold,
-                ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold)]),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
             decoration: BoxDecoration(
               color: Colors.green.withValues(alpha: 0.2),
-              borderRadius: AppDimensions.borderRadiusMedium,
-            ),
+              borderRadius: AppDimensions.borderRadiusMedium),
             child: Text(
               '${savings.toStringAsFixed(0)}% 절약',
-              style: Theme.of(context).textTheme.bodyMedium,
-        ],
-      
-    );
+              style: Theme.of(context).textTheme.bodyMedium]);
 }
 
   Widget _buildGeneratedInfo(BuildContext context, WidgetRef ref) {
@@ -143,14 +121,10 @@ class BatchFortunePackageCard extends ConsumerWidget {
               '생성 완료',
               style: TextStyle(
                 color: Theme.of(context).primaryColor),
-                fontWeight: FontWeight.bold,
-              ),
+                fontWeight: FontWeight.bold),
             Text(
               '캐시: $cachedCount개, 신규: $generatedCount개',
-              style: Theme.of(context).textTheme.bodySmall,
-          ],
-        ),
-      ]
+              style: Theme.of(context).textTheme.bodySmall])]
     );
 }
 
@@ -192,8 +166,7 @@ class BatchFortunePackageCard extends ConsumerWidget {
       case BatchPackageType.premiumComplete:
         return 15;
 }
-  },
-}
+  }}
 
 /// 배치 운세 결과 리스트
 class BatchFortuneResultsList extends ConsumerWidget {
@@ -225,16 +198,14 @@ class BatchFortuneResultsList extends ConsumerWidget {
               child: Icon(
                 _getFortuneIcon(result.type),
                 color: Colors.white,
-                size: 20,
-              ),
+                size: 20),
             title: Text(
               _getFortuneTitle(result.type),
-              style: const TextStyle(fontWeight: FontWeight.bold)),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             subtitle: Text(
               result.fortune.summary ?? result.fortune.content.substring(0, 50),
               maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+              overflow: TextOverflow.ellipsis),
             trailing: result.fromCache
                 ? const Chip(
                     label: Text('캐시'),
@@ -242,13 +213,11 @@ class BatchFortuneResultsList extends ConsumerWidget {
                   ,
                 : const Chip(
                     label: Text('신규'),
-                    backgroundColor: Colors.green,
-                  ),
+                    backgroundColor: Colors.green),
             onTap: () {
               // 상세 운세 보기
               _showFortuneDetail(context, result);
-},
-          ));
+}),;
 }
     );
 }
@@ -262,7 +231,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
         height: MediaQuery.of(context).size.height * 0.8,
         decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20),
         child: Column(
           children: [
             Container(
@@ -271,8 +240,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
               margin: const EdgeInsets.symmetric(vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(
                 color: Colors.grey.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
-            ),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             Expanded(
               child: SingleChildScrollView(
                 padding: AppSpacing.paddingAll20,
@@ -284,14 +252,11 @@ class BatchFortuneResultsList extends ConsumerWidget {
                         Icon(
                           _getFortuneIcon(result.type),
                           size: 32,
-                          color: Theme.of(context).primaryColor,
-                        ),
+                          color: Theme.of(context).primaryColor),
                         const SizedBox(width: AppSpacing.spacing3),
                         Text(
                           _getFortuneTitle(result.type),
-                          style: Theme.of(context).textTheme.headlineSmall,
-                      ],
-                    ),
+                          style: Theme.of(context).textTheme.headlineSmall]),
                     const SizedBox(height: AppSpacing.spacing5),
                     if (result.fortune.overallScore != null) ...[
                       Row(
@@ -299,24 +264,18 @@ class BatchFortuneResultsList extends ConsumerWidget {
                           const Text('점수: '),
                           Text(
                             '${result.fortune.overallScore}점',
-                            style: Theme.of(context).textTheme.bodyMedium.primaryColor),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.spacing4),
-                    ],
+                            style: Theme.of(context).textTheme.bodyMedium.primaryColor))]),
+                      const SizedBox(height: AppSpacing.spacing4)],
                     if (result.fortune.summary != null) ...[
                       Container(
                         padding: AppSpacing.paddingAll12,
                         decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                          borderRadius: AppDimensions.borderRadiusSmall,
-                        ),
+                          borderRadius: AppDimensions.borderRadiusSmall),
                         child: Text(
                           result.fortune.summary!,
                           style: Theme.of(context).textTheme.bodyMedium,
-                      const SizedBox(height: AppSpacing.spacing4),
-                    ],
+                      const SizedBox(height: AppSpacing.spacing4)],
                     Text(
                       result.fortune.content,
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -328,13 +287,7 @@ class BatchFortuneResultsList extends ConsumerWidget {
                       const SizedBox(height: AppSpacing.spacing2),
                       Text(
                         result.fortune.additionalInfo!['advice'],
-                        style: Theme.of(context).textTheme.bodyMedium,
-                    ],
-                  ],
-                ),
-            ),
-          ],
-        ));
+                        style: Theme.of(context).textTheme.bodyMedium]]))]),;
 }
 
   IconData _getFortuneIcon(String type) {
@@ -349,43 +302,41 @@ class BatchFortuneResultsList extends ConsumerWidget {
       'talent': Icons.star,
       'yearly': Icons.calendar_month,
       'biorhythm': Icons.show_chart,
-      'lucky-color'),
-    };
+      'lucky-color')};
     return iconMap[type] ?? Icons.auto_awesome;
 }
 
   String _getFortuneTitle(String type) {
     final titleMap = {
-      'daily': '오늘의 운세',
-      'saju': '사주팔자',
-      'love': '연애운',
-      'career': '직업운',
-      'wealth': '재물운',
-      'health': '건강운',
-      'personality': '성격운세',
-      'talent': '재능운세',
-      'yearly': '올해운세',
-      'biorhythm': '바이오리듬',
-      'lucky-color': '행운의 색',
-      'hourly': '시간별 운세',
-      'tomorrow': '내일의 운세',
-      'weekly': '주간 운세',
-      'monthly': '월간 운세',
-      'destiny': '운명',
-      'blind-date': '소개팅운',
-      'celebrity-match': '연예인 매칭',
-      'couple-match': '커플 매칭',
-      'chemistry': '케미스트리',
-      'marriage': '결혼운',
-      'business': '사업운',
-      'lucky-number': '행운의 숫자',
-      'lucky-items': '행운의 아이템',
-      'lucky-food': '행운의 음식',
-      'lucky-outfit': '행운의 의상',
-      'traditional-saju': '전통사주',
-      'tojeong': '토정비결',
-      'past-life': '전생',
-    };
+      'daily', '오늘의 운세',
+      'saju', '사주팔자',
+      'love', '연애운',
+      'career', '직업운',
+      'wealth', '재물운',
+      'health', '건강운',
+      'personality', '성격운세',
+      'talent', '재능운세',
+      'yearly', '올해운세',
+      'biorhythm', '바이오리듬',
+      'lucky-color', '행운의 색',
+      'hourly', '시간별 운세',
+      'tomorrow', '내일의 운세',
+      'weekly', '주간 운세',
+      'monthly', '월간 운세',
+      'destiny', '운명',
+      'blind-date', '소개팅운',
+      'celebrity-match', '연예인 매칭',
+      'couple-match', '커플 매칭',
+      'chemistry', '케미스트리',
+      'marriage', '결혼운',
+      'business', '사업운',
+      'lucky-number', '행운의 숫자',
+      'lucky-items', '행운의 아이템',
+      'lucky-food', '행운의 음식',
+      'lucky-outfit', '행운의 의상',
+      'traditional-saju', '전통사주',
+      'tojeong', '토정비결',
+      'past-life', '전생'};
     return titleMap[type] ?? type;
 }
 }

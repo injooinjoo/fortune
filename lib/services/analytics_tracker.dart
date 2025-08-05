@@ -66,8 +66,7 @@ class AnalyticsTracker {
         parameters: {
           'screen_name': fromScreen,
           'duration_seconds': duration)
-        },
-    );
+        });
     }
     
     // 현재 화면 진입 시간 기록
@@ -76,8 +75,7 @@ class AnalyticsTracker {
     // Analytics에 화면 조회 로깅
     await _analytics.logScreenView(
       screenName: screenName,
-      screenClass: screenClass,
-    );
+      screenClass: screenClass);
     
     // A/B Test Manager에도 로깅
     await _abTestManager.logScreenView(
@@ -184,8 +182,7 @@ class AnalyticsTracker {
         errorType: errorType,
         errorMessage: errorMessage);
         screen: _currentScreen),
-    additionalParams: parameters,
-    ))
+    additionalParams: parameters))
       _abTestManager.logError(
         errorType: errorType);
         errorMessage: errorMessage),
@@ -194,9 +191,7 @@ class AnalyticsTracker {
           ...?parameters)
           'error_screen': _currentScreen,
           'user_journey': _userJourney.take(5).join(' → '))
-        },
-    ),
-    ]);
+        })]);
   }
   
   /// 성능 추적

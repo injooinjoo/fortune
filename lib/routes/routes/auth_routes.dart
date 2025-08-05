@@ -9,28 +9,23 @@ final authRoutes = [
   GoRoute(
     path: '/',
     name: 'landing',
-    builder: (context, state) => const LandingPage(),
-  ),
+    builder: (context, state) => const LandingPage()),
   GoRoute(
     path: '/splash',
     name: 'splash',
-    builder: (context, state) => const SplashScreen(),
-  ),
+    builder: (context, state) => const SplashScreen()),
   GoRoute(
     path: '/signup',
     name: 'signup',
-    builder: (context, state) => const SignupScreen(),
-  ),
+    builder: (context, state) => const SignupScreen()),
   GoRoute(
     path: '/auth/callback',
     name: 'auth-callback',
-    builder: (context, state) => const CallbackPage(),
-  ),
+    builder: (context, state) => const CallbackPage()),
   GoRoute(
     path: '/onboarding',
     name: 'onboarding',
-    builder: (context, state) => const OnboardingPage(),
-  ),
+    builder: (context, state) => const OnboardingPage()),
   // GoRoute(
   //   path: '/onboarding/profile',
   //   name: 'onboarding-profile',
@@ -40,5 +35,5 @@ final authRoutes = [
   //   path: '/onboarding/flow',
   //   name: 'onboarding-flow',
   //   builder: (context, state) => const OnboardingFlowPage(),
-  // ),
+  // )
 ];

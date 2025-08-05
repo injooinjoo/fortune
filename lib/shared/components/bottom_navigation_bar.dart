@@ -11,41 +11,34 @@ class FortuneBottomNavigationBar extends StatelessWidget {
 
   const FortuneBottomNavigationBar({
     Key? key,
-    required this.currentIndex,
-  }) : super(key: key);
+    required this.currentIndex}) : super(key: key);
 
   static const List<_NavItem> _items = [
     _NavItem(
       icon: Icons.home_outlined,
       selectedIcon: Icons.home_rounded,
       label: '홈',
-      route: '/home',
-    ),
+      route: '/home'),
     _NavItem(
       icon: Icons.explore_outlined,
       selectedIcon: Icons.explore_rounded,
       label: '운세',
-      route: '/fortune',
-    ),
+      route: '/fortune'),
     _NavItem(
       icon: Icons.trending_up,
       selectedIcon: Icons.trending_up,
       label: '트렌드',
-      route: '/trend',
-    ),
+      route: '/trend'),
     _NavItem(
       icon: Icons.stars_outlined,
       selectedIcon: Icons.stars_rounded,
       label: '프리미엄',
-      route: '/premium',
-    ),
+      route: '/premium'),
     _NavItem(
       icon: Icons.person_outline_rounded,
       selectedIcon: Icons.person_rounded,
       label: '프로필',
-      route: '/profile',
-    ),
-  ];
+      route: '/profile')];
 
   int _getIndexFromPath(String path) {
     for (int i = 0; i < _items.length; i++) {
@@ -68,10 +61,7 @@ class FortuneBottomNavigationBar extends StatelessWidget {
         border: Border(
           top: BorderSide(
             color: context.fortuneTheme.dividerColor,
-            width: AppSpacing.spacing0 * 0.5,
-          ),
-        ),
-      ),
+            width: AppSpacing.spacing0 * 0.5))),
       child: SafeArea(
         top: false,
         child: SizedBox(
@@ -100,13 +90,7 @@ class FortuneBottomNavigationBar extends StatelessWidget {
                   } else {
                     context.go(_items[index].route);
                   }
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+                }))))));
   }
 }
 
@@ -120,8 +104,7 @@ class _NavItem {
     required this.icon,
     required this.selectedIcon,
     required this.label,
-    required this.route,
-  });
+    required this.route});
 }
 
 class _NavItemWidget extends StatelessWidget {
@@ -132,8 +115,7 @@ class _NavItemWidget extends StatelessWidget {
   const _NavItemWidget({
     required this.item,
     required this.isSelected,
-    required this.onTap,
-  });
+    required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -150,17 +132,12 @@ class _NavItemWidget extends StatelessWidget {
               size: AppDimensions.iconSizeMedium,
               color: isSelected 
                 ? theme.colorScheme.primary 
-                : context.fortuneTheme.subtitleText,
-            ),
+                : context.fortuneTheme.subtitleText),
             SizedBox(height: AppSpacing.spacing1),
             Text(
               item.label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isSelected 
                   ? theme.colorScheme.primary 
-                  : context.fortuneTheme.subtitleText)),
-          ],
-        ),
-      ),
-    );
+                  : context.fortuneTheme.subtitleText))])));
   }
 }

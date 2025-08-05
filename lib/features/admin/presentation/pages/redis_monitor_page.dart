@@ -43,8 +43,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
             children: [
               const AppHeader(
                 title: 'Redis 모니터링',
-                showBackButton: true,
-              ),
+                showBackButton: true),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () => ref.read(redisStatsProvider.notifier).fetchRedisStats(),
@@ -71,12 +70,9 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                           const SizedBox(height: 16),
                           
                           // Rate Limits
-                          _buildRateLimits(stats.rateLimits),
-                        ],
-                      ),
+                          _buildRateLimits(stats.rateLimits)]),
                       loading: () => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                        child: CircularProgressIndicator()),
                       error: (error, stack) => Center(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -84,36 +80,20 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                             Icon(
                               Icons.error_outline,
                               size: 48,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
+                              color: Theme.of(context).colorScheme.error),
                             const SizedBox(height: 16),
                             Text(
                               'Redis 통계를 불러올 수 없습니다',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
+                              style: Theme.of(context).textTheme.titleMedium),
                             const SizedBox(height: 8),
                             Text(
                               error.toString(),
                               style: Theme.of(context).textTheme.bodySmall,
-                              textAlign: TextAlign.center,
-                            ),
+                              textAlign: TextAlign.center),
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () => ref.read(redisStatsProvider.notifier).fetchRedisStats(),
-                              child: const Text('다시 시도'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                              child: const Text('다시 시도'))]))))))]))));
   }
 
   Widget _buildConnectionStatus(RedisConnectionInfo connection) {
@@ -129,9 +109,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
             height: 12,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isConnected ? Colors.green : Colors.red,
-            ),
-          ),
+              color: isConnected ? Colors.green : Colors.red)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -140,48 +118,29 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                 Text(
                   'Redis 연결 상태',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
                   connection.status,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
                 if (connection.error != null) ...[
                   const SizedBox(height: 4),
                     Text(
                       connection.error!,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.error,
-                      ),
-                    ),
-                ],
-              ],
-            ),
-          ),
+                        color: theme.colorScheme.error))]])),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 '${connection.activeConnections}/${connection.totalConnections}',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               Text(
                 '활성 연결',
                 style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))])]));
   }
 
   Widget _buildCachePerformance(RedisCacheStats cache) {
@@ -201,17 +160,13 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                   center: Text(
                     '${cache.hitRate.toStringAsFixed(1)}%',
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)),
                   progressColor: theme.colorScheme.primary,
-                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                ),
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1)),
                 const SizedBox(height: 16),
                 Text(
                   '캐시 적중률',
-                  style: theme.textTheme.titleMedium,
-                ),
+                  style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -222,36 +177,20 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                           cache.hits.toString(),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            fontWeight: FontWeight.bold)),
                         Text(
                           'Hits',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
+                          style: theme.textTheme.bodySmall)]),
                     Column(
                       children: [
                         Text(
                           cache.misses.toString(),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            fontWeight: FontWeight.bold)),
                         Text(
                           'Misses',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
+                          style: theme.textTheme.bodySmall)])])]))),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -260,20 +199,13 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                 title: '총 키 개수',
                 value: cache.totalKeys.toString(),
                 icon: Icons.key,
-                iconColor: Colors.blue,
-              ),
+                iconColor: Colors.blue),
               const SizedBox(height: 16),
               StatsCard(
                 title: '메모리 사용량',
                 value: cache.memoryUsage,
                 icon: Icons.memory,
-                iconColor: Colors.purple,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                iconColor: Colors.purple)]))]);
   }
 
   Widget _buildOperationStats(RedisOperationStats operations) {
@@ -286,9 +218,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
+          color: Colors.white)),
       PieChartSectionData(
         value: operations.writes.toDouble(),
         title: '쓰기\n${operations.writes}',
@@ -297,9 +227,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
+          color: Colors.white)),
       PieChartSectionData(
         value: operations.deletes.toDouble(),
         title: '삭제\n${operations.deletes}',
@@ -308,9 +236,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
         titleStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
+          color: Colors.white)),
       if (operations.errors > 0)
         PieChartSectionData(
           value: operations.errors.toDouble(),
@@ -320,10 +246,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
           titleStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-    ];
+            color: Colors.white))];
 
     return ChartCard(
       title: '작업 통계',
@@ -333,10 +256,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
         PieChartData(
           sections: data,
           sectionsSpace: 2,
-          centerSpaceRadius: 40,
-        ),
-      ),
-    );
+          centerSpaceRadius: 40)));
   }
 
   Widget _buildPerformanceMetrics(RedisPerformanceStats performance) {
@@ -352,28 +272,22 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
           title: '평균 응답 시간',
           value: '${performance.avgResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.speed,
-          iconColor: Colors.teal,
-        ),
+          iconColor: Colors.teal),
         StatsCard(
           title: '최대 응답 시간',
           value: '${performance.maxResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.trending_up,
-          iconColor: Colors.red,
-        ),
+          iconColor: Colors.red),
         StatsCard(
           title: '최소 응답 시간',
           value: '${performance.minResponseTime.toStringAsFixed(2)}ms',
           icon: Icons.trending_down,
-          iconColor: Colors.green,
-        ),
+          iconColor: Colors.green),
         StatsCard(
           title: '느린 쿼리',
           value: performance.slowQueries.toString(),
           icon: Icons.warning,
-          iconColor: Colors.orange,
-        ),
-      ],
-    );
+          iconColor: Colors.orange)]);
   }
 
   Widget _buildRateLimits(Map<String, RateLimitInfo> rateLimits) {
@@ -387,9 +301,7 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
           Text(
             '레이트 리밋 현황',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           ...rateLimits.entries.map((entry) {
             final info = entry.value;
@@ -406,37 +318,22 @@ class _RedisMonitorPageState extends ConsumerState<RedisMonitorPage> {
                       Text(
                         info.tier.toUpperCase(),
                         style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       Text(
                         '${info.used} / ${info.limit}',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
+                        style: theme.textTheme.bodySmall)]),
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: percentage,
                     backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      percentage > 0.8 ? Colors.red : theme.colorScheme.primary,
-                    ),
-                  ),
+                      percentage > 0.8 ? Colors.red : theme.colorScheme.primary)),
                   const SizedBox(height: 4),
                   Text(
                     '재설정: ${_formatResetTime(info.resetAt)}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))]));
+          }).toList()]));
   }
 
   String _formatResetTime(DateTime resetAt) {

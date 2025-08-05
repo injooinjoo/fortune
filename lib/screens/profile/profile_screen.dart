@@ -92,8 +92,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               'total_tokens_earned': 0,
               'total_tokens_spent': 0,
               'profile_completion_percentage': 0,
-              'achievements': [],
-            };
+              'achievements': []};
             isLoading = false;
           });
         }
@@ -107,8 +106,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             userProfile = localProfile;
             userStats = {
               'total_fortunes': 0,
-              'consecutive_days': 1,
-            };
+              'consecutive_days': 1};
             isLoading = false;
           });
         }
@@ -167,9 +165,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         body: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+          child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -179,32 +175,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+          onPressed: () => context.pop()),
         title: const Text(
           '내 프로필',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+            fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(
               isDarkMode ? Icons.light_mode : Icons.dark_mode,
-              color: AppColors.textPrimary,
-            ),
+              color: AppColors.textPrimary),
             onPressed: () {
               ref.read(themeModeProvider.notifier).toggleTheme();
-            },
-          ),
+            }),
           IconButton(
             icon: const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
-            onPressed: () => context.push('/settings'),
-          ),
-        ],
-      ),
+            onPressed: () => context.push('/settings'))]),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,10 +204,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: UserInfoCard(
                   userProfile: userProfile ?? localProfile,
-                  onProfileUpdated: _loadUserData,
-                ),
-              ),
-            ],
+                  onProfileUpdated: _loadUserData))],
 
             // 테스트 계정 섹션 (테스트 계정인 경우에만 표시)
             FutureBuilder<UserProfile?>(
@@ -243,28 +228,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   color: Colors.orange.shade50,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(16),
-                                    topRight: Radius.circular(16),
-                                  ),
-                                ),
+                                    topRight: Radius.circular(16))),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.bug_report,
                                       color: Colors.orange.shade700,
-                                      size: 24,
-                                    ),
+                                      size: 24),
                                     const SizedBox(width: 12),
                                     Text(
                                       '테스트 계정 설정',
                                       style: theme.textTheme.titleLarge?.copyWith(
                                         fontWeight: FontWeight.w700,
                                         fontSize: 20,
-                                        color: Colors.orange.shade700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                        color: Colors.orange.shade700))])),
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 child: Column(
@@ -277,37 +254,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           '무제한 토큰',
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                            fontWeight: FontWeight.w600)),
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 12,
-                                            vertical: 4,
-                                          ),
+                                            vertical: 4),
                                           decoration: BoxDecoration(
                                             color: Colors.green.shade100,
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
+                                            borderRadius: BorderRadius.circular(20)),
                                           child: const Text(
                                             '활성화됨',
                                             style: TextStyle(
                                               color: Colors.green,
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                              fontWeight: FontWeight.w600)))]),
                                     const SizedBox(height: 8),
                                     const Text(
                                       '모든 운세를 토큰 제한 없이 이용할 수 있습니다.',
                                       style: TextStyle(
                                         color: AppColors.textSecondary,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                        fontSize: 14)),
                                     const SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -316,9 +282,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           '프리미엄 기능',
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
+                                            fontWeight: FontWeight.w600)),
                                         Switch(
                                           value: profile.isPremiumActive,
                                           onChanged: (value) async {
@@ -326,8 +290,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                             try {
                                               await testAccountService.togglePremium(
                                                 profile.userId,
-                                                value,
-                                              );
+                                                value);
                                               // Refresh user profile
                                               ref.invalidate(userProfileProvider);
                                               _loadUserData();
@@ -338,34 +301,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                     content: Text(
                                                       value
                                                         ? '프리미엄 기능이 활성화되었습니다.'
-                                                        : '프리미엄 기능이 비활성화되었습니다.',
-                                                    ),
-                                                    backgroundColor: value ? Colors.green : Colors.grey,
-                                                  ),
-                                                );
+                                                        : '프리미엄 기능이 비활성화되었습니다.'),
+                                                    backgroundColor: value ? Colors.green : Colors.grey));
                                               }
                                             } catch (e) {
                                               if (mounted) {
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   const SnackBar(
                                                     content: Text('프리미엄 상태 변경에 실패했습니다.'),
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                );
+                                                    backgroundColor: Colors.red));
                                               }
                                             }
                                           },
-                                          activeColor: AppColors.primary,
-                                        ),
-                                      ],
-                                    ),
+                                          activeColor: AppColors.primary)]),
                                     const Text(
                                       '프리미엄 기능을 즉시 켜고 끌 수 있습니다.',
                                       style: TextStyle(
                                         color: AppColors.textSecondary,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                        fontSize: 14)),
                                     const SizedBox(height: 16),
                                     Container(
                                       padding: const EdgeInsets.all(12),
@@ -373,42 +326,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         color: Colors.blue.shade50,
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: Colors.blue.shade200,
-                                        ),
-                                      ),
+                                          color: Colors.blue.shade200)),
                                       child: Row(
                                         children: [
                                           Icon(
                                             Icons.info_outline,
                                             color: Colors.blue.shade700,
-                                            size: 20,
-                                          ),
+                                            size: 20),
                                           const SizedBox(width: 8),
                                           Expanded(
                                             child: Text(
                                               '계정: ${profile.email}',
                                               style: TextStyle(
                                                 color: Colors.blue.shade700,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
+                                                fontSize: 14)))]))]))])))]);
                 }
                 return const SizedBox.shrink();
-              },
-            ),
+              }),
 
             // 사주 정보 섹션
             if (userProfile != null || localProfile != null) ...[
@@ -416,10 +350,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: SajuChartWidget(
-                  userProfile: userProfile ?? localProfile,
-                ),
-              ),
-            ],
+                  userProfile: userProfile ?? localProfile))],
 
             // 오행 분석 섹션
             if (userProfile != null || localProfile != null) ...[
@@ -427,17 +358,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: FiveElementsWidget(
-                  userProfile: userProfile ?? localProfile,
-                ),
-              ),
-            ],
+                  userProfile: userProfile ?? localProfile))],
 
             // 운세 히스토리 요약 카드
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: FortuneHistorySummaryWidget(userId: userProfile?['user_id'] ?? supabase.auth.currentUser?.id ?? ''),
-            ),
+              child: FortuneHistorySummaryWidget(userId: userProfile?['user_id'] ?? supabase.auth.currentUser?.id ?? '')),
 
             // 활동 통계 섹션
             const SizedBox(height: 24),
@@ -450,10 +377,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.04),
                     blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+                    offset: const Offset(0, 2))]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -463,9 +387,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       color: AppColors.primary.withOpacity(0.05),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
+                        topRight: Radius.circular(16))),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -476,38 +398,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               '활동 통계',
                               style: theme.textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 20,
-                              ),
-                            ),
+                                fontSize: 20)),
                             const SizedBox(height: 4),
                             Text(
                               _getDateRange(),
                               style: const TextStyle(
                                 color: AppColors.textSecondary,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+                                fontSize: 14))]),
                         TextButton.icon(
                           onPressed: () => context.push('/profile/statistics'),
                           icon: const Icon(
                             Icons.bar_chart,
                             size: 16,
-                            color: AppColors.primary,
-                          ),
+                            color: AppColors.primary),
                           label: const Text(
                             '상세 분석',
                             style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                              fontWeight: FontWeight.w600)))])),
 
                   // Statistics Items
                   _buildInsightItem(
@@ -515,31 +424,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     title: '운세 조회수',
                     value: userStats?['total_fortunes'],
                     icon: Icons.visibility_outlined,
-                    isFirst: true,
-                  ),
+                    isFirst: true),
                   _buildInsightItem(
                     context,
                     title: '연속 접속일',
                     value: userStats?['consecutive_days'],
-                    icon: Icons.local_fire_department_outlined,
-                  ),
+                    icon: Icons.local_fire_department_outlined),
                   _buildInsightItem(
                     context,
                     title: '획득 토큰',
                     value: userStats?['total_tokens_earned'],
-                    icon: Icons.token_outlined,
-                  ),
+                    icon: Icons.token_outlined),
                   _buildInsightItem(
                     context,
                     title: '즐겨찾는 운세',
                     value: userStats?['favorite_fortune_type'] ?? '없음',
                     isText: true,
                     icon: Icons.favorite_outline,
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ),
+                    isLast: true)])),
 
             // 추천 활동 섹션
             const SizedBox(height: 24),
@@ -553,8 +455,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     children: [
                       Text(
                         '추천 활동',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                        style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 16),
                       Column(
                   children: [
@@ -563,16 +464,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           icon: Icons.verified_outlined,
                           title: '프로필 인증하기',
                           subtitle: '인증 배지를 받고 계정을 보호하세요.',
-                          onTap: () => context.push('/profile/verification'),
-                        ),
+                          onTap: () => context.push('/profile/verification')),
                         const SizedBox(height: 12),
                         _buildNextStepItem(
                           context,
                           icon: Icons.star_outline,
                           title: '프리미엄 체험하기',
                           subtitle: '무제한 운세와 특별한 기능을 이용해보세요.',
-                          onTap: () => context.push('/subscription'),
-                        ),
+                          onTap: () => context.push('/subscription')),
                         const SizedBox(height: 12),
                         _buildNextStepItem(
                           context,
@@ -581,15 +480,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           subtitle: '친구를 초대하고 함께 운세를 확인해보세요.',
                           onTap: () async {
                             await _inviteFriend();
-                          },
-                        ),
-                      ],
-                    ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                          })])])))),
 
             // 내 도구 섹션
             const SizedBox(height: 24),
@@ -606,21 +497,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         color: Colors.purple.shade50,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
+                          topRight: Radius.circular(16))),
                       child: Row(
                         children: [
                           Text(
                             '내 도구',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w700,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              fontSize: 20))])),
                   _buildToolItem(
                     context,
                     icon: Icons.school_outlined,
@@ -628,23 +512,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     subtitle: '운세를 200% 활용하는 방법',
                     isNew: true,
                     onTap: () => context.push('/fortune/best-practices'),
-                    isFirst: true,
-                  ),
+                    isFirst: true),
                   _buildToolItem(
                     context,
                     icon: Icons.lightbulb_outline,
                     title: '오늘의 영감',
                     subtitle: '매일 새로운 긍정 메시지',
                     isNew: true,
-                    onTap: () => context.push('/fortune/inspiration'),
-                  ),
+                    onTap: () => context.push('/fortune/inspiration')),
                   _buildToolItem(
                     context,
                     icon: Icons.history,
                     title: '운세 기록',
                     subtitle: '나의 모든 운세 히스토리',
-                    onTap: () => context.push('/fortune/history'),
-                  ),
+                    onTap: () => context.push('/fortune/history')),
                   _buildToolItem(
                     context,
                     icon: Icons.share_outlined,
@@ -653,12 +534,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     onTap: () async {
                       await _shareWithFriends();
                     },
-                    isLast: true,
-                  ),
-                  ],
-                ),
-              ),
-            ),
+                    isLast: true)]))),
 
             // 계정 설정 버튼
             const SizedBox(height: 32),
@@ -672,25 +548,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: const BorderSide(color: AppColors.divider),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(8))),
                   child: const Text(
                     '계정 설정',
                     style: TextStyle(
                       color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+                      fontWeight: FontWeight.w600))))),
 
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
+            const SizedBox(height: 32)])));
   }
 
   Future<void> _inviteFriend() async {
@@ -719,8 +584,7 @@ iOS: $appStoreUrl,
 
     await Share.share(
       shareText,
-      subject: 'Fortune 앱 초대',
-    );
+      subject: 'Fortune 앱 초대');
   }
 
   Future<void> _shareWithFriends() async {
@@ -758,8 +622,7 @@ https://fortune.app''';
 
     await Share.share(
       shareText,
-      subject: 'Fortune 운세 공유',
-    );
+      subject: 'Fortune 운세 공유');
   }
 
   String _getDateRange() {
@@ -775,24 +638,19 @@ https://fortune.app''';
     bool isText = false,
     IconData? icon,
     bool isFirst = false,
-    bool isLast = false,
-  }) {
+    bool isLast = false}) {
     return InkWell(
       onTap: () => context.push('/profile/statistics'),
       borderRadius: isLast ? const BorderRadius.only(
         bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ) : null,
+        bottomRight: Radius.circular(16)) : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           border: Border(
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
-              width: 1,
-            ),
-          ),
-        ),
+              width: 1))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -804,26 +662,18 @@ https://fortune.app''';
                     height: 40,
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                      borderRadius: BorderRadius.circular(8)),
                     child: Icon(
                       icon,
                       size: 22,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                ],
+                      color: AppColors.primary)),
+                  const SizedBox(width: 14)],
                 Text(
                   title,
                   style: const TextStyle(
                     fontSize: 16,
                     color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
+                    fontWeight: FontWeight.w500))]),
             Row(
               children: [
                 Text(
@@ -833,21 +683,12 @@ https://fortune.app''';
                     fontWeight: FontWeight.w700,
                     color: isText && value == '없음'
                         ? AppColors.textSecondary
-                        : AppColors.textPrimary,
-                  ),
-                ),
+                        : AppColors.textPrimary)),
                 const SizedBox(width: 8),
                 const Icon(
                   Icons.arrow_forward_ios,
                   size: 16,
-                  color: AppColors.textSecondary,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                  color: AppColors.textSecondary)])])));
   }
 
   Widget _buildDivider() {
@@ -858,8 +699,7 @@ https://fortune.app''';
     required IconData icon,
     required String title,
     required String subtitle,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -867,8 +707,7 @@ https://fortune.app''';
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
+          borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
             Container(
@@ -876,10 +715,8 @@ https://fortune.app''';
               height: 48,
               decoration: BoxDecoration(
                 color: Colors.blue.shade100,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.blue.shade700),
-            ),
+                borderRadius: BorderRadius.circular(12)),
+              child: Icon(icon, color: Colors.blue.shade700)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -890,29 +727,17 @@ https://fortune.app''';
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                      color: AppColors.textPrimary)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      color: AppColors.textSecondary))])),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary,
-            ),
-          ],
-        ),
-      ),
-    );
+              color: AppColors.textSecondary)])));
   }
 
   Widget _buildToolItem(BuildContext context, {
@@ -922,24 +747,19 @@ https://fortune.app''';
     bool isNew = false,
     required VoidCallback onTap,
     bool isFirst = false,
-    bool isLast = false,
-  }) {
+    bool isLast = false}) {
     return InkWell(
       onTap: onTap,
       borderRadius: isLast ? const BorderRadius.only(
         bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ) : null,
+        bottomRight: Radius.circular(16)) : null,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         decoration: BoxDecoration(
           border: Border(
             bottom: isLast ? BorderSide.none : const BorderSide(
               color: AppColors.divider,
-              width: 1,
-            ),
-          ),
-        ),
+              width: 1))),
         child: Row(
           children: [
             Container(
@@ -947,14 +767,11 @@ https://fortune.app''';
               height: 44,
               decoration: BoxDecoration(
                 color: Colors.purple.shade100,
-                borderRadius: BorderRadius.circular(10),
-              ),
+                borderRadius: BorderRadius.circular(10)),
               child: Icon(
                 icon,
                 color: Colors.purple.shade700,
-                size: 24,
-              ),
-            ),
+                size: 24)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -967,50 +784,30 @@ https://fortune.app''';
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
+                          color: AppColors.textPrimary)),
                       if (isNew) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: Colors.blue,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                            borderRadius: BorderRadius.circular(4)),
                           child: const Text(
                             'NEW',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                              fontWeight: FontWeight.bold)))]]),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+                        color: AppColors.textSecondary))]])),
             const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: AppColors.textSecondary,
-            ),
-          ],
-        ),
-      ),
-    );
+              color: AppColors.textSecondary)])));
   }
 }

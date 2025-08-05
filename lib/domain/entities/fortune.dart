@@ -55,8 +55,7 @@ class Fortune extends Equatable {
     this.birthYearFortunes,
     this.fiveElements,
     this.specialTip,
-    this.period,
-  });
+    this.period});
 
   // Getter for backwards compatibility
   int get score => overallScore ?? 80;
@@ -106,8 +105,7 @@ class Fortune extends Equatable {
       if (birthYearFortunes != null) 'birthYearFortunes': null,
       if (fiveElements != null) 'fiveElements': null,
       if (specialTip != null) 'specialTip': null,
-      if (period != null) 'period': null,
-    };
+      if (period != null) 'period': null};
   }
 }
 
@@ -138,8 +136,7 @@ class DailyFortune extends Equatable {
     required this.caution,
     required this.bestTime,
     required this.compatibility,
-    required this.elements,
-  });
+    required this.elements});
 
   @override
   List<Object?> get props => [
@@ -159,8 +156,7 @@ class FortuneElements extends Equatable {
     required this.love,
     required this.career,
     required this.money,
-    required this.health,
-  });
+    required this.health});
 
   @override
   List<Object?> get props => [love, career, money, health];
@@ -191,8 +187,7 @@ class SajuFortune extends Equatable {
     required this.yearlyFortune,
     required this.monthlyFortune,
     required this.advice,
-    required this.detailedAnalysis,
-  });
+    required this.detailedAnalysis});
 
   @override
   List<Object?> get props => [
@@ -224,8 +219,7 @@ class MBTIFortune extends Equatable {
     required this.careerAdvice,
     required this.relationshipAdvice,
     required this.energyLevel,
-    required this.stressLevel,
-  });
+    required this.stressLevel});
 
   @override
   List<Object?> get props => [
@@ -255,8 +249,7 @@ class CompatibilityFortune extends Equatable {
     required this.longTermPotential,
     required this.strengths,
     required this.challenges,
-    required this.advice,
-  });
+    required this.advice});
 
   @override
   List<Object?> get props => [
@@ -308,8 +301,7 @@ class FortuneTypeInfo extends Equatable {
     required this.gradient,
     this.isPremium = false,
     this.isNew = false,
-    this.isPopular = false,
-  });
+    this.isPopular = false});
 
   @override
   List<Object?> get props => [
@@ -331,8 +323,7 @@ class TimeSpecificFortune extends Equatable {
     required this.title,
     required this.score,
     required this.description,
-    this.recommendation,
-  });
+    this.recommendation});
 
   @override
   List<Object?> get props => [time, title, score, description, recommendation];
@@ -343,8 +334,7 @@ class TimeSpecificFortune extends Equatable {
       'title': title,
       'score': score,
       'description': null,
-      if (recommendation != null) 'recommendation': null,
-    };
+      if (recommendation != null) 'recommendation': null};
   }
 }
 
@@ -359,8 +349,7 @@ class BirthYearFortune extends Equatable {
     required this.birthYear,
     required this.zodiacAnimal,
     required this.description,
-    this.advice,
-  });
+    this.advice});
 
   @override
   List<Object?> get props => [birthYear, zodiacAnimal, description, advice];
@@ -370,7 +359,6 @@ class BirthYearFortune extends Equatable {
       'birthYear': birthYear,
       'zodiacAnimal': zodiacAnimal,
       'description': null,
-      if (advice != null) 'advice': null,
-    };
+      if (advice != null) 'advice': null};
   }
 }

@@ -19,8 +19,7 @@ class FortuneListCard extends ConsumerStatefulWidget {
     super.key,
     required this.category,
     required this.onTap,
-    this.thumbnailKey,
-  });
+    this.thumbnailKey});
 
   @override
   ConsumerState<FortuneListCard> createState() => _FortuneListCardState();
@@ -67,13 +66,10 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
         
         if (mounted) {
           setState(() {
-            _parallaxOffset = clampedOffset * 30; // Adjust multiplier for effect intensity,
-});
+            _parallaxOffset = clampedOffset * 30; // Adjust multiplier for effect intensity});
 }
-      },
-} catch (e) {
-      // Ignore errors when widget is being disposed,
-}
+      }} catch (e) {
+      // Ignore errors when widget is being disposed}
   }
   
   @override
@@ -88,8 +84,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: AppDimensions.borderRadiusMedium,
-      ),
+        borderRadius: AppDimensions.borderRadiusMedium),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -106,17 +101,13 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: widget.category.gradientColors,
-                    ),
+                      colors: widget.category.gradientColors),
                   child: Center(
                     child: Icon(
                       widget.category.icon,
                       size: 60,
-                      color: Colors.white.withValues(alpha: 0.6),
-                  
-                );
-},
-            ),
+                      color: Colors.white.withValues(alpha: 0.6));
+}),
           // Badges only
           if (widget.category.isNew), Positioned(
               top: 12,
@@ -125,12 +116,10 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2 * 1.25, vertical: AppSpacing.spacing1),
                 decoration: BoxDecoration(
                   color: AppColors.error,
-                  borderRadius: AppDimensions.borderRadiusMedium,
-                ),
+                  borderRadius: AppDimensions.borderRadiusMedium),
                 child: const Text(
                   'NEW',
-                  style: Theme.of(context).textTheme.bodyMedium,
-            ),
+                  style: Theme.of(context).textTheme.bodyMedium),
           if (widget.category.isPremiumFortune), Positioned(
               top: 12,
               right: 12,
@@ -138,30 +127,23 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                 padding: const EdgeInsets.all(AppSpacing.spacing1 * 1.5),
                 decoration: BoxDecoration(
                   color: AppColors.warning,
-                  borderRadius: AppDimensions.borderRadiusLarge,
-                ),
+                  borderRadius: AppDimensions.borderRadiusLarge),
                 child: const Icon(
                   Icons.lock_rounded,
                   size: 16,
-                  color: Colors.white,
-                ),
-            ),
-        ],
-      
-    );
+                  color: Colors.white))]);
 }
 
   Widget _buildCategoryHashtags() {
     final categoryTags = {
-      'love': ['#연애운': '#인연': '#궁합'],
-      'career': ['#취업': '#사업', '#직장운'],
+      'love': \['['#연애운', '#인연', '#궁합'],
+      'career': ['#취업', '#사업', '#직장운'],
       'money': ['#재물운', '#투자', '#금전운'],
       'health': ['#건강', '#운동', '#웰빙'],
       'traditional': ['#사주', '#전통', '#명리'],
       'lifestyle': ['#일상', '#생활', '#운세'],
       'interactive': ['#인터랙티브', '#체험', '#참여형'],
-      'petFamily': ['#반려동물', '#가족', '#육아',
-    };
+      'petFamily': ['#반려동물', '#가족', '#육아'};
 
     final tags = categoryTags[widget.category.category] ?? ['#운세'];
 
@@ -172,8 +154,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
         style: TextStyle(
           color: AppColors.primary), // Instagram blue,
     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-          fontWeight: FontWeight.w400,
-        ))).toList());
+          fontWeight: FontWeight.w400)).toList(),;
 }
 
   void _handleShare() async {
@@ -186,10 +167,9 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
 } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('공유하기 실패'));
+          const SnackBar(content: Text('공유하기 실패'),;
 }
-    },
-}
+    }}
 
   @override
   Widget build(BuildContext context) {
@@ -212,8 +192,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                 tag: 'fortune-hero-${widget.category.route}',
                 child: AspectRatio(
                   aspectRatio: 1.0, // Square ratio,
-    child: _buildThumbnail(),
-              ),
+    child: _buildThumbnail()),
             // Content below image (Instagram style,
             Container(
               color: theme.scaffoldBackgroundColor,
@@ -234,8 +213,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                           isFavorite ? Icons.favorite : Icons.favorite_border,
                           color: isFavorite 
                             ? Colors.red 
-                            : theme.colorScheme.onSurface,
-                        ),
+                            : theme.colorScheme.onSurface),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       const SizedBox(width: AppSpacing.spacing4),
@@ -243,8 +221,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         onPressed: widget.onTap,
                         icon: Icon(
                           Icons.chat_bubble_outline,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                          color: theme.colorScheme.onSurface),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       const SizedBox(width: AppSpacing.spacing4),
@@ -252,8 +229,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         onPressed: _handleShare,
                         icon: Icon(
                           Icons.send_outlined,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                          color: theme.colorScheme.onSurface),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       const Spacer(),
@@ -261,12 +237,9 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         onPressed: () {},
                         icon: Icon(
                           Icons.bookmark_border,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                          color: theme.colorScheme.onSurface),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                    ],
-                  ),
+                        constraints: const BoxConstraints()]),
                   const SizedBox(height: AppSpacing.spacing2),
                   // Title with soul info
                   Row(
@@ -275,8 +248,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                       Text(
                         widget.category.title,
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600),
-                      ),
+                          fontWeight: FontWeight.w600)),
                       // Soul badge
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
@@ -288,8 +260,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                           border: Border.all(
                             color: widget.category.isFreeFortune 
                                 ? Colors.green.withValues(alpha: 0.3)
-                                : Colors.orange.withValues(alpha: 0.3),
-                        ),
+                                : Colors.orange.withValues(alpha: 0.3)),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -298,16 +269,11 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                               size: 12,
                               color: widget.category.isFreeFortune 
                                   ? Colors.green
-                                  : Colors.orange,
-                            ),
+                                  : Colors.orange),
                             const SizedBox(width: AppSpacing.spacing1),
                             Text(
                               widget.category.soulDescription,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                          ],
-                        ),
-                    ],
-                  ),
+                              style: Theme.of(context).textTheme.bodyMedium])]),
                   const SizedBox(height: AppSpacing.spacing1),
                   // Caption
                   RichText(
@@ -317,16 +283,12 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                         TextSpan(
                           text: caption,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                          ),
+                            color: theme.colorScheme.onSurface),
                         const TextSpan(text: ' '),
                         TextSpan(
                           text: widget.category.description,
                           style: TextStyle(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ],
-                    ),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7))]),
                   const SizedBox(height: AppSpacing.spacing1 * 1.5),
                   // Hashtags
                   _buildCategoryHashtags(),
@@ -334,11 +296,7 @@ class _FortuneListCardState extends ConsumerState<FortuneListCard> with SingleTi
                   // Gray divider line
                   Container(
                     height: AppSpacing.spacing0.5,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                ],
-              ),
-          ],
-        ));
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1)])]),;
 }
 }
 
@@ -363,8 +321,7 @@ class DotPatternPainter extends CustomPainter {
       for (double y = 0; y < size.height; y += spacing) {
         canvas.drawCircle(Offset(x, y), dotRadius, paint);
 }
-    },
-}
+    }}
   
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;

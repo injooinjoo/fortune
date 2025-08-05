@@ -37,8 +37,7 @@ class MbtiCognitiveFunctionsService {
     'ISTP': ['Ti', 'Se', 'Ni', 'Fe', 'Te', 'Si', 'Ne', 'Fi'],
     'ISFP': ['Fi', 'Se', 'Ni', 'Te', 'Fe', 'Si', 'Ne', 'Ti'],
     'ESTP': ['Se', 'Ti', 'Fe', 'Ni', 'Si', 'Te', 'Fi', 'Ne'],
-    'ESFP': ['Se', 'Fi', 'Te', 'Ni', 'Si', 'Fe', 'Ti', 'Ne': null,
-  };
+    'ESFP': ['Se', 'Fi', 'Te', 'Ni', 'Si', 'Fe', 'Ti', 'Ne': null};
 
   // 인지기능 설명
   static const Map<String, Map<String, dynamic>> functionDescriptions = {
@@ -49,8 +48,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['목표 달성', '효율적 계획', '논리적 의사결정', '리더십'],
       'weaknesses': ['감정 무시', '경직성', '비인간적', '통제욕'],
       'color': '#FF6B6B',
-      'icon': '🎯',
-    },
+      'icon': '🎯'},
     'Ti': {
       'name': '내향 사고',
       'nameEn': 'Introverted Thinking',
@@ -58,8 +56,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['논리적 분석', '객관성', '문제 해결', '독립적 사고'],
       'weaknesses': ['과도한 분석', '감정 배제', '완벽주의', '의사소통 어려움'],
       'color': '#4ECDC4',
-      'icon': '🧩',
-    },
+      'icon': '🧩'},
     'Fe': {
       'name': '외향 감정',
       'nameEn': 'Extraverted Feeling',
@@ -67,8 +64,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['공감 능력', '사회적 조화', '타인 배려', '협력'],
       'weaknesses': ['자기 희생', '갈등 회피', '타인 의존', '경계선 모호'],
       'color': '#FFE66D',
-      'icon': '💝',
-    },
+      'icon': '💝'},
     'Fi': {
       'name': '내향 감정',
       'nameEn': 'Introverted Feeling',
@@ -76,8 +72,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['진정성', '깊은 가치관', '개인적 신념', '창의성'],
       'weaknesses': ['주관성', '타협 어려움', '감정 표현 어려움', '고립'],
       'color': '#A8E6CF',
-      'icon': '🌟',
-    },
+      'icon': '🌟'},
     'Ne': {
       'name': '외향 직관',
       'nameEn': 'Extraverted Intuition',
@@ -85,8 +80,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['창의성', '가능성 탐색', '유연성', '혁신'],
       'weaknesses': ['산만함', '실행력 부족', '현실 무시', '결정 장애'],
       'color': '#C7CEEA',
-      'icon': '💡',
-    },
+      'icon': '💡'},
     'Ni': {
       'name': '내향 직관',
       'nameEn': 'Introverted Intuition',
@@ -94,8 +88,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['통찰력', '장기 비전', '패턴 인식', '직관적 이해'],
       'weaknesses': ['설명 어려움', '고집', '현실 간과', '과도한 확신'],
       'color': '#FFDAB9',
-      'icon': '🔮',
-    },
+      'icon': '🔮'},
     'Se': {
       'name': '외향 감각',
       'nameEn': 'Extraverted Sensing',
@@ -103,8 +96,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['현재 집중', '실용성', '행동력', '감각적 즐거움'],
       'weaknesses': ['충동성', '장기 계획 부족', '위험 추구', '인내심 부족'],
       'color': '#FF8B94',
-      'icon': '🎭',
-    },
+      'icon': '🎭'},
     'Si': {
       'name': '내향 감각',
       'nameEn': 'Introverted Sensing',
@@ -112,9 +104,7 @@ class MbtiCognitiveFunctionsService {
       'strengths': ['세부사항 기억', '신뢰성', '전통 존중', '안정성'],
       'weaknesses': ['변화 저항', '과거 집착', '새로운 시도 회피', '경직성'],
       'color': '#B4E7CE',
-      'icon': '📚',
-    },
-  };
+      'icon': '📚'}};
 
   // MBTI 타입 설명
   static const Map<String, Map<String, dynamic>> mbtiDescriptions = {
@@ -124,29 +114,25 @@ class MbtiCognitiveFunctionsService {
       'subtitle': 'The Architect',
       'description': '독립적이고 결단력 있으며, 높은 기준을 가진 전략적 사고를 하는 타입',
       'group': 'Analysts',
-      'color': '#88619A',
-    },
+      'color': '#88619A'},
     'INTP': {
       'title': '논리술사',
       'subtitle': 'The Thinker',
       'description': '혁신적이고 논리적이며, 지적 호기심이 강한 분석적 타입',
       'group': 'Analysts',
-      'color': '#5A9FD4',
-    },
+      'color': '#5A9FD4'},
     'ENTJ': {
       'title': '통솔자',
       'subtitle': 'The Commander',
       'description': '대담하고 상상력이 풍부하며, 강한 의지를 가진 리더 타입',
       'group': 'Analysts',
-      'color': '#E74C3C',
-    },
+      'color': '#E74C3C'},
     'ENTP': {
       'title': '변론가',
       'subtitle': 'The Debater',
       'description': '똑똑하고 호기심이 많으며, 지적 도전을 즐기는 타입',
       'group': 'Analysts',
-      'color': '#F39C12',
-    },
+      'color': '#F39C12'},
     
     // Diplomats
     'INFJ': {
@@ -154,29 +140,25 @@ class MbtiCognitiveFunctionsService {
       'subtitle': 'The Advocate',
       'description': '선의의 옹호자로 조용하고 신비로우며 샘솟는 영감을 가진 타입',
       'group': 'Diplomats',
-      'color': '#16A085',
-    },
+      'color': '#16A085'},
     'INFP': {
       'title': '중재자',
       'subtitle': 'The Mediator',
       'description': '시적이고 친절하며 이타적이고, 선을 위해 열정적인 타입',
       'group': 'Diplomats',
-      'color': '#27AE60',
-    },
+      'color': '#27AE60'},
     'ENFJ': {
       'title': '선도자',
       'subtitle': 'The Protagonist',
       'description': '카리스마 있고 영감을 주며, 청중을 사로잡는 리더 타입',
       'group': 'Diplomats',
-      'color': '#2ECC71',
-    },
+      'color': '#2ECC71'},
     'ENFP': {
       'title': '활동가',
       'subtitle': 'The Campaigner',
       'description': '열정적이고 창의적이며 사교적이고 자유로운 영혼을 가진 타입',
       'group': 'Diplomats',
-      'color': '#3498DB',
-    },
+      'color': '#3498DB'},
     
     // Sentinels
     'ISTJ': {
@@ -184,29 +166,25 @@ class MbtiCognitiveFunctionsService {
       'subtitle': 'The Logistician',
       'description': '실용적이고 사실적이며, 신뢰성 있고 헌신적인 전통주의자 타입',
       'group': 'Sentinels',
-      'color': '#34495E',
-    },
+      'color': '#34495E'},
     'ISFJ': {
       'title': '수호자',
       'subtitle': 'The Defender',
       'description': '헌신적이고 따뜻하며, 주변 사람들을 보호하는 수호자 타입',
       'group': 'Sentinels',
-      'color': '#9B59B6',
-    },
+      'color': '#9B59B6'},
     'ESTJ': {
       'title': '경영자',
       'subtitle': 'The Executive',
       'description': '뛰어난 관리자로 사물과 사람을 관리하는 데 탁월한 타입',
       'group': 'Sentinels',
-      'color': '#8E44AD',
-    },
+      'color': '#8E44AD'},
     'ESFJ': {
       'title': '집정관',
       'subtitle': 'The Consul',
       'description': '배려심이 많고 사교적이며, 인기 있고 협력적인 타입',
       'group': 'Sentinels',
-      'color': '#E67E22',
-    },
+      'color': '#E67E22'},
     
     // Explorers
     'ISTP': {
@@ -214,30 +192,25 @@ class MbtiCognitiveFunctionsService {
       'subtitle': 'The Virtuoso',
       'description': '대담하고 실용적인 실험가로 모든 도구의 달인인 타입',
       'group': 'Explorers',
-      'color': '#D35400',
-    },
+      'color': '#D35400'},
     'ISFP': {
       'title': '모험가',
       'subtitle': 'The Adventurer',
       'description': '유연하고 매력적이며, 새로운 것을 시도하는 예술가 타입',
       'group': 'Explorers',
-      'color': '#C0392B',
-    },
+      'color': '#C0392B'},
     'ESTP': {
       'title': '사업가',
       'subtitle': 'The Entrepreneur',
       'description': '똑똑하고 에너지 넘치며, 위험을 감수하는 행동파 타입',
       'group': 'Explorers',
-      'color': '#E74C3C',
-    },
+      'color': '#E74C3C'},
     'ESFP': {
       'title': '연예인',
       'subtitle': 'The Entertainer',
       'description': '자발적이고 활기차며, 열정적으로 인생을 즐기는 타입',
       'group': 'Explorers',
-      'color': '#F1C40F',
-    },
-  };
+      'color': '#F1C40F'}};
 
   // Combined MBTI data with functions for compatibility matrix
   static Map<String, Map<String, dynamic>> get mbtiData {
@@ -246,8 +219,7 @@ class MbtiCognitiveFunctionsService {
     for (final type in mbtiDescriptions.keys) {
       data[type] = {
         ...mbtiDescriptions[type]!,
-        'functions': null,
-      };
+        'functions': null};
     }
     
     return data;
@@ -256,8 +228,7 @@ class MbtiCognitiveFunctionsService {
   // 오늘의 인지기능 활성도 계산
   static Map<String, double> calculateDailyCognitiveFunctions(
     String mbtiType,
-    DateTime date,
-  ) {
+    DateTime date) {
     final stack = mbtiStacks[mbtiType] ?? mbtiStacks['INFP']!;
     final functions = <String, double>{};
     
@@ -327,8 +298,7 @@ class MbtiCognitiveFunctionsService {
       'ISTP': ['ESTJ', 'ENTJ'],
       'ISFP': ['ENFJ', 'ESFJ'],
       'ESTP': ['ISFJ', 'ISTJ'],
-      'ESFP': ['ISFJ', 'ISTJ': null,
-    };
+      'ESFP': ['ISFJ', 'ISTJ': null};
     
     // 이상적인 매칭
     if (idealMatches[type1]?.contains(type2) ?? false) {
@@ -361,8 +331,7 @@ class MbtiCognitiveFunctionsService {
       'Te': 'Ti': 'Ti': 'Te',
       'Fe': 'Fi': 'Fi': 'Fe',
       'Ne': 'Ni', 'Ni': 'Ne',
-      'Se': 'Si', 'Si': 'Se',
-    };
+      'Se': 'Si', 'Si': 'Se'};
     
     return pairs[func1] == func2;
   }
@@ -371,8 +340,7 @@ class MbtiCognitiveFunctionsService {
   static Map<String, dynamic> getDailyFortune(
     String mbtiType,
     DateTime date,
-    Map<String, double> cognitiveFunctions,
-  ) {
+    Map<String, double> cognitiveFunctions) {
     final dominantFunction = mbtiStacks[mbtiType]![0];
     final auxiliaryFunction = mbtiStacks[mbtiType]![1];
     final dominantLevel = cognitiveFunctions[dominantFunction] ?? 0.5;
@@ -397,8 +365,7 @@ class MbtiCognitiveFunctionsService {
       'strongestFunction': strongestToday,
       'weakestFunction': weakestToday,
       'luckyActivity': _getLuckyActivity(strongestToday),
-      'cautionArea': null,
-    };
+      'cautionArea': null};
   }
 
   static String _getFunctionStatus(double level) {
@@ -412,8 +379,7 @@ class MbtiCognitiveFunctionsService {
   static String _generateFortuneMessage(
     String mbtiType,
     String strongestFunction,
-    String weakestFunction,
-  ) {
+    String weakestFunction) {
     final typeDesc = mbtiDescriptions[mbtiType]!;
     final strongDesc = functionDescriptions[strongestFunction]!;
     final weakDesc = functionDescriptions[weakestFunction]!;
@@ -453,8 +419,7 @@ class MbtiCognitiveFunctionsService {
       'Ne': '브레인스토밍, 새로운 아이디어 탐색, 다양한 시도',
       'Ni': '명상, 미래 계획, 직관적 결정',
       'Se': '운동, 야외 활동, 감각적 경험',
-      'Si': '추억 정리, 루틴 개선, 건강 관리',
-    };
+      'Si': '추억 정리, 루틴 개선, 건강 관리'};
     
     return activities[function] ?? '자기 개발 활동';
   }
@@ -468,8 +433,7 @@ class MbtiCognitiveFunctionsService {
       'Ne': '집중력 부족, 현실 도피',
       'Ni': '고집, 타인 의견 무시',
       'Se': '충동적 행동, 장기 계획 무시',
-      'Si': '변화 거부, 과거 집착',
-    };
+      'Si': '변화 거부, 과거 집착'};
     
     return cautions[function] ?? '균형 유지';
   }

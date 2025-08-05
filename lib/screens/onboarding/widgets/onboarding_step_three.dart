@@ -17,8 +17,7 @@ class OnboardingStepThree extends StatelessWidget {
     this.gender,
     required this.onGenderChanged,
     required this.onSubmit,
-    required this.isLoading,
-  });
+    required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +29,7 @@ class OnboardingStepThree extends StatelessWidget {
         Text(
           '성별 선택 (선택사항)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         SizedBox(height: formStyle.inputPadding.horizontal * 1.25),
         
         // 성별 라디오 버튼
@@ -42,17 +39,13 @@ class OnboardingStepThree extends StatelessWidget {
             value: g,
             groupValue: gender,
             onChanged: onGenderChanged,
-            contentPadding: EdgeInsets.zero,
-          )).toList(),
-        ),
+            contentPadding: EdgeInsets.zero)).toList()),
         
         SizedBox(height: formStyle.inputPadding.vertical * 0.5),
         Text(
           '성별별 운세 분석에 활용됩니다.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: context.fortuneTheme.subtitleText,
-          ),
-        ),
+            color: context.fortuneTheme.subtitleText)),
         
         const Spacer(),
         
@@ -61,12 +54,9 @@ class OnboardingStepThree extends StatelessWidget {
           onPressed: isLoading ? null : onSubmit,
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(
-              vertical: formStyle.inputPadding.horizontal,
-            ),
+              vertical: formStyle.inputPadding.horizontal),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
-          ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius))),
           child: isLoading 
               ? SizedBox(
                   height: formStyle.inputHeight * 0.4,
@@ -74,13 +64,7 @@ class OnboardingStepThree extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: formStyle.inputBorderWidth * 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
-                    ),
-                  ),
-                )
-              : const Text('완료'),
-        ),
-      ],
-    );
+                      context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)))
+              : const Text('완료'))]);
   }
 }

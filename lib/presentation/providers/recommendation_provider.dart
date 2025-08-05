@@ -18,8 +18,7 @@ class RecommendedFortune {
     required this.description,
     required this.route,
     required this.reason,
-    required this.relevanceScore,
-  });
+    required this.relevanceScore});
 }
 
 // 추천 운세 프로바이더
@@ -64,8 +63,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
             : DateTime.now(),
         updatedAt: response['updated_at'] != null
             ? DateTime.parse(response['updated_at'])
-            : DateTime.now(),
-      );
+            : DateTime.now());
     }
   }
   
@@ -85,8 +83,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         description: '${userProfile.mbti} 유형에 맞는 조언',
         route: '/fortune/mbti',
         reason: '${userProfile.mbti} 성격 유형 맞춤',
-        relevanceScore: 0.95,
-      ));
+        relevanceScore: 0.95));
     }
     
     // 띠 기반 추천
@@ -97,8 +94,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         description: '${userProfile.zodiacAnimal}띠의 이달 운세',
         route: '/fortune/zodiac-animal',
         reason: '${userProfile.zodiacAnimal}띠 맞춤',
-        relevanceScore: 0.9,
-      ));
+        relevanceScore: 0.9));
     }
     
     // 별자리 기반 추천
@@ -109,8 +105,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         description: '${userProfile.zodiacSign}자리의 흐름',
         route: '/fortune/zodiac',
         reason: '${userProfile.zodiacSign}자리 맞춤',
-        relevanceScore: 0.85,
-      ));
+        relevanceScore: 0.85));
     }
   }
   
@@ -135,8 +130,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       description: '상대방과의 특별한 연결',
       route: '/fortune/chemistry',
         reason: '연애 운세에 관심',
-        relevanceScore: 0.8,
-    ));
+        relevanceScore: 0.8));
   }
   
   // 직업 관련 방문이 많으면 직업운 추천
@@ -147,8 +141,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       description: '나에게 맞는 직업 찾기',
       route: '/fortune/lucky-job',
         reason: '직업 운세에 관심',
-        relevanceScore: 0.75,
-    ));
+        relevanceScore: 0.75));
   }
   
   // 3. 시즌/트렌드 기반 추천
@@ -162,8 +155,7 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
       description: '새해의 전체적인 흐름',
       route: '/fortune/yearly',
         reason: '새해 특별 운세',
-        relevanceScore: 0.7,
-    ));
+        relevanceScore: 0.7));
   }
   
   // 4. 인기 운세 추가 (추천이 부족한 경우)
@@ -175,25 +167,21 @@ final recommendedFortunesProvider = FutureProvider<List<RecommendedFortune>>((re
         description: '정통 사주 풀이',
         route: '/fortune/saju',
         reason: '인기 운세',
-        relevanceScore: 0.6,
-      ),
+        relevanceScore: 0.6),
       RecommendedFortune(
         id: 'love',
         title: '연애운',
         description: '사랑과 인연의 흐름',
         route: '/fortune/love',
         reason: '인기 운세',
-        relevanceScore: 0.6,
-      ),
+        relevanceScore: 0.6),
       RecommendedFortune(
         id: 'wealth',
         title: '금전운',
         description: '재물과 투자의 운',
         route: '/fortune/wealth',
         reason: '인기 운세',
-        relevanceScore: 0.6,
-      ),
-    ];
+        relevanceScore: 0.6)];
     
     for (final fortune in popularFortunes) {
       if (!recommendations.any((r) => r.id == fortune.id) && recommendations.length < 5) {

@@ -58,8 +58,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         }
       },
       error: (_, __) {},
-      loading: () {},
-    );
+      loading: () {});
   }
   
   Future<void> _sendPhoneVerification() async {
@@ -67,8 +66,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '전화번호를 입력해주세요',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
       return;
     }
     
@@ -84,8 +82,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '인증번호가 발송되었습니다',
-        type: ToastType.success,
-      );
+        type: ToastType.success);
       
       setState(() {
         _currentStep = 1;
@@ -94,8 +91,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '인증번호 발송에 실패했습니다',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
     } finally {
       setState(() {
         _isLoading = false;
@@ -108,8 +104,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '인증번호를 입력해주세요',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
       return;
     }
     
@@ -130,14 +125,12 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '전화번호가 인증되었습니다',
-        type: ToastType.success,
-      );
+        type: ToastType.success);
     } catch (e) {
       Toast.show(
         context,
         message: '인증에 실패했습니다',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
     } finally {
       setState(() {
         _isLoading = false;
@@ -150,8 +143,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '이메일을 입력해주세요',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
       return;
     }
     
@@ -167,8 +159,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '인증 이메일이 발송되었습니다',
-        type: ToastType.success,
-      );
+        type: ToastType.success);
       
       setState(() {
         _isEmailVerified = true;
@@ -177,8 +168,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
       Toast.show(
         context,
         message: '이메일 발송에 실패했습니다',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
     } finally {
       setState(() {
         _isLoading = false;
@@ -237,17 +227,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+          onPressed: () => context.pop()),
         title: Text(
           '프로필 인증',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18 * fontScale,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+            fontWeight: FontWeight.w600))),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,16 +246,12 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                 gradient: LinearGradient(
                   colors: [
                     verificationColor.withValues(alpha: 0.2),
-                    verificationColor.withValues(alpha: 0.1),
-                  ],
+                    verificationColor.withValues(alpha: 0.1)],
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                  end: Alignment.bottomRight),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: verificationColor.withValues(alpha: 0.3),
-                ),
-              ),
+                  color: verificationColor.withValues(alpha: 0.3))),
               child: Column(
                 children: [
                   Row(
@@ -278,14 +260,11 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: verificationColor.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
-                        ),
+                          shape: BoxShape.circle),
                         child: Icon(
                           Icons.verified_user,
                           color: verificationColor,
-                          size: 32,
-                        ),
-                      ),
+                          size: 32)),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -295,46 +274,30 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               '현재 인증 상태',
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
+                                color: AppColors.textSecondary)),
                             const SizedBox(height: 4),
                             Row(
                               children: [
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
-                                    vertical: 4,
-                                  ),
+                                    vertical: 4),
                                   decoration: BoxDecoration(
                                     color: verificationColor,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                    borderRadius: BorderRadius.circular(12)),
                                   child: Text(
                                     verificationBadge,
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
+                                      color: Colors.white))),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Lv.$verificationLevel',
                                   style: TextStyle(
                                     fontSize: 16 * fontScale,
                                     fontWeight: FontWeight.bold,
-                                    color: verificationColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                                    color: verificationColor))])]))]),
                   const SizedBox(height: 20),
                   // Progress Bar
                   Column(
@@ -347,19 +310,13 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             '인증 진행도',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
+                              color: AppColors.textSecondary)),
                           Text(
                             '$verificationLevel/3',
                             style: TextStyle(
                               fontSize: 12 * fontScale,
                               fontWeight: FontWeight.w600,
-                              color: verificationColor,
-                            ),
-                          ),
-                        ],
-                      ),
+                              color: verificationColor))]),
                       const SizedBox(height: 8),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
@@ -367,14 +324,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           value: verificationLevel / 3,
                           backgroundColor: AppColors.divider,
                           valueColor: AlwaysStoppedAnimation<Color>(verificationColor),
-                          minHeight: 8,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                          minHeight: 8))])])),
             
             // Benefits Section
             Padding(
@@ -387,37 +337,28 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                      color: AppColors.textPrimary)),
                   const SizedBox(height: 16),
                   _buildBenefitItem(
                     icon: Icons.security,
                     title: '계정 보안 강화',
                     description: '2단계 인증으로 계정을 안전하게 보호하세요',
-                    fontScale: fontScale,
-                  ),
+                    fontScale: fontScale),
                   _buildBenefitItem(
                     icon: Icons.star,
                     title: '프리미엄 기능 우선 체험',
                     description: '새로운 기능을 먼저 사용해보실 수 있습니다',
-                    fontScale: fontScale,
-                  ),
+                    fontScale: fontScale),
                   _buildBenefitItem(
                     icon: Icons.badge,
                     title: '인증 배지 표시',
                     description: '프로필에 공식 인증 배지가 표시됩니다',
-                    fontScale: fontScale,
-                  ),
+                    fontScale: fontScale),
                   _buildBenefitItem(
                     icon: Icons.card_giftcard,
                     title: '특별 보상',
                     description: '인증 완료 시 보너스 토큰을 지급합니다',
-                    fontScale: fontScale,
-                  ),
-                ],
-              ),
-            ),
+                    fontScale: fontScale)])),
             
             const SizedBox(height: 32),
             
@@ -432,9 +373,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                     style: TextStyle(
                       fontSize: 18 * fontScale,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                      color: AppColors.textPrimary)),
                   const SizedBox(height: 16),
                   
                   // Phone Verification
@@ -458,23 +397,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: '010-0000-0000',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: AppColors.textSecondary,
-                            ),
+                              color: AppColors.textSecondary),
                             prefixIcon: const Icon(Icons.phone, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider),
-                            ),
+                              borderSide: const BorderSide(color: AppColors.divider)),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider),
-                            ),
+                              borderSide: const BorderSide(color: AppColors.divider)),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.primary),
-                            ),
-                          ),
-                        ),
+                              borderSide: const BorderSide(color: AppColors.primary)))),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
@@ -484,31 +417,20 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               backgroundColor: AppColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(8))),
                             child: _isLoading
                                 ? SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
+                                      color: Colors.white))
                                 : Text(
                                     '인증번호 발송',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    fontScale: fontScale,
-                  ),
+                                      fontWeight: FontWeight.w600))))]),
+                    fontScale: fontScale),
                   
                   // Verification Code Input (shown after phone number is submitted)
                   if (_currentStep == 1) ...[
@@ -519,9 +441,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                         color: AppColors.primary.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.2),
-                        ),
-                      ),
+                          color: AppColors.primary.withValues(alpha: 0.2))),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -530,9 +450,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             style: TextStyle(
                               fontSize: 14 * fontScale,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
+                              color: AppColors.textPrimary)),
                           const SizedBox(height: 12),
                           TextField(
                             controller: _verificationCodeController,
@@ -543,23 +461,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               hintText: '6자리 인증번호',
                               hintStyle: TextStyle(
                                 fontSize: 14 * fontScale,
-                                color: AppColors.textSecondary,
-                              ),
+                                color: AppColors.textSecondary),
                               counterText: '',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.divider),
-                              ),
+                                borderSide: const BorderSide(color: AppColors.divider)),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.divider),
-                              ),
+                                borderSide: const BorderSide(color: AppColors.divider)),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(color: AppColors.primary),
-                              ),
-                            ),
-                          ),
+                                borderSide: const BorderSide(color: AppColors.primary)))),
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -574,18 +486,12 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     side: const BorderSide(color: AppColors.divider),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
+                                      borderRadius: BorderRadius.circular(8))),
                                   child: Text(
                                     '취소',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                                      color: AppColors.textSecondary)))),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton(
@@ -594,33 +500,19 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                                     backgroundColor: AppColors.primary,
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
+                                      borderRadius: BorderRadius.circular(8))),
                                   child: _isLoading
                                       ? SizedBox(
                                           height: 20,
                                           width: 20,
                                           child: CircularProgressIndicator(
                                             strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
+                                            color: Colors.white))
                                       : Text(
                                           '확인',
                                           style: TextStyle(
                                             fontSize: 14 * fontScale,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                                            fontWeight: FontWeight.w600))))])]))],
                   
                   const SizedBox(height: 16),
                   
@@ -645,23 +537,17 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             hintText: 'example@email.com',
                             hintStyle: TextStyle(
                               fontSize: 14 * fontScale,
-                              color: AppColors.textSecondary,
-                            ),
+                              color: AppColors.textSecondary),
                             prefixIcon: const Icon(Icons.email, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider),
-                            ),
+                              borderSide: const BorderSide(color: AppColors.divider)),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.divider),
-                            ),
+                              borderSide: const BorderSide(color: AppColors.divider)),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(color: AppColors.primary),
-                            ),
-                          ),
-                        ),
+                              borderSide: const BorderSide(color: AppColors.primary)))),
                         const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
@@ -671,31 +557,20 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                               backgroundColor: AppColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(8))),
                             child: _isLoading
                                 ? SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
+                                      color: Colors.white))
                                 : Text(
                                     '인증 이메일 발송',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    fontScale: fontScale,
-                  ),
+                                      fontWeight: FontWeight.w600))))]),
+                    fontScale: fontScale),
                   
                   const SizedBox(height: 16),
                   
@@ -711,28 +586,18 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                             Toast.show(
                               context,
                               message: '신원 인증은 준비 중입니다',
-                              type: ToastType.info,
-                            );
+                              type: ToastType.info);
                           },
-                    fontScale: fontScale,
-                  ),
-                ],
-              ),
-            ),
+                    fontScale: fontScale)])),
             
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
+            const SizedBox(height: 32)])));
   }
   
   Widget _buildBenefitItem({
     required IconData icon,
     required String title,
     required String description,
-    required double fontScale,
-  }) {
+    required double fontScale}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -742,14 +607,11 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+              borderRadius: BorderRadius.circular(8)),
             child: Icon(
               icon,
               color: AppColors.primary,
-              size: 20,
-            ),
-          ),
+              size: 20)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -760,24 +622,14 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                   style: TextStyle(
                     fontSize: 14 * fontScale,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
+                    color: AppColors.textPrimary)),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 12 * fontScale,
                     color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    height: 1.4))]))]));
   }
   
   Widget _buildVerificationStep({
@@ -788,8 +640,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
     bool isLocked = false,
     VoidCallback? onTap,
     Widget? content,
-    required double fontScale,
-  }) {
+    required double fontScale}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -800,16 +651,12 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
               ? Colors.green.withValues(alpha: 0.3)
               : isLocked 
                   ? AppColors.divider
-                  : AppColors.primary.withValues(alpha: 0.2),
-        ),
+                  : AppColors.primary.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+            offset: const Offset(0, 2))]),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -828,8 +675,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           : isLocked
                               ? AppColors.divider
                               : AppColors.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
+                      shape: BoxShape.circle),
                     child: Icon(
                       isCompleted
                           ? Icons.check_circle
@@ -841,9 +687,7 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           : isLocked
                               ? AppColors.textSecondary
                               : AppColors.primary,
-                      size: 24,
-                    ),
-                  ),
+                      size: 24)),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -854,51 +698,31 @@ class _ProfileVerificationPageState extends ConsumerState<ProfileVerificationPag
                           style: TextStyle(
                             fontSize: 16 * fontScale,
                             fontWeight: FontWeight.w600,
-                            color: isLocked ? AppColors.textSecondary : AppColors.textPrimary,
-                          ),
-                        ),
+                            color: isLocked ? AppColors.textSecondary : AppColors.textPrimary)),
                         const SizedBox(height: 4),
                         Text(
                           description,
                           style: TextStyle(
                             fontSize: 12 * fontScale,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                            color: AppColors.textSecondary))])),
                   if (isCompleted)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.green.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                        borderRadius: BorderRadius.circular(12)),
                       child: Text(
                         '완료',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
                           fontWeight: FontWeight.w600,
-                          color: Colors.green,
-                        ),
-                      ),
-                    )
+                          color: Colors.green)))
                   else if (!isLocked && onTap != null)
                     Icon(
                       isExpanded ? Icons.expand_less : Icons.expand_more,
-                      color: AppColors.textSecondary,
-                    ),
-                ],
-              ),
+                      color: AppColors.textSecondary)]),
               if (isExpanded && content != null) ...[
                 const SizedBox(height: 16),
-                content,
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
+                content]]))));
   }
 }

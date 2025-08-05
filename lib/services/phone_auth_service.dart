@@ -7,15 +7,13 @@ class PhoneAuthService {
   /// Send OTP to phone number
   Future<void> sendOTP({
     required String phoneNumber,
-    required String countryCode,
-  }) async {
+    required String countryCode}) async {
     try {
       // Format phone number with country code
       final formattedPhone = formatPhoneNumber(phoneNumber, countryCode);
       
       await _client.auth.signInWithOtp(
-        phone: formattedPhone,
-      );
+        phone: formattedPhone);
       
       debugPrint('OTP sent successfully');
     } catch (e) {
@@ -28,16 +26,14 @@ class PhoneAuthService {
   Future<AuthResponse> verifyOTP({
     required String phoneNumber,
     required String countryCode,
-    required String otpCode,
-  }) async {
+    required String otpCode}) async {
     try {
       final formattedPhone = formatPhoneNumber(phoneNumber, countryCode);
       
       final response = await _client.auth.verifyOTP(
         type: OtpType.sms,
         phone: formattedPhone,
-        token: otpCode,
-      );
+        token: otpCode);
       
       debugPrint('Phone verification successful');
       return response;
@@ -50,17 +46,14 @@ class PhoneAuthService {
   /// Link phone number to existing account
   Future<void> linkPhoneToAccount({
     required String phoneNumber,
-    required String countryCode,
-  }) async {
+    required String countryCode}) async {
     try {
       final formattedPhone = formatPhoneNumber(phoneNumber, countryCode);
       
       // First send OTP
       await _client.auth.updateUser(
         UserAttributes(
-          phone: formattedPhone,
-        ),
-      );
+          phone: formattedPhone));
       
       debugPrint('Phone link initiated successfully');
     } catch (e) {
@@ -72,8 +65,7 @@ class PhoneAuthService {
   /// Check if phone number is already registered
   Future<bool> isPhoneRegistered({
     required String phoneNumber,
-    required String countryCode,
-  }) async {
+    required String countryCode}) async {
     try {
       final formattedPhone = formatPhoneNumber(phoneNumber, countryCode);
       
@@ -95,16 +87,14 @@ class PhoneAuthService {
   Future<void> updateProfilePhone({
     required String userId,
     required String phoneNumber,
-    required String countryCode,
-  }) async {
+    required String countryCode}) async {
     try {
       final formattedPhone = formatPhoneNumber(phoneNumber, countryCode);
       
       await _client.from('user_profiles').update({
         'phone': formattedPhone,
         'phone_verified': true,
-        'updated_at': null,
-      }).eq('id', userId);
+        'updated_at': null}).eq('id', userId);
       
       debugPrint('Profile phone updated successfully');
     } catch (e) {

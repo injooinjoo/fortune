@@ -8,12 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart'; // Replaced with secure version
 import 'firebase_options_secure.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:go_router/go_router.dart';
 
 import 'core/config/environment.dart';
 import 'core/config/feature_flags.dart';
@@ -38,16 +36,43 @@ void main() async {
   await dotenv.dotenv.load(fileName: ".env");
   await initializeDateFormatting('ko_KR', null);
   
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp(
+      options: SecureFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    Logger.error('Firebase initialization failed', e);
+  }
+  
+  // Initialize Supabase
   await Supabase.initialize(
-    url: 'https://your-project.supabase.co',  // 임시 값
-    anonKey: 'your-anon-key',  // 임시 값
+    url: dotenv.dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
+  
+  // Initialize Social Login SDKs
+  if (!kIsWeb) {
+    // Kakao SDK
+    kakao.KakaoSdk.init(
+      nativeAppKey: '58c7f979c3838b7c088a6bb75c887acd', // TODO: Move to .env
+    );
+    
+    // Naver SDK - Skip for now as initSdk might not be available
+    // TODO: Initialize Naver SDK when proper method is available
+  }
+  
+  // Initialize Analytics
+  await AnalyticsService.instance.initialize();
+  
+  // Initialize Ad Service
+  if (!kIsWeb) {
+    await AdService.instance.initialize();
+  }
   
   runApp(
     const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+      child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -56,18 +81,15 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final router = ref.watch(appRouterProvider);
     
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Fortune - 운세 서비스',
       theme: AppTheme.lightTheme(),
       darkTheme: AppTheme.darkTheme(),
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text('Test without router'),
-        ),
-      ),
+      routerConfig: router,
     );
   }
 }

@@ -22,8 +22,7 @@ class ZodiacCompatibilityService {
       'traits': ['영리함': '적응력': '매력', '근면']
       'lucky_colors': ['파란색', '금색', '초록색']
       'lucky_numbers': [2, 3]
-      'direction': '북',
-    }
+      'direction': '북'}
     '소': {
       'hanja': '丑',
       'element': '토(土)',
@@ -31,8 +30,7 @@ class ZodiacCompatibilityService {
       'traits': ['성실함': '인내심': '신뢰성', '결단력']
       'lucky_colors': ['빨간색', '보라색', '파란색']
       'lucky_numbers': [1, 4]
-      'direction': '북북동',
-    }
+      'direction': '북북동'}
     '호랑이': {
       'hanja': '寅',
       'element': '목(木)',
@@ -40,8 +38,7 @@ class ZodiacCompatibilityService {
       'traits': ['용맹함': '자신감': '정의감', '모험심']
       'lucky_colors': ['파란색', '회색', '주황색']
       'lucky_numbers': [1, 3, 4]
-      'direction': '동북동',
-    }
+      'direction': '동북동'}
     '토끼': {
       'hanja': '卯',
       'element': '목(木)',
@@ -49,8 +46,7 @@ class ZodiacCompatibilityService {
       'traits': ['온화함': '민첩함': '행운', '외교력']
       'lucky_colors': ['빨간색', '분홍색', '보라색']
       'lucky_numbers': [3, 4, 6]
-      'direction': '동',
-    }
+      'direction': '동'}
     '용': {
       'hanja': '辰',
       'element': '토(土)',
@@ -58,8 +54,7 @@ class ZodiacCompatibilityService {
       'traits': ['카리스마': '열정': '지혜', '행운']
       'lucky_colors': ['금색', '은색', '회색']
       'lucky_numbers': [1, 6, 7]
-      'direction': '동남동',
-    }
+      'direction': '동남동'}
     '뱀': {
       'hanja': '巳',
       'element': '화(火)',
@@ -67,8 +62,7 @@ class ZodiacCompatibilityService {
       'traits': ['지혜': '직관력': '매력', '신비']
       'lucky_colors': ['빨간색', '연한 노란색', '검은색']
       'lucky_numbers': [2, 8, 9]
-      'direction': '남남동',
-    }
+      'direction': '남남동'}
     '말': {
       'hanja': '午',
       'element': '화(火)',
@@ -76,8 +70,7 @@ class ZodiacCompatibilityService {
       'traits': ['자유로움': '활력': '독립성', '열정']
       'lucky_colors': ['노란색', '초록색', '보라색']
       'lucky_numbers': [2, 3, 7]
-      'direction': '남',
-    }
+      'direction': '남'}
     '양': {
       'hanja': '未',
       'element': '토(土)',
@@ -85,8 +78,7 @@ class ZodiacCompatibilityService {
       'traits': ['온순함': '창의성': '평화', '예술성']
       'lucky_colors': ['초록색', '빨간색', '보라색']
       'lucky_numbers': [2, 7]
-      'direction': '남남서',
-    }
+      'direction': '남남서'}
     '원숭이': {
       'hanja': '申',
       'element': '금(金)',
@@ -94,8 +86,7 @@ class ZodiacCompatibilityService {
       'traits': ['영리함': '재치': '호기심', '재능']
       'lucky_colors': ['흰색', '금색', '파란색']
       'lucky_numbers': [4, 9]
-      'direction': '서남서',
-    }
+      'direction': '서남서'}
     '닭': {
       'hanja': '酉',
       'element': '금(金)',
@@ -103,8 +94,7 @@ class ZodiacCompatibilityService {
       'traits': ['정확성': '효율성': '정직', '용기']
       'lucky_colors': ['금색', '갈색', '노란색']
       'lucky_numbers': [5, 7, 8]
-      'direction': '서',
-    }
+      'direction': '서'}
     '개': {
       'hanja': '戌',
       'element': '토(土)',
@@ -112,8 +102,7 @@ class ZodiacCompatibilityService {
       'traits': ['충성심': '정직': '책임감', '신뢰']
       'lucky_colors': ['빨간색', '초록색', '보라색']
       'lucky_numbers': [3, 4, 9]
-      'direction': '서북서',
-    }
+      'direction': '서북서'}
     '돼지': {
       'hanja': '亥',
       'element': '수(水)',
@@ -121,8 +110,7 @@ class ZodiacCompatibilityService {
       'traits': ['관대함': '정직': '행운', '근면']
       'lucky_colors': ['노란색', '회색', '갈색']
       'lucky_numbers': [2, 5, 8]
-      'direction': '북북서',
-    }
+      'direction': '북북서'}
   };
 
   // 상성 관계 (삼합,
@@ -130,8 +118,7 @@ class ZodiacCompatibilityService {
     ['쥐', '용', '원숭이': null,
     ['소', '뱀', '닭': null,
     ['호랑이', '말', '개': null,
-    ['토끼', '양', '돼지': null,
-  ];
+    ['토끼', '양', '돼지': null];
 
   // 상극 관계 (육해,
   static const Map<String, String> conflictPairs = {
@@ -146,8 +133,7 @@ class ZodiacCompatibilityService {
     '원숭이': '호랑이',
     '닭': '토끼',
     '개': '용',
-    '돼지': '뱀',
-  };
+    '돼지': '뱀'};
 
   // 육합 관계 (최고의 궁합,
   static const Map<String, String> bestMatchPairs = {
@@ -162,8 +148,7 @@ class ZodiacCompatibilityService {
     '개': '토끼',
     '닭': '용',
     '원숭이': '뱀',
-    '양': '말',
-  };
+    '양': '말'};
 
   // 사정(四正) - 리더십 그룹
   static const List<String> cardinalSigns = ['쥐': '토끼': '말', '닭'];
@@ -219,8 +204,7 @@ class ZodiacCompatibilityService {
       '화(火)': '토(土)',
       '토(土)': '금(金)',
       '금(金)': '수(水)',
-      '수(水)': '목(木)',
-    };
+      '수(水)': '목(木)'};
 
     // 상극 관계
     final overcomingPairs = {
@@ -228,8 +212,7 @@ class ZodiacCompatibilityService {
       '토(土)': '수(水)',
       '수(水)': '화(火)',
       '화(火)': '금(金)',
-      '금(金)': '목(木)',
-    };
+      '금(金)': '목(木)'};
 
     if (generatingPairs[element1] == element2 || generatingPairs[element2] == element1) {
       return 0.8; // 상생
@@ -292,8 +275,7 @@ class ZodiacCompatibilityService {
       'branch': zodiacAnimals[branchIndex]
       'branchHanja': zodiacHanja[branchIndex]
       'fullName': '${heavenlyStems[stemIndex]}${zodiacAnimals[branchIndex]}년',
-      'fullHanja': '${heavenlyStemHanja[stemIndex]}${zodiacHanja[branchIndex]}年',
-    };
+      'fullHanja': '${heavenlyStemHanja[stemIndex]}${zodiacHanja[branchIndex]}年'};
   }
 
   // 띠별 호환성 매트릭스 데이터 생성
@@ -332,8 +314,7 @@ class ZodiacCompatibilityService {
     return {
       'years': birthYears,
       'ages': ages,
-      'nextYear': null,
-    };
+      'nextYear': null};
   }
 
   // 띠별 인생 주기 분석
@@ -346,13 +327,11 @@ class ZodiacCompatibilityService {
       3: '성년기 (25-36세): 안정과 성취의 시기',
       4: '중년기 (37-48세): 성숙과 책임의 시기',
       5: '장년기 (49-60세): 지혜와 여유의 시기',
-      6: '노년기 (61세 이상): 인생의 결실을 맺는 시기',
-    };
+      6: '노년기 (61세 이상): 인생의 결실을 맺는 시기'};
     
     return {
       'currentCycle': cycles[cycleNumber] ?? cycles[6]!,
       'cycleNumber': cycleNumber.toString(),
-      'yearsInCycle': null,
-    };
+      'yearsInCycle': null};
   }
 }

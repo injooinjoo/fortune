@@ -20,10 +20,8 @@ final specialFortuneRoutes = [
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
       return fortune_pages.DreamFortuneChatPage(
-        initialParams: extra,
-      );
-    },
-  ),
+        initialParams: extra);
+    }),
   
   // Dream Chat
   GoRoute(
@@ -32,17 +30,14 @@ final specialFortuneRoutes = [
     builder: (context, state) {
       final extra = state.extra as Map<String, dynamic>?;
       return fortune_pages.DreamFortuneChatPage(
-        initialParams: extra,
-      );
-    },
-  ),
+        initialParams: extra);
+    }),
   
   // Family Fortune Unified
   GoRoute(
     path: 'family',
     name: 'fortune-family',
-    builder: (context, state) => const fortune_pages.FamilyFortuneUnifiedPage(),
-  ),
+    builder: (context, state) => const fortune_pages.FamilyFortuneUnifiedPage()),
   
   // Children
   GoRoute(
@@ -52,9 +47,7 @@ final specialFortuneRoutes = [
       fortuneType: 'children',
       title: '자녀 운세',
       description: '자녀와 관련된 운세를 확인해보세요',
-      specificFortuneType: 'children',
-    ),
-  ),
+      specificFortuneType: 'children')),
   
   // Parenting
   GoRoute(
@@ -64,9 +57,7 @@ final specialFortuneRoutes = [
       fortuneType: 'parenting',
       title: '육아 운세',
       description: '육아와 관련된 운세를 확인해보세요',
-      specificFortuneType: 'parenting',
-    ),
-  ),
+      specificFortuneType: 'parenting')),
   
   // Pregnancy
   GoRoute(
@@ -76,9 +67,7 @@ final specialFortuneRoutes = [
       fortuneType: 'pregnancy',
       title: '태교 운세',
       description: '태교와 관련된 운세를 확인해보세요',
-      specificFortuneType: 'pregnancy',
-    ),
-  ),
+      specificFortuneType: 'pregnancy')),
   
   // Family Harmony
   GoRoute(
@@ -88,63 +77,52 @@ final specialFortuneRoutes = [
       fortuneType: 'family-harmony',
       title: '가족 화합 운세',
       description: '가족의 화합과 관련된 운세를 확인해보세요',
-      specificFortuneType: 'family-harmony',
-    ),
-  ),
+      specificFortuneType: 'family-harmony')),
   
   // Best Practices
   GoRoute(
     path: 'best-practices',
     name: 'fortune-best-practices',
-    builder: (context, state) => const fortune_pages.FortuneBestPracticesPage(),
-  ),
+    builder: (context, state) => const fortune_pages.FortuneBestPracticesPage()),
   
   // Lucky Job
   GoRoute(
     path: 'lucky-job',
     name: 'fortune-lucky-job',
-    builder: (context, state) => const fortune_pages.LuckyJobFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyJobFortunePage()),
   
   // Lucky Side Job
   GoRoute(
     path: 'lucky-sidejob',
     name: 'fortune-lucky-sidejob',
-    builder: (context, state) => const fortune_pages.LuckySideJobFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckySideJobFortunePage()),
   
   // E-Sports
   GoRoute(
     path: 'esports',
     name: 'fortune-esports',
-    builder: (context, state) => const fortune_pages.EsportsFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.EsportsFortunePage()),
   
   // Influencer
   GoRoute(
     path: 'influencer',
     name: 'fortune-influencer',
-    builder: (context, state) => const fortune_pages.InfluencerFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.InfluencerFortunePage()),
   
   // Politician
   GoRoute(
     path: 'politician',
     name: 'fortune-politician',
-    builder: (context, state) => const fortune_pages.PoliticianFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.PoliticianFortunePage()),
   
   // Sports Player
   GoRoute(
     path: 'sports-player',
     name: 'fortune-sports-player',
-    builder: (context, state) => const fortune_pages.SportsPlayerFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.SportsPlayerFortunePage()),
   
   // Physiognomy redirect (for convenience)
   GoRoute(
     path: '/physiognomy',
     name: 'physiognomy',
-    redirect: (_, __) => '/fortune/physiognomy',
-  ),
-];
+    redirect: (_, __) => '/fortune/physiognomy')];

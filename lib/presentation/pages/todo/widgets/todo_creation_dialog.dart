@@ -10,8 +10,7 @@ class TodoCreationDialog extends ConsumerStatefulWidget {
 
   const TodoCreationDialog({
     super.key,
-    this.todoToEdit,
-  });
+    this.todoToEdit});
 
   @override
   ConsumerState<TodoCreationDialog> createState() => _TodoCreationDialogState();
@@ -57,8 +56,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
       context: context,
       initialDate: _selectedDueDate ?? firstDate,
       firstDate: firstDate,
-      lastDate: lastDate,
-    );
+      lastDate: lastDate);
 
     if (picked != null) {
       setState(() {
@@ -99,8 +97,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
           description: description.isEmpty ? null : description,
           priority: _selectedPriority,
           dueDate: _selectedDueDate,
-          tags: tags,
-        );
+          tags: tags);
       } else {
         // Create new todo
         await ref.read(todosProvider.notifier).createTodo(
@@ -108,8 +105,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
           description: description.isEmpty ? null : description,
           priority: _selectedPriority,
           dueDate: _selectedDueDate,
-          tags: tags,
-        );
+          tags: tags);
       }
 
       if (mounted) {
@@ -119,10 +115,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
             content: Text(
               widget.todoToEdit != null
                   ? '할 일이 수정되었습니다'
-                  : '새로운 할 일이 추가되었습니다',
-            ),
-          ),
-        );
+                  : '새로운 할 일이 추가되었습니다')));
       }
     } catch (e) {
       Logger.error('Error saving todo', e);
@@ -130,9 +123,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('할 일 저장 중 오류가 발생했습니다'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     } finally {
       if (mounted) {
@@ -154,12 +145,9 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
         color: colorScheme.surface,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
+          topRight: Radius.circular(20))),
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
+        bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -176,17 +164,13 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                     height: 4,
                     decoration: BoxDecoration(
                       color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
+                      borderRadius: BorderRadius.circular(2)))),
                 const SizedBox(height: 20),
 
                 // Title
                 Text(
                   widget.todoToEdit != null ? '할 일 수정' : '새 할 일 추가',
-                  style: theme.textTheme.headlineSmall,
-                ),
+                  style: theme.textTheme.headlineSmall),
                 const SizedBox(height: 20),
 
                 // Title input
@@ -195,8 +179,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                   decoration: const InputDecoration(
                     labelText: '제목',
                     hintText: '할 일을 입력하세요',
-                    border: OutlineInputBorder(),
-                  ),
+                    border: OutlineInputBorder()),
                   maxLength: 200,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -206,8 +189,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                       return '제목은 200자 이하로 입력해주세요';
                     }
                     return null;
-                  },
-                ),
+                  }),
                 const SizedBox(height: 16),
 
                 // Description input
@@ -216,8 +198,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                   decoration: const InputDecoration(
                     labelText: '설명 (선택)',
                     hintText: '추가 설명을 입력하세요',
-                    border: OutlineInputBorder(),
-                  ),
+                    border: OutlineInputBorder()),
                   maxLines: 3,
                   maxLength: 1000,
                   validator: (value) {
@@ -225,8 +206,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                       return '설명은 1000자 이하로 입력해주세요';
                     }
                     return null;
-                  },
-                ),
+                  }),
                 const SizedBox(height: 16),
 
                 // Priority selector
@@ -237,26 +217,21 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                     ButtonSegment(
                       value: TodoPriority.low,
                       label: Text('낮음'),
-                      icon: Icon(Icons.arrow_downward),
-                    ),
+                      icon: Icon(Icons.arrow_downward)),
                     ButtonSegment(
                       value: TodoPriority.medium,
                       label: Text('중간'),
-                      icon: Icon(Icons.remove),
-                    ),
+                      icon: Icon(Icons.remove)),
                     ButtonSegment(
                       value: TodoPriority.high,
                       label: Text('높음'),
-                      icon: Icon(Icons.arrow_upward),
-                    ),
-                  ],
+                      icon: Icon(Icons.arrow_upward))],
                   selected: {_selectedPriority},
                   onSelectionChanged: (selection) {
                     setState(() {
                       _selectedPriority = selection.first;
                     });
-                  },
-                ),
+                  }),
                 const SizedBox(height: 16),
 
                 // Due date selector
@@ -267,8 +242,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                   subtitle: Text(
                     _selectedDueDate != null
                         ? dateFormat.format(_selectedDueDate!)
-                        : '선택하지 않음',
-                  ),
+                        : '선택하지 않음'),
                   trailing: _selectedDueDate != null
                       ? IconButton(
                           icon: const Icon(Icons.clear),
@@ -276,11 +250,9 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                             setState(() {
                               _selectedDueDate = null;
                             });
-                          },
-                        )
+                          })
                       : null,
-                  onTap: _selectDueDate,
-                ),
+                  onTap: _selectDueDate),
                 const SizedBox(height: 16),
 
                 // Tags input
@@ -290,8 +262,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                     labelText: '태그 (선택)',
                     hintText: '태그를 쉼표로 구분하여 입력 (최대 10개)',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.label_outline),
-                  ),
+                    prefixIcon: Icon(Icons.label_outline)),
                   validator: (value) {
                     if (value != null && value.isNotEmpty) {
                       final tags = value.split(',');
@@ -305,8 +276,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                       }
                     }
                     return null;
-                  },
-                ),
+                  }),
                 const SizedBox(height: 24),
 
                 // Action buttons
@@ -315,8 +285,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                   children: [
                     TextButton(
                       onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-                      child: const Text('취소'),
-                    ),
+                      child: const Text('취소')),
                     const SizedBox(width: 8),
                     FilledButton(
                       onPressed: _isLoading ? null : _saveTodo,
@@ -325,18 +294,7 @@ class _TodoCreationDialogState extends ConsumerState<TodoCreationDialog> {
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Text(widget.todoToEdit != null ? '수정' : '추가'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                                strokeWidth: 2))
+                          : Text(widget.todoToEdit != null ? '수정' : '추가'))])])))));
   }
 }

@@ -46,8 +46,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       Logger.error('인앱결제 초기화 실패', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')),
-        );
+          const SnackBar(content: Text('결제 시스템을 초기화할 수 없습니다')));
       }
     } finally {
       if (mounted) {
@@ -80,12 +79,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             Expanded(
               child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
-                : _buildContent(),
-            ),
-          ],
-        ),
-      ),
-    );
+                : _buildContent())])));
   }
 
   Widget _buildContent() {
@@ -96,10 +90,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           child: Text(
             '인앱결제를 사용할 수 없습니다.\n앱스토어 설정을 확인해주세요.',
             textAlign: TextAlign.center,
-            style: AppTextStyles.body1,
-          ),
-        ),
-      );
+            style: AppTextStyles.body1)));
     }
 
     if (_products.isEmpty) {
@@ -109,10 +100,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           child: Text(
             '상품을 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.',
             textAlign: TextAlign.center,
-            style: AppTextStyles.body1,
-          ),
-        ),
-      );
+            style: AppTextStyles.body1)));
     }
 
     return SingleChildScrollView(
@@ -128,10 +116,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
           const SizedBox(height: 16),
           _buildRestoreButton(),
           const SizedBox(height: 32),
-          _buildDescription(),
-        ],
-      ),
-    );
+          _buildDescription()]));
   }
 
   Widget _buildCurrentBalance() {
@@ -141,9 +126,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       return const CustomCard(
         padding: EdgeInsets.all(20),
         child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+          child: CircularProgressIndicator()));
     }
     
     return CustomCard(
@@ -157,9 +140,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
               Text(
                 '현재 보유 토큰',
                   style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                    color: AppColors.textSecondary)),
                 const SizedBox(height: 4),
                 Row(
                   children: [
@@ -169,32 +150,19 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                         : '${tokenBalance.remainingTokens}',
                       style: AppTextStyles.heading2.copyWith(
                         color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     if (!tokenBalance.hasUnlimitedAccess) ...[
                       const SizedBox(width: 4),
                       Text(
                         '개',
                         style: AppTextStyles.body1.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
+                          color: AppColors.textSecondary))]])]),
             Icon(
               tokenBalance.hasUnlimitedAccess 
                 ? Icons.all_inclusive 
                 : Icons.toll,
               size: 40,
-              color: AppColors.primary.withValues(alpha: 0.3),
-            ),
-          ],
-        ),
-      ).animate()
+              color: AppColors.primary.withValues(alpha: 0.3))])).animate()
         .fadeIn(duration: 600.ms)
         .slideX(begin: -0.1, end: 0);
   }
@@ -206,9 +174,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
         Text(
           '토큰 패키지 선택',
           style: AppTextStyles.heading3.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         ...List.generate(_products.length, (index) {
           final product = _products[index];
@@ -226,22 +192,17 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 setState(() {
                   _selectedPackageIndex = index;
                 });
-              },
-            ).animate()
+              }).animate()
               .fadeIn(duration: 600.ms, delay: (index * 100).ms)
-              .slideX(begin: 0.1, end: 0),
-          );
-        }),
-      ],
-    );
+              .slideX(begin: 0.1, end: 0));
+        })]);
   }
 
   Widget _buildPackageCard({
     required ProductDetails product,
     ProductInfo? productInfo,
     required bool isSelected,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     final isSubscription = productInfo?.isSubscription ?? false;
     final tokens = productInfo?.tokens ?? 0;
     
@@ -254,18 +215,14 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             ? LinearGradient(
                 colors: [
                   AppColors.primary.withValues(alpha: 0.1),
-                  AppColors.primary.withValues(alpha: 0.05),
-                ],
+                  AppColors.primary.withValues(alpha: 0.05)],
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
+                end: Alignment.bottomRight)
             : null,
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
+            width: isSelected ? 2 : 1),
+          borderRadius: BorderRadius.circular(16)),
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
@@ -276,16 +233,12 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                 color: isSelected 
                   ? AppColors.primary.withValues(alpha: 0.1)
                   : AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
-              ),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Icon(
                   isSubscription ? Icons.all_inclusive : Icons.toll,
                   size: 28,
-                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                ),
-              ),
-            ),
+                  color: isSelected ? AppColors.primary : AppColors.textSecondary))),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -296,41 +249,26 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                       Text(
                         productInfo?.title ?? product.title,
                         style: AppTextStyles.body1.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       if (productInfo?.title.contains('인기') ?? false) ...[
                         const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
-                            vertical: 2,
-                          ),
+                            vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.error,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                            borderRadius: BorderRadius.circular(4)),
                           child: Text(
                             '인기',
                             style: AppTextStyles.caption.copyWith(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                              fontWeight: FontWeight.bold)))]]),
                   const SizedBox(height: 4),
                   Text(
                     productInfo?.description ?? product.description,
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      color: AppColors.textSecondary))])),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -338,23 +276,12 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
                   product.price,
                   style: AppTextStyles.heading3.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? AppColors.primary : AppColors.text,
-                  ),
-                ),
+                    color: isSelected ? AppColors.primary : AppColors.text)),
                 if (isSubscription) ...[
                   Text(
                     '/월',
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                      color: AppColors.textSecondary))]])])));
   }
 
   Widget _buildPurchaseButton() {
@@ -364,8 +291,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       text: _isProcessing ? '처리 중...' : '구매하기',
       onPressed: isDisabled ? null : _handlePurchase,
       isLoading: _isProcessing,
-      width: double.infinity,
-    );
+      width: double.infinity);
   }
 
   Widget _buildRestoreButton() {
@@ -373,8 +299,7 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       text: '구매 복원',
       onPressed: _isProcessing ? null : _handleRestore,
       variant: ButtonVariant.secondary,
-      width: double.infinity,
-    );
+      width: double.infinity);
   }
 
   Widget _buildDescription() {
@@ -384,27 +309,19 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
         Text(
           '구매 안내',
           style: AppTextStyles.body2.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         ...const [
           '• 토큰은 운세를 볼 때 사용됩니다',
           '• 구매한 토큰은 즉시 계정에 추가됩니다',
           '• 무제한 구독은 매월 자동 갱신됩니다',
           '• 구독은 언제든지 취소할 수 있습니다',
-          '• 환불은 앱스토어/구글플레이 정책을 따릅니다',
-        ].map((text) => Padding(
+          '• 환불은 앱스토어/구글플레이 정책을 따릅니다'].map((text) => Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             text,
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
-        )),
-      ],
-    );
+              color: AppColors.textSecondary))))]);
   }
 
   Future<void> _handlePurchase() async {
@@ -431,17 +348,13 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
             builder: (_) => PaymentResultPage(
               isSuccess: true,
               productName: product.title,
-              amount: product.price,
-            ),
-          ),
-        );
+              amount: product.price)));
       }
     } catch (e) {
       Logger.error('구매 실패', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('실패: ${e.toString()}')),
-        );
+          SnackBar(content: Text('실패: ${e.toString()}')));
       }
     } finally {
       if (mounted) {
@@ -462,15 +375,13 @@ class _TokenPurchasePageV2State extends ConsumerState<TokenPurchasePageV2> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매가 복원되었습니다')),
-        );
+          const SnackBar(content: Text('구매가 복원되었습니다')));
       }
     } catch (e) {
       Logger.error('복원 실패', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매 복원에 실패했습니다')),
-        );
+          const SnackBar(content: Text('구매 복원에 실패했습니다')));
       }
     } finally {
       if (mounted) {

@@ -8,8 +8,7 @@ class TimePeriod {
     required this.value,
     required this.label,
     required this.time,
-    required this.description,
-  });
+    required this.description});
 }
 
 // 12시진(時辰) 시스템
@@ -25,8 +24,7 @@ const List<TimePeriod> timePeriods = [
   TimePeriod(value: "신시", label: "신시 (申時)", time: "15:00-17:00", description: "오후 3시 ~ 오후 5시"),
   TimePeriod(value: "유시", label: "유시 (酉時)", time: "17:00-19:00", description: "오후 5시 ~ 오후 7시"),
   TimePeriod(value: "술시", label: "술시 (戌時)", time: "19:00-21:00", description: "오후 7시 ~ 오후 9시"),
-  TimePeriod(value: "해시", label: "해시 (亥時)", time: "21:00-23:00", description: "오후 9시 ~ 오후 11시"),
-];
+  TimePeriod(value: "해시", label: "해시 (亥時)", time: "21:00-23:00", description: "오후 9시 ~ 오후 11시")];
 
 class FortuneDateUtils {
   // 년도 옵션 생성 (1900-현재년도)

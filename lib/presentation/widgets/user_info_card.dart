@@ -20,8 +20,7 @@ class UserInfoCard extends StatefulWidget {
   const UserInfoCard({
     super.key,
     required this.userProfile,
-    this.onProfileUpdated,
-  });
+    this.onProfileUpdated});
 
   @override
   State<UserInfoCard> createState() => _UserInfoCardState();
@@ -63,8 +62,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         
         await SupabaseHelper.updateUserProfile(
           userId: userId,
-          updates: updates,
-        );
+          updates: updates);
       }
       
       // Notify parent widget to reload
@@ -74,9 +72,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('프로필이 업데이트되었습니다'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+            backgroundColor: AppColors.success));
       }
     } catch (e) {
       Logger.error('Failed to update profile field', e);
@@ -84,9 +80,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('실패: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       }
     }
   }
@@ -102,8 +96,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
       borderRadius: AppDimensions.borderRadiusMedium,
       border: Border.all(
         color: theme.colorScheme.outline.withOpacity(0.1),
-        width: 1,
-      ),
+        width: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -113,17 +106,11 @@ class _UserInfoCardState extends State<UserInfoCard> {
               Text(
                 '기본 정보',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               Text(
                 '基本情報',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ],
-          ),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
           SizedBox(height: AppSpacing.spacing5),
           
           // 프로필 이미지와 이름
@@ -138,43 +125,27 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     Text(
                       userProfile!['name'] ?? '사용자',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     SizedBox(height: AppSpacing.spacing1),
                     if (userProfile!['birth_date'] != null) ...[
                       Row(
                         children: [
                           Text(
                             _calculateAge(userProfile!['birth_date']),
-                            style: theme.textTheme.bodyLarge,
-                          ),
+                            style: theme.textTheme.bodyLarge),
                           SizedBox(width: AppSpacing.spacing2),
                           Text(
                             '·',
-                            style: theme.textTheme.bodyLarge,
-                          ),
+                            style: theme.textTheme.bodyLarge),
                           SizedBox(width: AppSpacing.spacing2),
                           Text(
                             _getGenderLabel(userProfile!['gender']),
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
+                            style: theme.textTheme.bodyLarge)])]]))]),
           
           SizedBox(height: AppSpacing.spacing5),
           
           // 정보 그리드
-          _buildInfoGrid(context),
-        ],
-      ),
-    );
+          _buildInfoGrid(context)]));
   }
   
   Widget _buildProfileImage(BuildContext context) {
@@ -185,19 +156,14 @@ class _UserInfoCardState extends State<UserInfoCard> {
         shape: BoxShape.circle,
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
-          width: 2,
-        ),
-      ),
+          width: 2)),
       child: ClipOval(
         child: userProfile?['profile_photo_url'] != null
             ? Image.network(
                 userProfile!['profile_photo_url'],
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(context),
-              )
-            : _buildDefaultAvatar(context),
-      ),
-    );
+                errorBuilder: (context, error, stackTrace) => _buildDefaultAvatar(context))
+            : _buildDefaultAvatar(context)));
   }
   
   Widget _buildDefaultAvatar(BuildContext context) {
@@ -206,9 +172,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
       child: Icon(
         Icons.person,
         size: 40,
-        color: Theme.of(context).colorScheme.primary,
-      ),
-    );
+        color: Theme.of(context).colorScheme.primary));
   }
   
   Widget _buildInfoGrid(BuildContext context) {
@@ -221,15 +185,12 @@ class _UserInfoCardState extends State<UserInfoCard> {
             icon: Icons.cake,
             label: '생년월일',
             value: _formatBirthDate(userProfile!['birth_date']),
-            onTap: () => _showBirthDateEditDialog(context),
-          ),
+            onTap: () => _showBirthDateEditDialog(context)),
           _InfoItem(
             icon: Icons.access_time,
             label: '출생시간',
             value: userProfile!['birth_time'] ?? '미입력',
-            onTap: () => _showBirthTimeEditDialog(context),
-          ),
-        ]),
+            onTap: () => _showBirthTimeEditDialog(context))]),
         SizedBox(height: AppSpacing.spacing3),
         _buildInfoRow(context, [
           _InfoItem(
@@ -243,25 +204,19 @@ class _UserInfoCardState extends State<UserInfoCard> {
             label: '별자리',
             value: userProfile!['zodiac_sign'] ?? _calculateZodiacSign(userProfile!['birth_date']),
             onTap: () => _showBirthDateEditDialog(context), // 생년월일 수정 시 자동 계산
-          ),
-        ]),
+          )]),
         SizedBox(height: AppSpacing.spacing3),
         _buildInfoRow(context, [
           _InfoItem(
             icon: Icons.water_drop,
             label: '혈액형',
             value: userProfile!['blood_type'] != null ? '${userProfile!['blood_type']}형' : '미입력',
-            onTap: () => _showBloodTypeEditDialog(context),
-          ),
+            onTap: () => _showBloodTypeEditDialog(context)),
           _InfoItem(
             icon: Icons.psychology,
             label: 'MBTI',
             value: userProfile!['mbti']?.toUpperCase() ?? '미입력',
-            onTap: () => _showMbtiEditDialog(context),
-          ),
-        ]),
-      ],
-    );
+            onTap: () => _showMbtiEditDialog(context))])]);
   }
   
   void _showBirthDateEditDialog(BuildContext context) {
@@ -275,9 +230,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         initialDate: currentDate,
         onSave: (date) async {
           await _updateProfileField('birth_date', date.toIso8601String().split('T')[0]);
-        },
-      ),
-    );
+        }));
   }
   
   void _showBirthTimeEditDialog(BuildContext context) {
@@ -287,9 +240,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         initialTime: userProfile!['birth_time'],
         onSave: (time) async {
           await _updateProfileField('birth_time', time);
-        },
-      ),
-    );
+        }));
   }
   
   void _showBloodTypeEditDialog(BuildContext context) {
@@ -299,9 +250,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
         initialBloodType: userProfile!['blood_type'],
         onSave: (bloodType) async {
           await _updateProfileField('blood_type', bloodType);
-        },
-      ),
-    );
+        }));
   }
   
   void _showMbtiEditDialog(BuildContext context) {
@@ -311,17 +260,13 @@ class _UserInfoCardState extends State<UserInfoCard> {
         initialMbti: userProfile!['mbti'],
         onSave: (mbti) async {
           await _updateProfileField('mbti', mbti);
-        },
-      ),
-    );
+        }));
   }
   
   Widget _buildInfoRow(BuildContext context, List<_InfoItem> items) {
     return Row(
       children: items.map((item) => Expanded(
-        child: _buildInfoItem(context, item, items),
-      )).toList(),
-    );
+        child: _buildInfoItem(context, item, items))).toList());
   }
   
   Widget _buildInfoItem(BuildContext context, _InfoItem item, List<_InfoItem> items) {
@@ -336,19 +281,16 @@ class _UserInfoCardState extends State<UserInfoCard> {
           padding: AppSpacing.paddingAll12,
           margin: EdgeInsets.only(
             right: items.indexOf(item) == 0 ? 6 : 0,
-            left: items.indexOf(item) == 1 ? 6 : 0,
-          ),
+            left: items.indexOf(item) == 1 ? 6 : 0),
           decoration: BoxDecoration(
             color: AppColors.textPrimaryDark,
-            borderRadius: AppDimensions.borderRadiusSmall,
-          ),
+            borderRadius: AppDimensions.borderRadiusSmall),
           child: Row(
             children: [
               Icon(
                 item.icon,
                 size: AppDimensions.iconSizeSmall,
-                color: theme.colorScheme.primary,
-              ),
+                color: theme.colorScheme.primary),
               SizedBox(width: AppSpacing.spacing2),
               Expanded(
                 child: Column(
@@ -357,24 +299,12 @@ class _UserInfoCardState extends State<UserInfoCard> {
                     Text(
                       item.label,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
+                        color: theme.colorScheme.onSurface.withOpacity(0.6))),
                     SizedBox(height: AppSpacing.xxxSmall),
                     Text(
                       item.value,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                        fontWeight: FontWeight.w600))]))]))));
   }
   
   String _calculateAge(String? birthDate) {
@@ -452,6 +382,5 @@ class _InfoItem {
     required this.icon,
     required this.label,
     required this.value,
-    this.onTap,
-  });
+    this.onTap});
 }

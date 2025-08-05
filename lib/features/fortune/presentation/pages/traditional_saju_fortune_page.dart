@@ -13,8 +13,7 @@ class TraditionalSajuFortunePage extends BaseFortunePage {
           title: '전통 사주',
           description: '천간지지로 보는 운명과 대운',
           fortuneType: 'traditional-saju',
-          requiresUserInfo: true,
-        );
+          requiresUserInfo: true);
 
   @override
   ConsumerState<TraditionalSajuFortunePage> createState() =>
@@ -28,32 +27,30 @@ class _TraditionalSajuFortunePageState
   late List<Animation<double>> _pillarAnimations;
 
   final List<Map<String, dynamic>> _heavenlyStems = [
-    {'name': '갑(甲)': 'element': '목': 'yin': false, 'color'},
-    {'name': '을(乙)', 'element': '목': 'yin': true, 'color'},
-    {'name': '병(丙)': 'element': '화': 'yin': false, 'color'},
-    {'name': '정(丁)', 'element': '화': 'yin': true, 'color'},
-    {'name': '무(戊)': 'element': '토': 'yin': false, 'color'},
-    {'name': '기(己)', 'element': '토': 'yin': true, 'color'},
-    {'name': '경(庚)': 'element': '금': 'yin': false, 'color'},
-    {'name': '신(辛)', 'element': '금': 'yin': true, 'color'},
-    {'name': '임(壬)': 'element': '수': 'yin': false, 'color'},
-    {'name': '계(癸)', 'element': '수': 'yin': true, 'color'},
-  ];
+    {'name': '갑(甲)', 'element': '목', 'yin': false, 'color': Colors.green},
+    {'name': '을(乙)', 'element': '목', 'yin': true, 'color': Colors.green},
+    {'name': '병(丙)', 'element': '화', 'yin': false, 'color': Colors.red},
+    {'name': '정(丁)', 'element': '화', 'yin': true, 'color': Colors.red},
+    {'name': '무(戊)', 'element': '토', 'yin': false, 'color': Colors.yellow},
+    {'name': '기(己)', 'element': '토', 'yin': true, 'color': Colors.yellow},
+    {'name': '경(庚)', 'element': '금', 'yin': false, 'color': Colors.grey},
+    {'name': '신(辛)', 'element': '금', 'yin': true, 'color': Colors.grey},
+    {'name': '임(壬)', 'element': '수', 'yin': false, 'color': Colors.blue},
+    {'name': '계(癸)', 'element': '수', 'yin': true, 'color': Colors.blue}];
 
   final List<Map<String, dynamic>> _earthlyBranches = [
-    {'name': '자(子)': 'animal': '쥐': 'element': '수', 'season': '겨울'},
-    {'name': '축(丑)', 'animal': '소': 'element': '토': 'season': '겨울'},
-    {'name': '인(寅)', 'animal': '호랑이': 'element': '목': 'season': '봄'},
-    {'name': '묘(卯)', 'animal': '토끼': 'element': '목': 'season': '봄'},
-    {'name': '진(辰)', 'animal': '용': 'element': '토': 'season': '봄'},
-    {'name': '사(巳)', 'animal': '뱀': 'element': '화': 'season': '여름'},
-    {'name': '오(午)', 'animal': '말': 'element': '화': 'season': '여름'},
-    {'name': '미(未)', 'animal': '양': 'element': '토': 'season': '여름'},
-    {'name': '신(申)', 'animal': '원숭이': 'element': '금': 'season': '가을'},
-    {'name': '유(酉)', 'animal': '닭': 'element': '금': 'season': '가을'},
-    {'name': '술(戌)', 'animal': '개': 'element': '토': 'season': '가을'},
-    {'name': '해(亥)', 'animal': '돼지': 'element': '수': 'season': '겨울'},
-  ];
+    {'name': '자(子)', 'animal': '쥐', 'element': '수', 'season': '겨울'},
+    {'name': '축(丑)', 'animal': '소', 'element': '토', 'season': '겨울'},
+    {'name': '인(寅)', 'animal': '호랑이', 'element': '목', 'season': '봄'},
+    {'name': '묘(卯)', 'animal': '토끼', 'element': '목', 'season': '봄'},
+    {'name': '진(辰)', 'animal': '용', 'element': '토', 'season': '봄'},
+    {'name': '사(巳)', 'animal': '뱀', 'element': '화', 'season': '여름'},
+    {'name': '오(午)', 'animal': '말', 'element': '화', 'season': '여름'},
+    {'name': '미(未)', 'animal': '양', 'element': '토', 'season': '여름'},
+    {'name': '신(申)', 'animal': '원숭이', 'element': '금', 'season': '가을'},
+    {'name': '유(酉)', 'animal': '닭', 'element': '금', 'season': '가을'},
+    {'name': '술(戌)', 'animal': '개', 'element': '토', 'season': '가을'},
+    {'name': '해(亥)', 'animal': '돼지', 'element': '수', 'season': '겨울'}];
 
   final Map<String, Map<String, dynamic>> _tenGods = {
     '비견': {'meaning': '형제, 경쟁자', 'color': Colors.blue},
@@ -65,7 +62,7 @@ class _TraditionalSajuFortunePageState
     '편관': {'meaning': '권력, 도전', 'color': Colors.indigo},
     '정관': {'meaning': '명예, 지위', 'color': Colors.teal},
     '편인': {'meaning': '학문, 종교', 'color': Colors.brown},
-    '정인': {'meaning': '어머니, 교육', 'color': null,
+    '정인': {'meaning': '어머니, 교육', 'color': Colors.pink}
   };
 
   @override
@@ -73,12 +70,10 @@ class _TraditionalSajuFortunePageState
     super.initState();
     _fourPillarsController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
+      duration: const Duration(milliseconds: 1500));
     _tenGodsController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
+      duration: const Duration(milliseconds: 1000));
 
     _pillarAnimations = List.generate(4, (index) {
       return Tween<double>(begin: 0, end: 1).animate(
@@ -87,10 +82,7 @@ class _TraditionalSajuFortunePageState
           curve: Interval(
             index * 0.2,
             0.4 + index * 0.2,
-            curve: Curves.easeOutBack,
-          ),
-        ),
-      );
+            curve: Curves.easeOutBack)));
     });
   }
 
@@ -122,15 +114,13 @@ class _TraditionalSajuFortunePageState
       yearPillar,
       monthPillar,
       dayPillar,
-      hourPillar,
-    );
+      hourPillar);
 
     final elementBalance = _calculateElementBalance(
       yearPillar,
       monthPillar,
       dayPillar,
-      hourPillar,
-    );
+      hourPillar);
 
     _fourPillarsController.forward();
     _tenGodsController.forward();
@@ -178,24 +168,21 @@ ${_formatMajorFortunes(majorFortunes)}
       overallScore: overallScore,
       scoreBreakdown: {
         '전체운': overallScore,
-        '재물운': _calculateFortuneScore(tenGodsDistribution, ['편재': '정재'],
-        '직업운': _calculateFortuneScore(tenGodsDistribution, ['정관': '편관'],
-        '학업운': _calculateFortuneScore(tenGodsDistribution, ['정인': '편인'],
-        '대인운': _calculateFortuneScore(tenGodsDistribution, ['비견': '겁재',
-      },
+        '재물운': _calculateFortuneScore(tenGodsDistribution, ['편재', '정재']),
+        '직업운': _calculateFortuneScore(tenGodsDistribution, ['정관', '편관']),
+        '학업운': _calculateFortuneScore(tenGodsDistribution, ['정인', '편인']),
+        '대인운': _calculateFortuneScore(tenGodsDistribution, ['비견', '겁재'])},
       luckyItems: {
         '일간': dayPillar['stem']['name'],
         '주 오행': _getDominantElement(elementBalance),
         '부족 오행': _getLackingElement(elementBalance),
         '현재 대운': majorFortunes.first['name'],
-        '십신 강세'),
-      },
+        '십신 강세': _getDominantTenGod(tenGodsDistribution)},
       recommendations: [
         '${_getLackingElement(elementBalance)} 기운을 보충하는 활동을 하세요',
         '${_getLuckyDirection(elementBalance)} 방향으로 여행이나 이사를 고려해보세요',
         '${_getSuitableCareer(tenGodsDistribution)} 분야에서 능력을 발휘할 수 있습니다',
-        '대운의 흐름에 맞춰 장기 계획을 세우세요',
-      ],
+        '대운의 흐름에 맞춰 장기 계획을 세우세요'],
       metadata: {
         'yearPillar': yearPillar,
         'monthPillar': monthPillar,
@@ -203,9 +190,7 @@ ${_formatMajorFortunes(majorFortunes)}
         'hourPillar': hourPillar,
         'majorFortunes': majorFortunes,
         'tenGodsDistribution': tenGodsDistribution,
-        'elementBalance': null,
-      },
-    );
+        'elementBalance': elementBalance});
   }
 
   Map<String, dynamic> _calculateYearPillar(DateTime birthDate) {
@@ -213,8 +198,7 @@ ${_formatMajorFortunes(majorFortunes)}
     final yearBranchIndex = (birthDate.year - 4) % 12;
     return {
       'stem': _heavenlyStems[yearStemIndex],
-      'branch': null,
-    };
+      'branch': _earthlyBranches[yearBranchIndex]};
   }
 
   Map<String, dynamic> _calculateMonthPillar(DateTime birthDate) {
@@ -222,8 +206,7 @@ ${_formatMajorFortunes(majorFortunes)}
     final monthBranchIndex = (birthDate.month + 1) % 12;
     return {
       'stem': _heavenlyStems[monthStemIndex],
-      'branch': null,
-    };
+      'branch': _earthlyBranches[monthBranchIndex]};
   }
 
   Map<String, dynamic> _calculateDayPillar(DateTime birthDate) {
@@ -232,8 +215,7 @@ ${_formatMajorFortunes(majorFortunes)}
     final dayBranchIndex = daysSinceEpoch % 12;
     return {
       'stem': _heavenlyStems[dayStemIndex],
-      'branch': null,
-    };
+      'branch': _earthlyBranches[dayBranchIndex]};
   }
 
   Map<String, dynamic> _calculateHourPillar(DateTime birthDate) {
@@ -241,8 +223,7 @@ ${_formatMajorFortunes(majorFortunes)}
     final hourStemIndex = (birthDate.day * 12 + hourBranchIndex) % 10;
     return {
       'stem': _heavenlyStems[hourStemIndex],
-      'branch': null,
-    };
+      'branch': _earthlyBranches[hourBranchIndex]};
   }
 
   List<Map<String, dynamic>> _calculateMajorFortunes(DateTime birthDate) {
@@ -259,8 +240,7 @@ ${_formatMajorFortunes(majorFortunes)}
         'endAge': startAge + 9,
         'name': '${_heavenlyStems[stemIndex]['name']} ${_earthlyBranches[branchIndex]['name']}',
         'isCurrent': currentAge >= startAge && currentAge <= startAge + 9,
-        'interpretation': null,
-      });
+        'interpretation': _getMajorFortuneInterpretation(stemIndex, branchIndex)});
     }
 
     return fortunes;
@@ -283,8 +263,7 @@ ${_formatMajorFortunes(majorFortunes)}
       '화토': '안정과 결실',
       '화금': '정제와 완성',
       '화수': '조화와 균형',
-      '화목': '지원과 성장',
-    };
+      '화목': '지원과 성장'};
 
     return interactions['$element1$element2'] ??
         interactions['$element2$element1'] ??
@@ -295,8 +274,7 @@ ${_formatMajorFortunes(majorFortunes)}
     Map<String, dynamic> yearPillar,
     Map<String, dynamic> monthPillar,
     Map<String, dynamic> dayPillar,
-    Map<String, dynamic> hourPillar,
-  ) {
+    Map<String, dynamic> hourPillar) {
     final dayStem = dayPillar['stem']['element'];
     final tenGodsCounts = <String, int>{};
 
@@ -316,36 +294,30 @@ ${_formatMajorFortunes(majorFortunes)}
 
     final relationships = {
       '목': {
-        '화': ['식신': '상관'],
-        '토': ['편재': '정재'],
+        '화': ['식신', '상관'],
+        '토': ['편재', '정재'],
         '금': ['편관', '정관'],
-        '수': ['편인', '정인': null,
-      },
+        '수': ['편인', '정인']},
       '화': {
         '토': ['식신', '상관'],
         '금': ['편재', '정재'],
         '수': ['편관', '정관'],
-        '목': ['편인', '정인': null,
-      },
+        '목': ['편인', '정인']},
       '토': {
         '금': ['식신', '상관'],
         '수': ['편재', '정재'],
         '목': ['편관', '정관'],
-        '화': ['편인', '정인': null,
-      },
+        '화': ['편인', '정인']},
       '금': {
         '수': ['식신', '상관'],
         '목': ['편재', '정재'],
         '화': ['편관', '정관'],
-        '토': ['편인', '정인': null,
-      },
+        '토': ['편인', '정인']},
       '수': {
         '목': ['식신', '상관'],
         '화': ['편재', '정재'],
         '토': ['편관', '정관'],
-        '금': ['편인', '정인': null,
-      },
-    };
+        '금': ['편인', '정인']}};
 
     final relation = relationships[dayStem]?[stemElement];
     if (relation != null) {
@@ -359,15 +331,13 @@ ${_formatMajorFortunes(majorFortunes)}
     Map<String, dynamic> yearPillar,
     Map<String, dynamic> monthPillar,
     Map<String, dynamic> dayPillar,
-    Map<String, dynamic> hourPillar,
-  ) {
+    Map<String, dynamic> hourPillar) {
     final elementCounts = <String, int>{
       '목': 0,
       '화': 0,
       '토': 0,
       '금': 0,
-      '수': null,
-    };
+      '수': 0};
 
     for (final pillar in [yearPillar, monthPillar, dayPillar, hourPillar]) {
       final stemElement = pillar['stem']['element'];
@@ -413,7 +383,7 @@ ${_formatMajorFortunes(majorFortunes)}
       '화': '열정적이고 활동적이며 리더십이 강합니다.',
       '토': '신중하고 안정적이며 신뢰감을 주는 성격입니다.',
       '금': '원칙적이고 정의로우며 결단력이 있습니다.',
-      '수': '지혜롭고 유연하며 적응력이 뛰어납니다.',
+      '수': '지혜롭고 유연하며 적응력이 뛰어납니다.'
     };
 
     return interpretations[stem['element']] ?? '균형잡힌 성격을 가지고 있습니다.';
@@ -434,7 +404,7 @@ ${_formatMajorFortunes(majorFortunes)}
       '화': '남쪽',
       '토': '중앙',
       '금': '서쪽',
-      '수': '북쪽',
+      '수': '북쪽'
     };
     return directions[lacking] ?? '중앙';
   }
@@ -453,7 +423,7 @@ ${_formatMajorFortunes(majorFortunes)}
       '편관': '군인, 경찰, 관리직',
       '정관': '공무원, 대기업, 전문직',
       '편인': '학자, 연구원, 종교인',
-      '정인': '교육, 의료, 상담',
+      '정인': '교육, 의료, 상담'
     };
 
     return careers[dominant] ?? '다양한 분야';
@@ -486,10 +456,7 @@ ${_formatMajorFortunes(majorFortunes)}
           _buildTenGodsDistribution(),
           _buildMajorFortunesTimeline(),
           _buildSajuInterpretation(),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+          const SizedBox(height: 32)]));
   }
 
   Widget _buildFourPillarsDisplay() {
@@ -497,20 +464,18 @@ ${_formatMajorFortunes(majorFortunes)}
     if (fortune == null) return const SizedBox.shrink();
 
     final pillars = [
-      {'title': '년주': 'data': fortune.metadata?['yearPillar'],
-      {'title': '월주': 'data': fortune.metadata?['monthPillar'],
-      {'title': '일주': 'data': fortune.metadata?['dayPillar'],
-      {'title': '시주', 'data': fortune.metadata?['hourPillar'],
-    ];
+      {'title': '년주', 'data': fortune.metadata?['yearPillar']},
+      {'title': '월주', 'data': fortune.metadata?['monthPillar']},
+      {'title': '일주', 'data': fortune.metadata?['dayPillar']},
+      {'title': '시주', 'data': fortune.metadata?['hourPillar']}];
 
     return GlassCard(
-      padding: const EdgeInsets.all(24,
+      padding: const EdgeInsets.all(24),
       child: Column(
         children: [
           Text(
             '사주팔자',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -527,16 +492,9 @@ ${_formatMajorFortunes(majorFortunes)}
                         Offset(0, 50 * (1 - _pillarAnimations[index].value)),
                     child: Opacity(
                       opacity: _pillarAnimations[index].value,
-                      child: _buildPillarCard(pillar['title'],
-                    ),
-                  );
-                },
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                      child: _buildPillarCard(pillar['title']!, data)));
+                });
+            }).toList())]));
   }
 
   Widget _buildPillarCard(String title, Map<String, dynamic> pillarData) {
@@ -562,47 +520,34 @@ ${_formatMajorFortunes(majorFortunes)}
                 .bodySmall
                 ?.copyWith(
                     fontWeight:
-                        isDay ? FontWeight.bold : FontWeight.normal),
-          ),
+                        isDay ? FontWeight.bold : FontWeight.normal)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (stem['color'],
-              borderRadius: BorderRadius.circular(8),
-            ),
+              color: (stem['color'] as Color).withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8)),
             child: Text(
               stem['name'],
               style: TextStyle(
-                color: stem['color'],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+                color: stem['color'] as Color,
+                fontWeight: FontWeight.bold))),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
+              borderRadius: BorderRadius.circular(8)),
             child: Text(
               branch['name'],
               style: TextStyle(
                 color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+                fontWeight: FontWeight.bold))),
           const SizedBox(height: 4),
           Text(
             branch['animal'],
             style:
-                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
-          ),
-        ],
-      ),
-    );
+                Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10))]));
   }
 
   Widget _buildElementBalanceChart() {
@@ -624,15 +569,11 @@ ${_formatMajorFortunes(majorFortunes)}
               children: [
                 Icon(
                   Icons.pie_chart,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '오행 균형',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -653,19 +594,10 @@ ${_formatMajorFortunes(majorFortunes)}
                       titleStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    );
+                        color: Colors.white));
                   }).toList(),
                   sectionsSpace: 2,
-                  centerSpaceRadius: 40,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  centerSpaceRadius: 40)))])));
   }
 
   Color _getElementColor(String element) {
@@ -674,7 +606,7 @@ ${_formatMajorFortunes(majorFortunes)}
       '화': Colors.red,
       '토': Colors.brown,
       '금': Colors.amber,
-      '수': null,
+      '수': Colors.blue
     };
     return colors[element] ?? Colors.grey;
   }
@@ -700,15 +632,11 @@ ${_formatMajorFortunes(majorFortunes)}
               children: [
                 Icon(
                   Icons.psychology,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '십신 분포',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             AnimatedBuilder(
               animation: _tenGodsController,
@@ -727,20 +655,15 @@ ${_formatMajorFortunes(majorFortunes)}
                             width: 60,
                             padding: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
-                              color: (info['color'],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                              color: (info['color'] as Color).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12)),
                             child: Center(
                               child: Text(
                                 god,
                                 style: TextStyle(
-                                  color: info['color'],
+                                  color: info['color'] as Color,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
+                                  fontSize: 12)))),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -748,8 +671,7 @@ ${_formatMajorFortunes(majorFortunes)}
                               children: [
                                 Text(
                                   info['meaning'],
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
+                                  style: Theme.of(context).textTheme.bodySmall),
                                 const SizedBox(height: 4),
                                 LinearProgressIndicator(
                                   value:
@@ -757,32 +679,17 @@ ${_formatMajorFortunes(majorFortunes)}
                                   backgroundColor: (info['color'] as Color)
                                       .withOpacity(0.2),
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    info['color'],
-                                  ),
-                                  minHeight: 6,
-                                ),
-                              ],
-                            ),
-                          ),
+                                    info['color'] as Color),
+                                  minHeight: 6)])),
                           const SizedBox(width: 8),
                           Text(
                             '$count',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+                                ?.copyWith(fontWeight: FontWeight.bold))]));
+                  }).toList());
+              })])));
   }
 
   Widget _buildMajorFortunesTimeline() {
@@ -804,15 +711,11 @@ ${_formatMajorFortunes(majorFortunes)}
               children: [
                 Icon(
                   Icons.timeline,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '대운 흐름',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...majorFortunes.take(4).map((fortune) {
               final isCurrent = fortune['isCurrent'] as bool;
@@ -838,9 +741,7 @@ ${_formatMajorFortunes(majorFortunes)}
                             .colorScheme
                             .outline
                             .withOpacity(0.3),
-                    width: isCurrent ? 2 : 1,
-                  ),
-                ),
+                    width: isCurrent ? 2 : 1)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -855,39 +756,31 @@ ${_formatMajorFortunes(majorFortunes)}
                               ?.copyWith(
                                   fontWeight: isCurrent
                                       ? FontWeight.bold
-                                      : FontWeight.normal),
-                        ),
+                                      : FontWeight.normal)),
                         if (isCurrent)
                           Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.primary,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                              borderRadius: BorderRadius.circular(10)),
                             child: Text(
                               '현재',
                               style: TextStyle(
                                 color:
                                     Theme.of(context).colorScheme.onPrimary,
                                 fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                                fontWeight: FontWeight.bold)))]),
                     const SizedBox(height: 4),
                     Text(
                       fortune['name'],
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
+                          ?.copyWith(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
                     Text(
-                      fortune['interpretation'],
+                      fortune['interpretation'] ?? '',
                       style: Theme.of(context)
                           .textTheme
                           .bodySmall
@@ -895,17 +788,8 @@ ${_formatMajorFortunes(majorFortunes)}
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7)),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
+                                  .withOpacity(0.7))])]);
+            }).toList()])));
 
   Widget _buildSajuInterpretation() {
     return GlassCard(
@@ -917,23 +801,18 @@ ${_formatMajorFortunes(majorFortunes)}
             children: [
               Icon(
                 Icons.tips_and_updates,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 '사주 활용법',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
             '일간의 오행을 강화하는 색상과 방향을 활용하세요',
             '부족한 오행을 보충하는 활동과 음식을 섭취하세요',
             '대운의 흐름에 맞춰 인생 계획을 세우세요',
             '십신의 특성을 이해하고 장점을 살리세요',
-            '음양오행의 균형을 맞추며 조화로운 삶을 추구하세요',
-          ].map((tip) {
+            '음양오행의 균형을 맞추며 조화로운 삶을 추구하세요'].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -942,21 +821,12 @@ ${_formatMajorFortunes(majorFortunes)}
                   Icon(
                     Icons.check_circle,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                    color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                      style: Theme.of(context).textTheme.bodyMedium))]));
+          }).toList()]));
   }
 }

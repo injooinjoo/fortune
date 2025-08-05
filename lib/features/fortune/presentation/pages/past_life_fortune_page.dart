@@ -15,14 +15,11 @@ class PastLifeFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF6A1B9A), Color(0xFF4A148C)],
-      ),
+        colors: [Color(0xFF6A1B9A), Color(0xFF4A148C)]),
       inputBuilder: (context, onSubmit) => _PastLifeInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _PastLifeFortuneResult(
         result: result,
-        onShare: onShare,
-      ),
-    );
+        onShare: onShare));
   }
 }
 
@@ -42,35 +39,26 @@ class _PastLifeInputForm extends StatelessWidget {
           '당신의 전생을 확인해보세요!\n과거의 인연과 현생의 과업을 알려드립니다.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 32),
         
         Center(
           child: Icon(
             Icons.history,
             size: 120,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
-        ),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
         
         const SizedBox(height: 32),
         
         Center(
           child: ElevatedButton.icon(
-            onPressed: () => onSubmit({},),
+            onPressed: () => onSubmit({}),
             icon: const Icon(Icons.history),
             label: const Text('운세 확인하기'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ),
-      ]
+                borderRadius: BorderRadius.circular(30)))))]
     );
   }
 }
@@ -81,8 +69,7 @@ class _PastLifeFortuneResult extends StatelessWidget {
 
   const _PastLifeFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   Widget build(BuildContext context) {
@@ -105,27 +92,17 @@ class _PastLifeFortuneResult extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.history,
-                      color: theme.colorScheme.primary,
-                    ),
+                      color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       '전생',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 Text(
                   fortune.content,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    height: 1.6))])),
           const SizedBox(height: 16),
 
           // Score Breakdown
@@ -140,17 +117,12 @@ class _PastLifeFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.analytics,
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         '상세 분석',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.scoreBreakdown!.entries.map((entry) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -159,33 +131,20 @@ class _PastLifeFortuneResult extends StatelessWidget {
                         Expanded(
                           child: Text(
                             entry.key,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ),
+                            style: theme.textTheme.bodyLarge)),
                         Container(
                           width: 60,
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
                             color: _getScoreColor(entry.value).withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                            borderRadius: BorderRadius.circular(12)),
                           child: Text(
                             '${entry.value}점',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: _getScoreColor(entry.value),
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+                              fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center))])).toList()])),
+            const SizedBox(height: 16)],
 
           // Lucky Items
           if (fortune.luckyItems != null && fortune.luckyItems!.isNotEmpty) ...[
@@ -199,17 +158,12 @@ class _PastLifeFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.stars,
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         '행운 아이템',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 8,
@@ -217,15 +171,9 @@ class _PastLifeFortuneResult extends StatelessWidget {
                     children: fortune.luckyItems!.entries.map((entry) {
                       return Chip(
                         label: Text('${entry.key}: ${entry.value}'),
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+                        backgroundColor: theme.colorScheme.primaryContainer);
+                    }).toList())])),
+            const SizedBox(height: 16)],
 
           // Recommendations
           if (fortune.recommendations != null && fortune.recommendations!.isNotEmpty) ...[
@@ -239,17 +187,12 @@ class _PastLifeFortuneResult extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.tips_and_updates,
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         '조언',
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...fortune.recommendations!.map((rec) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -259,25 +202,12 @@ class _PastLifeFortuneResult extends StatelessWidget {
                         Icon(
                           Icons.check_circle,
                           size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
+                          color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             rec,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
+                            style: theme.textTheme.bodyMedium))])).toList()]))]]));
   }
 
   Color _getScoreColor(int score) {

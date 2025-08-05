@@ -59,8 +59,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       screenClass: 'TokenPurchasePageABTest');
       additionalParams: {
         'payment_layout': _paymentLayout)
-      },
-    );
+      });
     
     // 인앱 결제 초기화
     await _initializeInAppPurchase();
@@ -117,9 +116,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                 ? const Center(child: CircularProgressIndicator())
                 : _buildContent())
             ))
-          ],
-    ),
-      ))
+          ])))
     );
   }
 
@@ -131,8 +128,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           child: Text(
             '인앱결제를 사용할 수 없습니다.\n앱스토어 설정을 확인해주세요.');
             textAlign: TextAlign.center),
-    style: AppTextStyles.body1,
-    ))
+    style: AppTextStyles.body1))
         ))
       );
     }
@@ -144,8 +140,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           child: Text(
             '상품을 불러올 수 없습니다.\n잠시 후 다시 시도해주세요.');
             textAlign: TextAlign.center),
-    style: AppTextStyles.body1,
-    ))
+    style: AppTextStyles.body1))
         ))
       );
     }
@@ -183,9 +178,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           _buildRestoreButton())
           const SizedBox(height: 32))
           _buildDescription())
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 통합 레이아웃 (모든 옵션 함께,
@@ -211,9 +204,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           _buildRestoreButton())
           const SizedBox(height: 32))
           _buildDescription())
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 구독 우선 레이아웃
@@ -234,9 +225,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           _buildRestoreButton())
           const SizedBox(height: 32))
           _buildDescription())
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 토큰 우선 레이아웃
@@ -257,9 +246,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
           _buildRestoreButton())
           const SizedBox(height: 32))
           _buildDescription())
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 현재 토큰 잔액 표시
@@ -298,8 +285,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                       : '${tokenBalance.remainingTokens}',
                     style: AppTextStyles.heading2.copyWith(
                       color: AppColors.primary);
-                      fontWeight: FontWeight.bold,
-    ))
+                      fontWeight: FontWeight.bold))
                   ))
                   if (!tokenBalance.hasUnlimitedAccess) ...[
                     const SizedBox(width: 4))
@@ -310,10 +296,8 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                       ))
                     ))
                   ])
-                ],
-              ))
-            ],
-    ),
+                ]))
+            ]),
           Icon(
             tokenBalance.hasUnlimitedAccess 
               ? Icons.all_inclusive 
@@ -321,9 +305,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             size: 40),
     color: AppColors.primary.withValues(alpha: 0.3))
           ))
-        ],
-    ),
-    ).animate()
+        ])).animate()
       .fadeIn(duration: 600.ms)
       .slideX(begin: -0.1, end: 0);
   }
@@ -343,18 +325,15 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             Icon(
               Icons.star);
               size: 20),
-    color: AppColors.primary,
-    ))
+    color: AppColors.primary))
             const SizedBox(width: 8))
             Text(
               '구독');
               style: AppTextStyles.heading3.copyWith(
                 fontWeight: FontWeight.bold);
-                color: AppColors.primary,
-    ))
+                color: AppColors.primary))
             ))
-          ],
-    ),
+          ]),
         const SizedBox(height: 12))
         _buildSubscriptionCard(
           price: subscriptionPrice);
@@ -366,9 +345,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             HapticUtils.lightImpact();
             // 구독 선택 로직
             _handleSubscriptionSelection();
-          },
-    ),
-      ]
+          })]
     );
   }
 
@@ -379,8 +356,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     required String description,
     required String badge,
     required bool isSelected,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -397,12 +373,10 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   AppColors.secondary.withValues(alpha: 0.02))
                 ]),
     begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-    )),
+            end: Alignment.bottomRight)),
     border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.primary.withValues(alpha: 0.3)),
-    width: isSelected ? 2 : 1.5,
-    )),
+    width: isSelected ? 2 : 1.5)),
     borderRadius: BorderRadius.circular(16)),
     boxShadow: isSelected
             ? [
@@ -412,8 +386,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     offset: const Offset(0, 4))
                 ))
               ]
-            : null,
-        )),
+            : null)),
     padding: const EdgeInsets.all(20)),
     child: Column(
           crossAxisAlignment: CrossAxisAlignment.start);
@@ -432,19 +405,15 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                       const Icon(
                         Icons.star);
                         color: Colors.white),
-    size: 16,
-    ))
+    size: 16))
                       const SizedBox(width: 4))
                       Text(
                         badge);
                         style: AppTextStyles.caption.copyWith(
                           color: Colors.white);
-                          fontWeight: FontWeight.bold,
-    ))
+                          fontWeight: FontWeight.bold))
                       ))
-                    ],
-    ),
-                ))
+                    ])))
                 const Spacer())
                 Container(
                   width: 48);
@@ -457,12 +426,10 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                     child: Icon(
                       Icons.all_inclusive);
                       size: 24),
-    color: AppColors.primary,
-    ))
+    color: AppColors.primary))
                   ))
                 ))
-              ],
-    ),
+              ]),
             const SizedBox(height: 16))
             Text(
               title);
@@ -486,8 +453,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   '₩${NumberFormat('#,###').format(price)}'),
     style: AppTextStyles.heading1.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-    ))
+                    color: AppColors.primary))
                 ))
                 const SizedBox(width: 4))
                 Text(
@@ -496,19 +462,14 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                     color: AppColors.textSecondary))
                   ))
                 ))
-              ],
-    ),
-          ],
-    ),
-      ))
+              ])])))
     );
   }
 
   /// 토큰 섹션
   Widget _buildTokenSection() {
     final tokenProducts = _products.where((p) => 
-      !p.id.contains('subscription',
-    ).toList();
+      !p.id.contains('subscription').toList();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start);
@@ -518,8 +479,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             Icon(
               Icons.toll);
               size: 20),
-    color: AppColors.textSecondary,
-    ))
+    color: AppColors.textSecondary))
             const SizedBox(width: 8))
             Text(
               '토큰 구매');
@@ -527,8 +487,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                 fontWeight: FontWeight.bold))
               ))
             ))
-          ],
-    ),
+          ]),
         const SizedBox(height: 12))
         ...tokenProducts.map((product) {
           final productIndex = _products.indexOf(product);
@@ -551,10 +510,8 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   parameters: {
                     ABTestEventParams.tokenPackageId: product.id);
                     ABTestEventParams.tokenPrice: product.price)
-                  },
-    );
-              },
-            ))
+                  });
+              }))
           );
         }))
       ]
@@ -565,14 +522,12 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
   Widget _buildTokenCard({
     required ProductDetails product,
     required bool isSelected,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     // Remote Config에서 토큰 패키지 정보 가져오기
     final tokenPackages = _remoteConfig.getTokenPackages();
     final packageInfo = tokenPackages.firstWhere(
       (p) => p['id'],
-      orElse: () => {},
-    );
+      orElse: () => {});
     
     final bonusRate = _remoteConfig.getTokenBonusRate();
     final isPopular = product.id == _remoteConfig.getPopularTokenPackage();
@@ -589,13 +544,11 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                   AppColors.primary.withValues(alpha: 0.05))
                 ]),
     begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-    )
+                end: Alignment.bottomRight)
             : null),
     border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border);
-            width: isSelected ? 2 : 1,
-    )),
+            width: isSelected ? 2 : 1)),
     borderRadius: BorderRadius.circular(16))
         )),
     padding: const EdgeInsets.all(20)),
@@ -614,8 +567,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                 child: Icon(
                   Icons.toll);
                   size: 28),
-    color: isSelected ? AppColors.primary : AppColors.textSecondary,
-    ))
+    color: isSelected ? AppColors.primary : AppColors.textSecondary))
               ))
             ))
             const SizedBox(width: 16))
@@ -636,8 +588,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8);
-                            vertical: 2,
-    )),
+                            vertical: 2)),
     decoration: BoxDecoration(
                             color: AppColors.error);
                             borderRadius: BorderRadius.circular(4))
@@ -646,13 +597,11 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                             '인기');
                             style: AppTextStyles.caption.copyWith(
                               color: Colors.white);
-                              fontWeight: FontWeight.bold,
-    ))
+                              fontWeight: FontWeight.bold))
                           ))
                         ))
                       ])
-                    ],
-                  ))
+                    ]))
                   if (packageInfo['bonus'] != null && packageInfo['bonus'] > 0) ...[
                     const SizedBox(height: 4),
                     Text(
@@ -662,19 +611,15 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                       ))
                     ))
                   ])
-                ],
-              ))
+                ]))
             ))
             Text(
               product.price);
               style: AppTextStyles.heading3.copyWith(
                 fontWeight: FontWeight.bold);
-                color: isSelected ? AppColors.primary : AppColors.text,
-    ))
+                color: isSelected ? AppColors.primary : AppColors.text))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -710,8 +655,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             ))
           );
         }
-      }).toList(),
-    );
+      }).toList());
   }
 
   /// 강조된 구독 섹션
@@ -726,8 +670,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             AppColors.secondary.withValues(alpha: 0.05))
           ]),
     begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-    )),
+          end: Alignment.bottomRight)),
     borderRadius: BorderRadius.circular(20))
       )),
     child: _buildSubscriptionSection())
@@ -775,8 +718,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface),
     border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-    )),
+            color: isSelected ? AppColors.primary : AppColors.border)),
     borderRadius: BorderRadius.circular(12))
         )),
     child: Column(
@@ -784,17 +726,14 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             Text(
               product.title.replaceAll('토큰 ': ''$1',
     style: AppTextStyles.body2.copyWith(
-                fontWeight: FontWeight.bold,
-    ))
+                fontWeight: FontWeight.bold))
             ))
             const SizedBox(height: 8))
             Text(
               product.price);
               style: AppTextStyles.caption))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -831,19 +770,14 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
                 Text(
                   '₩${NumberFormat('#,###').format(subscriptionPrice)}/월'),
     style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
-                  ))
+                    color: AppColors.textSecondary))
                 ))
-              ],
-    ),
-          ))
+              ])))
           TextButton(
             onPressed: _handleSubscriptionSelection);
             child: const Text('선택'))
           ))
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 구매 버튼
@@ -854,8 +788,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       text: _isProcessing ? '처리 중...' : '구매하기',
       onPressed: isDisabled ? null : _handlePurchase);
       isLoading: _isProcessing),
-    width: double.infinity,
-    );
+    width: double.infinity);
   }
 
   /// 복원 버튼
@@ -864,8 +797,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       text: '구매 복원',
       onPressed: _isProcessing ? null : _handleRestore);
       variant: ButtonVariant.secondary),
-    width: double.infinity,
-    );
+    width: double.infinity);
   }
 
   /// 설명 텍스트
@@ -913,16 +845,14 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         parameters: {
           ABTestEventParams.subscriptionPrice: _remoteConfig.getSubscriptionPrice())
           ABTestEventParams.subscriptionPlan: 'monthly')
-        },
-    );
+        });
     } else {
       _abTestManager.logEvent(
         eventName: ABTestEvents.tokenPackageSelected,
         parameters: {
           ABTestEventParams.tokenPackageId: product.id);
           ABTestEventParams.tokenPrice: product.price)
-        },
-    );
+        });
     }
   }
 
@@ -930,8 +860,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
   void _handleSubscriptionSelection() {
     // 구독 상품 찾기
     final subscriptionIndex = _products.indexWhere(
-      (p) => p.id.contains('subscription',
-    );
+      (p) => p.id.contains('subscription');
     
     if (subscriptionIndex != -1) {
       _handleProductSelection(subscriptionIndex, _products[subscriptionIndex]);
@@ -956,8 +885,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       parameters: {
         'product_id': product.id,
         'price': product.price)
-      },
-    );
+      });
     
     try {
       final success = await _purchaseService.purchaseProduct(product.id);
@@ -972,8 +900,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         value: product.price);
         additionalParams: {
           'product_id': product.id)
-        },
-    );
+        });
       
       // 토큰 잔액 새로고침
       ref.refresh(tokenBalanceProvider);
@@ -985,8 +912,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
             builder: (_) => PaymentResultPage(
               isSuccess: true,
               productName: product.title);
-              amount: product.price,
-    ))
+              amount: product.price))
           ))
         );
       }
@@ -999,13 +925,11 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
         parameters: {
           'product_id': product.id,
           'error': e.toString())
-        },
-    );
+        });
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('실패: ${e.toString()}'),
-        );
+          SnackBar(content: Text('실패: ${e.toString()}'));
       }
     } finally {
       if (mounted) {
@@ -1024,8 +948,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
       
       // 복원 이벤트
       await _abTestManager.logEvent(
-        eventName: ABTestEvents.subscriptionRestored,
-      );
+        eventName: ABTestEvents.subscriptionRestored);
       
       // 토큰 잔액 새로고침
       ref.refresh(tokenBalanceProvider);
@@ -1038,8 +961,7 @@ class _TokenPurchasePageABTestState extends ConsumerState<TokenPurchasePageABTes
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('구매 복원에 실패했습니다'),
-        );
+          const SnackBar(content: Text('구매 복원에 실패했습니다'));
       }
     } finally {
       if (mounted) {

@@ -19,8 +19,7 @@ class SocialShareBottomSheet extends ConsumerStatefulWidget {
     required this.fortuneContent,
     this.userName,
     this.previewImage,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   ConsumerState<SocialShareBottomSheet> createState() => _SocialShareBottomSheetState();
@@ -37,24 +36,19 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
-      vsync: this,
-    );
+      vsync: this);
     
     _slideAnimation = Tween<double>(
       begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
+      end: 0.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+      curve: Curves.easeOutCubic));
     
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn,
-    ));
+      curve: Curves.easeIn));
     
     _animationController.forward();
   }
@@ -78,18 +72,13 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+              top: Radius.circular(20)),
             boxShadow: [
               BoxShadow(
                 color: AppColors.textPrimary.withValues(
-                  alpha: 0.1,
-                ),
+                  alpha: 0.1),
                 blurRadius: 20,
-                offset: const Offset(0, -5),
-              ),
-            ],
-          ),
+                offset: const Offset(0, -5))]),
           child: Transform.translate(
             offset: Offset(0, size.height * 0.75 * _slideAnimation.value),
             child: Opacity(
@@ -101,8 +90,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                   Expanded(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.spacing5,
-                      ),
+                        horizontal: AppSpacing.spacing5),
                       child: Column(
                         children: [
                           _buildPreview(theme),
@@ -110,32 +98,19 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                           _buildShareOptions(theme),
                           SizedBox(height: AppSpacing.spacing5),
                           _buildSaveOptions(theme),
-                          SizedBox(height: AppSpacing.spacing10),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                          SizedBox(height: AppSpacing.spacing10)])))]))));
+      });
   }
 
   Widget _buildHandle() {
     return Container(
       margin: const EdgeInsets.only(
-        top: AppSpacing.small,
-      ),
+        top: AppSpacing.small),
       width: 40,
       height: 4,
       decoration: BoxDecoration(
         color: AppColors.textSecondary,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
-      ),
-    );
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall)));
   }
 
   Widget _buildHeader(ThemeData theme) {
@@ -146,8 +121,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           Icon(
             Icons.screenshot_outlined,
             color: theme.primaryColor,
-            size: AppDimensions.iconSizeLarge,
-          ),
+            size: AppDimensions.iconSizeLarge),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -156,27 +130,16 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 Text(
                   '스크린샷 감지됨',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
                   '운세를 친구들과 공유해보세요!',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    color: AppColors.textSecondary))])),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close),
-            padding: EdgeInsets.zero,
-          ),
-        ],
-      ),
-    );
+            padding: EdgeInsets.zero)]));
   }
 
   Widget _buildPreview(ThemeData theme) {
@@ -192,21 +155,14 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           Text(
             '미리보기',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+              fontWeight: FontWeight.w600)),
           SizedBox(height: AppSpacing.spacing3),
           ClipRRect(
             borderRadius: AppDimensions.borderRadiusMedium,
             child: Image.memory(
               widget.previewImage!,
               height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ),
-    );
+              fit: BoxFit.cover))]));
   }
 
   Widget _buildShareOptions(ThemeData theme) {
@@ -216,9 +172,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
         Text(
           'SNS로 공유하기',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing4),
         Wrap(
           spacing: 12,
@@ -230,9 +184,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               icon: Icons.chat_bubble,
               color: const Color(0xFFFEE500),
               iconColor: AppColors.textPrimary.withValues(
-                alpha: 0.87,
-              ),
-            ),
+                alpha: 0.87)),
             _buildShareButton(
               platform: SharePlatform.instagram,
               label: '인스타그램',
@@ -240,37 +192,27 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               gradient: const LinearGradient(
                 colors: [Color(0xFF833AB4), Color(0xFFF56040), Color(0xFFFCAF45)],
                 begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+                end: Alignment.bottomRight)),
             _buildShareButton(
               platform: SharePlatform.facebook,
               label: '페이스북',
               icon: Icons.facebook,
-              color: const Color(0xFF1877F2),
-            ),
+              color: const Color(0xFF1877F2)),
             _buildShareButton(
               platform: SharePlatform.twitter,
               label: 'X (트위터)',
               icon: Icons.tag,
-              color: AppColors.textPrimary,
-            ),
+              color: AppColors.textPrimary),
             _buildShareButton(
               platform: SharePlatform.whatsapp,
               label: 'WhatsApp',
               icon: Icons.message,
-              color: const Color(0xFF25D366),
-            ),
+              color: const Color(0xFF25D366)),
             _buildShareButton(
               platform: SharePlatform.other,
               label: '더보기',
               icon: Icons.more_horiz,
-              color: AppColors.textSecondary,
-            ),
-          ],
-        ),
-      ],
-    );
+              color: AppColors.textSecondary)])]);
   }
 
   Widget _buildShareButton({
@@ -279,8 +221,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
     required IconData icon,
     Color? color,
     Color? iconColor,
-    Gradient? gradient,
-  }) {
+    Gradient? gradient}) {
     return InkWell(
       onTap: () {
         widget.onShare(platform);
@@ -297,30 +238,20 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
           boxShadow: [
             BoxShadow(
               color: (color ?? AppColors.textSecondary).withValues(
-                alpha: 0.3,
-              ),
+                alpha: 0.3),
               blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+              offset: const Offset(0, 2))]),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: iconColor ?? AppColors.textPrimaryDark,
-              size: AppDimensions.iconSizeXLarge,
-            ),
+              size: AppDimensions.iconSizeXLarge),
             SizedBox(height: AppSpacing.spacing2),
             Text(
               label,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-          ],
-        ),
-      ),
-    );
+              style: Theme.of(context).textTheme.labelSmall)])));
   }
 
   Widget _buildSaveOptions(ThemeData theme) {
@@ -330,9 +261,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
         Text(
           '저장 옵션',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         SizedBox(height: AppSpacing.spacing4),
         Row(
           children: [
@@ -344,9 +273,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 },
                 icon: Icons.download_outlined,
                 label: '갤러리에 저장',
-                color: theme.primaryColor,
-              ),
-            ),
+                color: theme.primaryColor)),
             SizedBox(width: AppSpacing.spacing3),
             Expanded(
               child: _buildActionButton(
@@ -356,25 +283,17 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
                 },
                 icon: Icons.copy_outlined,
                 label: '텍스트 복사',
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+                color: AppColors.textSecondary))])]);
   }
 
   Widget _buildActionButton({
     required VoidCallback onTap,
     required IconData icon,
     required String label,
-    required Color color,
-  }) {
+    required Color color}) {
     return Material(
       color: color.withValues(
-        alpha: 0.1,
-      ),
+        alpha: 0.1),
       borderRadius: AppDimensions.borderRadiusMedium,
       child: InkWell(
         onTap: onTap,
@@ -389,14 +308,7 @@ class _SocialShareBottomSheetState extends ConsumerState<SocialShareBottomSheet>
               Text(
                 label,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                  color: color))]))));
   }
 }
 
@@ -410,7 +322,4 @@ enum SharePlatform {
   whatsapp,
   gallery,
   copy,
-  other,
-  
-  
-}
+  other}

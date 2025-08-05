@@ -13,8 +13,7 @@ class CustomCalendarPicker extends StatefulWidget {
   const CustomCalendarPicker({
     super.key,
     this.initialDate,
-    required this.onDateSelected,
-  });
+    required this.onDateSelected});
 
   static Future<DateTime?> show(BuildContext context, {DateTime? initialDate}) {
     return showModalBottomSheet<DateTime>(
@@ -25,9 +24,7 @@ class CustomCalendarPicker extends StatefulWidget {
         initialDate: initialDate,
         onDateSelected: (date) {
           Navigator.of(context).pop(date);
-        },
-      ),
-    );
+        }));
   }
 
   @override
@@ -82,9 +79,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
       builder: (context) => _YearPickerDialog(
         selectedYear: _selectedYear,
         minYear: 1900,
-        maxYear: DateTime.now().year,
-      ),
-    );
+        maxYear: DateTime.now().year));
     
     if (selectedYear != null) {
       setState(() {
@@ -99,9 +94,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
       context: context,
       builder: (context) => _MonthPickerDialog(
         selectedMonth: _selectedMonth,
-        monthNames: _monthNames,
-      ),
-    );
+        monthNames: _monthNames));
     
     if (selectedMonth != null) {
       setState(() {
@@ -129,9 +122,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
-          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius),
-        ),
-      ),
+          topRight: Radius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius))),
       child: Column(
         children: [
           // Handle bar
@@ -141,9 +132,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             height: context.fortuneTheme.bottomSheetStyles.handleHeight,
             decoration: BoxDecoration(
               color: context.fortuneTheme.dividerColor,
-              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2),
-            ),
-          ),
+              borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.handleHeight / 2))),
           
           // Header
           Padding(
@@ -157,19 +146,14 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                     '취소',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: context.fortuneTheme.subtitleText
-                    ),
-                  ),
-                ),
+                    ))),
                 Text(
                   '생년월일',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600
-                  ),
-                ),
+                  )),
                 SizedBox(width: context.fortuneTheme.formStyles.inputPadding.horizontal * 3.75), // Balance the layout
-              ],
-            ),
-          ),
+              ])),
           
           // Year and Month selectors
           Padding(
@@ -185,22 +169,16 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                     padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal, vertical: context.fortuneTheme.formStyles.inputPadding.vertical * 0.67),
                     decoration: BoxDecoration(
                       border: Border.all(color: context.fortuneTheme.dividerColor),
-                      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-                    ),
+                      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
                     child: Row(
                       children: [
                         Text(
                           '$_selectedYear년',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600
-                          ),
-                        ),
+                          )),
                         SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
-                        Icon(Icons.arrow_drop_down, size: context.fortuneTheme.formStyles.inputHeight * 0.4),
-                      ],
-                    ),
-                  ),
-                ),
+                        Icon(Icons.arrow_drop_down, size: context.fortuneTheme.formStyles.inputHeight * 0.4)]))),
                 
                 // Month selector
                 InkWell(
@@ -210,25 +188,16 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                     padding: EdgeInsets.symmetric(horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal, vertical: context.fortuneTheme.formStyles.inputPadding.vertical * 0.67),
                     decoration: BoxDecoration(
                       border: Border.all(color: context.fortuneTheme.dividerColor),
-                      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-                    ),
+                      borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
                     child: Row(
                       children: [
                         Text(
                           _monthNames[_selectedMonth - 1],
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600
-                          ),
-                        ),
+                          )),
                         SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
-                        Icon(Icons.arrow_drop_down, size: context.fortuneTheme.formStyles.inputHeight * 0.4),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                        Icon(Icons.arrow_drop_down, size: context.fortuneTheme.formStyles.inputHeight * 0.4)])))])),
           
           SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.25),
           
@@ -244,12 +213,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                   day,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: day == '일' ? AppColors.error : (day == '토' ? AppColors.primary : null),
-                  ),
-                ),
-              )).toList(),
-            ),
-          ),
+                    color: day == '일' ? AppColors.error : (day == '토' ? AppColors.primary : null))))).toList())),
           
           SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 0.625),
           
@@ -262,8 +226,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                   crossAxisCount: 7,
                   childAspectRatio: 1,
                   crossAxisSpacing: 0,
-                  mainAxisSpacing: 0,
-                ),
+                  mainAxisSpacing: 0),
                 itemCount: days.length,
                 itemBuilder: (context, index) {
                   final date = days[index];
@@ -294,8 +257,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight * 0.4),
                         border: isToday && !isSelected
                             ? Border.all(color: Theme.of(context).primaryColor, width: context.fortuneTheme.formStyles.focusBorderWidth)
-                            : null,
-                      ),
+                            : null),
                       alignment: Alignment.center,
                       child: Text(
                         '${date.day}',
@@ -308,14 +270,8 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                                   : isSaturday 
                                       ? AppColors.primary 
                                       : null
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+                        ))));
+                }))),
           
           // Selected date display and confirm button
           Container(
@@ -323,9 +279,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
             decoration: BoxDecoration(
               color: context.fortuneTheme.cardBackground,
               border: Border(
-                top: BorderSide(color: context.fortuneTheme.dividerColor),
-              ),
-            ),
+                top: BorderSide(color: context.fortuneTheme.dividerColor))),
             child: Column(
               children: [
                 Text(
@@ -333,8 +287,7 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: Theme.of(context).primaryColor
-                  ),
-                ),
+                  )),
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 SizedBox(
                   width: double.infinity,
@@ -345,24 +298,13 @@ class _CustomCalendarPickerState extends State<CustomCalendarPicker> {
                       backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight / 2),
-                      ),
-                      elevation: 0,
-                    ),
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputHeight / 2)),
+                      elevation: 0),
                     child: Text(
                       '확인',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                      ))))]))]));
   }
 }
 
@@ -375,8 +317,7 @@ class _YearPickerDialog extends StatelessWidget {
   const _YearPickerDialog({
     required this.selectedYear,
     required this.minYear,
-    required this.maxYear,
-  });
+    required this.maxYear});
 
   @override
   Widget build(BuildContext context) {
@@ -395,9 +336,7 @@ class _YearPickerDialog extends StatelessWidget {
               padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal),
               child: Text(
                 '년도 선택',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
+                style: Theme.of(context).textTheme.titleLarge)),
             Expanded(
               child: ListView.builder(
                 itemCount: years.length,
@@ -411,18 +350,10 @@ class _YearPickerDialog extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: isSelected ? FontWeight.bold : null,
                         color: isSelected ? Theme.of(context).primaryColor : null
-                      ),
-                    ),
+                      )),
                     onTap: () => Navigator.of(context).pop(year),
-                    selected: isSelected,
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    selected: isSelected);
+                }))])));
   }
 }
 
@@ -433,8 +364,7 @@ class _MonthPickerDialog extends StatelessWidget {
   
   const _MonthPickerDialog({
     required this.selectedMonth,
-    required this.monthNames,
-  });
+    required this.monthNames});
 
   @override
   Widget build(BuildContext context) {
@@ -448,9 +378,7 @@ class _MonthPickerDialog extends StatelessWidget {
               padding: EdgeInsets.all(context.fortuneTheme.formStyles.inputPadding.horizontal),
               child: Text(
                 '월 선택',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
+                style: Theme.of(context).textTheme.titleLarge)),
             Expanded(
               child: ListView.builder(
                 itemCount: monthNames.length,
@@ -464,17 +392,9 @@ class _MonthPickerDialog extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: isSelected ? FontWeight.bold : null,
                         color: isSelected ? Theme.of(context).primaryColor : null
-                      ),
-                    ),
+                      )),
                     onTap: () => Navigator.of(context).pop(month),
-                    selected: isSelected,
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    selected: isSelected);
+                }))])));
   }
 }

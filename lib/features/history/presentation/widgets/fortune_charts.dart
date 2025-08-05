@@ -13,8 +13,7 @@ class CategoryPieChart extends StatelessWidget {
   const CategoryPieChart({
     Key? key,
     required this.history,
-    required this.fontScale,
-  }) : super(key: key);
+    required this.fontScale}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +33,7 @@ class CategoryPieChart extends StatelessWidget {
       AppColors.secondary,
       AppColors.success,
       AppColors.warning,
-      AppColors.error,
-    ];
+      AppColors.error];
     
     return Container(
       height: 300,
@@ -46,9 +44,7 @@ class CategoryPieChart extends StatelessWidget {
             '운세 유형별 분포',
             style: TextStyle(
               fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: Row(
@@ -68,16 +64,11 @@ class CategoryPieChart extends StatelessWidget {
                           titleStyle: TextStyle(
                             fontSize: 12 * fontScale,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                          color: colors[index % colors.length],
-                        );
+                            color: Colors.white),
+                          color: colors[index % colors.length]);
                       }).toList(),
                       sectionsSpace: 2,
-                      centerSpaceRadius: 40,
-                    ),
-                  ),
-                ),
+                      centerSpaceRadius: 40))),
                 const SizedBox(width: 16),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -95,27 +86,13 @@ class CategoryPieChart extends StatelessWidget {
                             height: 16,
                             decoration: BoxDecoration(
                               color: colors[index % colors.length],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
+                              borderRadius: BorderRadius.circular(4))),
                           const SizedBox(width: 8),
                           Text(
                             category.key,
                             style: TextStyle(
-                              fontSize: 14 * fontScale,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                              fontSize: 14 * fontScale))]));
+                  }).toList())]))]));
   }
 
   Map<String, int> _groupHistoryByCategory(List<FortuneHistory> history) {
@@ -137,8 +114,7 @@ class MonthlyTrendChart extends StatelessWidget {
   const MonthlyTrendChart({
     Key? key,
     required this.history,
-    required this.fontScale,
-  }) : super(key: key);
+    required this.fontScale}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -162,9 +138,7 @@ class MonthlyTrendChart extends StatelessWidget {
             '월별 운세 조회 추이',
             style: TextStyle(
               fontSize: 18 * fontScale,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Expanded(
             child: LineChart(
@@ -176,18 +150,14 @@ class MonthlyTrendChart extends StatelessWidget {
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: theme.colorScheme.outline.withOpacity(0.1),
-                      strokeWidth: 1,
-                    );
-                  },
-                ),
+                      strokeWidth: 1);
+                  }),
                 titlesData: FlTitlesData(
                   show: true,
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
+                    sideTitles: SideTitles(showTitles: false)),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
+                    sideTitles: SideTitles(showTitles: false)),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -197,14 +167,10 @@ class MonthlyTrendChart extends StatelessWidget {
                             months[value.toInt()],
                             style: TextStyle(
                               color: theme.colorScheme.onSurface.withOpacity(0.6),
-                              fontSize: 12,
-                            ),
-                          );
+                              fontSize: 12));
                         }
                         return const Text('');
-                      },
-                    ),
-                  ),
+                      })),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -213,24 +179,15 @@ class MonthlyTrendChart extends StatelessWidget {
                           value.toInt().toString(),
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withOpacity(0.6),
-                            fontSize: 12,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                            fontSize: 12));
+                      }))),
                 borderData: FlBorderData(
                   show: true,
                   border: Border(
                     bottom: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
+                      color: theme.colorScheme.outline.withOpacity(0.2)),
                     left: BorderSide(
-                      color: theme.colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                ),
+                      color: theme.colorScheme.outline.withOpacity(0.2)))),
                 minX: 0,
                 maxX: months.length - 1,
                 minY: 0,
@@ -251,22 +208,11 @@ class MonthlyTrendChart extends StatelessWidget {
                           radius: 4,
                           color: theme.colorScheme.primary,
                           strokeWidth: 2,
-                          strokeColor: theme.colorScheme.surface,
-                        );
-                      },
-                    ),
+                          strokeColor: theme.colorScheme.surface);
+                      }),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: theme.colorScheme.primary.withOpacity(0.1),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                      color: theme.colorScheme.primary.withOpacity(0.1)))])))]));
   }
 
   Map<String, int> _groupHistoryByMonth(List<FortuneHistory> history) {

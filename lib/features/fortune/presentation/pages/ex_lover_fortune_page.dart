@@ -36,40 +36,36 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
   bool _readyForNewRelationship = false;
   
   final Map<String, String> _durations = {
-    'short': '6개월 미만',
-    'medium': '6개월-1년',
-    'long': '1-3년',
-    'verylong': '3년 이상',
-  };
+    'short', '6개월 미만',
+    'medium', '6개월-1년',
+    'long', '1-3년',
+    'verylong', '3년 이상'};
   
   final Map<String, String> _breakupReasons = {
-    'distance': '물리적/정서적 거리',
-    'values': '가치관 차이',
-    'timing': '시기가 맞지 않음',
-    'cheating': '신뢰 문제',
-    'family': '가족 반대',
-    'growth': '서로 다른 성장',
-    'communication': '소통 부재',
-    'other': '기타',
-  };
+    'distance', '물리적/정서적 거리',
+    'values', '가치관 차이',
+    'timing', '시기가 맞지 않음',
+    'cheating', '신뢰 문제',
+    'family', '가족 반대',
+    'growth', '서로 다른 성장',
+    'communication', '소통 부재',
+    'other', '기타'};
   
   final Map<String, String> _timePeriods = {
-    'recent': '1개월 미만',
-    'short': '1-3개월',
-    'medium': '3-6개월',
-    'long': '6개월-1년',
-    'verylong': '1년 이상',
-  };
+    'recent', '1개월 미만',
+    'short', '1-3개월',
+    'medium', '3-6개월',
+    'long', '6개월-1년',
+    'verylong', '1년 이상'};
   
   final Map<String, String> _feelings = {
-    'miss': '그리움',
-    'anger': '분노/원망',
-    'sadness': '슬픔',
-    'relief': '안도감',
-    'indifferent': '무덤덤',
-    'grateful': '감사함',
-    'confused': '혼란스러움',
-  };
+    'miss', '그리움',
+    'anger', '분노/원망',
+    'sadness', '슬픔',
+    'relief', '안도감',
+    'indifferent', '무덤덤',
+    'grateful', '감사함',
+    'confused', '혼란스러움'};
   
   final List<String> _lessons = [
     '소통의 중요성',
@@ -80,15 +76,13 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
     '양보와 이해',
     '독립성 유지',
     '감정 표현',
-    '성장의 필요성',
-  ];
+    '성장의 필요성'];
   
   final Map<String, String> _currentStatuses = {
-    'single': '싱글',
-    'dating': '새로운 사람과 연애 중',
-    'healing': '치유 중',
-    'confused': '혼란스러운 상태',
-  };
+    'single', '싱글',
+    'dating', '새로운 사람과 연애 중',
+    'healing', '치유 중',
+    'confused', '혼란스러운 상태'};
 
   // User info form state
   final _nameController = TextEditingController();
@@ -129,8 +123,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'gender': _gender,
-      'mbti': null,
-    };
+      'mbti': null};
   }
 
   Widget buildUserInfoForm() {
@@ -143,8 +136,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
         children: [
           Text(
             '기본 정보',
-            style: theme.textTheme.headlineSmall,
-          ),
+            style: theme.textTheme.headlineSmall),
           const SizedBox(height: 16),
           
           // Name Input
@@ -155,10 +147,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+                borderRadius: BorderRadius.circular(12)))),
           const SizedBox(height: 16),
           
           // Birth Date Picker
@@ -168,8 +157,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 context: context,
                 initialDate: _birthDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now());
               if (date != null) {
                 setState(() => _birthDate = date);
               }
@@ -179,9 +167,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 labelText: '생년월일',
                 prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: Text(
                 _birthDate != null
                     ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
@@ -189,11 +175,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-          ),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -202,8 +184,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
             children: [
               Text(
                 '성별',
-                style: theme.textTheme.bodyLarge,
-              ),
+                style: theme.textTheme.bodyLarge),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -213,22 +194,14 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       value: 'male',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
+                      contentPadding: EdgeInsets.zero)),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('여성'),
                       value: 'female',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                      contentPadding: EdgeInsets.zero))])]),
           const SizedBox(height: 16),
           
           // MBTI Selection (Optional)
@@ -238,23 +211,15 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               labelText: 'MBTI (선택)',
               prefixIcon: const Icon(Icons.psychology),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+                borderRadius: BorderRadius.circular(12))),
             items: [
-              'INTJ': 'INTP': 'ENTJ', 'ENTP',
+              'INTJ', 'INTP': 'ENTJ', 'ENTP',
               'INFJ', 'INFP', 'ENFJ', 'ENFP',
               'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-              'ISTP', 'ISFP', 'ESTP', 'ESFP',
-            ].map((mbti) => DropdownMenuItem(
+              'ISTP', 'ISFP', 'ESTP', 'ESFP'].map((mbti) => DropdownMenuItem(
               value: mbti,
-              child: Text(mbti),
-            )).toList(),
-            onChanged: (value) => setState(() => _mbti = value),
-          ),
-        ],
-      ),
-    );
+              child: Text(mbti)).toList(),
+            onChanged: (value) => setState(() => _mbti = value))]));
   }
 
   @override
@@ -290,8 +255,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
       'hasUnresolvedFeelings': _hasUnresolvedFeelings,
       'lessonLearned': _lessonLearned,
       'currentStatus': _currentStatus,
-      'readyForNewRelationship': null,
-    };
+      'readyForNewRelationship': null};
   }
 
   @override
@@ -314,56 +278,44 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 children: [
                   Icon(
                     Icons.history,
-                    color: theme.colorScheme.primary,
-                  ),
+                    color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     '과거 관계 정보',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               const SizedBox(height: 16),
               
               // Relationship Duration
               Text(
                 '교제 기간',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _relationshipDuration,
                 decoration: InputDecoration(
                   hintText: '교제 기간을 선택하세요',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _durations.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _relationshipDuration = value;
                   });
-                },
-              ),
+                }),
               const SizedBox(height: 16),
               
               // Breakup Reason
               Text(
                 '이별 이유',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -386,47 +338,34 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                }).toList()),
               const SizedBox(height: 16),
               
               // Time Since Breakup
               Text(
                 '이별 후 시간',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _timeSinceBreakup,
                 decoration: InputDecoration(
                   hintText: '이별 후 얼마나 지났나요?',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _timePeriods.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _timeSinceBreakup = value;
                   });
-                },
-              ),
-            ],
-          ),
-        ),
+                })])),
         const SizedBox(height: 16),
         
         // Current Feelings
@@ -439,24 +378,18 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 children: [
                   Icon(
                     Icons.favorite_border,
-                    color: theme.colorScheme.primary,
-                  ),
+                    color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     '현재 감정',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               const SizedBox(height: 16),
               
               // Current Feeling
               Text(
                 '전 애인에 대한 현재 감정',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -479,12 +412,8 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       side: BorderSide(
                         color: isSelected
                             ? _getFeelingColor(entry.key)
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                }).toList()),
               const SizedBox(height: 16),
               
               // Contact Status
@@ -492,18 +421,13 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 '아직 연락하고 있나요?',
                 _stillInContact,
                 (value) => setState(() => _stillInContact = value),
-                Icons.chat_bubble_outline,
-              ),
+                Icons.chat_bubble_outline),
               const SizedBox(height: 8),
               _buildSwitchTile(
                 '아직 미련이 남아있나요?',
                 _hasUnresolvedFeelings,
                 (value) => setState(() => _hasUnresolvedFeelings = value),
-                Icons.favorite_outline,
-              ),
-            ],
-          ),
-        ),
+                Icons.favorite_outline)])),
         const SizedBox(height: 16),
         
         // Lessons Learned
@@ -516,22 +440,16 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
-                    color: theme.colorScheme.primary,
-                  ),
+                    color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
                     '배운 점',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               const SizedBox(height: 8),
               Text(
                 '이 관계에서 배운 점을 선택하세요 (복수 선택)',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -558,19 +476,12 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       side: BorderSide(
                         color: isSelected
                             ? Colors.green
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18)
                           : null,
-                      onDeleted: isSelected ? () {} : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
+                      onDeleted: isSelected ? () {} : null));
+                }).toList())])),
         const SizedBox(height: 16),
         
         // Current Status
@@ -581,8 +492,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
             children: [
               Text(
                 '현재 상태',
-                style: theme.textTheme.headlineSmall,
-              ),
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               ...(_currentStatuses.entries.map((entry) {
                 final isSelected = _currentStatus == entry.key;
@@ -599,8 +509,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
-                        horizontal: 16,
-                      ),
+                        horizontal: 16),
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
@@ -616,36 +525,22 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                               setState(() {
                                 _currentStatus = value;
                               });
-                            },
-                          ),
+                            }),
                           Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList()),
+                            style: theme.textTheme.bodyLarge)]))));
+              }).toList(),
               const SizedBox(height: 16),
               _buildSwitchTile(
                 '새로운 연애를 시작할 준비가 되었나요?',
                 _readyForNewRelationship,
                 (value) => setState(() => _readyForNewRelationship = value),
-                Icons.favorite,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                Icons.favorite)]))]);
   }
 
   Color _getFeelingColor(String feeling) {
     switch (feeling) {
-      case 'miss':
-        return Colors.blue;
+      case 'miss': return Colors.blue;
       case 'anger':
         return Colors.red;
       case 'sadness':
@@ -656,10 +551,9 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
         return Colors.grey;
       case 'grateful':
         return Colors.amber;
-      case 'confused':
-        return Colors.purple;
+      case , 'confused': return Colors.purple;
       default:
-        return Colors.grey;
+        return Colors.grey;}
     }
   }
 
@@ -673,15 +567,10 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
-          onChanged: onChanged,
-        ),
-      ],
-    );
+          onChanged: onChanged)]);
   }
 
   @override
@@ -693,9 +582,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
         _buildReunionPossibility(),
         _buildHealingProgress(),
         _buildGrowthInsights(),
-        _buildNewBeginningGuidance(),
-      ],
-    );
+        _buildNewBeginningGuidance()]);
   }
 
   Widget _buildClosureAnalysis() {
@@ -713,15 +600,11 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               children: [
                 Icon(
                   Icons.lock_open_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '정리 상태 분석',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 24),
             Stack(
               alignment: Alignment.center,
@@ -734,44 +617,27 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     strokeWidth: 20,
                     backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      _getClosureColor(closureLevel),
-                    ),
-                  ),
-                ),
+                      _getClosureColor(closureLevel)))),
                 Column(
                   children: [
                     Text(
                       '$closureLevel%',
                       style: theme.textTheme.displayMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _getClosureColor(closureLevel),
-                      ),
-                    ),
+                        color: _getClosureColor(closureLevel))),
                     Text(
                       _getClosureStatus(closureLevel),
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      style: theme.textTheme.bodyLarge)])]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                borderRadius: BorderRadius.circular(12)),
               child: Text(
                 _getClosureAdvice(closureLevel),
                 style: theme.textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                textAlign: TextAlign.center))])));
   }
 
   int _calculateClosureLevel() {
@@ -836,69 +702,47 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               children: [
                 Icon(
                   Icons.loop_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '재회 가능성',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             LinearProgressIndicator(
               value: reunionChance / 100,
               minHeight: 20,
               backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(
-                _getProbabilityColor(reunionChance),
-              ),
-            ),
+                _getProbabilityColor(reunionChance))),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   '재회 가능성',
-                  style: theme.textTheme.bodyLarge,
-                ),
+                  style: theme.textTheme.bodyLarge),
                 Text(
                   '$reunionChance%',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: _getProbabilityColor(reunionChance),
-                  ),
-                ),
-              ],
-            ),
+                    color: _getProbabilityColor(reunionChance)))]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
+                borderRadius: BorderRadius.circular(8)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     '💡 조언',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
                     _getReunionAdvice(reunionChance),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    style: theme.textTheme.bodyMedium)]))])));
   }
 
   int _calculateReunionChance() {
@@ -933,12 +777,11 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
     final theme = Theme.of(context);
     
     final healingStages = [
-      {'stage': '부정': 'completed'},
-      {'stage': '분노': 'completed'},
-      {'stage': '타협': 'completed': _timeSinceBreakup != 'recent'},
-      {'stage': '우울': 'completed': _currentFeeling != 'sadness'},
-      {'stage': '수용', 'completed': _currentFeeling == 'grateful' || _currentFeeling == 'indifferent'},
-    ];
+      {'stage', '부정': 'completed'},
+      {'stage', '분노': 'completed'},
+      {'stage', '타협':  , 'completed': _timeSinceBreakup != 'recent'},
+      {'stage', '우울':  , 'completed': _currentFeeling != 'sadness'},
+      {'stage', '수용', 'completed': _currentFeeling == 'grateful' || _currentFeeling == 'indifferent'}];
     
     return Padding(
       padding: const EdgeInsets.all(16,
@@ -951,15 +794,11 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               children: [
                 Icon(
                   Icons.healing_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '치유 과정',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...healingStages.asMap().entries.map((entry) {
               final index = entry.key;
@@ -978,23 +817,17 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                           shape: BoxShape.circle,
                           color: isCompleted
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                        ),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2)),
                         child: Center(
                           child: isCompleted
                               ? const Icon(
                                   Icons.check,
                                   color: Colors.white,
-                                  size: 20,
-                                ),
+                                  size: 20),
                               : Text(
                                   '${index + 1}',
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                        ),
-                      ),
+                                    color: Colors.white)))),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
@@ -1006,20 +839,11 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                                 fontWeight: FontWeight.bold,
                                 color: isCompleted
                                     ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
-                            ),
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.5))),
                             Text(
                               _getStageDescription(stage['stage'],
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))]),
                   if (!isLast)
                     Container(
                       margin: const EdgeInsets.only(left: 20),
@@ -1027,31 +851,22 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       width: 2,
                       color: isCompleted
                           ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    ),
-                ],
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.1))]);
+            }).toList()])));
   }
 
   String _getStageDescription(String stage) {
     switch (stage) {
-      case '부정':
-        return '이별을 받아들이지 못하는 단계';
+      case '부정': return '이별을 받아들이지 못하는 단계';
       case '분노':
         return '상대방이나 상황에 대한 분노';
       case '타협':
         return '다시 돌아갈 수 있을까 하는 희망';
       case '우울':
         return '상실감과 슬픔을 느끼는 시기';
-      case '수용':
-        return '이별을 받아들이고 앞으로 나아감';
+      case , '수용': return '이별을 받아들이고 앞으로 나아감';
       default:
-        return '';
+        return '';}
     }
   }
 
@@ -1069,23 +884,17 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               children: [
                 Icon(
                   Icons.trending_up_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '성장 포인트',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             if (_lessonLearned.isNotEmpty) ...[
               Text(
                 '당신이 배운 교훈들',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               ..._lessonLearned.map((lesson) => Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -1095,8 +904,7 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                     Icon(
                       Icons.check_circle,
                       size: 20,
-                      color: Colors.green,
-                    ),
+                      color: Colors.green),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Column(
@@ -1105,34 +913,19 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                           Text(
                             lesson,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             _getLessonApplication(lesson),
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              )).toList(),
-            ] else ...[
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])).toList()] else ...[
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Text(
                   '모든 관계는 우리에게 무언가를 가르쳐줍니다. 이 경험에서 배운 점을 찾아보세요.',
-                  style: theme.textTheme.bodyMedium,
-                ),
-              ),
-            ],
+                  style: theme.textTheme.bodyMedium))],
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -1140,11 +933,8 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                 gradient: LinearGradient(
                   colors: [
                     theme.colorScheme.primary.withValues(alpha: 0.1),
-                    theme.colorScheme.secondary.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                borderRadius: BorderRadius.circular(12)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1153,43 +943,29 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                       Icon(
                         Icons.auto_awesome,
                         size: 20,
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
                         '다음 관계를 위한 준비',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 8),
                   Text(
                     _getNextRelationshipAdvice(),
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    style: theme.textTheme.bodyMedium)]))])));
   }
 
   String _getLessonApplication(String lesson) {
     final applications = {
-      '소통의 중요성': '다음 관계에서는 더 열린 마음으로 대화하세요',
-      '자기 자신을 사랑하기': '자존감을 높이고 자신의 가치를 인정하세요',
-      '경계 설정하기': '건강한 관계를 위한 적절한 경계를 만드세요',
-      '신뢰의 가치': '신뢰는 서서히 쌓아가는 것임을 기억하세요',
-      '타이밍의 중요성': '서두르지 말고 적절한 시기를 기다리세요',
-      '양보와 이해': '상대방의 입장에서 생각하는 연습을 하세요',
-      '독립성 유지': '관계 속에서도 자신만의 공간을 지키세요',
-      '감정 표현': '솔직한 감정 표현이 건강한 관계를 만듭니다',
-      '성장의 필요성': '함께 성장할 수 있는 관계를 추구하세요',
-    };
+      '소통의 중요성', '다음 관계에서는 더 열린 마음으로 대화하세요',
+      '자기 자신을 사랑하기', '자존감을 높이고 자신의 가치를 인정하세요',
+      '경계 설정하기', '건강한 관계를 위한 적절한 경계를 만드세요',
+      '신뢰의 가치', '신뢰는 서서히 쌓아가는 것임을 기억하세요',
+      '타이밍의 중요성', '서두르지 말고 적절한 시기를 기다리세요',
+      '양보와 이해', '상대방의 입장에서 생각하는 연습을 하세요',
+      '독립성 유지', '관계 속에서도 자신만의 공간을 지키세요',
+      '감정 표현', '솔직한 감정 표현이 건강한 관계를 만듭니다',
+      '성장의 필요성', '함께 성장할 수 있는 관계를 추구하세요'};
     return applications[lesson] ?? '이 경험을 통해 더 나은 사람이 되세요';
   }
 
@@ -1206,33 +982,26 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
     
     final steps = [
       {
-        'title': '자기 돌봄',
-        'actions': [
+        'title', '자기 돌봄',
+        'actions': [}
           '규칙적인 운동으로 건강 관리',
           '취미 활동으로 자신만의 시간 갖기',
-          '친구들과의 관계 강화',
-        ],
-        'icon': null,
-      },
+          '친구들과의 관계 강화'],
+        'icon': null},
       {
-        'title': '감정 정리',
-        'actions': [
+        'title', '감정 정리',
+        'actions': [}
           '일기 쓰기로 감정 표현',
           '필요하다면 전문가 상담',
-          '명상이나 요가로 마음 안정',
-        ],
-        'icon': null,
-      },
+          '명상이나 요가로 마음 안정'],
+        'icon': null},
       {
-        'title': '새로운 시작',
-        'actions': [
+        'title', '새로운 시작',
+        'actions': [}
           '새로운 사람들과의 만남',
           '관심사 확장하기',
-          '긍정적인 미래 계획 세우기',
-        ],
-        'icon': null,
-      },
-    ];
+          '긍정적인 미래 계획 세우기'],
+        'icon': null}];
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
@@ -1245,25 +1014,19 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
               children: [
                 Icon(
                   Icons.wb_sunny_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '새로운 시작을 위한 가이드',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...steps.map((step) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.3)),
+                  borderRadius: BorderRadius.circular(12)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1273,26 +1036,18 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
-                          topRight: Radius.circular(11),
-                        ),
-                      ),
+                          topRight: Radius.circular(11))),
                       child: Row(
                         children: [
                           Icon(
                             step['icon'],
                             size: 20,
-                            color: theme.colorScheme.primary,
-                          ),
+                            color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
                             step['title'],
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              fontWeight: FontWeight.bold))])),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
@@ -1307,57 +1062,30 @@ class _ExLoverFortunePageState extends BaseFortunePageState<ExLoverFortunePage> 
                                 height: 6,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
+                                  color: theme.colorScheme.primary)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   action as String,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )).toList(),
+                                  style: theme.textTheme.bodyMedium))])).toList()))]))).toList(),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     Colors.amber.withValues(alpha: 0.1),
-                    Colors.orange.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                    Colors.orange.withValues(alpha: 0.1)]),
+                borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
                   Icon(
                     Icons.star,
-                    color: Colors.amber,
-                  ),
+                    color: Colors.amber),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       '모든 끝은 새로운 시작입니다. 과거에 감사하고 미래를 향해 나아가세요.',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                        fontWeight: FontWeight.w500)))]))])));
   }
 }

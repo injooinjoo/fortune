@@ -66,8 +66,7 @@ class AdService {
         }
         
         MobileAds.instance.updateRequestConfiguration(
-          RequestConfiguration(testDeviceIds: testDeviceIds),
-        );
+          RequestConfiguration(testDeviceIds: testDeviceIds));
       }
 
       _isInitialized = true;
@@ -125,8 +124,7 @@ class AdService {
   Future<void> loadBannerAd({
     AdSize adSize = AdSize.banner,
     void Function(Ad)? onAdLoaded,
-    void Function(Ad, LoadAdError)? onAdFailedToLoad,
-  }) async {
+    void Function(Ad, LoadAdError)? onAdFailedToLoad}) async {
     if (!_isInitialized) {
       Logger.warning('AdMob SDK not initialized');
       return;
@@ -151,9 +149,7 @@ class AdService {
         onAdOpened: (ad) => Logger.info('Banner ad opened'),
         onAdClosed: (ad) => Logger.info('Banner ad closed'),
         onAdImpression: (ad) => Logger.info('Banner ad impression'),
-        onAdClicked: (ad) => Logger.info('Banner ad clicked'),
-      ),
-    );
+        onAdClicked: (ad) => Logger.info('Banner ad clicked')));
 
     await _bannerAd!.load();
   }
@@ -161,8 +157,7 @@ class AdService {
   /// Load an interstitial ad
   Future<void> loadInterstitialAd({
     void Function(InterstitialAd)? onAdLoaded,
-    void Function(LoadAdError)? onAdFailedToLoad,
-  }) async {
+    void Function(LoadAdError)? onAdFailedToLoad}) async {
     if (!_isInitialized) {
       Logger.warning('AdMob SDK not initialized');
       return;
@@ -193,16 +188,13 @@ class AdService {
             },
             onAdShowedFullScreenContent: (ad) {
               Logger.info('Interstitial ad showed');
-            },
-          );
+            });
         },
         onAdFailedToLoad: (error) {
           _isInterstitialAdReady = false;
           Logger.error('Interstitial ad failed to load', error);
           onAdFailedToLoad?.call(error);
-        },
-      ),
-    );
+        }));
   }
 
   /// Show an interstitial ad
@@ -217,8 +209,7 @@ class AdService {
   /// Load a rewarded ad
   Future<void> loadRewardedAd({
     void Function(RewardedAd)? onAdLoaded,
-    void Function(LoadAdError)? onAdFailedToLoad,
-  }) async {
+    void Function(LoadAdError)? onAdFailedToLoad}) async {
     if (!_isInitialized) {
       Logger.warning('AdMob SDK not initialized');
       return;
@@ -249,22 +240,18 @@ class AdService {
             },
             onAdShowedFullScreenContent: (ad) {
               Logger.info('Rewarded ad showed');
-            },
-          );
+            });
         },
         onAdFailedToLoad: (error) {
           _isRewardedAdReady = false;
           Logger.error('Rewarded ad failed to load', error);
           onAdFailedToLoad?.call(error);
-        },
-      ),
-    );
+        }));
   }
 
   /// Show a rewarded ad
   Future<void> showRewardedAd({
-    required void Function(Ad ad, RewardItem reward) onUserEarnedReward,
-  }) async {
+    required void Function(Ad ad, RewardItem reward) onUserEarnedReward}) async {
     if (_isRewardedAdReady && _rewardedAd != null) {
       await _rewardedAd!.show(onUserEarnedReward: onUserEarnedReward);
     } else {
@@ -276,8 +263,7 @@ class AdService {
   NativeAd createNativeAd({
     required NativeAdListener listener,
     NativeTemplateStyle? nativeTemplateStyle,
-    TemplateType templateType = TemplateType.medium,
-  }) {
+    TemplateType templateType = TemplateType.medium}) {
     if (!_isInitialized) {
       throw Exception('AdMob SDK not initialized');
     }
@@ -295,25 +281,19 @@ class AdService {
               textColor: AppColors.textPrimaryDark,
               backgroundColor: const material.Color(0xFF4285F4),
               style: NativeTemplateFontStyle.bold,
-              size: 16.0,
-            ),
+              size: 16.0),
             primaryTextStyle: NativeTemplateTextStyle(
               textColor: AppColors.textPrimary.withValues(alpha: 0.87),
               style: NativeTemplateFontStyle.normal,
-              size: 16.0,
-            ),
+              size: 16.0),
             secondaryTextStyle: NativeTemplateTextStyle(
               textColor: AppColors.textPrimary.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
-              size: 14.0,
-            ),
+              size: 14.0),
             tertiaryTextStyle: NativeTemplateTextStyle(
               textColor: AppColors.textPrimary.withValues(alpha: 0.54),
               style: NativeTemplateFontStyle.normal,
-              size: 12.0,
-            ),
-          ),
-    );
+              size: 12.0)));
   }
 
   /// Dispose of ads

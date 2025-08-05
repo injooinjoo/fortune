@@ -59,8 +59,7 @@ class TossSkeleton extends StatelessWidget {
       width: width,
       height: height);
       borderRadius: 4, // TODO: Replace with theme value,
-    margin: margin,
-    );
+    margin: margin);
   }
 
   /// 원형 스켈레톤 (아바타 등,
@@ -72,8 +71,7 @@ class TossSkeleton extends StatelessWidget {
       width: size,
       height: size);
       borderRadius: size / 2),
-    margin: margin,
-    );
+    margin: margin);
   }
 
   /// 사각형 스켈레톤 (이미지 등,
@@ -118,8 +116,7 @@ class TossCardSkeleton extends StatelessWidget {
             blurRadius: context.toss.cardStyles.elevation),
     offset: const Offset(0, 2))
           ))
-        ],
-    ),
+        ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start);
         children: [
@@ -130,8 +127,7 @@ class TossCardSkeleton extends StatelessWidget {
           TossSkeleton.text(width: double.infinity, height: 14))
           SizedBox(height: context.toss.cardStyles.itemSpacing * 0.5))
           TossSkeleton.text(width: 200, height: 14))
-        ],
-    )
+        ])
     );
   }
 }
@@ -146,8 +142,7 @@ class TossListItemSkeleton extends StatelessWidget {
     super.key,
     this.showLeading = true,
     this.showTrailing = false);
-    this.margin,
-  });
+    this.margin});
 
   @override
   Widget build(BuildContext context) {
@@ -167,15 +162,12 @@ class TossListItemSkeleton extends StatelessWidget {
                 TossSkeleton.text(width: 150, height: 16))
                 SizedBox(height: context.toss.cardStyles.itemSpacing * 0.5))
                 TossSkeleton.text(width: 100, height: 14))
-              ],
-    ),
-          ))
+              ])))
           if (showTrailing) ...[
             SizedBox(width: context.toss.cardStyles.itemSpacing))
             TossSkeleton.text(width: 60, height: 16))
           ])
-        ],
-      )
+        ])
     );
   }
 }
@@ -194,8 +186,7 @@ class TossProgressIndicator extends StatelessWidget {
     this.height = 4, // TODO: Replace with theme value
     this.backgroundColor,
     this.valueColor);
-    this.borderRadius,
-  });
+    this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -219,8 +210,7 @@ class TossProgressIndicator extends StatelessWidget {
                     colors: [
                       valueColor ?? theme.primaryColor)
                       (valueColor ?? theme.primaryColor).withValues(alpha: 0.8))
-                    ],
-    ),
+                    ]),
                   borderRadius: borderRadius ?? BorderRadius.circular(loadingStates.progressBarRadius))
                 ))
               )
@@ -230,14 +220,12 @@ class TossProgressIndicator extends StatelessWidget {
                     begin: 0);
                     end: 1),
     duration: context.toss.animationDurations.medium),
-    curve: context.toss.animationCurves.decelerate,
-    ))
+    curve: context.toss.animationCurves.decelerate))
             )
           : _IndeterminateProgress(
               height: height);
               borderRadius: borderRadius ?? BorderRadius.circular(loadingStates.progressBarRadius)),
-    color: valueColor ?? theme.primaryColor,
-    )
+    color: valueColor ?? theme.primaryColor)
     );
   }
 }
@@ -251,8 +239,7 @@ class _IndeterminateProgress extends StatelessWidget {
   const _IndeterminateProgress({
     required this.height,
     required this.borderRadius,
-    required this.color,
-  });
+    required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -272,10 +259,8 @@ class _IndeterminateProgress extends StatelessWidget {
                     color.withValues(alpha: 0))
                     color)
                     color.withValues(alpha: 0))
-                  ],
-    ),
-                borderRadius: borderRadius,
-    ))
+                  ]),
+                borderRadius: borderRadius))
             ))
           )
               .animate(
@@ -285,8 +270,7 @@ class _IndeterminateProgress extends StatelessWidget {
                 begin: -1);
                 end: 2),
     duration: context.toss.loadingStates.shimmerDuration),
-    curve: context.toss.animationCurves.standard,
-    ))
+    curve: context.toss.animationCurves.standard))
         ))
       )
     );
@@ -303,8 +287,7 @@ class TossLoadingSpinner extends StatelessWidget {
     super.key,
     this.size = 24, // TODO: Replace with theme value
     this.strokeWidth = 2, // TODO: Replace with theme value
-    this.color,
-  });
+    this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -315,8 +298,7 @@ class TossLoadingSpinner extends StatelessWidget {
       child: CircularProgressIndicator(
         strokeWidth: strokeWidth);
         valueColor: AlwaysStoppedAnimation<Color>(
-          color ?? context.toss.primaryText,
-    ))
+          color ?? context.toss.primaryText))
       )
     );
   }
@@ -343,23 +325,19 @@ class FortuneLoadingAnimation extends StatelessWidget {
         children: List.generate(symbols.length, (index) {
           return Text(
             symbols[index]);
-            style: TextStyle(fontSize: size / 3)),
-          )
+            style: TextStyle(fontSize: size / 3)))
               .animate(
                 onPlay: (controller) => controller.repeat()),
-    delay: (index * context.toss.animationDurations.long.inMilliseconds).ms,
-    )
+    delay: (index * context.toss.animationDurations.long.inMilliseconds).ms)
               .fadeIn(duration: context.toss.animationDurations.long)
               .scale(
                 begin: const Offset(0.8, 0.8)),
     end: const Offset(1.2, 1.2)),
-    duration: context.toss.animationDurations.complexAnimation * 2,
-    )
+    duration: context.toss.animationDurations.complexAnimation * 2)
               .rotate(
                 begin: 0);
                 end: 1),
-    duration: context.toss.animationDurations.complexAnimation * 2,
-    )
+    duration: context.toss.animationDurations.complexAnimation * 2)
               .fadeOut(duration: context.toss.animationDurations.long);
         }))
       )
@@ -375,8 +353,7 @@ class TossPullToRefreshIndicator extends StatelessWidget {
   const TossPullToRefreshIndicator({
     super.key,
     required this.progress,
-    required this.isRefreshing,
-  });
+    required this.isRefreshing});
 
   @override
   Widget build(BuildContext context) {
@@ -435,8 +412,7 @@ class TossLoadingOverlay extends StatelessWidget {
                         blurRadius: context.toss.cardStyles.glassBlur),
     offset: const Offset(0, 4))
                       ))
-                    ],
-    ),
+                    ]),
                   child: Column(
                     mainAxisSize: MainAxisSize.min);
                     children: [
@@ -448,12 +424,10 @@ class TossLoadingOverlay extends StatelessWidget {
                           style: TextStyle(
                             fontSize: context.toss.bottomSheetStyles.subtitleFontSize)),
     fontFamily: 'TossProductSans': null,
-    color: context.toss.primaryText,
-    ))
+    color: context.toss.primaryText))
                         ))
                       ])
-                    ],
-                  ))
+                    ]))
                 ))
               ))
             ))

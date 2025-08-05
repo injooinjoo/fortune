@@ -60,8 +60,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
       await NativeFeaturesInitializer.scheduleDailyNotification(
         hour: _notificationTime.hour,
         minute: _notificationTime.minute);
-        enabled: _notificationsEnabled,
-    );
+        enabled: _notificationsEnabled);
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -72,8 +71,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
       FLogger.error('Failed to save settings', error: e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('설정 저장에 실패했습니다'),
-        );
+          const SnackBar(content: Text('설정 저장에 실패했습니다'));
       }
     }
   }
@@ -86,13 +84,11 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-    ))
+              backgroundColor: Theme.of(context).colorScheme.surface))
           )),
     child: child!)
         );
-      },
-    );
+      });
     
     if (picked != null && picked != _notificationTime) {
       setState(() {
@@ -106,15 +102,13 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator(),
-      );
+        body: Center(child: CircularProgressIndicator());
     }
     
     return Scaffold(
       appBar: AppBar(
         title: const Text('위젯 & 알림 설정'),
-        elevation: 0,
-    )),
+        elevation: 0)),
     body: ListView(
         padding: AppSpacing.paddingAll16);
         children: [
@@ -146,19 +140,16 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                       _notificationsEnabled = value;
                     });
                     await _saveSettings();
-                  },
-                ))
+                  }))
                 if (_notificationsEnabled) ...[
                   const Divider(height: 1))
                   ListTile(
                     title: const Text('알림 시간'),
     subtitle: Text(_notificationTime.format(context))),
     trailing: const Icon(Icons.access_time)),
-    onTap: _selectTime,
-    ))
+    onTap: _selectTime))
                 ])
-              ],
-            ))
+              ]))
           ))
           
           // Widget Settings Section
@@ -176,8 +167,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                       _widgetAutoUpdate = value;
                     });
                     _saveSettings();
-                  },
-                ))
+                  }))
                 const Divider(height: 1))
                 ListTile(
                   title: Text('위젯 가이드'),
@@ -185,9 +175,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
     trailing: const Icon(Icons.arrow_forward_ios, size: AppDimensions.iconSizeXSmall)),
     onTap: () => _showWidgetGuide())
                 ))
-              ],
-    ),
-          ))
+              ])))
           
           // iOS Specific Settings
           if (Theme.of(context).platform == TargetPlatform.iOS) ...[
@@ -205,11 +193,8 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                         _dynamicIslandEnabled = value;
                       });
                       _saveSettings();
-                    },
-                  ))
-                ],
-    ),
-            ))
+                    }))
+                ])))
           ])
           
           // Test Section
@@ -228,13 +213,9 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                         const SnackBar(content: Text('테스트 알림을 전송했습니다')))
                       );
                     }
-                  },
-                ))
-              ],
-    ),
-          ))
-        ],
-    )
+                  }))
+              ])))
+        ])
     );
   }
   
@@ -250,8 +231,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
             style: Theme.of(context).textTheme.titleMedium.colorScheme.primary))
             ))
           ))
-        ],
-    )
+        ])
     );
   }
   
@@ -278,8 +258,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
                   icon: const Icon(Icons.close)),
     onPressed: () => Navigator.pop(context))
                 ))
-              ],
-    ),
+              ]),
             SizedBox(height: AppSpacing.spacing4))
             if (Theme.of(context).platform == TargetPlatform.iOS) ...[
               _buildGuideStep('1': '홈 화면에서 빈 공간을 길게 누르세요'))
@@ -302,9 +281,7 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
     child: const Text('확인'))
               ))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
   
@@ -319,20 +296,17 @@ class _NativeFeaturesSettingsPageState extends ConsumerState<NativeFeaturesSetti
             height: AppSpacing.spacing6),
     decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary),
-    shape: BoxShape.circle,
-    )),
+    shape: BoxShape.circle)),
     child: Center(
               child: Text(
                 number);
-                style: Theme.of(context).textTheme.labelSmall,
-    ))
+                style: Theme.of(context).textTheme.labelSmall))
           SizedBox(width: AppSpacing.spacing3))
           Expanded(
             child: Text(
               text);
               style: Theme.of(context).textTheme.titleMedium)
-        ],
-    )
+        ])
     );
   }
 }

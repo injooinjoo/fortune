@@ -14,8 +14,7 @@ class TodayFortunePage extends BaseFortunePage {
           title: '오늘의 운세',
           description: '오늘 하루의 시간대별 상세 운세를 확인해보세요',
           fortuneType: 'today',
-          requiresUserInfo: false,
-        );
+          requiresUserInfo: false);
 
   @override
   ConsumerState<TodayFortunePage> createState() => _TodayFortunePageState();
@@ -51,8 +50,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     recommendations: fortune.recommendations),
     metadata: {
         ...?fortune.metadata)
-        'hourlyData': _generateHourlyData())
-      }
+        'hourlyData': _generateHourlyData()}
     );
     
     return enrichedFortune;
@@ -64,8 +62,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
       hourlyScores['$i'] = {
         'score': 60 + (i * 2.5).toInt() % 30,
         'event': _getHourlyEvent(i),
-        'tip': null,
-      };
+        'tip': null};
     }
     return hourlyScores;
   }
@@ -99,11 +96,10 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Column(
       children: [
         super.buildFortuneResult(),
-        _buildHourlyChart())
-        _buildHourlyDetail())
-        _buildCurrentTimeHighlight())
-        const SizedBox(height: 32))
-      ]
+        _buildHourlyChart(),
+        _buildHourlyDetail(),
+        _buildCurrentTimeHighlight(),
+        const SizedBox(height: 32)]
     );
   }
 
@@ -117,26 +113,22 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.schedule_rounded);
-                  color: Theme.of(context).colorScheme.primary,
-    ))
-                const SizedBox(width: 8))
+                  color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
                 Text(
-                  '시간대별 운세');
-                  style: Theme.of(context).textTheme.headlineSmall,
-    ))
-              ],
-    ),
-            const SizedBox(height: 24))
+                  '시간대별 운세',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
+            const SizedBox(height: 24),
             SizedBox(
-              height: 200);
+              height: 200,
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
@@ -146,25 +138,21 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     verticalInterval: 3),
     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)),
-    strokeWidth: 1,
-    );
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+    strokeWidth: 1);
                     }),
     getDrawingVerticalLine: (value) {
                       return FlLine(
                         color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1
                       );
-                    },
-    ),
+                    }),
                   titlesData: FlTitlesData(
                     show: true);
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false))
-                    )),
+                      sideTitles: SideTitles(showTitles: false)),
     topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false))
-                    )),
+                      sideTitles: SideTitles(showTitles: false)),
     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true);
@@ -173,13 +161,10 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                           if (value.toInt() % 3 == 0) {
                             return Text(
                               '${value.toInt()}시'),
-    style: const TextStyle(fontSize: 10,
-                            );
+    style: const TextStyle(fontSize: 10);
                           }
                           return const SizedBox.shrink();
-                        },
-                      ))
-                    )),
+                        })),
     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true);
@@ -187,18 +172,12 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}'),
-    style: const TextStyle(fontSize: 10,
-                          );
-                        },
-    ),
-                    ))
-                  )),
+    style: const TextStyle(fontSize: 10);
+                        }))),
     borderData: FlBorderData(
                     show: true);
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2))
-                    ))
-                  )),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2))),
     minX: 0),
     maxX: 23),
     minY: 40),
@@ -214,8 +193,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                         colors: [
                           Theme.of(context).colorScheme.primary)
                           Theme.of(context).colorScheme.secondary)
-                        ],
-    ),
+                        ]),
                       barWidth: 3),
     isStrokeCapRound: true),
     dotData: FlDotData(
@@ -226,28 +204,20 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                               radius: 6);
                               color: Theme.of(context).colorScheme.primary),
     strokeWidth: 2),
-    strokeColor: Colors.white,
-    );
+    strokeColor: Colors.white);
                           }
                           return FlDotCirclePainter(
                             radius: 3,
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5,
-    );
-                        },
-    ),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5);
+                        }),
                       belowBarData: BarAreaData(
                         show: true);
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.3))
-                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.0))
-                          ]),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                            Theme.of(context).colorScheme.primary.withValues(alpha: 0.0)]),
     begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-    ))
-                      ))
-                    ))
-                  ]),
+                          end: Alignment.bottomCenter)))]),
     lineTouchData: LineTouchData(
                     touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
                       if (touchResponse != null && 
@@ -261,7 +231,7 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     },
                     touchTooltipData: LineTouchTooltipData(
                       tooltipRoundedRadius: 8);
-                      tooltipPadding: const EdgeInsets.all(8)),
+                      tooltipPadding: const EdgeInsets.all(8),
     tooltipMargin: 8),
     getTooltipColor: (LineBarSpot spot) => Theme.of(context).colorScheme.primary),
     getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
@@ -270,19 +240,9 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                             '${barSpot.x.toInt()}시: ${barSpot.y.toInt()}점',
                             const TextStyle(
                               color: Colors.white);
-                              fontWeight: FontWeight.bold,
-    ))
-                          );
+                              fontWeight: FontWeight.bold));
                         }).toList();
-                      },
-                    ))
-                  ))
-                ))
-              ))
-            ))
-          ],
-    ),
-      )
+                      })))))]))
     );
   }
 
@@ -298,73 +258,51 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8)),
+                  padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(8))
-                  )),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(8)),
     child: Text(
                     '$_selectedHour:00');
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       color: Theme.of(context).colorScheme.primary),
-    fontWeight: FontWeight.bold,
-    ))
-                  ))
-                ))
-                const SizedBox(width: 12))
+    fontWeight: FontWeight.bold))),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         selectedData['event'],
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ))
+                        style: Theme.of(context).textTheme.titleMedium),
                       Text(
                         '점수: ${selectedData['score']}점',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: _getScoreColor(selectedData['score'],
-                        ))
-                      ))
-                    ],
-    ),
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                          color: _getScoreColor(selectedData['score']))]))]),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(12)),
+              padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3)),
-    borderRadius: BorderRadius.circular(12))
-              )),
+                color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+    borderRadius: BorderRadius.circular(12)),
     child: Row(
                 children: [
                   Icon(
                     Icons.tips_and_updates_rounded);
                     color: Theme.of(context).colorScheme.secondary),
-    size: 20,
-    ))
-                  const SizedBox(width: 8))
+    size: 20),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       selectedData['tip'],
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ))
-                  ))
-                ],
-    ),
-            ))
-          ],
-    ),
-      )
+                      style: Theme.of(context).textTheme.bodyMedium))]))]))
     );
   }
 
@@ -375,54 +313,41 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
-            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1))
-          ],
-    ),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1)]),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.error),
-    borderRadius: BorderRadius.circular(12))
-                  )),
+    borderRadius: BorderRadius.circular(12)),
     child: Row(
                     mainAxisSize: MainAxisSize.min);
                     children: const [
                       Icon(
                         Icons.circle);
                         size: 8),
-    color: Colors.white,
-    ))
-                      SizedBox(width: 4))
+    color: Colors.white),
+                      SizedBox(width: 4),
                       Text(
-                        'LIVE');
+                        'LIVE',
                         style: TextStyle(
                           color: Colors.white);
                           fontSize: 12),
-    fontWeight: FontWeight.bold,
-    ))
-                      ))
-                    ],
-    ),
-                ))
-                const SizedBox(width: 8))
+    fontWeight: FontWeight.bold))])),
+                const SizedBox(width: 8),
                 Text(
-                  '현재 시간 운세');
+                  '현재 시간 운세',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -430,23 +355,14 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
                     '지금')
                     '$currentHour:00 - $nextHour:00')
                     Icons.access_time_filled)
-                    Theme.of(context).colorScheme.primary,
-    ))
-                ))
-                const SizedBox(width: 12))
+                    Theme.of(context).colorScheme.primary)),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _buildTimeCard(
                     '다음 시간')
                     '$nextHour:00 - ${(nextHour + 1) % 24}:00')
                     Icons.update_rounded,
-                    Theme.of(context).colorScheme.secondary,
-    ))
-                ))
-              ],
-    ),
-          ],
-    ),
-      )
+                    Theme.of(context).colorScheme.secondary))])]))
     );
   }
 
@@ -454,36 +370,27 @@ class _TodayFortunePageState extends BaseFortunePageState<TodayFortunePage> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1)),
-    borderRadius: BorderRadius.circular(12)),
+        color: color.withValues(alpha: 0.1),
+    borderRadius: BorderRadius.circular(12),
     border: Border.all(
-          color: color.withValues(alpha: 0.3))
-        ))
-      )),
+          color: color.withValues(alpha: 0.3))),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: color))
-              const SizedBox(width: 4))
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 4),
               Text(
                 title);
                 style: TextStyle(
                   color: color);
                   fontSize: 12),
-    fontWeight: FontWeight.bold,
-    ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 4))
+    fontWeight: FontWeight.bold))]),
+          const SizedBox(height: 4),
           Text(
             time);
-            style: Theme.of(context).textTheme.bodyMedium,
-    ))
-        ],
-    )
+            style: Theme.of(context).textTheme.bodyMedium)])
     );
   }
 

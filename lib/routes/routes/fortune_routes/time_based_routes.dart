@@ -20,8 +20,7 @@ final timeBasedRoutes = [
       if (periodParam != null) {
         initialPeriod = fortune_pages.TimePeriod.values.firstWhere(
           (p) => p.value == periodParam,
-          orElse: () => fortune_pages.TimePeriod.today,
-        );
+          orElse: () => fortune_pages.TimePeriod.today);
       }
       
       // Pass extra data to the page
@@ -29,10 +28,8 @@ final timeBasedRoutes = [
       
       return fortune_pages.TimeBasedFortunePage(
         initialPeriod: initialPeriod ?? fortune_pages.TimePeriod.today,
-        initialParams: extra,
-      );
-    },
-  ),
+        initialParams: extra);
+    }),
   
   // Time-based redirect (for backward compatibility)
   GoRoute(
@@ -44,50 +41,43 @@ final timeBasedRoutes = [
         return '/fortune/time?period=$tabParam';
       }
       return '/fortune/time';
-    },
-  ),
+    }),
   
   // Hourly
   GoRoute(
     path: 'hourly',
     name: 'fortune-hourly',
-    builder: (context, state) => const fortune_pages.HourlyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.HourlyFortunePage()),
   
   // Daily
   GoRoute(
     path: 'daily',
     name: 'fortune-daily',
-    builder: (context, state) => const fortune_pages.DailyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.DailyFortunePage()),
   
   // Today
   GoRoute(
     path: 'today',
     name: 'fortune-today',
-    builder: (context, state) => const fortune_pages.TodayFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.TodayFortunePage()),
   
   // Tomorrow
   GoRoute(
     path: 'tomorrow',
     name: 'fortune-tomorrow',
-    builder: (context, state) => const fortune_pages.TomorrowFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.TomorrowFortunePage()),
   
   // Weekly
   GoRoute(
     path: 'weekly',
     name: 'fortune-weekly',
-    builder: (context, state) => const fortune_pages.WeeklyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.WeeklyFortunePage()),
   
   // Monthly
   GoRoute(
     path: 'monthly',
     name: 'fortune-monthly',
-    builder: (context, state) => const fortune_pages.MonthlyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.MonthlyFortunePage()),
   
   // Yearly
   GoRoute(
@@ -97,10 +87,8 @@ final timeBasedRoutes = [
       final extra = state.extra as Map<String, dynamic>?;
       return fortune_pages.TimeBasedFortunePage(
         initialPeriod: fortune_pages.TimePeriod.yearly,
-        initialParams: extra,
-      );
-    },
-  ),
+        initialParams: extra);
+    }),
   
   // New Year
   GoRoute(
@@ -110,8 +98,5 @@ final timeBasedRoutes = [
       final extra = state.extra as Map<String, dynamic>?;
       return fortune_pages.TimeBasedFortunePage(
         initialPeriod: fortune_pages.TimePeriod.yearly,
-        initialParams: extra,
-      );
-    },
-  ),
-];
+        initialParams: extra);
+    })];

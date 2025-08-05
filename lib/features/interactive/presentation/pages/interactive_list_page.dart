@@ -14,58 +14,49 @@ class InteractiveListPage extends StatelessWidget {
         subtitle: '오늘의 행운 메시지를 확인해보세요',
         icon: Icons.cookie_outlined,
         route: '/interactive/fortune-cookie',
-        isAvailable: true,
-      ),
+        isAvailable: true),
       _InteractiveFeature(
         title: '꿈 해몽',
         subtitle: '꿈에 숨겨진 의미를 해석해드립니다',
         icon: Icons.bedtime_outlined,
         route: '/interactive/dream',
-        isAvailable: true,
-      ),
+        isAvailable: true),
       _InteractiveFeature(
         title: 'AI 관상',
         subtitle: 'AI가 분석하는 당신의 얼굴 운세',
         icon: Icons.face_retouching_natural,
         route: '/interactive/face-reading',
-        isAvailable: false,
-      ),
+        isAvailable: false),
       _InteractiveFeature(
         title: '심리 테스트',
         subtitle: '다양한 심리 테스트로 자신을 알아보세요',
         icon: Icons.psychology_outlined,
         route: '/interactive/psychology-test',
-        isAvailable: true,
-      ),
+        isAvailable: true),
       _InteractiveFeature(
         title: '태몽',
         subtitle: '태몽의 의미를 해석해드립니다',
         icon: Icons.child_care_outlined,
         route: '/interactive/taemong',
-        isAvailable: false,
-      ),
+        isAvailable: false),
       _InteractiveFeature(
         title: '타로카드',
         subtitle: '타로카드로 보는 오늘의 운세',
         icon: Icons.style_outlined,
         route: '/interactive/tarot',
-        isAvailable: true,
-      ),
+        isAvailable: true),
       _InteractiveFeature(
         title: '걱정 염주',
         subtitle: '고민을 털어놓고 마음의 평화를 찾으세요',
         icon: Icons.radio_button_checked_outlined,
         route: '/interactive/worry-bead',
-        isAvailable: true,
-      ),
+        isAvailable: true),
       _InteractiveFeature(
         title: '꿈 일기',
         subtitle: '꿈을 기록하고 AI가 해석해드려요',
         icon: Icons.nights_stay_outlined,
         route: '/interactive/dream-journal',
-        isAvailable: true,
-      ),
-    ];
+        isAvailable: true)];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -74,8 +65,7 @@ class InteractiveListPage extends StatelessWidget {
           children: [
             const AppHeader(
               title: '인터랙티브',
-              showBackButton: true,
-            ),
+              showBackButton: true),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -84,20 +74,12 @@ class InteractiveListPage extends StatelessWidget {
                     crossAxisCount: 2,
                     childAspectRatio: 1.2,
                     crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
+                    mainAxisSpacing: 12),
                   itemCount: interactiveFeatures.length,
                   itemBuilder: (context, index) {
                     final feature = interactiveFeatures[index];
                     return _InteractiveFeatureCard(feature: feature);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  })))])));
   }
 }
 
@@ -113,16 +95,14 @@ class _InteractiveFeature {
     required this.subtitle,
     required this.icon,
     required this.route,
-    required this.isAvailable,
-  });
+    required this.isAvailable});
 }
 
 class _InteractiveFeatureCard extends StatelessWidget {
   final _InteractiveFeature feature;
 
   const _InteractiveFeatureCard({
-    required this.feature,
-  });
+    required this.feature});
 
   @override
   Widget build(BuildContext context) {
@@ -140,8 +120,7 @@ class _InteractiveFeatureCard extends StatelessWidget {
               size: 36,
               color: feature.isAvailable
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
             const SizedBox(height: 8),
             Text(
               feature.title,
@@ -149,41 +128,28 @@ class _InteractiveFeatureCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 color: feature.isAvailable
                     ? theme.colorScheme.onSurface
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-              textAlign: TextAlign.center,
-            ),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+              textAlign: TextAlign.center),
             const SizedBox(height: 4),
             Text(
               feature.subtitle,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: feature.isAvailable
                     ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              ),
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
               textAlign: TextAlign.center,
               maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+              overflow: TextOverflow.ellipsis),
             if (!feature.isAvailable) ...[
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                  borderRadius: BorderRadius.circular(12)),
                 child: Text(
                   '준비중',
                   style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5))))]])));
   }
 }

@@ -14,8 +14,7 @@ class CustomErrorWidget extends StatelessWidget {
     required this.message,
     this.details,
     this.onRetry,
-    this.icon = Icons.error_outline,
-  }));
+    this.icon = Icons.error_outline}));
 
   @override
   Widget build(BuildContext context) {
@@ -32,35 +31,27 @@ class CustomErrorWidget extends StatelessWidget {
               padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
                 color: colorScheme.errorContainer.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: Icon(
                 icon,
                 size: 64,
-                color: colorScheme.error,
-              ),
-            ),
+                color: colorScheme.error)),
             SizedBox(height: AppSpacing.spacing6),
             Text(
               message,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
+                fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center),
             if (details != null) ...[
               SizedBox(height: AppSpacing.spacing2),
               Text(
                 details!,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                  color: colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
                 maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ]
+                overflow: TextOverflow.ellipsis)]
             if (onRetry != null) ...[
               SizedBox(height: AppSpacing.spacing6),
               FilledButton.icon(
@@ -69,13 +60,6 @@ class CustomErrorWidget extends StatelessWidget {
                 label: const Text('다시 시도'),
                 style: FilledButton.styleFrom(
                   backgroundColor: colorScheme.error,
-                  foregroundColor: colorScheme.onError,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+                  foregroundColor: colorScheme.onError))]])));
   }
 }

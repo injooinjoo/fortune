@@ -10,8 +10,7 @@ class TraditionalFortuneResultPage extends ConsumerStatefulWidget {
   
   const TraditionalFortuneResultPage({
     super.key,
-    required this.fortuneData),
-});
+    required this.fortuneData)});
 
   @override
   ConsumerState<TraditionalFortuneResultPage> createState() => _TraditionalFortuneResultPageState();
@@ -40,8 +39,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
     end: Alignment.bottomCenter),
                   colors: [
               Color(0xFFEF4444).withValues(alpha: 0.1),
-              AppColors.background,
-          ),
+              AppColors.background),
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
@@ -62,8 +60,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       // Traditional pattern overlay
                       Positioned.fill(
                         child: CustomPaint(
-                          painter: TraditionalPatternPainter(),
-                      ),
+                          painter: TraditionalPatternPainter()),
                       Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -71,8 +68,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                             Icon(
                               Icons.auto_awesome_rounded),
                   size: 60),
-                  color: Colors.white,
-    ).animate()
+                  color: Colors.white).animate()
                   .scale(delay: 300.ms, duration: 600.ms)
                               .fade(),
                             const SizedBox(height: 16),
@@ -81,15 +77,11 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold),
-                  color: Colors.white,
-    )).animate()
+                  color: Colors.white),.animate()
                   .fadeIn(delay: 500.ms, duration: 600.ms)
-                              .slideY(begin: 0.2, end: 0),
-                      ),
-                ),
+                              .slideY(begin: 0.2, end: 0))),
                 title: const Text('전통운세 종합'),
-                centerTitle: true,
-              ),
+                centerTitle: true),
             
             SliverPadding(
               padding: const EdgeInsets.all(16),
@@ -157,9 +149,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   .fadeIn(delay: 800.ms, duration: 500.ms)
                         .slideY(begin: 0.1, end: 0),
                   
-                  const SizedBox(height: 32)),
-            ),
-      ));
+                  const SizedBox(height: 32))),;
 }
 
   Widget _buildGreetingCard(String greeting) {
@@ -179,10 +169,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 fontSize: 16,
                 height: 1.6),
                   color: AppColors.textPrimary),
-              textAlign: TextAlign.center,
-            ),
-      
-    );
+              textAlign: TextAlign.center));
 }
 
   Widget _buildTodayThemeCard(Map<String, dynamic> theme) {
@@ -215,16 +202,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     '오늘의 주제'),
                   style: TextStyle(
                       fontSize: 14),
-                  color: AppColors.textSecondary,
-    ),
+                  color: AppColors.textSecondary),
                   Text(
                     theme['title'] ?? ''$1',
                   style: TextStyle(
                       fontSize: 18,
     fontWeight: FontWeight.bold),
-                  color: _getElementColor(theme['element'] ?? '화'),
-                  ),
-            ),
+                  color: _getElementColor(theme['element'] ?? '화'))),
         initiallyExpanded: _expandedSections['todayTheme'],
     onExpansionChanged: (expanded) {
           setState(() {
@@ -242,8 +226,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 15,
     height: 1.6),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
                 if (theme['hexagram'] != null) ...[
                   const SizedBox(height: 16),
                   Container(
@@ -252,16 +235,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       color: AppColors.surface),
                   borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: AppColors.divider,
-    ),
+                        color: AppColors.divider),
                     child: Row(
                       children: [
                         Text(
                           theme['hexagram']['symbol'] ?? '☰'),
                   style: TextStyle(
                             fontSize: 32),
-                  color: _getElementColor(theme['element'] ?? '화'),
-                        ),
+                  color: _getElementColor(theme['element'] ?? '화')),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -272,20 +253,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                                   fontSize: 16,
     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
                               const SizedBox(height: 4),
                               Text(
                                 theme['hexagram']['meaning'] ?? ''$1',
                   style: TextStyle(
                                   fontSize: 14,
-    color: AppColors.textSecondary,
-    ),
-                          ),
-                    ),
-            ),
-      
-    );
+    color: AppColors.textSecondary)))));
 }
 
   Widget _buildCoreReadingCard(Map<String, dynamic> reading) {
@@ -301,17 +275,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               child: Icon(
                 Icons.insights_rounded),
                   color: Color(0xFFEF4444),
-                size: 24,
-              ),
+                size: 24),
             const SizedBox(width: 12),
             Text(
               '핵심 운세 분석',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         initiallyExpanded: _expandedSections['coreReading'],
         onExpansionChanged: (expanded) {
           setState(() {
@@ -361,20 +332,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                               style: TextStyle(
                                 fontSize: 16),
                   fontWeight: FontWeight.bold),
-                  color: Color(0xFFEF4444),
-                            ),
+                  color: Color(0xFFEF4444)),
                         const SizedBox(height: 12),
                         Text(
                           reading['synthesis'],
                           style: TextStyle(
                             fontSize: 15,
                             height: 1.6),
-                  color: AppColors.textPrimary,
-    ),
-                    ),
-            ),
-      
-    );
+                  color: AppColors.textPrimary))));
 }
 
   Widget _buildSajuSection(Map<String, dynamic> saju) {
@@ -393,27 +358,24 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         const SizedBox(height: 12),
         
         // Four Pillars
         Row(
           children: [
-            Expanded(child: _buildPillarCard('년주': saju['yearPillar'],
+            Expanded(child: _buildPillarCard('년주', saju['yearPillar'],
             const SizedBox(width: 8,
-            Expanded(child: _buildPillarCard('월주': saju['monthPillar'],
+            Expanded(child: _buildPillarCard('월주', saju['monthPillar'],
             const SizedBox(width: 8,
-            Expanded(child: _buildPillarCard('일주': saju['dayPillar'],
+            Expanded(child: _buildPillarCard('일주', saju['dayPillar'],
             const SizedBox(width: 8,
-            Expanded(child: _buildPillarCard('시주': saju['hourPillar'])),
+            Expanded(child: _buildPillarCard('시주', saju['hourPillar']),
         
         // Element Balance
         if (saju['balance'] != null) ...[
           const SizedBox(height: 16),
-          _buildElementBalance(saju['balance'],
-    );
+          _buildElementBalance(saju['balance']);
 }
 
   Widget _buildPillarCard(String title, Map<String, dynamic>? pillar) {
@@ -425,28 +387,25 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
         color: AppColors.surface),
                   borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.divider,
-    ),
+          color: AppColors.divider),
       child: Column(
         children: [
           Text(
             title),
                   style: TextStyle(
               fontSize: 12),
-                  color: AppColors.textSecondary,
-    ),
+                  color: AppColors.textSecondary),
           const SizedBox(height: 4),
           Text(
             '${pillar['stem'] ?? ''}${pillar['branch'] ?? ''}'),
                   style: TextStyle(
               fontSize: 16,
     fontWeight: FontWeight.bold),
-                  color: _getElementColor(pillar['element'] ?? ''$1',
-          ));
+                  color: _getElementColor(pillar['element'] ?? ''$1'),;
 }
 
   Widget _buildElementBalance(Map<String, dynamic> balance) {
-    final elements = ['wood': 'fire': 'earth': 'metal': 'water'];
+    final elements = \['['wood', 'fire', 'earth', 'metal': 'water'];}
     final elementNames = ['목', '화', '토', '금', '수'];
     final elementColors = [
       Color(0xFF4CAF50,
@@ -463,8 +422,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
           style: TextStyle(
             fontSize: 14),
                   fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
         const SizedBox(height: 8),
         ...List.generate(elements.length, (index) {
           final element = elements[index];
@@ -480,9 +438,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     style: TextStyle(
                       fontSize: 14),
                   fontWeight: FontWeight.bold),
-                  color: elementColors[index],
-    ),
-                ),
+                  color: elementColors[index])),
                 const SizedBox(width: 8),
                 Expanded(
                   child: ClipRRect(
@@ -491,18 +447,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       value: value / 100,
                       minHeight: 8),
                   backgroundColor: elementColors[index].withValues(alpha: 0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(elementColors[index]),
-                  ),
+                      valueColor: AlwaysStoppedAnimation<Color>(elementColors[index])),
                 const SizedBox(width: 8),
                 Text(
                   '${value.toInt()}%',
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
-    ),
-            ));
-},
-    );
+                    color: AppColors.textSecondary)),;
+});
 }
 
   Widget _buildTojeongSection(Map<String, dynamic> tojeong) {
@@ -521,9 +473,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(16),
@@ -540,15 +490,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                       fontSize: 16,
     fontWeight: FontWeight.bold),
-                  color: Color(0xFF8B5CF6),
-                  ),
+                  color: Color(0xFF8B5CF6)),
               const SizedBox(height: 8),
               Text(
                 tojeong['combinedMeaning'] ?? ''$1',
                   style: TextStyle(
                   fontSize: 14,
-    color: AppColors.textPrimary,
-    ),
+    color: AppColors.textPrimary),
               if (tojeong['monthlyMessage'] != null) ...[
                 const SizedBox(height: 12),
                 Text(
@@ -556,18 +504,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
                 const SizedBox(height: 4),
                 Text(
                   tojeong['monthlyMessage'],
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5),
-                  color: AppColors.textPrimary,
-    ),
-          ))
-    );
+                  color: AppColors.textPrimary)));
 }
 
   Widget _buildLifeAspectsCard(List<dynamic> aspects) {
@@ -583,17 +527,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               child: Icon(
                 Icons.category_rounded),
                   color: Color(0xFF3B82F6),
-                size: 24,
-              ),
+                size: 24),
             const SizedBox(width: 12),
             Text(
               '분야별 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -602,9 +543,8 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 final aspectMap = aspect as Map<String, dynamic>;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
-                  child: _buildAspectItem(aspectMap));
-}).toList(),
-          ));
+                  child: _buildAspectItem(aspectMap),;
+}).toList()),;
 }
 
   Widget _buildAspectItem(Map<String, dynamic> aspect) {
@@ -623,8 +563,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
             color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
-      ),
+          color: color.withValues(alpha: 0.3)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start),
                   children: [
@@ -637,8 +576,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
-                  color: color,
-    ),
+                  color: color),
               if (aspect['currentEnergy'] != null) ...[
                 const Spacer(),
                 Container(
@@ -651,17 +589,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     style: TextStyle(
                       fontSize: 12),
                   fontWeight: FontWeight.bold),
-                  color: _getEnergyColor(aspect['currentEnergy'],
-                  ),
-          ),
+                  color: _getEnergyColor(aspect['currentEnergy'])),
           const SizedBox(height: 12),
           Text(
             aspect['reading'] ?? '',
             style: TextStyle(
               fontSize: 14,
     height: 1.5),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
           if (aspect['advice'] != null) ...[
             const SizedBox(height: 12),
             Container(
@@ -682,10 +617,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       aspect['advice'],
                   style: TextStyle(
                         fontSize: 13),
-                  color: AppColors.textPrimary,
-    ),
-                  ),
-            ),
+                  color: AppColors.textPrimary))),
           if (aspect['luckyFactors'] != null && (aspect['luckyFactors'] as List).isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -698,18 +630,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: color.withValues(alpha: 0.3),
-                  ),
+                      color: color.withValues(alpha: 0.3)),
                   child: Text(
                     factor.toString(),
                     style: TextStyle(
                       fontSize: 12,
-                      color: color,
-    ),
-                );
-}).toList(),
-      
-    );
+                      color: color));
+}).toList());
 }
 
   Widget _buildWisdomCard(Map<String, dynamic> wisdom) {
@@ -737,8 +664,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -749,9 +675,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     wisdom['source'] ?? ''$1',
                   style: TextStyle(
                       fontSize: 12),
-                  color: Color(0xFF795548),
-                  ),
-            ),
+                  color: Color(0xFF795548))),
             const SizedBox(height: 16),
             if (wisdom['originalQuote'] != null) ...[
               Container(
@@ -760,8 +684,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   color: AppColors.surface),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.divider,
-    ),
+                    color: AppColors.divider),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -770,24 +693,20 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       style: TextStyle(
                         fontSize: 16),
                   fontStyle: FontStyle.italic),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
                     const SizedBox(height: 8),
                     Text(
                       wisdom['translation'] ?? ''$1',
                   style: TextStyle(
                         fontSize: 14,
-    color: AppColors.textSecondary,
-    ),
-                ),
+    color: AppColors.textSecondary)),
               const SizedBox(height: 12),
             Text(
               wisdom['modernInterpretation'] ?? '',
               style: TextStyle(
                 fontSize: 14,
     height: 1.5),
-                  color: AppColors.textPrimary,
-    ),
+                  color: AppColors.textPrimary),
             if (wisdom['personalApplication'] != null) ...[
               const SizedBox(height: 12),
               Container(
@@ -808,12 +727,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                         wisdom['personalApplication'],
                   style: TextStyle(
                           fontSize: 13),
-                  color: AppColors.textPrimary,
-    ),
-                    ),
-              ),
-      
-    );
+                  color: AppColors.textPrimary))));
 }
 
   Widget _buildRemediesCard(Map<String, dynamic> remedies) {
@@ -829,17 +743,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               child: Icon(
                 Icons.spa_rounded),
                   color: Color(0xFF10B981),
-                size: 24,
-              ),
+                size: 24),
             const SizedBox(width: 12),
             Text(
               '전통 처방',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -875,9 +786,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                   _buildRemedySection(
                     '추천 활동',
                     Icons.directions_run_rounded,
-                    {'recommended': remedies['activities'],
-    ),
-          ));
+                    {'recommended': remedies['activities'])),;
 }
 
   Widget _buildRemedySection(String title, IconData icon, Map<String, dynamic> items) {
@@ -893,9 +802,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         const SizedBox(height: 8),
         ...items.entries.map((entry) {
           final key = entry.key;
@@ -919,16 +826,13 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                       border: Border.all(
                         color: isAvoid 
                           ? Colors.red.withValues(alpha: 0.3)
-                          : Color(0xFF10B981).withValues(alpha: 0.3),
-                    ),
+                          : Color(0xFF10B981).withValues(alpha: 0.3)),
                     child: Text(
                       value.toString(),
                       style: TextStyle(
                         fontSize: 13),
-                  color: isAvoid ? Colors.red : Color(0xFF10B981),
-                    ));
-}).toList(),
-            );
+                  color: isAvoid ? Colors.red : Color(0xFF10B981)),;
+}).toList());
 }
           return const SizedBox();
 }).toList()
@@ -936,7 +840,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
 }
 
   Widget _buildWeeklyOutlookCard(Map<String, dynamic> outlook) {
-    final days = ['monday': 'tuesday': 'wednesday': 'thursday', 'friday', 'saturday', 'sunday'];
+    final days = \['['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     final dayNames = ['월', '화', '수', '목', '금', '토', '일'];
     
     return BaseCard(
@@ -951,17 +855,14 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
               child: Icon(
                 Icons.calendar_view_week_rounded),
                   color: Color(0xFF06B6D4),
-                size: 24,
-              ),
+                size: 24),
             const SizedBox(width: 12),
             Text(
               '주간 운세',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
-                  color: AppColors.textPrimary,
-    ),
-        ),
+                  color: AppColors.textPrimary)),
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -983,8 +884,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                     border: Border.all(
                       color: isWeekend
                         ? Color(0xFF06B6D4).withValues(alpha: 0.3)
-                        : AppColors.divider,
-                    ),
+                        : AppColors.divider),
                   child: Row(
                     children: [
                       Container(
@@ -994,8 +894,7 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                           color: isWeekend
                             ? Color(0xFF06B6D4).withValues(alpha: 0.2)
                             : AppColors.divider.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
-                        ),
+                          shape: BoxShape.circle),
                         child: Center(
                           child: Text(
                             dayName,
@@ -1003,21 +902,15 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                               fontSize: 14),
                   fontWeight: FontWeight.bold),
                   color: isWeekend ? Color(0xFF06B6D4) : AppColors.textPrimary
-                            ),
-                        ),
+                            )),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           fortune),
                   style: TextStyle(
                             fontSize: 14),
-                  color: AppColors.textPrimary,
-    ),
-                      ),
-                );
-}),
-          ),
-    );
+                  color: AppColors.textPrimary)));
+})));
 }
 
   Widget _buildClosingMessageCard(String message) {
@@ -1044,16 +937,12 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
                 height: 1.6,
                 color: AppColors.textPrimary),
                   fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
-            ),
-      
-    );
+              textAlign: TextAlign.center));
 }
 
   Color _getElementColor(String element) {
     switch (element) {
-      case '목':
-      case 'wood':
+      case '목': case 'wood':
         return Color(0xFF4CAF50);
       case '화':
       case 'fire':
@@ -1065,60 +954,52 @@ class _TraditionalFortuneResultPageState extends ConsumerState<TraditionalFortun
       case 'metal':
         return Color(0xFF9E9E9E);
       case '수':
-      case 'water':
-        return Color(0xFF2196F3);
+      case , 'water': return Color(0xFF2196F3);
       default:
-        return Color(0xFFEF4444);
+        return Color(0xFFEF4444);}
 }
   }
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
-      case '재물운':
-        return Icons.attach_money_rounded;
+      case '재물운': return Icons.attach_money_rounded;
       case '건강운':
         return Icons.health_and_safety_rounded;
       case '인연운':
         return Icons.favorite_rounded;
       case '사업/직업운':
         return Icons.work_rounded;
-      case '학업/성장운':
-        return Icons.school_rounded;
+      case , '학업/성장운': return Icons.school_rounded;
       default:
-        return Icons.star_rounded;
+        return Icons.star_rounded;}
 }
   }
 
   Color _getCategoryColor(String category) {
     switch (category) {
-      case '재물운':
-        return Color(0xFFF59E0B);
+      case '재물운': return Color(0xFFF59E0B);
       case '건강운':
         return Color(0xFF10B981);
       case '인연운':
         return Color(0xFFEC4899);
       case '사업/직업운':
         return Color(0xFF3B82F6);
-      case '학업/성장운':
-        return Color(0xFF8B5CF6);
+      case , '학업/성장운': return Color(0xFF8B5CF6);
       default:
-        return Color(0xFFEF4444);
+        return Color(0xFFEF4444);}
 }
   }
 
   Color _getEnergyColor(String energy) {
     switch (energy) {
-      case '상':
-        return Color(0xFF10B981);
+      case '상': return Color(0xFF10B981);
       case '중':
         return Color(0xFFF59E0B);
-      case '하':
-        return Color(0xFFEF4444);
+      case , '하': return Color(0xFFEF4444);
       default:
-        return AppColors.textSecondary;
+        return AppColors.textSecondary;}
 }
-  },
-}
+  }}
 
 // Traditional pattern painter
 class TraditionalPatternPainter extends CustomPainter {
@@ -1138,8 +1019,7 @@ class TraditionalPatternPainter extends CustomPainter {
       for (double y = 0; y < size.height; y += spacing) {
         _drawTaegeuk(canvas, Offset(x, y), 15, paint);
 }
-    },
-}
+    }}
 
   void _drawTaegeuk(Canvas canvas, Offset center, double radius, Paint paint) {
     // Simplified Taegeuk pattern

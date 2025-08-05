@@ -54,8 +54,7 @@ class AnalyticsService {
     bool? isPremium,
     String? userType,
     String? gender,
-    String? birthYear,
-  }) async {
+    String? birthYear}) async {
     if (!_isInitialized || _analytics == null) return;
 
     try {
@@ -66,29 +65,25 @@ class AnalyticsService {
       if (isPremium != null) {
         await _analytics!.setUserProperty(
           name: 'is_premium',
-          value: isPremium.toString(),
-        );
+          value: isPremium.toString());
       }
       
       if (userType != null) {
         await _analytics!.setUserProperty(
           name: 'user_type',
-          value: userType,
-        );
+          value: userType);
       }
       
       if (gender != null) {
         await _analytics!.setUserProperty(
           name: 'gender',
-          value: gender,
-        );
+          value: gender);
       }
       
       if (birthYear != null) {
         await _analytics!.setUserProperty(
           name: 'birth_year',
-          value: birthYear,
-        );
+          value: birthYear);
       }
       
       Logger.info('User properties set successfully');
@@ -100,8 +95,7 @@ class AnalyticsService {
   /// Log a custom event
   Future<void> logEvent(
     String name, {
-    Map<String, dynamic>? parameters,
-  }) async {
+    Map<String, dynamic>? parameters}) async {
     if (!_isInitialized || _analytics == null) return;
 
     try {
@@ -128,8 +122,7 @@ class AnalyticsService {
     required String category,
     required double score,
     required String recommendationType,
-    required int position,
-  }) async {
+    required int position}) async {
     await logEvent(
       'fortune_recommendation_impression',
       parameters: {
@@ -137,9 +130,7 @@ class AnalyticsService {
         'category': category,
         'score': score,
         'recommendation_type': recommendationType,
-        'position': position,
-      },
-    );
+        'position': position});
   }
 
   /// Log fortune recommendation click
@@ -148,8 +139,7 @@ class AnalyticsService {
     required String category,
     required double score,
     required String recommendationType,
-    required int position,
-  }) async {
+    required int position}) async {
     await logEvent(
       'fortune_recommendation_click',
       parameters: {
@@ -158,9 +148,7 @@ class AnalyticsService {
         'score': score,
         'recommendation_type': recommendationType,
         'position': position,
-        'action': 'click',
-      },
-    );
+        'action': 'click'});
   }
 
   /// Log recommendation effectiveness
@@ -168,8 +156,7 @@ class AnalyticsService {
     required String fortuneType,
     required bool visited,
     required double personalScore,
-    required double popularityScore,
-  }) async {
+    required double popularityScore}) async {
     await logEvent(
       'recommendation_effectiveness',
       parameters: {
@@ -177,17 +164,14 @@ class AnalyticsService {
         'visited': visited,
         'personal_score': personalScore,
         'popularity_score': popularityScore,
-        'effectiveness': visited ? 1.0 : 0.0,
-      },
-    );
+        'effectiveness': visited ? 1.0 : 0.0});
   }
 
 
   /// Log screen view
   Future<void> logScreenView({
     required String screenName,
-    String? screenClass,
-  }) async {
+    String? screenClass}) async {
     if (!_isInitialized || _analytics == null) return;
 
     try {
@@ -208,15 +192,13 @@ class AnalyticsService {
     required bool success,
     String? source,
     int? responseTimeMs,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     await logEvent('fortune_generation', parameters: {
       'fortune_type': fortuneType,
       'success': success,
       'source': source ?? 'api',
       if (responseTimeMs != null) 'response_time_ms': responseTimeMs,
-      ...?additionalParams,
-    });
+      ...?additionalParams});
   }
 
   /// Log token purchase event
@@ -225,79 +207,67 @@ class AnalyticsService {
     required double price,
     required String currency,
     required int tokenAmount,
-    bool success = true,
-  }) async {
+    bool success = true}) async {
     await logEvent('purchase', parameters: {
       'item_id': packageId,
       'price': price,
       'currency': currency,
       'token_amount': tokenAmount,
       'success': success,
-      'item_category': 'tokens',
-    });
+      'item_category': 'tokens'});
   }
 
   /// Log token consumption event
   Future<void> logTokenConsumption({
     required String fortuneType,
     required int tokenAmount,
-    int? remainingTokens,
-  }) async {
+    int? remainingTokens}) async {
     await logEvent('token_consumed', parameters: {
       'fortune_type': fortuneType,
       'token_amount': tokenAmount,
-      if (remainingTokens != null) 'remaining_tokens': remainingTokens,
-    });
+      if (remainingTokens != null) 'remaining_tokens': remainingTokens});
   }
 
   /// Log ad events
   Future<void> logAdImpression({
     required String adType,
     String? adUnitId,
-    String? placement,
-  }) async {
+    String? placement}) async {
     await logEvent('ad_impression', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
-      if (placement != null) 'placement': placement,
-    });
+      if (placement != null) 'placement': placement});
   }
 
   Future<void> logAdClick({
     required String adType,
     String? adUnitId,
-    String? placement,
-  }) async {
+    String? placement}) async {
     await logEvent('ad_click', parameters: {
       'ad_type': adType,
       if (adUnitId != null) 'ad_unit_id': adUnitId,
-      if (placement != null) 'placement': placement,
-    });
+      if (placement != null) 'placement': placement});
   }
 
   Future<void> logAdReward({
     required String adType,
     required int rewardAmount,
-    String? rewardType,
-  }) async {
+    String? rewardType}) async {
     await logEvent('ad_reward_earned', parameters: {
       'ad_type': adType,
       'reward_amount': rewardAmount,
-      'reward_type': rewardType ?? 'tokens',
-    });
+      'reward_type': rewardType ?? 'tokens'});
   }
 
   /// Log user engagement
   Future<void> logUserEngagement({
     required String action,
     String? target,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     await logEvent('user_engagement', parameters: {
       'action': action,
       if (target != null) 'target': target,
-      ...?additionalParams,
-    });
+      ...?additionalParams});
   }
 
   /// Log error events
@@ -305,27 +275,23 @@ class AnalyticsService {
     required String errorType,
     String? errorMessage,
     String? screen,
-    Map<String, dynamic>? additionalParams,
-  }) async {
+    Map<String, dynamic>? additionalParams}) async {
     await logEvent('app_error', parameters: {
       'error_type': errorType,
       if (errorMessage != null) 'error_message': errorMessage,
       if (screen != null) 'screen': screen,
-      ...?additionalParams,
-    });
+      ...?additionalParams});
   }
 
   /// Log share events
   Future<void> logShare({
     required String contentType,
     required String method,
-    String? itemId,
-  }) async {
+    String? itemId}) async {
     await logEvent('share', parameters: {
       'content_type': contentType,
       'method': method,
-      if (itemId != null) 'item_id': itemId,
-    });
+      if (itemId != null) 'item_id': itemId});
   }
 
   /// Log tutorial/onboarding events
@@ -338,19 +304,15 @@ class AnalyticsService {
   }
 
   Future<void> logSignUp({
-    required String method,
-  }) async {
+    required String method}) async {
     await logEvent('sign_up', parameters: {
-      'method': method,
-    });
+      'method': method});
   }
 
   Future<void> logLogin({
-    required String method,
-  }) async {
+    required String method}) async {
     await logEvent('login', parameters: {
-      'method': method,
-    });
+      'method': method});
   }
 
   /// Reset analytics (e.g., on logout,

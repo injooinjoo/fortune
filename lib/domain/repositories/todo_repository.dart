@@ -12,13 +12,11 @@ abstract class TodoRepository {
     List<String>? tags,
     String? searchQuery,
     int? limit,
-    int? offset,
-  });
+    int? offset});
 
   Future<Either<Failure, Todo>> getTodoById({
     required String todoId,
-    required String userId,
-  });
+    required String userId});
 
   Future<Either<Failure, Todo>> createTodo({
     required String userId,
@@ -26,8 +24,7 @@ abstract class TodoRepository {
     String? description,
     required TodoPriority priority,
     DateTime? dueDate,
-    List<String>? tags,
-  });
+    List<String>? tags});
 
   Future<Either<Failure, Todo>> updateTodo({
     required String todoId,
@@ -37,36 +34,29 @@ abstract class TodoRepository {
     TodoPriority? priority,
     TodoStatus? status,
     DateTime? dueDate,
-    List<String>? tags,
-  });
+    List<String>? tags});
 
   Future<Either<Failure, void>> deleteTodo({
     required String todoId,
-    required String userId,
-  });
+    required String userId});
 
   Future<Either<Failure, void>> deleteTodos({
     required List<String> todoIds,
-    required String userId,
-  });
+    required String userId});
 
   Future<Either<Failure, List<Todo>>> searchTodos({
     required String userId,
     required String query,
-    int? limit,
-  });
+    int? limit});
 
   Future<Either<Failure, Map<TodoStatus, int>>> getTodoStats({
-    required String userId,
-  });
+    required String userId});
 
   Future<Either<Failure, void>> toggleTodoStatus({
     required String todoId,
-    required String userId,
-  });
+    required String userId});
 
   Stream<Either<Failure, List<Todo>>> watchTodos({
     required String userId,
-    TodoStatus? status,
-  });
+    TodoStatus? status});
 }

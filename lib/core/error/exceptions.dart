@@ -19,8 +19,7 @@ class CacheException implements Exception {
 
   CacheException({
     required this.message,
-    this.code,
-  });
+    this.code});
 
   @override
   String toString() => 'CacheException: $message${code != null ? ' (Code: $code)' : ''}';
@@ -32,8 +31,7 @@ class NetworkException implements Exception {
 
   NetworkException({
     required this.message,
-    this.code,
-  });
+    this.code});
 
   @override
   String toString() => 'NetworkException: $message${code != null ? ' (Code: $code)' : ''}';
@@ -45,8 +43,7 @@ class AuthenticationException implements Exception {
 
   AuthenticationException({
     required this.message,
-    this.code,
-  });
+    this.code});
 
   @override
   String toString() => 'AuthenticationException: $message${code != null ? ' (Code: $code)' : ''}';
@@ -58,8 +55,7 @@ class ValidationException implements Exception {
 
   ValidationException({
     required this.message,
-    this.errors,
-  });
+    this.errors});
 
   @override
   String toString() => 'ValidationException: $message${errors != null ? ',
@@ -72,8 +68,7 @@ class NotFoundException implements Exception {
 
   NotFoundException({
     required this.message,
-    this.resource,
-  });
+    this.resource});
 
   @override
   String toString() => 'NotFoundException: $message${resource != null ? ',
@@ -86,8 +81,7 @@ class PermissionException implements Exception {
 
   PermissionException({
     required this.message,
-    this.permission,
-  });
+    this.permission});
 
   @override
   String toString() => 'PermissionException: $message${permission != null ? ',
@@ -100,8 +94,7 @@ class RateLimitException implements Exception {
 
   RateLimitException({
     required this.message,
-    this.retryAfter,
-  });
+    this.retryAfter});
 
   @override
   String toString() => 'RateLimitException: $message${retryAfter != null ? '),
@@ -114,8 +107,7 @@ class StorageException implements Exception {
 
   StorageException({
     required this.message,
-    this.code,
-  });
+    this.code});
 
   @override
   String toString() => 'StorageException: $message${code != null ? ' (Code: $code)' : ''}';

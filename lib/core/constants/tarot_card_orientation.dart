@@ -31,8 +31,7 @@ class TarotCardState {
   TarotCardState({
     required this.cardIndex,
     required this.orientation,
-    required this.selectedAt,
-  });
+    required this.selectedAt});
 
   // 랜덤하게 카드 방향 결정 (70% 정방향, 30% 역방향,
   static CardOrientation getRandomOrientation() {
@@ -64,10 +63,8 @@ class TarotCardState {
       cardIndex: json['cardIndex'],
       orientation: CardOrientation.values.firstWhere(
         (e) => e.name == json['orientation'])
-        orElse: () => CardOrientation.upright,
-      )
-      selectedAt: DateTime.parse(json['selectedAt'],
-    );
+        orElse: () => CardOrientation.upright)
+      selectedAt: DateTime.parse(json['selectedAt']);
   }
 }
 
@@ -75,8 +72,7 @@ class TarotCardState {
 extension TarotCardInterpretation on TarotCardState {
   String getMeaning({
     required String uprightMeaning,
-    required String reversedMeaning,
-  }) {
+    required String reversedMeaning}) {
     return orientation == CardOrientation.upright
         ? uprightMeaning
         : reversedMeaning;

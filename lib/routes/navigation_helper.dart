@@ -13,8 +13,7 @@ class NavigationHelper {
       '/fortune',
       '/trend',
       '/premium',
-      '/profile',
-    ];
+      '/profile'];
 
     // Check if current location is exactly a main route
     if (mainRoutes.contains(location)) {
@@ -95,8 +94,7 @@ class NavigationHelper {
       '/fortune',
       '/trend',
       '/premium',
-      '/profile',
-    ];
+      '/profile'];
 
     return mainRoutes.contains(location);
   }

@@ -16,8 +16,7 @@ class BirthDatePreview extends StatelessWidget {
     required this.birthYear,
     required this.birthMonth,
     required this.birthDay,
-    this.birthTimePeriod,
-  });
+    this.birthTimePeriod});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +27,7 @@ class BirthDatePreview extends StatelessWidget {
     final formattedDate = FortuneDateUtils.formatKoreanDate(
       birthYear,
       birthMonth,
-      birthDay,
-    );
+      birthDay);
 
     TimePeriod? selectedTimePeriod;
     if (birthTimePeriod != null) {
@@ -45,8 +43,7 @@ class BirthDatePreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
-      ),
+        border: Border.all(color: Theme.of(context).primaryColor.withValues(alpha: 0.2))),
       child: Column(
         children: [
           Text(
@@ -55,20 +52,13 @@ class BirthDatePreview extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: Theme.of(context).primaryColor
             ),
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center),
           if (selectedTimePeriod != null) ...[
             SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.25),
             Text(
               selectedTimePeriod.label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).primaryColor.withValues(alpha: 0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ],
-      ),
-    );
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.8)),
+              textAlign: TextAlign.center)]]));
   }
 }

@@ -18,10 +18,7 @@ enum SocialAuthState {
   initial,
   loading,
   authenticated,
-  error,
-  
-  
-}
+  error}
 
 // Social Auth Notifier
 class SocialAuthNotifier extends StateNotifier<AsyncValue<AuthResponse?>> {

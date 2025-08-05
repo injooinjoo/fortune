@@ -18,8 +18,7 @@ class MbtiStep extends StatefulWidget {
     required this.onMbtiChanged,
     required this.onComplete,
     required this.onBack,
-    required this.isLoading,
-  });
+    required this.isLoading});
 
   @override
   State<MbtiStep> createState() => _MbtiStepState();
@@ -54,8 +53,7 @@ class _MbtiStepState extends State<MbtiStep> {
       dimension: dimension['title'],
       option1: dimension['option1'],
       option2: dimension['option2'],
-      selectedOption: _getSelectedOption(_currentDimension,
-    );
+      selectedOption: _getSelectedOption(_currentDimension);
     
     if (selected != null) {
       setState(() {
@@ -129,8 +127,7 @@ class _MbtiStepState extends State<MbtiStep> {
             child: IconButton(
               onPressed: widget.onBack);
               icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText)),
-    padding: EdgeInsets.zero,
-    ))
+    padding: EdgeInsets.zero))
           ))
           
           Expanded(
@@ -143,10 +140,8 @@ class _MbtiStepState extends State<MbtiStep> {
                     fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
     fontWeight: FontWeight.bold),
     height: 1.2),
-    color: context.fortuneTheme.primaryText,
-    )),
-    textAlign: TextAlign.center,
-    ))
+    color: context.fortuneTheme.primaryText)),
+    textAlign: TextAlign.center))
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3))
                 
                 // MBTI display or start button
@@ -159,8 +154,7 @@ class _MbtiStepState extends State<MbtiStep> {
     foregroundColor: AppColors.textPrimaryDark),
     padding: EdgeInsets.symmetric(
                         horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 3);
-                        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal,
-    )),
+                        vertical: context.fortuneTheme.formStyles.inputPadding.horizontal)),
     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
                       ))
@@ -176,8 +170,7 @@ class _MbtiStepState extends State<MbtiStep> {
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 2);
-                      vertical: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-    )),
+                      vertical: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5)),
     decoration: BoxDecoration(
                       color: context.fortuneTheme.cardBackground);
                       borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4))
@@ -192,9 +185,7 @@ class _MbtiStepState extends State<MbtiStep> {
                         _buildMbtiLetter(_t_f))
                         SizedBox(width: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
                         _buildMbtiLetter(_j_p))
-                      ],
-    ),
-                  ))
+                      ])))
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
                 
@@ -213,8 +204,7 @@ class _MbtiStepState extends State<MbtiStep> {
                         style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
     fontWeight: FontWeight.bold),
-    color: Theme.of(context).primaryColor,
-    ))
+    color: Theme.of(context).primaryColor))
                       ))
                       SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.65))
                       TextButton(
@@ -230,8 +220,7 @@ class _MbtiStepState extends State<MbtiStep> {
                         },
                         child: Text('다시 선택하기'))
                       ))
-                    ],
-    ),
+                    ]),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5))
                 
@@ -247,23 +236,16 @@ class _MbtiStepState extends State<MbtiStep> {
     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4))
                       )),
-    elevation: 0,
-    )),
+    elevation: 0)),
     child: widget.isLoading
                         ? CircularProgressIndicator(
                             color: AppColors.textPrimaryDark);
-                            strokeWidth: 2,
-    )
+                            strokeWidth: 2)
                         : Text(
                             '완료');
-                            style: Theme.of(context).textTheme.titleLarge,
-    ))
-              ],
-    ),
-          ))
-        ],
-    ),
-    );
+                            style: Theme.of(context).textTheme.titleLarge))
+              ])))
+        ]));
   }
   
   Widget _buildMbtiLetter(String? letter) {
@@ -275,8 +257,7 @@ class _MbtiStepState extends State<MbtiStep> {
     borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius * 0.67)),
     border: Border.all(
           color: letter != null ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor),
-    width: letter != null ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth,
-    ))
+    width: letter != null ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth))
       )),
     child: Center(
         child: Text(

@@ -53,11 +53,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFFFF6B6B), Color(0xFFFFE66D)],
-      ),
+        colors: [Color(0xFFFF6B6B), Color(0xFFFFE66D)]),
       inputBuilder: (context, onSubmit) => _buildInputSection(onSubmit),
-      resultBuilder: (context, result, onShare) => _buildResult(context, result),
-    );
+      resultBuilder: (context, result, onShare) => _buildResult(context, result));
   }
   
   Widget _buildInputSection(Function(Map<String, dynamic>) onSubmit) {
@@ -69,17 +67,13 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             '두 사람의 케미스트리 확인하기',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           const Text(
             '두 사람의 정보를 입력하면 서로의 성격, 관계의 강점과 보완점을 분석해드립니다.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
+              color: Colors.grey)),
           const SizedBox(height: 24),
           
           // Person 1 Section
@@ -89,7 +83,6 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               color: Colors.pink.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.pink.withValues(alpha: 0.2)),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -102,11 +95,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink,
-                      ),
-                    ),
-                  ],
-                ),
+                        color: Colors.pink))]),
                 const SizedBox(height: 16),
                 
                 // Name input
@@ -116,11 +105,8 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     labelText: '이름',
                     hintText: '이름을 입력해주세요',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: const Icon(Icons.edit),
-                  ),
-                ),
+                      borderRadius: BorderRadius.circular(8)),
+                    prefixIcon: const Icon(Icons.edit))),
                 const SizedBox(height: 12),
                 
                 // Birthdate input
@@ -130,20 +116,14 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     decoration: InputDecoration(
                       labelText: '생년월일',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      prefixIcon: const Icon(Icons.calendar_today),
-                    ),
+                        borderRadius: BorderRadius.circular(8)),
+                      prefixIcon: const Icon(Icons.calendar_today)),
                     child: Text(
                       _birthdate1 != null
                           ? '${_birthdate1!.year}년 ${_birthdate1!.month}월 ${_birthdate1!.day}일'
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
-                        color: _birthdate1 != null ? null : Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
+                        color: _birthdate1 != null ? null : Colors.grey)))),
                 const SizedBox(height: 12),
                 
                 // Gender selection
@@ -158,9 +138,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           setState(() {
                             _gender1 = value;
                           });
-                        },
-                      ),
-                    ),
+                        })),
                     Expanded(
                       child: RadioListTile<String>(
                         title: const Text('여성'),
@@ -170,14 +148,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           setState(() {
                             _gender1 = value;
                           });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                        }))])])),
           
           const SizedBox(height: 20),
           
@@ -187,15 +158,11 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.orange.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: const Icon(
                 Icons.favorite,
                 color: Colors.orange,
-                size: 32,
-              ),
-            ),
-          ),
+                size: 32))),
           
           const SizedBox(height: 20),
           
@@ -206,7 +173,6 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               color: Colors.blue.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
-            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -219,11 +185,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
+                        color: Colors.blue))]),
                 const SizedBox(height: 16),
                 
                 // Name input
@@ -233,11 +195,8 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     labelText: '이름',
                     hintText: '이름을 입력해주세요',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    prefixIcon: const Icon(Icons.edit),
-                  ),
-                ),
+                      borderRadius: BorderRadius.circular(8)),
+                    prefixIcon: const Icon(Icons.edit))),
                 const SizedBox(height: 12),
                 
                 // Birthdate input
@@ -247,20 +206,14 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     decoration: InputDecoration(
                       labelText: '생년월일',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      prefixIcon: const Icon(Icons.calendar_today),
-                    ),
+                        borderRadius: BorderRadius.circular(8)),
+                      prefixIcon: const Icon(Icons.calendar_today)),
                     child: Text(
                       _birthdate2 != null
                           ? '${_birthdate2!.year}년 ${_birthdate2!.month}월 ${_birthdate2!.day}일'
                           : '생년월일을 선택해주세요',
                       style: TextStyle(
-                        color: _birthdate2 != null ? null : Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
+                        color: _birthdate2 != null ? null : Colors.grey)))),
                 const SizedBox(height: 12),
                 
                 // Gender selection
@@ -275,9 +228,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           setState(() {
                             _gender2 = value;
                           });
-                        },
-                      ),
-                    ),
+                        })),
                     Expanded(
                       child: RadioListTile<String>(
                         title: const Text('여성'),
@@ -287,14 +238,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                           setState(() {
                             _gender2 = value;
                           });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+                        }))])])),
           
           const SizedBox(height: 24),
           
@@ -305,24 +249,19 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             child: ElevatedButton(
               onPressed: _canSubmit()
                   ? () => onSubmit({
-                        'person1': {
+                        'person1': {}
                           'name': _name1Controller.text),
                           'birthdate': _birthdate1!.toIso8601String(),
-                          'gender': null,
-                        },
+                          'gender': null},
                         'person2': {
-                          'name': _name2Controller.text,
+                          , 'name': _name2Controller.text,
                           'birthdate': _birthdate2!.toIso8601String(),
-                          'gender': null,
-                        },
-                      })
+                          'gender': null}})
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.orange,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -332,16 +271,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     '케미스트리 분석하기',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                      fontWeight: FontWeight.bold))])))]));
   }
   
   bool _canSubmit() {
@@ -356,10 +286,9 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
   Future<void> _selectDate(BuildContext context, int person) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: person == 1 ? (_birthdate1 ?? DateTime.now()) : (_birthdate2 ?? DateTime.now()),
+      initialDate: person == 1 ? (_birthdate1 ?? DateTime.now(), : (_birthdate2 ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
+      lastDate: DateTime.now());
     if (picked != null) {
       setState(() {
         if (person == 1) {
@@ -383,23 +312,18 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             gradient: LinearGradient(
               colors: [
                 _getScoreColor(score).withValues(alpha: 0.1),
-                _getScoreColor(score).withValues(alpha: 0.2),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
+                _getScoreColor(score).withValues(alpha: 0.2)]),
+            borderRadius: BorderRadius.circular(16)),
           child: Column(
             children: [
               Text(
                 '케미스트리 점수',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
+                  color: Colors.grey[600])),
               const SizedBox(height: 8),
               TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: score.toDouble()),
+                tween: Tween(begin: 0, end: score.toDouble(),
                 duration: const Duration(seconds: 2),
                 builder: (context, value, child) {
                   return Text(
@@ -407,23 +331,15 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.bold,
-                      color: _getScoreColor(value.toInt()),
-                    ),
-                  );
-                },
-              ),
+                      color: _getScoreColor(value.toInt()));
+                }),
               const SizedBox(height: 8),
               Text(
                 _getScoreMessage(score),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: _getScoreColor(score),
-                ),
-              ),
-            ],
-          ),
-        ),
+                  color: _getScoreColor(score)))])),
         
         const SizedBox(height: 20),
         
@@ -434,8 +350,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+              border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -447,24 +362,14 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       '종합 분석',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 Text(
                   result.mainFortune!,
                   style: const TextStyle(
                     fontSize: 16,
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                    height: 1.6))])),
+          const SizedBox(height: 20)],
         
         // Score Breakdown
         if (result.scoreBreakdown != null) ...[
@@ -473,8 +378,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
+              border: Border.all(color: Colors.grey[200]!)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -486,11 +390,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       '항목별 점수',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 16),
                 ...result.scoreBreakdown!.entries.map((entry) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -502,34 +402,20 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                         children: [
                           Text(
                             _translateScoreKey(entry.key),
-                            style: const TextStyle(fontSize: 14),
-                          ),
+                            style: const TextStyle(fontSize: 14)),
                           Text(
                             '${entry.value}점',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: _getScoreColor(entry.value),
-                            ),
-                          ),
-                        ],
-                      ),
+                              color: _getScoreColor(entry.value)))]),
                       const SizedBox(height: 4),
                       LinearProgressIndicator(
                         value: entry.value / 100,
                         backgroundColor: Colors.grey[200],
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _getScoreColor(entry.value),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                          _getScoreColor(entry.value)))]))])),
+          const SizedBox(height: 20)],
         
         // Sections
         if (result.sections != null && result.sections!.isNotEmpty) ...[
@@ -540,8 +426,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
+                border: Border.all(color: Colors.grey[200]!)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -549,31 +434,19 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                     children: [
                       Icon(
                         _getSectionIcon(entry.key),
-                        color: _getSectionColor(entry.key),
-                      ),
+                        color: _getSectionColor(entry.key)),
                       const SizedBox(width: 8),
                       Text(
                         _translateSectionKey(entry.key),
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 12),
                   Text(
                     entry.value,
                     style: const TextStyle(
                       fontSize: 14,
-                      height: 1.6,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )),
-        ],
+                      height: 1.6))])))],
         
         // Recommendations
         if (result.recommendations != null && result.recommendations!.isNotEmpty) ...[
@@ -583,11 +456,8 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
               gradient: LinearGradient(
                 colors: [
                   Colors.purple[50]!,
-                  Colors.pink[50]!,
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                  Colors.pink[50]!]),
+              borderRadius: BorderRadius.circular(12)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -599,11 +469,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       '관계 발전을 위한 조언',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 12),
                 ...result.recommendations!.map((rec) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
@@ -613,24 +479,12 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
                       const Icon(
                         Icons.check_circle,
                         size: 20,
-                        color: Colors.purple,
-                      ),
+                        color: Colors.purple),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           rec,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
-        ],
-      ],
-    );
+                          style: const TextStyle(fontSize: 14)))]))]))]]);
   }
   
   Color _getScoreColor(int score) {
@@ -649,27 +503,25 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
   
   String _translateScoreKey(String key) {
     final translations = {
-      'communication': '의사소통',
-      'emotional': '감정적 교감',
-      'values': '가치관',
-      'lifestyle': '라이프스타일',
-      'physical': '신체적 매력',
-      'intellectual': '지적 교감',
-      'trust': '신뢰도',
-      'compatibility': '전반적 호환성',
-    };
+      'communication', '의사소통',
+      'emotional', '감정적 교감',
+      'values', '가치관',
+      'lifestyle', '라이프스타일',
+      'physical', '신체적 매력',
+      'intellectual', '지적 교감',
+      'trust', '신뢰도',
+      'compatibility', '전반적 호환성'};
     return translations[key] ?? key;
   }
   
   String _translateSectionKey(String key) {
     final translations = {
-      'strengths': '관계의 강점',
-      'challenges': '주의할 점',
-      'communication': '소통 스타일',
-      'emotional_connection': '감정적 연결',
-      'growth_areas': '성장 가능성',
-      'advice': '종합 조언',
-    };
+      'strengths', '관계의 강점',
+      'challenges', '주의할 점',
+      'communication', '소통 스타일',
+      'emotional_connection', '감정적 연결',
+      'growth_areas', '성장 가능성',
+      'advice', '종합 조언'};
     return translations[key] ?? key;
   }
   
@@ -680,8 +532,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
       'communication': Icons.chat,
       'emotional_connection': Icons.favorite,
       'growth_areas': Icons.trending_up,
-      'advice': null,
-    };
+      'advice': null};
     return icons[key] ?? Icons.info;
   }
   
@@ -692,8 +543,7 @@ class _ChemistryFortunePageState extends ConsumerState<ChemistryFortunePage> {
       'communication': Colors.blue,
       'emotional_connection': Colors.pink,
       'growth_areas': Colors.purple,
-      'advice': null,
-    };
+      'advice': null};
     return colors[key] ?? Colors.grey;
   }
 }

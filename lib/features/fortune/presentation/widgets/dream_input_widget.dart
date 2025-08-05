@@ -17,8 +17,7 @@ class DreamInputWidget extends ConsumerStatefulWidget {
   const DreamInputWidget({
     Key? key,
     this.enabled = true,
-    this.onSendPressed,
-  }) : super(key: key);
+    this.onSendPressed}) : super(key: key);
 
   @override
   ConsumerState<DreamInputWidget> createState() => _DreamInputWidgetState();
@@ -38,7 +37,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2));
+      duration: const Duration(seconds: 2),;
     _animationController.repeat();
     
     _textController.addListener(() {
@@ -119,17 +118,14 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
         left: AppSpacing.spacing4,
         right: AppSpacing.spacing4,
         bottom: MediaQuery.of(context).padding.bottom + 16,
-        top: 8,
-      ),
+        top: 8),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            Colors.black.withValues(alpha: 0.3),
-          ],
-        ),
+            Colors.black.withValues(alpha: 0.3)]),
       child: SafeArea(
         top: false,
         child: Column(
@@ -142,9 +138,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               gradient: LinearGradient(
                 colors: [
                   Colors.white.withValues(alpha: 0.1),
-                  Colors.white.withValues(alpha: 0.05),
-                ],
-              ),
+                  Colors.white.withValues(alpha: 0.05)]),
               child: Row(
                 children: [
                   // Voice button
@@ -167,24 +161,17 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.spacing0,
-                          vertical: AppSpacing.spacing3,
-                        ),
+                          vertical: AppSpacing.spacing3),
                       maxLines: null,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _sendMessage(),
-                  ),
+                      onSubmitted: (_) => _sendMessage()),
                   
                   // Send button
-                  _buildSendButton(theme),
-                ],
-              ),
+                  _buildSendButton(theme)]),
             const SizedBox(height: AppSpacing.spacing2),
             
             // Quick response buttons
-            if (widget.enabled && !_isVoiceMode), _buildQuickResponses(theme),
-          ],
-        ),
-    ).animate().fadeIn().slideY(begin: 0.2, end: 0);
+            if (widget.enabled && !_isVoiceMode), _buildQuickResponses(theme)])).animate().fadeIn().slideY(begin: 0.2, end: 0);
 }
   
   Widget _buildVoiceButton(ThemeData theme) {
@@ -200,21 +187,16 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               ? LinearGradient(
                   colors: [
                     Colors.red.withValues(alpha: 0.6),
-                    Colors.red.withValues(alpha: 0.8),
-                  ],
+                    Colors.red.withValues(alpha: 0.8)],
                 ,
               : LinearGradient(
                   colors: [
                     Colors.deepPurple.withValues(alpha: 0.3),
-                    Colors.deepPurple.withValues(alpha: 0.3),
-                  ],
-                ),
+                    Colors.deepPurple.withValues(alpha: 0.3)]),
         child: Icon(
           _isVoiceMode ? Icons.stop : Icons.mic,
           color: Colors.white,
-          size: 24,
-        ),
-    );
+          size: 24));
 }
   
   Widget _buildSendButton(ThemeData theme) {
@@ -232,20 +214,16 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               ? LinearGradient(
                   colors: [
                     Colors.deepPurple.withValues(alpha: 0.6),
-                    Colors.deepPurple.withValues(alpha: 0.8),
-                  ],
+                    Colors.deepPurple.withValues(alpha: 0.8)],
                 ,
               : LinearGradient(
                   colors: [
                     Colors.grey.withValues(alpha: 0.9).withValues(alpha: 0.3),
-                    Colors.grey.withValues(alpha: 0.87).withValues(alpha: 0.3),
-                  ],
-                ),
+                    Colors.grey.withValues(alpha: 0.87).withValues(alpha: 0.3)]),
         child: Icon(
           Icons.send_rounded,
           color: canSend ? Colors.white : Colors.white30,
-          size: 20,
-        ));
+          size: 20),;
 }
   
   Widget _buildVoiceListeningIndicator(ThemeData theme) {
@@ -260,8 +238,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
             Icon(
               Icons.mic,
               color: Colors.red.withValues(alpha: 0.6),
-              size: 20,
-            ),
+              size: 20),
             const SizedBox(width: AppSpacing.spacing2),
             Text(
               '듣고 있습니다...',
@@ -276,9 +253,7 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       text,
                       style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    
-                  );
+                      overflow: TextOverflow.ellipsis);
 }
                 return Row(
                   children: List.generate(3, (index) {
@@ -288,23 +263,17 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
                       height: 4,
                       decoration: BoxDecoration(
                         color: Colors.white60,
-                        shape: BoxShape.circle,
-                      )).animate(
-                      onPlay: (controller) => controller.repeat()).scale(
+                        shape: BoxShape.circle),.animate(
+                      onPlay: (controller) => controller.repeat(),.scale(
                       duration: 600.ms,
                       delay: Duration(milliseconds: index * 200),
                       begin: const Offset(0.5, 0.5),
-                      end: const Offset(1.5, 1.5)).then().scale(
+                      end: const Offset(1.5, 1.5),.then().scale(
                       duration: 600.ms,
                       begin: const Offset(1.5, 1.5),
-                      end: const Offset(0.5, 0.5));
-},
-                );
-},
-            ),
-          ],
-        ),
-    ).animate()
+                      end: const Offset(0.5, 0.5),;
+});
+})])).animate()
                   .fadeIn(,
         .slideY(begin: -0.2, end: 0,
         .scale(begin: const Offset(0.95, 0.95);
@@ -322,15 +291,13 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
       quickResponses = [
         '무서운 꿈을 꿨어요',
         '좋은 꿈이었어요',
-        '이상한 꿈을 꿨어요',
-      ];
+        '이상한 꿈을 꿨어요'];
 } else if (messageCount == 1) {
       // Follow-up responses
       quickResponses = [
         '불안했어요',
         '기뻤어요',
-        '혼란스러웠어요',
-      ];
+        '혼란스러웠어요'];
 }
     
     if (quickResponses.isEmpty) return const SizedBox.shrink();
@@ -356,15 +323,12 @@ class _DreamInputWidgetState extends ConsumerState<DreamInputWidget>
               gradient: LinearGradient(
                 colors: [
                   Colors.deepPurple.withValues(alpha: 0.3),
-                  Colors.deepPurple.withValues(alpha: 0.3),
-                ],
-              ),
+                  Colors.deepPurple.withValues(alpha: 0.3)]),
               child: Text(
                 response,
                 style: Theme.of(context).textTheme.bodyMedium
           );
-},
-      )).animate()
+}),.animate()
                   .fadeIn(delay: 300.ms,
         .slideY(begin: 0.2, end: 0);
 }

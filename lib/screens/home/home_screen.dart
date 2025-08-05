@@ -61,9 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           const SnackBar(
             content: Text('환영합니다! 오늘의 운세를 확인해보세요 ✨'),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 3),
-          ),
-        );
+            duration: Duration(seconds: 3)));
       }
     });
   }
@@ -108,8 +106,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   : DateTime.now(),
               updatedAt: response['updated_at'] != null
                   ? DateTime.parse(response['updated_at']) 
-                  : DateTime.now(),
-            );
+                  : DateTime.now());
           }
         });
       }
@@ -163,9 +160,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('발생했습니다: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     }
   }
@@ -203,9 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             love: dailyData['elements']?['love'],
             career: dailyData['elements']?['career'],
             money: dailyData['elements']?['money'],
-            health: dailyData['elements']?['health'],
-          ),
-        );
+            health: dailyData['elements']?['health']));
       });
     } else {
       // Fallback: Create a basic DailyFortune from the Fortune content
@@ -235,9 +228,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             love: fortune.scoreBreakdown?['love'],
             career: fortune.scoreBreakdown?['career'],
             money: fortune.scoreBreakdown?['money'],
-            health: fortune.scoreBreakdown?['health'],
-          ),
-        );
+            health: fortune.scoreBreakdown?['health']));
       });
     }
   }
@@ -254,9 +245,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('오늘의 새로고침 횟수를 모두 사용했습니다. 내일 다시 시도해주세요!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+          backgroundColor: Colors.orange));
       return;
     }
     
@@ -283,9 +272,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('횟수: ${maxRefreshCount - refreshCount - 1})'),
-              backgroundColor: Colors.green,
-            ),
-          );
+              backgroundColor: Colors.green));
         }
       }
     } catch (e) {
@@ -294,9 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('운세를 새로고침하는 중 오류가 발생했습니다.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+            backgroundColor: Colors.red));
       }
     } finally {
       setState(() => isRefreshing = false);
@@ -327,8 +312,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               await _cacheService.cacheFortune(
                 'daily',
                 {'userId': userId},
-                FortuneModel.fromEntity(fortune),
-              );
+                FortuneModel.fromEntity(fortune));
               debugPrint('✅ [HomeScreen] Fortune cached successfully');
             }
           } catch (e) {
@@ -369,8 +353,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                 await _cacheService.cacheFortune(
                   'daily',
                   {'userId': userId},
-                  FortuneModel.fromEntity(fortune),
-                );
+                  FortuneModel.fromEntity(fortune));
               }
             } catch (e) {
               debugPrint('Error loading user profile: $e');
@@ -407,9 +390,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   onRefresh: _refreshFortune,
                   isRefreshing: isRefreshing,
                   refreshCount: refreshCount,
-                  maxRefreshCount: maxRefreshCount,
-                ),
-              ),
+                  maxRefreshCount: maxRefreshCount)),
               
               Padding(
                 padding: const EdgeInsets.all(24),
@@ -422,17 +403,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                       children: [
                         Text(
                           '✨ ',
-                          style: TextStyle(fontSize: 20),
-                        ),
+                          style: TextStyle(fontSize: 20)),
                         Text(
                           '인기 운세',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 200.ms),
+                            letterSpacing: -0.5))]).animate().fadeIn(delay: 200.ms),
                     const SizedBox(height: 20),
                     _buildMainServices(context),
                     
@@ -446,14 +422,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                           Text(
                             '최근에 본 운세',
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                          ),
-                          ),
-                        ],
-                      ).animate().fadeIn(delay: 400.ms),
+                              fontWeight: FontWeight.bold))]).animate().fadeIn(delay: 400.ms),
                       const SizedBox(height: 16),
-                      _buildRecentFortunes(context),
-                    ],
+                      _buildRecentFortunes(context)],
                     
                     // Instagram-style section title
                     const SizedBox(height: 32),
@@ -461,27 +432,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                       children: [
                         Text(
                           '💕 ',
-                          style: TextStyle(fontSize: 20),
-                        ),
+                          style: TextStyle(fontSize: 20)),
                         Text(
                           '나를 위한 추천',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w700,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 600.ms),
+                            letterSpacing: -0.5))]).animate().fadeIn(delay: 600.ms),
                     const SizedBox(height: 20),
-                    _buildPersonalizedFortunes(context),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                    _buildPersonalizedFortunes(context)]))]))));
   }
 
   Widget _buildMainServices(BuildContext context) {
@@ -493,9 +451,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'desc': '여러 운세 한번에',
         'route': '/fortune/batch',
         'gradient': const LinearGradient(
-          colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
-        ),
-      },
+          colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)])},
       {
         'icon': Icons.psychology_alt_rounded,
         'emoji': '🤖',
@@ -503,9 +459,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'desc': '모든 데이터 분석',
         'route': '/fortune/ai-comprehensive',
         'gradient': const LinearGradient(
-          colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)],
-        ),
-      },
+          colors: [Color(0xFF4ECDC4), Color(0xFF44A08D)])},
       {
         'icon': Icons.wb_sunny,
         'emoji': '☀️',
@@ -513,16 +467,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'desc': '정통 사주 풀이',
         'route': '/fortune/saju',
         'gradient': const LinearGradient(
-          colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
-        ),
-      },
+          colors: [Color(0xFF667EEA), Color(0xFF764BA2)])},
       {
         'icon': Icons.star,
         'emoji': '⭐',
         'title': '전체 운세',
         'desc': '모든 운세 보기',
-        'route': '/fortune',
-      },
+        'route': '/fortune'},
       {
         'icon': Icons.view_carousel_rounded,
         'emoji': '📱',
@@ -530,10 +481,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'desc': '스와이프로 운세 보기',
         'route': '/demo/snap-scroll',
         'gradient': const LinearGradient(
-          colors: [Color(0xFFF093FB), Color(0xFFF5576C)],
-        ),
-      },
-    ];
+          colors: [Color(0xFFF093FB), Color(0xFFF5576C)])}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -542,8 +490,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         crossAxisCount: 2,
         childAspectRatio: 1.0,
         crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
+        mainAxisSpacing: 12),
       itemCount: services.length,
       itemBuilder: (context, index) {
         final service = services[index];
@@ -555,14 +502,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
           gradient: service['gradient'] as List<Color>?,
           onTap: () => _navigateToFortune(
             service['route'] as String,
-            service['title'] as String,
-          ),
-        ).animate()
+            service['title'] as String)).animate()
           .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
           .slideY(begin: 0.1, end: 0)
           .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0));
-      },
-    );
+      });
   }
 
   Widget _buildRecentFortunes(BuildContext context) {
@@ -577,8 +521,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
       '/fortune/wealth': Icons.account_balance_wallet,
       '/fortune/career': Icons.work,
       '/fortune/marriage': Icons.favorite,
-      '/fortune/compatibility': Icons.people,
-    };
+      '/fortune/compatibility': Icons.people};
     
     return Column(
       children: recentFortunes.map((fortune) {
@@ -618,10 +561,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   BoxShadow(
                     color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
                     blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+                    offset: const Offset(0, 2))]),
               child: Row(
                 children: [
                   Container(
@@ -629,14 +569,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     height: 48,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
+                      borderRadius: BorderRadius.circular(24)),
                     child: Icon(
                       iconMap[path] ?? Icons.auto_awesome,
                       size: 24,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                      color: Theme.of(context).colorScheme.primary)),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -645,53 +582,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                         Text(
                           title,
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                            fontWeight: FontWeight.w600)),
                         const SizedBox(height: 2),
                         Text(
                           _getFortuneDescription(path),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: context.fortuneTheme.subtitleText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                            color: context.fortuneTheme.subtitleText))])),
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
-                          vertical: 4,
-                        ),
+                          vertical: 4),
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
+                          borderRadius: BorderRadius.circular(4)),
                         child: Text(
                           timeAgo,
                           style: Theme.of(context).textTheme.labelSmall?.copyWith(
                             color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                            fontWeight: FontWeight.w500))),
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
-                        color: context.fortuneTheme.subtitleText,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                        color: context.fortuneTheme.subtitleText)])]))));
+      }).toList());
   }
   
   String _getFortuneDescription(String path) {
@@ -705,8 +621,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
       '/fortune/career': '커리어와 성공의 길',
       '/fortune/marriage': '평생의 동반자 운세',
       '/fortune/compatibility': '둘의 운명적 만남',
-      '/fortune/chemistry': '상대방과의 특별한 연결',
-    };
+      '/fortune/chemistry': '상대방과의 특별한 연결'};
     
     return descriptions[path] ?? '운세를 확인해보세요';
   }
@@ -736,8 +651,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               'new-year': Icons.celebration,
               'saju': Icons.wb_sunny,
               'love': Icons.favorite_border,
-              'wealth': Icons.account_balance_wallet,
-            };
+              'wealth': Icons.account_balance_wallet};
             
             // 배지 결정
             String badge = '';
@@ -765,8 +679,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: context.fortuneTheme.dividerColor),
-                  ),
+                    border: Border.all(color: context.fortuneTheme.dividerColor)),
                   child: Row(
                     children: [
                       Container(
@@ -774,14 +687,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                         height: 40,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                          borderRadius: BorderRadius.circular(20)),
                         child: Icon(
                           iconMap[fortune.id] ?? Icons.auto_awesome,
                           size: 20,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
+                          color: Theme.of(context).colorScheme.primary)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -792,70 +702,44 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                                 Text(
                                   fortune.title,
                                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                          ),
-                                ),
+                                    fontWeight: FontWeight.w600)),
                                 if (badge.isNotEmpty) ...[
                                   const SizedBox(width: 8),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 6,
-                                      vertical: 2,
-                                    ),
+                                      vertical: 2),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
+                                      borderRadius: BorderRadius.circular(4)),
                                     child: Text(
                                       badge,
                                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                         color: Theme.of(context).colorScheme.primary,
                                         fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
+                                        fontWeight: FontWeight.w600)))]]),
                             const SizedBox(height: 2),
                             Text(
                               fortune.description,
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: context.fortuneTheme.subtitleText,
-                          ),
-                            ),
+                            color: context.fortuneTheme.subtitleText)),
                             if (fortune.reason.isNotEmpty && !fortune.reason.contains('인기')) ...[
                               const SizedBox(height: 4),
                               Text(
                                 fortune.reason,
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
-                                  fontSize: 11,
-                          ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
+                                  fontSize: 11))]])),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 16,
-                        color: context.fortuneTheme.subtitleText,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ).animate()
+                        color: context.fortuneTheme.subtitleText)])))).animate()
               .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
               .slideX(begin: 0.1, end: 0);
-          }).toList(),
-        );
+          }).toList());
       },
       loading: () => _buildLoadingRecommendations(context),
-      error: (error, stack) => const SizedBox.shrink(),
-    );
+      error: (error, stack) => const SizedBox.shrink());
   }
   
   Widget _buildLoadingRecommendations(BuildContext context) {
@@ -866,8 +750,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: context.fortuneTheme.dividerColor),
-        ),
+          border: Border.all(color: context.fortuneTheme.dividerColor)),
         child: Row(
           children: [
             Container(
@@ -875,9 +758,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               height: 40,
               decoration: BoxDecoration(
                 color: context.fortuneTheme.dividerColor,
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ).animate(onPlay: (controller) => controller.repeat())
+                borderRadius: BorderRadius.circular(20))).animate(onPlay: (controller) => controller.repeat())
                 .shimmer(duration: 1.5.seconds),
             const SizedBox(width: 12),
             Expanded(
@@ -889,9 +770,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     height: 14,
                     decoration: BoxDecoration(
                       color: context.fortuneTheme.dividerColor,
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ).animate(onPlay: (controller) => controller.repeat())
+                      borderRadius: BorderRadius.circular(7))).animate(onPlay: (controller) => controller.repeat())
                       .shimmer(duration: 1.5.seconds, delay: 0.2.seconds),
                   const SizedBox(height: 6),
                   Container(
@@ -899,17 +778,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     height: 12,
                     decoration: BoxDecoration(
                       color: context.fortuneTheme.dividerColor,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ).animate(onPlay: (controller) => controller.repeat())
-                      .shimmer(duration: 1.5.seconds, delay: 0.4.seconds),
-                ],
-              ),
-            ),
-          ],
-        ),
-      )),
-    );
+                      borderRadius: BorderRadius.circular(6))).animate(onPlay: (controller) => controller.repeat())
+                      .shimmer(duration: 1.5.seconds, delay: 0.4.seconds)]))]))));
   }
   
   Widget _buildDefaultFortunes(BuildContext context) {
@@ -920,23 +790,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
         'title': '시간별 운세',
         'desc': '오늘/내일/주간/월간',
         'badge': 'NEW',
-        'route': '/fortune/time-based',
-      },
+        'route': '/fortune/time-based'},
       {
         'icon': Icons.work_rounded,
         'title': '커리어 운세',
         'desc': '취업/직업/사업 종합',
         'badge': '인기',
-        'route': '/fortune/career',
-      },
+        'route': '/fortune/career'},
       {
         'icon': Icons.history_rounded,
         'title': '운세 히스토리',
         'desc': '나의 운세 기록',
         'badge': 'NEW',
-        'route': '/fortune/history',
-      },
-    ];
+        'route': '/fortune/history'}];
     
     return Column(
       children: defaultFortunes.asMap().entries.map((entry) {
@@ -949,12 +815,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             onTap: () {
               _storageService.addRecentFortune(
                 fortune['route'] as String,
-                fortune['title'] as String,
-              );
+                fortune['title'] as String);
               _navigateToFortune(
                 fortune['route'] as String,
-                fortune['title'] as String,
-              );
+                fortune['title'] as String);
             },
             borderRadius: BorderRadius.circular(12),
             child: Container(
@@ -962,8 +826,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: context.fortuneTheme.dividerColor),
-              ),
+                border: Border.all(color: context.fortuneTheme.dividerColor)),
               child: Row(
                 children: [
                   Container(
@@ -971,14 +834,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                     height: 40,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                      borderRadius: BorderRadius.circular(20)),
                     child: Icon(
                       fortune['icon'] as IconData,
                       size: 20,
-                      color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
+                      color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -989,53 +849,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
                             Text(
                               fortune['title'] as String,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                          ),
-                            ),
+                                fontWeight: FontWeight.w600)),
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
-                              ),
+                                vertical: 2),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.surface,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                                borderRadius: BorderRadius.circular(4)),
                               child: Text(
                                 fortune['badge'] as String,
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   color: Theme.of(context).textTheme.bodyMedium?.color ?? Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                                  fontSize: 10)))]),
                         const SizedBox(height: 2),
                         Text(
                           fortune['desc'] as String,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: context.fortuneTheme.subtitleText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                            color: context.fortuneTheme.subtitleText))])),
                   Icon(
                     Icons.arrow_forward_ios,
                     size: 16,
-                    color: context.fortuneTheme.subtitleText,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ).animate()
+                    color: context.fortuneTheme.subtitleText)])))).animate()
           .fadeIn(delay: Duration(milliseconds: 600 + (index * 100)))
           .slideX(begin: 0.1, end: 0);
-      }).toList(),
-    );
+      }).toList());
   }
 
   // Dynamic value generation helpers
@@ -1109,8 +948,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
     if (route == '/fortune/time-based' && cachedFortune != null) {
       fortuneParams = {
         'cachedFortune': cachedFortune,
-        'todaysFortune': todaysFortune,
-      };
+        'todaysFortune': todaysFortune};
     }
     
     if (!isPremium) {
@@ -1136,10 +974,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with AutomaticKeepAlive
             onSkip: () {
               // If user skips (premium feature), just go back
               Navigator.pop(context);
-            },
-          ),
-        ),
-      );
+            })));
     } else {
       // Premium users go directly with cached data
       if (fortuneParams != null) {

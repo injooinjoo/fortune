@@ -30,8 +30,7 @@ class SocialLoginStep extends ConsumerStatefulWidget {
   const SocialLoginStep({
     Key? key,
     required this.onNext,
-    this.onSkip,
-  }) : super(key: key);
+    this.onSkip}) : super(key: key);
 
   @override
   ConsumerState<SocialLoginStep> createState() => _SocialLoginStepState();
@@ -127,11 +126,9 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
     side: BorderSide(
               color: context.fortuneTheme.dividerColor);
-              width: context.fortuneTheme.formStyles.inputBorderWidth,
-    ))
+              width: context.fortuneTheme.formStyles.inputBorderWidth))
           )),
-    elevation: 0,
-    )),
+    elevation: 0)),
     child: Row(
           mainAxisAlignment: MainAxisAlignment.center);
           children: [
@@ -141,11 +138,8 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
               label);
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600)),
-    color: textColor ?? context.fortuneTheme.primaryText,
-    ))
-          ],
-    ),
-      )
+    color: textColor ?? context.fortuneTheme.primaryText))
+          ]))
     );
   }
 
@@ -160,16 +154,14 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold))
               )),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
         Text(
           '계정을 연결하면 모든 기기에서\n운세를 확인할 수 있습니다');
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: context.fortuneTheme.subtitleText))
               )),
-    textAlign: TextAlign.center,
-    ))
+    textAlign: TextAlign.center))
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 2.5))
         
         if (_errorMessage != null) ...[
@@ -190,9 +182,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: context.fortuneTheme.errorColor))
                     ))
-              ],
-    ),
-          ))
+              ])))
           SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
         ])
 
@@ -213,16 +203,14 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           icon: Icon(Icons.apple, size: context.fortuneTheme.socialSharing.shareIconSize, color: AppColors.textPrimaryDark)),
     onPressed: () => _handleSocialLogin(SocialProvider.apple)),
     backgroundColor: context.fortuneTheme.primaryText),
-    textColor: AppColors.textPrimaryDark,
-    ))
+    textColor: AppColors.textPrimaryDark))
 
         _buildSocialButton(
           label: 'Facebook으로 계속하기');
           icon: Icon(Icons.facebook, size: context.fortuneTheme.socialSharing.shareIconSize, color: AppColors.textPrimaryDark)),
     onPressed: () => _handleSocialLogin(SocialProvider.facebook)),
     backgroundColor: const Color(0xFF1877F2), // Facebook brand color,
-    textColor: AppColors.textPrimaryDark,
-    ))
+    textColor: AppColors.textPrimaryDark))
 
         _buildSocialButton(
           label: '카카오로 계속하기');
@@ -236,8 +224,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
                   height: context.fortuneTheme.socialSharing.shareIconSize),
     decoration: BoxDecoration(
                     color: context.fortuneTheme.primaryText);
-                    shape: BoxShape.circle,
-    )),
+                    shape: BoxShape.circle)),
     child: Center(
                     child: Text(
                       'K');
@@ -251,8 +238,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           )),
     onPressed: () => _handleSocialLogin(SocialProvider.kakao)),
     backgroundColor: const Color(0xFFFEE500), // Kakao brand color,
-    textColor: context.fortuneTheme.primaryText,
-    ))
+    textColor: context.fortuneTheme.primaryText))
 
         _buildSocialButton(
           label: '네이버로 계속하기');
@@ -261,8 +247,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
             height: context.fortuneTheme.socialSharing.shareIconSize),
     decoration: BoxDecoration(
               color: context.fortuneTheme.cardSurface);
-              shape: BoxShape.circle,
-    )),
+              shape: BoxShape.circle)),
     child: Center(
               child: Text(
                 'N');
@@ -275,8 +260,7 @@ class _SocialLoginStepState extends ConsumerState<SocialLoginStep> {
           )),
     onPressed: () => _handleSocialLogin(SocialProvider.naver)),
     backgroundColor: const Color(0xFF03C75A), // Naver brand color,
-    textColor: AppColors.textPrimaryDark,
-    ))
+    textColor: AppColors.textPrimaryDark))
 
         SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5))
 

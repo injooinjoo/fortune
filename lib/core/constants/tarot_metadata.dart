@@ -55,8 +55,7 @@ class TarotCardInfo {
     this.healthMessage,
     this.cardCombinations,
     this.historicalContext,
-    this.artisticSymbolism,
-  });
+    this.artisticSymbolism});
 }
 
 class TarotMetadata {
@@ -75,8 +74,7 @@ class TarotMetadata {
       advice: '두려움 없이 새로운 도전을 받아들이세요',
       questions: [
         '어떤 새로운 시작이 당신을 기다리고 있나요?',
-        '무엇이 당신을 주저하게 만들고 있나요?',
-      ],
+        '무엇이 당신을 주저하게 만들고 있나요?'],
       story: '''바보는 타로의 첫 번째 카드로, 영혼의 여정을 시작하는 순수한 존재를 나타냅니다. 
       
 젊은 여행자가 작은 보따리 하나만 메고 절벽 끝에 서 있습니다. 그의 얼굴은 하늘을 향하고 있으며, 한 발은 이미 절벽 너머로 향하고 있습니다. 하얀 개가 그의 발치에서 짖으며 경고하지만, 바보는 개의 경고를 듣지 않습니다. 
@@ -120,8 +118,7 @@ class TarotMetadata {
         '실패를 두려워하지 말고 배움의 기회로 삼으세요',
         '어린아이같은 호기심으로 일상을 바라보세요',
         '계획에 너무 얽매이지 말고 즉흥성을 허용하세요',
-        '모르는 것을 인정하고 질문하는 용기를 가지세요',
-      ],
+        '모르는 것을 인정하고 질문하는 용기를 가지세요'],
       meditation: '''명상법:
 
 1. 편안한 자세로 앉아 눈을 감습니다.
@@ -135,8 +132,7 @@ class TarotMetadata {
         '나의 순수함과 호기심이 나를 올바른 길로 인도합니다',
         '나는 우주의 보호를 받으며 나아갑니다',
         '매 순간이 새로운 시작입니다',
-        '나는 무한한 가능성의 존재입니다',
-      ],
+        '나는 무한한 가능성의 존재입니다'],
       colorSymbolism: '''
 **노란색 배경**: 낙관주의, 지적 명료함, 새로운 아이디어
 **흰색 옷**: 순수함, 영적 각성, 새로운 시작
@@ -148,8 +144,7 @@ class TarotMetadata {
         '클리어 쿼츠 - 명료함과 새로운 시작',
         '문스톤 - 직관과 새로운 주기',
         '라브라도라이트 - 변화와 모험',
-        '아쿠아마린 - 용기와 명확한 소통',
-      ],
+        '아쿠아마린 - 용기와 명확한 소통'],
       timing: '새로운 달, 봄의 시작, 3월 21일(춘분), 새벽 시간',
       
       healthMessage: '''신체적으로는 신경계와 관련이 있으며, 새로운 활력과 에너지를 나타냅니다. 정신적으로는 스트레스 해소와 마음의 개방성이 필요한 시기입니다. 새로운 운동이나 건강 습관을 시작하기 좋은 때입니다.''',
@@ -159,12 +154,10 @@ class TarotMetadata {
         '바보 + 여사제': '직관을 따르는 새로운 시작',
         '바보 + 죽음': '완전히 새로운 삶의 장이 열림',
         '바보 + 탑': '예상치 못한 변화로 인한 새출발',
-        '바보 + 세계': '한 주기가 끝나고 새로운 주기가 시작됨',
-      },
+        '바보 + 세계': '한 주기가 끝나고 새로운 주기가 시작됨'},
       historicalContext: '''바보 카드는 중세 유럽의 궁정 광대 전통과 깊은 연관이 있습니다. 광대는 왕에게 진실을 말할 수 있는 유일한 존재였으며, 그들의 '어리석음'은 오히려 지혜를 전달하는 수단이었습니다. 르네상스 시대에는 '신성한 광기'라는 개념이 유행했으며, 이는 바보 카드의 심오한 의미와 연결됩니다.''',
       
-      artisticSymbolism: '''라이더-웨이트 덱에서 팸밀라 콜먼 스미스는 바보를 젊고 앤드로지너스한 인물로 그렸습니다. 이는 성별을 초월한 순수한 영혼을 나타냅니다. 절벽은 의식과 무의식의 경계를, 태양은 신성한 축복을 상징합니다. 작은 보따리는 과거의 경험을, 지팡이는 의지력을 나타냅니다.''',
-    ),
+      artisticSymbolism: '''라이더-웨이트 덱에서 팸밀라 콜먼 스미스는 바보를 젊고 앤드로지너스한 인물로 그렸습니다. 이는 성별을 초월한 순수한 영혼을 나타냅니다. 절벽은 의식과 무의식의 경계를, 태양은 신성한 축복을 상징합니다. 작은 보따리는 과거의 경험을, 지팡이는 의지력을 나타냅니다.'''),
     1: TarotCardInfo(
       id: 1,
       name: '마법사 (The Magician)',
@@ -178,8 +171,7 @@ class TarotMetadata {
       advice: '당신의 모든 능력을 활용하여 목표를 달성하세요',
       questions: [
         '어떤 재능을 더 개발해야 하나요?',
-        '목표 달성을 위해 무엇이 필요한가요?',
-      ],
+        '목표 달성을 위해 무엇이 필요한가요?'],
     ,
     2: TarotCardInfo(
       id: 2,
@@ -194,8 +186,7 @@ class TarotMetadata {
       advice: '직관을 믿고 내면의 지혜에 귀 기울이세요',
       questions: [
         '무엇이 아직 드러나지 않았나요?',
-        '내면의 목소리가 무엇을 말하고 있나요?',
-      ],
+        '내면의 목소리가 무엇을 말하고 있나요?'],
     ,
     3: TarotCardInfo(
       id: 3,
@@ -210,8 +201,7 @@ class TarotMetadata {
       advice: '자연과 조화를 이루며 창조적 에너지를 발산하세요',
       questions: [
         '무엇을 창조하고 키워나가고 있나요?',
-        '어떻게 자신을 더 사랑할 수 있나요?',
-      ],
+        '어떻게 자신을 더 사랑할 수 있나요?'],
     ,
     4: TarotCardInfo(
       id: 4,
@@ -226,8 +216,7 @@ class TarotMetadata {
       advice: '책임감을 갖고 안정적인 구조를 만들어가세요',
       questions: [
         '어디서 더 많은 구조가 필요한가요?',
-        '당신의 권위를 어떻게 사용하고 있나요?',
-      ],
+        '당신의 권위를 어떻게 사용하고 있나요?'],
     ,
     5: TarotCardInfo(
       id: 5,
@@ -242,8 +231,7 @@ class TarotMetadata {
       advice: '지혜로운 조언을 구하고 전통에서 배우세요',
       questions: [
         '어떤 믿음이 당신을 인도하고 있나요?',
-        '누구에게서 배울 수 있나요?',
-      ],
+        '누구에게서 배울 수 있나요?'],
     ,
     6: TarotCardInfo(
       id: 6,
@@ -258,8 +246,7 @@ class TarotMetadata {
       advice: '마음의 소리를 듣고 진정한 선택을 하세요',
       questions: [
         '어떤 선택이 당신 앞에 놓여 있나요?',
-        '무엇이 진정한 조화를 만드나요?',
-      ],
+        '무엇이 진정한 조화를 만드나요?'],
     ,
     7: TarotCardInfo(
       id: 7,
@@ -274,8 +261,7 @@ class TarotMetadata {
       advice: '목표를 향해 결단력 있게 전진하세요',
       questions: [
         '어떤 도전을 극복해야 하나요?',
-        '어떻게 균형을 유지할 수 있나요?',
-      ],
+        '어떻게 균형을 유지할 수 있나요?'],
     ,
     8: TarotCardInfo(
       id: 8,
@@ -290,8 +276,7 @@ class TarotMetadata {
       advice: '부드러운 힘으로 어려움을 극복하세요',
       questions: [
         '어떤 내적 힘을 발견했나요?',
-        '어디서 더 많은 인내가 필요한가요?',
-      ],
+        '어디서 더 많은 인내가 필요한가요?'],
     ,
     9: TarotCardInfo(
       id: 9,
@@ -306,8 +291,7 @@ class TarotMetadata {
       advice: '내면의 빛을 따라 진실을 찾으세요',
       questions: [
         '무엇을 찾고 있나요?',
-        '혼자만의 시간이 왜 필요한가요?',
-      ],
+        '혼자만의 시간이 왜 필요한가요?'],
     ,
     10: TarotCardInfo(
       id: 10,
@@ -322,8 +306,7 @@ class TarotMetadata {
       advice: '변화의 흐름을 받아들이고 기회를 포착하세요',
       questions: [
         '어떤 변화가 다가오고 있나요?',
-        '운명의 흐름을 어떻게 활용할 수 있나요?',
-      ],
+        '운명의 흐름을 어떻게 활용할 수 있나요?'],
     ,
     11: TarotCardInfo(
       id: 11,
@@ -338,8 +321,7 @@ class TarotMetadata {
       advice: '진실과 공정함을 추구하세요',
       questions: [
         '어떤 결정이 필요한가요?',
-        '무엇이 진정한 균형인가요?',
-      ],
+        '무엇이 진정한 균형인가요?'],
     ,
     12: TarotCardInfo(
       id: 12,
@@ -354,8 +336,7 @@ class TarotMetadata {
       advice: '다른 관점에서 상황을 바라보세요',
       questions: [
         '무엇을 놓아주어야 하나요?',
-        '어떤 새로운 관점이 필요한가요?',
-      ],
+        '어떤 새로운 관점이 필요한가요?'],
     ,
     13: TarotCardInfo(
       id: 13,
@@ -370,8 +351,7 @@ class TarotMetadata {
       advice: '끝은 새로운 시작을 위한 준비입니다',
       questions: [
         '무엇을 끝내야 하나요?',
-        '어떤 변화가 필요한가요?',
-      ],
+        '어떤 변화가 필요한가요?'],
     ,
     14: TarotCardInfo(
       id: 14,
@@ -386,8 +366,7 @@ class TarotMetadata {
       advice: '인내심을 갖고 균형을 찾으세요',
       questions: [
         '어디서 더 많은 균형이 필요한가요?',
-        '무엇을 통합해야 하나요?',
-      ],
+        '무엇을 통합해야 하나요?'],
     ,
     15: TarotCardInfo(
       id: 15,
@@ -402,8 +381,7 @@ class TarotMetadata {
       advice: '자신을 속박하는 것에서 벗어나세요',
       questions: [
         '무엇이 당신을 속박하고 있나요?',
-        '어떤 두려움과 마주해야 하나요?',
-      ],
+        '어떤 두려움과 마주해야 하나요?'],
     ,
     16: TarotCardInfo(
       id: 16,
@@ -418,8 +396,7 @@ class TarotMetadata {
       advice: '파괴는 때로 필요한 정화 과정입니다',
       questions: [
         '어떤 구조가 무너져야 하나요?',
-        '진실은 무엇인가요?',
-      ],
+        '진실은 무엇인가요?'],
     ,
     17: TarotCardInfo(
       id: 17,
@@ -434,8 +411,7 @@ class TarotMetadata {
       advice: '희망을 품고 미래를 믿으세요',
       questions: [
         '무엇이 당신에게 희망을 주나요?',
-        '어떤 꿈을 향해 나아가고 있나요?',
-      ],
+        '어떤 꿈을 향해 나아가고 있나요?'],
     ,
     18: TarotCardInfo(
       id: 18,
@@ -450,8 +426,7 @@ class TarotMetadata {
       advice: '직관을 신뢰하되 환상에 주의하세요',
       questions: [
         '무엇이 숨겨져 있나요?',
-        '어떤 두려움이 당신을 지배하나요?',
-      ],
+        '어떤 두려움이 당신을 지배하나요?'],
     ,
     19: TarotCardInfo(
       id: 19,
@@ -466,8 +441,7 @@ class TarotMetadata {
       advice: '당신의 빛을 세상과 나누세요',
       questions: [
         '무엇이 당신을 행복하게 하나요?',
-        '어떤 성공을 축하해야 하나요?',
-      ],
+        '어떤 성공을 축하해야 하나요?'],
     ,
     20: TarotCardInfo(
       id: 20,
@@ -482,8 +456,7 @@ class TarotMetadata {
       advice: '과거를 용서하고 새롭게 태어나세요',
       questions: [
         '무엇을 용서해야 하나요?',
-        '어떤 부름을 받고 있나요?',
-      ],
+        '어떤 부름을 받고 있나요?'],
     ,
     21: TarotCardInfo(
       id: 21,
@@ -498,10 +471,8 @@ class TarotMetadata {
       advice: '성취를 축하하고 새로운 여정을 준비하세요',
       questions: [
         '무엇을 완성했나요?',
-        '다음 여정은 무엇인가요?',
-      ],
-    ,
-  };
+        '다음 여정은 무엇인가요?'],
+    };
 
   // 모든 타로 카드를 하나의 맵으로 통합 (78장)
   static Map<int, TarotCardInfo> get allCards {
@@ -550,16 +521,14 @@ class TarotMetadata {
       cardCount: 1,
       positions: ['현재 상황/오늘의 메시지'],
       layout: SpreadLayout.single,
-      soulCost: 1,
-    ),
+      soulCost: 1),
     'three': TarotSpread(
       name: '쓰리 카드 스프레드',
       description: '과거-현재-미래 또는 상황-행동-결과',
       cardCount: 3,
       positions: ['과거/상황': '현재/행동': '미래/결과',
       layout: SpreadLayout.horizontal,
-      soulCost: 3,
-    ),
+      soulCost: 3),
     'celtic': TarotSpread(
       name: '켈틱 크로스',
       description: '가장 상세한 10장 스프레드',
@@ -574,11 +543,9 @@ class TarotMetadata {
         '당신의 접근',
         '외부 영향',
         '희망과 두려움',
-        '최종 결과',
-      ],
+        '최종 결과'],
       layout: SpreadLayout.celticCross,
-      soulCost: 5,
-    ),
+      soulCost: 5),
     'relationship': TarotSpread(
       name: '관계 스프레드',
       description: '두 사람 사이의 관계 분석',
@@ -590,11 +557,9 @@ class TarotMetadata {
         '나의 도전',
         '상대의 도전',
         '관계의 잠재력',
-        '조언',
-      ],
+        '조언'],
       layout: SpreadLayout.relationship,
-      soulCost: 4,
-    ),
+      soulCost: 4),
     'career': TarotSpread(
       name: '경력 스프레드',
       description: '직업과 경력에 대한 통찰',
@@ -604,11 +569,9 @@ class TarotMetadata {
         '숨겨진 영향',
         '조언',
         '예상되는 도전',
-        '잠재적 결과',
-      ],
+        '잠재적 결과'],
       layout: SpreadLayout.pyramid,
-      soulCost: 3,
-    ),
+      soulCost: 3),
     'decision': TarotSpread(
       name: '결정 스프레드',
       description: '중요한 선택을 위한 가이드',
@@ -620,19 +583,16 @@ class TarotMetadata {
         '선택지 2',
         '선택지 2의 결과',
         '중요한 요소',
-        '최종 조언',
-      ],
+        '최종 조언'],
       layout: SpreadLayout.decision,
-      soulCost: 4,
-    ),
+      soulCost: 4),
     'year': TarotSpread(
       name: '연간 스프레드',
       description: '12개월 전망',
       cardCount: 12,
       positions: [
         '1월': '2월': '3월': '4월': '5월', '6월',
-        '7월', '8월', '9월', '10월', '11월', '12월',
-      ],
+        '7월', '8월', '9월', '10월', '11월', '12월'],
       layout: SpreadLayout.circle,
       soulCost: 5,
     ,
@@ -647,12 +607,9 @@ class TarotMetadata {
         '하트 차크라 (사랑)',
         '목 차크라 (소통)',
         '제3의 눈 차크라 (직관)',
-        '크라운 차크라 (영성)',
-      ],
+        '크라운 차크라 (영성)'],
       layout: SpreadLayout.vertical,
-      soulCost: 4,
-    ),
-  };
+      soulCost: 4)};
 
   // 카드 해석 깊이 레벨
   static const Map<String, InterpretationDepth> interpretationLevels = {
@@ -662,38 +619,32 @@ class TarotMetadata {
       includeElemental: false,
       includeNumerology: false,
       includeAstrology: false,
-      detailLevel: 1,
-    ),
+      detailLevel: 1),
     'standard': InterpretationDepth(
       name: '표준 해석',
       includeReversed: true,
       includeElemental: true,
       includeNumerology: false,
       includeAstrology: false,
-      detailLevel: 2,
-    ),
+      detailLevel: 2),
     'advanced': InterpretationDepth(
       name: '심화 해석',
       includeReversed: true,
       includeElemental: true,
       includeNumerology: true,
       includeAstrology: true,
-      detailLevel: 3,
-    ),
-  };
+      detailLevel: 3)};
 
   // 카드 조합 의미
   static const Map<String, CardCombination> significantCombinations = {
     'tower_death': CardCombination(
       cards: ['The Tower': 'Death',
       meaning: '급격한 변화와 변혁의 시기, 과거와의 완전한 단절',
-      advice: '변화를 받아들이고 새로운 시작을 준비하세요',
-    ),
+      advice: '변화를 받아들이고 새로운 시작을 준비하세요'),
     'lovers_twocups': CardCombination(
       cards: ['The Lovers': 'Two of Cups',
       meaning: '깊은 사랑과 조화로운 관계의 시작',
-      advice: '마음을 열고 진정한 연결을 만들어가세요',
-    ),
+      advice: '마음을 열고 진정한 연결을 만들어가세요'),
     // ... 더 많은 조합들
   };
 }
@@ -712,8 +663,7 @@ class TarotSpread {
     required this.cardCount,
     required this.positions,
     required this.layout,
-    required this.soulCost,
-  });
+    required this.soulCost});
 }
 
 enum SpreadLayout {
@@ -726,10 +676,7 @@ enum SpreadLayout {
   pyramid,
   circle,
   relationship,
-  decision,
-  
-  
-}
+  decision}
 
 class InterpretationDepth {
   final String name;
@@ -745,8 +692,7 @@ class InterpretationDepth {
     required this.includeElemental,
     required this.includeNumerology,
     required this.includeAstrology,
-    required this.detailLevel,
-  });
+    required this.detailLevel});
 }
 
 class CardCombination {
@@ -757,8 +703,7 @@ class CardCombination {
   const CardCombination({
     required this.cards,
     required this.meaning,
-    required this.advice,
-  });
+    required this.advice});
 }
 
 // 카드별 상세 정보 제공 메서드

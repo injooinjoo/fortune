@@ -40,14 +40,11 @@ class TokenBalanceWidget extends ConsumerWidget {
               padding: AppSpacing.paddingAll4,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: Icon(
                 Icons.auto_awesome_rounded,
                 size: AppDimensions.iconSizeXSmall,
-                color: theme.colorScheme.primary,
-              ),
-            ),
+                color: theme.colorScheme.primary)),
             SizedBox(width: AppSpacing.spacing2),
             
             // Balance or Loading
@@ -58,10 +55,7 @@ class TokenBalanceWidget extends ConsumerWidget {
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    theme.colorScheme.primary,
-                  ),
-                ),
-              )
+                    theme.colorScheme.primary)))
             else
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -71,15 +65,7 @@ class TokenBalanceWidget extends ConsumerWidget {
                     balance?.toString() ?? '0',
                     style: AppTypography.bodySmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
+                      color: theme.colorScheme.onSurface))])])));
   }
 }
 
@@ -103,15 +89,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             end: Alignment.bottomRight,
             colors: [
               AppColors.primary.withValues(alpha: 0.1),
-              AppColors.secondary.withValues(alpha: 0.1),
-            ],
-          ),
+              AppColors.secondary.withValues(alpha: 0.1)]),
           borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
           border: Border.all(
             color: theme.colorScheme.primary.withValues(alpha: 0.2),
-            width: 1,
-          ),
-        ),
+            width: 1)),
         child: Column(
           children: [
             // Header
@@ -122,16 +104,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                   '영혼 잔액',
                   style: AppTypography.bodyLarge.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
+                    color: theme.colorScheme.onSurface)),
                 Icon(
                   Icons.add_circle_outline,
                   color: theme.colorScheme.primary,
-                  size: AppDimensions.iconSizeMedium,
-                ),
-              ],
-            ),
+                  size: AppDimensions.iconSizeMedium)]),
             SizedBox(height: AppSpacing.spacing3),
             
             // Balance Display
@@ -141,11 +118,7 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      theme.colorScheme.primary,
-                    ),
-                  ),
-                ),
-              )
+                      theme.colorScheme.primary))))
             else
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -154,14 +127,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                     padding: EdgeInsets.all(AppSpacing.spacing3),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
+                      shape: BoxShape.circle),
                     child: Icon(
                       Icons.auto_awesome,
                       size: AppDimensions.iconSizeLarge,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
+                      color: theme.colorScheme.primary)),
                   SizedBox(width: AppSpacing.spacing3),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,19 +140,11 @@ class FullTokenBalanceWidget extends ConsumerWidget {
                         balance?.toString() ?? '0',
                         style: AppTypography.headlineMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
+                          color: theme.colorScheme.onSurface)),
                       Text(
                         '영혼',
                         style: AppTypography.bodySmall.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])]),
             
             SizedBox(height: AppSpacing.spacing4),
             
@@ -190,26 +152,16 @@ class FullTokenBalanceWidget extends ConsumerWidget {
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
-                vertical: AppSpacing.spacing3,
-              ),
+                vertical: AppSpacing.spacing3),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-              ),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)),
               child: Center(
                 child: Text(
                   '영혼 충전하기',
                   style: AppTypography.bodyMedium.copyWith(
                     color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    fontWeight: FontWeight.w600))))])));
   }
 }
 
@@ -231,10 +183,7 @@ class TokenBalanceStats extends ConsumerWidget {
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+            offset: const Offset(0, 4))]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -242,10 +191,8 @@ class TokenBalanceStats extends ConsumerWidget {
             '영혼 사용 통계',
             style: AppTypography.bodyLarge.copyWith(
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          SizedBox(height: AppSpacing.spacing3),
+              color: theme.colorScheme.onSurface)),
+          const SizedBox(height: AppSpacing.spacing3),
           
           // Stats rows - TODO: Add these fields to TokenState
           // _buildTokenStat(
@@ -281,8 +228,7 @@ class TokenBalanceStats extends ConsumerWidget {
     required String label,
     required String value,
     required Color color,
-    required IconData icon,
-  }) {
+    required IconData icon}) {
     final theme = Theme.of(context);
     
     return Row(
@@ -293,25 +239,16 @@ class TokenBalanceStats extends ConsumerWidget {
             Icon(
               icon,
               size: AppDimensions.iconSizeSmall,
-              color: color,
-            ),
+              color: color),
             SizedBox(width: AppSpacing.spacing2),
             Text(
               label,
               style: AppTypography.bodySmall.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-        ),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]),
         Text(
           value,
           style: AppTypography.bodyMedium.copyWith(
             fontWeight: FontWeight.w600,
-            color: color,
-          ),
-        ),
-      ],
-    );
+            color: color))]);
   }
 }

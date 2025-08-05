@@ -27,8 +27,7 @@ class TokenApiService {
         usedTokens: totalUsed,
         remainingTokens: balance,
         lastUpdated: DateTime.now(),
-        hasUnlimitedAccess: isUnlimited,
-      );
+        hasUnlimitedAccess: isUnlimited);
     } on DioException catch (e) {
       // Handle profile not found specifically
       if (e.response?.statusCode == 404 && 
@@ -41,8 +40,7 @@ class TokenApiService {
           usedTokens: 0,
           remainingTokens: 0,
           lastUpdated: DateTime.now(),
-          hasUnlimitedAccess: false,
-        );
+          hasUnlimitedAccess: false);
       }
       throw _handleDioError(e);
     }
@@ -53,17 +51,14 @@ class TokenApiService {
     required String userId,
     required String fortuneType,
     required int amount,
-    String? referenceId,
-  }) async {
+    String? referenceId}) async {
     try {
       // 새로운 soul-consume 엔드포인트 사용
       final response = await _apiClient.post(
         '/soul-consume',
         data: {
           'fortuneType': fortuneType,
-          'referenceId': null,
-        },
-      );
+          'referenceId': null});
 
       return TokenBalance(
         userId: userId,
@@ -71,8 +66,7 @@ class TokenApiService {
         usedTokens: response.data['balance']['usedTokens'],
         remainingTokens: response.data['balance']['remainingTokens'],
         lastUpdated: DateTime.parse(response.data['balance']['lastUpdated']),
-        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess'],
-      );
+        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'INSUFFICIENT_TOKENS') {
@@ -102,8 +96,7 @@ class TokenApiService {
                 badge: json['badge'],
                 bonusTokens: json['bonusTokens'],
                 description: json['description'],
-                isPopular: json['isPopular'],
-              ))
+                isPopular: json['isPopular']))
           .toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -113,16 +106,13 @@ class TokenApiService {
   // 토큰 구매
   Future<Map<String, dynamic>> purchaseTokens({
     required String packageId,
-    required String paymentMethodId,
-  }) async {
+    required String paymentMethodId}) async {
     try {
       final response = await _apiClient.post(
         '/token-purchase',
         data: {
           'packageId': packageId,
-          'paymentMethodId': null,
-        },
-      );
+          'paymentMethodId': null});
 
       return response.data;
     } on DioException catch (e) {
@@ -134,18 +124,15 @@ class TokenApiService {
   Future<List<TokenTransaction>> getTokenHistory({
     required String userId,
     int? limit,
-    int? offset,
-  }) async {
+    int? offset}) async {
     try {
       final queryParams = {
         if (limit != null) 'limit': null,
-        if (offset != null) 'offset': null,
-      };
+        if (offset != null) 'offset': null};
 
       final response = await _apiClient.get(
         '/token-history',
-        queryParameters: queryParams,
-      );
+        queryParameters: queryParams);
 
       // Handle the response format from the backend
       final transactions = response.data['transactions'] as List? ?? [];
@@ -159,8 +146,7 @@ class TokenApiService {
                 description: json['description'],
                 referenceId: json['referenceId'],
                 createdAt: DateTime.parse(json['createdAt']),
-                balanceAfter: json['balanceAfter'],
-              ))
+                balanceAfter: json['balanceAfter']))
           .toList();
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -183,8 +169,7 @@ class TokenApiService {
           'daily': 1,
           'weekly': 2,
           'monthly': 3,
-          'yearly': 5,
-        };
+          'yearly': 5};
       }
       throw _handleDioError(e);
     }
@@ -208,8 +193,7 @@ class TokenApiService {
         status: sub['status'],
         plan: sub['plan'],
         price: (sub['price'] as num).toDouble(),
-        currency: sub['currency'] ?? 'KRW',
-      );
+        currency: sub['currency'] ?? 'KRW');
     } on DioException catch (e) {
       // Handle CORS/network errors gracefully
       if (e.type == DioExceptionType.connectionError || 
@@ -232,8 +216,7 @@ class TokenApiService {
         usedTokens: response.data['balance']['usedTokens'],
         remainingTokens: response.data['balance']['remainingTokens'],
         lastUpdated: DateTime.parse(response.data['balance']['lastUpdated']),
-        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess'],
-      );
+        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
       if (e.response?.statusCode == 400 && 
           e.response?.data['code'] == 'ALREADY_CLAIMED') {
@@ -249,16 +232,13 @@ class TokenApiService {
   Future<TokenBalance> rewardTokensForAdView({
     required String userId,
     required String fortuneType,
-    int rewardAmount = 1,
-  }) async {
+    int rewardAmount = 1}) async {
     try {
       // 새로운 soul-earn 엔드포인트 사용
       final response = await _apiClient.post(
         '/soul-earn',
         data: {
-          'fortuneType': fortuneType,
-        },
-      );
+          'fortuneType': fortuneType});
 
       return TokenBalance(
         userId: userId,
@@ -266,8 +246,7 @@ class TokenApiService {
         usedTokens: response.data['balance']['usedTokens'],
         remainingTokens: response.data['balance']['remainingTokens'],
         lastUpdated: DateTime.parse(response.data['balance']['lastUpdated']),
-        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess'],
-      );
+        hasUnlimitedAccess: response.data['balance']['hasUnlimitedAccess']);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }

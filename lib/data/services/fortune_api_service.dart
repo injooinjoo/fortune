@@ -23,19 +23,16 @@ class FortuneApiService {
   // Daily Fortune
   Future<Fortune> getDailyFortune({
     required String userId,
-    DateTime? date,
-  }) async {
+    DateTime? date}) async {
     final stopwatch = Logger.startTimer('getDailyFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getDailyFortune called', {
       'userId': userId,
-      'date': null,
-    });
+      'date': null});
     
     final params = {
       'userId': null,
-      if (date != null) 'date': null,
-    };
+      if (date != null) 'date': null};
 
     // Check cache first
     Logger.debug('🔍 [FortuneApiService] Checking cache for daily fortune...');
@@ -45,8 +42,7 @@ class FortuneApiService {
     
     if (cachedFortune != null) {
       Logger.info('💾 [FortuneApiService] Cache hit! Returning cached daily fortune', {
-        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms',
-      });
+        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
       Logger.endTimer('getDailyFortune - Total', stopwatch);
       return _fortuneModelToEntity(cachedFortune);
     }
@@ -54,25 +50,21 @@ class FortuneApiService {
 
     try {
       final queryParams = {
-        if (date != null) 'date': null,
-      };
+        if (date != null) 'date': null};
 
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.dailyFortune,
-        'queryParams': null,
-      });
+        'queryParams': null});
       
       final apiStopwatch = Logger.startTimer('API Call - daily');
       final response = await _apiClient.get(
         ApiEndpoints.dailyFortune,
-        queryParameters: queryParams,
-      );
+        queryParameters: queryParams);
       Logger.endTimer('API Call - daily', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -82,8 +74,7 @@ class FortuneApiService {
         'fortuneType': fortune.type,
         'overallScore': fortune.overallScore,
         'contentLength': fortune.content.length,
-        'tokensUsed': null,
-      });
+        'tokensUsed': null});
 
       // Cache the result
       Logger.debug('🔍 [FortuneApiService] Caching fortune result...');
@@ -91,16 +82,14 @@ class FortuneApiService {
       await _cacheService.cacheFortune(
         'daily',
         params,
-        _entityToFortuneModel(fortune, 'daily'),
-      );
+        _entityToFortuneModel(fortune, 'daily'));
       Logger.endTimer('Cache Write - daily', cacheWriteStopwatch);
       Logger.debug('🔍 [FortuneApiService] Fortune cached successfully');
 
       Logger.endTimer('getDailyFortune - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getDailyFortune completed', {
         'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-        'fromCache': null,
-      });
+        'fromCache': null});
 
       return fortune;
     } on DioException catch (e) {
@@ -108,8 +97,7 @@ class FortuneApiService {
         'type': e.type.toString(),
         'message': e.message,
         'statusCode': e.response?.statusCode,
-        'responseData': null,
-      });
+        'responseData': null});
       
       // If network error and cache exists, return cached data
       if (_isNetworkError(e)) {
@@ -133,28 +121,24 @@ class FortuneApiService {
   // Generate Daily Fortune (for compatibility)
   Future<Fortune> generateDailyFortune({
     required String userId,
-    DateTime? date,
-  }) async {
+    DateTime? date}) async {
     return getDailyFortune(userId: userId, date: date);
   }
 
   // Saju Fortune
   Future<Fortune> getSajuFortune({
     required String userId,
-    required DateTime birthDate,
-  }) async {
+    required DateTime birthDate}) async {
     final stopwatch = Logger.startTimer('getSajuFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getSajuFortune called', {
       'userId': userId,
       'birthDate': birthDate.toIso8601String(),
-      'age': null,
-    });
+      'age': null});
     
     final params = {
       'userId': userId,
-      'birthDate': null,
-    };
+      'birthDate': null};
 
     // Check cache first
     Logger.debug('🔍 [FortuneApiService] Checking cache for saju fortune...');
@@ -164,8 +148,7 @@ class FortuneApiService {
     
     if (cachedFortune != null) {
       Logger.info('💾 [FortuneApiService] Cache hit! Returning cached saju fortune', {
-        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms',
-      });
+        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
       Logger.endTimer('getSajuFortune - Total', stopwatch);
       return _fortuneModelToEntity(cachedFortune);
     }
@@ -174,22 +157,18 @@ class FortuneApiService {
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.sajuFortune,
-        'birthDate': null,
-      });
+        'birthDate': null});
       
       final apiStopwatch = Logger.startTimer('API Call - saju');
       final response = await _apiClient.post(
         ApiEndpoints.sajuFortune,
         data: {
-          'birthDate': birthDate,
-        },
-      );
+          'birthDate': birthDate});
       Logger.endTimer('API Call - saju', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -197,8 +176,7 @@ class FortuneApiService {
       Logger.info('🔍 [FortuneApiService] Saju fortune processed successfully', {
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
-        'tokensUsed': null,
-      });
+        'tokensUsed': null});
 
       // Cache the result
       Logger.debug('🔍 [FortuneApiService] Caching fortune result...');
@@ -206,23 +184,20 @@ class FortuneApiService {
       await _cacheService.cacheFortune(
         'saju',
         params,
-        _entityToFortuneModel(fortune, 'saju'),
-      );
+        _entityToFortuneModel(fortune, 'saju'));
       Logger.endTimer('Cache Write - saju', cacheWriteStopwatch);
 
       Logger.endTimer('getSajuFortune - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getSajuFortune completed', {
         'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-        'fromCache': null,
-      });
+        'fromCache': null});
 
       return fortune;
     } on DioException catch (e) {
       Logger.error('❌ [FortuneApiService] DioException in getSajuFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       
       // If network error and cache exists, return cached data
       if (_isNetworkError(e)) {
@@ -246,36 +221,30 @@ class FortuneApiService {
   // Compatibility Fortune
   Future<Fortune> getCompatibilityFortune({
     required Map<String, dynamic> person1,
-    required Map<String, dynamic> person2,
-  }) async {
+    required Map<String, dynamic> person2}) async {
     final stopwatch = Logger.startTimer('getCompatibilityFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getCompatibilityFortune called', {
       'person1Name': person1['name'],
       'person2Name': person2['name'],
       'person1Keys': person1.keys.toList(),
-      'person2Keys': null,
-    });
+      'person2Keys': null});
     
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
-        'endpoint',
-      });
+        'endpoint'});
       
       final apiStopwatch = Logger.startTimer('API Call - compatibility');
       final response = await _apiClient.post(
         ApiEndpoints.compatibilityFortune,
         data: {
           'person1': person1,
-          'person2': null,
-        },
-      );
+          'person2': null});
       Logger.endTimer('API Call - compatibility', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -284,8 +253,7 @@ class FortuneApiService {
       Logger.info('✅ [FortuneApiService] getCompatibilityFortune completed', {
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
       
       return fortune;
     } on DioException catch (e) {
@@ -293,8 +261,7 @@ class FortuneApiService {
       Logger.error('❌ [FortuneApiService] DioException in getCompatibilityFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('getCompatibilityFortune - Total', stopwatch);
@@ -305,17 +272,14 @@ class FortuneApiService {
 
   // Love Fortune
   Future<Fortune> getLoveFortune({
-    required String userId,
-  }) async {
+    required String userId}) async {
     final stopwatch = Logger.startTimer('getLoveFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getLoveFortune called', {
-      'userId',
-    });
+      'userId'});
     
     final params = {
-      'userId': null,
-    };
+      'userId': null};
 
     // Check cache first
     Logger.debug('🔍 [FortuneApiService] Checking cache for love fortune...');
@@ -325,8 +289,7 @@ class FortuneApiService {
     
     if (cachedFortune != null) {
       Logger.info('💾 [FortuneApiService] Cache hit! Returning cached love fortune', {
-        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms',
-      });
+        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
       Logger.endTimer('getLoveFortune - Total', stopwatch);
       return _fortuneModelToEntity(cachedFortune);
     }
@@ -334,8 +297,7 @@ class FortuneApiService {
 
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
-        'endpoint',
-      });
+        'endpoint'});
       
       final apiStopwatch = Logger.startTimer('API Call - love');
       final response = await _apiClient.get(ApiEndpoints.loveFortune);
@@ -343,16 +305,14 @@ class FortuneApiService {
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
       
       Logger.info('🔍 [FortuneApiService] Love fortune processed successfully', {
         'fortuneId': fortune.id,
-        'overallScore': null,
-      });
+        'overallScore': null});
 
       // Cache the result
       Logger.debug('🔍 [FortuneApiService] Caching fortune result...');
@@ -360,23 +320,20 @@ class FortuneApiService {
       await _cacheService.cacheFortune(
         'love',
         params,
-        _entityToFortuneModel(fortune, 'love'),
-      );
+        _entityToFortuneModel(fortune, 'love'));
       Logger.endTimer('Cache Write - love', cacheWriteStopwatch);
 
       Logger.endTimer('getLoveFortune - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getLoveFortune completed', {
         'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-        'fromCache': null,
-      });
+        'fromCache': null});
 
       return fortune;
     } on DioException catch (e) {
       Logger.error('❌ [FortuneApiService] DioException in getLoveFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       
       // If network error and cache exists, return cached data
       if (_isNetworkError(e)) {
@@ -400,33 +357,28 @@ class FortuneApiService {
   // Wealth Fortune
   Future<Fortune> getWealthFortune({
     required String userId,
-    Map<String, dynamic>? financialData,
-  }) async {
+    Map<String, dynamic>? financialData}) async {
     final stopwatch = Logger.startTimer('getWealthFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getWealthFortune called', {
       'userId': userId,
       'hasFinancialData': financialData != null,
-      'dataKeys': null,
-    });
+      'dataKeys': null});
     
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.wealthFortune,
-        'hasData': null,
-      });
+        'hasData': null});
       
       final apiStopwatch = Logger.startTimer('API Call - wealth');
       final response = await _apiClient.post(
         ApiEndpoints.wealthFortune,
-        data: financialData ?? {},
-      );
+        data: financialData ?? {});
       Logger.endTimer('API Call - wealth', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -435,8 +387,7 @@ class FortuneApiService {
       Logger.info('✅ [FortuneApiService] getWealthFortune completed', {
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
       
       return fortune;
     } on DioException catch (e) {
@@ -444,8 +395,7 @@ class FortuneApiService {
       Logger.error('❌ [FortuneApiService] DioException in getWealthFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('getWealthFortune - Total', stopwatch);
@@ -458,37 +408,31 @@ class FortuneApiService {
   Future<Fortune> getMbtiFortune({
     required String userId,
     required String mbtiType,
-    List<String>? categories,
-  }) async {
+    List<String>? categories}) async {
     final stopwatch = Logger.startTimer('getMbtiFortune - Total');
     
     Logger.info('🔍 [FortuneApiService] getMbtiFortune called', {
       'userId': userId,
       'mbtiType': mbtiType,
       'categoriesCount': categories?.length ?? 0,
-      'categories': null,
-    });
+      'categories': null});
     
     try {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.mbtiFortune,
-        'mbtiType': null,
-      });
+        'mbtiType': null});
       
       final apiStopwatch = Logger.startTimer('API Call - mbti');
       final response = await _apiClient.post(
         ApiEndpoints.mbtiFortune,
         data: {
           'mbtiType': mbtiType,
-          if (categories != null) 'categories': categories,
-        },
-      );
+          if (categories != null) 'categories': categories});
       Logger.endTimer('API Call - mbti', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -497,8 +441,7 @@ class FortuneApiService {
       Logger.info('✅ [FortuneApiService] getMbtiFortune completed', {
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
       
       return fortune;
     } on DioException catch (e) {
@@ -506,8 +449,7 @@ class FortuneApiService {
       Logger.error('❌ [FortuneApiService] DioException in getMbtiFortune', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('getMbtiFortune - Total', stopwatch);
@@ -520,8 +462,7 @@ class FortuneApiService {
   Future<Fortune> getTodayFortune({required String userId}) async {
     Logger.debug('📅 [FortuneApiService] getTodayFortune delegating to getDailyFortune', {
       'userId': userId,
-      'date': null,
-    });
+      'date': null});
     return getDailyFortune(userId: userId, date: DateTime.now());
   }
 
@@ -530,8 +471,7 @@ class FortuneApiService {
     final tomorrow = DateTime.now().add(Duration(days: 1));
     Logger.debug('📅 [FortuneApiService] getTomorrowFortune delegating to getDailyFortune', {
       'userId': userId,
-      'date': null,
-    });
+      'date': null});
     return getDailyFortune(userId: userId, date: tomorrow);
   }
 
@@ -539,8 +479,7 @@ class FortuneApiService {
   Future<Fortune> getWeeklyFortune({required String userId}) async {
     Logger.debug('📅 [FortuneApiService] getWeeklyFortune delegating to getFortune', {
       'userId': userId,
-      'fortuneType': 'weekly',
-    });
+      'fortuneType': 'weekly'});
     return getFortune(fortuneType: 'weekly', userId: userId);
   }
 
@@ -548,8 +487,7 @@ class FortuneApiService {
   Future<Fortune> getMonthlyFortune({required String userId}) async {
     Logger.debug('📅 [FortuneApiService] getMonthlyFortune delegating to getFortune', {
       'userId': userId,
-      'fortuneType': 'monthly',
-    });
+      'fortuneType': 'monthly'});
     return getFortune(fortuneType: 'monthly', userId: userId);
   }
 
@@ -557,57 +495,48 @@ class FortuneApiService {
   Future<Fortune> getYearlyFortune({required String userId}) async {
     Logger.debug('📅 [FortuneApiService] getYearlyFortune delegating to getFortune', {
       'userId': userId,
-      'fortuneType': 'yearly',
-    });
+      'fortuneType': 'yearly'});
     return getFortune(fortuneType: 'yearly', userId: userId);
   }
 
   // Hourly Fortune
   Future<Fortune> getHourlyFortune({
     required String userId,
-    required DateTime targetTime,
-  }) async {
+    required DateTime targetTime}) async {
     return getFortune(
       fortuneType: 'hourly',
       userId: userId,
-      params: {'targetTime': targetTime},
-    );
+      params: {'targetTime': targetTime});
   }
 
   // Zodiac Fortune
   Future<Fortune> getZodiacFortune({
     required String userId,
-    required String zodiacSign,
-  }) async {
+    required String zodiacSign}) async {
     return getFortune(
       fortuneType: 'zodiac',
       userId: userId,
-      params: {'zodiacSign': zodiacSign},
-    );
+      params: {'zodiacSign': zodiacSign});
   }
 
   // Zodiac Animal Fortune
   Future<Fortune> getZodiacAnimalFortune({
     required String userId,
-    required String zodiacAnimal,
-  }) async {
+    required String zodiacAnimal}) async {
     return getFortune(
       fortuneType: 'zodiac-animal',
       userId: userId,
-      params: {'zodiacAnimal': zodiacAnimal},
-    );
+      params: {'zodiacAnimal': zodiacAnimal});
   }
 
   // Blood Type Fortune
   Future<Fortune> getBloodTypeFortune({
     required String userId,
-    required String bloodType,
-  }) async {
+    required String bloodType}) async {
     return getFortune(
       fortuneType: 'blood-type',
       userId: userId,
-      params: {'bloodType': bloodType},
-    );
+      params: {'bloodType': bloodType});
   }
 
   // Tojeong Fortune
@@ -694,13 +623,11 @@ class FortuneApiService {
   // Wish Fortune
   Future<Fortune> getWishFortune({
     required String userId,
-    required String wish,
-  }) async {
+    required String wish}) async {
     return getFortune(
       fortuneType: 'wish',
       userId: userId,
-      params: {'wish': wish},
-    );
+      params: {'wish': wish});
   }
 
   // Talent Fortune
@@ -752,37 +679,31 @@ class FortuneApiService {
   Future<Fortune> getSameBirthdayCelebrityFortune({
     required String userId,
     required DateTime birthDate,
-    required String lunarSolar,
-  }) async {
+    required String lunarSolar}) async {
     return getFortune(
       fortuneType: 'same-birthday-celebrity',
       userId: userId,
       params: {
         'birth_date': birthDate.toIso8601String(),
-        'lunar_solar': null,
-      },
-    );
+        'lunar_solar': null});
   }
 
   // Generic Fortune
   Future<Fortune> getFortune({
     required String fortuneType,
     required String userId,
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     final stopwatch = Logger.startTimer('Fortune cached');
     
     Logger.info('🔍 [FortuneApiService] getFortune called', {
       'fortuneType': fortuneType,
       'userId': userId,
       'hasParams': params != null,
-      'paramKeys': null,
-    });
+      'paramKeys': null});
     
     final cacheParams = {
       'userId': null,
-      ...?params,
-    };
+      ...?params};
 
     // Check cache first
     Logger.debug('🔍 [FortuneApiService] Checking cache for $fortuneType fortune...');
@@ -792,8 +713,7 @@ class FortuneApiService {
     
     if (cachedFortune != null) {
       Logger.info('💾 [FortuneApiService] Cache hit! Returning cached $fortuneType fortune', {
-        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms',
-      });
+        'cacheTime': '${cacheStopwatch.elapsedMilliseconds}ms'});
       Logger.endTimer('getFortune - $fortuneType', stopwatch);
       return _fortuneModelToEntity(cachedFortune);
     }
@@ -804,8 +724,7 @@ class FortuneApiService {
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': endpoint,
         'method': params != null ? 'POST' : 'GET',
-        'fortuneType': fortuneType,
-      });
+        'fortuneType': fortuneType});
       
       final apiStopwatch = Logger.startTimer('Fortune cached');
       final response = params != null
@@ -816,8 +735,7 @@ class FortuneApiService {
       Logger.info('🔍 [FortuneApiService] API response received', {
         'fortuneType': fortuneType,
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortuneResponse = FortuneResponseModel.fromJson(response.data);
       final fortune = fortuneResponse.toEntity();
@@ -826,8 +744,7 @@ class FortuneApiService {
         'fortuneType': fortuneType,
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
-        'contentLength': null,
-      });
+        'contentLength': null});
 
       // Cache the result
       Logger.debug('🔍 [FortuneApiService] Caching fortune result...');
@@ -835,16 +752,14 @@ class FortuneApiService {
       await _cacheService.cacheFortune(
         fortuneType,
         cacheParams,
-        _entityToFortuneModel(fortune, fortuneType),
-      );
+        _entityToFortuneModel(fortune, fortuneType));
       Logger.endTimer('Cache Write - $fortuneType', cacheWriteStopwatch);
 
       Logger.endTimer('getFortune - $fortuneType', stopwatch);
       Logger.info('✅ [FortuneApiService] getFortune completed', {
         'fortuneType': fortuneType,
         'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-        'fromCache': null,
-      });
+        'fromCache': null});
 
       return fortune;
     } on DioException catch (e) {
@@ -852,8 +767,7 @@ class FortuneApiService {
         'fortuneType': fortuneType,
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       
       // If network error and cache exists, return cached data
       if (_isNetworkError(e)) {
@@ -877,35 +791,29 @@ class FortuneApiService {
   // Batch Fortune Generation
   Future<List<Fortune>> generateBatchFortunes({
     required String userId,
-    required List<String> fortuneTypes,
-  }) async {
+    required List<String> fortuneTypes}) async {
     final stopwatch = Logger.startTimer('generateBatchFortunes - Total');
     
     Logger.info('🔍 [FortuneApiService] generateBatchFortunes called', {
       'userId': userId,
       'fortuneTypesCount': fortuneTypes.length,
-      'fortuneTypes': null,
-    });
+      'fortuneTypes': null});
     
     try {
       Logger.debug('🔍 [FortuneApiService] Making batch API call', {
         'endpoint': ApiEndpoints.batchFortune,
-        'typesCount': null,
-      });
+        'typesCount': null});
       
       final apiStopwatch = Logger.startTimer('API Call - batch');
       final response = await _apiClient.post(
         ApiEndpoints.batchFortune,
         data: {
-          'fortuneTypes': fortuneTypes,
-        },
-      );
+          'fortuneTypes': fortuneTypes});
       Logger.endTimer('API Call - batch', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] Batch API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortunes = (response.data['fortunes'] as List)
           .map((json) => FortuneResponseModel.fromJson(json).toEntity())
@@ -914,8 +822,7 @@ class FortuneApiService {
       Logger.endTimer('generateBatchFortunes - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] generateBatchFortunes completed', {
         'fortunesReturned': fortunes.length,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
 
       return fortunes;
     } on DioException catch (e) {
@@ -923,8 +830,7 @@ class FortuneApiService {
       Logger.error('❌ [FortuneApiService] DioException in generateBatchFortunes', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('generateBatchFortunes - Total', stopwatch);
@@ -937,38 +843,32 @@ class FortuneApiService {
   Future<List<Fortune>> getFortuneHistory({
     required String userId,
     int? limit,
-    int? offset,
-  }) async {
+    int? offset}) async {
     final stopwatch = Logger.startTimer('getFortuneHistory - Total');
     
     Logger.info('🔍 [FortuneApiService] getFortuneHistory called', {
       'userId': userId,
       'limit': limit,
-      'offset': null,
-    });
+      'offset': null});
     
     try {
       final queryParams = {
         if (limit != null) 'limit': null,
-        if (offset != null) 'offset': null,
-      };
+        if (offset != null) 'offset': null};
 
       Logger.debug('🔍 [FortuneApiService] Making API call', {
         'endpoint': ApiEndpoints.fortuneHistory,
-        'queryParams': null,
-      });
+        'queryParams': null});
       
       final apiStopwatch = Logger.startTimer('API Call - history');
       final response = await _apiClient.get(
         ApiEndpoints.fortuneHistory,
-        queryParameters: queryParams,
-      );
+        queryParameters: queryParams);
       Logger.endTimer('API Call - history', apiStopwatch);
       
       Logger.info('🔍 [FortuneApiService] History API response received', {
         'statusCode': response.statusCode,
-        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms',
-      });
+        'apiTime': '${apiStopwatch.elapsedMilliseconds}ms'});
 
       final fortunes = (response.data['history'] as List)
           .map((json) => FortuneResponseModel.fromJson(json).toEntity())
@@ -977,8 +877,7 @@ class FortuneApiService {
       Logger.endTimer('getFortuneHistory - Total', stopwatch);
       Logger.info('✅ [FortuneApiService] getFortuneHistory completed', {
         'fortunesReturned': fortunes.length,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        'totalTime': '${stopwatch.elapsedMilliseconds}ms'});
 
       return fortunes;
     } on DioException catch (e) {
@@ -986,8 +885,7 @@ class FortuneApiService {
       Logger.error('❌ [FortuneApiService] DioException in getFortuneHistory', {
         'type': e.type.toString(),
         'message': e.message,
-        'statusCode': null,
-      });
+        'statusCode': null});
       throw _handleDioError(e);
     } catch (e, stackTrace) {
       Logger.endTimer('getFortuneHistory - Total', stopwatch);
@@ -999,8 +897,7 @@ class FortuneApiService {
   // Get User Fortune History with Scores (for charts)
   Future<List<int>> getUserFortuneHistory({
     required String userId,
-    int days = 7,
-  }) async {
+    int days = 7}) async {
     try {
       // For now, using Supabase directly to get fortune history
       // This should ideally be moved to a proper API endpoint
@@ -1055,8 +952,7 @@ class FortuneApiService {
   Future<void> clearFortuneCache(String fortuneType, String userId) async {
     Logger.info('🗎 [FortuneApiService] Clearing cache', {
       'fortuneType': fortuneType,
-      'userId': null,
-    });
+      'userId': null});
     
     final params = {'userId': userId};
     await _cacheService.removeCachedFortune(fortuneType, params);
@@ -1073,8 +969,7 @@ class FortuneApiService {
     Logger.endTimer('Clear All Cache', stopwatch);
     
     Logger.debug('✅ [FortuneApiService] All cache cleared successfully', {
-      'clearTime': '${stopwatch.elapsedMilliseconds}ms',
-    });
+      'clearTime': '${stopwatch.elapsedMilliseconds}ms'});
   }
 
   // Get cache statistics
@@ -1112,8 +1007,7 @@ class FortuneApiService {
     
     Logger.info('📦 [FortuneApiService] Starting offline preload', {
       'userId': userId,
-      'typesToPreload': essentialFortuneTypes,
-    });
+      'typesToPreload': essentialFortuneTypes});
     
     final preloadResults = <String, bool>{};
     
@@ -1126,18 +1020,15 @@ class FortuneApiService {
         await getFortune(
           fortuneType: type,
           userId: userId,
-          params: {},
-        );
+          params: {});
         
         Logger.endTimer('Preload - $type', typeStopwatch);
         Logger.info('✅ [FortuneApiService] Preloaded $type fortune', {
-          'preloadTime': '${typeStopwatch.elapsedMilliseconds}ms',
-        });
+          'preloadTime': '${typeStopwatch.elapsedMilliseconds}ms'});
         preloadResults[type] = true;
       } catch (e) {
         Logger.error('❌ [FortuneApiService] Failed to preload $type fortune', {
-          'error',
-        });
+          'error'});
         preloadResults[type] = false;
       }
     }
@@ -1147,8 +1038,7 @@ class FortuneApiService {
       'totalTime': '${stopwatch.elapsedMilliseconds}ms',
       'results': preloadResults,
       'successCount': preloadResults.values.where((v) => v).length,
-      'failureCount': null,
-    });
+      'failureCount': null});
   }
 
   // Helper method to check if it's a network error
@@ -1168,8 +1058,7 @@ class FortuneApiService {
       content: fortune.content,
       createdAt: fortune.createdAt,
       metadata: fortune.metadata,
-      tokenCost: fortune.tokenCost,
-    );
+      tokenCost: fortune.tokenCost);
   }
 
   // Convert FortuneModel to Fortune entity
@@ -1195,8 +1084,7 @@ class FortuneApiService {
       'statusCode': error.response?.statusCode,
       'responseData': error.response?.data,
       'requestPath': error.requestOptions.path,
-      'requestMethod': null,
-    });
+      'requestMethod': null});
     
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -1219,8 +1107,7 @@ class FortuneApiService {
         
         Logger.error('🔴 [FortuneApiService] Bad response', {
           'statusCode': statusCode,
-          'message': null,
-        });
+          'message': null});
         
         switch (statusCode) {
           case 401:
@@ -1253,59 +1140,50 @@ class FortuneApiService {
   Future<Fortune> getTimeFortune({
     required String userId,
     String fortuneType = 'time',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     return getFortune(
       fortuneType: fortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Investment Fortune (for unified investment fortune page)
   Future<Fortune> getInvestmentFortune({
     required String userId,
     String fortuneType = 'investment',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     return getFortune(
       fortuneType: fortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
   
   // Investment Enhanced Fortune (for enhanced investment fortune page)
   Future<Fortune> getInvestmentEnhancedFortune({
     required String userId,
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     return getFortune(
       fortuneType: 'investment-enhanced',
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Sports Fortune (for unified sports fortune page)
   Future<Fortune> getSportsFortune({
     required String userId,
     String fortuneType = 'sports',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     return getFortune(
       fortuneType: fortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Relationship Fortune (통합)
   Future<Fortune> getRelationshipFortune({
     required String userId,
     String fortuneType = 'relationship',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     // Extract relationship type from params
     final relationType = params?['relationshipType'] ?? 'love';
     final actualFortuneType = _getRelationshipMappingType(relationType);
@@ -1313,16 +1191,14 @@ class FortuneApiService {
     return getFortune(
       fortuneType: actualFortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Traditional Fortune (통합)
   Future<Fortune> getTraditionalFortune({
     required String userId,
     String fortuneType = 'traditional',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     // Extract traditional type from params
     final traditionalType = params?['traditionalType'] ?? 'saju';
     final actualFortuneType = _getTraditionalMappingType(traditionalType);
@@ -1330,16 +1206,14 @@ class FortuneApiService {
     return getFortune(
       fortuneType: actualFortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Personality Fortune (통합)
   Future<Fortune> getPersonalityFortune({
     required String userId,
     String fortuneType = 'personality',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     // Extract personality type from params
     final personalityType = params?['personalityType'] ?? 'personality';
     final actualFortuneType = _getPersonalityMappingType(personalityType);
@@ -1347,16 +1221,14 @@ class FortuneApiService {
     return getFortune(
       fortuneType: actualFortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Lucky Items Fortune (통합)
   Future<Fortune> getLuckyItemsFortune({
     required String userId,
     String fortuneType = 'lucky_items',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     // Extract lucky item type from params
     final itemType = params?['luckyItemType'] ?? 'lucky_items';
     final actualFortuneType = _getLuckyItemsMappingType(itemType);
@@ -1364,16 +1236,14 @@ class FortuneApiService {
     return getFortune(
       fortuneType: actualFortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Lifestyle Fortune (통합)
   Future<Fortune> getLifestyleFortune({
     required String userId,
     String fortuneType = 'lifestyle',
-    Map<String, dynamic>? params,
-  }) async {
+    Map<String, dynamic>? params}) async {
     // Extract lifestyle type from params
     final lifestyleType = params?['lifestyleType'] ?? 'health';
     final actualFortuneType = _getLifestyleMappingType(lifestyleType);
@@ -1381,8 +1251,7 @@ class FortuneApiService {
     return getFortune(
       fortuneType: actualFortuneType,
       userId: userId,
-      params: params,
-    );
+      params: params);
   }
 
   // Helper methods for mapping
@@ -1394,8 +1263,7 @@ class FortuneApiService {
       'ex_lover': 'ex-lover',
       'blind_date': 'blind-date',
       'chemistry': 'chemistry',
-      'couple_match': 'couple-match',
-    };
+      'couple_match': 'couple-match'};
     return mapping[type] ?? 'love';
   }
 
@@ -1405,8 +1273,7 @@ class FortuneApiService {
       'traditional_saju': 'traditional-saju',
       'tojeong': 'tojeong',
       'salpuli': 'salpuli',
-      'five_blessings': 'five-blessings',
-    };
+      'five_blessings': 'five-blessings'};
     return mapping[type] ?? 'saju';
   }
 
@@ -1416,8 +1283,7 @@ class FortuneApiService {
       'personality': 'personality',
       'saju_psychology': 'saju-psychology',
       'talent': 'talent',
-      'blood_type': 'blood-type',
-    };
+      'blood_type': 'blood-type'};
     return mapping[type] ?? 'personality';
   }
 
@@ -1428,8 +1294,7 @@ class FortuneApiService {
       'lucky_items': 'lucky-items',
       'lucky_food': 'lucky-food',
       'lucky_outfit': 'lucky-outfit',
-      'lucky_place': 'lucky-place',
-    };
+      'lucky_place': 'lucky-place'};
     return mapping[type] ?? 'lucky-items';
   }
 
@@ -1438,8 +1303,7 @@ class FortuneApiService {
       'health': 'health',
       'biorhythm': 'biorhythm',
       'moving': 'moving',
-      'moving_date': 'moving-date',
-    };
+      'moving_date': 'moving-date'};
     return mapping[type] ?? 'health';
   }
 }
@@ -1450,8 +1314,7 @@ final fortuneApiServiceProvider = Provider<FortuneApiService>((ref) {
   final featureFlags = FeatureFlags();
   Logger.info('🔧 [fortuneApiServiceProvider] Creating fortune API service', {
     'edgeFunctionsEnabled': featureFlags.isEdgeFunctionsEnabled(),
-    'featureFlags': null,
-  });
+    'featureFlags': null});
   
   if (featureFlags.isEdgeFunctionsEnabled()) {
     Logger.info('⚡ [fortuneApiServiceProvider] Using Edge Functions for fortune API');

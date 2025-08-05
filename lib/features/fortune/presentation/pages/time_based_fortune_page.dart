@@ -32,15 +32,13 @@ class TimeBasedFortunePage extends BaseFortunePage {
   const TimeBasedFortunePage({
     Key? key,
     this.initialPeriod = TimePeriod.today,
-    Map<String, dynamic>? initialParams,
-  }) : super(
+    Map<String, dynamic>? initialParams}) : super(
           key: key,
           title: '시간별 운세',
           description: '원하는 기간의 운세를 확인해보세요',
           fortuneType: 'time_based',
           requiresUserInfo: false,
-          initialParams: initialParams,
-        );
+          initialParams: initialParams);
 
   @override
   ConsumerState<TimeBasedFortunePage> createState() => _TimeBasedFortunePageState();
@@ -61,26 +59,23 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     if (periodParam != null) {
       _selectedPeriod = TimePeriod.values.firstWhere(
         (period) => period.value == periodParam,
-        orElse: () => widget.initialPeriod,
-      );
+        orElse: () => widget.initialPeriod);
     } else {
       _selectedPeriod = widget.initialPeriod;
     }
 
     Logger.debug('🕐 [TimeBasedFortunePage] Initialized with period': {
-      'selectedPeriod': _selectedPeriod.value,
+      , 'selectedPeriod': _selectedPeriod.value,
       'periodParam': periodParam,
-      'initialParams': null,
-    });
+      'initialParams': null});
   }
 
   @override
   Future<Fortune> generateFortune(Map<String, dynamic> params) async {
-    Logger.info('🎲 [TimeBasedFortunePage] generateFortune called': {
+    Logger.info('🎲 [TimeBasedFortunePage] generateFortune called': {}
       'selectedPeriod': _selectedPeriod.value,
       'selectedDate': _selectedDate.toIso8601String(),
-      'params': null,
-    });
+      'params': null});
 
     final fortuneService = ref.read(fortuneServiceProvider);
 
@@ -90,18 +85,16 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       Logger.debug('🔄 [TimeBasedFortunePage] Waiting for user profile...');
       final userProfileAsync = await ref.read(userProfileProvider.future);
       profile = userProfileAsync;
-      Logger.debug('✅ [TimeBasedFortunePage] User profile loaded': {
+      Logger.debug('✅ [TimeBasedFortunePage] User profile loaded': {}
         'profileName': profile?.name,
-        'profileId': null,
-      });
+        'profileId': null});
     }
 
     final userId = params['userId'] ?? profile?.id;
     if (userId == null) {
-      Logger.error('❌ [TimeBasedFortunePage] User ID not found': {
+      Logger.error('❌ [TimeBasedFortunePage] User ID not found': {}
         'params': params,
-        'profile': null,
-      });
+        'profile': null});
       throw Exception('User ID not found after waiting for profile');
     }
 
@@ -109,18 +102,16 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     params['date'] = _selectedDate.toIso8601String();
 
     Logger.debug('📝 [TimeBasedFortunePage] Final params prepared': {
-      'userId': userId,
+      , 'userId': userId,
       'period': params['period'],
       'date': params['date'],
-      'allParams': null,
-    });
+      'allParams': null});
 
     Logger.debug('🚀 [TimeBasedFortunePage] Calling getTimeFortune': {
-      'userId': userId,
-      'fortuneType': 'time',
+      , 'userId': userId,
+      'fortuneType', 'time',
       'period': _selectedPeriod.value,
-      'date': null,
-    });
+      'date': null});
 
     try {
       final fortune = await fortuneService.getTimeFortune(
@@ -128,16 +119,13 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         fortuneType: 'time',
         params: {
           'period': _selectedPeriod.value,
-          'date': null,
-        },
-      );
+          'date': null});
 
       Logger.info('✅ [TimeBasedFortunePage] Fortune generated successfully': {
-        'fortuneId': fortune.id,
+        , 'fortuneId': fortune.id,
         'fortuneType': fortune.type,
         'score': fortune.score,
-        'metadata': null,
-      });
+        'metadata': null});
 
       setState(() {
         _currentFortune = fortune;
@@ -145,12 +133,11 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
 
       return fortune;
     } catch (error, stackTrace) {
-      Logger.error('❌ [TimeBasedFortunePage] Fortune generation failed': {
+      Logger.error('❌ [TimeBasedFortunePage] Fortune generation failed': {}
         'error': error.toString(,
         'stackTrace': stackTrace.toString(),
         'userId': userId,
-        'period': null,
-      });
+        'period': null});
       rethrow;
     }
   }
@@ -179,8 +166,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null,
-      };
+        'gender': null};
       generateFortuneAction(params: params);
     }
   }
@@ -192,7 +178,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       for (var i = 0; i < fortune.timeSpecificFortunes!.length; i++) {
         final timeFortune = fortune.timeSpecificFortunes![i];
         // Parse hour from time string (e.g., "09:00-12:00" -> 9)
-        final hour = int.tryParse(timeFortune.time.split(':')[0]) ?? i;
+        final hour = int.tryParse(timeFortune.time.split(', ')[0]) ?? i;
         timeScores[hour] = timeFortune.score.toDouble();
       }
     }
@@ -206,7 +192,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
 
   Map<String, dynamic> _extractWeeklyData(Fortune fortune) {
     final weeklyScores = <String, double>{};
-    final days = ['월': '화': '수', '목', '금', '토', '일'];
+    final days = \['['월', '화', '수', '목', '금', '토', '일'];
     for (int i = 0; i < 7; i++) {
       weeklyScores[days[i]] = 50 + (i * 10 % 50);
     }
@@ -224,7 +210,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
 
   Map<String, dynamic> _extractYearlyData(Fortune fortune) {
     final yearlyScores = <String, double>{};
-    final months = ['1월': '2월': '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    final months = \['['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
     for (int i = 0; i < 12; i++) {
       yearlyScores[months[i]] = 50 + (i * 4 % 50);
     }
@@ -245,13 +231,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           _buildPeriodSelector(),
           const SizedBox(height: 20),
 
-          if (_showDateSelector()) ...[
+          if (_showDateSelector(), ...[
             _buildDateSelector()
                 .animate()
                 .fadeIn(duration: 600.ms)
                 .slideY(begin: -0.1, end: 0),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)],
 
           if (fortune.greeting != null) ...[
             Text(
@@ -259,20 +244,17 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                height: 1.4,
-              ),
-            )
+                height: 1.4))
                 .animate()
                 .fadeIn(duration: 600.ms, delay: 200.ms)
                 .slideY(begin: 0.1, end: 0),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)],
 
           _buildMainFortuneCard(fortune)
               .animate()
               .fadeIn(duration: 800.ms, delay: 400.ms)
               .slideY(begin: 0.1, end: 0)
-              .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.0, 1.0)),
+              .scale(begin: const Offset(0.95, 0.95), end: const Offset(1.0, 1.0),
           const SizedBox(height: 20),
 
           if (fortune.hexagonScores != null) ...[
@@ -280,45 +262,35 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 .animate()
                 .fadeIn(duration: 800.ms, delay: 600.ms)
                 .slideX(begin: -0.1, end: 0),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)],
 
           if (fortune.timeSpecificFortunes != null &&
               fortune.timeSpecificFortunes!.isNotEmpty) ...[
             TimeSpecificFortuneList(
               fortunes: fortune.timeSpecificFortunes!,
-              title: _getTimeSpecificTitle(),
-            )
+              title: _getTimeSpecificTitle())
                 .animate()
                 .fadeIn(duration: 800.ms, delay: 800.ms)
                 .slideY(begin: 0.1, end: 0),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)],
 
           if (fortune.birthYearFortunes != null &&
               fortune.birthYearFortunes!.isNotEmpty) ...[
             BirthYearFortuneList(
               fortunes: fortune.birthYearFortunes!,
               title: '띠별 ${_selectedPeriod.label} 운세',
-              currentUserZodiac: userProfile?.chineseZodiac,
-            ),
-            const SizedBox(height: 20),
-          ],
+              currentUserZodiac: userProfile?.chineseZodiac),
+            const SizedBox(height: 20)],
 
           if (fortune.specialTip != null) ...[
             _buildSpecialTipCard(fortune.specialTip!),
-            const SizedBox(height: 20),
-          ],
+            const SizedBox(height: 20)],
 
           ..._buildPeriodSpecificContent(fortune),
 
           if (_showAdditionalFortunes) ...[
             const SizedBox(height: 20),
-            _buildAdditionalFortunesSection(fortune),
-          ],
-        ],
-      ),
-    );
+            _buildAdditionalFortunesSection(fortune)]]));
   }
 
   Widget _buildPeriodSelector() {
@@ -337,22 +309,17 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 end: Alignment.bottomRight,
                 colors: [
                   AppTheme.primaryColor.withOpacity(0.1),
-                  AppTheme.primaryColor.withOpacity(0.05),
-                ],
-              ),
+                  AppTheme.primaryColor.withOpacity(0.05)]),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: AppTheme.primaryColor.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
+                width: 1)),
             child: Row(
               children: [
                 Icon(
                   _getPeriodIcon(_selectedPeriod),
                   color: AppTheme.primaryColor,
-                  size: 24,
-                ),
+                  size: 24),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,19 +328,13 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                       '선택된 기간',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ),
+                        color: AppTheme.textSecondaryColor)),
                     const SizedBox(height: 2),
                     Text(
                       _selectedPeriod.label,
                       style: const TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: () {
@@ -382,19 +343,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   icon: const Icon(Icons.refresh, size: 18),
                   label: const Text('다시 선택'),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppTheme.primaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ] else ...[
+                    foregroundColor: AppTheme.primaryColor))]))] else ...[
           Container(
             height: 50,
             decoration: BoxDecoration(
               color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: TimePeriod.values.length,
@@ -418,16 +372,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                     selectedColor: AppTheme.primaryColor,
                     labelStyle: TextStyle(
                       color: isSelected ? Colors.white : AppTheme.textColor,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ],
-    );
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)));
+              }))]]);
   }
 
   bool _showDateSelector() {
@@ -435,8 +381,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       TimePeriod.today,
       TimePeriod.tomorrow,
       TimePeriod.weekly,
-      TimePeriod.monthly,
-    ].contains(_selectedPeriod);
+      TimePeriod.monthly].contains(_selectedPeriod);
   }
 
   Widget _buildDateSelector() {
@@ -445,9 +390,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         final picked = await showDatePicker(
           context: context,
           initialDate: _selectedDate,
-          firstDate: DateTime.now().subtract(const Duration(days: 365)),
-          lastDate: DateTime.now().add(const Duration(days: 365)),
-        );
+          firstDate: DateTime.now().subtract(const Duration(days: 365),
+          lastDate: DateTime.now().add(const Duration(days: 365));
         if (picked != null) {
           setState(() {
             _selectedDate = picked;
@@ -459,8 +403,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           border: Border.all(color: AppTheme.dividerColor),
-          borderRadius: BorderRadius.circular(8),
-        ),
+          borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -468,38 +411,26 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '선택된 날짜',
               style: TextStyle(
                 color: AppTheme.textSecondaryColor,
-                fontSize: 14,
-              ),
-            ),
+                fontSize: 14)),
             Row(
               children: [
                 Text(
                   DateFormat('yyyy년 MM월 dd일'),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+                    fontSize: 16)),
                 const SizedBox(width: 8),
                 Icon(
                   Icons.calendar_today,
                   size: 20,
-                  color: AppTheme.primaryColor,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                  color: AppTheme.primaryColor)])])));
   }
 
   Widget _buildMainFortuneCard(Fortune fortune) {
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+        borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -508,11 +439,8 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             end: Alignment.bottomRight,
             colors: [
               AppTheme.primaryColor.withOpacity(0.1),
-              AppTheme.primaryColor.withOpacity(0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-        ),
+              AppTheme.primaryColor.withOpacity(0.05)]),
+          borderRadius: BorderRadius.circular(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -523,53 +451,38 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   '${_selectedPeriod.label} 종합 운세',
                   style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 if (fortune.score != null)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: _getScoreColor(fortune.score!),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                      borderRadius: BorderRadius.circular(20)),
                     child: Text(
                       '${fortune.score}점',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+                        fontWeight: FontWeight.bold)))]),
             const SizedBox(height: 16),
             Text(
               fortune.message,
               style: TextStyle(
                 fontSize: 16,
                 height: 1.5,
-                color: AppTheme.textColor,
-              ),
-            ),
+                color: AppTheme.textColor)),
             if (fortune.summary != null) ...[
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Text(
                   fortune.summary!,
                   style: TextStyle(
                     fontSize: 14,
                     color: AppTheme.textSecondaryColor,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-            ],
+                    fontStyle: FontStyle.italic)))],
             if (fortune.advice != null) ...[
               const SizedBox(height: 16),
               Row(
@@ -578,25 +491,14 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   Icon(
                     Icons.lightbulb_outline,
                     size: 20,
-                    color: AppTheme.primaryColor,
-                  ),
+                    color: AppTheme.primaryColor),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
+                        color: AppTheme.textColor)))])]]))).animate().fadeIn(duration: 300.ms).slideY(begin: 0.1, end: 0);
   }
 
   List<Widget> _buildPeriodSpecificContent(Fortune fortune) {
@@ -633,8 +535,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+        borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -644,30 +545,21 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '${_selectedPeriod.label} 운세 종합',
               style: const TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Center(
               child: HexagonChart(
                 scores: fortune.hexagonScores!,
                 size: 200,
                 primaryColor: AppTheme.primaryColor,
-                animate: true,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                animate: true))])));
   }
 
   Widget _buildSpecialTipCard(String tip) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+        borderRadius: BorderRadius.circular(12)),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -675,18 +567,14 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           gradient: LinearGradient(
             colors: [
               Colors.amber.withOpacity(0.1),
-              Colors.amber.withOpacity(0.05),
-            ],
-          ),
-        ),
+              Colors.amber.withOpacity(0.05)])),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Icon(
               Icons.auto_awesome,
               color: Colors.amber,
-              size: 24,
-            ),
+              size: 24),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -697,25 +585,14 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.amber,
-                    ),
-                  ),
+                      color: Colors.amber)),
                   const SizedBox(height: 4),
                   Text(
                     tip,
                     style: TextStyle(
                       fontSize: 14,
                       color: AppTheme.textColor,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                      height: 1.4))]))])));
   }
 
 
@@ -734,83 +611,61 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   time,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
+                    fontSize: 14)),
                 Text(
                   description,
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    fontSize: 12))])),
           Container(
             width: 100,
             height: 8,
             decoration: BoxDecoration(
               color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(4),
-            ),
+              borderRadius: BorderRadius.circular(4)),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
               widthFactor: score / 100,
               child: Container(
                 decoration: BoxDecoration(
                   color: _getScoreColor(score),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-          ),
+                  borderRadius: BorderRadius.circular(4))))),
           const SizedBox(width: 8),
           Text(
             '$score%',
             style: TextStyle(
               color: _getScoreColor(score),
               fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
+              fontSize: 12))]));
   }
 
   Widget _buildTodayDetails(Fortune fortune) {
     final luckyItems = <Widget>[];
     
     if (fortune.luckyColor != null) {
-      luckyItems.add(_buildDetailItem('행운의 색상': fortune.luckyColor!, Icons.color_lens));
+      luckyItems.add(_buildDetailItem('행운의 색상': fortune.luckyColor!, Icons.color_lens),;
     }
     if (fortune.luckyNumber != null) {
-      luckyItems.add(_buildDetailItem('행운의 숫자': fortune.luckyNumber.toString(, Icons.looks_one));
+      luckyItems.add(_buildDetailItem('행운의 숫자': fortune.luckyNumber.toString(, Icons.looks_one),;
     }
     if (fortune.luckyDirection != null) {
-      luckyItems.add(_buildDetailItem('행운의 방향': fortune.luckyDirection!, Icons.explore));
+      luckyItems.add(_buildDetailItem('행운의 방향': fortune.luckyDirection!, Icons.explore),;
     }
     if (fortune.bestTime != null) {
-      luckyItems.add(_buildDetailItem('행운의 시간': fortune.bestTime!, Icons.access_time));
+      luckyItems.add(_buildDetailItem('행운의 시간': fortune.bestTime!, Icons.access_time),;
     }
     
     return Column(
       children: [
         if (luckyItems.isNotEmpty) ...[
           _buildDetailCard('오늘의 행운'),
-          const SizedBox(height: 16),
-        ],
+          const SizedBox(height: 16)],
         if (fortune.details != null && fortune.details?.isNotEmpty == true) ...[
           _buildDetailCard(
             '상세 정보',
             (fortune.details as Map<String, dynamic>).entries.map((entry) {
               return _buildAdviceItem('${entry.key}: ${entry.value}');
-            }).toList(),
-          ),
-        ],
-      ],
-    );
+            }).toList())]]);
   }
 
   Widget _buildTomorrowDetails(Fortune fortune) {
@@ -819,22 +674,16 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         if (fortune.caution != null) ...[
           _buildDetailCard(
             '내일의 주의사항',
-            [_buildWarningItem(fortune.caution!)],
-          ),
-          const SizedBox(height: 16),
-        ],
+            [_buildWarningItem(fortune.caution!)]),
+          const SizedBox(height: 16)],
         if (fortune.advice != null) ...[
           _buildDetailCard(
             '내일을 위한 조언',
-            [_buildAdviceItem(fortune.advice!)],
-          ),
-        ],
-      ],
-    );
+            [_buildAdviceItem(fortune.advice!)])]]);
   }
 
   Widget _buildWeeklyChart() {
-    if (_chartData == null || !_chartData!.containsKey('weekly')) {
+    if (_chartData == null || !_chartData!.containsKey('weekly'), {
       return const SizedBox.shrink();
     }
 
@@ -850,9 +699,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '주간 운세 추이',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
@@ -864,14 +711,11 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   titlesData: FlTitlesData(
                     show: true,
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                      sideTitles: SideTitles(showTitles: false)),
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                      sideTitles: SideTitles(showTitles: false)),
                     topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                      sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -880,14 +724,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                           if (value.toInt() < days.length) {
                             return Text(
                               days[value.toInt()],
-                              style: const TextStyle(fontSize: 12),
-                            );
+                              style: const TextStyle(fontSize: 12));
                           }
                           return const Text('');
-                        },
-                      ),
-                    ),
-                  ),
+                        }))),
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   barGroups: weeklyData.entries.map((entry) {
@@ -897,22 +737,11 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                       barRods: [
                         BarChartRodData(
                           toY: entry.value,
-                          color: _getScoreColor(entry.value.toInt()),
+                          color: _getScoreColor(entry.value.toInt(),
                           width: 30,
                           borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                            top: Radius.circular(4)))]);
+                  }).toList())))])));
   }
 
   Widget _buildWeeklyDetails(Fortune fortune) {
@@ -926,18 +755,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '주간 하이라이트',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildWeekdayItem('월요일': '새로운 시작의 에너지',
-            _buildWeekdayItem('수요일': '대인관계 호전',
-            _buildWeekdayItem('금요일': '재정운 상승',
-            _buildWeekdayItem('일요일': '휴식과 재충전',
-          ],
-        ),
-      ),
-    );
+            _buildWeekdayItem('월요일', '새로운 시작의 에너지',
+            _buildWeekdayItem('수요일', '대인관계 호전',
+            _buildWeekdayItem('금요일', '재정운 상승',
+            _buildWeekdayItem('일요일', '휴식과 재충전'])));
   }
 
   Widget _buildMonthlyCalendar() {
@@ -952,25 +775,16 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '월간 운세 캘린더',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             // Add calendar widget here
             Container(
               height: 300,
               decoration: BoxDecoration(
                 border: Border.all(color: AppTheme.dividerColor),
-                borderRadius: BorderRadius.circular(8),
-              ),
+                borderRadius: BorderRadius.circular(8)),
               child: const Center(
-                child: Text('캘린더 뷰 (구현 예정)'),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                child: Text('캘린더 뷰 (구현 예정)')))])));
   }
 
   Widget _buildMonthlyDetails(Fortune fortune) {
@@ -984,17 +798,11 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '월간 종합 분석',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildMonthSection('상순 (1-10일)': '안정적인 시작',
-            _buildMonthSection('중순 (11-20일)': '도약의 시기',
-            _buildMonthSection('하순 (21-31일)': '마무리와 정리',
-          ],
-        ),
-      ),
-    );
+            _buildMonthSection('상순 (1-10일)', '안정적인 시작',
+            _buildMonthSection('중순 (11-20일)', '도약의 시기',
+            _buildMonthSection('하순 (21-31일)', '마무리와 정리'])));
   }
 
   Widget _buildYearlyOverview(Fortune fortune) {
@@ -1008,18 +816,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               '연간 운세 전망',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            _buildSeasonItem('봄 (3-5월)': '새로운 시작과 성장',
-            _buildSeasonItem('여름 (6-8월)': '활발한 활동과 성취',
-            _buildSeasonItem('가을 (9-11월)': '수확과 안정',
-            _buildSeasonItem('겨울 (12-2월)': '휴식과 재충전',
-          ],
-        ),
-      ),
-    );
+            _buildSeasonItem('봄 (3-5월)', '새로운 시작과 성장',
+            _buildSeasonItem('여름 (6-8월)', '활발한 활동과 성취',
+            _buildSeasonItem('가을 (9-11월)', '수확과 안정',
+            _buildSeasonItem('겨울 (12-2월)', '휴식과 재충전'])));
   }
 
 
@@ -1035,15 +837,9 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               title,
               style: const TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            ...children,
-          ],
-        ),
-      ),
-    );
+            ...children])));
   }
 
   Widget _buildDetailItem(String label, String value, IconData icon) {
@@ -1057,20 +853,13 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             label,
             style: TextStyle(
               color: AppTheme.textSecondaryColor,
-              fontSize: 14,
-            ),
-          ),
+              fontSize: 14)),
           const Spacer(),
           Text(
             value,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
+              fontSize: 14))]));
   }
 
   Widget _buildAdviceItem(String advice) {
@@ -1082,18 +871,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           Icon(
             Icons.lightbulb_outline,
             size: 20,
-            color: Colors.amber,
-          ),
+            color: Colors.amber),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               advice,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-    );
+              style: const TextStyle(fontSize: 14)))]));
   }
 
   Widget _buildChecklistItem(String task, bool isCompleted) {
@@ -1104,8 +887,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           Icon(
             isCompleted ? Icons.check_box : Icons.check_box_outline_blank,
             color: isCompleted ? Colors.green : Colors.grey,
-            size: 20,
-          ),
+            size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -1113,13 +895,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               style: TextStyle(
                 fontSize: 14,
                 decoration: isCompleted ? TextDecoration.lineThrough : null,
-                color: isCompleted ? Colors.grey : AppTheme.textColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                color: isCompleted ? Colors.grey : AppTheme.textColor)))]));
   }
 
   Widget _buildWarningItem(String warning) {
@@ -1131,18 +907,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
           const Icon(
             Icons.warning_amber_outlined,
             size: 20,
-            color: Colors.orange,
-          ),
+            color: Colors.orange),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               warning,
-              style: const TextStyle(fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-    );
+              style: const TextStyle(fontSize: 14)))]));
   }
 
   Widget _buildWeekdayItem(String day, String description, int score) {
@@ -1156,37 +926,24 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               day,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ),
+                fontSize: 14))),
           Expanded(
             child: Text(
               description,
               style: TextStyle(
                 color: AppTheme.textSecondaryColor,
-                fontSize: 14,
-              ),
-            ),
-          ),
+                fontSize: 14))),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: _getScoreColor(score).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             child: Text(
               '$score점',
               style: TextStyle(
                 color: _getScoreColor(score),
                 fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                fontSize: 12)))]));
   }
 
   Widget _buildMonthSection(String period, String description, int score) {
@@ -1195,8 +952,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.isDarkMode ? Colors.grey[900] : Colors.grey[100],
-        borderRadius: BorderRadius.circular(8),
-      ),
+        borderRadius: BorderRadius.circular(8)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1207,37 +963,24 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 period,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
+                  fontSize: 16)),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: _getScoreColor(score),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                  borderRadius: BorderRadius.circular(12)),
                 child: Text(
                   '$score점',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
+                    fontSize: 12)))]),
           const SizedBox(height: 4),
           Text(
             description,
             style: TextStyle(
               color: AppTheme.textSecondaryColor,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
+              fontSize: 14))]));
   }
 
   Widget _buildSeasonItem(String season, String description, IconData icon) {
@@ -1251,9 +994,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
             child: Icon(
               icon,
               color: AppTheme.primaryColor,
-              size: 24,
-            ),
-          ),
+              size: 24)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1263,22 +1004,12 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   season,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
+                    fontSize: 14)),
                 Text(
                   description,
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    fontSize: 12))]))]));
   }
 
 
@@ -1293,8 +1024,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+        borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -1307,35 +1037,24 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                   '추가 운세 정보',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 IconButton(
                   icon: Icon(
                     _showAdditionalFortunes
                         ? Icons.expand_less_rounded
-                        : Icons.expand_more_rounded,
-                  ),
+                        : Icons.expand_more_rounded),
                   onPressed: () {
                     setState(() {
                       _showAdditionalFortunes = !_showAdditionalFortunes;
                     });
-                  },
-                ),
-              ],
-            ),
+                  })]),
             const SizedBox(height: 16),
-            if (_isBirthday()) ...[
+            if (_isBirthday(), ...[
               _buildBirthdayFortune(),
-              const SizedBox(height: 16),
-            ],
+              const SizedBox(height: 16)],
             _buildZodiacFortune(),
             const SizedBox(height: 16),
-            _buildChineseZodiacFortune(),
-          ],
-        ),
-      ),
-    );
+            _buildChineseZodiacFortune()])));
   }
 
   bool _isBirthday() {
@@ -1354,14 +1073,10 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         gradient: LinearGradient(
           colors: [
             Colors.pink.withOpacity(0.1),
-            Colors.purple.withOpacity(0.1),
-          ],
-        ),
+            Colors.purple.withOpacity(0.1)]),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.pink.withOpacity(0.3),
-        ),
-      ),
+          color: Colors.pink.withOpacity(0.3))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1374,22 +1089,14 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.pink,
-                ),
-              ),
-            ],
-          ),
+                  color: Colors.pink))]),
           const SizedBox(height: 12),
           Text(
             '생일을 맞이한 당신에게 특별한 행운이 찾아옵니다! 오늘은 평소보다 더 많은 긍정적인 에너지가 당신을 둘러싸고 있습니다.',
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ).animate().fadeIn(duration: 600.ms).shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3));
+              height: 1.5))]).animate().fadeIn(duration: 600.ms).shimmer(duration: 1500.ms, color: Colors.pink.withOpacity(0.3),;
   }
 
   Widget _buildZodiacFortune() {
@@ -1400,9 +1107,7 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         color: AppTheme.primaryColor.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.primaryColor.withOpacity(0.2),
-        ),
-      ),
+          color: AppTheme.primaryColor.withOpacity(0.2))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1411,31 +1116,21 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
               Icon(
                 Icons.stars_rounded,
                 color: AppTheme.primaryColor,
-                size: 24,
-              ),
+                size: 24),
               const SizedBox(width: 8),
               Text(
                 '별자리 운세 - $zodiacSign',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
-                ),
-              ),
-            ],
-          ),
+                  color: AppTheme.primaryColor))]),
           const SizedBox(height: 12),
           Text(
             _getZodiacFortuneMessage(zodiacSign),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
+              height: 1.5))]));
   }
 
   Widget _buildChineseZodiacFortune() {
@@ -1446,38 +1141,27 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
         color: Colors.orange.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.orange.withOpacity(0.2),
-        ),
-      ),
+          color: Colors.orange.withOpacity(0.2))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: const [
               Icon(Icons.pets_rounded, color: Colors.orange, size: 24),
-              SizedBox(width: 8),
-            ],
-          ),
+              SizedBox(width: 8)]),
           Text(
             '띠 운세 - ${chineseZodiac}띠',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.orange,
-            ),
-          ),
+              color: Colors.orange)),
           const SizedBox(height: 12),
           Text(
             _getChineseZodiacFortuneMessage(chineseZodiac),
             style: TextStyle(
               fontSize: 14,
               color: AppTheme.textColor,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
+              height: 1.5))]));
   }
 
   String _getZodiacSign() {
@@ -1524,19 +1208,18 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
 
   String _getZodiacFortuneMessage(String zodiac) {
     final messages = {
-      '양자리': '오늘은 새로운 도전을 시작하기에 좋은 날입니다. 용기를 내세요!',
-      '황소자리': '안정과 평화가 찾아오는 날입니다. 재정 관리에 신경 쓰세요.',
-      '쌍둥이자리': '소통과 교류가 활발한 날입니다. 새로운 인연을 만날 수 있습니다.',
-      '게자리': '가족과 함께하는 시간이 행복을 가져다줄 것입니다.',
-      '사자자리': '당신의 카리스마가 빛나는 날입니다. 리더십을 발휘하세요.',
-      '처녀자리': '세심한 계획이 성공으로 이어집니다. 디테일에 신경 쓰세요.',
-      '천칭자리': '균형과 조화가 중요한 날입니다. 중재자 역할을 잘 해낼 수 있습니다.',
-      '전갈자리': '직관력이 뛰어난 날입니다. 내면의 목소리에 귀 기울이세요.',
-      '사수자리': '모험과 자유를 추구하기 좋은 날입니다. 새로운 경험을 즐기세요.',
-      '염소자리': '목표 달성에 한 걸음 더 가까워지는 날입니다. 꾸준히 노력하세요.',
-      '물병자리': '창의적인 아이디어가 샘솟는 날입니다. 혁신적인 시도를 해보세요.',
-      '물고기자리': '감성과 직관이 풍부한 날입니다. 예술적 활동이 도움이 됩니다.',
-    };
+      '양자리', '오늘은 새로운 도전을 시작하기에 좋은 날입니다. 용기를 내세요!',
+      '황소자리', '안정과 평화가 찾아오는 날입니다. 재정 관리에 신경 쓰세요.',
+      '쌍둥이자리', '소통과 교류가 활발한 날입니다. 새로운 인연을 만날 수 있습니다.',
+      '게자리', '가족과 함께하는 시간이 행복을 가져다줄 것입니다.',
+      '사자자리', '당신의 카리스마가 빛나는 날입니다. 리더십을 발휘하세요.',
+      '처녀자리', '세심한 계획이 성공으로 이어집니다. 디테일에 신경 쓰세요.',
+      '천칭자리', '균형과 조화가 중요한 날입니다. 중재자 역할을 잘 해낼 수 있습니다.',
+      '전갈자리', '직관력이 뛰어난 날입니다. 내면의 목소리에 귀 기울이세요.',
+      '사수자리', '모험과 자유를 추구하기 좋은 날입니다. 새로운 경험을 즐기세요.',
+      '염소자리', '목표 달성에 한 걸음 더 가까워지는 날입니다. 꾸준히 노력하세요.',
+      '물병자리', '창의적인 아이디어가 샘솟는 날입니다. 혁신적인 시도를 해보세요.',
+      '물고기자리', '감성과 직관이 풍부한 날입니다. 예술적 활동이 도움이 됩니다.'};
     return messages[zodiac] ?? '오늘은 평온하고 안정적인 하루가 될 것입니다.';
   }
 
@@ -1552,19 +1235,18 @@ class _TimeBasedFortunePageState extends BaseFortunePageState<TimeBasedFortunePa
                     : '올해';
 
     final messages = {
-      '쥐': '$periodSpecific는 재빠른 판단력이 빛을 발하는 시기입니다.',
-      '소': '$periodSpecific는 꾸준한 노력이 결실을 맺는 시기입니다.',
-      '호랑이': '$periodSpecific는 용기와 도전정신이 필요한 시기입니다.',
-      '토끼': '$periodSpecific는 신중하고 조심스러운 접근이 필요합니다.',
-      '용': '$periodSpecific는 큰 성취를 이룰 수 있는 기회가 찾아옵니다.',
-      '뱀': '$periodSpecific는 지혜롭고 현명한 결정이 중요합니다.',
-      '말': '$periodSpecific는 활발한 활동과 사교가 행운을 가져옵니다.',
-      '양': '$periodSpecific는 온화하고 평화로운 분위기가 지속됩니다.',
-      '원숭이': '$periodSpecific는 재치와 유머가 좋은 결과를 가져옵니다.',
-      '닭': '$periodSpecific는 부지런함과 성실함이 인정받는 시기입니다.',
-      '개': '$periodSpecific는 충성과 신뢰가 중요한 역할을 합니다.',
-      '돼지': '$periodSpecific는 풍요와 행복이 가득한 시기입니다.',
-    };
+      '쥐', '$periodSpecific는 재빠른 판단력이 빛을 발하는 시기입니다.',
+      '소', '$periodSpecific는 꾸준한 노력이 결실을 맺는 시기입니다.',
+      '호랑이', '$periodSpecific는 용기와 도전정신이 필요한 시기입니다.',
+      '토끼', '$periodSpecific는 신중하고 조심스러운 접근이 필요합니다.',
+      '용', '$periodSpecific는 큰 성취를 이룰 수 있는 기회가 찾아옵니다.',
+      '뱀', '$periodSpecific는 지혜롭고 현명한 결정이 중요합니다.',
+      '말', '$periodSpecific는 활발한 활동과 사교가 행운을 가져옵니다.',
+      '양', '$periodSpecific는 온화하고 평화로운 분위기가 지속됩니다.',
+      '원숭이', '$periodSpecific는 재치와 유머가 좋은 결과를 가져옵니다.',
+      '닭', '$periodSpecific는 부지런함과 성실함이 인정받는 시기입니다.',
+      '개', '$periodSpecific는 충성과 신뢰가 중요한 역할을 합니다.',
+      '돼지', '$periodSpecific는 풍요와 행복이 가득한 시기입니다.'};
     return messages[zodiac] ?? '$periodSpecific는 안정적이고 평온한 시기가 될 것입니다.';
   }
 }

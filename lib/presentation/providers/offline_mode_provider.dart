@@ -25,21 +25,18 @@ class OfflineModeState {
     this.isOffline = false,
     this.isInitialized = false,
     this.cacheStats = const {},
-    this.pendingSyncItems = const [],
-  });
+    this.pendingSyncItems = const []});
 
   OfflineModeState copyWith({
     bool? isOffline,
     bool? isInitialized,
     Map<String, dynamic>? cacheStats,
-    List<String>? pendingSyncItems,
-  }) {
+    List<String>? pendingSyncItems}) {
     return OfflineModeState(
       isOffline: isOffline ?? this.isOffline,
       isInitialized: isInitialized ?? this.isInitialized,
       cacheStats: cacheStats ?? this.cacheStats,
-      pendingSyncItems: pendingSyncItems ?? this.pendingSyncItems,
-    );
+      pendingSyncItems: pendingSyncItems ?? this.pendingSyncItems);
   }
 }
 
@@ -88,8 +85,7 @@ class OfflineModeNotifier extends StateNotifier<OfflineModeState> {
       state = state.copyWith(
         isOffline: !hasInitialConnection,
         isInitialized: true,
-        cacheStats: stats,
-      );
+        cacheStats: stats);
       
       await _cacheService.setOfflineMode(!hasInitialConnection);
       
@@ -149,8 +145,7 @@ class OfflineModeNotifier extends StateNotifier<OfflineModeState> {
             // Sync to server
             await fortuneService.syncOfflineFortune(
               userId: user.id,
-              fortune: cachedFortune,
-            );
+              fortune: cachedFortune);
             
             syncedItems.add(itemId);
             Logger.info('Supabase initialized successfully');

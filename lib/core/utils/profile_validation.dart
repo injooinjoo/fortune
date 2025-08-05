@@ -81,8 +81,7 @@ class ProfileValidation {
     final requiredFields = [
       'name',
       'birth_date',
-      'gender',
-    ];
+      'gender'];
     
     for (final field in requiredFields) {
       if (profile[field] == null || profile[field].toString().isEmpty) {
@@ -132,8 +131,7 @@ class ProfileValidation {
       'birth_date': '생년월일',
       'gender': '성별',
       'birth_time': '태어난 시간',
-      'mbti': 'MBTI',
-    };
+      'mbti': 'MBTI'};
     
     for (final entry in allFields.entries) {
       final value = profile[entry.key];

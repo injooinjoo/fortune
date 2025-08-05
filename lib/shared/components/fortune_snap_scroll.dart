@@ -27,8 +27,7 @@ class FortuneSnapScrollView extends StatefulWidget {
     this.snapCurve = Curves.easeOutCubic,
     this.velocityThreshold = 100,
     this.snapDistance = 50,
-    this.backgroundColor,
-  }) : super(key: key);
+    this.backgroundColor}) : super(key: key);
 
   @override
   State<FortuneSnapScrollView> createState() => _FortuneSnapScrollViewState();
@@ -129,11 +128,9 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
     // Animate to target
     final animation = Tween<double>(
       begin: _scrollController.offset,
-      end: targetOffset,
-    ).animate(CurvedAnimation(
+      end: targetOffset).animate(CurvedAnimation(
       parent: _animationController,
-      curve: widget.snapCurve,
-    );
+      curve: widget.snapCurve);
 
     animation.addListener(() {
       if (_scrollController.hasClients) {
@@ -173,13 +170,8 @@ class _FortuneSnapScrollViewState extends State<FortuneSnapScrollView>
               final card = entry.value;
               
               return RepaintBoundary(
-                child: card,
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
+                child: card);
+            }).toList()))));
   }
 }
 
@@ -201,8 +193,7 @@ class FortuneSnapCard extends StatelessWidget {
     required this.content,
     this.imageHeight = 300,
     this.contentPadding = 20,
-    this.onTap,
-  }) : super(key: key);
+    this.onTap}) : super(key: key);
 
   double get totalHeight => imageHeight + 150 + contentPadding * 2; // Approximate height
 
@@ -224,9 +215,7 @@ class FortuneSnapCard extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
-              ),
+                  fit: BoxFit.cover)),
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -235,11 +224,8 @@ class FortuneSnapCard extends StatelessWidget {
                     colors: [
                       Colors.transparent,
                       AppColors.textPrimary.withValues(alpha: 0.3),
-                      AppColors.textPrimary.withValues(alpha: 0.7),
-                    ],
-                    stops: const [0.5, 0.8, 1.0],
-                  ),
-                ),
+                      AppColors.textPrimary.withValues(alpha: 0.7)],
+                    stops: const [0.5, 0.8, 1.0])),
                 padding: EdgeInsets.all(contentPadding),
                 alignment: Alignment.bottomLeft,
                 child: Column(
@@ -254,11 +240,7 @@ class FortuneSnapCard extends StatelessWidget {
                         shadows: [
                           Shadow(
                             color: AppColors.textPrimary.withValues(alpha: 0.8),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                    ),
+                            blurRadius: 8)])),
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       description,
@@ -267,25 +249,12 @@ class FortuneSnapCard extends StatelessWidget {
                         shadows: [
                           Shadow(
                             color: AppColors.textPrimary.withValues(alpha: 0.8),
-                            blurRadius: 6,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                            blurRadius: 6)]))]))),
             
             // Content Section
             Container(
               padding: EdgeInsets.all(contentPadding),
-              child: content,
-            ),
-          ],
-        ),
-      ),
-    );
+              child: content)])));
   }
 }
 
@@ -299,8 +268,7 @@ class FortunePageSnapView extends StatefulWidget {
     Key? key,
     required this.pages,
     this.onPageChanged,
-    this.enableHapticFeedback = true,
-  }) : super(key: key);
+    this.enableHapticFeedback = true}) : super(key: key);
 
   @override
   State<FortunePageSnapView> createState() => _FortunePageSnapViewState();

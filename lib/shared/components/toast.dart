@@ -22,8 +22,7 @@ class Toast {
     required String message,
     ToastType type = ToastType.info,
     Duration duration = const Duration(seconds: 3),
-    VoidCallback? onTap,
-  }) {
+    VoidCallback? onTap}) {
     // Remove any existing toast
     _currentToast?.remove();
     _currentToast = null;
@@ -40,9 +39,7 @@ class Toast {
         onDismiss: () {
           _currentToast?.remove();
           _currentToast = null;
-        },
-      ),
-    );
+        }));
 
     _currentToast = toast;
     overlay.insert(toast);
@@ -85,8 +82,7 @@ class _ToastWidget extends StatefulWidget {
     required this.type,
     required this.duration,
     required this.onDismiss,
-    this.onTap,
-  });
+    this.onTap});
 
   @override
   State<_ToastWidget> createState() => _ToastWidgetState();
@@ -108,19 +104,15 @@ class _ToastWidgetState extends State<_ToastWidget>
 
     _offsetAnimation = Tween<Offset>(
       begin: const Offset(0, -1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
+      end: Offset.zero).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutBack,
-    ));
+      curve: Curves.easeOutBack)));
 
     _fadeAnimation = Tween<double>(
       begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
+      end: 1).animate(CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeIn,
-    ));
+      curve: Curves.easeIn)));
 
     _controller.forward();
   }
@@ -190,62 +182,43 @@ class _ToastWidgetState extends State<_ToastWidget>
                 child: GlassContainer(
         padding: EdgeInsets.symmetric(
         horizontal: AppSpacing.spacing4,
-                    vertical: AppSpacing.spacing3,
-                  ),
+                    vertical: AppSpacing.spacing3),
                   borderRadius: AppDimensions.borderRadiusLarge,
                   blur: 20,
                   boxShadow: GlassEffects.glassShadow(
         color: _color,
-                    elevation: 8,
-                  ),
+                    elevation: 8),
                   child: Row(
         children: [
                       Container(
                         padding: AppSpacing.paddingAll8,
                         decoration: BoxDecoration(
         color: _color.withValues(alpha: 0.2),
-                          borderRadius: AppDimensions.borderRadiusMedium,
-                        ),
+                          borderRadius: AppDimensions.borderRadiusMedium),
                         child: Icon(
                           _icon,
                           color: _color,
-                          size: AppDimensions.iconSizeMedium,
-                        ),
-                      ),
+                          size: AppDimensions.iconSizeMedium)),
                       SizedBox(width: AppSpacing.spacing3),
                       Expanded(
                         child: Text(
                           widget.message,
                           style: theme.textTheme.bodyMedium,
                           maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                          overflow: TextOverflow.ellipsis)),
                       SizedBox(width: AppSpacing.spacing2),
                       IconButton(
                         onPressed: _dismiss,
                         icon: Icon(
                           Icons.close_rounded,
                           size: AppDimensions.iconSizeSmall,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                        ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                         padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ).animate().scale(
+                        constraints: const BoxConstraints())]))))))).animate().scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1, 1),
             duration: 300.ms,
-            curve: Curves.easeOutBack,
-      ),
-    );
+            curve: Curves.easeOutBack));
   }
 }
 
@@ -270,8 +243,7 @@ class SnackBarHelper {
     BuildContext context,
     String message,
     Color color,
-    IconData icon,
-  ) {
+    IconData icon) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -284,19 +256,12 @@ class SnackBarHelper {
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(color: AppColors.textPrimaryDark),
-              ),
-            ),
-          ],
-        ),
+                style: const TextStyle(color: AppColors.textPrimaryDark)))]),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-        borderRadius: AppDimensions.borderRadiusMedium,
-        ),
+        borderRadius: AppDimensions.borderRadiusMedium),
         margin: AppSpacing.paddingAll16,
-        dismissDirection: DismissDirection.horizontal,
-      ),
-    );
+        dismissDirection: DismissDirection.horizontal));
   }
 }

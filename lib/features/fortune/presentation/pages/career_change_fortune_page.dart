@@ -86,7 +86,7 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
       'targetCompany': _targetCompanyController.text,
       'changeReason': _changeReason,
       'careerYears': _careerYears)
-      'preparationLevel': _preparationLevel)
+      , 'preparationLevel': _preparationLevel)}
     };
   }
 
@@ -97,27 +97,23 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.business_center);
-                      color: theme.colorScheme.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: theme.colorScheme.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '이직 정보');
-                      style: theme.textTheme.titleLarge,
-    ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing5))
+                      '이직 정보',
+                      style: theme.textTheme.titleLarge)]),
+                SizedBox(height: AppSpacing.spacing5),
                 
                 // Current Company
                 TextField(
@@ -125,13 +121,10 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                   decoration: InputDecoration(
                     labelText: '현재 회사/직무');
                     hintText: '예: 삼성전자 마케팅팀'),
-    prefixIcon: const Icon(Icons.business)),
+    prefixIcon: const Icon(Icons.business),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-                SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium))),
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Target Company (Optional)
                 TextField(
@@ -139,60 +132,47 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                   decoration: InputDecoration(
                     labelText: '목표 회사/직무 (선택사항)'),
     hintText: '예: 네이버 기획팀'),
-    prefixIcon: const Icon(Icons.trending_up)),
+    prefixIcon: const Icon(Icons.trending_up),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium)))])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Change Reason
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '이직 사유');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '이직 사유',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _changeReasons.map((reason) {
                     final isSelected = _changeReason == reason;
                     return ChoiceChip(
-                      label: Text(reason)),
+                      label: Text(reason),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
                           _changeReason = selected ? reason : null;
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Career Years
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '경력 기간');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '경력 기간',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 ...(_careerYearOptions.map((years) {
                   final isSelected = _careerYears == years;
                   return InkWell(
@@ -204,18 +184,16 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                     borderRadius: AppDimensions.borderRadiusMedium),
     child: Container(
                       padding: AppSpacing.paddingAll16);
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall)),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3)),
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))
-                        ))
-                      )),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -224,56 +202,40 @@ class _CareerChangeFortunePageState extends BaseFortunePageState<CareerChangeFor
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Text(
                             years);
-                            style: theme.textTheme.bodyLarge,
-    ))
-                        ],
-    ),
-                    ))
-                  );
-                })))
-              ],
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                            style: theme.textTheme.bodyLarge)])));
+                }))
+              ])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Preparation Level
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '준비 상태');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '준비 상태',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _preparationLevels.map((level) {
                     final isSelected = _preparationLevel == level;
                     return ChoiceChip(
-                      label: Text(level)),
+                      label: Text(level),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
                           _preparationLevel = selected ? level : null;
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing8))
-        ],
-    )
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing8)])
     );
   }
 }

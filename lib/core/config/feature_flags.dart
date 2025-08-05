@@ -79,7 +79,6 @@ class FeatureFlags {
     return {
       'useEdgeFunctions': _useEdgeFunctions,
       'edgeFunctionsRolloutPercentage': _edgeFunctionsRolloutPercentage,
-      'edgeFunctionsTestUsers': _edgeFunctionsTestUsers,
-    };
+      'edgeFunctionsTestUsers': _edgeFunctionsTestUsers};
   }
 }

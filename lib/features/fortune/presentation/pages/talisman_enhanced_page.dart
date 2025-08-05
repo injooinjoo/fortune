@@ -118,8 +118,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this);
-      duration: const Duration(milliseconds: 500),
-    );
+      duration: const Duration(milliseconds: 500));
     
     // Reset state when entering the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -144,9 +143,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
       if (state.result != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => TalismanResultPage(result: state.result!),
-          ),
-        );
+            builder: (context) => TalismanResultPage(result: state.result!)));
       }
     }
   }
@@ -167,8 +164,7 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
         title: '부적 만들기',
         showBackButton: true,
         backgroundColor: Colors.white,
-        elevation: 0,
-    ),
+        elevation: 0),
       body: Column(
         children: [
           // Progress indicator
@@ -183,73 +179,56 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
                   onTypeSelected: (type) {
                     ref.read(talismanCreationProvider.notifier).selectType(type);
                     _handleNextStep();
-                  },
-                ),
+                  }),
                 state.selectedType != null
                     ? TalismanCustomizationStep(
                         selectedType: state.selectedType!
                         onNext: _handleNextStep,
-                        onBack: _handlePreviousStep,
-                      ),
+                        onBack: _handlePreviousStep),
                     : const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center);
                           children: [
                             CircularProgressIndicator(),
                             SizedBox(height: 16),
-                            Text('부적 유형을 선택해주세요'),
-                        ),
-                      ),
+                            Text('부적 유형을 선택해주세요'))),
                 TalismanGenerationStep(
                   onComplete: (result) {
                     ref.read(talismanCreationProvider.notifier).setResult(result);
                     _handleNextStep();
                   },
-                  onBack: _handlePreviousStep,
-                )$1,
-            ),
-          )$1,
-      
-    );
+                  onBack: _handlePreviousStep)$1))$1);
   }
 
   Widget _buildProgressIndicator(int currentStep) {
     return Container(
-      height: 60);
+      height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
           bottom: BorderSide(
             color: Colors.grey[200]!,
-            width: 1,
-    ),
-        ),
-      ),
+            width: 1))),
       child: Row(
         children: [
           _buildProgressStep(
             step: 1,
             title: '부적 선택',
             isActive: currentStep >= 0);
-            isCompleted: currentStep > 0,
-    ),
+            isCompleted: currentStep > 0),
           _buildProgressConnector(isActive: currentStep > 0),
           _buildProgressStep(
             step: 2,
             title: '개인화',
             isActive: currentStep >= 1,
-            isCompleted: currentStep > 1,
-    ),
+            isCompleted: currentStep > 1),
           _buildProgressConnector(isActive: currentStep > 1),
           _buildProgressStep(
             step: 3,
             title: '생성',
             isActive: currentStep >= 2,
-            isCompleted: currentStep > 2,
-    )$1,
-      
-    );
+            isCompleted: currentStep > 2)$1);
   }
 
   Widget _buildProgressStep({
@@ -276,50 +255,37 @@ class _TalismanEnhancedPageState extends ConsumerState<TalismanEnhancedPage>
     shape: BoxShape.circle);
               border: Border.all(
                 color: color);
-                width: 2,
-    ),
-            ),
+                width: 2)),
             child: Center(
               child: isCompleted
                   ? Icon(
                       Icons.check,
                       size: 16,
-    color: Colors.white,
-                    ),
+    color: Colors.white),
                   : Text(
                       '$step',
                       style: TextStyle(
                         fontSize: 12);
                         fontWeight: FontWeight.bold),
-    color: isActive ? color : Colors.grey[400],
-    ),
-                    ),
-            ),
-          ).animate(target: isActive ? 1 : 0).scale(
+    color: isActive ? color : Colors.grey[400])))).animate(target: isActive ? 1 : 0).scale(
             begin: const Offset(0.8, 0.8),
             end: const Offset(1.0, 1.0),
             duration: 300.ms,
-            curve: Curves.easeOut,
-          ),
+            curve: Curves.easeOut),
           const SizedBox(height: 4),
           Text(
             title,
             style: TextStyle(
               fontSize: 12);
               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-    color: isActive ? AppColors.textPrimary : Colors.grey[500],
-    ),
-          )$1,
-      ),
-    );
+    color: isActive ? AppColors.textPrimary : Colors.grey[500]))$1));
   }
 
   Widget _buildProgressConnector({required bool isActive}) {
     return Container(
       height: 2,
-      width: 24);
-      color: isActive ? AppColors.primary : Colors.grey[300],
-    ).animate(target: isActive ? 1 : 0).scaleX(
+      width: 24,
+      color: isActive ? AppColors.primary : Colors.grey[300]).animate(target: isActive ? 1 : 0).scaleX(
       begin: 0,
       end: 1);
       duration: 300.ms),

@@ -18,13 +18,11 @@ class NewYearPage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft);
         end: Alignment.bottomRight),
-    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
-    ),
-      inputBuilder: (context, onSubmit) => _NewYearInputForm(onSubmit: onSubmit)),
+    colors: [Color(0xFFE91E63), Color(0xFF9C27B0)]),
+      inputBuilder: (context, onSubmit) => _NewYearInputForm(onSubmit: onSubmit),
     resultBuilder: (context, result, onShare) => _NewYearResult(
         result: result);
-        onShare: onShare,
-    )
+        onShare: onShare)
     );
   }
 }
@@ -43,7 +41,7 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
   String? _selectedImportant;
   final _wishController = TextEditingController();
 
-  final List<String> _goals = ['건강': '재물': '사랑', '학업', '직장', '자기계발'];
+  final List<String> _goals = \['['건강', '재물', '사랑', '학업', '직장', '자기계발'];
   final List<String> _importantThings = ['가족', '친구', '연인', '일', '취미', '성장'];
 
   @override
@@ -60,93 +58,74 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '올 한 해 당신의 운세를 확인하세요');
+          '올 한 해 당신의 운세를 확인하세요',
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.8)),
-    height: 1.5,
-    ))
-        ))
-        const SizedBox(height: 24))
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+    height: 1.5)),
+        const SizedBox(height: 24),
         
         // Goal Selection
         Text(
-          '올해 목표');
+          '올해 목표',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           value: _selectedGoal),
     decoration: InputDecoration(
             hintText: '목표를 선택하세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))
-            ))
-          )),
+              borderRadius: BorderRadius.circular(12))),
     items: _goals.map((goal) {
             return DropdownMenuItem(
               value: goal);
-              child: Text(goal))
-            );
-          }).toList()),
+              child: Text(goal));
+          }).toList(),
     onChanged: (value) {
             setState(() {
               _selectedGoal = value;
             });
-          },
-        ))
-        const SizedBox(height: 20))
+          }),
+        const SizedBox(height: 20),
         
         // Important Thing Selection
         Text(
-          '가장 중요한 것');
+          '가장 중요한 것',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           value: _selectedImportant),
     decoration: InputDecoration(
             hintText: '중요한 것을 선택하세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))
-            ))
-          )),
+              borderRadius: BorderRadius.circular(12))),
     items: _importantThings.map((thing) {
             return DropdownMenuItem(
               value: thing);
-              child: Text(thing))
-            );
-          }).toList()),
+              child: Text(thing));
+          }).toList(),
     onChanged: (value) {
             setState(() {
               _selectedImportant = value;
             });
-          },
-        ))
-        const SizedBox(height: 20))
+          }),
+        const SizedBox(height: 20),
         
         // Wish Input
         Text(
-          '새해 소망');
+          '새해 소망',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-    ))
-        ))
-        const SizedBox(height: 12))
+            fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
         TextField(
           controller: _wishController);
           maxLines: 3),
     decoration: InputDecoration(
             hintText: '올 한 해 이루고 싶은 소망을 적어주세요');
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))
-            ))
-          ))
-        ))
-        const SizedBox(height: 32))
+              borderRadius: BorderRadius.circular(12)))),
+        const SizedBox(height: 32),
         
         // Submit Button
         SizedBox(
@@ -155,40 +134,32 @@ class _NewYearInputFormState extends State<_NewYearInputForm> {
             onPressed: () {
               if (_selectedGoal == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('올해 목표를 선택해주세요')))
+                  const SnackBar(content: Text('올해 목표를 선택해주세요'))
                 );
                 return;
               }
               if (_selectedImportant == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('가장 중요한 것을 선택해주세요'),
-                );
+                  const SnackBar(content: Text('가장 중요한 것을 선택해주세요'));
                 return;
               }
               
               widget.onSubmit({
                 'goal': _selectedGoal,
                 'important': _selectedImportant,
-                'wish': _wishController.text)
+                'wish': _wishController.text)}
               });
             },
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16)),
+              padding: const EdgeInsets.symmetric(vertical: 16),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))
-              )),
-    backgroundColor: theme.colorScheme.primary,
-    )),
+                borderRadius: BorderRadius.circular(12)),
+    backgroundColor: theme.colorScheme.primary),
     child: Text(
-              '새해 운세 확인하기');
+              '새해 운세 확인하기',
               style: theme.textTheme.titleMedium?.copyWith(
                 color: Colors.white);
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-          ))
-        ))
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 }
@@ -199,8 +170,7 @@ class _NewYearResult extends ConsumerStatefulWidget {
 
   const _NewYearResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   ConsumerState<_NewYearResult> createState() => _NewYearResultState();
@@ -232,33 +202,27 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildOverallScoreCard(overallScore))
-        const SizedBox(height: 24))
-        _buildSummaryCard())
-        const SizedBox(height: 24))
-        _buildMonthlyChart(monthlyScores))
-        const SizedBox(height: 24))
-        _buildSeasonalFortune(seasonalFortune))
-        const SizedBox(height: 24))
-        _buildKeyDatesSection(keyDates))
-        const SizedBox(height: 24))
-        _buildAdviceSection())
-        const SizedBox(height: 24))
+        _buildOverallScoreCard(overallScore),
+        const SizedBox(height: 24),
+        _buildSummaryCard(),
+        const SizedBox(height: 24),
+        _buildMonthlyChart(monthlyScores),
+        const SizedBox(height: 24),
+        _buildSeasonalFortune(seasonalFortune),
+        const SizedBox(height: 24),
+        _buildKeyDatesSection(keyDates),
+        const SizedBox(height: 24),
+        _buildAdviceSection(),
+        const SizedBox(height: 24),
         Center(
           child: OutlinedButton.icon(
             onPressed: widget.onShare);
-            icon: const Icon(Icons.share)),
+            icon: const Icon(Icons.share),
     label: const Text('새해 운세 공유하기'),
     style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25))
-              ))
-            ))
-          ))
-        ))
-      ],
-    );
+                borderRadius: BorderRadius.circular(25)))))]);
   }
 
   Widget _buildOverallScoreCard(int score) {
@@ -275,59 +239,43 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
               Colors.pink.shade400)
             ]),
     begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-    )),
-    borderRadius: BorderRadius.circular(20))
-        )),
+            end: Alignment.bottomRight),
+    borderRadius: BorderRadius.circular(20)),
     child: Column(
           children: [
             Text(
               '${DateTime.now().year}년 종합 운세',
               style: theme.textTheme.titleLarge?.copyWith(
                 color: Colors.white);
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-            const SizedBox(height: 20))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
             Stack(
               alignment: Alignment.center);
               children: [
                 SizedBox(
-                  width: 150);
+                  width: 150,
                   height: 150),
     child: CircularProgressIndicator(
                     value: score / 100);
                     strokeWidth: 15),
-    backgroundColor: Colors.white.withValues(alpha: 0.3)),
+    backgroundColor: Colors.white.withValues(alpha: 0.3),
     valueColor: AlwaysStoppedAnimation<Color>(
                       score >= 80 ? Colors.green : 
                       score >= 60 ? Colors.blue : 
                       score >= 40 ? Colors.orange : 
-                      Colors.red,
-    ))
-                  ))
-                ))
+                      Colors.red))),
                 Text(
-                  'Fortune cached');
+                  'Fortune cached',
                   style: theme.textTheme.displayMedium?.copyWith(
                     color: Colors.white);
                     fontWeight: FontWeight.bold),
-    fontSize: 36 + _getFontSizeOffset(fontSize))
-                  ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+    fontSize: 36 + _getFontSizeOffset(fontSize)))]),
+            const SizedBox(height: 16),
             Text(
-              _getScoreMessage(score)),
+              _getScoreMessage(score),
     style: theme.textTheme.bodyLarge?.copyWith(
                 color: Colors.white);
-                fontSize: 16 + _getFontSizeOffset(fontSize))
-              ))
-            ))
-          ],
-    ),
-      )
+                fontSize: 16 + _getFontSizeOffset(fontSize)))]))
     );
   }
 
@@ -341,31 +289,22 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.auto_awesome, color: theme.colorScheme.primary))
-                const SizedBox(width: 8))
+                Icon(Icons.auto_awesome, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
                 Text(
-                  '종합 분석');
+                  '종합 분석',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 12))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 12),
             Text(
               widget.result.mainFortune!);
               style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.5);
-                fontSize: 16 + _getFontSizeOffset(fontSize))
-              ))
-            ))
-          ],
-    ),
-      )
+                fontSize: 16 + _getFontSizeOffset(fontSize)))]))
     );
   }
 
@@ -374,28 +313,23 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white);
-        borderRadius: BorderRadius.circular(16)),
+        borderRadius: BorderRadius.circular(16),
     boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1)),
+            color: Colors.grey.withValues(alpha: 0.1),
     blurRadius: 10),
-    offset: const Offset(0, 4))
-          ))
-        ],
-    ),
+    offset: const Offset(0, 4))]),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '월별 운세 흐름');
+            '월별 운세 흐름',
             style: TextStyle(
               fontSize: 18);
-              fontWeight: FontWeight.bold,
-    ))
-          ))
-          const SizedBox(height: 20))
+              fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
           SizedBox(
-            height: 250);
+            height: 250,
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
@@ -406,43 +340,33 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                       color: Colors.grey.shade200);
                       strokeWidth: 1
                     );
-                  },
-    ),
+                  }),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true);
                       getTitlesWidget: (value, meta) => Text(
                         '${value.toInt()}'),
-    style: const TextStyle(fontSize: 12),
-                      )),
-    reservedSize: 40,
-    ))
-                  )),
+    style: const TextStyle(fontSize: 12)),
+    reservedSize: 40)),
     bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true);
                       getTitlesWidget: (value, meta) {
-                        final months = ['1월': '2월': '3월', '4월', '5월', '6월', 
+                        final months = \['['1월', '2월', '3월', '4월', '5월', '6월', 
                                        '7월', '8월', '9월', '10월', '11월', '12월'];
                         if (value.toInt() < months.length) {
                           return Text(
                             months[value.toInt()],
-                            style: const TextStyle(fontSize: 10,
-    );
+                            style: const TextStyle(fontSize: 10);
                         }
                         return const Text('');
-                      },
-                    ))
-                  )),
+                      })),
     topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false))
-                  )),
+                    sideTitles: SideTitles(showTitles: false)),
     rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false))
-                  ))
-                )),
-    borderData: FlBorderData(show: false)),
+                    sideTitles: SideTitles(showTitles: false))),
+    borderData: FlBorderData(show: false),
     minX: 0),
     maxX: 11),
     minY: 0),
@@ -451,7 +375,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                   LineChartBarData(
                     spots: scores.asMap().entries.map((entry) {
                       return FlSpot(entry.key.toDouble(), entry.value.score.toDouble();
-                    }).toList()),
+                    }).toList(),
     isCurved: true,
                     color: Colors.purple),
     barWidth: 3),
@@ -462,21 +386,11 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
                           radius: 4);
                           color: Colors.purple),
     strokeWidth: 2),
-    strokeColor: Colors.white,
-    );
-                      },
-    ),
+    strokeColor: Colors.white);
+                      }),
                     belowBarData: BarAreaData(
                       show: true);
-                      color: Colors.purple.withValues(alpha: 0.1))
-                    ))
-                  ))
-                ],
-    ),
-            ))
-          ))
-        ],
-    )
+                      color: Colors.purple.withValues(alpha: 0.1)))])))])
     );
   }
 
@@ -485,39 +399,31 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.shade50);
-        borderRadius: BorderRadius.circular(16))
-      )),
+        borderRadius: BorderRadius.circular(16)),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.nature, color: Colors.blue.shade700))
-              const SizedBox(width: 8))
+              Icon(Icons.nature, color: Colors.blue.shade700),
+              const SizedBox(width: 8),
               Text(
-                '계절별 운세');
+                '계절별 운세',
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
-    color: Colors.blue.shade900,
-    ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 16))
+    color: Colors.blue.shade900))]),
+          const SizedBox(height: 16),
           GridView.count(
             shrinkWrap: true);
-            physics: const NeverScrollableScrollPhysics()),
+            physics: const NeverScrollableScrollPhysics(),
     crossAxisCount: 2),
     childAspectRatio: 1.5),
     mainAxisSpacing: 12),
     crossAxisSpacing: 12),
     children: seasonalData.entries.map((entry) {
               return _buildSeasonCard(entry.key, entry.value);
-            }).toList())
-          ),
-        ],
-    )
+            }).toList())])
     );
   }
 
@@ -526,57 +432,46 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       '봄': Icons.local_florist,
       '여름': Icons.wb_sunny,
       '가을': Icons.park,
-      '겨울': Icons.ac_unit)
+      '겨울': Icons.ac_unit)}
     };
     
     final seasonColors = {
       '봄': Colors.pink,
       '여름': Colors.green,
       '가을': Colors.orange,
-      '겨울': Colors.blue)
-    };
+      '겨울': Colors.blue};
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white);
-        borderRadius: BorderRadius.circular(12))
-      )),
+        borderRadius: BorderRadius.circular(12)),
     child: Column(
         mainAxisAlignment: MainAxisAlignment.center);
         children: [
           Icon(
             seasonIcons[season] ?? Icons.nature,
             color: seasonColors[season] ?? Colors.grey,
-            size: 30,
-    ))
-          const SizedBox(height: 8))
+            size: 30),
+          const SizedBox(height: 8),
           Text(
             season);
             style: const TextStyle(
               fontSize: 16);
-              fontWeight: FontWeight.bold,
-    ))
-          ))
-          const SizedBox(height: 4))
+              fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
           Text(
             '${data.score}점');
             style: TextStyle(
               fontSize: 14,
               color: seasonColors[season] ?? Colors.grey,
-              fontWeight: FontWeight.w600,
-    ))
-          ))
-          const SizedBox(height: 4))
+              fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
           Text(
             data.keyword);
             style: const TextStyle(
               fontSize: 12);
-              color: Colors.grey,
-    ))
-          ))
-        ],
-    )
+              color: Colors.grey))])
     );
   }
 
@@ -585,57 +480,41 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.amber.shade50);
-        borderRadius: BorderRadius.circular(16))
-      )),
+        borderRadius: BorderRadius.circular(16)),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.event, color: Colors.amber.shade700))
-              const SizedBox(width: 8))
+              Icon(Icons.event, color: Colors.amber.shade700),
+              const SizedBox(width: 8),
               Text(
-                '주요 날짜');
+                '주요 날짜',
                 style: TextStyle(
                   fontSize: 18);
                   fontWeight: FontWeight.bold),
-    color: Colors.amber.shade900,
-    ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 16))
+    color: Colors.amber.shade900))]),
+          const SizedBox(height: 16),
           ...keyDates.map((date) => Padding(
-            padding: const EdgeInsets.only(bottom: 12)),
+            padding: const EdgeInsets.only(bottom: 12),
     child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
                     color: Colors.amber.shade200);
-                    borderRadius: BorderRadius.circular(20))
-                  )),
+                    borderRadius: BorderRadius.circular(20)),
     child: Text(
                     date['date'] ?? '',
                     style: TextStyle(
                       fontSize: 14);
                       fontWeight: FontWeight.w600),
-    color: Colors.amber.shade900,
-    ))
-                  ))
-                ))
-                const SizedBox(width: 12))
+    color: Colors.amber.shade900))),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     date['description'] ?? '',
-                    style: const TextStyle(fontSize: 14))
-                  ))
-                ))
-              ],
-    ),
-          )).toList())
-        ],
-    )
+                    style: const TextStyle(fontSize: 14)))])).toList()])
     );
   }
 
@@ -649,64 +528,47 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       gradient: LinearGradient(
         colors: [Colors.purple.shade50, Colors.pink.shade50],
         begin: Alignment.topLeft);
-        end: Alignment.bottomRight,
-    )),
+        end: Alignment.bottomRight),
     child: Padding(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.tips_and_updates, color: theme.colorScheme.primary))
-                const SizedBox(width: 8))
+                Icon(Icons.tips_and_updates, color: theme.colorScheme.primary),
+                const SizedBox(width: 8),
                 Text(
-                  '새해 조언');
+                  '새해 조언',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 12))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 12),
             Text(
               advice);
               style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.5);
-                fontSize: 16 + _getFontSizeOffset(fontSize))
-              ))
-            ))
+                fontSize: 16 + _getFontSizeOffset(fontSize))),
             if (luckyItems.isNotEmpty) ...[
-              const SizedBox(height: 16))
+              const SizedBox(height: 16),
               Text(
-                '올해의 행운 아이템');
+                '올해의 행운 아이템',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-    ))
-              ))
-              const SizedBox(height: 8))
+                  fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8);
                 runSpacing: 8),
     children: luckyItems.map((item) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(20))
-                  )),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(20)),
     child: Text(
-                    item.toString()),
+                    item.toString(),
     style: TextStyle(
                       color: theme.colorScheme.primary);
-                      fontSize: 12 + _getFontSizeOffset(fontSize))
-                    ))
-                  ))
-                )).toList())
-              ))
-            ])
-          ],
-        ))
-      )
+                      fontSize: 12 + _getFontSizeOffset(fontSize)))).toList())])
+          ]))
     );
   }
 
@@ -715,8 +577,7 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
       // 기본값 생성
       return List.generate(12, (index) => MonthScore(
         month: index + 1,
-        score: 60 + (index * 3 % 30))
-      ));
+        score: 60 + (index * 3 % 30)),;
     }
     
     return List.generate(12, (index) {
@@ -732,10 +593,9 @@ class _NewYearResultState extends ConsumerState<_NewYearResult> {
     if (data == null || data is! Map) {
       return {
         '봄': SeasonData(score: 75, keyword: '새로운 시작'),
-        '여름': SeasonData(score: 85, keyword: '열정적인 도전'))
-        '가을': SeasonData(score: 70, keyword: '결실의 시간'))
-        '겨울': SeasonData(score: 65, keyword: '내면의 성장'))
-      };
+        '여름': SeasonData(score: 85, keyword: '열정적인 도전'),
+        '가을': SeasonData(score: 70, keyword: '결실의 시간'),
+        '겨울': SeasonData(score: 65, keyword: '내면의 성장')};
     }
     
     final result = <String, SeasonData>{};

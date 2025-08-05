@@ -15,8 +15,7 @@ class PlatformShareButton extends StatelessWidget {
     required this.platform,
     required this.onTap,
     this.size = 56);
-    this.showLabel = true,
-  });
+    this.showLabel = true});
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +44,11 @@ class PlatformShareButton extends StatelessWidget {
     blurRadius: 8),
     offset: const Offset(0, 2))
                   ))
-                ],
-    ),
+                ]),
               child: config.customIcon ?? Icon(
                 config.icon);
                 color: config.iconColor ?? AppColors.textPrimaryDark),
-    size: size * 0.5,
-    ))
+    size: size * 0.5))
             ))
             if (showLabel) ...[
               SizedBox(height: AppSpacing.spacing1))
@@ -59,11 +56,9 @@ class PlatformShareButton extends StatelessWidget {
                 config.label);
                 style: context.captionMedium)),
     maxLines: 1),
-    overflow: TextOverflow.ellipsis,
-    ))
+    overflow: TextOverflow.ellipsis))
             ])
-          ],
-        ))
+          ]))
       ))
     );
   }
@@ -89,8 +84,7 @@ class PlatformShareButton extends StatelessWidget {
               Color(0xFFFCAF45))
             ]),
     begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-    ))
+            end: Alignment.bottomRight))
         );
       case SharePlatform.facebook:
         return _PlatformConfig(
@@ -186,8 +180,7 @@ class _PlatformConfig {
     this.color,
     this.iconColor,
     this.gradient);
-    this.customIcon,
-  });
+    this.customIcon});
 }
 
 enum SharePlatform {

@@ -14,8 +14,7 @@ import '../../../fortune/presentation/widgets/tarot/tarot_result_view.dart';
 
 /// Provider to manage the tarot reading state
 final tarotReadingStateProvider = StateNotifierProvider.autoDispose<TarotReadingStateNotifier, TarotReadingState>(
-  (ref) => TarotReadingStateNotifier(),
-);
+  (ref) => TarotReadingStateNotifier());
 
 /// State for the tarot reading process
 class TarotReadingState {
@@ -32,8 +31,7 @@ class TarotReadingState {
     this.spreadType = 'three',
     this.selectedCards = const [],
     this.readingResult,
-    this.isLoading = false,
-  });
+    this.isLoading = false});
 
   TarotReadingState copyWith({
     TarotReadingStep? currentStep,
@@ -41,16 +39,14 @@ class TarotReadingState {
     String? spreadType,
     List<int>? selectedCards,
     Map<String, dynamic>? readingResult,
-    bool? isLoading,
-  }) {
+    bool? isLoading}) {
     return TarotReadingState(
       currentStep: currentStep ?? this.currentStep,
       question: question ?? this.question,
       spreadType: spreadType ?? this.spreadType,
       selectedCards: selectedCards ?? this.selectedCards,
       readingResult: readingResult ?? this.readingResult,
-      isLoading: isLoading ?? this.isLoading,
-    );
+      isLoading: isLoading ?? this.isLoading);
   }
 }
 
@@ -83,8 +79,7 @@ class TarotReadingStateNotifier extends StateNotifier<TarotReadingState> {
     state = state.copyWith(
       readingResult: result,
       currentStep: TarotReadingStep.result,
-      isLoading: false,
-    );
+      isLoading: false);
   }
 
   void setLoading(bool loading) {
@@ -106,8 +101,7 @@ class TarotCardPage extends ConsumerStatefulWidget {
     super.key,
     this.spreadType,
     this.initialQuestion,
-    this.extra,
-  });
+    this.extra});
 
   @override
   ConsumerState<TarotCardPage> createState() => _TarotCardPageState();
@@ -225,15 +219,13 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       final tokenCost = _getTokenCost(state.spreadType);
       final hasEnoughTokens = await tokenService.checkAndConsumeTokens(
         tokenCost,
-        'tarot',
-      );
+        'tarot');
       
       if (!hasEnoughTokens) {
         Toast.show(
           context,
           message: '토큰이 부족합니다',
-          type: ToastType.error,
-        );
+          type: ToastType.error);
         stateNotifier.setLoading(false);
         return;
       }
@@ -247,10 +239,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             'question': state.question.isEmpty ? '오늘의 운세를 봐주세요' : state.question,
             'spreadType': state.spreadType,
             'selectedCards': selectedCards,
-            'deckId': selectedDeck?.id ?? 'rider_waite',
-          },
-        },
-      );
+            'deckId': selectedDeck?.id ?? 'rider_waite'}});
 
       if (response['success'] == true && response['data'] != null) {
         stateNotifier.setReadingResult(response['data']);
@@ -261,8 +250,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       Toast.show(
         context,
         message: '타로 리딩 중 오류가 발생했습니다',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
       stateNotifier.setLoading(false);
     }
   }
@@ -281,9 +269,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
       return Scaffold(
         backgroundColor: theme.colorScheme.surface,
         body: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+          child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -294,18 +280,11 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             AppHeader(
               title: '타로 카드',
               showBackButton: true,
-              showActions: true,
-            ),
+              showActions: true),
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
-                child: _buildCurrentStep(state),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                child: _buildCurrentStep(state)))])));
   }
 
   Widget _buildCurrentStep(TarotReadingState state) {
@@ -322,9 +301,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             },
             onProceed: () {
               ref.read(tarotReadingStateProvider.notifier).proceedToSelection();
-            },
-          ),
-        );
+            }));
         
       case TarotReadingStep.selection:
         return TarotSelectionView(
@@ -336,8 +313,7 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
           onSelectionComplete: (selectedCards) {
             ref.read(tarotReadingStateProvider.notifier).setSelectedCards(selectedCards);
             _performReading(selectedCards);
-          },
-        );
+          });
         
       case TarotReadingStep.result:
         return TarotResultView(
@@ -356,10 +332,8 @@ class _TarotCardPageState extends ConsumerState<TarotCardPage> {
             Toast.show(
               context,
               message: '공유 기능은 준비 중입니다',
-              type: ToastType.info,
-            );
-          },
-        );
+              type: ToastType.info);
+          });
     }
   }
 }

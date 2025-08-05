@@ -7,8 +7,7 @@ class FortuneListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('운세 목록'),
-      )),
+        title: const Text('운세 목록'))),
     body: const Center(
         child: Text('운세 목록 화면'))
       )

@@ -18,8 +18,7 @@ class CrossPlatformAdWidget extends StatelessWidget {
     this.padding = AppSpacing.paddingVertical8,
     this.mobileAdSize = AdSize.banner,
     this.webAdSize = AdSenseBannerSize.responsive,
-    this.backgroundColor,
-  });
+    this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +31,12 @@ class CrossPlatformAdWidget extends StatelessWidget {
     if (kIsWeb) {
       return AdSenseBanner(
         size: webAdSize,
-        padding: padding,
-      );
+        padding: padding);
     } else {
       return BannerAdWidget(
         adSize: mobileAdSize,
         padding: padding,
-        backgroundColor: backgroundColor,
-      );
+        backgroundColor: backgroundColor);
     }
   }
 }
@@ -48,49 +45,41 @@ class CrossPlatformAdWidget extends StatelessWidget {
 class CommonAdPlacements {
   /// Ad placement at the bottom of lists or feeds
   static Widget listBottomAd({
-    EdgeInsets? padding,
-  }) {
+    EdgeInsets? padding}) {
     return CrossPlatformAdWidget(
       padding: padding ?? AppSpacing.paddingVertical16,
       mobileAdSize: AdSize.banner,
-      webAdSize: AdSenseBannerSize.responsive,
-    );
+      webAdSize: AdSenseBannerSize.responsive);
   }
 
   /// Ad placement between content sections
   static Widget betweenContentAd({
     EdgeInsets? padding,
-    Color? backgroundColor,
-  }) {
+    Color? backgroundColor}) {
     return CrossPlatformAdWidget(
       padding: padding ?? EdgeInsets.symmetric(vertical: AppSpacing.spacing6),
       mobileAdSize: AdSize.mediumRectangle,
       webAdSize: AdSenseBannerSize.mediumRectangle,
-      backgroundColor: backgroundColor,
-    );
+      backgroundColor: backgroundColor);
   }
 
   /// Small ad placement for sidebars or compact spaces
   static Widget compactAd({
-    EdgeInsets? padding,
-  }) {
+    EdgeInsets? padding}) {
     return CrossPlatformAdWidget(
       padding: padding ?? AppSpacing.paddingAll8,
       mobileAdSize: AdSize.banner,
-      webAdSize: AdSenseBannerSize.banner,
-    );
+      webAdSize: AdSenseBannerSize.banner);
   }
 
   /// Large ad placement for main content areas
   static Widget largeAd({
     EdgeInsets? padding,
-    Color? backgroundColor,
-  }) {
+    Color? backgroundColor}) {
     return CrossPlatformAdWidget(
       padding: padding ?? EdgeInsets.symmetric(vertical: AppSpacing.spacing8),
       mobileAdSize: AdSize.largeBanner,
       webAdSize: AdSenseBannerSize.largeRectangle,
-      backgroundColor: backgroundColor,
-    );
+      backgroundColor: backgroundColor);
   }
 }

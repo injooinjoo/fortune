@@ -26,9 +26,7 @@ class ApiClient {
       receiveTimeout: const Duration(seconds: 30),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+        'Accept': 'application/json'}));
 
     // 인터셉터 추가
     _dio.interceptors.addAll([
@@ -52,8 +50,7 @@ class ApiClient {
               'requestId': options.extra['requestId'],
               'fortuneType': fortuneType,
               'method': options.method,
-              'endpoint': null,
-            });
+              'endpoint': null});
           }
           
           handler.next(options);
@@ -80,8 +77,7 @@ class ApiClient {
               'fortuneType': fortuneType,
               'statusCode': response.statusCode,
               'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
-              'hasData': response.data != null,
-            });
+              'hasData': response.data != null});
           }
           
           handler.next(response);
@@ -109,14 +105,11 @@ class ApiClient {
               'statusCode': error.response?.statusCode ?? 0,
               'errorType': error.type.toString(),
               'responseTime': responseTime != null ? '${responseTime}ms' : 'unknown',
-              'errorMessage': null,
-            });
+              'errorMessage': null});
           }
           
           handler.next(error);
-        },
-      ),
-    ]);
+        })]);
     
     // Add improved token refresh interceptor
     _dio.addTokenRefreshInterceptor(_supabase.client);
@@ -129,8 +122,7 @@ class ApiClient {
   Future<T> get<T>(
     String path, {
     Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
+    Options? options}) async {
     try {
       final response = await _dio.get<T>(
         path,
@@ -148,8 +140,7 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
+    Options? options}) async {
     try {
       final response = await _dio.post<T>(
         path,
@@ -168,8 +159,7 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
+    Options? options}) async {
     try {
       final response = await _dio.put<T>(
         path,
@@ -188,8 +178,7 @@ class ApiClient {
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Options? options,
-  }) async {
+    Options? options}) async {
     try {
       final response = await _dio.delete<T>(
         path,
@@ -208,8 +197,7 @@ class ApiClient {
     String path, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? data,
-    CancelToken? cancelToken,
-  }) async* {
+    CancelToken? cancelToken}) async* {
     try {
       final response = await _dio.post(
         path,
@@ -218,9 +206,7 @@ class ApiClient {
         options: Options(
           responseType: ResponseType.stream,
           headers: {
-            'Accept': 'text/event-stream',
-          },
-        ),
+            'Accept': 'text/event-stream'}),
         cancelToken: cancelToken
       );
 
@@ -269,29 +255,25 @@ class ApiClient {
             if (statusCode == 402 || data['code'] == 'insufficient_tokens') {
               return app_exceptions.TokenException(
                 message: message,
-                remainingTokens: data['remainingTokens'],
-              );
+                remainingTokens: data['remainingTokens']);
             }
             
             // 유효성 검사 에러
             if (statusCode == 400) {
               return app_exceptions.ValidationException(
                 message: message,
-                errors: data['errors'],
-              );
+                errors: data['errors']);
             }
             
             return app_exceptions.ServerException(
               message: message,
               statusCode: statusCode,
-              data: data,
-            );
+              data: data);
           }
           
           return app_exceptions.ServerException(
             message: '서버 오류가 발생했습니다. (${statusCode ?? 'Unknown'})',
-            statusCode: statusCode,
-          );
+            statusCode: statusCode);
         
         default:
           return app_exceptions.NetworkException('네트워크 오류가 발생했습니다.');
@@ -303,7 +285,6 @@ class ApiClient {
     }
     
     return app_exceptions.ServerException(
-      message: error.toString(),
-    );
+      message: error.toString());
   }
 }

@@ -33,8 +33,7 @@ class CelebritySearchNotifier extends StateNotifier<List<Celebrity>> {
   
   void search({
     String? query,
-    CelebrityFilter? filter,
-  }) {
+    CelebrityFilter? filter}) {
     if ((query == null || query.isEmpty) && filter == null) {
       state = [];
       return;
@@ -42,8 +41,7 @@ class CelebritySearchNotifier extends StateNotifier<List<Celebrity>> {
     
     state = _service.searchCelebrities(
       query: query,
-      filter: filter,
-    );
+      filter: filter);
   }
   
   void clear() {
@@ -102,8 +100,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       maxAge: state.maxAge,
       searchQuery: state.searchQuery,
       zodiacSign: state.zodiacSign,
-      chineseZodiac: state.chineseZodiac,
-    );
+      chineseZodiac: state.chineseZodiac);
   }
   
   void updateGender(Gender? gender) {
@@ -114,8 +111,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       maxAge: state.maxAge,
       searchQuery: state.searchQuery,
       zodiacSign: state.zodiacSign,
-      chineseZodiac: state.chineseZodiac,
-    );
+      chineseZodiac: state.chineseZodiac);
   }
   
   void updateAgeRange(int? minAge, int? maxAge) {
@@ -126,8 +122,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       maxAge: maxAge,
       searchQuery: state.searchQuery,
       zodiacSign: state.zodiacSign,
-      chineseZodiac: state.chineseZodiac,
-    );
+      chineseZodiac: state.chineseZodiac);
   }
   
   void updateSearchQuery(String? query) {
@@ -138,8 +133,7 @@ class CelebrityFilterNotifier extends StateNotifier<CelebrityFilter> {
       maxAge: state.maxAge,
       searchQuery: query,
       zodiacSign: state.zodiacSign,
-      chineseZodiac: state.chineseZodiac,
-    );
+      chineseZodiac: state.chineseZodiac);
   }
   
   void reset() {

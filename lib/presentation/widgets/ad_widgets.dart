@@ -15,40 +15,34 @@ class AdDialog extends ConsumerWidget {
     {
     Key? key,
     required this.onComplete,
-    this.adType,
-  )}) : super(key: key);
+    this.adType)}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Dialog(
       shape: RoundedRectangleBorder(,
-      borderRadius: AppDimensions.borderRadiusLarge,
-    ),
+      borderRadius: AppDimensions.borderRadiusLarge),
         child: Container(,
       padding: AppSpacing.paddingAll24),
-        child: Column(,
-      mainAxisSize: MainAxisSize.min,
-              ),
+        child: Column(
+      mainAxisSize: MainAxisSize.min),
               children: [
             Icon(
               Icons.play_circle_outline),
         size: 64),
-        color: AppColors.primary,
-    ))
+        color: AppColors.primary))
             SizedBox(height: AppSpacing.spacing4))
             Text(
               '광고 시청하기'),
         style: Theme.of(context).textTheme.headlineSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          ))
+      fontWeight: FontWeight.bold))
               ))
             SizedBox(height: AppSpacing.spacing2))
             Text(
               '짧은 광고를 시청하고 운세를 확인하세요'),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
       color: AppColors.onSurface.withValues(alp,
-      ha: 0.7, textAlign: TextAlign.center,
-                          )))
+      ha: 0.7, textAlign: TextAlign.center)))
             SizedBox(height: AppSpacing.spacing6))
             Row(
               children: [
@@ -70,8 +64,7 @@ class AdDialog extends ConsumerWidget {
         child: const Text('광고 보기'))))
                 ))
               ])
-          ],
-    )))
+          ])))
   }
 }
 
@@ -91,8 +84,7 @@ class AdBanner extends StatelessWidget {
       height: height),
               width: width ?? double.infinity),
         decoration: BoxDecoration(,
-      color: AppColors.divider,
-        ),
+      color: AppColors.divider),
         borderRadius: AppDimensions.borderRadiusSmall),
         border: Border.all(colo,
       r: AppColors.textSecondary!))
@@ -101,8 +93,7 @@ class AdBanner extends StatelessWidget {
       child: Text(
           'Advertisement'),
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(,
-      color: AppColors.textSecondary,
-                          ))
+      color: AppColors.textSecondary))
   }
 }
 
@@ -112,16 +103,14 @@ class NativeAdWidget extends StatelessWidget {
   const NativeAdWidget(
     {
     Key? key,
-    this.adId,
-  )}) : super(key: key);
+    this.adId)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: AppSpacing.paddingAll16),
         decoration: BoxDecoration(,
-      color: AppColors.surface,
-        ),
+      color: AppColors.surface),
         borderRadius: AppDimensions.borderRadiusMedium),
         boxShadow: [
           BoxShadow(
@@ -140,10 +129,8 @@ class NativeAdWidget extends StatelessWidget {
                 width: AppDimensions.buttonHeightSmall),
               height: AppDimensions.buttonHeightSmall),
         decoration: BoxDecoration(,
-      color: AppColors.textSecondary,
-        ),
-        borderRadius: AppDimensions.borderRadiusSmall,
-    ))
+      color: AppColors.textSecondary),
+        borderRadius: AppDimensions.borderRadiusSmall))
               ))
               SizedBox(width: AppSpacing.spacing3))
               Expanded(
@@ -153,28 +140,23 @@ class NativeAdWidget extends StatelessWidget {
                     Text(
                           'Sponsored Content',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          ))
+      fontWeight: FontWeight.bold))
                       ))
                     Text(
                       'Learn more'),
         style: Theme.of(context).textTheme.bodySmall?.copyWith(,
-      color: AppColors.primary,
-                          ))
+      color: AppColors.primary))
                       ))
-                  ],
-    ))))
+                  ]))))
               Icon(
                 Icons.ad_units),
         size: AppDimensions.iconSizeSmall),
-        color: AppColors.textSecondary,
-    ))
+        color: AppColors.textSecondary))
             ])
           SizedBox(height: AppSpacing.spacing3))
           Text(
             'This is a placeholder for native ad content. In production, this would display actual ad content.'),
         style: Theme.of(context).textTheme.bodyMedium)
-        ],
-    )
+        ])
   }
 }

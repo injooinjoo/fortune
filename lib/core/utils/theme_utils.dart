@@ -18,8 +18,7 @@ class ThemeUtils {
         colors: [
           AppColors.primaryDarkMode.withValues(alpha: 0.8),
           AppColors.primaryLightDarkMode.withValues(alpha: 0.6),
-          AppColors.primaryDarkDarkMode.withValues(alpha: 0.4),
-        ]
+          AppColors.primaryDarkDarkMode.withValues(alpha: 0.4)]
       );
     }
     return AppColors.primaryGradient;
@@ -32,17 +31,13 @@ class ThemeUtils {
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.3),
           blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ];
+          offset: const Offset(0, 2))];
     }
     return [
       BoxShadow(
         color: Colors.black.withValues(alpha: 0.04),
         blurRadius: 10,
-        offset: const Offset(0, 2),
-      ),
-    ];
+        offset: const Offset(0, 2))];
   }
 
   /// Get theme-aware border
@@ -51,8 +46,7 @@ class ThemeUtils {
       color: isDarkMode(context) 
         ? AppColors.dividerDark.withValues(alpha: 0.3)
         : AppColors.divider.withValues(alpha: 0.5),
-      width: 1,
-    );
+      width: 1);
   }
 
   /// Get mystical gradient based on theme
@@ -64,8 +58,7 @@ class ThemeUtils {
         colors: [
           AppColors.mysticalPurpleDarkMode,
           AppColors.mysticalPurpleLightDarkMode,
-          AppColors.mysticalPurpleDarkDarkMode,
-        ]
+          AppColors.mysticalPurpleDarkDarkMode]
       );
     }
     return AppColors.mysticalGradient;
@@ -98,8 +91,7 @@ class ThemeUtils {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return ShimmerColors(
       baseColor: fortuneTheme?.shimmerBase ?? AppColors.divider,
-      highlightColor: fortuneTheme?.shimmerHighlight ?? AppColors.divider.withValues(alpha: 0.3),
-    );
+      highlightColor: fortuneTheme?.shimmerHighlight ?? AppColors.divider.withValues(alpha: 0.3));
   }
 
   /// Get glass morphism colors
@@ -107,8 +99,7 @@ class ThemeUtils {
     final fortuneTheme = Theme.of(context).extension<FortuneThemeExtension>();
     return GlassColors(
       background: fortuneTheme?.glassBackground ?? Colors.white.withValues(alpha: 0.05),
-      border: fortuneTheme?.glassBorder ?? Colors.white.withValues(alpha: 0.1),
-    );
+      border: fortuneTheme?.glassBorder ?? Colors.white.withValues(alpha: 0.1));
   }
 }
 
@@ -119,10 +110,7 @@ enum StatusType {
   success,
   error,
   warning,
-  info,
-  
-  
-}
+  info}
 
 /// Shimmer colors data class
 class ShimmerColors {
@@ -131,8 +119,7 @@ class ShimmerColors {
 
   const ShimmerColors({
     required this.baseColor,
-    required this.highlightColor,
-  });
+    required this.highlightColor});
 }
 
 /// Glass morphism colors data class
@@ -142,7 +129,6 @@ class GlassColors {
 
   const GlassColors({
     required this.background,
-    required this.border,
-  });
+    required this.border});
 }
 

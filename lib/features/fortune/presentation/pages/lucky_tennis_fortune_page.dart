@@ -35,44 +35,39 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
   String? _preferredTime;
   
   final Map<String, String> _skillLevels = {
-    'beginner': '초급 (NTRP 2.0-2.5)',
-    'intermediate': '중급 (NTRP 3.0-3.5)',
-    'advanced': '상급 (NTRP 4.0-4.5)',
-    'expert': '고급 (NTRP 5.0+)',
-    'professional': '프로/준프로',
-  };
+    'beginner', '초급 (NTRP 2.0-2.5)',
+    'intermediate', '중급 (NTRP 3.0-3.5)',
+    'advanced', '상급 (NTRP 4.0-4.5)',
+    'expert', '고급 (NTRP 5.0+)',
+    'professional', '프로/준프로'};
   
   final Map<String, String> _frequencies = {
-    'rarely': '월 1회 미만',
-    'monthly': '월 1-2회',
-    'weekly': '주 1-2회',
-    'frequent': '주 3-4회',
-    'daily': '거의 매일',
-  };
+    'rarely', '월 1회 미만',
+    'monthly', '월 1-2회',
+    'weekly', '주 1-2회',
+    'frequent', '주 3-4회',
+    'daily', '거의 매일'};
   
   final Map<String, String> _playStyles = {
-    'baseline': '베이스라인 플레이어',
-    'serve_volley': '서브앤발리',
-    'all_court': '올코트 플레이어',
-    'counter': '카운터 펀처',
-    'aggressive': '공격적 베이스라이너',
-  };
+    'baseline', '베이스라인 플레이어',
+    'serve_volley', '서브앤발리',
+    'all_court', '올코트 플레이어',
+    'counter', '카운터 펀처',
+    'aggressive', '공격적 베이스라이너'};
   
   final Map<String, String> _courtTypes = {
-    'hard': '하드코트',
-    'clay': '클레이코트',
-    'grass': '잔디코트',
-    'indoor': '실내코트',
-    'any': '상관없음',
-  };
+    'hard', '하드코트',
+    'clay', '클레이코트',
+    'grass', '잔디코트',
+    'indoor', '실내코트',
+    'any', '상관없음'};
   
   final Map<String, String> _racketTypes = {
-    'power': '파워형 라켓',
-    'control': '컨트롤형 라켓',
-    'tweener': '올라운드형 라켓',
-    'spin': '스핀형 라켓',
-    'unsure': '잘 모르겠음',
-  };
+    'power', '파워형 라켓',
+    'control', '컨트롤형 라켓',
+    'tweener', '올라운드형 라켓',
+    'spin', '스핀형 라켓',
+    'unsure', '잘 모르겠음'};
   
   final List<String> _weaknessOptions = [
     '서브',
@@ -86,17 +81,15 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
     '풋워크',
     '멘탈',
     '체력',
-    '전략',
-  ];
+    '전략'];
   
   final Map<String, String> _timePreferences = {
-    'early_morning': '새벽 (5-7시)',
-    'morning': '오전 (7-11시)',
-    'afternoon': '오후 (12-16시)',
-    'evening': '저녁 (16-20시)',
-    'night': '야간 (20시 이후)',
-    'flexible': '시간 무관',
-  };
+    'early_morning', '새벽 (5-7시)',
+    'morning', '오전 (7-11시)',
+    'afternoon', '오후 (12-16시)',
+    'evening', '저녁 (16-20시)',
+    'night', '야간 (20시 이후)',
+    'flexible', '시간 무관'};
 
   // User info form state
   final _nameController = TextEditingController();
@@ -131,8 +124,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'gender': _gender,
-      'mbti': null,
-    };
+      'mbti': null};
   }
 
   @override
@@ -156,8 +148,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
       'racketType': _racketType,
       'weakPoints': _weakPoints,
       'hasTournament': _hasTournament,
-      'preferredTime': null,
-    };
+      'preferredTime': null};
   }
 
   Widget buildUserInfoForm() {
@@ -170,8 +161,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
         children: [
           Text(
             '기본 정보',
-            style: theme.textTheme.headlineSmall,
-          ),
+            style: theme.textTheme.headlineSmall),
           const SizedBox(height: 16),
           
           // Name Input
@@ -182,10 +172,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+                borderRadius: BorderRadius.circular(12)))),
           const SizedBox(height: 16),
           
           // Birth Date Picker
@@ -195,8 +182,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 context: context,
                 initialDate: _birthDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now());
               if (date != null) {
                 setState(() => _birthDate = date);
               }
@@ -206,9 +192,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 labelText: '생년월일',
                 prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: Text(
                 _birthDate != null
                     ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
@@ -216,11 +200,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-          ),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -229,8 +209,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             children: [
               Text(
                 '성별',
-                style: theme.textTheme.bodyLarge,
-              ),
+                style: theme.textTheme.bodyLarge),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -240,25 +219,14 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                       value: 'male',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
+                      contentPadding: EdgeInsets.zero)),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('여성'),
                       value: 'female',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                      contentPadding: EdgeInsets.zero))])])]));
   }
 
   @override
@@ -283,10 +251,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   const SizedBox(width: 8),
                   Text(
                     '테니스 정보',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               const SizedBox(height: 16),
               
               // Skill Level
@@ -296,17 +261,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '실력 수준',
                   prefixIcon: const Icon(Icons.trending_up),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _skillLevels.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _skillLevel = value),
-              ),
+                onChanged: (value) => setState(() => _skillLevel = value)),
               const SizedBox(height: 16),
               
               // Play Frequency
@@ -316,17 +277,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '경기 빈도',
                   prefixIcon: const Icon(Icons.calendar_month),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _frequencies.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _playFrequency = value),
-              ),
+                onChanged: (value) => setState(() => _playFrequency = value)),
               const SizedBox(height: 16),
               
               // Play Style
@@ -336,17 +293,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '플레이 스타일',
                   prefixIcon: const Icon(Icons.sports),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _playStyles.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _playStyle = value),
-              ),
+                onChanged: (value) => setState(() => _playStyle = value)),
               const SizedBox(height: 16),
               
               // Preferred Time
@@ -356,20 +309,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '선호 시간대',
                   prefixIcon: const Icon(Icons.access_time),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _timePreferences.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value,
-                  );
+                    child: Text(entry.value);
                 }).toList(),
-                onChanged: (value) => setState(() => _preferredTime = value),
-              ),
-            ],
-          ),
-        ),
+                onChanged: (value) => setState(() => _preferredTime = value))])),
         const SizedBox(height: 16),
         
         // Equipment and Court Info
@@ -384,10 +330,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   const SizedBox(width: 8),
                   Text(
                     '장비 및 코트',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               const SizedBox(height: 16),
               
               // Court Type
@@ -397,17 +340,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '선호 코트',
                   prefixIcon: const Icon(Icons.square_foot),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _courtTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _courtType = value),
-              ),
+                onChanged: (value) => setState(() => _courtType = value)),
               const SizedBox(height: 16),
               
               // Racket Type
@@ -417,17 +356,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   labelText: '라켓 타입',
                   prefixIcon: const Icon(Icons.sports_tennis),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                    borderRadius: BorderRadius.circular(12))),
                 items: _racketTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
-                onChanged: (value) => setState(() => _racketType = value),
-              ),
+                onChanged: (value) => setState(() => _racketType = value)),
               const SizedBox(height: 16),
               
               // Weak Points
@@ -436,8 +371,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 children: [
                   Text(
                     '개선이 필요한 부분 (복수 선택 가능)',
-                    style: theme.textTheme.bodyLarge,
-                  ),
+                    style: theme.textTheme.bodyLarge),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -462,14 +396,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                           side: BorderSide(
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                    }).toList())]),
               const SizedBox(height: 16),
               
               // Tournament
@@ -477,12 +405,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 '대회 참가 예정',
                 _hasTournament,
                 (value) => setState(() => _hasTournament = value),
-                Icons.emoji_events,
-              ),
-            ],
-          ),
-        ),
-      ]
+                Icons.emoji_events)]))]
     );
   }
 
@@ -496,15 +419,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
-          onChanged: onChanged,
-        ),
-      ],
-    );
+          onChanged: onChanged)]);
   }
 
   @override
@@ -517,9 +435,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
         _buildEquipmentRecommendations(),
         _buildStrategyTips(),
         _buildPhysicalCondition(),
-        _buildMentalCoaching(),
-      ],
-    );
+        _buildMentalCoaching()]);
   }
 
   Widget _buildMatchPrediction() {
@@ -537,15 +453,11 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               children: [
                 Icon(
                   Icons.sports_tennis,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '오늘의 승률 예측',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 24),
             
             Container(
@@ -556,14 +468,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 gradient: RadialGradient(
                   colors: [
                     _getWinColor(winProbability).withValues(alpha: 0.3),
-                    _getWinColor(winProbability).withValues(alpha: 0.1),
-                  ],
-                ),
+                    _getWinColor(winProbability).withValues(alpha: 0.1)]),
                 border: Border.all(
                   color: _getWinColor(winProbability),
-                  width: 3,
-                ),
-              ),
+                  width: 3)),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -572,17 +480,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                       '${winProbability}%',
                       style: theme.textTheme.displayLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: _getWinColor(winProbability),
-                      ),
-                    ),
+                        color: _getWinColor(winProbability))),
                     Text(
                       _getWinMessage(winProbability),
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ).animate(,
+                      style: theme.textTheme.bodyMedium)]))).animate(,
                 .scale(duration: 600.ms,
                 .then(,
                 .shimmer(duration: 1000.ms),
@@ -591,12 +492,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             Text(
               '오늘은 ${_getPerformanceMessage(winProbability)}',
               style: theme.textTheme.bodyLarge,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+              textAlign: TextAlign.center)])));
   }
 
   Widget _buildLuckyShots() {
@@ -616,17 +512,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 const SizedBox(width: 8),
                 Text(
                   '오늘의 필살기',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...luckyShots.asMap().entries.map((entry) => 
-              _buildShotItem(entry.value, index: entry.key)).toList(),
-          ],
-        ),
-      ),
-    );
+              _buildShotItem(entry.value, index: entry.key).toList()])));
   }
 
   Widget _buildShotItem(Map<String, String> shot, {int index = 0}) {
@@ -640,9 +529,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           color: theme.colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
-        ),
+            color: theme.colorScheme.primary.withValues(alpha: 0.3))),
         child: Row(
           children: [
             Container(
@@ -650,14 +537,11 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
               height: 40,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: Icon(
                 _getShotIcon(shot['name'],
                 color: Colors.white,
-                size: 20,
-              ),
-            ),
+                size: 20)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -666,24 +550,13 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                   Text(
                     shot['name'],
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)),
                   Text(
                     shot['description'],
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ).animate(,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])).animate(,
           .fadeIn(delay: (index * 100).ms,
-          .slideX(begin: -0.1, end: 0,
-    );
+          .slideX(begin: -0.1, end: 0);
   }
 
   Widget _buildEquipmentRecommendations() {
@@ -702,18 +575,11 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 const SizedBox(width: 8),
                 Text(
                   '오늘의 장비 팁',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
-            _buildEquipmentItem('스트링 텐션': '평소보다 1-2파운드 낮게',
-            _buildEquipmentItem('그립 사이즈': '오버그립 추가 권장',
-            _buildEquipmentItem('신발': '쿠션이 좋은 신발 추천',
-          ],
-        ),
-      ),
-    );
+            _buildEquipmentItem('스트링 텐션', '평소보다 1-2파운드 낮게',
+            _buildEquipmentItem('그립 사이즈', '오버그립 추가 권장',
+            _buildEquipmentItem('신발', '쿠션이 좋은 신발 추천'])));
   }
 
   Widget _buildEquipmentItem(String item, String recommendation, IconData icon) {
@@ -727,10 +593,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, size: 24, color: theme.colorScheme.secondary),
-          ),
+              borderRadius: BorderRadius.circular(8)),
+            child: Icon(icon, size: 24, color: theme.colorScheme.secondary)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -739,21 +603,11 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 Text(
                   item,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 Text(
                   recommendation,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))]));
   }
 
   Widget _buildStrategyTips() {
@@ -772,19 +626,12 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 const SizedBox(width: 8),
                 Text(
                   '전략 포인트',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
-            _buildStrategyItem('서브 게임': '첫 서브 확률을 높이세요',
-            _buildStrategyItem('랠리': '인내심을 가지고 기회를 기다리세요',
-            _buildStrategyItem('네트 플레이': '오늘은 네트로 자주 나가세요',
-            _buildStrategyItem('게임 운영': '중요한 포인트에서 안정적으로',
-          ],
-        ),
-      ),
-    );
+            _buildStrategyItem('서브 게임', '첫 서브 확률을 높이세요',
+            _buildStrategyItem('랠리', '인내심을 가지고 기회를 기다리세요',
+            _buildStrategyItem('네트 플레이', '오늘은 네트로 자주 나가세요',
+            _buildStrategyItem('게임 운영', '중요한 포인트에서 안정적으로'])));
   }
 
   Widget _buildStrategyItem(String aspect, String tip) {
@@ -798,8 +645,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
           Icon(
             Icons.chevron_right,
             size: 20,
-            color: theme.colorScheme.primary,
-          ),
+            color: theme.colorScheme.primary),
           const SizedBox(width: 4),
           Expanded(
             child: RichText(
@@ -808,16 +654,8 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 children: [
                   TextSpan(
                     text: '$aspect: ',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  TextSpan(text: tip),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: tip)])))]));
   }
 
   Widget _buildPhysicalCondition() {
@@ -836,23 +674,14 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 const SizedBox(width: 8),
                 Text(
                   '신체 컨디션',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildConditionItem('체력': null,
                 _buildConditionItem('집중력': null,
-                _buildConditionItem('반응속도'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                _buildConditionItem('반응속도')])])));
   }
 
   Widget _buildConditionItem(String label, int value, IconData icon, Color color) {
@@ -870,26 +699,17 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 value: value / 100,
                 backgroundColor: color.withValues(alpha: 0.2),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
-                strokeWidth: 8,
-              ),
-            ),
-            Icon(icon, color: color, size: 30),
-          ],
-        ),
+                strokeWidth: 8)),
+            Icon(icon, color: color, size: 30)]),
         const SizedBox(height: 8),
         Text(
           label,
-          style: theme.textTheme.bodySmall,
-        ),
+          style: theme.textTheme.bodySmall),
         Text(
           '$value%',
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ],
-    ).animate(,
+            color: color))]).animate(,
         .scale(delay: 200.ms, duration: 400.ms);
   }
 
@@ -909,10 +729,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 const SizedBox(width: 8),
                 Text(
                   '멘탈 코칭',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -920,34 +737,21 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
                 gradient: LinearGradient(
                   colors: [
                     Colors.deepPurple.withValues(alpha: 0.1),
-                    Colors.blue.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                    Colors.blue.withValues(alpha: 0.1)]),
+                borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: [
                   Text(
                     '"한 포인트씩 집중하라"',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                      fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center),
                   const SizedBox(height: 8),
                   Text(
                     '과거의 실수나 미래의 결과에 연연하지 말고,\n지금 이 순간의 플레이에만 집중하세요.',
                     style: theme.textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                    textAlign: TextAlign.center)]))])));
   }
 
   int _calculateWinProbability() {
@@ -958,8 +762,7 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
       'advanced' => 65,
       'expert' => 75,
       'professional': null,
-      _ => 50,
-    };
+      _ => 50};
     
     // Add randomness for daily variation
     final today = DateTime.now();
@@ -969,11 +772,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
 
   List<Map<String, String>> _getLuckyShots() {
     final shots = [
-      {'name': '포핸드 다운더라인': 'description': '결정적인 순간에 위력을 발휘합니다'},
-      {'name': '백핸드 크로스': 'description': '안정적이고 정확한 샷이 가능합니다'},
-      {'name': '서브 에이스', 'description': '첫 서브 성공률이 높습니다'},
-      {'name': '드롭샷', 'description': '상대를 교란시키는데 효과적입니다'},
-    ];
+      {'name', '포핸드 다운더라인': 'description', '결정적인 순간에 위력을 발휘합니다'},
+      {'name', '백핸드 크로스': 'description', '안정적이고 정확한 샷이 가능합니다'},
+      {'name', '서브 에이스', 'description', '첫 서브 성공률이 높습니다'},
+      {'name', '드롭샷', 'description', '상대를 교란시키는데 효과적입니다'}];
     
     // Return 2-3 random lucky shots
     final today = DateTime.now();
@@ -1006,10 +808,10 @@ class _LuckyTennisFortunePageState extends BaseFortunePageState<LuckyTennisFortu
   }
 
   IconData _getShotIcon(String shotName) {
-    if (shotName.contains('서브')) return Icons.sports_tennis;
-    if (shotName.contains('백핸드')) return Icons.arrow_back;
-    if (shotName.contains('포핸드')) return Icons.arrow_forward;
-    if (shotName.contains('드롭')) return Icons.arrow_drop_down;
+    if (shotName.contains('서브') return Icons.sports_tennis;
+    if (shotName.contains('백핸드') return Icons.arrow_back;
+    if (shotName.contains('포핸드') return Icons.arrow_forward;
+    if (shotName.contains('드롭') return Icons.arrow_drop_down;
     return Icons.sports;
   }
 }

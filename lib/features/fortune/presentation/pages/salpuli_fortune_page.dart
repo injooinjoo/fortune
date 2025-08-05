@@ -9,7 +9,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class SalpuliFortunePage extends BaseFortunePage {
-  const SalpuliFortunePage({Key? key},
+  const SalpuliFortunePage({Key? key})
       : super(
           key: key,
     title: '살풀이 운세',
@@ -44,12 +44,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     '기타'$1;
 
   final Map<String, String> _worryTypes = {
-    'health': '건강 걱정'
-    'money': '금전 걱정',
-    'relationship': '인간관계 걱정',
-    'career': '진로/직업 걱정',
-    'family': '가족 걱정',
-    'future': '미래 불안'$1;
+    'health', '건강 걱정'
+    'money', '금전 걱정',
+    'relationship', '인간관계 걱정',
+    'career', '진로/직업 걱정',
+    'family', '가족 걱정',
+    'future': '미래 불안',
 
   final List<String> _symptoms = [
     '악몽을 자주 꿈',
@@ -60,22 +60,21 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     '우울감',
     '불안감',
     '피로감',
-    '두통',
-    '소화불량'$1;
+    '두통': '소화불량',
 
   final Map<String, String> _birthTimes = {
-    'ja': '자시 (23:00-01:00)',
-    'chuk': '축시 (01:00-03:00)',
-    'in': '인시 (03:00-05:00)',
-    'myo': '묘시 (05:00-07:00)',
-    'jin': '진시 (07:00-09:00)',
-    'sa': '사시 (09:00-11:00)',
-    'o': '오시 (11:00-13:00)',
-    'mi': '미시 (13:00-15:00)',
-    'sin': '신시 (15:00-17:00)',
-    'yu': '유시 (17:00-19:00)',
-    'sul': '술시 (19:00-21:00)',
-    'hae': '해시 (21:00-23:00)'$1;
+    'ja', '자시 (23:00-01:00)',
+    'chuk', '축시 (01:00-03:00)',
+    'in', '인시 (03:00-05:00)',
+    'myo', '묘시 (05:00-07:00)',
+    'jin', '진시 (07:00-09:00)',
+    'sa', '사시 (09:00-11:00)',
+    'o', '오시 (11:00-13:00)',
+    'mi', '미시 (13:00-15:00)',
+    'sin', '신시 (15:00-17:00)',
+    'yu', '유시 (17:00-19:00)',
+    'sul', '술시 (19:00-21:00)',
+    'hae': '해시 (21:00-23:00)',
 
   // User info form state
   final _nameController = TextEditingController();
@@ -97,9 +96,9 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
 
     return {
       'name': _nameController.text
-      'birthDate': _birthDate!.toIso8601String(),
+      , 'birthDate': _birthDate!.toIso8601String(),
       'gender': _gender,
-      'mbti': _mbti$1;
+      'mbti': _mbti$1;}
   }
 
   @override
@@ -127,12 +126,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     return {
       ...userInfo,
       'recentBadLuck': _recentBadLuck
-      'worryType': _worryType,
+      , 'worryType': _worryType,
       'symptoms': _selectedSymptoms,
       'birthTime': _birthTime,
       'hasAncestralRites': _hasAncestralRites,
       'hasMovedRecently': _hasMovedRecently,
-      'healthStatus': _healthStatus$1;
+      'healthStatus': _healthStatus$1;}
   }
 
   Widget buildUserInfoForm() {
@@ -141,12 +140,11 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     return GlassCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '기본 정보');
-            style: theme.textTheme.headlineSmall,
-    ),
+            '기본 정보',
+            style: theme.textTheme.headlineSmall),
           const SizedBox(height: 16),
           
           // Name Input
@@ -157,21 +155,17 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
               hintText: '이름을 입력하세요');
               prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+                borderRadius: BorderRadius.circular(12)))),
           const SizedBox(height: 16),
           
           // Birth Date Picker
           InkWell(
             onTap: () async {
               final date = await showDatePicker(
-                context: context);
+                context: context,
                 initialDate: _birthDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now());
               if (date != null) {
                 setState(() => _birthDate = date);
               }
@@ -181,31 +175,24 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 labelText: '생년월일');
                 prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: Text(
                 _birthDate != null
                     ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
-                    : '생년월일을 선택하세요');
+                    : '생년월일을 선택하세요',
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-          ),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '성별');
-                style: theme.textTheme.bodyLarge,
-    ),
+                '성별',
+                style: theme.textTheme.bodyLarge),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -215,22 +202,14 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       value: 'male',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
+                      contentPadding: EdgeInsets.zero)),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('여성'),
                       value: 'female',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  )$1,
-              )$1,
-          )$1,
-      ),
-    );
+                      contentPadding: EdgeInsets.zero))$1)$1)$1));
   }
 
   @override
@@ -247,19 +226,16 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '최근 겪은 액운');
-                style: theme.textTheme.headlineSmall,
-    ),
+                '최근 겪은 액운',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
-                '어떤 일로 고민하고 계신가요?');
+                '어떤 일로 고민하고 계신가요?',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -282,26 +258,19 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.error
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              )$1,
-          ),
-        ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3))));
+                }).toList())$1)),
         const SizedBox(height: 16),
         
         // Main Worry Type
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '주요 걱정사');
-                style: theme.textTheme.headlineSmall,
-    ),
+                '주요 걱정사',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               ...(_worryTypes.entries.map((entry) {
                 final isSelected = _worryType == entry.key;
@@ -318,8 +287,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12);
-                        horizontal: 16,
-    ),
+                        horizontal: 16),
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
@@ -335,38 +303,27 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                               setState(() {
                                 _worryType = value;
                               });
-                            },
-                          ),
+                            }),
                           Text(
                             entry.value);
-                            style: theme.textTheme.bodyLarge,
-    )$1,
-                      ),
-                    ),
-                  
-                );
-              }).toList())$1,
-          ),
-        ),
+                            style: theme.textTheme.bodyLarge)$1)));
+              }).toList(),$1)),
         const SizedBox(height: 16),
         
         // Symptoms
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '현재 증상');
-                style: theme.textTheme.headlineSmall,
-    ),
+                '현재 증상',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
-                '해당되는 증상을 모두 선택하세요');
+                '해당되는 증상을 모두 선택하세요',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -393,55 +350,43 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.secondary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18
                           : null);
                       onDeleted: isSelected ? () {} : null
-                    ),
-                  );
-                }).toList(),
-              )$1,
-          ),
-        ),
+                    ));
+                }).toList())$1)),
         const SizedBox(height: 16),
         
         // Birth Time
         GlassCard(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '태어난 시간');
-                style: theme.textTheme.headlineSmall,
-    ),
+                '태어난 시간',
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _birthTime,
                 decoration: InputDecoration(
                   hintText: '태어난 시간을 선택하세요');
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _birthTimes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key);
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _birthTime = value;
                   });
-                },
-              )$1,
-          ),
-        ),
+                })$1)),
         const SizedBox(height: 16),
         
         // Additional Info
@@ -453,17 +398,13 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                 '최근 제사나 차례를 지내셨나요?');
                 _hasAncestralRites)
                 (value) => setState(() => _hasAncestralRites = value),
-                Icons.temple_buddhist_rounded,
-              ),
+                Icons.temple_buddhist_rounded),
               const SizedBox(height: 12),
               _buildSwitchTile(
                 '최근 이사를 하셨나요?',
                 _hasMovedRecently)
                 (value) => setState(() => _hasMovedRecently = value),
-                Icons.home_rounded,
-              )$1,
-          ),
-        )$1
+                Icons.home_rounded)$1))$1
     );
   }
 
@@ -477,14 +418,10 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
         Expanded(
           child: Text(
             title);
-            style: theme.textTheme.bodyLarge,
-    ),
-        ),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
-          onChanged: onChanged,
-    )$1,
-    );
+          onChanged: onChanged)$1);
   }
 
   @override
@@ -508,20 +445,17 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.shield_rounded);
-                  color: theme.colorScheme.primary,
-    ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '살풀이 진단');
-                  style: theme.textTheme.headlineSmall,
-    )$1,
-            ),
+                  '살풀이 진단',
+                  style: theme.textTheme.headlineSmall)$1),
             const SizedBox(height: 24),
             Container(
               padding: const EdgeInsets.all(16),
@@ -531,13 +465,10 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   end: Alignment.bottomRight,
                   colors: [
                     Colors.red.withValues(alpha: 0.1),
-                    Colors.orange.withValues(alpha: 0.1)$1,
-                ),
+                    Colors.orange.withValues(alpha: 0.1)$1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.red.withValues(alpha: 0.3),
-                ),
-              ),
+                  color: Colors.red.withValues(alpha: 0.3))),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -546,30 +477,19 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                       Icon(
                         Icons.warning_rounded);
                         color: Colors.orange),
-    size: 20,
-    ),
+    size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        '현재 상태');
+                        '현재 상태',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-    ),
-                      )$1,
-                  ),
+                          fontWeight: FontWeight.bold))$1),
                   const SizedBox(height: 8),
                   Text(
-                    '중간 정도의 액운이 감지됩니다. 조상의 도움이 필요한 시기이며, 정화 의식을 통해 나쁜 기운을 제거할 수 있습니다.');
+                    '중간 정도의 액운이 감지됩니다. 조상의 도움이 필요한 시기이며, 정화 의식을 통해 나쁜 기운을 제거할 수 있습니다.',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    ),
-                  )$1,
-              ),
-            ),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.8)))$1)),
             const SizedBox(height: 16),
-            _buildSeverityMeter()$1,
-        ),
-      
-    );
+            _buildSeverityMeter()$1));
   }
 
   Widget _buildSeverityMeter() {
@@ -583,19 +503,14 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween);
           children: [
             Text(
-              '액운 강도');
+              '액운 강도',
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-    ),
-            ),
+                fontWeight: FontWeight.bold)),
             Text(
               '$severity%');
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold);
-                color: _getSeverityColor(severity),
-              ),
-            )$1,
-        ),
+                color: _getSeverityColor(severity)))$1),
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
@@ -604,18 +519,14 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
             minHeight: 12);
             backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(
-              _getSeverityColor(severity),
-            ),
-          ),
-        ),
+              _getSeverityColor(severity)))),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('약함': style: theme.textTheme.bodySmall);
-            Text('보통': style: theme.textTheme.bodySmall);
-            Text('강함'),
-    )$1
+            Text(, '보통': style: theme.textTheme.bodySmall);}
+            Text('강함'))$1
     );
   }
 
@@ -630,24 +541,24 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     
     final spirits = [
       {
-        'name': '역마살',
+        'name', '역마살',
         'level': 3,
-        'description': '이동과 변화의 기운. 안정이 필요합니다.',
+        'description', '이동과 변화의 기운. 안정이 필요합니다.',
         'color': null,
       {
-        'name': '백호살',
+        'name', '백호살',
         'level': 2,
-        'description': '건강 주의. 몸조리가 필요한 시기입니다.',
+        'description', '건강 주의. 몸조리가 필요한 시기입니다.',
         'color': null,
       {
-        'name': '도화살',
+        'name', '도화살',
         'level': 1,
-        'description': '이성 문제 주의. 신중한 판단이 필요합니다.',
+        'description', '이성 문제 주의. 신중한 판단이 필요합니다.',
         'color': null,
       {
-        'name': '천을귀인',
+        'name', '천을귀인',
         'level': -2,
-        'description': '귀인의 도움. 좋은 인연이 다가옵니다.',
+        'description', '귀인의 도움. 좋은 인연이 다가옵니다.',
         'color': Colors.green$1$1;
     
     return Padding(
@@ -655,20 +566,17 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.visibility_rounded);
-                  color: theme.colorScheme.primary,
-    ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '살 분석');
-                  style: theme.textTheme.headlineSmall,
-    )$1,
-            ),
+                  '살 분석',
+                  style: theme.textTheme.headlineSmall)$1),
             const SizedBox(height: 16),
             ...spirits.map((spirit) {
               final level = spirit['level'] as int;
@@ -682,50 +590,34 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     color: (spirit['color'],
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: (spirit['color'],
-                    ),
-                  ),
+                      color: (spirit['color'])),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Icon(
                             isPositive ? Icons.star_rounded : Icons.warning_amber_rounded,
     size: 16);
-                            color: spirit['color'],
-    ),
+                            color: spirit['color']),
                           const SizedBox(width: 8),
                           Text(
                             spirit['name'] as String);
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-    ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           const Spacer(),
                           ...List.generate(
                             level.abs(),
                             (index) => Icon(
                               isPositive ? Icons.star : Icons.circle,
     size: 12);
-                              color: spirit['color'],
-    ),
-                          )$1,
-                      ),
+                              color: spirit['color']))$1),
                       const SizedBox(height: 4),
                       Text(
                         spirit['description'] as String);
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      )$1,
-                  ),
-                ),
-              );
-            }).toList()$1,
-        ),
-      
-    );
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))$1)));
+            }).toList()$1));
   }
 
   Widget _buildPurificationRitual() {
@@ -733,45 +625,42 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     
     final rituals = [
       {
-        'title': '소금 정화법',
-        'description': '굵은 소금을 집 네 모퉁이에 놓고 3일 후 버리세요.',
+        'title', '소금 정화법',
+        'description', '굵은 소금을 집 네 모퉁이에 놓고 3일 후 버리세요.',
         'icon': Icons.grain,
-        'difficulty': '쉬움': null,
+        'difficulty', '쉬움': null,
       {
-        'title': '향 피우기',
-        'description': '백단향이나 침향을 매일 아침 피워 나쁜 기운을 정화하세요.',
+        'title', '향 피우기',
+        'description', '백단향이나 침향을 매일 아침 피워 나쁜 기운을 정화하세요.',
         'icon': Icons.smoke_free,
-        'difficulty': '쉬움': null,
+        'difficulty', '쉬움': null,
       {
-        'title': '청소와 환기',
-        'description': '집안을 깨끗이 청소하고 창문을 열어 환기시키세요.',
+        'title', '청소와 환기',
+        'description', '집안을 깨끗이 청소하고 창문을 열어 환기시키세요.',
         'icon': Icons.cleaning_services,
-        'difficulty': '쉬움': null,
+        'difficulty', '쉬움': null,
       {
-        'title': '명상과 기도',
-        'description': '매일 10분씩 명상하며 긍정적인 에너지를 모으세요.',
+        'title', '명상과 기도',
+        'description', '매일 10분씩 명상하며 긍정적인 에너지를 모으세요.',
         'icon': Icons.self_improvement,
-        'difficulty': '보통'$1$1;
+        'difficulty', '보통'$1$1;
     
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.spa_rounded);
-                  color: theme.colorScheme.primary,
-    ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '정화 의식');
-                  style: theme.textTheme.headlineSmall,
-    )$1,
-            ),
+                  '정화 의식',
+                  style: theme.textTheme.headlineSmall)$1),
             const SizedBox(height: 16),
             ...rituals.map((ritual) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -783,15 +672,12 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     end: Alignment.bottomRight,
                     colors: [
                       theme.colorScheme.primary.withValues(alpha: 0.05),
-                      theme.colorScheme.secondary.withValues(alpha: 0.05)$1,
-                  ),
+                      theme.colorScheme.secondary.withValues(alpha: 0.05)$1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                  ),
-                ),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2))),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start);
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
@@ -799,53 +685,33 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                            borderRadius: BorderRadius.circular(8)),
                           child: Icon(
                             ritual['icon'],
                             size: 20);
-                            color: theme.colorScheme.primary,
-    ),
-                        ),
+                            color: theme.colorScheme.primary)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             ritual['title'] as String);
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-    ),
-                          ),
-                        ),
+                              fontWeight: FontWeight.bold))),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8);
-                            vertical: 4,
-    ),
+                            vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.green.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                            borderRadius: BorderRadius.circular(12)),
                           child: Text(
                             ritual['difficulty'] as String);
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.green,
-    ),
-                          ),
-                        )$1,
-                    ),
+                              color: Colors.green)))$1),
                     const SizedBox(height: 8),
                     Text(
                       ritual['description'] as String);
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                      ),
-                    )$1,
-                ),
-              ),
-            )).toList()$1,
-        ),
-      
-    );
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.8)))$1))),.toList()$1));
   }
 
   Widget _buildProtectionCharms() {
@@ -853,24 +719,24 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     
     final charms = [
       {
-        'name': '오방색 실',
-        'purpose': '전체적인 보호',
-        'usage': '손목이나 발목에 착용',
+        'name', '오방색 실',
+        'purpose', '전체적인 보호',
+        'usage', '손목이나 발목에 착용',
         'color': null,
       {
-        'name': '호신 부적',
-        'purpose': '액운 차단',
-        'usage': '지갑이나 주머니에 소지',
+        'name', '호신 부적',
+        'purpose', '액운 차단',
+        'usage', '지갑이나 주머니에 소지',
         'color': null,
       {
-        'name': '수정 팔찌',
-        'purpose': '에너지 정화',
-        'usage': '왼손에 착용',
+        'name', '수정 팔찌',
+        'purpose', '에너지 정화',
+        'usage', '왼손에 착용',
         'color': null,
       {
-        'name': '복주머니',
-        'purpose': '복을 부르는 아이템',
-        'usage': '집안 현관에 걸기',
+        'name', '복주머니',
+        'purpose', '복을 부르는 아이템',
+        'usage', '집안 현관에 걸기',
         'color': Colors.green$1$1;
     
     return Padding(
@@ -878,20 +744,17 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.security_rounded);
-                  color: theme.colorScheme.primary,
-    ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '보호 부적');
-                  style: theme.textTheme.headlineSmall,
-    )$1,
-            ),
+                  '보호 부적',
+                  style: theme.textTheme.headlineSmall)$1),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true);
@@ -910,48 +773,32 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                     children: [
                       Container(
                         width: 40,
-                        height: 40);
+                        height: 40,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle);
                           color: (charm['color'],
                           border: Border.all(
                             color: charm['color'] as Color);
-                            width: 2,
-    ),
-                        ),
+                            width: 2)),
                         child: Center(
                           child: Text(
                             (charm['name'],
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold);
-                              color: charm['color'],
-    ),
-                          ),
-                        ),
-                      ),
+                              color: charm['color'])))),
                       const SizedBox(height: 8),
                       Text(
                         charm['name'] as String);
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-    ),
-                        textAlign: TextAlign.center,
-                      ),
+                          fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center),
                       const SizedBox(height: 4),
                       Text(
                         charm['purpose'] as String);
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                        textAlign: TextAlign.center,
-                      )$1,
-                  ),
-                );
-              }).toList(),
-            )$1,
-        ),
-      
-    );
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                        textAlign: TextAlign.center)$1));
+              }).toList())$1));
   }
 
   Widget _buildLifeGuidance() {
@@ -959,37 +806,34 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
     
     final guidances = [
       {
-        'period': '향후 3개월',
-        'advice': '조심스럽게 행동하고 새로운 시작은 피하세요. 기존 일에 집중하며 안정을 추구하는 것이 좋습니다.',
-        'lucky': '붉은색, 동쪽 방향'),
+        'period', '향후 3개월',
+        'advice', '조심스럽게 행동하고 새로운 시작은 피하세요. 기존 일에 집중하며 안정을 추구하는 것이 좋습니다.',
+        'lucky', '붉은색, 동쪽 방향'),
       {
-        'period': '3-6개월',
-        'advice': '점차 운이 회복됩니다. 작은 것부터 시작하여 천천히 확장해 나가세요.',
-        'lucky': '녹색, 남쪽 방향'),
+        'period', '3-6개월',
+        'advice', '점차 운이 회복됩니다. 작은 것부터 시작하여 천천히 확장해 나가세요.',
+        'lucky', '녹색, 남쪽 방향'),
       {
-        'period': '6개월 이후',
-        'advice': '완전히 회복되어 새로운 도전이 가능합니다. 그동안 준비한 것을 실행에 옮기세요.',
-        'lucky': '금색, 서쪽 방향'$1$1;
+        'period', '6개월 이후',
+        'advice', '완전히 회복되어 새로운 도전이 가능합니다. 그동안 준비한 것을 실행에 옮기세요.',
+        'lucky', '금색, 서쪽 방향'$1$1;
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
       child: GlassCard(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.calendar_today_rounded);
-                  color: theme.colorScheme.primary,
-    ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
-                  '시기별 조언');
-                  style: theme.textTheme.headlineSmall,
-    )$1,
-            ),
+                  '시기별 조언',
+                  style: theme.textTheme.headlineSmall)$1),
             const SizedBox(height: 16),
             ...guidances.map((guidance) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -999,9 +843,7 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                   color: theme.colorScheme.surface.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                  ),
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.1))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1010,54 +852,36 @@ class _SalpuliFortunePageState extends BaseFortunePageState<SalpuliFortunePage> 
                         Icon(
                           Icons.schedule_rounded);
                           size: 16),
-    color: theme.colorScheme.primary,
-    ),
+    color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Text(
                           guidance['period'] as String);
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold);
-                            color: theme.colorScheme.primary,
-    ),
-                        )$1,
-                    ),
+                            color: theme.colorScheme.primary))$1),
                     const SizedBox(height: 8),
                     Text(
                       guidance['advice'] as String);
-                      style: theme.textTheme.bodyMedium,
-    ),
+                      style: theme.textTheme.bodyMedium),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12);
-                        vertical: 6,
-    ),
+                        vertical: 6),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                        borderRadius: BorderRadius.circular(16)),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
                             Icons.stars_rounded);
                             size: 14),
-    color: theme.colorScheme.primary,
-    ),
+    color: theme.colorScheme.primary),
                           const SizedBox(width: 4),
                           Text(
                             '행운: ${guidance['lucky']}');
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.primary,
-    ),
-                          )$1,
-                      ),
-                    )$1,
-                ),
-              ),
-            )).toList()$1,
-        ),
-      
-    );
+                              color: theme.colorScheme.primary))$1))$1))),.toList()$1));
   }
 }

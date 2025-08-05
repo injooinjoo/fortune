@@ -26,35 +26,25 @@ class TodoStatsCard extends ConsumerWidget {
                 icon: Icons.pending_actions,
                 label: '대기중',
                 count: stats[TodoStatus.pending] ?? 0,
-                color: colorScheme.onPrimaryContainer,
-              ),
+                color: colorScheme.onPrimaryContainer),
               _buildDivider(colorScheme),
               _buildStatItem(
                 context,
                 icon: Icons.play_circle_outline,
                 label: '진행중',
                 count: stats[TodoStatus.inProgress] ?? 0,
-                color: colorScheme.tertiary,
-              ),
+                color: colorScheme.tertiary),
               _buildDivider(colorScheme),
               _buildStatItem(
                 context,
                 icon: Icons.check_circle_outline,
                 label: '완료',
                 count: stats[TodoStatus.completed] ?? 0,
-                color: colorScheme.primary,
-              ),
-            ],
-          ),
+                color: colorScheme.primary)]),
           loading: () => const Center(
-            child: CircularProgressIndicator(),
-          ),
+            child: CircularProgressIndicator()),
           error: (_, __) => const Center(
-            child: Text('통계를 불러올 수 없습니다'),
-          ),
-        ),
-      ),
-    );
+            child: Text('통계를 불러올 수 없습니다')))));
   }
 
   Widget _buildStatItem(
@@ -63,8 +53,7 @@ class TodoStatsCard extends ConsumerWidget {
       required IconData icon,
       required String label,
       required int count,
-      required Color color,
-    }
+      required Color color}
   ) {
     final theme = Theme.of(context);
     
@@ -73,32 +62,24 @@ class TodoStatsCard extends ConsumerWidget {
         Icon(
           icon,
           size: 32,
-          color: color,
-        ),
+          color: color),
         const SizedBox(height: 8),
         Text(
           count.toString(),
           style: theme.textTheme.headlineMedium?.copyWith(
             color: color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: color.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
-    );
+            color: color.withValues(alpha: 0.7)))]);
   }
 
   Widget _buildDivider(ColorScheme colorScheme) {
     return Container(
       height: 50,
       width: 1,
-      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.2),
-    );
+      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.2));
   }
 }

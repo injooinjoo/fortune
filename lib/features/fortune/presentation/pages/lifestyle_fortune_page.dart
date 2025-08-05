@@ -24,14 +24,12 @@ class LifestyleFortunePage extends BaseFortunePage {
   
   const LifestyleFortunePage({
     Key? key,
-    this.initialType = LifestyleType.health,
-  }) : super(
+    this.initialType = LifestyleType.health}) : super(
           key: key,
           title: '생활 & 건강 운세',
           description: '건강하고 행복한 일상을 위한 운세를 확인하세요',
           fortuneType: 'lifestyle',
-          requiresUserInfo: true,
-        );
+          requiresUserInfo: true);
 
   @override
   ConsumerState<LifestyleFortunePage> createState() => _LifestyleFortunePageState();
@@ -55,7 +53,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
 
   // Health concerns options
   final List<String> _healthOptions = [
-    '피로감': '스트레스': '수면', '소화', '면역력',
+    '피로감', '스트레스': '수면', '소화', '면역력',
     '체중관리', '피부', '눈건강', '관절', '호흡기'
   ];
 
@@ -96,7 +94,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         params['currentAddress'] = _currentAddress;
         params['destinationArea'] = _destinationArea;
         params['movingPurpose'] = _movingPurpose;
-        params['candidateDates'] = _candidateDates.map((d) => d.toIso8601String()).toList();
+        params['candidateDates'] = _candidateDates.map((d) => d.toIso8601String(),.toList();
         break;
     }
     
@@ -121,42 +119,38 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             '운세 유형')
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)
-            ))
-          ))
-          const SizedBox(height: 16))
+            )),
+          const SizedBox(height: 16),
           ...LifestyleType.values.map((type) {
             final isSelected = _selectedType == type;
             return Container(
-              margin: const EdgeInsets.only(bottom: 8))
+              margin: const EdgeInsets.only(bottom: 8),
               child: InkWell(
                 onTap: () {
                   setState(() {
                     _selectedType = type;
                   });
                 },
-                borderRadius: BorderRadius.circular(12))
+                borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  padding: const EdgeInsets.all(16))
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: isSelected
                         ? LinearGradient(
                             begin: Alignment.topLeft)
                             end: Alignment.bottomRight)
                             colors: [
-                              AppColors.primary.withValues(alpha: 0.1))
-                              AppColors.secondary.withValues(alpha: 0.1))
-                            ])
+                              AppColors.primary.withValues(alpha: 0.1),
+                              AppColors.secondary.withValues(alpha: 0.1)])
                           )
                         : null,
                     color: isSelected ? null : AppColors.surface)
-                    borderRadius: BorderRadius.circular(12))
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isSelected 
                           ? AppColors.primary
                           : AppColors.border)
-                      width: isSelected ? 2 : 1)
-                    ))
-                  ))
+                      width: isSelected ? 2 : 1)),
                   child: Row(
                     children: [
                       Container(
@@ -166,16 +160,13 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                           color: isSelected
                               ? AppColors.primary.withValues(alpha: 0.2)
                               : AppColors.surface)
-                          borderRadius: BorderRadius.circular(12))
-                        ))
+                          borderRadius: BorderRadius.circular(12)),
                         child: Icon(
-                          _getIconForType(type))
+                          _getIconForType(type),
                           color: isSelected 
                               ? AppColors.primary
-                              : AppColors.textSecondary)
-                        ))
-                      ))
-                      const SizedBox(width: 16))
+                              : AppColors.textSecondary)),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start)
@@ -187,39 +178,28 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                                 fontSize: 16)
                                 color: isSelected 
                                     ? AppColors.primary
-                                    : AppColors.textPrimary)
-                              ))
-                            ))
-                            const SizedBox(height: 4))
+                                    : AppColors.textPrimary)),
+                            const SizedBox(height: 4),
                             Text(
                               type.description)
                               style: TextStyle(
                                 fontSize: 12)
-                                color: AppColors.textSecondary)
-                              ))
-                            ))
-                          ])
-                        ),
-                      ))
+                                color: AppColors.textSecondary))])
+                        )),
                       if (isSelected)
                         Icon(
                           Icons.check_circle)
-                          color: AppColors.primary)
-                        ))
-                    ])
-                  ),
-                ))
-              ))
-            ).animate()
+                          color: AppColors.primary)])
+                  )))).animate()
               .fadeIn(duration: 300.ms, delay: (type.index * 50).ms)
               .slideX(begin: 0.1, end: 0);
-          }).toList())
+          }).toList(),
           const SizedBox(height: 24),
 
           // Type-specific inputs
-          _buildTypeSpecificInputs(context))
+          _buildTypeSpecificInputs(context),
 
-          const SizedBox(height: 24))
+          const SizedBox(height: 24),
 
           // Generate Button
           SizedBox(
@@ -227,23 +207,16 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             child: ElevatedButton(
               onPressed: _canGenerate() ? _onGenerateFortune : null)
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16))
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))
-                ))
-              ))
+                  borderRadius: BorderRadius.circular(12))),
               child: const Text(
                 '운세 보기')
                 style: TextStyle(
                   fontSize: 16)
                   fontWeight: FontWeight.bold)
-                ))
-              ))
-            ))
-          ))
-        ])
-      ),
-    );
+                ))))])
+      ));
   }
 
   Widget _buildTypeSpecificInputs(BuildContext context) {
@@ -266,16 +239,15 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           '건강 관심사 (최대 3개)')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 16))
+          )),
+        const SizedBox(height: 16),
         Wrap(
           spacing: 8)
           runSpacing: 8)
           children: _healthOptions.map((concern) {
             final isSelected = _healthConcerns.contains(concern);
             return FilterChip(
-              label: Text(concern))
+              label: Text(concern),
               selected: isSelected)
               onSelected: (selected) {
                 setState(() {
@@ -286,37 +258,31 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   }
                 });
               },
-              selectedColor: AppColors.primary.withValues(alpha: 0.2))
+              selectedColor: AppColors.primary.withValues(alpha: 0.2),
               checkmarkColor: AppColors.primary)
             );
-          }).toList())
-        ),
-        const SizedBox(height: 24))
+          }).toList()),
+        const SizedBox(height: 24),
         Text(
           '활동 수준')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 16))
+          )),
+        const SizedBox(height: 16),
         SegmentedButton<String>(
           segments: _activityLevels.map((level) {
             return ButtonSegment(
               value: level)
               label: Text(
                 level)
-                style: const TextStyle(fontSize: 12))
-              ))
-            );
-          }).toList())
+                style: const TextStyle(fontSize: 12)));
+          }).toList(),
           selected: _activityLevel != null ? {_activityLevel!} : {},
           onSelectionChanged: (Set<String> newSelection) {
             setState(() {
               _activityLevel = newSelection.first;
             });
-          },
-        ))
-      ])
+          })])
     );
   }
 
@@ -328,17 +294,15 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           '확인할 날짜')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 16))
+          )),
+        const SizedBox(height: 16),
         InkWell(
           onTap: () async {
             final picked = await showDatePicker(
               context: context)
-              initialDate: _checkDate ?? DateTime.now())
-              firstDate: DateTime.now())
-              lastDate: DateTime.now().add(const Duration(days: 365))
-            );
+              initialDate: _checkDate ?? DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365));
             if (picked != null) {
               setState(() {
                 _checkDate = picked;
@@ -346,15 +310,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16))
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.border))
-              borderRadius: BorderRadius.circular(12))
-            ))
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               children: [
-                Icon(Icons.calendar_today, color: AppColors.primary))
-                const SizedBox(width: 12))
+                Icon(Icons.calendar_today, color: AppColors.primary),
+                const SizedBox(width: 12),
                 Text(
                   _checkDate != null
                       ? '${_checkDate!.year}년 ${_checkDate!.month}월 ${_checkDate!.day}일'
@@ -362,38 +325,29 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   style: TextStyle(
                     color: _checkDate != null
                         ? AppColors.textPrimary
-                        : AppColors.textSecondary)
-                  ))
-                ))
-              ])
-            ),
-          ))
-        ))
-        const SizedBox(height: 16))
+                        : AppColors.textSecondary))])
+            ))),
+        const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(16))
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: AppColors.surface)
-            borderRadius: BorderRadius.circular(12))
-            border: Border.all(color: AppColors.border))
-          ))
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: AppColors.border)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start)
             children: [
               Row(
                 children: [
-                  Icon(Icons.info_outline, color: AppColors.primary, size: 20))
-                  const SizedBox(width: 8))
+                  Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                  const SizedBox(width: 8),
                   Text(
                     '바이오리듬이란?')
                     style: TextStyle(
                       fontWeight: FontWeight.bold)
-                      color: AppColors.primary)
-                    ))
-                  ))
-                ])
+                      color: AppColors.primary))])
               ),
-              const SizedBox(height: 8))
+              const SizedBox(height: 8),
               Text(
                 '• 신체리듬 (23일 주기): 체력, 건강 상태\n'
                 '• 감성리듬 (28일 주기): 감정, 기분 상태\n'
@@ -401,13 +355,8 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 style: TextStyle(
                   fontSize: 12)
                   color: AppColors.textSecondary)
-                  height: 1.5)
-                ))
-              ))
-            ])
-          ),
-        ))
-      ])
+                  height: 1.5))])
+          ))])
     );
   }
 
@@ -419,52 +368,43 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           '현재 거주지')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 12))
+          )),
+        const SizedBox(height: 12),
         TextField(
           onChanged: (value) => _currentAddress = value)
           decoration: InputDecoration(
             hintText: '예: 서울시 강남구')
-            prefixIcon: const Icon(Icons.home))
+            prefixIcon: const Icon(Icons.home),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))
-            ))
-          ))
-        ))
-        const SizedBox(height: 20))
+              borderRadius: BorderRadius.circular(12)))),
+        const SizedBox(height: 20),
         Text(
           '이사 희망 지역')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 12))
+          )),
+        const SizedBox(height: 12),
         TextField(
           onChanged: (value) => _destinationArea = value)
           decoration: InputDecoration(
             hintText: '예: 경기도 성남시')
-            prefixIcon: const Icon(Icons.location_on))
+            prefixIcon: const Icon(Icons.location_on),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12))
-            ))
-          ))
-        ))
-        const SizedBox(height: 20))
+              borderRadius: BorderRadius.circular(12)))),
+        const SizedBox(height: 20),
         Text(
           '이사 목적')
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold)
-          ))
-        ))
-        const SizedBox(height: 12))
+          )),
+        const SizedBox(height: 12),
         Wrap(
           spacing: 8)
           runSpacing: 8)
           children: _movingPurposes.map((purpose) {
             final isSelected = _movingPurpose == purpose;
             return ChoiceChip(
-              label: Text(purpose))
+              label: Text(purpose),
               selected: isSelected)
               onSelected: (selected) {
                 setState(() {
@@ -476,66 +416,57 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 color: isSelected ? Colors.white : AppColors.textPrimary)
               )
             );
-          }).toList())
-        ),
+          }).toList()),
         if (_selectedType == LifestyleType.movingDate) ...[
-          const SizedBox(height: 20))
+          const SizedBox(height: 20),
           Text(
             '후보 날짜 (최대 3개)')
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold)
-            ))
-          ))
-          const SizedBox(height: 12))
+            )),
+          const SizedBox(height: 12),
           ..._candidateDates.map((date) {
             return Container(
-              margin: const EdgeInsets.only(bottom: 8))
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12))
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(8))
-                border: Border.all(color: AppColors.border))
-              ))
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.border)),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today, size: 16, color: AppColors.primary))
-                  const SizedBox(width: 8))
+                  Icon(Icons.calendar_today, size: 16, color: AppColors.primary),
+                  const SizedBox(width: 8),
                   Text(
                     '${date.year}년 ${date.month}월 ${date.day}일',
-                    style: const TextStyle(fontWeight: FontWeight.w500))
-                  ))
-                  const Spacer())
+                    style: const TextStyle(fontWeight: FontWeight.w500)),
+                  const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.close, size: 18))
+                    icon: const Icon(Icons.close, size: 18),
                     onPressed: () {
                       setState(() {
                         _candidateDates.remove(date);
                       });
-                    },
-                  ))
-                ])
-              ),
-            );
-          }).toList())
+                    })])
+              ));
+          }).toList(),
           if (_candidateDates.length < 3,
             TextButton.icon(
               onPressed: () async {
                 final picked = await showDatePicker(
                   context: context)
-                  initialDate: DateTime.now().add(const Duration(days: 30)))
-                  firstDate: DateTime.now())
-                  lastDate: DateTime.now().add(const Duration(days: 365)))
+                  initialDate: DateTime.now().add(const Duration(days: 30))
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365))
                 );
-                if (picked != null && !_candidateDates.contains(picked)) {
+                if (picked != null && !_candidateDates.contains(picked), {
                   setState(() {
                     _candidateDates.add(picked);
                   });
                 }
               },
-              icon: const Icon(Icons.add))
-              label: const Text('날짜 추가'))
-            ))
-        ])
+              icon: const Icon(Icons.add),
+              label: const Text('날짜 추가'))])
       ]
     );
   }
@@ -568,7 +499,7 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': profile.gender)
+        'gender': profile.gender)}
       };
       onGenerateFortune(params);
     }
@@ -597,22 +528,20 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         children: [
           // Health Score Card
           Container(
-            padding: const EdgeInsets.all(20))
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  _getHealthColor(healthScore).withValues(alpha: 0.1))
-                  _getHealthColor(healthScore).withValues(alpha: 0.05))
-                ])
+                  _getHealthColor(healthScore).withValues(alpha: 0.1),
+                  _getHealthColor(healthScore).withValues(alpha: 0.05)])
               ),
-              borderRadius: BorderRadius.circular(16))
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _getHealthColor(healthScore).withValues(alpha: 0.3))
+                color: _getHealthColor(healthScore).withValues(alpha: 0.3),
                 width: 1)
-              ))
-            ))
+              )),
             child: Column(
               children: [
                 Row(
@@ -620,58 +549,51 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                   children: [
                     Icon(
                       Icons.favorite)
-                      color: _getHealthColor(healthScore))
+                      color: _getHealthColor(healthScore),
                       size: 32)
-                    ))
-                    const SizedBox(width: 12))
+                    ),
+                    const SizedBox(width: 12),
                     Text(
                       '건강 점수')
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold)
-                      ))
-                    ))
-                  ])
+                      ))])
                 ),
-                const SizedBox(height: 16))
+                const SizedBox(height: 16),
                 Text(
                   '$healthScore점')
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: _getHealthColor(healthScore))
+                    color: _getHealthColor(healthScore),
                     fontWeight: FontWeight.bold)
-                  ))
-                ))
-                const SizedBox(height: 8))
+                  )),
+                const SizedBox(height: 8),
                 Text(
-                  _getHealthStatus(healthScore))
+                  _getHealthStatus(healthScore),
                   style: TextStyle(
-                    color: _getHealthColor(healthScore))
+                    color: _getHealthColor(healthScore),
                     fontWeight: FontWeight.w500)
-                  ))
-                ))
-                const SizedBox(height: 20))
+                  )),
+                const SizedBox(height: 20),
                 Text(
                   fortune.content)
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     height: 1.6)
-                  ))
+                  ),
                   textAlign: TextAlign.center)
-                ))
-              ])
-            ),
-          ).animate()
+                )])
+            )).animate()
             .fadeIn(duration: 500.ms)
-            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)))
-          const SizedBox(height: 20))
+            .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1))
+          const SizedBox(height: 20),
 
           // Health Tips
           if (recommendations.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(20))
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16))
-                border: Border.all(color: AppColors.border))
-              ))
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
@@ -680,45 +602,33 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       Icon(
                         Icons.health_and_safety)
                         color: AppColors.primary)
-                        size: 24)
-                      ))
-                      const SizedBox(width: 8))
+                        size: 24),
+                      const SizedBox(width: 8),
                       Text(
                         '건강 관리 팁')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold)
-                        ))
-                      ))
-                    ])
+                        ))])
                   ),
-                  const SizedBox(height: 16))
+                  const SizedBox(height: 16),
                   ...recommendations.map((tip) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12))
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start)
                       children: [
                         Icon(
                           Icons.check_circle)
                           color: AppColors.success)
-                          size: 20)
-                        ))
-                        const SizedBox(width: 8))
+                          size: 20),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             tip)
                             style: Theme.of(context).textTheme.bodyMedium)
-                          ))
-                        ))
-                      ])
-                    ),
-                  )).toList())
-                ])
-              ),
-            ))
-          ])
-        ],
-      ))
-    );
+                          ))])
+                    )).toList()])
+              ))])
+        ]));
   }
 
   Widget _buildBiorhythmResult(Fortune fortune) {
@@ -734,12 +644,11 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
           // Biorhythm Chart
           Container(
             height: 300)
-            padding: const EdgeInsets.all(20))
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.surface)
-              borderRadius: BorderRadius.circular(16))
-              border: Border.all(color: AppColors.border))
-            ))
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.border)),
             child: LineChart(
               LineChartData(
                 gridData: FlGridData(
@@ -766,27 +675,20 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       getTitlesWidget: (value, meta) {
                         return Text(
                           '${value.toInt()}%',
-                          style: const TextStyle(fontSize: 10),
-                        );
+                          style: const TextStyle(fontSize: 10));
                       })
-                    ),
-                  ))
+                    )),
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: false)
-                    ))
-                  ))
+                    )),
                   rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false))
-                  ))
+                    sideTitles: SideTitles(showTitles: false)),
                   topTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false))
-                  ))
-                ))
+                    sideTitles: SideTitles(showTitles: false))),
                 borderData: FlBorderData(
                   show: true)
-                  border: Border.all(color: AppColors.border))
-                ))
+                  border: Border.all(color: AppColors.border)),
                 minX: 0)
                 maxX: 30)
                 minY: -100)
@@ -794,76 +696,63 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                 lineBarsData: [
                   // Physical rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(23, physical))
+                    spots: _generateBiorhythmPoints(23, physical),
                     isCurved: true)
                     color: Colors.red)
                     barWidth: 3)
                     isStrokeCapRound: true)
-                    dotData: FlDotData(show: false))
-                  ))
+                    dotData: FlDotData(show: false)),
                   // Emotional rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(28, emotional))
+                    spots: _generateBiorhythmPoints(28, emotional),
                     isCurved: true)
                     color: Colors.blue)
                     barWidth: 3)
                     isStrokeCapRound: true)
-                    dotData: FlDotData(show: false))
-                  ))
+                    dotData: FlDotData(show: false)),
                   // Intellectual rhythm
                   LineChartBarData(
-                    spots: _generateBiorhythmPoints(33, intellectual))
+                    spots: _generateBiorhythmPoints(33, intellectual),
                     isCurved: true)
                     color: Colors.green)
                     barWidth: 3)
                     isStrokeCapRound: true)
-                    dotData: FlDotData(show: false))
-                  ))
-                ])
-              ),
-            ))
-          ))
-          const SizedBox(height: 16))
+                    dotData: FlDotData(show: false))])
+              ))),
+          const SizedBox(height: 16),
 
           // Legend
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly)
             children: [
-              _buildBiorhythmLegend('신체': Colors.red, physical))
-              _buildBiorhythmLegend('감성': Colors.blue, emotional))
-              _buildBiorhythmLegend('지성': Colors.green, intellectual))
-            ])
+              _buildBiorhythmLegend('신체': Colors.red, physical),
+              _buildBiorhythmLegend('감성': Colors.blue, emotional),
+              _buildBiorhythmLegend('지성': Colors.green, intellectual)])
           ),
-          const SizedBox(height: 20))
+          const SizedBox(height: 20),
 
           // Fortune Content
           Container(
-            padding: const EdgeInsets.all(20))
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1))
-                  AppColors.secondary.withValues(alpha: 0.1))
-                ])
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1)])
               ),
-              borderRadius: BorderRadius.circular(16))
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3))
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1)
-              ))
-            ))
+              )),
             child: Text(
               fortune.content)
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 height: 1.6)
-              ))
-            ))
-          ))
-        ])
-      ),
-    );
+              )))])
+      ));
   }
 
   Widget _buildMovingResult(Fortune fortune) {
@@ -876,22 +765,20 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         children: [
           // Moving Fortune Content
           Container(
-            padding: const EdgeInsets.all(20))
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft)
                 end: Alignment.bottomRight)
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.1))
-                  AppColors.secondary.withValues(alpha: 0.1))
-                ])
+                  AppColors.primary.withValues(alpha: 0.1),
+                  AppColors.secondary.withValues(alpha: 0.1)])
               ),
-              borderRadius: BorderRadius.circular(16))
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.3))
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 1)
-              ))
-            ))
+              )),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start)
               children: [
@@ -900,39 +787,31 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                     Icon(
                       Icons.home_work)
                       color: AppColors.primary)
-                      size: 28)
-                    ))
-                    const SizedBox(width: 12))
+                      size: 28),
+                    const SizedBox(width: 12),
                     Text(
                       '이사 운세 결과')
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold)
-                        color: AppColors.primary)
-                      ))
-                    ))
-                  ])
+                        color: AppColors.primary))])
                 ),
-                const SizedBox(height: 20))
+                const SizedBox(height: 20),
                 Text(
                   fortune.content)
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     height: 1.6)
-                  ))
-                ))
-              ])
-            ),
-          ))
-          const SizedBox(height: 20))
+                  ))])
+            )),
+          const SizedBox(height: 20),
 
           // Lucky Directions
           if (luckyDirections.isNotEmpty) ...[
             Container(
-              padding: const EdgeInsets.all(20))
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16))
-                border: Border.all(color: AppColors.border))
-              ))
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
@@ -941,18 +820,15 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       Icon(
                         Icons.explore)
                         color: AppColors.secondary)
-                        size: 24)
-                      ))
-                      const SizedBox(width: 8))
+                        size: 24),
+                      const SizedBox(width: 8),
                       Text(
                         '길한 방향')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold)
-                        ))
-                      ))
-                    ])
+                        ))])
                   ),
-                  const SizedBox(height: 16))
+                  const SizedBox(height: 16),
                   Wrap(
                     spacing: 12)
                     runSpacing: 12)
@@ -961,29 +837,20 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16)
                           vertical: 8)
-                        ))
+                        ),
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withValues(alpha: 0.1))
-                          borderRadius: BorderRadius.circular(20))
+                          color: AppColors.secondary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: AppColors.secondary.withValues(alpha: 0.3))
-                          ))
-                        ))
+                            color: AppColors.secondary.withValues(alpha: 0.3))),
                         child: Text(
                           direction)
                           style: TextStyle(
                             color: AppColors.secondary)
-                            fontWeight: FontWeight.w500)
-                          ))
-                        ))
-                      );
-                    }).toList())
-                  ),
-                ])
-              ),
-            ))
-            const SizedBox(height: 20))
-          ])
+                            fontWeight: FontWeight.w500)));
+                    }).toList())])
+              )),
+            const SizedBox(height: 20)])
 
           // Good Dates
           if (goodDates.isNotEmpty) ...[
@@ -991,9 +858,8 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppColors.surface)
-                borderRadius: BorderRadius.circular(16))
-                border: Border.all(color: AppColors.border))
-              ))
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start)
                 children: [
@@ -1002,60 +868,46 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
                       Icon(
                         Icons.calendar_month)
                         color: AppColors.success)
-                        size: 24)
-                      ))
-                      const SizedBox(width: 8))
+                        size: 24),
+                      const SizedBox(width: 8),
                       Text(
                         '길일 추천')
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold)
-                        ))
-                      ))
-                    ])
+                        ))])
                   ),
-                  const SizedBox(height: 16))
+                  const SizedBox(height: 16),
                   ...goodDates.map((date) => Container(
-                    margin: const EdgeInsets.only(bottom: 8))
-                    padding: const EdgeInsets.all(12))
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.1))
-                      borderRadius: BorderRadius.circular(8))
+                      color: AppColors.success.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: AppColors.success.withValues(alpha: 0.3))
-                      ))
-                    ))
+                        color: AppColors.success.withValues(alpha: 0.3))),
                     child: Row(
                       children: [
                         Icon(
                           Icons.check)
                           color: AppColors.success)
-                          size: 20)
-                        ))
-                        const SizedBox(width: 8))
+                          size: 20),
+                        const SizedBox(width: 8),
                         Text(
                           date)
                           style: TextStyle(
                             color: AppColors.textPrimary)
-                            fontWeight: FontWeight.w500)
-                          ))
-                        ))
-                      ])
-                    ),
-                  )).toList())
-                ])
-              ),
-            ))
-          ])
-        ],
-      )
+                            fontWeight: FontWeight.w500))])
+                    )).toList()])
+              ))])
+        ])
     );
   }
 
   List<FlSpot> _generateBiorhythmPoints(int cycle, double currentValue) {
     List<FlSpot> spots = [];
     for (int i = 0; i <= 30; i++) {
-      double value = 100 * sin((2 * pi * i) / cycle + (currentValue * pi / 100));
-      spots.add(FlSpot(i.toDouble(), value));
+      double value = 100 * sin((2 * pi * i) / cycle + (currentValue * pi / 100),;
+      spots.add(FlSpot(i.toDouble(), value),;
     }
     return spots;
   }
@@ -1066,17 +918,14 @@ class _LifestyleFortunePageState extends BaseFortunePageState<LifestyleFortunePa
         Container(
           width: 20,
           height: 3)
-          color: color)
-        ))
-        const SizedBox(width: 8))
+          color: color),
+        const SizedBox(width: 8),
         Text(
           '$label: ${value.toStringAsFixed(0)}%',
           style: TextStyle(
             fontSize: 12)
             fontWeight: FontWeight.w500)
-          ))
-        ))
-      ]
+          ))]
     );
   }
 

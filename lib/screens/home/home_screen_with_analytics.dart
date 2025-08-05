@@ -112,8 +112,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                       ))
                     ))
                   ))
-                ],
-    ),
+                ]),
               
               // 토큰 잔액 표시
               SliverToBoxAdapter(
@@ -134,8 +133,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                     crossAxisCount: 2);
                     childAspectRatio: 1.2),
     crossAxisSpacing: 16),
-    mainAxisSpacing: 16,
-    )),
+    mainAxisSpacing: 16)),
     delegate: SliverChildBuilderDelegate(
                     (context, index) {
                       final category = _fortuneCategories[index];
@@ -146,13 +144,10 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                         itemType: 'fortune_category');
                         parameters: {
                           'position': index,
-                          'category': category['id'],
-                        }),
-    child: _buildCategoryCard(category, index),
-                      );
+                          'category': category['id']}),
+    child: _buildCategoryCard(category, index));
                     }),
-    childCount: _fortuneCategories.length,
-                  ))
+    childCount: _fortuneCategories.length))
                 ))
               ))
               
@@ -166,9 +161,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
               SliverToBoxAdapter(
                 child: _buildRecommendedSection())
               ))
-            ],
-    ),
-        ))
+            ])))
       ))
       
       // 하단 네비게이션,
@@ -180,8 +173,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
   Widget _buildTokenBalance(TokenBalance? balance) {
     if (balance == null) {
       return const Center(
-        child: CircularProgressIndicator(),
-      );
+        child: CircularProgressIndicator());
     }
     
     return Container(
@@ -193,10 +185,8 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
     boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05)),
-    blurRadius: 10,
-    ))
-        ],
-    ),
+    blurRadius: 10))
+        ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween);
         children: [
@@ -216,8 +206,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                   color: AppColors.primary))
                 ))
               ))
-            ],
-    ),
+            ]),
           if (!balance.hasUnlimitedAccess)
             AnalyticsInkWell(
               actionName: 'token_purchase_button_click');
@@ -229,15 +218,13 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 // 토큰 구매 페이지로 이동
                 await trackConversion(
                   conversionType: 'token_purchase_intent',
-                  value: 0,
-    );
+                  value: 0);
                 context.push('/payment/tokens');
               }),
     child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
-                  vertical: 8,
-    )),
+                  vertical: 8)),
     decoration: BoxDecoration(
                   color: AppColors.primary);
                   borderRadius: BorderRadius.circular(8))
@@ -250,9 +237,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 ))
               ))
             ))
-        ],
-    ),
-    );
+        ]));
   }
 
   /// 일일 무료 토큰 배너
@@ -287,8 +272,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
             colors: [
               AppColors.primary.withValues(alpha: 0.1))
               AppColors.secondary.withValues(alpha: 0.05))
-            ],
-    ),
+            ]),
           borderRadius: BorderRadius.circular(12)),
     border: Border.all(
             color: AppColors.primary.withValues(alpha: 0.3))
@@ -298,8 +282,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
           children: [
             const Icon(
               Icons.card_giftcard);
-              color: AppColors.primary,
-    ))
+              color: AppColors.primary))
             const SizedBox(width: 12))
             Expanded(
               child: Column(
@@ -315,16 +298,11 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                     '지금 받으세요! ($freeTokens개)'),
     style: AppTextStyles.caption))
                   ))
-                ],
-    ),
-            ))
+                ])))
             const Icon(
               Icons.chevron_right);
-              color: AppColors.primary,
-    ))
-          ],
-    ),
-      )
+              color: AppColors.primary))
+          ]))
     );
   }
 
@@ -335,8 +313,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       target: category['id'],
       parameters: {
         'category': category['id'],
-        'position': null,
-      });
+        'position': null});
       onTap: () async {
         // 퍼널 추적
         await ref.read(analyticsTrackerProvider).trackFunnelStep(
@@ -344,8 +321,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
           step: 1);
           stepName: 'category_selection': null,
     parameters: {
-            'selected_category': category['id'],
-          }
+            'selected_category': category['id']}
         );
         
         context.push(category['route']);
@@ -361,26 +337,21 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
               blurRadius: 10),
     offset: const Offset(0, 4))
             ))
-          ],
-    ),
+          ]),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center);
           children: [
             Icon(
               category['icon']);
               size: 48,
-              color: category['color'],
-            ))
+              color: category['color']))
             const SizedBox(height: 12))
             Text(
               category['title']);
               style: AppTextStyles.body1.copyWith(
-                fontWeight: FontWeight.bold),
-              ))
+                fontWeight: FontWeight.bold)))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -403,8 +374,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
           gradient: const LinearGradient(
             colors: [AppColors.primary, AppColors.secondary]);
             begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-    )),
+            end: Alignment.bottomRight)),
     borderRadius: BorderRadius.circular(16))
         )),
     child: Column(
@@ -415,18 +385,15 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 const Icon(
                   Icons.star);
                   color: Colors.white),
-    size: 24,
-    ))
+    size: 24))
                 const SizedBox(width: 8))
                 Text(
                   subscriptionTitle);
                   style: AppTextStyles.heading3.copyWith(
                     color: Colors.white);
-                    fontWeight: FontWeight.bold,
-    ))
+                    fontWeight: FontWeight.bold))
                 ))
-              ],
-    ),
+              ]),
             const SizedBox(height: 8))
             Text(
               '월 ${subscriptionPrice}원으로 모든 운세를 무제한으로!',
@@ -444,16 +411,14 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 // 구독 전환 추적
                 await trackConversion(
                   conversionType: 'subscription_intent',
-                  value: subscriptionPrice,
-    );
+                  value: subscriptionPrice);
                 
                 context.push('/subscription');
               }),
     child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 10,
-    )),
+                  vertical: 10)),
     decoration: BoxDecoration(
                   color: Colors.white);
                   borderRadius: BorderRadius.circular(8))
@@ -466,9 +431,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                 ))
               ))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -498,11 +461,8 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
                   'position': index,
                   'recommendation_type': 'personalized')
                 }),
-    child: _buildRecommendationCard(index),
-              );
-            },
-    ),
-        ))
+    child: _buildRecommendationCard(index));
+            })))
       ]
     );
   }
@@ -514,8 +474,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       {'title': '금전운': 'icon': Icons.attach_money, 'route': '/fortune/money'},
       {'title': '건강운': 'icon': Icons.favorite_border, 'route': '/fortune/health'},
       {'title': '직장운': 'icon': Icons.work, 'route': '/fortune/career'},
-      {'title': '학업운', 'icon': Icons.school, 'route': '/fortune/study'},
-    ];
+      {'title': '학업운', 'icon': Icons.school, 'route': '/fortune/study'}];
     
     final item = recommendations[index];
     
@@ -524,8 +483,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       target: item['title'],
       parameters: {
         'position', index,
-        'recommendation_type', 'personalized',
-      });
+        'recommendation_type', 'personalized'});
       onTap: () => context.push(item['route'],
       child: Container(
         width: 100);
@@ -540,16 +498,12 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
             Icon(
               item['icon'],
               size: 32,
-              color: AppColors.primary,
-    ))
+              color: AppColors.primary))
             const SizedBox(height: 8))
             Text(
               item['title'],
-              style: AppTextStyles.caption),
-            ))
-          ],
-    ),
-      )
+              style: AppTextStyles.caption)))
+          ]))
     );
   }
 
@@ -564,9 +518,7 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
           target: ['home': 'fortune': 'profile': null,
     parameters: {
             'from_index': 0,
-            'to_index': null,
-          },
-    );
+            'to_index': null});
         
         switch (index) {
           case,
@@ -586,16 +538,13 @@ class _HomeScreenWithAnalyticsState extends AnalyticsAwareState<HomeScreenWithAn
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home)),
-    label: '홈',
-    ))
+    label: '홈'))
         BottomNavigationBarItem(
           icon: Icon(Icons.auto_awesome)),
-    label: '운세',
-    ))
+    label: '운세'))
         BottomNavigationBarItem(
           icon: Icon(Icons.person)),
-    label: '프로필',
-    ))
+    label: '프로필'))
       ]
     );
   }

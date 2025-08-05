@@ -21,8 +21,7 @@ class FortuneDisplay extends StatelessWidget {
     this.luckyItems,
     this.advice,
     this.detailedFortune,
-    this.warningMessage,
-  }) : super(key: key);
+    this.warningMessage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +33,16 @@ class FortuneDisplay extends StatelessWidget {
         _buildOverallScore(context),
         if (luckyItems != null) ...[
           const SizedBox(height: AppSpacing.spacing6),
-          _buildLuckyItems(context),
-        ],
+          _buildLuckyItems(context)],
         if (detailedFortune != null) ...[
           const SizedBox(height: AppSpacing.spacing6),
-          _buildDetailedFortune(context),
-        ],
+          _buildDetailedFortune(context)],
         if (advice != null) ...[
           const SizedBox(height: AppSpacing.spacing6),
-          _buildAdvice(context),
-        ],
+          _buildAdvice(context)],
         if (warningMessage != null) ...[
           const SizedBox(height: AppSpacing.spacing6),
-          _buildWarning(context),
-        ],
-      ],
-    );
+          _buildWarning(context)]]);
 }
 
   Widget _buildHeader(BuildContext context) {
@@ -65,10 +58,7 @@ class FortuneDisplay extends StatelessWidget {
           Text(
             description,
             style: Theme.of(context).textTheme.bodyMedium,
-              height: 1.5,
-            ),
-        ],
-      ));
+              height: 1.5)]),;
 }
 
   Widget _buildOverallScore(BuildContext context) {
@@ -79,9 +69,7 @@ class FortuneDisplay extends StatelessWidget {
       gradient: LinearGradient(
         colors: [
           scoreColor.withValues(alpha: 0.2),
-          scoreColor.withValues(alpha: 0.1),
-        ],
-      ),
+          scoreColor.withValues(alpha: 0.1)]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -94,9 +82,7 @@ class FortuneDisplay extends StatelessWidget {
               const SizedBox(height: AppSpacing.spacing1),
               Text(
                 _getScoreDescription(overallScore),
-                style: Theme.of(context).textTheme.bodyMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.bodyMedium]),
           Container(
             width: 80,
             height: 80,
@@ -104,15 +90,11 @@ class FortuneDisplay extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(
                 color: scoreColor,
-                width: 3,
-              ),
+                width: 3),
             child: Center(
               child: Text(
                 '$overallScore',
-                style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
-      ));
+                style: Theme.of(context).textTheme.bodyMedium)]),;
 }
 
   Widget _buildLuckyItems(BuildContext context) {
@@ -126,14 +108,11 @@ class FortuneDisplay extends StatelessWidget {
               Icon(
                 Icons.stars,
                 color: Colors.amber,
-                size: 24,
-              ),
+                size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '오늘의 행운 아이템',
-                style: Theme.of(context).textTheme.bodyMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.bodyMedium]),
           const SizedBox(height: AppSpacing.spacing4),
           Wrap(
             spacing: 12,
@@ -142,12 +121,8 @@ class FortuneDisplay extends StatelessWidget {
               return _buildLuckyItemChip(
                 entry.key,
                 entry.value.toString(),
-                context,
-              );
-}).toList(),
-        ],
-      
-    );
+                context);
+}).toList()]);
 }
 
   Widget _buildLuckyItemChip(String label, String value, BuildContext context) {
@@ -155,8 +130,7 @@ class FortuneDisplay extends StatelessWidget {
     Color color;
     
     switch (label) {
-      case '숫자':
-      case 'number':
+      case '숫자': case 'number':
         icon = Icons.looks_one;
         color = Colors.blue;
         break;
@@ -171,13 +145,12 @@ class FortuneDisplay extends StatelessWidget {
         color = Colors.green;
         break;
       case '시간':
-      case 'time':
-        icon = Icons.access_time;
+      case , 'time': icon = Icons.access_time;
         color = Colors.orange;
         break;
       default:
         icon = Icons.star;
-        color = Colors.amber;
+        color = Colors.amber;}
 }
     
     return Container(
@@ -187,8 +160,7 @@ class FortuneDisplay extends StatelessWidget {
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         border: Border.all(
           color: color.withValues(alpha: 0.3),
-          width: 1,
-        ),
+          width: 1),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -196,9 +168,7 @@ class FortuneDisplay extends StatelessWidget {
           const SizedBox(width: AppSpacing.spacing1),
           Text(
             '$label: $value',
-            style: Theme.of(context).textTheme.bodyMedium,
-        ],
-      ));
+            style: Theme.of(context).textTheme.bodyMedium]),;
 }
 
   Widget _buildDetailedFortune(BuildContext context) {
@@ -216,24 +186,17 @@ class FortuneDisplay extends StatelessWidget {
                     Icon(
                       _getCategoryIcon(entry.key),
                       color: _getCategoryColor(entry.key),
-                      size: 20,
-                    ),
+                      size: 20),
                     const SizedBox(width: AppSpacing.spacing2),
                     Text(
                       entry.key,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                  ],
-                ),
+                      style: Theme.of(context).textTheme.bodyMedium]),
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
                   entry.value.toString(),
                   style: Theme.of(context).textTheme.bodyMedium,
-                    height: 1.4,
-                  ),
-              ],
-            ),
-        );
-}).toList());
+                    height: 1.4)]));
+}).toList(),;
 }
 
   Widget _buildAdvice(BuildContext context) {
@@ -242,9 +205,7 @@ class FortuneDisplay extends StatelessWidget {
       gradient: LinearGradient(
         colors: [
           Colors.green.withValues(alpha: 0.2),
-          Colors.green.withValues(alpha: 0.1),
-        ],
-      ),
+          Colors.green.withValues(alpha: 0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -253,22 +214,16 @@ class FortuneDisplay extends StatelessWidget {
               Icon(
                 Icons.lightbulb,
                 color: Colors.green,
-                size: 24,
-              ),
+                size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '조언',
-                style: Theme.of(context).textTheme.bodyMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.bodyMedium]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             advice!,
             style: Theme.of(context).textTheme.bodyMedium,
-              height: 1.5,
-            ),
-        ],
-      ));
+              height: 1.5)]),;
 }
 
   Widget _buildWarning(BuildContext context) {
@@ -277,9 +232,7 @@ class FortuneDisplay extends StatelessWidget {
       gradient: LinearGradient(
         colors: [
           Colors.orange.withValues(alpha: 0.2),
-          Colors.orange.withValues(alpha: 0.1),
-        ],
-      ),
+          Colors.orange.withValues(alpha: 0.1)]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -288,23 +241,16 @@ class FortuneDisplay extends StatelessWidget {
               Icon(
                 Icons.warning_amber,
                 color: Colors.orange,
-                size: 24,
-              ),
+                size: 24),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '주의사항',
-                style: Theme.of(context).textTheme.bodyMedium,
-            ],
-          ),
+                style: Theme.of(context).textTheme.bodyMedium]),
           const SizedBox(height: AppSpacing.spacing3),
           Text(
             warningMessage!,
             style: Theme.of(context).textTheme.bodyMedium,
-              height: 1.5,
-            ),
-        ],
-      
-    );
+              height: 1.5)]);
 }
 
   Color _getScoreColor(int score) {
@@ -323,8 +269,7 @@ class FortuneDisplay extends StatelessWidget {
 
   IconData _getCategoryIcon(String category) {
     switch (category) {
-      case '재물운':
-      case '금전운':
+      case '재물운': case '금전운':
         return Icons.attach_money;
       case '연애운':
       case '애정운':
@@ -334,17 +279,15 @@ class FortuneDisplay extends StatelessWidget {
       case '직업운':
       case '사업운':
         return Icons.work;
-      case '학업운':
-        return Icons.school;
+      case , '학업운': return Icons.school;
       default:
-        return Icons.auto_awesome;
+        return Icons.auto_awesome;}
 }
   }
 
   Color _getCategoryColor(String category) {
     switch (category) {
-      case '재물운':
-      case '금전운':
+      case '재물운': case '금전운':
         return Colors.amber;
       case '연애운':
       case '애정운':
@@ -354,10 +297,8 @@ class FortuneDisplay extends StatelessWidget {
       case '직업운':
       case '사업운':
         return Colors.blue;
-      case '학업운':
-        return Colors.purple;
+      case , '학업운': return Colors.purple;
       default:
-        return Colors.cyan;
+        return Colors.cyan;}
 }
-  },
-}
+  }}

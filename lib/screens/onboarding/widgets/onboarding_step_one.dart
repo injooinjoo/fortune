@@ -28,8 +28,7 @@ class OnboardingStepOne extends StatelessWidget {
     required this.onBirthMonthChanged,
     required this.onBirthDayChanged,
     required this.onBirthTimePeriodChanged,
-    required this.onNext,
-  });
+    required this.onNext});
 
   @override
   Widget build(BuildContext context) {
@@ -52,22 +51,16 @@ class OnboardingStepOne extends StatelessWidget {
             labelText: '이름',
             hintText: '홍길동',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
             contentPadding: EdgeInsets.symmetric(
               horizontal: formStyle.inputPadding.horizontal,
-              vertical: formStyle.inputPadding.vertical,
-            ),
-          ),
-          onChanged: onNameChanged,
-        ),
+              vertical: formStyle.inputPadding.vertical)),
+          onChanged: onNameChanged),
         SizedBox(height: formStyle.inputPadding.vertical * 0.5),
         Text(
           '정확한 사주 분석을 위해 필요해요.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: context.fortuneTheme.subtitleText,
-          ),
-        ),
+            color: context.fortuneTheme.subtitleText)),
         SizedBox(height: formStyle.inputPadding.horizontal * 1.25),
 
         // 생년
@@ -76,20 +69,15 @@ class OnboardingStepOne extends StatelessWidget {
           decoration: InputDecoration(
             labelText: '생년',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
             contentPadding: EdgeInsets.symmetric(
               horizontal: formStyle.inputPadding.horizontal,
-              vertical: formStyle.inputPadding.vertical,
-            ),
-          ),
+              vertical: formStyle.inputPadding.vertical)),
           items: yearOptions.map((year) => DropdownMenuItem(
             value: year.toString(),
-            child: Text('$year년'),
-          )).toList(),
+            child: Text('$year년'))).toList(),
           onChanged: (value) => onBirthYearChanged(value ?? ''),
-          hint: const Text('년도 선택'),
-        ),
+          hint: const Text('년도 선택')),
         SizedBox(height: formStyle.inputPadding.horizontal),
 
         // 생월
@@ -98,20 +86,15 @@ class OnboardingStepOne extends StatelessWidget {
           decoration: InputDecoration(
             labelText: '생월',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
             contentPadding: EdgeInsets.symmetric(
               horizontal: formStyle.inputPadding.horizontal,
-              vertical: formStyle.inputPadding.vertical,
-            ),
-          ),
+              vertical: formStyle.inputPadding.vertical)),
           items: monthOptions.map((month) => DropdownMenuItem(
             value: month.toString(),
-            child: Text('$month월'),
-          )).toList(),
+            child: Text('$month월'))).toList(),
           onChanged: (value) => onBirthMonthChanged(value ?? ''),
-          hint: const Text('월 선택'),
-        ),
+          hint: const Text('월 선택')),
         SizedBox(height: formStyle.inputPadding.horizontal),
 
         // 생일
@@ -120,20 +103,15 @@ class OnboardingStepOne extends StatelessWidget {
           decoration: InputDecoration(
             labelText: '생일',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
             contentPadding: EdgeInsets.symmetric(
               horizontal: formStyle.inputPadding.horizontal,
-              vertical: formStyle.inputPadding.vertical,
-            ),
-          ),
+              vertical: formStyle.inputPadding.vertical)),
           items: dayOptions.map((day) => DropdownMenuItem(
             value: day.toString(),
-            child: Text('$day일'),
-          )).toList(),
+            child: Text('$day일'))).toList(),
           onChanged: (value) => onBirthDayChanged(value ?? ''),
-          hint: const Text('일 선택'),
-        ),
+          hint: const Text('일 선택')),
         SizedBox(height: formStyle.inputPadding.horizontal),
 
         // 생시 (선택사항)
@@ -142,26 +120,20 @@ class OnboardingStepOne extends StatelessWidget {
           decoration: InputDecoration(
             labelText: '생시 (선택사항)',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius),
-            ),
+              borderRadius: BorderRadius.circular(formStyle.inputBorderRadius)),
             contentPadding: EdgeInsets.symmetric(
               horizontal: formStyle.inputPadding.horizontal,
-              vertical: formStyle.inputPadding.vertical,
-            ),
-          ),
+              vertical: formStyle.inputPadding.vertical)),
           items: timePeriodOptions.map((time) => DropdownMenuItem(
             value: time['value'],
-            child: Text(time['label']!),
-          )).toList(),
+            child: Text(time['label']!))).toList(),
           onChanged: onBirthTimePeriodChanged,
-          hint: const Text('생시를 모르시면 선택하지 않으셔도 됩니다'),
-        ),
+          hint: const Text('생시를 모르시면 선택하지 않으셔도 됩니다')),
 
         // 띠 표시
         if (birthYear.isNotEmpty) ...[
           SizedBox(height: formStyle.inputPadding.horizontal),
-          _buildZodiacInfo(context),
-        ],
+          _buildZodiacInfo(context)],
         
         SizedBox(height: formStyle.inputPadding.horizontal * 2),
         
@@ -169,10 +141,7 @@ class OnboardingStepOne extends StatelessWidget {
         ElevatedButton(
           onPressed: _canProceed() ? onNext : null,
           style: context.fortuneTheme.ctaButtonStyle,
-          child: const Text('다음'),
-        ),
-      ],
-    );
+          child: const Text('다음'))]);
   }
 
   bool _canProceed() {
@@ -190,21 +159,15 @@ class OnboardingStepOne extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.fortuneTheme.cardBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: context.fortuneTheme.dividerColor),
-      ),
+        border: Border.all(color: context.fortuneTheme.dividerColor)),
       child: Row(
         children: [
           Text(
             zodiac['emoji']!,
-            style: const TextStyle(fontSize: 24),
-          ),
+            style: const TextStyle(fontSize: 24)),
           const SizedBox(width: 12),
           Text(
             '${zodiac['name']}띠',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
-      ),
-    );
+            style: Theme.of(context).textTheme.bodyLarge)]));
   }
 }

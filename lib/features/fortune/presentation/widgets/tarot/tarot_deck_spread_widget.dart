@@ -30,8 +30,7 @@ class TarotDeckSpreadWidget extends StatefulWidget {
     this.fanAngle = 90,
     this.enableHover = true,
     this.enableSelection = true,
-    this.spreadType = SpreadType.fan,
-  }) : super(key: key);
+    this.spreadType = SpreadType.fan}) : super(key: key);
 
   @override
   State<TarotDeckSpreadWidget> createState() => _TarotDeckSpreadWidgetState();
@@ -115,10 +114,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
           alignment: Alignment.center,
           children: List.generate(widget.cardCount, (index) {
             return _buildFanCard(index, screenWidth);
-          }),
-        ),
-      ),
-    );
+          }))));
   }
 
   Widget _buildFanCard(int index, double screenWidth) {
@@ -148,8 +144,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
             ..translate(
               position.x * fanProgress,
               position.y * fanProgress + (1 - fanProgress) * 100,
-              (widget.cardCount - index).toDouble(),
-            )
+              (widget.cardCount - index).toDouble())
             ..rotateZ(position.rotation * fanProgress)
             ..scale(position.scale * fanProgress, position.scale * fanProgress),
           child: Opacity(
@@ -165,17 +160,12 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                 isSelected: isSelected,
                 isHovered: isHovered,
                 onTap: () => _handleCardTap(index),
-                enableFlipAnimation: false,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                enableFlipAnimation: false))));
+      });
   }
 
   Widget _buildGridSpread() {
-    final crossAxisCount = (MediaQuery.of(context).size.width / (widget.cardWidth + 16)).floor();
+    final crossAxisCount = (MediaQuery.of(context).size.width / (widget.cardWidth + 16),.floor();
     
     return GridView.builder(
       shrinkWrap: true,
@@ -184,8 +174,7 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
         crossAxisCount: crossAxisCount,
         childAspectRatio: widget.cardWidth / widget.cardHeight,
         crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
+        mainAxisSpacing: 16),
       itemCount: widget.cardCount,
       itemBuilder: (context, index) {
         final isSelected = widget.selectedIndices?.contains(index) ?? false;
@@ -199,11 +188,8 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
             width: widget.cardWidth,
             height: widget.cardHeight,
             isSelected: isSelected,
-            onTap: () => _handleCardTap(index),
-        ),
-      );
-    },
-  );
+            onTap: () => _handleCardTap(index)));
+    });
   }
 
   Widget _buildStackSpread() {
@@ -223,8 +209,8 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
               return Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.identity()
-                  ..translate(offset * progress, offset * progress, index.toDouble())
-                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02)),
+                  ..translate(offset * progress, offset * progress, index.toDouble(),
+                  ..scale(1.0 - (index * 0.02), 1.0 - (index * 0.02),
                 child: Opacity(
                   opacity: (isTop ? 1.0 : 0.8 * progress).clamp(0.0, 1.0),
                   child: TarotCardWidget(
@@ -232,14 +218,9 @@ class _TarotDeckSpreadWidgetState extends State<TarotDeckSpreadWidget>
                     deck: widget.selectedDeck,
                     width: widget.cardWidth,
                     height: widget.cardHeight,
-                    onTap: isTop ? () => _handleCardTap(index) : null,
-                  ),
-              );
-            },
-          );
-        }).reversed.toList(),
-      ),
-    );
+                    onTap: isTop ? () => _handleCardTap(index) : null));
+            });
+        }).reversed.toList()));
   }
 
 /// Different spread types for tarot cards

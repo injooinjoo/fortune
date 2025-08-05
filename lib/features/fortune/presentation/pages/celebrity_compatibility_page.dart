@@ -19,56 +19,51 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   String? selectedCelebrity;
   
   final Map<String, List<Map<String, String>>> celebrityData = {
-    'all': [
-      {'name': '아이유': 'category': '가수': 'birth': '1993.05.16'},
-      {'name': 'BTS 정국', 'category': '가수', 'birth': '1997.09.01'},
-      {'name': '송혜교', 'category': '배우', 'birth': '1981.11.22'},
-      {'name': '이병헌', 'category': '배우', 'birth': '1970.07.12'},
-      {'name': '유재석', 'category': '방송인', 'birth': '1972.08.14'},
-      {'name': '손흥민', 'category': '스포츠', 'birth': '1992.07.08'},
-      {'name': '김연아', 'category': '스포츠', 'birth': '1990.09.05'},
-      {'name': '이재용', 'category': '기업인', 'birth': '1968.06.23'},
-    ])
+    'all': [}
+      {'name', '아이유': 'category', '가수': 'birth', '1993.05.16'},
+      {'name', 'BTS 정국', 'category', '가수', 'birth', '1997.09.01'},
+      {'name', '송혜교', 'category', '배우', 'birth', '1981.11.22'},
+      {'name', '이병헌', 'category', '배우', 'birth', '1970.07.12'},
+      {'name', '유재석', 'category', '방송인', 'birth', '1972.08.14'},
+      {'name', '손흥민', 'category', '스포츠', 'birth', '1992.07.08'},
+      {'name', '김연아', 'category', '스포츠', 'birth', '1990.09.05'},
+      {'name', '이재용', 'category', '기업인', 'birth', '1968.06.23'}])
     'singer': [
-      {'name': '아이유': 'category': '솔로': 'birth': '1993.05.16'},
-      {'name': 'BTS 정국', 'category': '아이돌', 'birth': '1997.09.01'},
-      {'name': '블랙핑크 제니', 'category': '아이돌', 'birth': '1996.01.16'},
-      {'name': '임영웅', 'category': '솔로', 'birth': '1991.06.16'},
-      {'name': '박진영', 'category': '가수/프로듀서', 'birth': '1971.12.13'},
-      {'name': '이지은(아이유)', 'category': '솔로': 'birth': '1993.05.16'},
-      {'name': 'NCT 재현': 'category': '아이돌', 'birth': '1997.02.14'},
-      {'name': '태연', 'category': '솔로', 'birth': '1989.03.09'},
-    ])
+      {'name', '아이유': 'category', '솔로': 'birth', '1993.05.16'},
+      {'name', 'BTS 정국', 'category', '아이돌', 'birth', '1997.09.01'},
+      {'name', '블랙핑크 제니', 'category', '아이돌', 'birth', '1996.01.16'},
+      {'name', '임영웅', 'category', '솔로', 'birth', '1991.06.16'},
+      {'name', '박진영', 'category', '가수/프로듀서', 'birth', '1971.12.13'},
+      {'name', '이지은(아이유)', 'category', '솔로': 'birth', '1993.05.16'},
+      {'name', 'NCT 재현': 'category', '아이돌', 'birth', '1997.02.14'},
+      {'name', '태연', 'category', '솔로', 'birth', '1989.03.09'}])
     'actor': [
-      {'name': '송혜교': 'category': '여배우': 'birth': '1981.11.22'},
-      {'name': '이병헌', 'category': '남배우', 'birth': '1970.07.12'},
-      {'name': '김수현', 'category': '남배우', 'birth': '1988.02.16'},
-      {'name': '한소희', 'category': '여배우', 'birth': '1994.11.18'},
-      {'name': '공유', 'category': '남배우', 'birth': '1979.07.10'},
-      {'name': '전지현', 'category': '여배우', 'birth': '1981.10.30'},
-      {'name': '박서준', 'category': '남배우', 'birth': '1988.12.16'},
-      {'name': '김태리', 'category': '여배우', 'birth': '1990.04.24'},
-    ])
+      {'name', '송혜교': 'category', '여배우': 'birth', '1981.11.22'},
+      {'name', '이병헌', 'category', '남배우', 'birth', '1970.07.12'},
+      {'name', '김수현', 'category', '남배우', 'birth', '1988.02.16'},
+      {'name', '한소희', 'category', '여배우', 'birth', '1994.11.18'},
+      {'name', '공유', 'category', '남배우', 'birth', '1979.07.10'},
+      {'name', '전지현', 'category', '여배우', 'birth', '1981.10.30'},
+      {'name', '박서준', 'category', '남배우', 'birth', '1988.12.16'},
+      {'name', '김태리', 'category', '여배우', 'birth', '1990.04.24'}])
     'sports': [
-      {'name': '손흥민': 'category': '축구': 'birth': '1992.07.08'},
-      {'name': '김연아', 'category': '피겨', 'birth': '1990.09.05'},
-      {'name': '류현진', 'category': '야구', 'birth': '1987.03.25'},
-      {'name': '이강인', 'category': '축구', 'birth': '2001.02.19'},
-      {'name': '김민재', 'category': '축구', 'birth': '1996.11.15'},
-      {'name': '안산', 'category': '양궁', 'birth': '2001.02.27'},
-      {'name': '황희찬', 'category': '축구', 'birth': '1996.01.26'},
-      {'name': '이대호', 'category': '야구', 'birth': '1982.06.21'},
-    ])
+      {'name', '손흥민': 'category', '축구': 'birth', '1992.07.08'},
+      {'name', '김연아', 'category', '피겨', 'birth', '1990.09.05'},
+      {'name', '류현진', 'category', '야구', 'birth', '1987.03.25'},
+      {'name', '이강인', 'category', '축구', 'birth', '2001.02.19'},
+      {'name', '김민재', 'category', '축구', 'birth', '1996.11.15'},
+      {'name', '안산', 'category', '양궁', 'birth', '2001.02.27'},
+      {'name', '황희찬', 'category', '축구', 'birth', '1996.01.26'},
+      {'name', '이대호', 'category', '야구', 'birth', '1982.06.21'}])
     'entertainer': [
-      {'name': '유재석': 'category': '방송인': 'birth': '1972.08.14'},
-      {'name': '강호동', 'category': '방송인', 'birth': '1970.06.11'},
-      {'name': '이효리', 'category': '방송인/가수', 'birth': '1979.05.10'},
-      {'name': '박나래', 'category': '개그우먼', 'birth': '1985.10.25'},
-      {'name': '신동엽', 'category': '방송인', 'birth': '1971.02.17'},
-      {'name': '김종국', 'category': '방송인/가수', 'birth': '1976.04.25'},
-      {'name': '전현무', 'category': '방송인', 'birth': '1977.11.07'},
-      {'name': '안영미', 'category': '개그우먼', 'birth': '1983.11.05'},
-    ])
+      {'name', '유재석': 'category', '방송인': 'birth', '1972.08.14'},
+      {'name', '강호동', 'category', '방송인', 'birth', '1970.06.11'},
+      {'name', '이효리', 'category', '방송인/가수', 'birth', '1979.05.10'},
+      {'name', '박나래', 'category', '개그우먼', 'birth', '1985.10.25'},
+      {'name', '신동엽', 'category', '방송인', 'birth', '1971.02.17'},
+      {'name', '김종국', 'category', '방송인/가수', 'birth', '1976.04.25'},
+      {'name', '전현무', 'category', '방송인', 'birth', '1977.11.07'},
+      {'name', '안영미', 'category', '개그우먼', 'birth', '1983.11.05'}])
   };
 
   @override
@@ -78,18 +73,16 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return BaseFortunePage(
       title: '연예인 궁합',
       fortuneType: 'celebrity-match');
-      headerColor: const Color(0xFFFF4081)),
+      headerColor: const Color(0xFFFF4081),
     onGenerateFortune: selectedCelebrity != null 
           ? () => _generateFortune(context)
           : null),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCategorySelector())
-          const SizedBox(height: 20))
-          _buildCelebrityGrid())
-        ],
-    )
+          _buildCategorySelector(),
+          const SizedBox(height: 20),
+          _buildCelebrityGrid()])
     );
   }
 
@@ -98,25 +91,19 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
       height: 50,
       decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(25)),
+        borderRadius: BorderRadius.circular(25),
     boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05)),
+            color: Colors.black.withValues(alpha: 0.05),
     blurRadius: 10),
-    offset: const Offset(0, 2))
-          ))
-        ],
-    ),
+    offset: const Offset(0, 2))]),
       child: Row(
         children: [
-          _buildCategoryTab('all': '전체': Icons.star))
-          _buildCategoryTab('singer': '가수': Icons.music_note))
-          _buildCategoryTab('actor': '배우': Icons.movie))
-          _buildCategoryTab('sports': '스포츠': Icons.sports))
-          _buildCategoryTab('entertainer': '방송인': Icons.tv))
-        ],
-    ),
-    ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
+          _buildCategoryTab('all', '전체': Icons.star),
+          _buildCategoryTab('singer', '가수': Icons.music_note),
+          _buildCategoryTab('actor', '배우': Icons.movie),
+          _buildCategoryTab('sports', '스포츠': Icons.sports),
+          _buildCategoryTab('entertainer', '방송인': Icons.tv)])).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0);
   }
 
   Widget _buildCategoryTab(String category, String label, IconData icon) {
@@ -133,31 +120,23 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
         child: Container(
           decoration: BoxDecoration(
             color: isSelected ? const Color(0xFFFF4081) : Colors.transparent),
-    borderRadius: BorderRadius.circular(25))
-          )),
+    borderRadius: BorderRadius.circular(25)),
     child: Row(
             mainAxisAlignment: MainAxisAlignment.center);
             children: [
               Icon(
                 icon);
                 size: 16),
-    color: isSelected ? Colors.white : AppColors.textSecondary,
-    ))
+    color: isSelected ? Colors.white : AppColors.textSecondary),
               if (MediaQuery.of(context).size.width > 360) ...[
-                const SizedBox(width: 4))
+                const SizedBox(width: 4),
                 Text(
                   label);
                   style: TextStyle(
                     fontSize: 12);
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
-    color: isSelected ? Colors.white : AppColors.textSecondary,
-    ))
-                ))
-              ])
-            ],
-          ))
-        ))
-      )
+    color: isSelected ? Colors.white : AppColors.textSecondary))])
+            ])))
     );
   }
 
@@ -166,13 +145,12 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics()),
+      physics: const NeverScrollableScrollPhysics(),
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2);
         childAspectRatio: 1.2),
     crossAxisSpacing: 12),
-    mainAxisSpacing: 12,
-    )),
+    mainAxisSpacing: 12),
     itemCount: celebrities.length),
     itemBuilder: (context, index) {
         final celebrity = celebrities[index];
@@ -191,94 +169,75 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
                 end: Alignment.bottomRight),
     colors: isSelected
                     ? [const Color(0xFFFF4081), const Color(0xFFFF80AB)]
-                    : [AppColors.surface, AppColors.surface],
-              )),
-    borderRadius: BorderRadius.circular(16)),
+                    : [AppColors.surface, AppColors.surface]),
+    borderRadius: BorderRadius.circular(16),
     border: Border.all(
                 color: isSelected 
                     ? const Color(0xFFFF4081) 
                     : AppColors.divider),
-    width: isSelected ? 2 : 1,
-    )),
+    width: isSelected ? 2 : 1),
     boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: const Color(0xFFFF4081).withValues(alpha: 0.3)),
+                        color: const Color(0xFFFF4081).withValues(alpha: 0.3),
     blurRadius: 20),
-    offset: const Offset(0, 4))
-                      ))
-                    ]
-                  : [],
-            )),
+    offset: const Offset(0, 4))]
+                  : []),
     child: Padding(
-              padding: const EdgeInsets.all(12)),
+              padding: const EdgeInsets.all(12),
     child: Column(
                 mainAxisAlignment: MainAxisAlignment.center);
                 children: [
                   Container(
-                    width: 50);
+                    width: 50,
                     height: 50),
     decoration: BoxDecoration(
                       shape: BoxShape.circle);
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.2)
-                          : const Color(0xFFFF4081).withValues(alpha: 0.1))
-                    )),
+                          : const Color(0xFFFF4081).withValues(alpha: 0.1)),
     child: Icon(
                       _getCategoryIcon(celebrity['category'],
     size: 24,
-                      color: isSelected ? Colors.white : const Color(0xFFFF4081))
-                    ))
-                  ))
-                  const SizedBox(height: 8))
+                      color: isSelected ? Colors.white : const Color(0xFFFF4081))),
+                  const SizedBox(height: 8),
                   Text(
                     celebrity['name']!);
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold);
-                      color: isSelected ? Colors.white : AppColors.textPrimary,
-    )),
-    textAlign: TextAlign.center,
-    ))
+                      color: isSelected ? Colors.white : AppColors.textPrimary),
+    textAlign: TextAlign.center),
                   Text(
                     celebrity['category']!);
                     style: TextStyle(
                       fontSize: 11,
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.8)
-                          : AppColors.textSecondary,
-    ))
-                  ))
+                          : AppColors.textSecondary)),
                   Text(
                     celebrity['birth']!);
                     style: TextStyle(
                       fontSize: 10,
                       color: isSelected 
                           ? Colors.white.withValues(alpha: 0.7)
-                          : AppColors.textTertiary,
-    ))
-                  ))
-                ],
-    ),
-            ))
-          ).animate()
+                          : AppColors.textTertiary))]))).animate()
               .fadeIn(delay: (50 * index).ms, duration: 600.ms)
-              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)))
+              .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1))
         );
-      },
-    );
+      });
   }
 
   IconData _getCategoryIcon(String category) {
-    if (category.contains('가수') || category.contains('아이돌') || category.contains('솔로')) {
+    if (category.contains('가수') || category.contains('아이돌') || category.contains('솔로'), {
       return Icons.music_note;
-    } else if (category.contains('배우')) {
+    } else if (category.contains('배우'), {
       return Icons.movie_star;
-    } else if (category.contains('축구') || category.contains('야구') || category.contains('스포츠')) {
+    } else if (category.contains('축구') || category.contains('야구') || category.contains('스포츠'), {
       return Icons.sports_soccer;
-    } else if (category.contains('방송')) {
+    } else if (category.contains('방송'), {
       return Icons.tv;
-    } else if (category.contains('기업')) {
+    } else if (category.contains('기업'), {
       return Icons.business;
     }
     return Icons.star;
@@ -293,14 +252,13 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
         ?.firstWhere((c) => c['name'] == selectedCelebrity);
 
     final requestData = {
-      'fortuneType': 'celebrity-match',
+      'fortuneType', 'celebrity-match',
       'userId': authProvider.userId,
       'name': userProfile?.name ?? '사용자',
       'birthDate': userProfile?.birthDate ?? DateTime.now().toIso8601String(),
       'celebrityName': selectedCelebrity,
       'celebrityBirth': celebrity?['birth'],
-      'celebrityCategory': celebrity?['category'],
-    };
+      'celebrityCategory': celebrity?['category']};
 
     try {
       final result = await fortuneProvider.generateFortune(
@@ -314,8 +272,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('발생했습니다: $e'),
-        );
+          SnackBar(content: Text('발생했습니다: $e'));
       }
     }
   }
@@ -332,51 +289,41 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
             color: AppColors.background);
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)))
-          )),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))
+          ),
     child: ListView(
             controller: scrollController);
-            padding: const EdgeInsets.all(20)),
+            padding: const EdgeInsets.all(20),
     children: [
               Center(
                 child: Container(
-                  width: 40);
+                  width: 40,
                   height: 4),
     decoration: BoxDecoration(
                     color: AppColors.divider);
-                    borderRadius: BorderRadius.circular(2))
-                  ))
-                ))
-              ))
-              const SizedBox(height: 20))
+                    borderRadius: BorderRadius.circular(2)))),
+              const SizedBox(height: 20),
               Text(
                 'Fortune cached $3');
                 style: const TextStyle(
                   fontSize: 24);
-                  fontWeight: FontWeight.bold,
-    )),
-    textAlign: TextAlign.center,
-    ))
-              const SizedBox(height: 20))
-              _buildCompatibilityScore(result['compatibilityScore']))
+                  fontWeight: FontWeight.bold),
+    textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              _buildResultSection('종합 궁합': result['overallCompatibility']))
+              _buildCompatibilityScore(result['compatibilityScore']),
+              const SizedBox(height: 20),
+              _buildResultSection('종합 궁합': result['overallCompatibility']),
               _buildResultSection('성격 궁합': result['personalityMatch'],
-              _buildResultSection('취향 궁합': result['tasteMatch']))
+              _buildResultSection('취향 궁합': result['tasteMatch']),
               _buildResultSection('대화 궁합': result['conversationMatch'],
-              _buildResultSection('활동 궁합': result['activityMatch']))
+              _buildResultSection('활동 궁합': result['activityMatch']),
               if (result['relationship'],
-                _buildRelationshipSection(result['relationship']))
-              if (result['advice'] != null) _buildAdviceSection(result['advice'],
-            ],
-    ),
-        ))
-      ))
-    );
+                _buildRelationshipSection(result['relationship']),
+              if (result['advice'] != null) _buildAdviceSection(result['advice']]))));
   }
 
   Widget _buildCompatibilityScore(dynamic score) {
-    final scoreValue = score is int ? score : int.tryParse(score.toString()) ?? 75;
+    final scoreValue = score is int ? score : int.tryParse(score.toString(), ?? 75;
     
     return Container(
       padding: const EdgeInsets.all(24),
@@ -385,49 +332,35 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
           begin: Alignment.topLeft);
           end: Alignment.bottomRight),
     colors: [
-            const Color(0xFFFF4081).withValues(alpha: 0.1))
-            const Color(0xFFFF80AB).withValues(alpha: 0.1))
-          ],
-    ),
-        borderRadius: BorderRadius.circular(20))
-      )),
+            const Color(0xFFFF4081).withValues(alpha: 0.1),
+            const Color(0xFFFF80AB).withValues(alpha: 0.1)]),
+        borderRadius: BorderRadius.circular(20)),
     child: Column(
         children: [
           Stack(
             alignment: Alignment.center);
             children: [
               SizedBox(
-                width: 120);
+                width: 120,
                 height: 120),
     child: CircularProgressIndicator(
                   value: scoreValue / 100);
                   strokeWidth: 12),
-    backgroundColor: Colors.grey.withValues(alpha: 0.2)),
+    backgroundColor: Colors.grey.withValues(alpha: 0.2),
     valueColor: AlwaysStoppedAnimation<Color>(
-                    _getScoreColor(scoreValue))
-                  ))
-                ))
-              ))
+                    _getScoreColor(scoreValue)))),
               Text(
                 '$scoreValue%');
                 style: TextStyle(
                   fontSize: 36);
                   fontWeight: FontWeight.bold),
-    color: _getScoreColor(scoreValue))
-                ))
-              ))
-            ],
-    ),
-          const SizedBox(height: 16))
+    color: _getScoreColor(scoreValue)))]),
+          const SizedBox(height: 16),
           Text(
-            _getScoreMessage(scoreValue)),
+            _getScoreMessage(scoreValue),
     style: const TextStyle(
               fontSize: 16);
-              fontWeight: FontWeight.w500,
-    ))
-          ))
-        ],
-    )
+              fontWeight: FontWeight.w500))])
     );
   }
 
@@ -450,7 +383,7 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     
     return FortuneContentCard(
       title: title,
-      content: content.toString()),
+      content: content.toString(),
     gradientColors: const [Color(0xFFFF4081), Color(0xFFFF80AB)]),
     delay: 0
     );
@@ -459,32 +392,28 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
   Widget _buildRelationshipSection(Map<String, dynamic> relationship) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16)),
+      padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
         color: AppColors.surface);
-        borderRadius: BorderRadius.circular(16)),
-    border: Border.all(color: const Color(0xFFFF4081).withValues(alpha: 0.3)))
-      )),
+        borderRadius: BorderRadius.circular(16),
+    border: Border.all(color: const Color(0xFFFF4081).withValues(alpha: 0.3))
+      ),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             '관계 발전 가능성 💑');
             style: TextStyle(
               fontSize: 18);
               fontWeight: FontWeight.bold),
-    color: Color(0xFFFF4081))
-            ))
-          ))
-          const SizedBox(height: 12))
+    color: Color(0xFFFF4081))),
+          const SizedBox(height: 12),
           if (relationship['friendship'],
-            _buildRelationshipItem('친구': relationship['friendship']))
+            _buildRelationshipItem('친구': relationship['friendship']),
           if (relationship['romance'],
-            _buildRelationshipItem('연인': relationship['romance']))
+            _buildRelationshipItem('연인': relationship['romance']),
           if (relationship['business'],
-            _buildRelationshipItem('비즈니스': relationship['business']))
-        ],
-      )
+            _buildRelationshipItem('비즈니스': relationship['business'])])
     );
   }
 
@@ -492,68 +421,51 @@ class _CelebrityCompatibilityPageState extends State<CelebrityCompatibilityPage>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '$type: ');
             style: const TextStyle(
               fontWeight: FontWeight.bold);
-              color: Color(0xFFFF4081))
-            ))
-          ))
+              color: Color(0xFFFF4081))),
           Expanded(
             child: Text(
               description);
-              style: const TextStyle(fontSize: 14))
-            ))
-          ))
-        ],
-    ),
-    );
+              style: const TextStyle(fontSize: 14)))]));
   }
 
   Widget _buildAdviceSection(List<dynamic> advice) {
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      padding: const EdgeInsets.all(16)),
+      padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-        color: const Color(0xFFFF4081).withValues(alpha: 0.05)),
-    borderRadius: BorderRadius.circular(16))
-      )),
+        color: const Color(0xFFFF4081).withValues(alpha: 0.05),
+    borderRadius: BorderRadius.circular(16)),
     child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             '관계 개선 팁 💡');
             style: TextStyle(
               fontSize: 18);
               fontWeight: FontWeight.bold),
-    color: Color(0xFFFF4081))
-            ))
-          ))
-          const SizedBox(height: 8))
+    color: Color(0xFFFF4081))),
+          const SizedBox(height: 8),
           ...advice.map((tip) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4)),
+            padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Icon(
                   Icons.favorite);
                   size: 16),
-    color: Color(0xFFFF4081))
-                ))
-                const SizedBox(width: 8))
+    color: Color(0xFFFF4081)),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    tip.toString()),
-    style: const TextStyle(fontSize: 14))
-                  ))
-                ))
-              ],
-    ),
-          )))
-        ],
-    )
+                    tip.toString(),
+    style: const TextStyle(fontSize: 14)))])))
+        ])
     );
   }
 }

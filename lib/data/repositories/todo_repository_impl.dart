@@ -26,8 +26,7 @@ class TodoRepositoryImpl implements TodoRepository {
     List<String>? tags,
     String? searchQuery,
     int? limit,
-    int? offset,
-  }) async {
+    int? offset}) async {
     try {
       // Validate userId
       if (userId.isEmpty || !_isValidUuid(userId)) {
@@ -94,8 +93,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   Future<Either<Failure, Todo>> getTodoById({
     required String todoId,
-    required String userId,
-  }) async {
+    required String userId}) async {
     try {
       if (!_isValidUuid(todoId) || !_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid ID format'));
@@ -128,8 +126,7 @@ class TodoRepositoryImpl implements TodoRepository {
     String? description,
     required TodoPriority priority,
     DateTime? dueDate,
-    List<String>? tags,
-  }) async {
+    List<String>? tags}) async {
     try {
       // Validate inputs
       if (!_isValidUuid(userId)) {
@@ -157,8 +154,7 @@ class TodoRepositoryImpl implements TodoRepository {
         'due_date': dueDate?.toIso8601String(),
         'tags': tags?.map(_sanitizeInput).take(10).toList() ?? [],
         'created_at': now.toIso8601String(),
-        'updated_at': null,
-      };
+        'updated_at': null};
 
       final response = await _executeWithRetry(() => supabase
           .from(_tableName)
@@ -184,16 +180,14 @@ class TodoRepositoryImpl implements TodoRepository {
     TodoPriority? priority,
     TodoStatus? status,
     DateTime? dueDate,
-    List<String>? tags,
-  }) async {
+    List<String>? tags}) async {
     try {
       if (!_isValidUuid(todoId) || !_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid ID format'));
       }
 
       final updates = <String, dynamic>{
-        'updated_at': null,
-      };
+        'updated_at': null};
 
       if (title != null) {
         if (title.isEmpty || title.length > 200) {
@@ -249,8 +243,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   Future<Either<Failure, void>> deleteTodo({
     required String todoId,
-    required String userId,
-  }) async {
+    required String userId}) async {
     try {
       if (!_isValidUuid(todoId) || !_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid ID format'));
@@ -261,8 +254,7 @@ class TodoRepositoryImpl implements TodoRepository {
           .from(_tableName)
           .update({
             'is_deleted': true,
-            'updated_at': null,
-          })
+            'updated_at': null})
           .eq('id': todoId)
           .eq('user_id': userId));
 
@@ -277,8 +269,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   Future<Either<Failure, void>> deleteTodos({
     required List<String> todoIds,
-    required String userId,
-  }) async {
+    required String userId}) async {
     try {
       if (!_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid user ID'));
@@ -300,8 +291,7 @@ class TodoRepositoryImpl implements TodoRepository {
           .from(_tableName)
           .update({
             'is_deleted': true,
-            'updated_at': null,
-          })
+            'updated_at': null})
           .eq('user_id': userId)
           .filter('id': 'in': '(${todoIds.join(',')})'));
 
@@ -317,8 +307,7 @@ class TodoRepositoryImpl implements TodoRepository {
   Future<Either<Failure, List<Todo>>> searchTodos({
     required String userId,
     required String query,
-    int? limit,
-  }) async {
+    int? limit}) async {
     try {
       if (!_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid user ID'));
@@ -352,8 +341,7 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   Future<Either<Failure, Map<TodoStatus, int>>> getTodoStats({
-    required String userId,
-  }) async {
+    required String userId}) async {
     try {
       if (!_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid user ID'));
@@ -384,8 +372,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   Future<Either<Failure, void>> toggleTodoStatus({
     required String todoId,
-    required String userId,
-  }) async {
+    required String userId}) async {
     try {
       if (!_isValidUuid(todoId) || !_isValidUuid(userId)) {
         return const Left(ValidationFailure('Invalid ID format'));
@@ -404,13 +391,11 @@ class TodoRepositoryImpl implements TodoRepository {
           final updateResult = await updateTodo(
             todoId: todoId,
             userId: userId,
-            status: newStatus,
-          );
+            status: newStatus);
 
           return updateResult.fold(
             (failure) => Left(failure),
-            (_) => const Right(null),
-          );
+            (_) => const Right(null));
         }
       );
     } catch (e) {
@@ -421,8 +406,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   Stream<Either<Failure, List<Todo>>> watchTodos({
     required String userId,
-    TodoStatus? status,
-  }) {
+    TodoStatus? status}) {
     try {
       if (!_isValidUuid(userId)) {
         return Stream.value(const Left(ValidationFailure('Invalid user ID')));

@@ -16,8 +16,7 @@ class TarotMinorArcana {
       advice: '새로운 창의적 프로젝트를 시작할 완벽한 시기입니다',
       questions: [
         '어떤 새로운 열정이 당신을 기다리고 있나요?',
-        '당신의 창의적 에너지를 어디에 집중할 것인가요?',
-      ],
+        '당신의 창의적 에너지를 어디에 집중할 것인가요?'],
     ,
     'wands_2': TarotCardInfo(
       id: 24,
@@ -32,8 +31,7 @@ class TarotMinorArcana {
       advice: '큰 그림을 보고 장기적인 계획을 세우세요',
       questions: [
         '당신의 장기적인 목표는 무엇인가요?',
-        '어떤 선택이 더 나은 미래로 이끌까요?',
-      ],
+        '어떤 선택이 더 나은 미래로 이끌까요?'],
     ,
     'wands_3': TarotCardInfo(
       id: 25,
@@ -48,8 +46,7 @@ class TarotMinorArcana {
       advice: '당신의 노력이 결실을 맺기 시작합니다',
       questions: [
         '어떤 기회가 지평선 너머에 있나요?',
-        '당신의 비전을 어떻게 확장할 수 있나요?',
-      ],
+        '당신의 비전을 어떻게 확장할 수 있나요?'],
     ,
     'wands_4': TarotCardInfo(
       id: 26,
@@ -64,8 +61,7 @@ class TarotMinorArcana {
       advice: '성취를 축하하고 사랑하는 사람들과 시간을 보내세요',
       questions: [
         '무엇을 축하해야 하나요?',
-        '어떻게 더 안정적인 기반을 만들 수 있나요?',
-      ],
+        '어떻게 더 안정적인 기반을 만들 수 있나요?'],
     ,
     'wands_5': TarotCardInfo(
       id: 27,
@@ -80,8 +76,7 @@ class TarotMinorArcana {
       advice: '건설적인 방법으로 갈등을 해결하세요',
       questions: [
         '어떤 갈등이 성장의 기회가 될 수 있나요?',
-        '경쟁이 당신을 어떻게 발전시키고 있나요?',
-      ],
+        '경쟁이 당신을 어떻게 발전시키고 있나요?'],
     ,
     'wands_6': TarotCardInfo(
       id: 28,
@@ -96,8 +91,7 @@ class TarotMinorArcana {
       advice: '자신의 성취를 자랑스러워하되 겸손을 잃지 마세요',
       questions: [
         '어떤 성공을 축하해야 하나요?',
-        '인정받기 위해 무엇을 해야 하나요?',
-      ],
+        '인정받기 위해 무엇을 해야 하나요?'],
     ,
     'wands_7': TarotCardInfo(
       id: 29,
@@ -112,8 +106,7 @@ class TarotMinorArcana {
       advice: '자신의 신념을 지키되 유연성도 가지세요',
       questions: [
         '무엇을 지켜야 하나요?',
-        '어떤 도전이 당신을 더 강하게 만들고 있나요?',
-      ],
+        '어떤 도전이 당신을 더 강하게 만들고 있나요?'],
     ,
     'wands_8': TarotCardInfo(
       id: 30,
@@ -128,8 +121,7 @@ class TarotMinorArcana {
       advice: '기회가 왔을 때 빠르게 행동하세요',
       questions: [
         '어떤 일이 빠르게 진행되고 있나요?',
-        '기다리던 소식이 무엇인가요?',
-      ],
+        '기다리던 소식이 무엇인가요?'],
     ,
     'wands_9': TarotCardInfo(
       id: 31,
@@ -144,8 +136,7 @@ class TarotMinorArcana {
       advice: '조금만 더 버티면 목표에 도달할 수 있습니다',
       questions: [
         '무엇이 당신을 계속 나아가게 하나요?',
-        '어떤 교훈을 배웠나요?',
-      ],
+        '어떤 교훈을 배웠나요?'],
     ,
     'wands_10': TarotCardInfo(
       id: 32,
@@ -160,8 +151,7 @@ class TarotMinorArcana {
       advice: '도움을 요청하고 부담을 나누세요',
       questions: [
         '어떤 부담을 내려놓아야 하나요?',
-        '책임을 어떻게 분담할 수 있나요?',
-      ],
+        '책임을 어떻게 분담할 수 있나요?'],
     ,
     'wands_page': TarotCardInfo(
       id: 33,
@@ -176,8 +166,7 @@ class TarotMinorArcana {
       advice: '열정을 가지고 새로운 모험을 시작하세요',
       questions: [
         '어떤 새로운 열정이 당신을 부르고 있나요?',
-        '창의적인 에너지를 어디에 쏟을 것인가요?',
-      ],
+        '창의적인 에너지를 어디에 쏟을 것인가요?'],
     ,
     'wands_knight': TarotCardInfo(
       id: 34,
@@ -192,8 +181,7 @@ class TarotMinorArcana {
       advice: '열정은 좋지만 신중함도 필요합니다',
       questions: [
         '어디로 모험을 떠나고 싶나요?',
-        '충동을 어떻게 건설적으로 활용할 수 있나요?',
-      ],
+        '충동을 어떻게 건설적으로 활용할 수 있나요?'],
     ,
     'wands_queen': TarotCardInfo(
       id: 35,
@@ -208,8 +196,7 @@ class TarotMinorArcana {
       advice: '자신감을 가지고 리더십을 발휘하세요',
       questions: [
         '어떻게 더 자신감 있게 행동할 수 있나요?',
-        '당신의 열정을 어떻게 다른 사람들에게 전달할 수 있나요?',
-      ],
+        '당신의 열정을 어떻게 다른 사람들에게 전달할 수 있나요?'],
     ,
     'wands_king': TarotCardInfo(
       id: 36,
@@ -224,10 +211,8 @@ class TarotMinorArcana {
       advice: '비전을 가지고 다른 사람들을 이끄세요',
       questions: [
         '당신의 비전은 무엇인가요?',
-        '어떻게 더 나은 리더가 될 수 있나요?',
-      ],
-    ,
-  };
+        '어떻게 더 나은 리더가 될 수 있나요?'],
+    };
 
   // Cups (물의 원소 - 감정, 직관, 관계)
   static const Map<String, TarotCardInfo> cups = {
@@ -244,8 +229,7 @@ class TarotMinorArcana {
       advice: '마음을 열고 새로운 감정적 경험을 받아들이세요',
       questions: [
         '어떤 새로운 감정이 당신을 기다리고 있나요?',
-        '마음을 어디에 열어야 하나요?',
-      ],
+        '마음을 어디에 열어야 하나요?'],
     ,
     'cups_2': TarotCardInfo(
       id: 38,
@@ -260,8 +244,7 @@ class TarotMinorArcana {
       advice: '진정한 파트너십은 상호 존중에서 시작됩니다',
       questions: [
         '어떤 관계가 당신에게 중요한가요?',
-        '어떻게 더 깊은 연결을 만들 수 있나요?',
-      ],
+        '어떻게 더 깊은 연결을 만들 수 있나요?'],
     ,
     'cups_3': TarotCardInfo(
       id: 39,
@@ -276,8 +259,7 @@ class TarotMinorArcana {
       advice: '친구들과 성공을 축하하고 기쁨을 나누세요',
       questions: [
         '누구와 기쁨을 나누고 싶나요?',
-        '어떤 성취를 축하해야 하나요?',
-      ],
+        '어떤 성취를 축하해야 하나요?'],
     ,
     'cups_4': TarotCardInfo(
       id: 40,
@@ -292,8 +274,7 @@ class TarotMinorArcana {
       advice: '내면을 들여다보되 새로운 기회도 놓치지 마세요',
       questions: [
         '어떤 기회를 놓치고 있나요?',
-        '무엇이 당신을 만족시킬 수 있나요?',
-      ],
+        '무엇이 당신을 만족시킬 수 있나요?'],
     ,
     'cups_5': TarotCardInfo(
       id: 41,
@@ -308,8 +289,7 @@ class TarotMinorArcana {
       advice: '상실을 애도하되 남은 것에도 감사하세요',
       questions: [
         '무엇을 놓아주어야 하나요?',
-        '어떻게 상실을 성장의 기회로 만들 수 있나요?',
-      ],
+        '어떻게 상실을 성장의 기회로 만들 수 있나요?'],
     ,
     'cups_6': TarotCardInfo(
       id: 42,
@@ -324,8 +304,7 @@ class TarotMinorArcana {
       advice: '과거의 아름다운 기억을 소중히 하되 현재를 살아가세요',
       questions: [
         '어떤 어린 시절의 기쁨을 되찾을 수 있나요?',
-        '과거가 현재에 어떤 영향을 미치고 있나요?',
-      ],
+        '과거가 현재에 어떤 영향을 미치고 있나요?'],
     ,
     'cups_7': TarotCardInfo(
       id: 43,
@@ -340,8 +319,7 @@ class TarotMinorArcana {
       advice: '모든 선택지를 신중히 검토하고 현실적으로 판단하세요',
       questions: [
         '어떤 환상이 당신을 현혹하고 있나요?',
-        '진정으로 원하는 것은 무엇인가요?',
-      ],
+        '진정으로 원하는 것은 무엇인가요?'],
     ,
     'cups_8': TarotCardInfo(
       id: 44,
@@ -356,8 +334,7 @@ class TarotMinorArcana {
       advice: '때로는 떠나는 것이 성장을 위한 최선의 선택입니다',
       questions: [
         '무엇을 뒤로하고 떠나야 하나요?',
-        '더 깊은 의미를 어디서 찾을 수 있나요?',
-      ],
+        '더 깊은 의미를 어디서 찾을 수 있나요?'],
     ,
     'cups_9': TarotCardInfo(
       id: 45,
@@ -372,8 +349,7 @@ class TarotMinorArcana {
       advice: '당신의 소원이 이루어질 때입니다. 감사하세요',
       questions: [
         '무엇이 당신을 진정으로 행복하게 하나요?',
-        '어떤 소원이 이루어졌나요?',
-      ],
+        '어떤 소원이 이루어졌나요?'],
     ,
     'cups_10': TarotCardInfo(
       id: 46,
@@ -388,8 +364,7 @@ class TarotMinorArcana {
       advice: '사랑하는 사람들과의 관계를 소중히 여기세요',
       questions: [
         '진정한 행복은 어디에서 오나요?',
-        '어떻게 더 조화로운 관계를 만들 수 있나요?',
-      ],
+        '어떻게 더 조화로운 관계를 만들 수 있나요?'],
     ,
     'cups_page': TarotCardInfo(
       id: 47,
@@ -404,8 +379,7 @@ class TarotMinorArcana {
       advice: '직관을 신뢰하고 창의적인 영감을 따르세요',
       questions: [
         '어떤 창의적 메시지가 당신에게 오고 있나요?',
-        '직관이 무엇을 말하고 있나요?',
-      ],
+        '직관이 무엇을 말하고 있나요?'],
     ,
     'cups_knight': TarotCardInfo(
       id: 48,
@@ -420,8 +394,7 @@ class TarotMinorArcana {
       advice: '마음의 소리를 따르되 현실도 잊지 마세요',
       questions: [
         '어떤 로맨틱한 기회가 다가오고 있나요?',
-        '감정과 행동의 균형을 어떻게 맞출 수 있나요?',
-      ],
+        '감정과 행동의 균형을 어떻게 맞출 수 있나요?'],
     ,
     'cups_queen': TarotCardInfo(
       id: 49,
@@ -436,8 +409,7 @@ class TarotMinorArcana {
       advice: '직관을 신뢰하고 타인에게 동정심을 보이세요',
       questions: [
         '어떻게 더 감정적으로 성숙해질 수 있나요?',
-        '누가 당신의 동정심을 필요로 하나요?',
-      ],
+        '누가 당신의 동정심을 필요로 하나요?'],
     ,
     'cups_king': TarotCardInfo(
       id: 50,
@@ -452,10 +424,8 @@ class TarotMinorArcana {
       advice: '감정을 현명하게 다스리고 균형을 유지하세요',
       questions: [
         '어떻게 감정과 이성의 균형을 맞출 수 있나요?',
-        '당신의 감정적 지혜를 어떻게 활용할 수 있나요?',
-      ],
-    ,
-  };
+        '당신의 감정적 지혜를 어떻게 활용할 수 있나요?'],
+    };
 
   // Swords (공기의 원소 - 생각, 소통, 갈등)
   static const Map<String, TarotCardInfo> swords = {
@@ -472,8 +442,7 @@ class TarotMinorArcana {
       advice: '명료한 사고로 진실을 추구하세요',
       questions: [
         '어떤 진실이 드러나고 있나요?',
-        '어디에 정신적 명료함이 필요한가요?',
-      ],
+        '어디에 정신적 명료함이 필요한가요?'],
     ,
     'swords_2': TarotCardInfo(
       id: 52,
@@ -488,8 +457,7 @@ class TarotMinorArcana {
       advice: '직관과 논리를 모두 사용하여 결정하세요',
       questions: [
         '어떤 결정을 피하고 있나요?',
-        '양쪽 의견을 어떻게 조화시킬 수 있나요?',
-      ],
+        '양쪽 의견을 어떻게 조화시킬 수 있나요?'],
     ,
     'swords_3': TarotCardInfo(
       id: 53,
@@ -504,8 +472,7 @@ class TarotMinorArcana {
       advice: '고통을 인정하고 치유의 과정을 시작하세요',
       questions: [
         '어떤 상처가 치유되어야 하나요?',
-        '고통에서 무엇을 배울 수 있나요?',
-      ],
+        '고통에서 무엇을 배울 수 있나요?'],
     ,
     'swords_4': TarotCardInfo(
       id: 54,
@@ -520,8 +487,7 @@ class TarotMinorArcana {
       advice: '행동하기 전에 충분한 휴식과 성찰의 시간을 가지세요',
       questions: [
         '어디에서 휴식을 찾을 수 있나요?',
-        '다음 단계를 위해 어떻게 준비할 수 있나요?',
-      ],
+        '다음 단계를 위해 어떻게 준비할 수 있나요?'],
     ,
     'swords_5': TarotCardInfo(
       id: 55,
@@ -536,8 +502,7 @@ class TarotMinorArcana {
       advice: '모든 전투가 싸울 가치가 있는 것은 아닙니다',
       questions: [
         '이기는 것이 정말 중요한가요?',
-        '어떤 갈등을 놓아주어야 하나요?',
-      ],
+        '어떤 갈등을 놓아주어야 하나요?'],
     ,
     'swords_6': TarotCardInfo(
       id: 56,
@@ -552,8 +517,7 @@ class TarotMinorArcana {
       advice: '어려운 시기를 뒤로하고 앞으로 나아가세요',
       questions: [
         '어떤 전환이 필요한가요?',
-        '더 나은 곳으로 어떻게 이동할 수 있나요?',
-      ],
+        '더 나은 곳으로 어떻게 이동할 수 있나요?'],
     ,
     'swords_7': TarotCardInfo(
       id: 57,
@@ -568,8 +532,7 @@ class TarotMinorArcana {
       advice: '정직이 최선의 정책임을 기억하세요',
       questions: [
         '무엇을 숨기고 있나요?',
-        '어떤 전략이 필요한가요?',
-      ],
+        '어떤 전략이 필요한가요?'],
     ,
     'swords_8': TarotCardInfo(
       id: 58,
@@ -584,8 +547,7 @@ class TarotMinorArcana {
       advice: '제한은 종종 우리 마음속에만 존재합니다',
       questions: [
         '어떤 제한이 실제이고 어떤 것이 상상인가요?',
-        '어떻게 자유를 찾을 수 있나요?',
-      ],
+        '어떻게 자유를 찾을 수 있나요?'],
     ,
     'swords_9': TarotCardInfo(
       id: 59,
@@ -600,8 +562,7 @@ class TarotMinorArcana {
       advice: '두려움은 종종 현실보다 더 나쁩니다',
       questions: [
         '무엇이 당신을 밤에 깨우나요?',
-        '두려움을 어떻게 극복할 수 있나요?',
-      ],
+        '두려움을 어떻게 극복할 수 있나요?'],
     ,
     'swords_10': TarotCardInfo(
       id: 60,
@@ -616,8 +577,7 @@ class TarotMinorArcana {
       advice: '끝은 새로운 시작의 전조입니다',
       questions: [
         '무엇이 끝나야 하나요?',
-        '어떻게 다시 일어설 수 있나요?',
-      ],
+        '어떻게 다시 일어설 수 있나요?'],
     ,
     'swords_page': TarotCardInfo(
       id: 61,
@@ -632,8 +592,7 @@ class TarotMinorArcana {
       advice: '호기심을 가지되 신중하게 행동하세요',
       questions: [
         '무엇을 더 알고 싶나요?',
-        '어떤 새로운 아이디어가 떠오르나요?',
-      ],
+        '어떤 새로운 아이디어가 떠오르나요?'],
     ,
     'swords_knight': TarotCardInfo(
       id: 62,
@@ -648,8 +607,7 @@ class TarotMinorArcana {
       advice: '용기는 좋지만 무모함과는 다릅니다',
       questions: [
         '어디로 돌진하고 있나요?',
-        '속도와 신중함의 균형을 어떻게 맞출 수 있나요?',
-      ],
+        '속도와 신중함의 균형을 어떻게 맞출 수 있나요?'],
     ,
     'swords_queen': TarotCardInfo(
       id: 63,
@@ -664,8 +622,7 @@ class TarotMinorArcana {
       advice: '진실을 말하되 친절함도 잊지 마세요',
       questions: [
         '어디에 명확한 경계가 필요한가요?',
-        '진실을 어떻게 친절하게 전달할 수 있나요?',
-      ],
+        '진실을 어떻게 친절하게 전달할 수 있나요?'],
     ,
     'swords_king': TarotCardInfo(
       id: 64,
@@ -680,10 +637,8 @@ class TarotMinorArcana {
       advice: '지혜와 공정함으로 판단하세요',
       questions: [
         '어디에 명확한 판단이 필요한가요?',
-        '권위를 어떻게 현명하게 사용할 수 있나요?',
-      ],
-    ,
-  };
+        '권위를 어떻게 현명하게 사용할 수 있나요?'],
+    };
 
   // Pentacles (땅의 원소 - 물질, 건강, 일)
   static const Map<String, TarotCardInfo> pentacles = {
@@ -700,8 +655,7 @@ class TarotMinorArcana {
       advice: '새로운 물질적 기회를 현명하게 활용하세요',
       questions: [
         '어떤 새로운 기회가 당신을 기다리고 있나요?',
-        '안정성을 어떻게 구축할 수 있나요?',
-      ],
+        '안정성을 어떻게 구축할 수 있나요?'],
     ,
     'pentacles_2': TarotCardInfo(
       id: 66,
@@ -716,8 +670,7 @@ class TarotMinorArcana {
       advice: '삶의 다양한 요구사항들 사이에서 균형을 찾으세요',
       questions: [
         '어떻게 더 나은 균형을 찾을 수 있나요?',
-        '우선순위를 어떻게 정해야 하나요?',
-      ],
+        '우선순위를 어떻게 정해야 하나요?'],
     ,
     'pentacles_3': TarotCardInfo(
       id: 67,
@@ -732,8 +685,7 @@ class TarotMinorArcana {
       advice: '다른 사람들과 협력하여 더 큰 것을 만드세요',
       questions: [
         '누구와 협력해야 하나요?',
-        '어떤 기술을 개발해야 하나요?',
-      ],
+        '어떤 기술을 개발해야 하나요?'],
     ,
     'pentacles_4': TarotCardInfo(
       id: 68,
@@ -748,8 +700,7 @@ class TarotMinorArcana {
       advice: '안정성은 좋지만 너무 경직되지 마세요',
       questions: [
         '무엇을 놓아주기 두려워하나요?',
-        '안정성과 유연성의 균형을 어떻게 맞출 수 있나요?',
-      ],
+        '안정성과 유연성의 균형을 어떻게 맞출 수 있나요?'],
     ,
     'pentacles_5': TarotCardInfo(
       id: 69,
@@ -764,8 +715,7 @@ class TarotMinorArcana {
       advice: '도움이 필요할 때는 요청하는 것을 두려워하지 마세요',
       questions: [
         '어떤 도움을 받을 수 있나요?',
-        '물질적 손실에서 무엇을 배울 수 있나요?',
-      ],
+        '물질적 손실에서 무엇을 배울 수 있나요?'],
     ,
     'pentacles_6': TarotCardInfo(
       id: 70,
@@ -780,8 +730,7 @@ class TarotMinorArcana {
       advice: '나눔은 받는 것만큼 중요합니다',
       questions: [
         '어떻게 더 관대해질 수 있나요?',
-        '주고받음의 균형이 맞나요?',
-      ],
+        '주고받음의 균형이 맞나요?'],
     ,
     'pentacles_7': TarotCardInfo(
       id: 71,
@@ -796,8 +745,7 @@ class TarotMinorArcana {
       advice: '인내심을 갖고 노력의 결실을 기다리세요',
       questions: [
         '어떤 투자가 결실을 맺고 있나요?',
-        '장기적 목표를 위해 무엇을 해야 하나요?',
-      ],
+        '장기적 목표를 위해 무엇을 해야 하나요?'],
     ,
     'pentacles_8': TarotCardInfo(
       id: 72,
@@ -812,8 +760,7 @@ class TarotMinorArcana {
       advice: '꾸준한 연습과 헌신이 전문성을 만듭니다',
       questions: [
         '어떤 기술을 완벽하게 만들고 싶나요?',
-        '세부사항에 충분히 주의를 기울이고 있나요?',
-      ],
+        '세부사항에 충분히 주의를 기울이고 있나요?'],
     ,
     'pentacles_9': TarotCardInfo(
       id: 73,
@@ -828,8 +775,7 @@ class TarotMinorArcana {
       advice: '당신의 성취와 독립성을 즐기세요',
       questions: [
         '어떤 성취를 축하해야 하나요?',
-        '독립성을 어떻게 유지할 수 있나요?',
-      ],
+        '독립성을 어떻게 유지할 수 있나요?'],
     ,
     'pentacles_10': TarotCardInfo(
       id: 74,
@@ -844,8 +790,7 @@ class TarotMinorArcana {
       advice: '미래 세대를 위한 유산을 만드세요',
       questions: [
         '어떤 유산을 남기고 싶나요?',
-        '장기적인 안정을 어떻게 구축할 수 있나요?',
-      ],
+        '장기적인 안정을 어떻게 구축할 수 있나요?'],
     ,
     'pentacles_page': TarotCardInfo(
       id: 75,
@@ -860,8 +805,7 @@ class TarotMinorArcana {
       advice: '실용적인 목표를 설정하고 꾸준히 노력하세요',
       questions: [
         '어떤 새로운 기술을 배우고 싶나요?',
-        '실용적인 목표는 무엇인가요?',
-      ],
+        '실용적인 목표는 무엇인가요?'],
     ,
     'pentacles_knight': TarotCardInfo(
       id: 76,
@@ -876,8 +820,7 @@ class TarotMinorArcana {
       advice: '느리고 꾸준한 것이 경주에서 이깁니다',
       questions: [
         '어디에 더 많은 인내가 필요한가요?',
-        '일상을 어떻게 개선할 수 있나요?',
-      ],
+        '일상을 어떻게 개선할 수 있나요?'],
     ,
     'pentacles_queen': TarotCardInfo(
       id: 77,
@@ -892,8 +835,7 @@ class TarotMinorArcana {
       advice: '실용적인 지혜로 자신과 타인을 돌보세요',
       questions: [
         '어떻게 더 나은 양육자가 될 수 있나요?',
-        '물질적 풍요를 어떻게 나눌 수 있나요?',
-      ],
+        '물질적 풍요를 어떻게 나눌 수 있나요?'],
     ,
     'pentacles_king': TarotCardInfo(
       id: 78,
@@ -908,10 +850,8 @@ class TarotMinorArcana {
       advice: '물질적 성공을 현명하고 관대하게 사용하세요',
       questions: [
         '어떻게 더 나은 리더가 될 수 있나요?',
-        '성공을 어떻게 다른 사람들과 나눌 수 있나요?',
-      ],
-    ,
-  };
+        '성공을 어떻게 다른 사람들과 나눌 수 있나요?'],
+    };
 
   // 전체 Minor Arcana 카드 목록 생성
   static Map<String, TarotCardInfo> getAllMinorArcana() {

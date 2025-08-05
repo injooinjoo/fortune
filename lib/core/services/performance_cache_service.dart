@@ -91,8 +91,7 @@ class PerformanceCacheService {
     
     final entry = CacheEntry(
       data: toJson != null ? toJson(data) : data,
-      expiry: DateTime.now().add(ttl ?? _defaultTTL,
-    );
+      expiry: DateTime.now().add(ttl ?? _defaultTTL);
     
     // Add to memory cache
     _addToMemoryCache(key, entry);
@@ -238,8 +237,7 @@ class CacheEntry {
 
   CacheEntry({
     required this.data,
-    required this.expiry,
-  });
+    required this.expiry});
 
   bool get isExpired => DateTime.now().isAfter(expiry);
 
@@ -250,8 +248,7 @@ class CacheEntry {
 
   factory CacheEntry.fromJson(Map<String, dynamic> json) => CacheEntry(
     data: json['data'],
-    expiry: DateTime.parse(json['expiry'],
-  );
+    expiry: DateTime.parse(json['expiry']);
 }
 
 /// Performance monitoring service

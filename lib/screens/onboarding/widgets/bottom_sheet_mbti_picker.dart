@@ -18,8 +18,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     required this.option1,
     required this.option2,
     this.selectedOption,
-    required this.onOptionSelected,
-  });
+    required this.onOptionSelected});
 
   static Future<String?> show(
     BuildContext context, {
@@ -39,8 +38,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     selectedOption: selectedOption),
     onOptionSelected: (option) {
           Navigator.of(context).pop(option);
-        },
-    )
+        })
     );
   }
 
@@ -110,12 +108,9 @@ class BottomSheetMbtiPicker extends StatelessWidget {
                   _buildOption(context, option1))
                   SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal))
                   _buildOption(context, option2))
-                ],
-    ),
-            ))
+                ])))
           ))
-        ],
-    )
+        ])
     );
   }
 
@@ -133,8 +128,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 4)),
     border: Border.all(
             color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor),
-    width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth,
-    ))
+    width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth))
         )),
     child: Column(
           crossAxisAlignment: CrossAxisAlignment.start);
@@ -143,8 +137,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
               option);
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold)),
-    color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText,
-    ))
+    color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.primaryText))
             ))
             SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.3))
             Text(
@@ -152,9 +145,7 @@ class BottomSheetMbtiPicker extends StatelessWidget {
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: context.fortuneTheme.subtitleText))
               ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 }

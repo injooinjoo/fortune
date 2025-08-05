@@ -26,8 +26,7 @@ class FortuneCard extends StatelessWidget {
     this.iconColor,
     this.backgroundColor,
     this.emoji,
-    this.gradient,
-  });
+    this.gradient});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +42,7 @@ class FortuneCard extends StatelessWidget {
       // 프리미엄 - 밝은 보라색
       0xFF2C2C2C: [Color(0xFFF3E5F5), Color(0xFFE1BEE7)],
       // 전체 운세 - 밝은 파란색
-      0xFF4A4A4A: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-    };
+      0xFF4A4A4A: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)]};
     
     List<Color>? adjustedGradient;
     if (gradient != null && !isDarkMode) {
@@ -64,8 +62,7 @@ class FortuneCard extends StatelessWidget {
               ? LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: adjustedGradient,
-                )
+                  colors: adjustedGradient)
               : null,
           color: adjustedGradient == null 
               ? (backgroundColor ?? (isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark)) 
@@ -76,10 +73,7 @@ class FortuneCard extends StatelessWidget {
               color: (adjustedGradient?.first ?? theme.colorScheme.primary)
                   .withValues(alpha: isDarkMode ? 0.3 : 0.15),
               blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+              offset: const Offset(0, 4))]),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -94,24 +88,20 @@ class FortuneCard extends StatelessWidget {
                   if (emoji != null)
                     Text(
                       emoji!,
-                      style: Theme.of(context).textTheme.displaySmall,
-                    )
+                      style: Theme.of(context).textTheme.displaySmall)
                   else
                     Container(
                       width: 50,
                       height: AppSpacing.spacing12 * 1.04,
                       decoration: BoxDecoration(
                         color: AppColors.textPrimaryDark.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
-                      ),
+                        borderRadius: BorderRadius.circular(AppDimensions.radiusLarge)),
                       child: Icon(
                         icon,
                         size: AppDimensions.iconSizeLarge,
                         color: adjustedGradient != null 
                             ? (isDarkMode ? AppColors.textPrimaryDark : (iconColor ?? theme.colorScheme.primary))
-                            : (iconColor ?? theme.colorScheme.primary),
-                      ),
-                    ),
+                            : (iconColor ?? theme.colorScheme.primary))),
                   SizedBox(height: AppSpacing.spacing4),
                   Text(
                     title,
@@ -120,12 +110,10 @@ class FortuneCard extends StatelessWidget {
                       color: adjustedGradient != null 
                           ? (isDarkMode ? AppColors.textPrimaryDark : theme.colorScheme.onSurface)
                           : theme.colorScheme.onSurface,
-                      letterSpacing: -0.5,
-                    ),
+                      letterSpacing: -0.5),
                     textAlign: TextAlign.center,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    overflow: TextOverflow.ellipsis),
                   SizedBox(height: AppSpacing.spacing1),
                   Text(
                     description,
@@ -135,40 +123,25 @@ class FortuneCard extends StatelessWidget {
                               ? AppColors.textPrimaryDark.withValues(alpha: 0.9) 
                               : theme.colorScheme.onSurface.withValues(alpha: 0.6))
                           : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w400,
-                    ),
+                      fontWeight: FontWeight.w400),
                     textAlign: TextAlign.center,
                     maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                    overflow: TextOverflow.ellipsis),
                   if (badge != null) ...[
                     const Spacer(),
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: AppSpacing.spacing3,
-                        vertical: AppSpacing.spacing1,
-                      ),
+                        vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
                         color: AppColors.textPrimaryDark.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-                      ),
+                        borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
                       child: Text(
                         badge!,
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: adjustedGradient != null 
                               ? (isDarkMode ? AppColors.textPrimaryDark : theme.textTheme.bodyMedium?.color)
                               : theme.textTheme.bodyMedium?.color,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+                          fontWeight: FontWeight.w600)))]]))))));
   }
 }

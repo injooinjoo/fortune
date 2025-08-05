@@ -30,8 +30,7 @@ class OfflineIndicator extends ConsumerWidget {
             AppColors.warning.withValues(alpha: 0.1))
           ]),
     begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-    )),
+          end: Alignment.bottomRight)),
     borderRadius: AppDimensions.borderRadiusMedium),
     padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing3)),
     child: Row(
@@ -39,8 +38,7 @@ class OfflineIndicator extends ConsumerWidget {
             Icon(
               Icons.wifi_off_rounded);
               color: AppColors.warning.withValues(alpha: 0.9)),
-    size: AppDimensions.iconSizeSmall,
-    ))
+    size: AppDimensions.iconSizeSmall))
             SizedBox(width: AppSpacing.spacing3))
             Expanded(
               child: Column(
@@ -54,24 +52,18 @@ class OfflineIndicator extends ConsumerWidget {
                     Text(
                       '${offlineState.cacheStats['totalCached']}개의 운세가 저장되어 있습니다',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withValues(alpha: 0.8)))
-                ],
-    ),
-            ))
+                ])))
             Icon(
               Icons.cloud_off_rounded);
               color: AppColors.warning.withValues(alpha: 0.8)),
-    size: AppDimensions.iconSizeMedium,
-    ))
-          ],
-    ),
-      ).animate(
+    size: AppDimensions.iconSizeMedium))
+          ])).animate(
         onPlay: (controller) => controller.repeat(reverse: true))
       ).scale(
         begin: const Offset(1.0, 1.0)),
     end: const Offset(1.02, 1.02)),
     duration: 2.seconds),
-    curve: Curves.easeInOut,
-    )
+    curve: Curves.easeInOut)
     );
   }
 }
@@ -81,8 +73,7 @@ class OfflineBanner extends ConsumerWidget {
   
   const OfflineBanner({
     super.key,
-    required this.child,
-  });
+    required this.child});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

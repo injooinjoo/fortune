@@ -17,9 +17,7 @@ class TestAccountService {
         'toggle_test_account_premium',
         params: {
           'user_id': userId,  // This is the auth user ID which is same as profile ID
-          'enabled': null,
-        },
-      );
+          'enabled': null});
 
       if (response == null) {
         throw Exception('Failed to toggle premium status');
@@ -37,9 +35,7 @@ class TestAccountService {
       final response = await _supabase.rpc(
         'is_test_account',
         params: {
-          'user_email': email,
-        },
-      );
+          'user_email': email});
 
       return response == true;
     } catch (e) {

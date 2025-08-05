@@ -38,8 +38,7 @@ class UserProfile extends Equatable {
     this.tokenBalance = 0,
     this.preferences,
     required this.createdAt,
-    required this.updatedAt,
-  });
+    required this.updatedAt});
 
   // 프로필 완성도 계산
   double get completionPercentage {
@@ -133,8 +132,7 @@ class UserProfile extends Equatable {
       'bloodType': bloodType,
       'zodiacSign': zodiacSign,
       'zodiacAnimal': null,
-      ...?preferences,
-    };
+      ...?preferences};
   }
 
   UserProfile copyWith({
@@ -155,8 +153,7 @@ class UserProfile extends Equatable {
     int? tokenBalance,
     Map<String, dynamic>? preferences,
     DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
+    DateTime? updatedAt}) {
     return UserProfile(
       id: id ?? this.id,
       email: email ?? this.email,
@@ -175,8 +172,7 @@ class UserProfile extends Equatable {
       tokenBalance: tokenBalance ?? this.tokenBalance,
       preferences: preferences ?? this.preferences,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
+      updatedAt: updatedAt ?? this.updatedAt);
   }
 
   @override

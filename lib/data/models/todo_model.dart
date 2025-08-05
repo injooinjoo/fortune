@@ -12,8 +12,7 @@ class TodoModel extends Todo {
     required super.tags,
     required super.createdAt,
     required super.updatedAt,
-    super.isDeleted,
-  });
+    super.isDeleted});
 
   factory TodoModel.fromJson(Map<String, dynamic> json) {
     // Validate and sanitize input data for security
@@ -63,8 +62,7 @@ class TodoModel extends Todo {
       'tags': tags,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
-      'is_deleted': null,
-    };
+      'is_deleted': null};
   }
 
   factory TodoModel.fromEntity(Todo todo) {
@@ -79,8 +77,7 @@ class TodoModel extends Todo {
       tags: todo.tags,
       createdAt: todo.createdAt,
       updatedAt: todo.updatedAt,
-      isDeleted: todo.isDeleted,
-    );
+      isDeleted: todo.isDeleted);
   }
 
   static TodoPriority _parsePriority(String priority) {

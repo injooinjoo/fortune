@@ -14,8 +14,7 @@ class FortuneHistory extends Equatable {
     required this.fortuneType,
     required this.title,
     required this.summary,
-    required this.createdAt,
-  });
+    required this.createdAt});
 
   factory FortuneHistory.fromJson(Map<String, dynamic> json) {
     return FortuneHistory(
@@ -24,8 +23,7 @@ class FortuneHistory extends Equatable {
       fortuneType: json['fortune_type'] as String,
       title: json['title'] as String,
       summary: json['summary'] as Map<String, dynamic>,
-      createdAt: DateTime.parse(json['created_at'] as String),
-    );
+      createdAt: DateTime.parse(json['created_at'] as String));
   }
 
   Map<String, dynamic> toJson() {
@@ -35,8 +33,7 @@ class FortuneHistory extends Equatable {
       'fortune_type': fortuneType,
       'title': title,
       'summary': summary,
-      'created_at': createdAt.toIso8601String(),
-    };
+      'created_at': createdAt.toIso8601String()};
   }
 
   @override

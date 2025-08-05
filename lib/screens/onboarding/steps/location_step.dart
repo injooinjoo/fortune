@@ -15,8 +15,7 @@ class LocationStep extends StatefulWidget {
     super.key,
     required this.onLocationChanged,
     required this.onComplete,
-    required this.onBack,
-  });
+    required this.onBack});
 
   @override
   State<LocationStep> createState() => _LocationStepState();
@@ -42,15 +41,13 @@ class _LocationStepState extends State<LocationStep> {
     '전라남도',
     '경상북도',
     '경상남도',
-    '제주특별자치도',
-  ];
+    '제주특별자치도'];
   
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-      ),
+        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
       child: Column(
         children: [
           // Back button
@@ -59,9 +56,7 @@ class _LocationStepState extends State<LocationStep> {
             child: IconButton(
               onPressed: widget.onBack,
               icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
-              padding: EdgeInsets.zero,
-            ),
-          ),
+              padding: EdgeInsets.zero)),
           
           Expanded(
             child: Column(
@@ -74,15 +69,11 @@ class _LocationStepState extends State<LocationStep> {
                     fontSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
-                    color: context.fortuneTheme.primaryText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(
-                  duration: 600.ms,
-                ).shimmer(
+                    color: context.fortuneTheme.primaryText),
+                  textAlign: TextAlign.center).animate().fadeIn(
+                  duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3),
-                ),
+                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
@@ -90,14 +81,10 @@ class _LocationStepState extends State<LocationStep> {
                 Text(
                   '운세의 정확도를 높이기 위해\n지역 정보가 필요해요',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.fortuneTheme.subtitleText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate(
-                  delay: 300.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ),
+                    color: context.fortuneTheme.subtitleText),
+                  textAlign: TextAlign.center).animate(
+                  delay: 300.ms).fadeIn(
+                  duration: 600.ms),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
                 
@@ -105,22 +92,18 @@ class _LocationStepState extends State<LocationStep> {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: context.fortuneTheme.dividerColor,
-                    ),
-                    borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius),
-                  ),
+                      color: context.fortuneTheme.dividerColor),
+                    borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius)),
                   child: DropdownButtonFormField<String>(
                     value: _selectedRegion,
                     decoration: InputDecoration(
                       labelText: '지역 선택',
                       border: InputBorder.none,
-                      contentPadding: context.fortuneTheme.formStyles.inputPadding,
-                    ),
+                      contentPadding: context.fortuneTheme.formStyles.inputPadding),
                     items: _regions.map((region) {
                       return DropdownMenuItem(
                         value: region,
-                        child: Text(region),
-                      );
+                        child: Text(region));
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
@@ -129,17 +112,12 @@ class _LocationStepState extends State<LocationStep> {
                       if (value != null) {
                         widget.onLocationChanged(value);
                       }
-                    },
-                  ),
-                ).animate(
-                  delay: 500.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ).slideY(
+                    })).animate(
+                  delay: 500.ms).fadeIn(
+                  duration: 600.ms).slideY(
                   begin: 0.1,
                   end: 0,
-                  curve: Curves.easeOutQuart,
-                ),
+                  curve: Curves.easeOutQuart),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 5),
                 
@@ -155,27 +133,13 @@ class _LocationStepState extends State<LocationStep> {
                       backgroundColor: context.fortuneTheme.primaryText,
                       foregroundColor: context.isDarkMode ? AppColors.textPrimary : AppColors.textPrimaryDark,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4),
-                      ),
-                      elevation: 0,
-                    ),
+                        borderRadius: BorderRadius.circular(context.fortuneTheme.bottomSheetStyles.borderRadius + 4)),
+                      elevation: 0),
                     child: Text(
                       '완료',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ).animate(
-                  delay: 700.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                        fontWeight: FontWeight.w600)))).animate(
+                  delay: 700.ms).fadeIn(
+                  duration: 600.ms)]))]));
   }
 }

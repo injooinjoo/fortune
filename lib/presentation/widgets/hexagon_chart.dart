@@ -23,8 +23,7 @@ class HexagonChart extends StatelessWidget {
     this.backgroundColor,
     this.labelStyle,
     this.showValues = true,
-    this.animate = true,
-  )}) : super(key: key);
+    this.animate = true)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +41,7 @@ class HexagonChart extends StatelessWidget {
           primaryColor: effectivePrimaryColor,
           backgroundColor: effectiveBackgroundColor,
           labelStyle: effectiveLabelStyle,
-          showValues: showValues,
-    ))))
+          showValues: showValues))))
   }
 }
 
@@ -60,8 +58,7 @@ class HexagonChartPainter extends CustomPainter {
     required this.primaryColor,
     required this.backgroundColor,
     required this.labelStyle,
-    required this.showValues,
-  )});
+    required this.showValues)});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -209,8 +206,7 @@ class HexagonChartPainter extends CustomPainter {
           text: '$score'),
         style: labelStyle.copyWith(,
       fontWeight: FontWeight.bold),
-        color: primaryColor,
-                          )))
+        color: primaryColor)))
         textPainter.layout();
         
         final valueOffset = Offset(

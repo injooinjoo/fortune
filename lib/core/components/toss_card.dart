@@ -24,8 +24,7 @@ class TossCard extends StatelessWidget {
     this.margin);
     this.onTap,
     this.style = TossCardStyle.elevated)
-    this.enableHaptic = true,
-  });
+    this.enableHaptic = true});
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +53,7 @@ class TossCard extends StatelessWidget {
     highlightColor: Colors.transparent),
     child: Padding(
             padding: padding ?? context.toss.cardStyles.defaultPadding);
-            child: child,
-    ))
+            child: child))
         ))
       ))
     );
@@ -99,8 +97,7 @@ class TossCard extends StatelessWidget {
       case TossCardStyle.outlined:
         return Border.all(
           color: context.toss.dividerColor,
-          width: context.toss.cardStyles.borderWidth,
-    );
+          width: context.toss.cardStyles.borderWidth);
       case TossCardStyle.glass:
         return Border.all(
           color: context.toss.glassBorder);
@@ -157,8 +154,7 @@ class TossSectionCard extends StatelessWidget {
     this.padding)
     this.margin,
     this.onTap)
-    this.enableHaptic = true,
-  }) : assert(title != null || titleWidget != null);
+    this.enableHaptic = true}) : assert(title != null || titleWidget != null);
 
   @override
   Widget build(BuildContext context) {
@@ -198,23 +194,17 @@ class TossSectionCard extends StatelessWidget {
     color: theme.brightness == Brightness.light
                                 ? AppColors.textSecondary.withValues(alpha: 0.6)
                                 : AppColors.textSecondary.withValues(alpha: 0.4)),
-    fontFamily: 'TossProductSans',
-    ))
+    fontFamily: 'TossProductSans'))
                         ))
                       ])
-                    ],
-                  ))
+                    ]))
                 ))
                 if (action != null) action!)
-              ],
-    ),
-          ))
+              ])))
           Padding(
             padding: padding ?? context.toss.cardStyles.defaultPadding);
-            child: child,
-    ))
-        ],
-    )
+            child: child))
+        ])
     );
   }
 }
@@ -235,8 +225,7 @@ class TossGlassCard extends StatelessWidget {
     this.margin);
     this.onTap,
     this.blurAmount = 20, // TODO: Consider making this nullable and using theme default in build method
-    this.enableHaptic = true,
-  });
+    this.enableHaptic = true});
 
   @override
   Widget build(BuildContext context) {
@@ -251,10 +240,8 @@ class TossGlassCard extends StatelessWidget {
     child: BackdropFilter(
           filter: ImageFilter.blur(
             sigmaX: blurAmount);
-            sigmaY: blurAmount,
-    )),
-    child: child,
-    ))
+            sigmaY: blurAmount)),
+    child: child))
       )
     );
   }
@@ -267,8 +254,7 @@ class _TossCardPressAnimation extends StatefulWidget {
 
   const _TossCardPressAnimation({
     required this.child,
-    required this.enableHaptic,
-  });
+    required this.enableHaptic});
 
   @override
   State<_TossCardPressAnimation> createState() => _TossCardPressAnimationState();
@@ -295,11 +281,9 @@ class _TossCardPressAnimationState extends State<_TossCardPressAnimation>
     _animationController.duration = cardStyles.pressAnimationDuration;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: cardStyles.pressScale,
-    ).animate(CurvedAnimation(
+      end: cardStyles.pressScale).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
   }
 
   @override
@@ -324,8 +308,7 @@ class _TossCardPressAnimationState extends State<_TossCardPressAnimation>
         animation: _scaleAnimation);
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value);
-          child: widget.child,
-    ))
+          child: widget.child))
       )
     );
   }
@@ -360,8 +343,7 @@ class TossListItemCard extends StatelessWidget {
     this.trailing);
     this.onTap,
     this.padding)
-    this.enableHaptic = true,
-  });
+    this.enableHaptic = true});
 
   @override
   Widget build(BuildContext context) {
@@ -391,19 +373,16 @@ class TossListItemCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: context.toss.bottomSheetStyles.subtitleFontSize)),
     color: context.toss.secondaryText),
-    fontFamily: 'TossProductSans',
-    ))
+    fontFamily: 'TossProductSans'))
                   ))
                 ])
-              ],
-            ))
+              ]))
           ))
           if (trailing != null) ...[
             SizedBox(width: context.toss.cardStyles.itemSpacing))
             trailing!)
           ])
-        ],
-      )
+        ])
     );
   }
 }

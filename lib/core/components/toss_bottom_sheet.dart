@@ -19,8 +19,7 @@ class TossBottomSheet {
     double? height,
     bool isScrollControlled = false,
     Color? backgroundColor,
-    bool enableHaptic = true,
-  }) {
+    bool enableHaptic = true}) {
     if (enableHaptic) {
       HapticPatterns.execute(context.toss.hapticPatterns.success);
     }
@@ -37,15 +36,12 @@ class TossBottomSheet {
       barrierColor: AppColors.textPrimary.withValues(alpha: bottomSheetStyles.barrierOpacity),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius),
-        ),
-      ),
+          top: Radius.circular(bottomSheetStyles.borderRadius))),
       builder: (context) => _TossBottomSheetWrapper(
         showHandle: showHandle,
         height: height,
         backgroundColor: backgroundColor,
-        child: builder(context),
-      )
+        child: builder(context))
     );
   }
 
@@ -56,8 +52,7 @@ class TossBottomSheet {
     required List<TossBottomSheetOption<T>> options,
     String? subtitle,
     bool showHandle = true,
-    bool enableHaptic = true,
-  }) {
+    bool enableHaptic = true}) {
     return show<T>(
       context: context,
       enableHaptic: enableHaptic,
@@ -65,8 +60,7 @@ class TossBottomSheet {
       builder: (context) => _TossSelectionBottomSheet<T>(
         title: title,
         subtitle: subtitle,
-        options: options,
-      )
+        options: options)
     );
   }
 
@@ -79,8 +73,7 @@ class TossBottomSheet {
     String cancelText = '취소',
     bool isDanger = false,
     bool showHandle = true,
-    bool enableHaptic = true,
-  }) {
+    bool enableHaptic = true}) {
     return show<bool>(
       context: context,
       enableHaptic: enableHaptic,
@@ -92,8 +85,7 @@ class TossBottomSheet {
         message: message,
         confirmText: confirmText,
         cancelText: cancelText,
-        isDanger: isDanger,
-      )
+        isDanger: isDanger)
     );
   }
 
@@ -106,8 +98,7 @@ class TossBottomSheet {
     VoidCallback? onAction,
     Widget? content,
     bool showHandle = true,
-    bool enableHaptic = true,
-  }) {
+    bool enableHaptic = true}) {
     return show<void>(
       context: context,
       enableHaptic: enableHaptic,
@@ -117,8 +108,7 @@ class TossBottomSheet {
         message: message,
         actionText: actionText,
         onAction: onAction,
-        content: content,
-      )
+        content: content)
     );
   }
 }
@@ -134,8 +124,7 @@ class _TossBottomSheetWrapper extends StatelessWidget {
     required this.child,
     required this.showHandle,
     this.height,
-    this.backgroundColor,
-  });
+    this.backgroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +136,7 @@ class _TossBottomSheetWrapper extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? context.toss.cardSurface,
         borderRadius: BorderRadius.vertical(
-          top: Radius.circular(bottomSheetStyles.borderRadius),
-        ),
-      ),
+          top: Radius.circular(bottomSheetStyles.borderRadius))),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -160,20 +147,14 @@ class _TossBottomSheetWrapper extends StatelessWidget {
               height: bottomSheetStyles.handleHeight,
               decoration: BoxDecoration(
                 color: context.toss.dividerColor.withValues(alpha: bottomSheetStyles.handleOpacity),
-                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2),
-              ),
-            ),
-          Flexible(child: child),
-        ],
-      ),
-    )
+                borderRadius: BorderRadius.circular(bottomSheetStyles.handleHeight / 2))),
+          Flexible(child: child)]))
         .animate()
         .slideY(
           begin: 1,
           end: 0,
           duration: bottomSheetStyles.slideAnimationDuration,
-          curve: Curves.easeOutCubic,
-        )
+          curve: Curves.easeOutCubic)
         .fadeIn(duration: bottomSheetStyles.fadeAnimationDuration);
   }
 }
@@ -187,8 +168,7 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
   const _TossSelectionBottomSheet({
     required this.title,
     required this.options,
-    this.subtitle,
-  });
+    this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -204,15 +184,13 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
                 context.toss.bottomSheetStyles.contentPadding.left,
                 context.toss.bottomSheetStyles.contentPadding.top,
                 context.toss.bottomSheetStyles.contentPadding.right,
-                context.toss.bottomSheetStyles.contentPadding.bottom - context.toss.bottomSheetStyles.spacing / 2,
-              ),
+                context.toss.bottomSheetStyles.contentPadding.bottom - context.toss.bottomSheetStyles.spacing / 2),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
+                    style: Theme.of(context).textTheme.titleSmall),
                   if (subtitle != null) ...[
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
@@ -220,19 +198,9 @@ class _TossSelectionBottomSheet<T> extends StatelessWidget {
                       style: TextStyle(
                         fontSize: context.toss.bottomSheetStyles.subtitleFontSize,
                         color: context.toss.secondaryText,
-                        fontFamily: 'TossProductSans',
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
+                        fontFamily: 'TossProductSans'))]])),
             Divider(height: context.toss.cardStyles.borderWidth, color: context.toss.dividerColor),
-            ...options.map((option) => _OptionTile(option: option)),
-          ],
-        ),
-      ),
-    );
+            ...options.map((option) => _OptionTile(option: option))])));
   }
 }
 
@@ -258,8 +226,7 @@ class _OptionTile<T> extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: context.toss.bottomSheetStyles.contentPadding.left,
-            vertical: AppSpacing.spacing3,
-          ),
+            vertical: AppSpacing.spacing3),
           child: Row(
             children: [
               if (option.icon != null) ...[
@@ -270,10 +237,8 @@ class _OptionTile<T> extends StatelessWidget {
                       ? AppColors.error
                       : (theme.brightness == Brightness.light
                           ? AppColors.textPrimary
-                          : AppColors.textPrimaryDark),
-                ),
-                SizedBox(width: AppSpacing.spacing3),
-              ],
+                          : AppColors.textPrimaryDark)),
+                SizedBox(width: AppSpacing.spacing3)],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,9 +251,7 @@ class _OptionTile<T> extends StatelessWidget {
                             : (theme.brightness == Brightness.light
                                 ? AppColors.textPrimary
                                 : AppColors.textPrimaryDark),
-                        fontFamily: 'TossProductSans',
-                      ),
-                    ),
+                        fontFamily: 'TossProductSans')),
                     if (option.subtitle != null) ...[
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
@@ -298,20 +261,9 @@ class _OptionTile<T> extends StatelessWidget {
                           color: theme.brightness == Brightness.light
                               ? AppColors.textSecondary.withValues(alpha: 0.6)
                               : AppColors.textSecondary.withValues(alpha: 0.4),
-                          fontFamily: 'TossProductSans',
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+                          fontFamily: 'TossProductSans'))]])),
               if (option.trailing != null)
-                option.trailing!,
-            ],
-          ),
-        ),
-      ),
-    );
+                option.trailing!]))));
   }
 }
 
@@ -328,8 +280,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
     required this.message,
     required this.confirmText,
     required this.cancelText,
-    required this.isDanger,
-  });
+    required this.isDanger});
 
   @override
   Widget build(BuildContext context) {
@@ -342,8 +293,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+              style: Theme.of(context).textTheme.titleSmall),
             SizedBox(height: context.toss.bottomSheetStyles.spacing),
             Text(
               message,
@@ -351,9 +301,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                 fontSize: context.toss.bottomSheetStyles.messageFontSize,
                 color: context.toss.secondaryText,
                 fontFamily: 'TossProductSans',
-                height: context.toss.cardStyles.borderWidth * 1.5,
-              ),
-            ),
+                height: context.toss.cardStyles.borderWidth * 1.5)),
             SizedBox(height: context.toss.bottomSheetStyles.largeSpacing),
             Row(
               children: [
@@ -361,9 +309,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                   child: _TossBottomSheetButton(
                     text: cancelText,
                     onPressed: () => Navigator.of(context).pop(false),
-                    style: TossBottomSheetButtonStyle.secondary,
-                  ),
-                ),
+                    style: TossBottomSheetButtonStyle.secondary)),
                 SizedBox(width: context.toss.bottomSheetStyles.spacing),
                 Expanded(
                   child: _TossBottomSheetButton(
@@ -371,15 +317,7 @@ class _TossConfirmationBottomSheet extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(true),
                     style: isDanger
                         ? TossBottomSheetButtonStyle.danger
-                        : TossBottomSheetButtonStyle.primary,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                        : TossBottomSheetButtonStyle.primary))])])));
   }
 }
 
@@ -396,8 +334,7 @@ class _TossInfoBottomSheet extends StatelessWidget {
     required this.message,
     this.actionText,
     this.onAction,
-    this.content,
-  });
+    this.content});
 
   @override
   Widget build(BuildContext context) {
@@ -410,8 +347,7 @@ class _TossInfoBottomSheet extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+              style: Theme.of(context).textTheme.titleSmall),
             SizedBox(height: context.toss.bottomSheetStyles.spacing),
             Text(
               message,
@@ -419,13 +355,10 @@ class _TossInfoBottomSheet extends StatelessWidget {
                 fontSize: context.toss.bottomSheetStyles.messageFontSize,
                 color: context.toss.secondaryText,
                 fontFamily: 'TossProductSans',
-                height: context.toss.cardStyles.borderWidth * 1.5,
-              ),
-            ),
+                height: context.toss.cardStyles.borderWidth * 1.5)),
             if (content != null) ...[
               SizedBox(height: AppSpacing.spacing5),
-              content!,
-            ],
+              content!],
             if (actionText != null) ...[
               SizedBox(height: context.toss.bottomSheetStyles.largeSpacing),
               SizedBox(
@@ -436,14 +369,7 @@ class _TossInfoBottomSheet extends StatelessWidget {
                     onAction?.call();
                     Navigator.of(context).pop();
                   },
-                  style: TossBottomSheetButtonStyle.primary,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+                  style: TossBottomSheetButtonStyle.primary))]])));
   }
 }
 
@@ -456,8 +382,7 @@ class _TossBottomSheetButton extends StatelessWidget {
   const _TossBottomSheetButton({
     required this.text,
     required this.onPressed,
-    required this.style,
-  });
+    required this.style});
 
   @override
   Widget build(BuildContext context) {
@@ -493,11 +418,7 @@ class _TossBottomSheetButton extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             text,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor),
-          ),
-        ),
-      ),
-    );
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(color: textColor)))));
   }
 }
 
@@ -518,8 +439,7 @@ class TossBottomSheetOption<T> {
     this.icon,
     this.trailing,
     this.isEnabled = true,
-    this.isDestructive = false,
-  });
+    this.isDestructive = false});
 }
 
 /// Bottom Sheet 버튼 스타일
@@ -528,7 +448,4 @@ enum TossBottomSheetButtonStyle {
   
   primary,
   secondary,
-  danger,
-  
-  
-}
+  danger}

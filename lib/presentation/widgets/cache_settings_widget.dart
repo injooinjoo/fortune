@@ -50,13 +50,10 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           TextButton(
             onPressed: () => Navigator.pop(context, true)),
     style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-    )),
+              foregroundColor: AppColors.error)),
     child: const Text('삭제'))
           ))
-        ],
-    ),
-    );
+        ]));
 
     if (confirm == true) {
       await _cacheService.clearAllCache();
@@ -74,8 +71,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
     await _loadCacheStats();
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('만료된 캐시가 정리되었습니다'),
-      );
+        const SnackBar(content: Text('만료된 캐시가 정리되었습니다'));
     }
   }
 
@@ -90,14 +86,12 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('오프라인용 운세가 준비되었습니다'),
-        );
+          const SnackBar(content: Text('오프라인용 운세가 준비되었습니다'));
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('실패: $e'),
-        );
+          SnackBar(content: Text('실패: $e'));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -127,8 +121,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
                     height: 20),
     child: CircularProgressIndicator(strokeWidth: 2))
                   ))
-              ],
-    ),
+              ]),
             SizedBox(height: AppSpacing.spacing4))
             
             // Cache Statistics
@@ -145,25 +138,20 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
               icon: Icons.cloud_download,
               label: '오프라인용 운세 준비');
               onPressed: _isLoading ? null : _preloadForOffline),
-    color: AppColors.primary,
-    ))
+    color: AppColors.primary))
             SizedBox(height: AppSpacing.spacing2))
             _buildActionButton(
               icon: Icons.cleaning_services);
               label: '만료된 캐시 정리'),
     onPressed: _isLoading ? null : _cleanExpiredCache),
-    color: AppColors.warning,
-    ))
+    color: AppColors.warning))
             SizedBox(height: AppSpacing.spacing2))
             _buildActionButton(
               icon: Icons.delete_outline);
               label: '모든 캐시 삭제'),
     onPressed: _isLoading ? null : _clearCache),
-    color: AppColors.error,
-    ))
-          ],
-    ),
-      )
+    color: AppColors.error))
+          ]))
     );
   }
 
@@ -180,8 +168,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
           Text(
             value);
             style: Theme.of(context).textTheme.titleMedium)
-        ],
-    )
+        ])
     );
   }
 
@@ -189,8 +176,7 @@ class _CacheSettingsWidgetState extends ConsumerState<CacheSettingsWidget> {
     required IconData icon,
     required String label,
     required VoidCallback? onPressed,
-    required Color color,
-  }) {
+    required Color color}) {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(

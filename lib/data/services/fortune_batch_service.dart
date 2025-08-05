@@ -37,8 +37,7 @@ class BatchFortuneResult {
   BatchFortuneResult({
     required this.type,
     required this.fortune,
-    required this.fromCache,
-  });
+    required this.fromCache});
 }
 
 /// 배치 운세 생성을 위한 서비스
@@ -53,8 +52,7 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> generateBatchFortunesByPackage({
     required String userId,
     required BatchPackageType packageType,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     debugPrint('package: ${packageType.key}');
 
     try {
@@ -63,16 +61,14 @@ class FortuneBatchService {
         return await _generateBatchWithEdgeFunctions(
           userId: userId,
           packageType: packageType,
-          userProfile: userProfile,
-        );
+          userProfile: userProfile);
       }
 
       // 기존 API 사용
       return await _generateBatchWithTraditionalAPI(
         userId: userId,
         packageType: packageType,
-        userProfile: userProfile,
-      );
+        userProfile: userProfile);
     } catch (e) {
       debugPrint('Supabase initialized with URL: $supabaseUrl');
       // 폴백: 캐시된 데이터 반환
@@ -84,8 +80,7 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> generateBatchFortunesByTypes({
     required String userId,
     required List<String> fortuneTypes,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     debugPrint('types: ${fortuneTypes.join('), ')}');
 
     try {
@@ -94,16 +89,14 @@ class FortuneBatchService {
         return await _generateCustomBatchWithEdgeFunctions(
           userId: userId,
           fortuneTypes: fortuneTypes,
-          userProfile: userProfile,
-        );
+          userProfile: userProfile);
       }
 
       // 기존 API 사용
       return await _generateCustomBatchWithTraditionalAPI(
         userId: userId,
         fortuneTypes: fortuneTypes,
-        userProfile: userProfile,
-      );
+        userProfile: userProfile);
     } catch (e) {
       debugPrint('Supabase initialized with URL: $supabaseUrl');
       // 폴백: 개별 운세 생성
@@ -115,15 +108,12 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> _generateBatchWithEdgeFunctions({
     required String userId,
     required BatchPackageType packageType,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     final edgeFunctionsDio = Dio(BaseOptions(
       baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
       headers: {
         'Content-Type': 'application/json',
-        'apikey': null,
-      },
-    ));
+        'apikey': null}));
 
     // 인증 토큰 추가
     final authToken = _apiClient.dio.options.headers['Authorization'];
@@ -135,8 +125,7 @@ class FortuneBatchService {
       EdgeFunctionsEndpoints.fortuneBatch,
       data: {
         'package_type': packageType.key,
-        'user_profile': null,
-      }
+        'user_profile': null}
     );
 
     return _processBatchResponse(response.data, userId);
@@ -146,15 +135,12 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> _generateCustomBatchWithEdgeFunctions({
     required String userId,
     required List<String> fortuneTypes,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     final edgeFunctionsDio = Dio(BaseOptions(
       baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
       headers: {
         'Content-Type': 'application/json',
-        'apikey': null,
-      },
-    ));
+        'apikey': null}));
 
     // 인증 토큰 추가
     final authToken = _apiClient.dio.options.headers['Authorization'];
@@ -166,8 +152,7 @@ class FortuneBatchService {
       EdgeFunctionsEndpoints.fortuneBatch,
       data: {
         'custom_fortune_types': fortuneTypes,
-        'user_profile': null,
-      }
+        'user_profile': null}
     );
 
     return _processBatchResponse(response.data, userId);
@@ -177,8 +162,7 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> _generateBatchWithTraditionalAPI({
     required String userId,
     required BatchPackageType packageType,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     // 패키지에 따른 운세 타입 매핑
     final fortuneTypes = _getFortuneTypesForPackage(packageType);
     
@@ -187,8 +171,7 @@ class FortuneBatchService {
       data: {
         'request_type': packageType.key,
         'user_profile': userProfile,
-        'fortune_categories': null,
-      }
+        'fortune_categories': null}
     );
 
     return _processBatchResponse(response.data, userId);
@@ -198,15 +181,13 @@ class FortuneBatchService {
   Future<List<BatchFortuneResult>> _generateCustomBatchWithTraditionalAPI({
     required String userId,
     required List<String> fortuneTypes,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     final response = await _apiClient.post(
       '/api/fortune/generate-batch',
       data: {
         'request_type': 'custom',
         'user_profile': userProfile,
-        'fortune_categories': null,
-      }
+        'fortune_categories': null}
     );
 
     return _processBatchResponse(response.data, userId);
@@ -235,10 +216,8 @@ class FortuneBatchService {
         additionalInfo: {
           if (fortuneInfo['lucky_items']?['color'] != null) 'luckyColor': fortuneInfo['lucky_items']['color'],
           if (fortuneInfo['lucky_items']?['number'] != null) 'luckyNumber': fortuneInfo['lucky_items']['number'],
-          if (fortuneInfo['advice'] != null) 'advice': fortuneInfo['advice'],
-        },
-        tokenCost: fromCache ? 0 : 1,
-      );
+          if (fortuneInfo['advice'] != null) 'advice': fortuneInfo['advice']},
+        tokenCost: fromCache ? 0 : 1);
 
       // 캐시에 저장
       if (!fromCache) {
@@ -252,16 +231,13 @@ class FortuneBatchService {
             content: fortune.content,
             createdAt: fortune.createdAt,
             metadata: fortune.metadata,
-            tokenCost: fortune.tokenCost,
-          ),
-        );
+            tokenCost: fortune.tokenCost));
       }
 
       results.add(BatchFortuneResult(
         type: type,
         fortune: fortune,
-        fromCache: fromCache,
-      ));
+        fromCache: fromCache));
     }
 
     return results;
@@ -286,16 +262,14 @@ class FortuneBatchService {
         return [
           'saju', 'traditional-saju', 'tojeong', 'destiny', 'past-life',
           'daily', 'weekly', 'monthly', 'yearly',
-          'love', 'career', 'wealth', 'health', 'lucky-items', 'biorhythm',
-        ];
+          'love', 'career', 'wealth', 'health', 'lucky-items', 'biorhythm'];
     }
   }
 
   /// 캐시된 배치 운세 가져오기
   Future<List<BatchFortuneResult>> _getCachedBatchFortunes(
     String userId,
-    BatchPackageType packageType,
-  ) async {
+    BatchPackageType packageType) async {
     final fortuneTypes = _getFortuneTypesForPackage(packageType);
     final results = <BatchFortuneResult>[];
 
@@ -309,8 +283,7 @@ class FortuneBatchService {
         results.add(BatchFortuneResult(
           type: type,
           fortune: cachedFortune.toEntity(),
-          fromCache: true,
-        ));
+          fromCache: true));
       }
     }
 
@@ -320,8 +293,7 @@ class FortuneBatchService {
   /// 개별 운세 생성 (폴백)
   Future<List<BatchFortuneResult>> _generateIndividualFortunes(
     String userId,
-    List<String> fortuneTypes,
-  ) async {
+    List<String> fortuneTypes) async {
     final results = <BatchFortuneResult>[];
 
     for (final type in fortuneTypes) {
@@ -336,8 +308,7 @@ class FortuneBatchService {
           results.add(BatchFortuneResult(
             type: type,
             fortune: cachedFortune.toEntity(),
-            fromCache: true,
-          ));
+            fromCache: true));
           continue;
         }
 
@@ -348,8 +319,7 @@ class FortuneBatchService {
         results.add(BatchFortuneResult(
           type: type,
           fortune: fortuneResponse.toEntity(),
-          fromCache: false,
-        ));
+          fromCache: false));
       } catch (e) {
         debugPrint('Supabase initialized with URL: $supabaseUrl');
       }
@@ -362,8 +332,7 @@ class FortuneBatchService {
   Future<Map<String, dynamic>> generateSystemFortunes({
     required String fortuneType,
     String period = 'monthly',
-    bool forceRegenerate = false,
-  }) async {
+    bool forceRegenerate = false}) async {
     debugPrint('Supabase initialized with URL: $supabaseUrl');
 
     if (_featureFlags.isEdgeFunctionsEnabled()) {
@@ -371,17 +340,14 @@ class FortuneBatchService {
         baseUrl: EdgeFunctionsEndpoints.currentBaseUrl,
         headers: {
           'Content-Type': 'application/json',
-          'apikey': null,
-        },
-      ));
+          'apikey': null}));
 
       final response = await edgeFunctionsDio.post(
         EdgeFunctionsEndpoints.fortuneSystem,
         data: {
           'fortune_type': fortuneType,
           'period': period,
-          'force_regenerate': null,
-        }
+          'force_regenerate': null}
       );
 
       return response.data;
@@ -394,25 +360,21 @@ class FortuneBatchService {
   /// 온보딩 완료 시 호출
   Future<List<BatchFortuneResult>> generateOnboardingFortunes({
     required String userId,
-    required Map<String, dynamic> userProfile,
-  }) async {
+    required Map<String, dynamic> userProfile}) async {
     return generateBatchFortunesByPackage(
       userId: userId,
       packageType: BatchPackageType.onboarding,
-      userProfile: userProfile,
-    );
+      userProfile: userProfile);
   }
 
   /// 일일 자동 갱신
   Future<List<BatchFortuneResult>> refreshDailyFortunes({
     required String userId,
-    Map<String, dynamic>? userProfile,
-  }) async {
+    Map<String, dynamic>? userProfile}) async {
     return generateBatchFortunesByPackage(
       userId: userId,
       packageType: BatchPackageType.dailyRefresh,
-      userProfile: userProfile,
-    );
+      userProfile: userProfile);
   }
 
   /// 패키지별 토큰 절약률 계산
@@ -429,13 +391,11 @@ class FortuneBatchService {
       'lucky-number': 1, 'lucky-items': 2, 'lucky-food': 1, 'lucky-outfit': 2,
       'biorhythm': 2, 'health': 2,
       'pet': 2, 'pet-dog': 2, 'pet-cat': 2, 'pet-compatibility': 3,
-      'children': 3, 'parenting': 3, 'pregnancy': 3, 'family-harmony'),
-    };
+      'children': 3, 'parenting': 3, 'pregnancy': 3, 'family-harmony')};
 
     final individualTotal = fortuneTypes.fold<int>(
       0,
-      (sum, type) => sum + (individualCosts[type] ?? 2),
-    );
+      (sum, type) => sum + (individualCosts[type] ?? 2));
 
     final savings = (individualTotal - packageType.tokenCost) / individualTotal * 100;
     return savings;

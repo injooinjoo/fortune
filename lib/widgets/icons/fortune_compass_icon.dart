@@ -7,8 +7,7 @@ class FortuneCompassIcon extends StatelessWidget {
   const FortuneCompassIcon({
     super.key,
     this.size = 24,
-    this.color,
-  });
+    this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +15,7 @@ class FortuneCompassIcon extends StatelessWidget {
     
     return CustomPaint(
       size: Size(size, size),
-      painter: FortuneCompassPainter(color: iconColor),
-    );
+      painter: FortuneCompassPainter(color: iconColor));
   }
 }
 

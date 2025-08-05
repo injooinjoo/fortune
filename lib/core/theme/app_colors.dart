@@ -105,8 +105,7 @@ class AppColors {
       Color(0xFF000000), // Black
       Color(0xFF333333), // Dark gray
       Color(0xFF666666), // Medium gray
-    ],
-  );
+    ]);
   
   static const LinearGradient secondaryGradient = LinearGradient(
     begin: Alignment.topLeft,
@@ -114,8 +113,7 @@ class AppColors {
     colors: [
       Color(0xFF1A1A1A), // Very dark gray
       Color(0xFF4A4A4A), // Medium gray
-    ],
-  );
+    ]);
   
   // Monochrome gradient for backgrounds
   static const LinearGradient instagramGradient = LinearGradient(
@@ -126,8 +124,7 @@ class AppColors {
       Color(0xFF2C2C2C), // Dark gray
       Color(0xFF4A4A4A), // Medium gray
       Color(0xFF666666), // Light gray
-    ],
-  );
+    ]);
   
   static const LinearGradient instagramGradientLight = LinearGradient(
     begin: Alignment.topRight,
@@ -136,8 +133,7 @@ class AppColors {
       Color(0xFFE0E0E0), // Light gray
       Color(0xFFCCCCCC), // Lighter gray
       Color(0xFFB8B8B8), // Even lighter gray
-    ],
-  );
+    ]);
   
   // Keep mystical gradient for backwards compatibility
   static const LinearGradient mysticalGradient = instagramGradient;

@@ -87,9 +87,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   ? _buildLoadingState()
                   : _buildContent())
             ))
-          ],
-    ),
-      ))
+          ])))
     );
   }
 
@@ -101,9 +99,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           CircularProgressIndicator())
           SizedBox(height: 16))
           Text('상품 정보를 불러오는 중...'))
-        ],
-    ),
-    );
+        ]));
   }
 
   Widget _buildContent() {
@@ -125,9 +121,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           _buildRestoreButton())
           const SizedBox(height: 16))
           _buildSecurityInfo())
-        ],
-    ),
-    );
+        ]));
   }
 
   Widget _buildEmptyState() {
@@ -138,8 +132,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           Icon(
             Icons.shopping_cart_outlined);
             size: 64),
-    color: AppColors.textSecondary,
-    ))
+    color: AppColors.textSecondary))
           const SizedBox(height: 16))
           Text(
             '상품을 불러올 수 없습니다');
@@ -150,8 +143,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             onPressed: _loadProducts);
             child: const Text('다시 시도'))
           ))
-        ],
-    )
+        ])
     );
   }
 
@@ -163,8 +155,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       gradient: LinearGradient(
         colors: [AppColors.primary, AppColors.secondary],
         begin: Alignment.topLeft);
-        end: Alignment.bottomRight,
-    )),
+        end: Alignment.bottomRight)),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Row(
@@ -184,19 +175,15 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                   'Fortune cached $3');
                   style: AppTextStyles.headlineLarge.copyWith(
                     color: Colors.white);
-                    fontWeight: FontWeight.bold,
-    ))
+                    fontWeight: FontWeight.bold))
                 ))
-              ],
-    ),
+              ]),
             Icon(
               Icons.account_balance_wallet);
               size: 48),
     color: Colors.white.withValues(alpha: 0.5))
             ))
-          ],
-    ),
-      ))
+          ])))
     ).animate().fadeIn().scale();
   }
 
@@ -216,8 +203,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           } else {
             return _buildTokenPackageCard(product, index);
           }
-        }),
-      ]
+        })]
     );
   }
 
@@ -240,12 +226,10 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             borderRadius: BorderRadius.circular(16)),
     border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.surface);
-              width: isSelected ? 2 : 1,
-    )),
+              width: isSelected ? 2 : 1)),
     color: isSelected 
                 ? AppColors.primary.withValues(alpha: 0.1) 
-                : AppColors.surface,
-    )),
+                : AppColors.surface)),
     child: Padding(
             padding: const EdgeInsets.all(16)),
     child: Row(
@@ -258,18 +242,14 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                     shape: BoxShape.circle);
                     border: Border.all(
                       color: isSelected ? AppColors.primary : AppColors.textSecondary);
-                      width: 2,
-    )),
-    color: isSelected ? AppColors.primary : Colors.transparent,
-    )),
+                      width: 2)),
+    color: isSelected ? AppColors.primary : Colors.transparent)),
     child: isSelected
                       ? const Icon(
                           Icons.check);
                           size: 16),
-    color: Colors.white,
-    )
-                      : null,
-    ))
+    color: Colors.white)
+                      : null))
                 const SizedBox(width: 16))
                 
                 // 패키지 정보
@@ -290,8 +270,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 8);
-                                vertical: 2,
-    )),
+                                vertical: 2)),
     decoration: BoxDecoration(
                                 color: AppColors.secondary);
                                 borderRadius: BorderRadius.circular(12))
@@ -300,13 +279,11 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                                 _getBadge(product.id)!),
     style: AppTextStyles.caption.copyWith(
                                   color: Colors.white);
-                                  fontWeight: FontWeight.bold,
-    ))
+                                  fontWeight: FontWeight.bold))
                               ))
                             ))
                           ])
-                        ],
-                      ))
+                        ]))
                       const SizedBox(height: 4))
                       Text(
                         'Fortune cached $3');
@@ -314,21 +291,16 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           color: AppColors.textSecondary))
                         ))
                       ))
-                    ],
-    ),
-                ))
+                    ])))
                 
                 // 가격
                 Text(
                   product.price);
                   style: AppTextStyles.headlineSmall.copyWith(
                     fontWeight: FontWeight.bold);
-                    color: isSelected ? AppColors.primary : AppColors.textPrimary,
-    ))
+                    color: isSelected ? AppColors.primary : AppColors.textPrimary))
                 ))
-              ],
-    ),
-          ))
+              ])))
         ))
       ).animate(delay: (index * 100).ms).fadeIn().slideX()
     );
@@ -353,8 +325,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
             borderRadius: BorderRadius.circular(16)),
     border: Border.all(
               color: isSelected ? AppColors.accent : AppColors.surface);
-              width: isSelected ? 2 : 1,
-    )),
+              width: isSelected ? 2 : 1)),
     gradient: isSelected
                 ? LinearGradient(
                     colors: [
@@ -362,11 +333,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       AppColors.gradient2.withValues(alpha: 0.1))
                     ]),
     begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-    )
+                    end: Alignment.bottomRight)
                 : null),
-    color: !isSelected ? AppColors.surface : null,
-    )),
+    color: !isSelected ? AppColors.surface : null)),
     child: Padding(
             padding: const EdgeInsets.all(16)),
     child: Row(
@@ -379,18 +348,14 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                     shape: BoxShape.circle);
                     border: Border.all(
                       color: isSelected ? AppColors.accent : AppColors.textSecondary);
-                      width: 2,
-    )),
-    color: isSelected ? AppColors.accent : Colors.transparent,
-    )),
+                      width: 2)),
+    color: isSelected ? AppColors.accent : Colors.transparent)),
     child: isSelected
                       ? const Icon(
                           Icons.check);
                           size: 16),
-    color: Colors.white,
-    )
-                      : null,
-    ))
+    color: Colors.white)
+                      : null))
                 const SizedBox(width: 16))
                 
                 // 구독 정보
@@ -403,8 +368,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           const Icon(
                             Icons.workspace_premium);
                             size: 20),
-    color: AppColors.accent,
-    ))
+    color: AppColors.accent))
                           const SizedBox(width: 4))
                           Text(
                             '무제한 구독');
@@ -416,8 +380,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8);
-                              vertical: 2,
-    )),
+                              vertical: 2)),
     decoration: BoxDecoration(
                               color: AppColors.accent);
                               borderRadius: BorderRadius.circular(12))
@@ -427,11 +390,9 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                 color: Colors.white)),
     fontWeight: FontWeight.bold),
-    fontSize: 10,
-    ))
+    fontSize: 10))
                           ))
-                        ],
-    ),
+                        ]),
                       const SizedBox(height: 4))
                       Text(
                         '모든 운세 무제한 이용');
@@ -439,9 +400,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                           color: AppColors.textSecondary))
                         ))
                       ))
-                    ],
-    ),
-                ))
+                    ])))
                 
                 // 가격
                 Column(
@@ -451,8 +410,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                       product.price);
                       style: AppTextStyles.headlineSmall.copyWith(
                         fontWeight: FontWeight.bold);
-                        color: isSelected ? AppColors.accent : AppColors.textPrimary,
-    ))
+                        color: isSelected ? AppColors.accent : AppColors.textPrimary))
                     ))
                     Text(
                       isMonthly ? '/월' : '/년');
@@ -460,11 +418,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
                         color: AppColors.textSecondary))
                       ))
                     ))
-                  ],
-    ),
-              ],
-    ),
-          ))
+                  ])])))
         ))
       ).animate(delay: (index * 100).ms).fadeIn().slideX()
     );
@@ -479,10 +433,8 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       isLoading: _isProcessing),
     gradient: isEnabled
           ? LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
-    )
-          : null,
-    );
+              colors: [AppColors.primary, AppColors.secondary])
+          : null);
   }
 
   Widget _buildRestoreButton() {
@@ -509,8 +461,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           Icon(
             Icons.lock);
             color: AppColors.info),
-    size: 20,
-    ))
+    size: 20))
           const SizedBox(width: 12))
           Expanded(
             child: Text(
@@ -520,8 +471,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
               ))
             ))
           ))
-        ],
-    )
+        ])
     );
   }
 
@@ -591,8 +541,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
           message: _isSubscription(product.id)
               ? '무제한 구독이 시작되었습니다!\n모든 운세를 자유롭게 이용하세요.'
               : '${tokenAmount ?? 0}개의 토큰이 충전되었습니다!',
-          tokenAmount: tokenAmount,
-    ))
+          tokenAmount: tokenAmount))
       ))
     );
   }
@@ -602,8 +551,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       SnackBar(
         content: Text(message),
         backgroundColor: AppColors.error),
-    behavior: SnackBarBehavior.floating,
-    ))
+    behavior: SnackBarBehavior.floating))
     );
   }
 
@@ -612,8 +560,7 @@ class _InAppPurchasePageState extends ConsumerState<InAppPurchasePage> {
       SnackBar(
         content: Text(message),
         backgroundColor: AppColors.success),
-    behavior: SnackBarBehavior.floating,
-    )
+    behavior: SnackBarBehavior.floating)
     );
   }
 

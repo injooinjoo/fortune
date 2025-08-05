@@ -202,8 +202,7 @@ class CacheStatistics {
     required this.hiveCacheEntries,
     required this.hiveCacheSizeBytes,
     required this.totalEntries,
-    required this.totalSizeBytes,
-  });
+    required this.totalSizeBytes});
 
   factory CacheStatistics.empty() => CacheStatistics(
     apiCacheEntries: 0,

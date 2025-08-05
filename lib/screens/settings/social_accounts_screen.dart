@@ -103,13 +103,10 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+          onPressed: () => context.pop()),
         title: Text(
           '소셜 계정 연동',
-          style: theme.textTheme.titleLarge,
-        ),
-      ),
+          style: theme.textTheme.titleLarge)),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -121,47 +118,33 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     padding: AppSpacing.paddingAll16,
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: AppDimensions.borderRadiusMedium,
-                    ),
+                      borderRadius: AppDimensions.borderRadiusMedium),
                     child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
                           color: AppColors.primary,
-                          size: AppDimensions.iconSizeMedium,
-                        ),
+                          size: AppDimensions.iconSizeMedium),
                         SizedBox(width: AppSpacing.spacing3),
                         Expanded(
                           child: Text(
                             '여러 소셜 계정을 연동하면 어떤 방법으로든 로그인할 수 있습니다.',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: AppColors.textSecondary,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                              height: 1.5)))])),
                   if (userIdentities.isNotEmpty) ...[
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
                       child: Text(
                         '연동된 계정',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                          fontWeight: FontWeight.bold))),
                     ...userIdentities.map(
                       (identity) => _buildConnectedAccount(
                         provider: identity.provider ?? '',
                         email: identity.identityData?['email'] ?? '',
                         isPrimary:
-                            userProfile?['primary_provider'],
-                      ),
-                    ),
-                  ],
+                            userProfile?['primary_provider']))],
                   if (userProfile?['phone'] != null &&
                       userProfile!['phone'].toString().isNotEmpty) ...[
                     Padding(
@@ -169,26 +152,18 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                       child: Text(
                         '전화번호',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                          fontWeight: FontWeight.bold))),
                     _buildConnectedAccount(
                       provider: 'phone',
                       email: userProfile!['phone'],
                       isPrimary: false,
-                      isPhone: true,
-                    ),
-                  ],
+                      isPhone: true)],
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                     child: Text(
                       '연동 가능한 계정',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                        fontWeight: FontWeight.bold))),
                   Padding(
                     padding: AppSpacing.paddingHorizontal16,
                     child: SocialAccountsSection(
@@ -199,36 +174,26 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                       onProvidersChanged: (providers) {
                         _loadUserData();
                       },
-                      socialAuthService: _socialAuthService,
-                    ),
-                  ),
-                  SizedBox(height: AppSpacing.spacing8),
-                ],
-              ),
-            ),
-    );
+                      socialAuthService: _socialAuthService)),
+                  SizedBox(height: AppSpacing.spacing8)])));
   }
 
   Widget _buildConnectedAccount({
     required String provider,
     required String email,
     required bool isPrimary,
-    bool isPhone = false,
-  }) {
+    bool isPhone = false}) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: AppSpacing.spacing4,
-        vertical: AppSpacing.spacing1,
-      ),
+        vertical: AppSpacing.spacing1),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
         color: AppColors.textPrimaryDark,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
           color: isPrimary ? AppColors.primary : AppColors.divider,
-          width: isPrimary ? 2 : 1,
-        ),
-      ),
+          width: isPrimary ? 2 : 1)),
       child: Row(
         children: [
           Container(
@@ -236,14 +201,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             height: AppDimensions.buttonHeightSmall,
             decoration: BoxDecoration(
               color: AppColors.background,
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-            ),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
             child: Icon(
               _getProviderIcon(provider),
               color: AppColors.textSecondary,
-              size: AppDimensions.iconSizeMedium,
-            ),
-          ),
+              size: AppDimensions.iconSizeMedium)),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -251,35 +213,24 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
               children: [
                 Text(
                   _getProviderName(provider),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                  style: Theme.of(context).textTheme.titleMedium),
                 if (email.isNotEmpty) ...[
                   SizedBox(height: AppSpacing.spacing1),
                   Text(
                     email,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                ],
-              ],
-            ),
-          ),
+                          color: AppColors.textSecondary))]])),
           if (isPrimary)
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: AppSpacing.spacing2,
-                vertical: AppSpacing.spacing1,
-              ),
+                vertical: AppSpacing.spacing1),
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: AppDimensions.borderRadiusMedium,
-              ),
+                borderRadius: AppDimensions.borderRadiusMedium),
               child: Text(
                 '주 계정',
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
-            ),
+                style: Theme.of(context).textTheme.labelSmall)),
           if (!isPrimary && userIdentities.length > 1 && !isPhone)
             TextButton(
               onPressed: () => _showUnlinkDialog(provider),
@@ -288,12 +239,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
-                    ?.copyWith(color: AppColors.error),
-              ),
-            ),
-        ],
-      ),
-    );
+                    ?.copyWith(color: AppColors.error)))]));
   }
 
   void _showUnlinkDialog(String provider) {
@@ -302,13 +248,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
       builder: (context) => AlertDialog(
         title: const Text('계정 연동 해제'),
         content: Text(
-          '${_getProviderName(provider)} 계정 연동을 해제하시겠습니까?',
-        ),
+          '${_getProviderName(provider)} 계정 연동을 해제하시겠습니까?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
+            child: const Text('취소')),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -316,12 +260,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             },
             child: const Text('연동 해제'),
             style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            ),
-          ),
-        ],
-      ),
-    );
+              foregroundColor: AppColors.error))]));
   }
 
   Future<void> _unlinkProvider(String provider) async {
@@ -332,9 +271,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('계정 연동이 해제되었습니다'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+            backgroundColor: AppColors.success));
         _loadUserData();
       }
     } catch (e) {
@@ -344,9 +281,7 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
             content: Text(
               e.toString().replaceAll('Exception: ', '')
             ),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       }
     }
   }

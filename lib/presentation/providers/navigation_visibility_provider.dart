@@ -7,17 +7,14 @@ class NavigationVisibilityState {
 
   const NavigationVisibilityState({
     this.isVisible = true,
-    this.isAnimating = false,
-  });
+    this.isAnimating = false});
 
   NavigationVisibilityState copyWith({
     bool? isVisible,
-    bool? isAnimating,
-  }) {
+    bool? isAnimating}) {
     return NavigationVisibilityState(
       isVisible: isVisible ?? this.isVisible,
-      isAnimating: isAnimating ?? this.isAnimating,
-    );
+      isAnimating: isAnimating ?? this.isAnimating);
   }
 }
 
@@ -72,8 +69,7 @@ extension RouteNavigationVisibility on String {
       '/fortune',
       '/todo',
       '/physiognomy',
-      '/profile',
-    ];
+      '/profile'];
 
     // Check if current route exactly matches or starts with a main route
     for (final mainRoute in mainRoutes) {
@@ -120,8 +116,7 @@ extension RouteNavigationVisibility on String {
       '/fortune',
       '/todo',
       '/physiognomy',
-      '/profile',
-    ];
+      '/profile'];
 
     // Check if this is exactly a main route
     if (mainRoutes.contains(this)) {

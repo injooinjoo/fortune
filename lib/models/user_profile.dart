@@ -42,8 +42,7 @@ class UserProfile {
     this.isLunarBirthdate,
     this.profileImageUrl,
     this.linkedProviders,
-    this.primaryProvider,
-  });
+    this.primaryProvider});
 
   Map<String, dynamic> toJson() {
     return {
@@ -66,8 +65,7 @@ class UserProfile {
       'is_lunar_birthdate': isLunarBirthdate,
       'profile_image_url': profileImageUrl,
       'linked_providers': linkedProviders,
-      'primary_provider': null,
-    };
+      'primary_provider': null};
   }
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -81,14 +79,12 @@ class UserProfile {
       mbti: json['mbti'],
       gender: Gender.values.firstWhere(
         (g) => g.value == json['gender'],
-        orElse: () => Gender.other,
-      ),
+        orElse: () => Gender.other),
       zodiacSign: json['zodiac_sign'],
       chineseZodiac: json['chinese_zodiac'],
       onboardingCompleted: json['onboarding_completed'],
       subscriptionStatus: SubscriptionStatus.fromString(
-        json['subscription_status'] ?? 'free',
-      ),
+        json['subscription_status'] ?? 'free'),
       fortuneCount: json['fortune_count'],
       premiumFortunesCount: json['premium_fortunes_count'],
       createdAt: json['created_at'] != null 
@@ -102,8 +98,7 @@ class UserProfile {
       linkedProviders: json['linked_providers'] != null 
           ? List<String>.from(json['linked_providers']) 
           : null,
-      primaryProvider: json['primary_provider'],
-    );
+      primaryProvider: json['primary_provider']);
   }
 
   UserProfile copyWith({
@@ -126,8 +121,7 @@ class UserProfile {
     bool? isLunarBirthdate,
     String? profileImageUrl,
     List<String>? linkedProviders,
-    String? primaryProvider,
-  }) {
+    String? primaryProvider}) {
     return UserProfile(
       id: id ?? this.id,
       name: name ?? this.name,

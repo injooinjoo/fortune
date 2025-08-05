@@ -47,8 +47,7 @@ class SoulRates {
     'lucky-fitness': 2,
     'lucky-yoga': 2,
     'wish': 3,
-    'talisman': 3,
-  };
+    'talisman': 3};
 
   // 영혼을 소비하는 프리미엄 운세 (음수)
   static const Map<String, int> consumeRates = {
@@ -91,17 +90,14 @@ class SoulRates {
     'new-year': -20,
     'lucky-lottery': -30,
     'employment': -25,
-    'salpuli': -20,
-  };
+    'salpuli': -20};
 
   // 특별 조건부 운세
   static const Map<String, dynamic> conditionalRates = {
     'hourly': {
       'freeCount': 3,
       'freeAmount': 1,
-      'paidAmount': null,
-    },
-  };
+      'paidAmount': null}};
 
   /// 운세 타입에 따른 영혼 양 반환
   /// 양수: 획득, 음수: 소비, 0: 변화 없음
@@ -202,8 +198,7 @@ class SoulTransaction {
     required this.actionType,
     required this.timestamp,
     required this.balanceBefore,
-    required this.balanceAfter,
-  });
+    required this.balanceAfter});
 
   bool get isSuccessful => balanceAfter >= 0;
 }

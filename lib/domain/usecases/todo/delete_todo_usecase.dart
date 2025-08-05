@@ -21,8 +21,7 @@ class DeleteTodoUseCase implements UseCase<void, DeleteTodoParams> {
 
     return repository.deleteTodo(
       todoId: params.todoId,
-      userId: params.userId,
-    );
+      userId: params.userId);
   }
 }
 
@@ -32,8 +31,7 @@ class DeleteTodoParams extends Equatable {
 
   const DeleteTodoParams({
     required this.todoId,
-    required this.userId,
-  });
+    required this.userId});
 
   @override
   List<Object> get props => [todoId, userId];

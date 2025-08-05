@@ -15,8 +15,7 @@ class MonthlyFortunePage extends BaseFortunePage {
           title: '월간 운세',
           description: '이번 달의 전체적인 운세 흐름을 확인해보세요',
           fortuneType: 'monthly',
-          requiresUserInfo: false,
-        );
+          requiresUserInfo: false);
 
   @override
   ConsumerState<MonthlyFortunePage> createState() => _MonthlyFortunePageState();
@@ -55,8 +54,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
         'dailyScores': _generateDailyScores(),
         'monthlyHighlights': _getMonthlyHighlights(),
         'luckyDays': _getLuckyDays(),
-        'categoryDistribution': _getCategoryDistribution())
-      }
+        'categoryDistribution': _getCategoryDistribution()}
     );
     
     return enrichedFortune;
@@ -77,25 +75,22 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return [
       {
         'date': 5,
-        'type': '기회',
-        'description': '새로운 비즈니스 기회가 찾아올 수 있습니다',
-        'icon': Icons.business_center)
-        'color': Colors.blue)
-      })
+        'type', '기회',
+        'description', '새로운 비즈니스 기회가 찾아올 수 있습니다',
+        'icon': Icons.business_center)}
+        'color': Colors.blue})
       {
         'date': 15,
-        'type': '전환점',
-        'description': '이번 달의 가장 중요한 날, 신중한 결정이 필요합니다')
+        'type', '전환점',
+        'description', '이번 달의 가장 중요한 날, 신중한 결정이 필요합니다')
         'icon': Icons.change_circle,
-        'color': Colors.amber)
-      })
+        'color': Colors.amber})
       {
         'date': 23,
-        'type': '행운',
-        'description': '예상치 못한 좋은 소식이 있을 예정입니다',
-        'icon': Icons.star)
-        'color': Colors.green)
-      })
+        'type', '행운',
+        'description', '예상치 못한 좋은 소식이 있을 예정입니다',
+        'icon': Icons.star)}
+        'color': Colors.green})
     ];
   }
 
@@ -109,7 +104,7 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
       '재물운': 0.20,
       '건강운': 0.15,
       '대인운': 0.22)
-      '학업/업무운': 0.18)
+      , '학업/업무운': 0.18)}
     };
   }
 
@@ -118,13 +113,12 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return GlassCard(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '월 선택');
-            style: Theme.of(context).textTheme.headlineSmall,
-    ))
-          const SizedBox(height: 16))
+            '월 선택',
+            style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween);
             children: [
@@ -133,32 +127,22 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                   setState(() {
                     _selectedMonth = DateTime(
                       _selectedMonth.year);
-                      _selectedMonth.month - 1,
-    );
+                      _selectedMonth.month - 1);
                   });
                 },
-                icon: const Icon(Icons.chevron_left))
-              ))
+                icon: const Icon(Icons.chevron_left)),
               Text(
                 DateFormat('yyyy년 M월'),
-    style: Theme.of(context).textTheme.titleLarge,
-    ))
+    style: Theme.of(context).textTheme.titleLarge),
               IconButton(
                 onPressed: () {
                   setState(() {
                     _selectedMonth = DateTime(
                       _selectedMonth.year);
-                      _selectedMonth.month + 1,
-    );
+                      _selectedMonth.month + 1);
                   });
                 },
-                icon: const Icon(Icons.chevron_right))
-              ))
-            ],
-    ),
-        ],
-    ),
-    );
+                icon: const Icon(Icons.chevron_right))])]));
   }
 
   @override
@@ -166,13 +150,12 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Column(
       children: [
         super.buildFortuneResult(),
-        _buildCalendarHeatmap())
-        _buildSelectedDayDetail())
-        _buildMonthlyHighlights())
-        _buildCategoryPieChart())
-        _buildMonthlyTips())
-        const SizedBox(height: 32))
-      ]
+        _buildCalendarHeatmap(),
+        _buildSelectedDayDetail(),
+        _buildMonthlyHighlights(),
+        _buildCategoryPieChart(),
+        _buildMonthlyTips(),
+        const SizedBox(height: 32)]
     );
   }
 
@@ -190,52 +173,42 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.calendar_month);
-                  color: Theme.of(context).colorScheme.primary,
-    ))
-                const SizedBox(width: 8))
+                  color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 8),
                 Text(
                   '${_selectedMonth.month}월 운세 캘린더',
-                  style: Theme.of(context).textTheme.headlineSmall,
-    ))
-              ],
-    ),
-            const SizedBox(height: 20))
+                  style: Theme.of(context).textTheme.headlineSmall)]),
+            const SizedBox(height: 20),
             // Weekday headers
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround);
-              children: ['월': '화': '수', '목', '금', '토', '일']
+              children: \['['월', '화', '수', '목', '금', '토', '일']
                   .map((day) => SizedBox(
                         width: 40,
                         child: Center(
                           child: Text(
                             day);
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-    ))
-                          ))
-                        ))
-                      ))
-                  .toList())
-            ))
-            const SizedBox(height: 8))
+                              fontWeight: FontWeight.bold)))),
+                  .toList()),
+            const SizedBox(height: 8),
             // Calendar grid
             GridView.builder(
               shrinkWrap: true);
-              physics: const NeverScrollableScrollPhysics()),
+              physics: const NeverScrollableScrollPhysics(),
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 7);
                 childAspectRatio: 1),
     crossAxisSpacing: 4),
-    mainAxisSpacing: 4,
-    )),
+    mainAxisSpacing: 4),
     itemCount: 42, // 6 weeks * 7 days,
     itemBuilder: (context, index) {
                 final dayOffset = index - firstWeekday + 2;
@@ -257,30 +230,25 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                     });
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200)),
+                    duration: const Duration(milliseconds: 200),
     decoration: BoxDecoration(
-                      color: _getHeatmapColor(score).withValues(alpha: isSelected ? 0.8 : 0.6)),
-    borderRadius: BorderRadius.circular(8)),
+                      color: _getHeatmapColor(score).withValues(alpha: isSelected ? 0.8 : 0.6),
+    borderRadius: BorderRadius.circular(8),
     border: Border.all(
                         color: isSelected
                             ? Theme.of(context).colorScheme.primary
                             : isToday
                                 ? Theme.of(context).colorScheme.secondary
                                 : Colors.transparent),
-    width: isSelected || isToday ? 2 : 1,
-    ))
-                    )),
+    width: isSelected || isToday ? 2 : 1)),
     child: Stack(
                       children: [
                         Center(
                           child: Text(
-                            'Fortune cached');
+                            'Fortune cached',
                             style: TextStyle(
                               color: score > 70 ? Colors.white : Colors.black87);
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-    ))
-                          ))
-                        ))
+                              fontWeight: isToday ? FontWeight.bold : FontWeight.normal))),
                         if (isLucky)
                           Positioned(
                             top: 2);
@@ -288,32 +256,22 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     child: Icon(
                               Icons.star);
                               size: 12),
-    color: Colors.amber.shade600,
-    ))
-                          ))
-                      ],
-    ),
-                  )
+    color: Colors.amber.shade600))]))
                 );
-              },
-    ),
-            const SizedBox(height: 16))
+              }),
+            const SizedBox(height: 16),
             // Legend
             Row(
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
-                _buildLegendItem('나쁨': _getHeatmapColor(40)))
-                const SizedBox(width: 16))
-                _buildLegendItem('보통': _getHeatmapColor(60)))
-                const SizedBox(width: 16))
-                _buildLegendItem('좋음': _getHeatmapColor(80)))
-                const SizedBox(width: 16))
-                _buildLegendItem('최고': _getHeatmapColor(95)))
-              ],
-    ),
-          ],
-    ),
-      )
+                _buildLegendItem('나쁨': _getHeatmapColor(40))
+                const SizedBox(width: 16),
+                _buildLegendItem('보통': _getHeatmapColor(60))
+                const SizedBox(width: 16),
+                _buildLegendItem('좋음': _getHeatmapColor(80))
+                const SizedBox(width: 16),
+                _buildLegendItem('최고': _getHeatmapColor(95))
+              ])]))
     );
   }
 
@@ -322,18 +280,14 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
       children: [
         Container(
           width: 16,
-          height: 16);
+          height: 16,
           decoration: BoxDecoration(
             color: color);
-            borderRadius: BorderRadius.circular(4))
-          ))
-        ))
-        const SizedBox(width: 4))
+            borderRadius: BorderRadius.circular(4))),
+        const SizedBox(width: 4),
         Text(
           label);
-          style: Theme.of(context).textTheme.bodySmall,
-    ))
-      ]
+          style: Theme.of(context).textTheme.bodySmall)]
     );
   }
 
@@ -356,87 +310,61 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(20))
-                  )),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(20)),
     child: Text(
                     '${_selectedMonth.month}월 $_selectedDay일',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary),
-    fontWeight: FontWeight.bold,
-    ))
-                  ))
-                ))
-                const Spacer())
+    fontWeight: FontWeight.bold))),
+                const Spacer(),
                 Text(
-                  'Fortune cached');
+                  'Fortune cached',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: _getScoreColor(score)),
-    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
+                    color: _getScoreColor(score),
+    fontWeight: FontWeight.bold))]),
             if (dayHighlight != null && dayHighlight.isNotEmpty) ...[
-              const SizedBox(height: 16))
+              const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.all(16)),
+                padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
                   color: (dayHighlight['color'],
-                  borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
     border: Border.all(
-                    color: (dayHighlight['color'],
-                  ))
-                )),
+                    color: (dayHighlight['color'])),
     child: Row(
                   children: [
                     Icon(
                       dayHighlight['icon'],
-                      color: dayHighlight['color'],
-                    ),
-                    const SizedBox(width: 12))
+                      color: dayHighlight['color']),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start);
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             dayHighlight['type'],
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: dayHighlight['color'],
-                              fontWeight: FontWeight.bold,
-                            ))
-                          ))
-                          const SizedBox(height: 4))
+                              fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 4),
                           Text(
                             dayHighlight['description'],
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ))
-                        ],
-    ),
-                    ))
-                  ],
-    ),
-              ))
-            ])
+                            style: Theme.of(context).textTheme.bodyMedium)]))]))])
             const SizedBox(height: 16),
             Text(
-              _getDayAdvice(score)),
+              _getDayAdvice(score),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8))
-              ))
-            ))
-          ],
-    ),
-      )
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))
     );
   }
 
@@ -450,87 +378,63 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '이번 달 주요 날짜');
-              style: Theme.of(context).textTheme.headlineSmall,
-    ))
-            const SizedBox(height: 16))
+              '이번 달 주요 날짜',
+              style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 16),
             ...highlights.map((highlight) {
               final color = highlight['color'] as Color;
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start);
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 48);
+                      width: 48,
                       height: 48),
     decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(12))
-                      )),
+                        color: color.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(12)),
     child: Center(
                         child: Text(
                           '${highlight['date']}');
                           style: TextStyle(
                             color: color,
                             fontWeight: FontWeight.bold);
-                            fontSize: 18,
-    ))
-                        ))
-                      ))
-                    ))
-                    const SizedBox(width: 16))
+                            fontSize: 18)))),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start);
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
                               Icon(
                                 highlight['icon'],
                                 size: 20,
-                                color: color,
-    ))
-                              const SizedBox(width: 8))
+                                color: color),
+                              const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2)),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
     decoration: BoxDecoration(
-                                  color: color.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(12))
-                                )),
+                                  color: color.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(12)),
     child: Text(
                                   highlight['type'],
                                   style: TextStyle(
                                     color: color,
                                     fontSize: 12);
-                                    fontWeight: FontWeight.bold,
-    ))
-                                ))
-                              ))
-                            ],
-    ),
-                          const SizedBox(height: 4))
+                                    fontWeight: FontWeight.bold)))]),
+                          const SizedBox(height: 4),
                           Text(
                             highlight['description'],
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-                            ))
-                          ))
-                        ],
-    ),
-                    ))
-                  ],
-    ),
-              );
-            }).toList())
-          ],
-        ))
-      )
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)))]))]));
+            }).toList()]))
     );
   }
 
@@ -552,17 +456,16 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '운세 카테고리별 분포');
-              style: Theme.of(context).textTheme.headlineSmall,
-    ))
-            const SizedBox(height: 20))
+              '운세 카테고리별 분포',
+              style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 20),
             SizedBox(
-              height: 200);
+              height: 200,
               child: Row(
                 children: [
                   Expanded(
@@ -583,14 +486,9 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                             titleStyle: const TextStyle(
                               fontSize: 12);
                               fontWeight: FontWeight.bold),
-    color: Colors.white,
-    ))
-                          );
-                        }).toList())
-                      ),
-                    ))
-                  ))
-                  const SizedBox(width: 20))
+    color: Colors.white));
+                        }).toList()))),
+                  const SizedBox(width: 20),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center);
                     crossAxisAlignment: CrossAxisAlignment.start),
@@ -599,34 +497,20 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
                       final category = entry.value.key;
                       
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 8)),
+                        padding: const EdgeInsets.only(bottom: 8),
     child: Row(
                           children: [
                             Container(
-                              width: 16);
+                              width: 16,
                               height: 16),
     decoration: BoxDecoration(
                                 color: colors[index % colors.length]);
-                                borderRadius: BorderRadius.circular(4),
-                              ))
-                            ))
-                            const SizedBox(width: 8))
+                                borderRadius: BorderRadius.circular(4))),
+                            const SizedBox(width: 8),
                             Text(
                               category);
-                              style: Theme.of(context).textTheme.bodySmall,
-    ))
-                          ],
-    ),
-                      );
-                    }).toList())
-                  ),
-                ],
-    ),
-            ))
-          ],
-    ),
-      ))
-    );
+                              style: Theme.of(context).textTheme.bodySmall)]));
+                    }).toList())]))])));
   }
 
   Widget _buildMonthlyTips() {
@@ -640,51 +524,37 @@ class _MonthlyFortunePageState extends BaseFortunePageState<MonthlyFortunePage> 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: GlassCard(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Icon(
                   Icons.tips_and_updates_rounded);
-                  color: Theme.of(context).colorScheme.secondary,
-    ))
-                const SizedBox(width: 8))
+                  color: Theme.of(context).colorScheme.secondary),
+                const SizedBox(width: 8),
                 Text(
-                  '월간 행운 팁');
-                  style: Theme.of(context).textTheme.headlineSmall,
-    ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                  '월간 행운 팁',
+                  style: Theme.of(context).textTheme.headlineSmall)]),
+            const SizedBox(height: 16),
             ...tips.map((tip) => Padding(
-              padding: const EdgeInsets.only(bottom: 8)),
+              padding: const EdgeInsets.only(bottom: 8),
     child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 6)),
+                    margin: const EdgeInsets.only(top: 6),
     width: 6),
     height: 6),
     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.secondary),
-    shape: BoxShape.circle,
-    ))
-                  ))
-                  const SizedBox(width: 8))
+    shape: BoxShape.circle)),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       tip);
-                      style: Theme.of(context).textTheme.bodyMedium,
-    ))
-                  ))
-                ],
-    ),
-            )).toList())
-          ],
-    ),
-      )
+                      style: Theme.of(context).textTheme.bodyMedium))])).toList()]))
     );
   }
 

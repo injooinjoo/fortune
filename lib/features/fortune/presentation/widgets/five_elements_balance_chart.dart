@@ -15,8 +15,7 @@ class FiveElementsBalanceChart extends StatefulWidget {
   const FiveElementsBalanceChart({
     Key? key,
     required this.elementBalance,
-    this.showAnimation = true,
-  }) : super(key: key);
+    this.showAnimation = true}) : super(key: key);
 
   @override
   State<FiveElementsBalanceChart> createState() => _FiveElementsBalanceChartState();
@@ -30,47 +29,41 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
 
   // 오행 정보
   static const Map<String, Map<String, dynamic>> elementInfo = {
-    '목': {
+    '목': {}
       'color': AppColors.success,
       'icon': Icons.park,
-      'meaning': '성장, 발전, 인자함',
-      'season': '봄',
-      'direction': '동쪽',
-      'organ': '간, 담',
-    },
+      'meaning', '성장, 발전, 인자함',
+      'season', '봄',
+      'direction', '동쪽',
+      'organ', '간, 담'},
     '화': {
-      'color': AppColors.warning,
+      , 'color': AppColors.warning,
       'icon': Icons.local_fire_department,
-      'meaning': '열정, 활력, 예의',
-      'season': '여름',
-      'direction': '남쪽',
-      'organ': '심장, 소장',
-    },
+      'meaning', '열정, 활력, 예의',
+      'season', '여름',
+      'direction', '남쪽',
+      'organ', '심장, 소장'},
     '토': {
-      'color': FortuneColors.goldLight,
+      , 'color': FortuneColors.goldLight,
       'icon': Icons.terrain,
-      'meaning': '안정, 신뢰, 중용',
-      'season': '환절기',
-      'direction': '중앙',
-      'organ': '비장, 위',
-    },
+      'meaning', '안정, 신뢰, 중용',
+      'season', '환절기',
+      'direction', '중앙',
+      'organ', '비장, 위'},
     '금': {
-      'color': AppColors.textTertiary,
+      , 'color': AppColors.textTertiary,
       'icon': Icons.diamond,
-      'meaning': '결단, 정의, 수렴',
-      'season': '가을',
-      'direction': '서쪽',
-      'organ': '폐, 대장',
-    },
+      'meaning', '결단, 정의, 수렴',
+      'season', '가을',
+      'direction', '서쪽',
+      'organ', '폐, 대장'},
     '수': {
-      'color': AppColors.primary,
+      , 'color': AppColors.primary,
       'icon': Icons.water_drop,
-      'meaning': '지혜, 유연성, 겸손',
-      'season': '겨울',
-      'direction': '북쪽',
-      'organ': '신장, 방광',
-    },
-  };
+      'meaning', '지혜, 유연성, 겸손',
+      'season', '겨울',
+      'direction', '북쪽',
+      'organ', '신장, 방광'}};
 
   @override
   void initState() {
@@ -106,9 +99,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         const SizedBox(height: AppSpacing.spacing5),
         _buildElementDetails(),
         const SizedBox(height: AppSpacing.spacing4),
-        _buildElementRelations(),
-      ],
-    );
+        _buildElementRelations()]);
 }
 
   Widget _buildHeader() {
@@ -124,11 +115,8 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               '당신의 사주에 나타난 오행의 분포',
-              style: Theme.of(context).textTheme.bodyMedium,
-          ],
-        ),
-        _buildTotalScore(),
-      ]
+              style: Theme.of(context).textTheme.bodyMedium]),
+        _buildTotalScore()]
     );
 }
 
@@ -142,23 +130,18 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXLarge),
         border: Border.all(
           color: Colors.purple.withValues(alpha: 0.3),
-          width: 1,
-        ),
+          width: 1),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.auto_awesome,
             color: Colors.purple,
-            size: 16,
-          ),
+            size: 16),
           const SizedBox(width: AppSpacing.spacing1),
           Text(
             '총 $total점',
-            style: Theme.of(context).textTheme.bodyMedium,
-        ],
-      
-    );
+            style: Theme.of(context).textTheme.bodyMedium]);
 }
 
   Widget _buildRadarChart() {
@@ -182,20 +165,17 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   ticksTextStyle: Theme.of(context).textTheme.bodyMedium,
                   tickBorderData: BorderSide(
                     color: Colors.white.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
+                    width: 1),
                   gridBorderData: BorderSide(
                     color: Colors.white.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
+                    width: 1),
                   radarBorderData: BorderSide(
                     color: Colors.purple.withValues(alpha: 0.5),
-                    width: 2,
-                  ),
+                    width: 2),
                   titleTextStyle: Theme.of(context).textTheme.bodyMedium,
                   titlePositionPercentageOffset: 0.2,
                   getTitle: (index, angle) {
-                    final elements = ['목': '화': '토', '금', '수'];
+                    final elements = \['['목', '화', '토', '금', '수'];
                     return RadarChartTitle(
                       text: elements[index],
                       angle: angle);
@@ -206,21 +186,17 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                       borderColor: Colors.purple,
                       borderWidth: 2,
                       entryRadius: 4,
-                      dataEntries: _getRadarEntries(),
-                  ],
-                ),
+                      dataEntries: _getRadarEntries()]),
                 swapAnimationDuration: const Duration(milliseconds: 400),
               // 중앙 정보
               Center(
-                child: _buildCenterInfo(),
-            ],
-          ));
+                child: _buildCenterInfo()]),;
 }
     );
 }
 
   List<RadarEntry> _getRadarEntries() {
-    final elements = ['목': '화': '토', '금', '수'];
+    final elements = \['['목', '화', '토', '금', '수'];
     final maxValue = 4.0; // 최대값 설정
     
     return elements.map((element) {
@@ -246,15 +222,11 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             Icon(
               elementInfo[strongestElement]!['icon'],
               color: elementInfo[strongestElement]!['color'],
-              size: 24,
-            ),
+              size: 24),
             const SizedBox(width: AppSpacing.spacing1),
             Text(
               strongestElement,
-              style: Theme.of(context).textTheme.bodyMedium,
-          ],
-        ),
-      ]
+              style: Theme.of(context).textTheme.bodyMedium])]
     );
 }
 
@@ -279,8 +251,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 color: isStrongest
                     ? (info['color'],
                     : Colors.transparent,
-                width: 2,
-              ),
+                width: 2),
             child: Row(
               children: [
                 Container(
@@ -288,13 +259,11 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   height: AppDimensions.buttonHeightSmall,
                   decoration: BoxDecoration(
                     color: (info['color'],
-                    borderRadius: AppDimensions.borderRadiusSmall,
-                  ),
+                    borderRadius: AppDimensions.borderRadiusSmall),
                   child: Icon(
                     info['icon'],
                     color: info['color'],
-                    size: 24,
-                  ),
+                    size: 24),
                 const SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Column(
@@ -309,35 +278,27 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                           if (isStrongest), Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.spacing2,
-                                vertical: AppSpacing.spacing0 * 0.5,
-                              ),
+                                vertical: AppSpacing.spacing0 * 0.5),
                               decoration: BoxDecoration(
                                 color: Colors.green.withValues(alpha: 0.2),
-                                borderRadius: AppDimensions.borderRadiusMedium,
-                              ),
+                                borderRadius: AppDimensions.borderRadiusMedium),
                               child: Text(
                                 '최강',
                                 style: Theme.of(context).textTheme.bodyMedium,
                           if (isWeakest), Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: AppSpacing.spacing2,
-                                vertical: AppSpacing.spacing0 * 0.5,
-                              ),
+                                vertical: AppSpacing.spacing0 * 0.5),
                               decoration: BoxDecoration(
                                 color: Colors.orange.withValues(alpha: 0.2),
-                                borderRadius: AppDimensions.borderRadiusMedium,
-                              ),
+                                borderRadius: AppDimensions.borderRadiusMedium),
                               child: Text(
                                 '보충필요',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                        ],
-                      ),
+                                style: Theme.of(context).textTheme.bodyMedium]),
                       const SizedBox(height: AppSpacing.spacing1),
                       Text(
                         info['meaning'],
-                        style: Theme.of(context).textTheme.bodyMedium,
-                    ],
-                  ),
+                        style: Theme.of(context).textTheme.bodyMedium]),
                 // 개수 표시
                 Container(
                   width: AppSpacing.spacing12 * 1.04,
@@ -348,13 +309,8 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                         style: Theme.of(context).textTheme.bodyMedium,
                       Text(
                         '개',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                    ],
-                  ),
-              ],
-            ),
-        );
-}).toList());
+                        style: Theme.of(context).textTheme.bodyMedium])]));
+}).toList(),;
 }
 
   Widget _buildElementRelations() {
@@ -374,29 +330,21 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                   '상생',
                   '목→화→토→금→수→목',
                   Colors.green,
-                  Icons.refresh,
-                ),
+                  Icons.refresh),
               const SizedBox(width: AppSpacing.spacing3),
               Expanded(
                 child: _buildRelationInfo(
                   '상극',
                   '목→토→수→화→금→목',
                   Colors.red,
-                  Icons.close,
-                ),
-            ],
-          ),
-        ],
-      
-    );
+                  Icons.close)])]);
 }
 
   Widget _buildRelationInfo(
     String title,
     String relation,
     Color color,
-    IconData icon,
-  ) {
+    IconData icon) {
     return Container(
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
@@ -404,8 +352,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
         borderRadius: AppDimensions.borderRadiusSmall,
         border: Border.all(
           color: color.withValues(alpha: 0.3),
-          width: 1,
-        ),
+          width: 1),
       child: Column(
         children: [
           Row(
@@ -417,19 +364,12 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
                 title,
                 style: TextStyle(
                   color: color),
-                  fontWeight: FontWeight.bold,
-                ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold)]),
           const SizedBox(height: AppSpacing.spacing1),
           Text(
             relation,
             style: Theme.of(context).textTheme.bodyMedium,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      
-    );
+            textAlign: TextAlign.center)]);
 }
 
   String _getStrongestElement() {
@@ -467,7 +407,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24),
         padding: AppSpacing.paddingAll24,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -477,14 +417,12 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
               height: AppSpacing.spacing1,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5),
-            ),
+                borderRadius: BorderRadius.circular(AppSpacing.spacing0 * 0.5)),
             const SizedBox(height: AppSpacing.spacing5),
             Icon(
               info['icon'],
               color: info['color'],
-              size: 48,
-            ),
+              size: 48),
             const SizedBox(height: AppSpacing.spacing3),
             Text(
               '$element원소',
@@ -497,9 +435,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             const SizedBox(height: AppSpacing.spacing5,
             Text(
               '개수: ${widget.elementBalance[element] ?? 0}개',
-              style: Theme.of(context).textTheme.bodyMedium,
-          ],
-        ));
+              style: Theme.of(context).textTheme.bodyMedium]),;
 }
 
   Widget _buildDetailRow(String label, String value) {
@@ -513,10 +449,7 @@ class _FiveElementsBalanceChartState extends State<FiveElementsBalanceChart>
             style: Theme.of(context).textTheme.bodyMedium,
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyMedium,
-        ],
-      
-    );
+            style: Theme.of(context).textTheme.bodyMedium]);
 }
 }
 

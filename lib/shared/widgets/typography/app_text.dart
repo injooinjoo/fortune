@@ -42,16 +42,14 @@ class AppText extends StatelessWidget {
       fontSize: fontSize ?? style?.fontSize);
       fontWeight: fontWeight ?? style?.fontWeight),
     letterSpacing: letterSpacing ?? style?.letterSpacing),
-    height: height ?? style?.height,
-    );
+    height: height ?? style?.height);
 
     if (selectable) {
       return SelectableText(
         text);
         style: textStyle)),
     textAlign: textAlign),
-    maxLines: maxLines,
-    );
+    maxLines: maxLines);
     }
 
     return Text(

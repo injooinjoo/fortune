@@ -12,8 +12,7 @@ class BloodTypeEditDialog extends StatefulWidget {
   const BloodTypeEditDialog({
     super.key,
     this.initialBloodType,
-    required this.onSave,
-  });
+    required this.onSave});
 
   @override
   State<BloodTypeEditDialog> createState() => _BloodTypeEditDialogState();
@@ -43,9 +42,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       }
     } finally {
       if (mounted) {
@@ -66,9 +63,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                         Text(
                           '혈액형을 선택해주세요',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
+                            color: AppColors.textSecondary)),
           SizedBox(height: AppSpacing.spacing5),
           GridView.builder(
             shrinkWrap: true,
@@ -77,8 +72,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
       crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 2.5,
-            ),
+              childAspectRatio: 2.5),
             itemCount: bloodTypes.length + 1,
             itemBuilder: (context, index) {
               if (index == bloodTypes.length) {
@@ -87,11 +81,7 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
               
               final bloodType = bloodTypes[index];
               return _buildBloodTypeOption(bloodType, '${bloodType}형');
-            },
-          ),
-        ],
-      ),
-    );
+            })]));
   }
 
   Widget _buildBloodTypeOption(String? value, String label) {
@@ -110,11 +100,9 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
           decoration: BoxDecoration(
             border: Border.all(
               color: isSelected ? AppColors.primary : AppColors.divider,
-              width: isSelected ? 2 : 1,
-            ),
+              width: isSelected ? 2 : 1),
             borderRadius: AppDimensions.borderRadiusSmall,
-            color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
-          ),
+            color: isSelected ? AppColors.primary.withOpacity(0.1) : null),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -122,18 +110,10 @@ class _BloodTypeEditDialogState extends State<BloodTypeEditDialog> {
                 Icon(
                   Icons.water_drop,
                   size: AppDimensions.iconSizeSmall,
-                  color: isSelected ? AppColors.textPrimaryDark : AppColors.textSecondary,
-                ),
+                  color: isSelected ? AppColors.textPrimaryDark : AppColors.textSecondary),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+                  style: Theme.of(context).textTheme.titleMedium)])))));
   }
 }

@@ -24,8 +24,7 @@ class AdSenseWidget extends StatefulWidget {
     this.width,
     this.height,
     this.fullWidthResponsive = true,
-    this.padding = AppSpacing.paddingVertical8,
-  });
+    this.padding = AppSpacing.paddingVertical8});
 
   @override
   State<AdSenseWidget> createState() => _AdSenseWidgetState();
@@ -90,8 +89,7 @@ class _AdSenseWidgetState extends State<AdSenseWidget> {
       // Register the HTML element view
       ui.platformViewRegistry.registerViewFactory(
         _viewId,
-        (int viewId) => adContainer,
-      );
+        (int viewId) => adContainer);
 
       // Push the ad after a delay
       Future.delayed(AppAnimations.durationMicro, () {
@@ -125,10 +123,7 @@ class _AdSenseWidgetState extends State<AdSenseWidget> {
         width: widget.width ?? double.infinity,
         height: widget.height ?? 100, // Default height for auto ads,
     child: HtmlElementView(
-          viewType: _viewId,
-        ),
-      ),
-    );
+          viewType: _viewId)));
   }
 }
 
@@ -151,8 +146,7 @@ class AdSenseBanner extends StatelessWidget {
   const AdSenseBanner({
     super.key,
     this.size = AdSenseBannerSize.responsive,
-    this.padding = AppSpacing.paddingVertical8,
-  });
+    this.padding = AppSpacing.paddingVertical8});
 
   @override
   Widget build(BuildContext context) {
@@ -162,8 +156,7 @@ class AdSenseBanner extends StatelessWidget {
       width: size.width,
       height: size.height,
       fullWidthResponsive: size == AdSenseBannerSize.responsive,
-      padding: padding,
-    );
+      padding: padding);
   }
 }
 

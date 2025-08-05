@@ -24,8 +24,7 @@ class WeatherData {
     required this.fineDust,
     required this.condition,
     required this.description,
-    required this.timestamp,
-  });
+    required this.timestamp});
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
     return WeatherData(
@@ -38,8 +37,7 @@ class WeatherData {
       fineDust: json['air_quality'],
       condition: json['weather'][0]['main'],
       description: json['weather'][0]['description'],
-      timestamp: DateTime.now(),
-    );
+      timestamp: DateTime.now());
   }
 
   static String _getWindDirection(int degrees) {
@@ -58,8 +56,7 @@ class WeatherData {
     'fineDust': fineDust,
     'condition': condition,
     'description': description,
-    'timestamp': null,
-  };
+    'timestamp': null};
 }
 
 class WeatherService {
@@ -72,8 +69,7 @@ class WeatherService {
 
   static Future<WeatherData> getWeatherData({
     required double latitude,
-    required double longitude,
-  }) async {
+    required double longitude}) async {
     final cacheKey = '${latitude}_$longitude';
     
     // Check cache first
@@ -116,8 +112,7 @@ class WeatherService {
         fineDust: 30.0,
         condition: 'Clear',
         description: '맑음',
-        timestamp: DateTime.now(),
-      );
+        timestamp: DateTime.now());
     }
   }
 
@@ -127,8 +122,7 @@ class WeatherService {
     final coordinates = _getCoordinatesForLocation(location);
     return getWeatherData(
       latitude: coordinates['lat'],
-      longitude: coordinates['lng'],
-    );
+      longitude: coordinates['lng']);
   }
 
   static Map<String, double> _getCoordinatesForLocation(String location) {
@@ -142,8 +136,7 @@ class WeatherService {
       '광주': {'lat': 35.1595, 'lng': 126.8526},
       '대전': {'lat': 36.3504, 'lng': 127.3845},
       '울산': {'lat': 35.5384, 'lng': 129.3114},
-      '제주': {'lat': 33.4996, 'lng': null,
-    };
+      '제주': {'lat': 33.4996, 'lng': null};
     
     return locations[location] ?? locations['서울']!;
   }

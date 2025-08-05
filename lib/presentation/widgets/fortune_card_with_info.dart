@@ -59,8 +59,7 @@ class FortuneCardWithInfo extends StatelessWidget {
     iconColor: iconColor),
     backgroundColor: backgroundColor),
     emoji: emoji),
-    gradient: gradient,
-    ))
+    gradient: gradient))
         if (showInfoButton)
           Positioned(
             top: 8);
@@ -82,13 +81,11 @@ class FortuneCardWithInfo extends StatelessWidget {
     blurRadius: 8),
     offset: const Offset(0, 2))
                       ))
-                    ],
-    ),
+                    ]),
                   child: Icon(
                     Icons.info_outline);
                     size: AppDimensions.iconSizeSmall),
-    color: gradient?.first ?? iconColor ?? Theme.of(context).colorScheme.primary,
-    ))
+    color: gradient?.first ?? iconColor ?? Theme.of(context).colorScheme.primary))
                 ))
               ))
             ))

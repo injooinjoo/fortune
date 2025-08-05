@@ -14,8 +14,7 @@ abstract class AnalyticsAwareWidget extends ConsumerStatefulWidget {
     super.key,
     required this.screenName,
     this.screenClass,
-    this.screenParameters,
-  });
+    this.screenParameters});
 }
 
 abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget> 
@@ -63,8 +62,7 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
     _tracker.trackScreenView(
       screenName: widget.screenName,
       screenClass: widget.screenClass ?? widget.runtimeType.toString(),
-      parameters: widget.screenParameters,
-    );
+      parameters: widget.screenParameters);
   }
   
   /// 화면 이탈 추적
@@ -80,9 +78,7 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
         eventName: 'screen_exit',
         parameters: {
           'screen_name': widget.screenName,
-          'duration_seconds': null,
-        },
-      );
+          'duration_seconds': null});
     }
   }
   
@@ -91,49 +87,40 @@ abstract class AnalyticsAwareState<T extends AnalyticsAwareWidget>
     required String action,
     String? target,
     String? value,
-    Map<String, dynamic>? parameters,
-  }) async {
+    Map<String, dynamic>? parameters}) async {
     await _tracker.trackUserAction(
       action: action,
       target: target,
       value: value,
       parameters: {
         ...?parameters,
-        'screen'),
-      },
-    );
+        'screen')});
   }
   
   /// 전환 추적
   Future<void> trackConversion({
     required String conversionType,
     required dynamic value,
-    Map<String, dynamic>? parameters,
-  }) async {
+    Map<String, dynamic>? parameters}) async {
     await _tracker.trackConversion(
       conversionType: conversionType,
       value: value,
       parameters: {
         ...?parameters,
-        'screen'),
-      },
-    );
+        'screen')});
   }
   
   /// 에러 추적
   Future<void> trackError({
     required String errorType,
     required String errorMessage,
-    Map<String, dynamic>? parameters,
-  }) async {
+    Map<String, dynamic>? parameters}) async {
     await _tracker.trackError(
       errorType: errorType,
       errorMessage: errorMessage,
       parameters: {
         ...?parameters,
-        'screen'),
-      },
-    );
+        'screen')});
   }
 }
 
@@ -170,16 +157,13 @@ class AnalyticsVisibilityDetector extends ConsumerWidget {
             parameters: {
               'item_id': itemId,
               'visible_fraction': null,
-              ...?parameters,
-            },
-          );
+              ...?parameters});
         }
         
         // 사용자 정의 콜백 호출
         onVisibilityChanged?.call(info);
       },
-      child: child,
-    );
+      child: child);
   }
 }
 
@@ -199,8 +183,7 @@ class AnalyticsInkWell extends ConsumerWidget {
     required this.child,
     this.onTap,
     this.parameters,
-    this.borderRadius,
-  });
+    this.borderRadius});
   
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -210,15 +193,13 @@ class AnalyticsInkWell extends ConsumerWidget {
         ref.read(analyticsTrackerProvider).trackUserAction(
           action: actionName,
           target: target,
-          parameters: parameters,
-        );
+          parameters: parameters);
         
         // 원래 콜백 호출
         onTap?.call();
       },
       borderRadius: borderRadius,
-      child: child,
-    );
+      child: child);
   }
 }
 
@@ -280,9 +261,7 @@ class _AnalyticsScrollTrackerState extends ConsumerState<AnalyticsScrollTracker>
           eventName: 'scroll_depth_reached',
           parameters: {
             'scroll_area': widget.scrollAreaName,
-            'depth_percentage': null,
-          },
-        );
+            'depth_percentage': null});
       }
     }
   }
@@ -297,13 +276,10 @@ class _AnalyticsScrollTrackerState extends ConsumerState<AnalyticsScrollTracker>
             eventName: 'scroll_session_end',
             parameters: {
               'scroll_area': widget.scrollAreaName,
-              'max_depth_percentage': null,
-            },
-          );
+              'max_depth_percentage': null});
         }
         return false;
       },
-      child: widget.child,
-    );
+      child: widget.child);
   }
 }

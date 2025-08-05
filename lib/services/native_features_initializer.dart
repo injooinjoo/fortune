@@ -38,8 +38,7 @@ class NativeFeaturesInitializer {
       await WidgetDataManager.initialize();
       await Workmanager().initialize(
         callbackDispatcher,
-        isInDebugMode: false,
-      );
+        isInDebugMode: false);
       await _registerBackgroundTasks();
       WidgetService.widgetClicks.listen((uri) {
         if (uri != null) {
@@ -77,18 +76,14 @@ class NativeFeaturesInitializer {
         'widget_update',
         frequency: const Duration(hours: 1),
         constraints: Constraints(
-          networkType: NetworkType.connected,
-        ),
-      );
+          networkType: NetworkType.connected));
       await Workmanager().registerPeriodicTask(
         'daily_fortune_task',
         'daily_fortune_fetch',
         frequency: const Duration(days: 1),
         initialDelay: _calculateInitialDelay(6, 0),
         constraints: Constraints(
-          networkType: NetworkType.connected,
-        ),
-      );
+          networkType: NetworkType.connected));
       Logger.info('Background tasks registered');
     } catch (e) {
       Logger.error('Failed to register background tasks', e);
@@ -107,12 +102,10 @@ class NativeFeaturesInitializer {
   static Future<void> scheduleDailyNotification({
     required int hour,
     required int minute,
-    bool enabled = true,
-  }) async {
+    bool enabled = true}) async {
     await NotificationService.scheduleDailyFortuneReminder(
       time: TimeOfDay(hour: hour, minute: minute),
-      enabled: enabled,
-    );
+      enabled: enabled);
   }
 
   static Future<void> showTestNotification() async {
@@ -120,8 +113,7 @@ class NativeFeaturesInitializer {
       id: 'test_notification',
       title: '운세 알림 테스트',
       body: '알림이 정상적으로 작동합니다!',
-      payload: 'test',
-    );
+      payload: 'test');
   }
 
   static Future<void> updateDailyFortuneWidget(dynamic fortune) async {
@@ -131,12 +123,10 @@ class NativeFeaturesInitializer {
   static Future<void> updateLoveFortuneWidget({
     required String partnerName,
     required int compatibilityScore,
-    required String message,
-  }) async {
+    required String message}) async {
     await WidgetDataManager.updateLoveFortune(
       partnerName: partnerName,
       compatibilityScore: compatibilityScore,
-      message: message,
-    );
+      message: message);
   }
 }

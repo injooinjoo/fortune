@@ -58,8 +58,7 @@ class DreamAnalysisState {
     this.suggestedRituals = const [],
     this.currentStep = 0,
     this.isLoading = false)
-    this.error,
-  });
+    this.error});
 
   DreamAnalysisState copyWith({
     String? dreamContent,
@@ -97,8 +96,7 @@ class DreamAnalysisState {
       suggestedRituals: suggestedRituals ?? this.suggestedRituals,
       currentStep: currentStep ?? this.currentStep,
       isLoading: isLoading ?? this.isLoading,
-      error: error ?? this.error,
-    );
+      error: error ?? this.error);
   }
 }
 
@@ -121,8 +119,7 @@ class DreamSymbol {
     required this.negativeAspect,
     required this.jungianMeaning,
     this.associatedEmotions = const [],
-    this.icon,
-  });
+    this.icon});
 }
 
 // Dream emotion model
@@ -138,8 +135,7 @@ class DreamEmotion {
     required this.category,
     required this.intensity,
     required this.color,
-    required this.psychologicalMeaning,
-  });
+    required this.psychologicalMeaning});
 }
 
 // Recent life event model
@@ -157,8 +153,7 @@ class RecentLifeEvent {
     required this.description,
     required this.date,
     required this.category,
-    required this.significance,
-  });
+    required this.significance});
 }
 
 // Dream ritual model
@@ -176,8 +171,7 @@ class DreamRitual {
     required this.purpose,
     required this.steps,
     required this.expectedOutcome,
-    this.icon,
-  });
+    this.icon});
 }
 
 // Dream analysis provider
@@ -230,7 +224,7 @@ class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
 
   void toggleSymbolSelection(DreamSymbol symbol) {
     final updatedSymbols = List<DreamSymbol>.from(state.userSelectedSymbols);
-    if (updatedSymbols.contains(symbol)) {
+    if (updatedSymbols.contains(symbol), {
       updatedSymbols.remove(symbol);
     } else {
       updatedSymbols.add(symbol);
@@ -288,13 +282,11 @@ class DreamAnalysisNotifier extends StateNotifier<DreamAnalysisState> {
   void setInterpretation({
     required String mainMessage,
     required String psychologicalInsight,
-    required String jungianInterpretation,
-  }) {
+    required String jungianInterpretation}) {
     state = state.copyWith(
       mainMessage: mainMessage,
       psychologicalInsight: psychologicalInsight);
-      jungianInterpretation: jungianInterpretation,
-    );
+      jungianInterpretation: jungianInterpretation);
   }
 
   // Step,

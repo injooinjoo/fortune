@@ -32,8 +32,7 @@ class TokenState {
     this.subscription,
     Map<String, int>? consumptionRates,
     this.isConsumingToken = false,
-    this.userProfile,
-  }) : consumptionRates = consumptionRates ?? _defaultConsumptionRates;
+    this.userProfile}) : consumptionRates = consumptionRates ?? _defaultConsumptionRates;
   
   static const Map<String, int> _defaultConsumptionRates = {
     // Simple fortunes (1 token)
@@ -82,8 +81,7 @@ class TokenState {
     'lucky-realestate': 5,
     'celebrity-match': 5,
     'network-report': 5,
-    'five-blessings': 5,
-  };
+    'five-blessings': 5};
 
   TokenState copyWith({
     TokenBalance? balance,
@@ -94,8 +92,7 @@ class TokenState {
     UnlimitedSubscription? subscription,
     Map<String, int>? consumptionRates,
     bool? isConsumingToken,
-    UserProfile? userProfile,
-  }) {
+    UserProfile? userProfile}) {
     return TokenState(
       balance: balance ?? this.balance,
       isLoading: isLoading ?? this.isLoading,
@@ -105,8 +102,7 @@ class TokenState {
       subscription: subscription ?? this.subscription,
       consumptionRates: consumptionRates ?? this.consumptionRates,
       isConsumingToken: isConsumingToken ?? this.isConsumingToken,
-      userProfile: userProfile ?? this.userProfile,
-    );
+      userProfile: userProfile ?? this.userProfile);
   }
 
   bool get hasUnlimitedAccess => 
@@ -158,21 +154,18 @@ class TokenNotifier extends StateNotifier<TokenState> {
       final results = await Future.wait([
         _apiService.getTokenBalance(userId: user.id),
         _apiService.getSubscription(userId: user.id),
-        _apiService.getTokenConsumptionRates(),
-      ]);
+        _apiService.getTokenConsumptionRates()]);
 
       state = state.copyWith(
         balance: results[0] as TokenBalance,
         subscription: results[1] as UnlimitedSubscription?,
         consumptionRates: results[2] as Map<String, int>,
         userProfile: userProfile,
-        isLoading: false,
-      );
+        isLoading: false);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
-      );
+        error: e.toString());
     }
   }
 
@@ -180,16 +173,14 @@ class TokenNotifier extends StateNotifier<TokenState> {
   Future<bool> checkAndConsumeTokens(int amount, String fortuneType) async {
     return consumeTokens(
       fortuneType: fortuneType,
-      amount: amount,
-    );
+      amount: amount);
   }
 
   // 토큰 소비 (프리미엄 운세를 볼 때,
   Future<bool> consumeTokens({
     required String fortuneType,
     required int amount,
-    String? referenceId,
-  }) async {
+    String? referenceId}) async {
     // 테스트 계정 확인
     final userProfile = await ref.read(userProfileProvider.future);
     if (userProfile != null && userProfile.hasUnlimitedTokens) {
@@ -231,9 +222,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
         state = state.copyWith(
           balance: state.balance!.copyWith(
             remainingTokens: state.balance!.remainingTokens - actualAmount,
-            usedTokens: state.balance!.usedTokens + actualAmount,
-          ),
-        );
+            usedTokens: state.balance!.usedTokens + actualAmount));
       }
 
       // API 호출
@@ -241,13 +230,11 @@ class TokenNotifier extends StateNotifier<TokenState> {
         userId: user.id,
         fortuneType: fortuneType,
         amount: actualAmount,
-        referenceId: referenceId,
-      );
+        referenceId: referenceId);
 
       state = state.copyWith(
         balance: newBalance,
-        isConsumingToken: false,
-      );
+        isConsumingToken: false);
 
       // Track token usage in statistics
       try {
@@ -266,15 +253,13 @@ class TokenNotifier extends StateNotifier<TokenState> {
       if (e is InsufficientTokensException) {
         state = state.copyWith(
           isConsumingToken: false,
-          error: 'INSUFFICIENT_TOKENS',
-        );
+          error: 'INSUFFICIENT_TOKENS');
         return false;
       }
 
       state = state.copyWith(
         isConsumingToken: false,
-        error: e.toString(),
-      );
+        error: e.toString());
       return false;
     }
   }
@@ -312,8 +297,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
   // 토큰 구매
   Future<Map<String, dynamic>?> purchaseTokens({
     required String packageId,
-    required String paymentMethodId,
-  }) async {
+    required String paymentMethodId}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -329,8 +313,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
-      );
+        error: e.toString());
       return null;
     }
   }
@@ -349,21 +332,18 @@ class TokenNotifier extends StateNotifier<TokenState> {
       
       state = state.copyWith(
         balance: newBalance,
-        isLoading: false,
-      );
+        isLoading: false);
 
       return true;
     } catch (e) {
       if (e is AlreadyClaimedException) {
         state = state.copyWith(
           isLoading: false,
-          error: 'ALREADY_CLAIMED',
-        );
+          error: 'ALREADY_CLAIMED');
       } else {
         state = state.copyWith(
           isLoading: false,
-          error: e.toString(),
-        );
+          error: e.toString());
       }
       return false;
     }
@@ -372,8 +352,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
   // 영혼 획득 (무료 운세를 볼 때,
   Future<bool> earnSouls({
     required String fortuneType,
-    String? referenceId,
-  }) async {
+    String? referenceId}) async {
     // 운세 타입에 따른 영혼 획득량 확인
     final soulAmount = SoulRates.getSoulAmount(fortuneType);
     
@@ -395,9 +374,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
         state = state.copyWith(
           balance: state.balance!.copyWith(
             remainingTokens: state.balance!.remainingTokens + soulAmount,
-            totalTokens: state.balance!.totalTokens + soulAmount,
-          ),
-        );
+            totalTokens: state.balance!.totalTokens + soulAmount));
       }
 
       // API 호출 (기존 rewardTokensForAdView 사용,
@@ -409,8 +386,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
       state = state.copyWith(
         balance: newBalance,
-        isLoading: false,
-      );
+        isLoading: false);
 
       // Track soul earnings in statistics
       try {
@@ -435,8 +411,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
   // 광고 시청 후 토큰 보상 (레거시 - 향후 제거 예정,
   Future<bool> rewardTokensForAd({
     required String fortuneType,
-    int rewardAmount = 1,
-  }) async {
+    int rewardAmount = 1}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -450,9 +425,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
         state = state.copyWith(
           balance: state.balance!.copyWith(
             remainingTokens: state.balance!.remainingTokens + rewardAmount,
-            totalTokens: state.balance!.totalTokens + rewardAmount,
-          ),
-        );
+            totalTokens: state.balance!.totalTokens + rewardAmount));
       }
 
       // API 호출
@@ -464,8 +437,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
 
       state = state.copyWith(
         balance: newBalance,
-        isLoading: false,
-      );
+        isLoading: false);
 
       // Track token earnings in statistics
       try {
@@ -498,8 +470,7 @@ class TokenNotifier extends StateNotifier<TokenState> {
       // 영혼 소비 (프리미엄 운세,
       return consumeTokens(
         fortuneType: fortuneType,
-        amount: -soulAmount,
-      );
+        amount: -soulAmount);
     }
     
     // 변화 없음

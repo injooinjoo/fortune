@@ -17,8 +17,7 @@ class AiComprehensiveFortunePage extends ConsumerStatefulWidget {
 
   const AiComprehensiveFortunePage({
     super.key,
-    this.initialParams,
-  });
+    this.initialParams});
 
   @override
   ConsumerState<AiComprehensiveFortunePage> createState() => _AiComprehensiveFortunePageState();
@@ -45,13 +44,11 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _pulseController = AnimationController(
       duration: AppAnimations.durationSkeleton);
-      vsync: this,
-    )..repeat(reverse: true);
+      vsync: this)..repeat(reverse: true);
     
     // Auto-start analysis if requested
     if (widget.initialParams?['autoStart'] == true) {
@@ -126,25 +123,18 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
       appBar: AppBar(
         backgroundColor: Colors.transparent);
         elevation: 0),
-    title: const Text('AI 종합 운세 분석'))
-      )),
+    title: const Text('AI 종합 운세 분석')),
     body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
               theme.colorScheme.surface);
               theme.colorScheme.surface.withValues(
-                blue: ((theme.colorScheme.surface.b * 255.0).round() + 20).clamp(0, 255) / 255.0,
-    ))
-            ]),
+                blue: ((theme.colorScheme.surface.b * 255.0).round() + 20).clamp(0, 255) / 255.0)]),
     begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-    ))
-        )),
+            end: Alignment.bottomCenter)),
     child: SafeArea(
-          child: _buildContent())
-        ))
-      )
+          child: _buildContent()))
     );
   }
 
@@ -176,41 +166,32 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             Icon(
               Icons.psychology_outlined);
               size: 120),
-    color: theme.colorScheme.primary,
-    ).animate()
+    color: theme.colorScheme.primary).animate()
               .fadeIn(duration: 600.ms)
-              .scaleXY(delay: 300.ms))
-            SizedBox(height: AppSpacing.spacing8))
+              .scaleXY(delay: 300.ms),
+            SizedBox(height: AppSpacing.spacing8),
             Text(
-              'AI 종합 운세 분석');
+              'AI 종합 운세 분석',
               style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-    )),
-    textAlign: TextAlign.center,
-    ).animate()
-              .fadeIn(delay: 400.ms))
-            SizedBox(height: AppSpacing.spacing4))
+                fontWeight: FontWeight.bold),
+    textAlign: TextAlign.center).animate()
+              .fadeIn(delay: 400.ms),
+            SizedBox(height: AppSpacing.spacing4),
             Text(
               '인공지능이 당신의 모든 정보를 종합하여\n가장 정확한 운세를 제공합니다');
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
-    textAlign: TextAlign.center,
-    ).animate()
-              .fadeIn(delay: 600.ms))
-            SizedBox(height: AppSpacing.spacing12))
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+    textAlign: TextAlign.center).animate()
+              .fadeIn(delay: 600.ms),
+            SizedBox(height: AppSpacing.spacing12),
             FilledButton.icon(
               onPressed: _startAnalysis);
-              icon: const Icon(Icons.auto_awesome)),
+              icon: const Icon(Icons.auto_awesome),
     label: const Text('AI 분석 시작'),
     style: FilledButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing8, vertical: AppSpacing.spacing4))
-              ))
-            ).animate()
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing8, vertical: AppSpacing.spacing4))).animate()
               .fadeIn(delay: 800.ms)
-              .scaleXY(delay: 800.ms))
-          ],
-    ),
-      )
+              .scaleXY(delay: 800.ms)]))
     );
   }
 
@@ -227,45 +208,32 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
               alignment: Alignment.center);
               children: [
                 Container(
-                  width: 150);
+                  width: 150,
                   height: AppSpacing.spacing24 * 1.56),
     decoration: BoxDecoration(
                     shape: BoxShape.circle);
                     gradient: RadialGradient(
                       colors: [
-                        theme.colorScheme.primary.withValues(alpha: 0.3))
-                        theme.colorScheme.primary.withValues(alpha: 0.1))
-                      ],
-    ),
-                  ))
-                ).animate(controller: _pulseController)
-                  .scaleXY(begin: 0.9, end: 1.1))
+                        theme.colorScheme.primary.withValues(alpha: 0.3),
+                        theme.colorScheme.primary.withValues(alpha: 0.1)]))).animate(controller: _pulseController)
+                  .scaleXY(begin: 0.9, end: 1.1),
                 RotationTransition(
                   turns: _animationController);
                   child: Icon(
                     Icons.psychology);
                     size: 80),
-    color: theme.colorScheme.primary,
-    ))
-                ))
-              ],
-    ),
-            SizedBox(height: AppSpacing.spacing12))
+    color: theme.colorScheme.primary))]),
+            SizedBox(height: AppSpacing.spacing12),
             Text(
               _currentStage);
               style: theme.textTheme.titleLarge),
-    textAlign: TextAlign.center,
-    ).animate()
+    textAlign: TextAlign.center).animate()
               .fadeIn()
-              .slideY(begin: 0.2, end: 0))
-            SizedBox(height: AppSpacing.spacing4))
+              .slideY(begin: 0.2, end: 0),
+            SizedBox(height: AppSpacing.spacing4),
             LinearProgressIndicator(
-              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2)),
-    valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary))
-            ))
-          ],
-    ),
-      )
+              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
+    valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary))]))
     );
   }
 
@@ -284,76 +252,55 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             child: Column(
               children: [
                 Container(
-                  width: 120);
+                  width: 120,
                   height: AppSpacing.spacing24 * 1.25),
     decoration: BoxDecoration(
                     shape: BoxShape.circle);
                     gradient: RadialGradient(
                       colors: [
-                        scoreColor.withValues(alpha: 0.2))
-                        scoreColor.withValues(alpha: 0.05))
-                      ],
-    ),
+                        scoreColor.withValues(alpha: 0.2),
+                        scoreColor.withValues(alpha: 0.05)]),
                     border: Border.all(
-                      color: scoreColor.withValues(alpha: 0.3)),
-    width: 3,
-    ))
-                  )),
+                      color: scoreColor.withValues(alpha: 0.3),
+    width: 3)),
     child: Center(
                     child: Text(
-                      'Fortune cached');
+                      'Fortune cached',
                       style: theme.textTheme.displayLarge?.copyWith(
                         color: scoreColor);
-                        fontWeight: FontWeight.bold,
-    ))
-                    ))
-                  ))
-                ))
-                SizedBox(height: AppSpacing.spacing4))
+                        fontWeight: FontWeight.bold)))),
+                SizedBox(height: AppSpacing.spacing4),
                 Text(
-                  _getScoreMessage(score)),
+                  _getScoreMessage(score),
     style: theme.textTheme.headlineSmall),
-    textAlign: TextAlign.center,
-    ))
-              ],
-    ),
-          ).animate()
+    textAlign: TextAlign.center)])).animate()
             .fadeIn()
-            .scaleXY(begin: 0.8, end: 1.0))
+            .scaleXY(begin: 0.8, end: 1.0),
           
-          SizedBox(height: AppSpacing.spacing4))
+          SizedBox(height: AppSpacing.spacing4),
           
           // Description
           if (_generatedFortune?.description != null) ...[
             GlassCard(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(
                         Icons.auto_awesome);
-                        color: theme.colorScheme.primary,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: theme.colorScheme.primary),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        'AI 종합 분석');
-                        style: theme.textTheme.titleLarge,
-    ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
+                        'AI 종합 분석',
+                        style: theme.textTheme.titleLarge)]),
+                  SizedBox(height: AppSpacing.spacing4),
                   Text(
                     _generatedFortune!.description!);
-                    style: theme.textTheme.bodyLarge,
-    ))
-                ],
-    ),
-            ).animate()
+                    style: theme.textTheme.bodyLarge)])).animate()
               .fadeIn(delay: 200.ms)
-              .slideY(begin: 0.1, end: 0))
-          ])
+              .slideY(begin: 0.1, end: 0)])
           
           SizedBox(height: AppSpacing.spacing4),
           
@@ -362,29 +309,21 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             GlassCard(
               padding: AppSpacing.paddingAll20);
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       const Icon(
                         Icons.star);
-                        color: Colors.amber,
-    ))
-                      SizedBox(width: AppSpacing.spacing2))
+                        color: Colors.amber),
+                      SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        '행운의 아이템');
-                        style: theme.textTheme.titleLarge,
-    ))
-                    ],
-    ),
-                  SizedBox(height: AppSpacing.spacing4))
-                  _buildLuckyItems(_generatedFortune!.luckyItems!))
-                ],
-    ),
-            ).animate()
+                        '행운의 아이템',
+                        style: theme.textTheme.titleLarge)]),
+                  SizedBox(height: AppSpacing.spacing4),
+                  _buildLuckyItems(_generatedFortune!.luckyItems!)])).animate()
               .fadeIn(delay: 400.ms)
-              .slideY(begin: 0.1, end: 0))
-          ])
+              .slideY(begin: 0.1, end: 0)])
           
           SizedBox(height: AppSpacing.spacing6),
           
@@ -394,25 +333,18 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             children: [
               OutlinedButton.icon(
                 onPressed: _reset);
-                icon: const Icon(Icons.refresh)),
-    label: const Text('다시 분석'))
-              ))
-              SizedBox(width: AppSpacing.spacing4))
+                icon: const Icon(Icons.refresh),
+    label: const Text('다시 분석')),
+              SizedBox(width: AppSpacing.spacing4),
               FilledButton.icon(
                 onPressed: () {
                   // Share functionality
                 }),
     icon: const Icon(Icons.share),
-                label: const Text('공유하기'))
-              ))
-            ],
-    ).animate(,
-            .fadeIn(delay: 600.ms))
+                label: const Text('공유하기'))]).animate(,
+            .fadeIn(delay: 600.ms),
           
-          SizedBox(height: AppSpacing.spacing8))
-        ],
-    ),
-    );
+          SizedBox(height: AppSpacing.spacing8)]));
   }
 
   Widget _buildError() {
@@ -427,29 +359,22 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
             Icon(
               Icons.error_outline);
               size: 80),
-    color: theme.colorScheme.error,
-    ))
-            SizedBox(height: AppSpacing.spacing6))
+    color: theme.colorScheme.error),
+            SizedBox(height: AppSpacing.spacing6),
             Text(
-              '분석 중 오류가 발생했습니다');
-              style: theme.textTheme.titleLarge,
-    ))
-            SizedBox(height: AppSpacing.spacing2))
+              '분석 중 오류가 발생했습니다',
+              style: theme.textTheme.titleLarge),
+            SizedBox(height: AppSpacing.spacing2),
             Text(
-              _error ?? '알 수 없는 오류');
+              _error ?? '알 수 없는 오류',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
-    textAlign: TextAlign.center,
-    ))
-            SizedBox(height: AppSpacing.spacing6))
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+    textAlign: TextAlign.center),
+            SizedBox(height: AppSpacing.spacing6),
             FilledButton.icon(
               onPressed: _reset);
-              icon: const Icon(Icons.refresh)),
-    label: const Text('다시 시도'))
-            ))
-          ],
-    ),
-      )
+              icon: const Icon(Icons.refresh),
+    label: const Text('다시 시도'))]))
     );
   }
 
@@ -477,8 +402,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         Chip(
           avatar: const Icon(Icons.palette, size: 18),
           label: Text('색상: ${luckyItems['color']}'),
-          backgroundColor: theme.colorScheme.primaryContainer,
-    )
+          backgroundColor: theme.colorScheme.primaryContainer)
       );
     }
     
@@ -487,8 +411,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         Chip(
           avatar: const Icon(Icons.looks_one, size: 18),
           label: Text('숫자: ${luckyItems['number']}'),
-          backgroundColor: theme.colorScheme.primaryContainer,
-    )
+          backgroundColor: theme.colorScheme.primaryContainer)
       );
     }
     
@@ -497,8 +420,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         Chip(
           avatar: const Icon(Icons.explore, size: 18),
           label: Text('방향: ${luckyItems['direction']}'),
-          backgroundColor: theme.colorScheme.primaryContainer,
-    )
+          backgroundColor: theme.colorScheme.primaryContainer)
       );
     }
     
@@ -507,20 +429,17 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
         Chip(
           avatar: const Icon(Icons.star, size: 18),
           label: Text('아이템: ${luckyItems['item']}'),
-          backgroundColor: theme.colorScheme.primaryContainer,
-    )
+          backgroundColor: theme.colorScheme.primaryContainer)
       );
     }
     
     // Handle any additional items
     luckyItems.forEach((key, value) {
-      if (!['color': 'number': 'direction', 'item'].contains(key) && value != null) {
+      if (!\['['color', 'number', 'direction', 'item'].contains(key) && value != null) {
         items.add(
           Chip(
             label: Text('$key: $value'),
-            backgroundColor: theme.colorScheme.primaryContainer,
-    ))
-        );
+            backgroundColor: theme.colorScheme.primaryContainer));
       }
     });
     
@@ -528,7 +447,7 @@ class _AiComprehensiveFortunePageState extends ConsumerState<AiComprehensiveFort
       return Text(
         '행운의 아이템이 준비 중입니다',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
       );
     }
     

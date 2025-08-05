@@ -17,8 +17,7 @@ class LiveActivityService {
   /// Start a fortune live activity
   static Future<String?> startFortuneActivity({
     required String fortuneType,
-    required Map<String, dynamic> initialData,
-  }) async {
+    required Map<String, dynamic> initialData}) async {
     if (!isSupported) {
       Logger.warning('Live Activities not supported on this device');
       return null;
@@ -28,10 +27,8 @@ class LiveActivityService {
       final activityId = await NativePlatformService.ios.startLiveActivity(
         attributes: {
           'fortuneType': fortuneType,
-          'startedAt': DateTime.now().toIso8601String(),
-        },
-        contentState: initialData,
-      );
+          'startedAt': DateTime.now().toIso8601String()},
+        contentState: initialData);
       
       if (activityId != null) {
         _activeActivities[fortuneType] = activityId;
@@ -48,8 +45,7 @@ class LiveActivityService {
   /// Update an existing live activity
   static Future<void> updateFortuneActivity({
     required String fortuneType,
-    required Map<String, dynamic> updatedData,
-  }) async {
+    required Map<String, dynamic> updatedData}) async {
     if (!isSupported) return;
     
     final activityId = _activeActivities[fortuneType];
@@ -61,8 +57,7 @@ class LiveActivityService {
     try {
       await NativePlatformService.ios.updateDynamicIsland(
         activityId: activityId,
-        content: updatedData,
-      );
+        content: updatedData);
       Logger.info('Supabase initialized successfully');
     } catch (e) {
       Logger.error('Failed to update live activity', e);
@@ -102,8 +97,7 @@ class LiveActivityService {
     required String score,
     required String message,
     required String luckyColor,
-    required String luckyNumber,
-  }) async {
+    required String luckyNumber}) async {
     return startFortuneActivity(
       fortuneType: 'daily',
       initialData: {
@@ -111,17 +105,14 @@ class LiveActivityService {
         'message': message,
         'luckyColor': luckyColor,
         'luckyNumber': luckyNumber,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-    );
+        'updatedAt': DateTime.now().toIso8601String()});
   }
   
   /// Start a compatibility check live activity
   static Future<String?> startCompatibilityCheck({
     required String userName,
     required String partnerName,
-    required String status,
-  }) async {
+    required String status}) async {
     return startFortuneActivity(
       fortuneType: 'compatibility',
       initialData: {
@@ -129,9 +120,7 @@ class LiveActivityService {
         'partnerName': partnerName,
         'status': status,
         'progress': 0,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-    );
+        'updatedAt': DateTime.now().toIso8601String()});
   }
   
   /// Update compatibility check progress
@@ -139,8 +128,7 @@ class LiveActivityService {
     required int progress,
     required String status,
     String? score,
-    String? message,
-  }) async {
+    String? message}) async {
     await updateFortuneActivity(
       fortuneType: 'compatibility',
       updatedData: {
@@ -148,8 +136,6 @@ class LiveActivityService {
         'status': status,
         'score': score,
         'message': message,
-        'updatedAt': DateTime.now().toIso8601String(),
-      },
-    );
+        'updatedAt': DateTime.now().toIso8601String()});
   }
 }

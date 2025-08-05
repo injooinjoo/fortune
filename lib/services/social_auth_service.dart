@@ -61,8 +61,7 @@ class SocialAuthService {
         scopes: 'email',
         queryParams: {
           'access_type': 'offline',
-          'prompt': 'consent',
-        }
+          'prompt': 'consent'}
       );
       
       print('🟡 [SocialAuthService] OAuth redirect initiated successfully');
@@ -116,8 +115,7 @@ class SocialAuthService {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ]
+          AppleIDAuthorizationScopes.fullName]
       );
       
       final String? idToken = credential.identityToken;
@@ -128,8 +126,7 @@ class SocialAuthService {
       // Supabase에 Apple 토큰으로 로그인
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.apple,
-        idToken: idToken,
-      );
+        idToken: idToken);
       
       Logger.securityCheckpoint('Apple: ${response.user?.id}');
       
@@ -140,8 +137,7 @@ class SocialAuthService {
           userId: response.user!.id,
           email: credential.email,
           name: '${credential.givenName ?? ''} ${credential.familyName ?? ''}',
-          provider: 'apple',
-        ).catchError((error) {
+          provider: 'apple').catchError((error) {
           Logger.error('Background profile update failed', error);
         });
       }
@@ -163,8 +159,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? null 
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
-      );
+        authScreenLaunchMode: LaunchMode.externalApplication);
       
       if (!response) {
         throw Exception('Apple OAuth sign in failed');
@@ -184,8 +179,7 @@ class SocialAuthService {
     String? email,
     String? name,
     String? photoUrl,
-    required String provider,
-  }) async {
+    required String provider}) async {
     try {
       // 프로필 데이터 준비
       final now = DateTime.now().toIso8601String();
@@ -194,8 +188,7 @@ class SocialAuthService {
       final profileData = {
         'id': userId,
         'email': email,
-        'updated_at': null,
-      };
+        'updated_at': null};
       
       // 조건부 필드 추가
       if (name != null) profileData['name'] = name;
@@ -229,8 +222,7 @@ class SocialAuthService {
           profileData.addAll({
             'primary_provider': provider,
             'linked_providers': jsonEncode([provider]),
-            'created_at': null,
-          });
+            'created_at': null});
           
           await _supabase.from('user_profiles').insert(profileData);
           Logger.info('Profile created successfully with social auth columns');
@@ -250,8 +242,7 @@ class SocialAuthService {
               'email': email,
               'name': name ?? email?.split('@')[0] ?? 'User',
               'created_at': now,
-              'updated_at': null,
-            };
+              'updated_at': null};
             
             try {
               await _supabase.from('user_profiles').insert(minimalProfile);
@@ -280,8 +271,7 @@ class SocialAuthService {
       } else {
         // 기존 프로필 업데이트
         final updates = <String, dynamic>{
-          'updated_at': null,
-        };
+          'updated_at': null};
         
         // Update name if not set
         if (name != null && existingProfile['name'] == null) {
@@ -341,8 +331,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? null 
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
-      );
+        authScreenLaunchMode: LaunchMode.externalApplication);
       
       if (!response) {
         throw Exception('Facebook OAuth sign in failed');
@@ -370,8 +359,7 @@ class SocialAuthService {
         redirectTo: kIsWeb 
           ? null 
           : 'com.beyond.fortune://auth-callback',
-        authScreenLaunchMode: LaunchMode.externalApplication,
-      );
+        authScreenLaunchMode: LaunchMode.externalApplication);
       
       if (!response) {
         throw Exception('Kakao OAuth sign in failed');
@@ -414,9 +402,7 @@ class SocialAuthService {
       final response = await _supabase.functions.invoke(
         'naver-oauth',
         body: {
-          'accessToken': tokenResult.accessToken,
-        },
-      );
+          'accessToken': tokenResult.accessToken});
       
       if (response.status != 200) {
         throw Exception('Naver OAuth failed: ${response.data}');
@@ -443,8 +429,7 @@ class SocialAuthService {
         await _updateUserProfile(
           userId: signInResponse.user!.id,
           email: email,
-          provider: 'naver',
-        );
+          provider: 'naver');
         
         return signInResponse;
       } catch (signInError) {
@@ -606,8 +591,7 @@ class SocialAuthService {
       // Find the identity to unlink
       final identityToUnlink = identities.firstWhere(
         (identity) => identity.provider == provider,
-        orElse: () => throw Exception('해당 계정이 연동되어 있지 않습니다'),
-      );
+        orElse: () => throw Exception('해당 계정이 연동되어 있지 않습니다'));
       
       // Use Supabase's unlinkIdentity method
       await _supabase.auth.unlinkIdentity(identityToUnlink);
@@ -646,8 +630,7 @@ class SocialAuthService {
       // Update profile
       await _supabase.from('user_profiles').update({
         'linked_providers': linkedProviders,
-        'updated_at': null,
-      }).eq('id', userId);
+        'updated_at': null}).eq('id', userId);
       
     } catch (e) {
       Logger.error('Fortune cached');

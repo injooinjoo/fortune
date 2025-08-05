@@ -36,8 +36,7 @@ class CreateTodoUseCase implements UseCase<Todo, CreateTodoParams> {
       final dueDay = DateTime(
         params.dueDate!.year,
         params.dueDate!.month,
-        params.dueDate!.day,
-      );
+        params.dueDate!.day);
       
       if (dueDay.isBefore(today)) {
         return const Left(ValidationFailure('Due date cannot be in the past'));
@@ -50,8 +49,7 @@ class CreateTodoUseCase implements UseCase<Todo, CreateTodoParams> {
       description: params.description?.trim(),
       priority: params.priority,
       dueDate: params.dueDate,
-      tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList(),
-    );
+      tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList());
   }
 }
 
@@ -69,8 +67,7 @@ class CreateTodoParams extends Equatable {
     this.description,
     this.priority = TodoPriority.medium,
     this.dueDate,
-    this.tags,
-  });
+    this.tags});
 
   @override
   List<Object?> get props => [userId, title, description, priority, dueDate, tags];

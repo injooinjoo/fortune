@@ -12,21 +12,18 @@ class SajuState {
     this.isLoading = false,
     this.sajuData,
     this.error,
-    this.isCached = false,
-  });
+    this.isCached = false});
 
   SajuState copyWith({
     bool? isLoading,
     Map<String, dynamic>? sajuData,
     String? error,
-    bool? isCached,
-  }) {
+    bool? isCached}) {
     return SajuState(
       isLoading: isLoading ?? this.isLoading,
       sajuData: sajuData ?? this.sajuData,
       error: error,
-      isCached: isCached ?? this.isCached,
-    );
+      isCached: isCached ?? this.isCached);
 }
 }
 
@@ -84,8 +81,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
   Future<void> calculateAndSaveSaju({
     required DateTime birthDate,
     String? birthTime,
-    bool isLunar = false,
-  }) async {
+    bool isLunar = false}) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
@@ -93,8 +89,7 @@ class SajuNotifier extends StateNotifier<SajuState> {
       if (user == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '로그인이 필요합니다.',
-        );
+          error: '로그인이 필요합니다.');
         return;
       }
 
@@ -110,15 +105,13 @@ class SajuNotifier extends StateNotifier<SajuState> {
           'birthDate': birthDate.toIso8601String().split('T')[0],
           'birthTime': birthTime,
           'isLunar': isLunar,
-          'timezone': 'Asia/Seoul',
-        },
-      ).timeout(
+          'timezone': 'Asia/Seoul'
+        }).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           print('Edge Function timeout after 30 seconds');
           throw Exception('사주 계산 시간 초과 (30초)');
-        },
-      );
+        });
       
       print('=== SAJU API RESPONSE ===');
       print('type: ${response.runtimeType}');
@@ -189,9 +182,9 @@ class SajuNotifier extends StateNotifier<SajuState> {
       String errorMessage = '사주 계산 중 오류가 발생했습니다';
       if (e.toString().contains('Exception: ')) {
         errorMessage = e.toString().replaceAll('Exception: ', '');
-} else {
+      } else {
         errorMessage += ': $e';
-}
+      }
       
       state = state.copyWith(
         isLoading: false,
@@ -207,67 +200,53 @@ class SajuNotifier extends StateNotifier<SajuState> {
         'cheongan': {
           'char': rawData['year_stem'],
           'hanja': rawData['year_stem_hanja'],
-          'element': _getElementForStem(rawData['year_stem']),
-        },
+          'element': _getElementForStem(rawData['year_stem'])},
         'jiji': {
           'char': rawData['year_branch'],
           'hanja': rawData['year_branch_hanja'],
-          'element': _getElementForBranch(rawData['year_branch']),
-        },
-      },
+          'element': _getElementForBranch(rawData['year_branch'])}},
       'month': {
         'cheongan': {
           'char': rawData['month_stem'],
           'hanja': rawData['month_stem_hanja'],
-          'element': _getElementForStem(rawData['month_stem']),
-        },
+          'element': _getElementForStem(rawData['month_stem'])},
         'jiji': {
           'char': rawData['month_branch'],
           'hanja': rawData['month_branch_hanja'],
-          'element': _getElementForBranch(rawData['month_branch']),
-        },
-      },
+          'element': _getElementForBranch(rawData['month_branch'])}},
       'day': {
         'cheongan': {
           'char': rawData['day_stem'],
           'hanja': rawData['day_stem_hanja'],
-          'element': _getElementForStem(rawData['day_stem']),
-        },
+          'element': _getElementForStem(rawData['day_stem'])},
         'jiji': {
           'char': rawData['day_branch'],
           'hanja': rawData['day_branch_hanja'],
-          'element': _getElementForBranch(rawData['day_branch']),
-        },
-      },
+          'element': _getElementForBranch(rawData['day_branch'])}},
       'hour': rawData['hour_stem'] != null
           ? {
               'cheongan': {
                 'char': rawData['hour_stem'],
                 'hanja': rawData['hour_stem_hanja'],
-                'element': _getElementForStem(rawData['hour_stem']),
-              },
+                'element': _getElementForStem(rawData['hour_stem'])},
               'jiji': {
                 'char': rawData['hour_branch'],
                 'hanja': rawData['hour_branch_hanja'],
-                'element': _getElementForBranch(rawData['hour_branch']),
-              },
-            }
+                'element': _getElementForBranch(rawData['hour_branch'])}}
           : null,
       'elements': rawData['element_balance'] ?? {},
       'daeun': {
         'current': rawData['current_daeun'] ?? '',
         'currentHanja': _getDaeunHanja(rawData['current_daeun']),
         'age': rawData['daeun_info']?['startAge'] ?? 0,
-        'endAge': rawData['daeun_info']?['endAge'],
-      },
+        'endAge': rawData['daeun_info']?['endAge']},
       'interpretation': rawData['interpretation'] ?? '',
       'personalityAnalysis': rawData['personality_analysis'] ?? '',
       'careerGuidance': rawData['career_guidance'] ?? '',
       'relationshipAdvice': rawData['relationship_advice'] ?? '',
       'dominantElement': rawData['dominant_element'] ?? '',
       'lackingElement': rawData['lacking_element'] ?? '',
-      'calculatedAt': rawData['calculated_at'],
-    };
+      'calculatedAt': rawData['calculated_at']};
 }
 
   String _getElementForStem(String stem) {
@@ -276,30 +255,30 @@ class SajuNotifier extends StateNotifier<SajuState> {
       '병': '화', '정': '화',
       '무': '토', '기': '토',
       '경': '금', '신': '금',
-      '임': '수', '계': '수',
+      '임': '수', '계': '수'
     };
     return stemElements[stem] ?? '';
-}
+  }
 
   String _getElementForBranch(String branch) {
     const branchElements = {
       '자': '수', '축': '토', '인': '목', '묘': '목',
       '진': '토', '사': '화', '오': '화', '미': '토',
-      '신': '금', '유': '금', '술': '토', '해': '수',
+      '신': '금', '유': '금', '술': '토', '해': '수'
     };
     return branchElements[branch] ?? '';
-}
+  }
 
   String _getDaeunHanja(String? daeun) {
     if (daeun == null || daeun.length < 2) return '';
     
     const stemHanja = {
       '갑': '甲', '을': '乙', '병': '丙', '정': '丁', '무': '戊',
-      '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸',
+      '기': '己', '경': '庚', '신': '辛', '임': '壬', '계': '癸'
     };
     const branchHanja = {
       '자': '子', '축': '丑', '인': '寅', '묘': '卯', '진': '辰', '사': '巳',
-      '오': '午', '미': '未', '신': '申', '유': '酉', '술': '戌', '해': '亥',
+      '오': '午', '미': '未', '신': '申', '유': '酉', '술': '戌', '해': '亥'
     };
     
     final stem = daeun[0];
@@ -341,12 +320,15 @@ class SajuNotifier extends StateNotifier<SajuState> {
         return;
       }
 
-      // Recalculate Saju
-      await calculateAndSaveSaju(
-        birthDate: DateTime.parse(profile['birth_date']),
-        birthTime: profile['birth_time'],
-        isLunar: false, // TODO: Get from user profile
-      );
+      // TODO: Implement calculateAndSaveSaju
+      // await calculateAndSaveSaju(
+      //   birthDate: DateTime.parse(profile['birth_date']),
+      //   birthTime: profile['birth_time'],
+      //   isLunar: false, // TODO: Get from user profile
+      // );
+      
+      // For now, just refetch the data
+      await fetchUserSaju();
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

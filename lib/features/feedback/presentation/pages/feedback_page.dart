@@ -20,8 +20,7 @@ class FeedbackSubmissionNotifier extends StateNotifier<AsyncValue<void>> {
     required String category,
     required String message,
     required int rating,
-    String? email,
-  }) async {
+    String? email}) async {
     state = const AsyncValue.loading();
     
     try {
@@ -33,8 +32,7 @@ class FeedbackSubmissionNotifier extends StateNotifier<AsyncValue<void>> {
           'category': category,
           'message': message,
           'rating': rating,
-          'email': email,
-        }
+          'email': email}
       );
       
       if (response.data['success'] == true) {
@@ -68,8 +66,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
     {'id': 'bug', 'label': '버그 신고', 'icon': Icons.bug_report},
     {'id': 'feature', 'label': '기능 제안', 'icon': Icons.lightbulb},
     {'id': 'improvement', 'label': '개선 사항', 'icon': Icons.auto_fix_high},
-    {'id': 'other', 'label': '기타', 'icon': Icons.more_horiz},
-  ];
+    {'id': 'other', 'label': '기타', 'icon': Icons.more_horiz}];
 
   @override
   void dispose() {
@@ -85,8 +82,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
       category: _selectedCategory,
       message: _messageController.text,
       rating: _rating,
-      email: _emailController.text.isNotEmpty ? _emailController.text : null,
-    );
+      email: _emailController.text.isNotEmpty ? _emailController.text : null);
 
     final submissionState = ref.read(feedbackSubmissionProvider);
     
@@ -94,14 +90,12 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
       Toast.show(
         context,
         message: '피드백 전송에 실패했습니다',
-        type: ToastType.error,
-      );
+        type: ToastType.error);
     } else if (submissionState.hasValue) {
       Toast.show(
         context,
         message: '소중한 의견 감사합니다!',
-        type: ToastType.success,
-      );
+        type: ToastType.success);
       
       // Reset form
       _messageController.clear();
@@ -127,8 +121,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
           children: [
             AppHeader(
               title: '의견 보내기',
-              showBackButton: true,
-            ),
+              showBackButton: true),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -143,16 +136,13 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary.withValues(alpha: 0.1),
-                            theme.colorScheme.secondary.withValues(alpha: 0.1),
-                          ],
-                        ),
+                            theme.colorScheme.secondary.withValues(alpha: 0.1)]),
                         child: Row(
                           children: [
                             Icon(
                               Icons.favorite,
                               size: 48,
-                              color: theme.colorScheme.primary,
-                            ),
+                              color: theme.colorScheme.primary),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
@@ -162,23 +152,13 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     '여러분의 의견을 들려주세요',
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                      fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 4),
                                   Text(
                                     '더 나은 서비스를 만들어가겠습니다',
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
-                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])),
                       const SizedBox(height: 24),
                       
                       // Category Selection
@@ -186,9 +166,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '카테고리',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
@@ -205,9 +183,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                 ? LinearGradient(
                                     colors: [
                                       theme.colorScheme.primary.withValues(alpha: 0.3),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.3),
-                                    ],
-                                  )
+                                      theme.colorScheme.secondary.withValues(alpha: 0.3)])
                                 : null,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -217,23 +193,16 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                   Icon(
                                     category['icon'],
                                     size: 18,
-                                    color: isSelected ? theme.colorScheme.primary : null,
-                                  ),
+                                    color: isSelected ? theme.colorScheme.primary : null),
                                   const SizedBox(width: 8),
                                   Text(
                                     category['label'],
                                     style: TextStyle(
                                       fontSize: 14 * fontScale,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                      color: isSelected ? theme.colorScheme.primary : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
+                                      color: isSelected ? theme.colorScheme.primary : null))]))
                           );
-                        }).toList(),
-                      ),
+                        }).toList()),
                       const SizedBox(height: 24),
                       
                       // Rating
@@ -241,9 +210,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '만족도',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -264,23 +231,16 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     size: 36,
                                     color: starValue <= _rating 
                                         ? Colors.amber 
-                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                                  )
+                                        : theme.colorScheme.onSurface.withValues(alpha: 0.3))
                                 );
-                              }),
-                            ),
+                              })),
                             const SizedBox(height: 8),
                             Text(
                               _getRatingText(_rating),
                               style: TextStyle(
                                 fontSize: 14 * fontScale,
                                 fontWeight: FontWeight.bold,
-                                color: _getRatingColor(_rating),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                                color: _getRatingColor(_rating)))])),
                       const SizedBox(height: 24),
                       
                       // Message
@@ -288,9 +248,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '내용',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -302,11 +260,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                             hintText: '의견을 자유롭게 작성해주세요',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
+                              borderSide: BorderSide.none),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                          ),
+                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return '내용을 입력해주세요';
@@ -315,9 +271,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               return '10자 이상 입력해주세요';
                             }
                             return null;
-                          },
-                        ),
-                      ),
+                          })),
                       const SizedBox(height: 24),
                       
                       // Email (optional)
@@ -325,17 +279,13 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                         '이메일 (선택)',
                         style: TextStyle(
                           fontSize: 16 * fontScale,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       Text(
                         '답변이 필요한 경우 이메일을 남겨주세요',
                         style: TextStyle(
                           fontSize: 12 * fontScale,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
                       const SizedBox(height: 12),
                       GlassContainer(
                         padding: const EdgeInsets.all(16),
@@ -348,11 +298,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                             prefixIcon: Icon(Icons.email, size: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
+                              borderSide: BorderSide.none),
                             filled: true,
-                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                          ),
+                            fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                           validator: (value) {
                             if (value != null && value.isNotEmpty) {
                               final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -361,9 +309,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                               }
                             }
                             return null;
-                          },
-                        ),
-                      ),
+                          })),
                       const SizedBox(height: 32),
                       
                       // Submit Button
@@ -374,9 +320,7 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                           gradient: LinearGradient(
                             colors: [
                               theme.colorScheme.primary,
-                              theme.colorScheme.secondary,
-                            ],
-                          ),
+                              theme.colorScheme.secondary]),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             child: submissionState.isLoading
@@ -385,30 +329,14 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
+                                      color: Colors.white))
                                 : Text(
                                     '의견 보내기',
                                     style: TextStyle(
                                       fontSize: 18 * fontScale,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                                      color: Colors.white))))),
+                      const SizedBox(height: 24)]))))])));
   }
 
   String _getRatingText(int rating) {

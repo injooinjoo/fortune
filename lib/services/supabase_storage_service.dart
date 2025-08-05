@@ -20,8 +20,7 @@ class SupabaseStorageService {
       if (!bucketExists) {
         await _supabase.storage.createBucket(
           _profileImagesBucket,
-          const BucketOptions(public: true),
-        );
+          const BucketOptions(public: true));
         Logger.info('Created profile images bucket');
       }
     } catch (e) {
@@ -33,8 +32,7 @@ class SupabaseStorageService {
   // Upload profile image
   Future<String?> uploadProfileImage({
     required String userId,
-    required XFile imageFile,
-  }) async {
+    required XFile imageFile}) async {
     try {
       await ensureBucketExists();
       
@@ -55,9 +53,7 @@ class SupabaseStorageService {
             bytes,
             fileOptions: FileOptions(
               contentType: 'image/$fileExtension',
-              upsert: true,
-            ),
-          );
+              upsert: true));
       
       // Get public URL
       final publicUrl = _supabase.storage
@@ -75,8 +71,7 @@ class SupabaseStorageService {
   // Delete old profile images for a user (keep only the latest,
   Future<void> cleanupOldProfileImages({
     required String userId,
-    String? currentImageUrl,
-  }) async {
+    String? currentImageUrl}) async {
     try {
       // List all files in user's directory
       final files = await _supabase.storage

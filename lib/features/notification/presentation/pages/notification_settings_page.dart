@@ -29,8 +29,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     'career': false,
     'wealth': false,
     'health': false,
-    'lucky': true,
-  };
+    'lucky': true};
 
   @override
   void initState() {
@@ -44,8 +43,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       final parts = _settings.dailyFortuneTime!.split(':');
       _morningTime = TimeOfDay(
         hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
+        minute: int.parse(parts[1]));
     }
   }
 
@@ -68,20 +66,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () => context.pop(),
                       style: IconButton.styleFrom(
-                        backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                      ),
-                    ),
+                        backgroundColor: theme.colorScheme.surfaceContainerHighest)),
                     const SizedBox(width: 12),
                     Text(
                       '알림 설정',
                       style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                        fontWeight: FontWeight.bold))]))),
             
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -121,14 +111,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   const SizedBox(height: 32),
                   
                   _buildTestNotificationButton(),
-                  const SizedBox(height: 20),
-                ]),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                  const SizedBox(height: 20)])))])));
   }
 
   Widget _buildSectionTitle(String title) {
@@ -138,9 +121,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       title,
       style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: theme.colorScheme.primary,
-      ),
-    );
+        color: theme.colorScheme.primary));
   }
 
   Widget _buildMasterSwitch() {
@@ -155,14 +136,11 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             height: 48,
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             child: Icon(
               Icons.notifications,
               color: AppColors.primary,
-              size: 28,
-            ),
-          ),
+              size: 28)),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -171,19 +149,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   '알림 허용',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(
                   '모든 알림을 켜거나 끕니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
           Switch(
             value: _settings.enabled,
             onChanged: (value) {
@@ -194,16 +165,11 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                   dailyFortune: _settings.dailyFortune,
                   tokenAlert: _settings.tokenAlert,
                   promotion: _settings.promotion,
-                  dailyFortuneTime: _settings.dailyFortuneTime,
-                );
+                  dailyFortuneTime: _settings.dailyFortuneTime);
               });
               _saveSettings();
             },
-            activeColor: AppColors.primary,
-          ),
-        ],
-      ),
-    ).animate().fadeIn().scale();
+            activeColor: AppColors.primary)])).animate().fadeIn().scale();
   }
 
   Widget _buildNotificationMethods() {
@@ -221,20 +187,13 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 child: Text(
                   '푸시 알림',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+                    fontWeight: FontWeight.w600))),
               Switch(
                 value: _settings.enabled,
                 onChanged: _settings.enabled ? (value) {
                   // Handle push notification toggle
                 } : null,
-                activeColor: AppColors.primary,
-              ),
-            ],
-          ),
-        ),
+                activeColor: AppColors.primary)])),
         const SizedBox(height: 8),
         GlassContainer(
           padding: const EdgeInsets.all(16),
@@ -249,26 +208,15 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '문자 알림',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                        fontWeight: FontWeight.w600)),
                     Text(
                       '프리미엄 회원 전용',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        color: theme.colorScheme.primary))])),
               Switch(
                 value: false,
                 onChanged: null,
-                activeColor: AppColors.primary,
-              ),
-            ],
-          ),
-        ),
+                activeColor: AppColors.primary)])),
         const SizedBox(height: 8),
         GlassContainer(
           padding: const EdgeInsets.all(16),
@@ -280,22 +228,13 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 child: Text(
                   '이메일 알림',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+                    fontWeight: FontWeight.w600))),
               Switch(
                 value: false,
                 onChanged: _settings.enabled ? (value) {
                   // Handle email notification toggle
                 } : null,
-                activeColor: AppColors.primary,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                activeColor: AppColors.primary)]))]);
   }
 
   Widget _buildNotificationCategories() {
@@ -313,12 +252,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 dailyFortune: value,
                 tokenAlert: _settings.tokenAlert,
                 promotion: _settings.promotion,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
+                dailyFortuneTime: _settings.dailyFortuneTime);
             });
             _saveSettings();
-          },
-        ),
+          }),
         const SizedBox(height: 8),
         _buildCategoryItem(
           icon: Icons.toll,
@@ -332,12 +269,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 dailyFortune: _settings.dailyFortune,
                 tokenAlert: value,
                 promotion: _settings.promotion,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
+                dailyFortuneTime: _settings.dailyFortuneTime);
             });
             _saveSettings();
-          },
-        ),
+          }),
         const SizedBox(height: 8),
         _buildCategoryItem(
           icon: Icons.local_offer,
@@ -351,12 +286,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 dailyFortune: _settings.dailyFortune,
                 tokenAlert: _settings.tokenAlert,
                 promotion: value,
-                dailyFortuneTime: _settings.dailyFortuneTime,
-              );
+                dailyFortuneTime: _settings.dailyFortuneTime);
             });
             _saveSettings();
-          },
-        ),
+          }),
         const SizedBox(height: 8),
         _buildCategoryItem(
           icon: Icons.cake,
@@ -365,10 +298,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           value: true,
           onChanged: (value) {
             // Handle birthday fortune toggle
-          },
-        ),
-      ],
-    );
+          })]);
   }
 
   Widget _buildFortuneTypeNotifications() {
@@ -382,9 +312,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           Text(
             '관심있는 운세만 알림받기',
             style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -395,12 +323,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
               _buildFortuneChip('직업 운세', 'career'),
               _buildFortuneChip('재물 운세', 'wealth'),
               _buildFortuneChip('건강 운세', 'health'),
-              _buildFortuneChip('행운 운세', 'lucky'),
-            ],
-          ),
-        ],
-      ),
-    );
+              _buildFortuneChip('행운 운세', 'lucky')])]));
   }
 
   Widget _buildFortuneChip(String label, String key) {
@@ -417,8 +340,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       } : null,
       backgroundColor: theme.colorScheme.surfaceContainerHighest,
       selectedColor: AppColors.primary.withValues(alpha: 0.2),
-      checkmarkColor: AppColors.primary,
-    );
+      checkmarkColor: AppColors.primary);
   }
 
   Widget _buildNotificationSchedule() {
@@ -435,13 +357,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                  borderRadius: BorderRadius.circular(12)),
                 child: Icon(
                   Icons.wb_sunny,
-                  color: AppColors.secondary,
-                ),
-              ),
+                  color: AppColors.secondary)),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -450,28 +369,17 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '아침 알림',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       '매일 ${_morningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
               TextButton(
                 onPressed: _settings.enabled && _settings.dailyFortune
                     ? () => _selectTime(true)
                     : null,
-                child: const Text('변경'),
-              ),
-            ],
-          ),
-        ),
+                child: const Text('변경'))])),
         const SizedBox(height: 8),
         GlassContainer(
           padding: const EdgeInsets.all(20),
@@ -482,13 +390,10 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                  borderRadius: BorderRadius.circular(12)),
                 child: Icon(
                   Icons.nightlight_round,
-                  color: AppColors.secondary,
-                ),
-              ),
+                  color: AppColors.secondary)),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -497,37 +402,21 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                     Text(
                       '저녁 알림',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       '매일 ${_eveningTime.format(context)}',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
               Row(
                 children: [
                   Switch(
                     value: false,
                     onChanged: _settings.enabled ? (value) {} : null,
-                    activeColor: AppColors.primary,
-                  ),
+                    activeColor: AppColors.primary),
                   TextButton(
                     onPressed: null,
-                    child: const Text('변경'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                    child: const Text('변경'))])]))]);
   }
 
   Widget _buildFrequencySettings() {
@@ -541,17 +430,12 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           Text(
             '알림 빈도 설정',
             style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           _buildFrequencyOption('매일'),
           _buildFrequencyOption('주 3회 (월/수/금)'),
           _buildFrequencyOption('주말만'),
-          _buildFrequencyOption('평일만'),
-        ],
-      ),
-    );
+          _buildFrequencyOption('평일만')]));
   }
 
   Widget _buildFrequencyOption(String label) {
@@ -564,8 +448,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
       groupValue: isSelected ? label : null,
       onChanged: _settings.enabled ? (value) {} : null,
       activeColor: AppColors.primary,
-      contentPadding: EdgeInsets.zero,
-    );
+      contentPadding: EdgeInsets.zero);
   }
 
   Widget _buildCategoryItem({
@@ -573,8 +456,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
     required String title,
     required String subtitle,
     required bool value,
-    required ValueChanged<bool> onChanged,
-  }) {
+    required ValueChanged<bool> onChanged}) {
     final theme = Theme.of(context);
     
     return GlassContainer(
@@ -586,14 +468,11 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.secondary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
+              borderRadius: BorderRadius.circular(10)),
             child: Icon(
               icon,
               color: AppColors.secondary,
-              size: 20,
-            ),
-          ),
+              size: 20)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -602,27 +481,16 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
                 Text(
                   title,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))])),
           Switch(
             value: value && _settings.enabled,
             onChanged: _settings.enabled ? onChanged : null,
-            activeColor: AppColors.secondary,
-          ),
-        ],
-      ),
-    ).animate().fadeIn().slideX();
+            activeColor: AppColors.secondary)])).animate().fadeIn().slideX();
   }
 
   Widget _buildTestNotificationButton() {
@@ -632,10 +500,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
         icon: const Icon(Icons.notifications_active),
         label: const Text('테스트 알림 보내기'),
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
-        ),
-      ),
-    );
+          foregroundColor: AppColors.primary)));
   }
 
   Future<void> _selectTime(bool isMorning) async {
@@ -649,13 +514,9 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
               primary: AppColors.primary,
-              secondary: AppColors.secondary,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
+              secondary: AppColors.secondary)),
+          child: child!);
+      });
 
     if (picked != null) {
       setState(() {
@@ -666,8 +527,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
             dailyFortune: _settings.dailyFortune,
             tokenAlert: _settings.tokenAlert,
             promotion: _settings.promotion,
-            dailyFortuneTime: '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}',
-          );
+            dailyFortuneTime: '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}');
         } else {
           _eveningTime = picked;
         }
@@ -694,9 +554,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           const SnackBar(
             content: Text('알림 설정이 저장되었습니다'),
             backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+            behavior: SnackBarBehavior.floating));
       }
     } catch (e) {
       Logger.error('알림 설정 저장 실패', e);
@@ -706,9 +564,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           const SnackBar(
             content: Text('설정 저장에 실패했습니다'),
             backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+            behavior: SnackBarBehavior.floating));
       }
     } finally {
       setState(() => _isLoading = false);
@@ -724,9 +580,7 @@ class _NotificationSettingsPageState extends ConsumerState<NotificationSettingsP
           const SnackBar(
             content: Text('테스트 알림을 전송했습니다'),
             backgroundColor: Colors.blue,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+            behavior: SnackBarBehavior.floating));
       }
     } catch (e) {
       Logger.error('테스트 알림 전송 실패', e);

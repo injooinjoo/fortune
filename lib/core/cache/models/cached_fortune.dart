@@ -69,8 +69,7 @@ class CachedFortune extends HiveObject {
     this.luckyItems,
     this.recommendations,
     this.summary,
-    this.additionalInfo,
-  });
+    this.additionalInfo});
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
@@ -90,8 +89,7 @@ class CachedFortune extends HiveObject {
       luckyItems: luckyItems,
       recommendations: recommendations,
       summary: summary,
-      additionalInfo: additionalInfo,
-    );
+      additionalInfo: additionalInfo);
   }
 
   factory CachedFortune.fromFortune(Fortune fortune, {Duration ttl = const Duration(hours: 24)}) {
@@ -111,7 +109,6 @@ class CachedFortune extends HiveObject {
       luckyItems: fortune.luckyItems,
       recommendations: fortune.recommendations,
       summary: fortune.summary,
-      additionalInfo: fortune.additionalInfo,
-    );
+      additionalInfo: fortune.additionalInfo);
   }
 }

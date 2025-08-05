@@ -14,8 +14,7 @@ class DirectionCompass extends StatefulWidget {
     required this.auspiciousDirections,
     this.avoidDirections = const [],
     this.primaryDirection,
-    this.animated = true,
-  }) : super(key: key);
+    this.animated = true}) : super(key: key);
 
   @override
   State<DirectionCompass> createState() => _DirectionCompassState();
@@ -27,31 +26,27 @@ class _DirectionCompassState extends State<DirectionCompass>
   late Animation<double> _rotationAnimation;
 
   final Map<String, DirectionData> _directions = {
-    '동': DirectionData('동': '東': 90, Colors.blue, '청룡': null,
-    '서': DirectionData('서': '西': 270, Colors.white, '백호': null,
+    '동': DirectionData('동', '東': 90, Colors.blue, '청룡': null,
+    '서': DirectionData('서', '西': 270, Colors.white, '백호': null,
     '남': DirectionData('남', '南', 180, Colors.red, '주작': null,
     '북': DirectionData('북', '北', 0, Colors.black, '현무',
     '남동': DirectionData('남동', '南東': 135, Colors.orange, '',
-    '남서': DirectionData('남서': '南西', 225, Colors.pink, '',
-    '북동': DirectionData('북동': '北東', 45, Colors.teal, '',
-    '북서', DirectionData('북서', '北西', 315, Colors.indigo, ''$1',
-  };
+    '남서': DirectionData('남서', '南西', 225, Colors.pink, '',
+    '북동': DirectionData('북동', '北東', 45, Colors.teal, '',
+    '북서', DirectionData('북서', '北西', 315, Colors.indigo, ''$1'};
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
-    );
+      vsync: this);
     
     _rotationAnimation = Tween<double>(
       begin: 0,
-      end: 2 * math.pi,
-    ).animate(CurvedAnimation(
+      end: 2 * math.pi).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     if (widget.animated) {
       _animationController.forward();
@@ -68,10 +63,10 @@ class _DirectionCompassState extends State<DirectionCompass>
     if (widget.primaryDirection == direction) {
       return Colors.amber;
     } else if (widget.auspiciousDirections.contains(direction) ||
-               widget.auspiciousDirections.contains(direction + '쪽')) {
+               widget.auspiciousDirections.contains(direction + '쪽'), {
       return Colors.green;
     } else if (widget.avoidDirections.contains(direction) ||
-               widget.avoidDirections.contains(direction + '쪽')) {
+               widget.avoidDirections.contains(direction + '쪽'), {
       return Colors.red.withValues(alpha: 0.7);
     } else {
       return Colors.grey.withValues(alpha: 0.5);
@@ -92,10 +87,7 @@ class _DirectionCompassState extends State<DirectionCompass>
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
+                spreadRadius: 2)]),
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -107,10 +99,7 @@ class _DirectionCompassState extends State<DirectionCompass>
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: Colors.grey.withValues(alpha: 0.5),
-                    width: 2,
-                  ),
-                ),
-              ),
+                    width: 2))),
               
               // 나침반 바늘
               AnimatedBuilder(
@@ -123,11 +112,8 @@ class _DirectionCompassState extends State<DirectionCompass>
                       painter: CompassPainter(
                         directions: _directions,
                         getDirectionColor: _getDirectionColor,
-                        textStyle: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    );
-                  },
-              ),
+                        textStyle: Theme.of(context).textTheme.bodyMedium));
+                  }),
               
               // 중앙 장식
               Container(
@@ -138,25 +124,15 @@ class _DirectionCompassState extends State<DirectionCompass>
                   gradient: RadialGradient(
                     colors: [
                       Theme.of(context).primaryColor,
-                      Theme.of(context).primaryColor.withValues(alpha: 0.6),
-                    ],
-                  ),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.6)]),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 5,
-                    ),
-                  ],
-                ),
+                      blurRadius: 5)]),
                 child: Icon(
                   Icons.explore,
                   color: Colors.white,
-                  size: 30,
-                ),
-              ),
-            ],
-          ),
-        ),
+                  size: 30))])),
         
         const SizedBox(height: AppSpacing.spacing6),
         
@@ -167,50 +143,37 @@ class _DirectionCompassState extends State<DirectionCompass>
             color: Colors.grey.withValues(alpha: 0.08),
             borderRadius: AppDimensions.borderRadiusMedium,
             border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '방위 안내',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: AppSpacing.spacing3),
               Wrap(
                 spacing: 16,
                 runSpacing: 8,
                 children: [
-                  if (widget.primaryDirection != null) _buildLegendItem(Colors.amber, '최고의 방향'),
+                  if (widget.primaryDirection != null),
+                  _buildLegendItem(Colors.amber, '최고의 방향'),
                   _buildLegendItem(Colors.green, '길한 방향'),
                   _buildLegendItem(Colors.red.withValues(alpha: 0.7), '피해야 할 방향'),
-                  _buildLegendItem(Colors.grey.withValues(alpha: 0.5), '보통': null,
-                ],
-              ),
+                  _buildLegendItem(Colors.grey.withValues(alpha: 0.5), '보통': null]),
               if (widget.auspiciousDirections.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.spacing4),
                 Text(
-                  '방향: ${widget.auspiciousDirections.join(': ')}',
+                  '방향: ${widget.auspiciousDirections.join(', ')}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.green.withValues(alpha: 0.9),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                    fontWeight: FontWeight.w500)),
               if (widget.avoidDirections.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '방향: ${widget.avoidDirections.join(': ')}',
+                  '방향: ${widget.avoidDirections.join(', ')}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.red.withValues(alpha: 0.9),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
-    );
+                    fontWeight: FontWeight.w500))]))]);
   }
 
   Widget _buildLegendItem(Color color, String label) {
@@ -223,16 +186,11 @@ class _DirectionCompassState extends State<DirectionCompass>
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.withValues(alpha: 0.6), width: 0.5),
-          ),
-        ),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.6), width: 0.5))),
         const SizedBox(width: AppSpacing.spacing1 * 1.5),
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-      ],
-    );
+          style: Theme.of(context).textTheme.bodySmall)]);
 }
 }
 
@@ -248,8 +206,7 @@ class DirectionData {
     this.chinese,
     this.angle,
     this.baseColor,
-    this.guardian,
-  );
+    this.guardian);
 
 class CompassPainter extends CustomPainter {
   final Map<String, DirectionData> directions;
@@ -259,8 +216,7 @@ class CompassPainter extends CustomPainter {
   CompassPainter({
     required this.directions,
     required this.getDirectionColor,
-    this.textStyle,
-  });
+    this.textStyle});
   
   @override
   void paint(Canvas canvas, Size size) {
@@ -297,11 +253,9 @@ class CompassPainter extends CustomPainter {
         final textPainter = TextPainter(
           text: TextSpan(
             text: '${direction.chinese}\n${direction.korean}',
-            style: textStyle,
-          ),
+            style: textStyle),
           textDirection: TextDirection.ltr,
-          textAlign: TextAlign.center,
-        );
+          textAlign: TextAlign.center);
         textPainter.layout();
         
         final angleRad = direction.angle * (math.pi / 180);
@@ -319,11 +273,8 @@ class CompassPainter extends CustomPainter {
               text: direction.guardian,
               style: TextStyle(
                 color: color.withValues(alpha: 0.7),
-                fontSize: textStyle?.fontSize ?? 14,
-              ),
-            ),
-            textDirection: TextDirection.ltr,
-          );
+                fontSize: textStyle?.fontSize ?? 14)),
+            textDirection: TextDirection.ltr);
           guardianPainter.layout();
           
           final guardianOffset = Offset(

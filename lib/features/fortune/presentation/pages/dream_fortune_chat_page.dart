@@ -16,8 +16,7 @@ class DreamFortuneChatPage extends ConsumerStatefulWidget {
   
   const DreamFortuneChatPage({
     super.key,
-    this.initialParams,
-  });
+    this.initialParams});
 
   @override
   ConsumerState<DreamFortuneChatPage> createState() => _DreamFortuneChatPageState();
@@ -34,8 +33,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
     super.initState();
     _backgroundAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 20),
-    );
+      duration: const Duration(seconds: 20));
     _backgroundAnimationController.repeat();
     
     // Start the chat
@@ -65,7 +63,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
     final tokenNotifier = ref.read(tokenProvider.notifier);
     final isPremium = tokenState.hasUnlimitedAccess;
     
-    if (!isPremium && !tokenNotifier.canAccessFortune('dream')) {
+    if (!isPremium && !tokenNotifier.canAccessFortune('dream'), {
       // Not enough souls - this should have been checked before navigation
       if (mounted) {
         Navigator.of(context).pop();
@@ -75,20 +73,18 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
     
     // Consume souls if not premium
     if (!isPremium) {
-      final soulAmount = SoulRates.getSoulAmount('dream');
+      final soulAmount = SoulRates.getSoulAmount('dream')
       HapticUtils.heavyImpact();
       
       // Show soul consumption animation
       SoulConsumeAnimation.show(
         context: context,
-        soulAmount: soulAmount,
-      );
+        soulAmount: soulAmount);
       
       // Actually consume the souls
       await tokenNotifier.consumeTokens(
         fortuneType: 'dream',
-        amount: soulAmount,
-      );
+        amount: soulAmount);
       _hasConsumedSoul = true;
     }
   }
@@ -99,8 +95,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
+          curve: Curves.easeOut);
       }
     });
   }
@@ -134,8 +129,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                   centerTitle: true,
                   onBackPressed: () {
                     _showExitConfirmDialog();
-                  },
-                ),
+                  }),
                 
                 // Chat messages
                 Expanded(
@@ -152,15 +146,12 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                         
                         return DreamChatBubble(
                           message: message,
-                          showAvatar: showAvatar,
-                        );
+                          showAvatar: showAvatar);
                       } else {
                         // Typing indicator
                         return const TypingIndicator();
                       }
-                    },
-                  ),
-                ),
+                    })),
                 
                 // Input area
                 DreamInputWidget(
@@ -171,11 +162,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                     if (!_hasConsumedSoul) {
                       _consumeSoulIfNeeded();
                     }
-                  },
-                ),
-              ],
-            ),
-          ),
+                  })])),
           
           // Loading overlay
           if (chatState.isAnalyzing)
@@ -183,13 +170,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
               color: Colors.black.withValues(alpha: 0.5),
               child: const Center(
                 child: CircularProgressIndicator(
-                  color: Colors.deepPurple,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+                  color: Colors.deepPurple)))]));
   }
   
   Widget _buildMysticalBackground() {
@@ -200,10 +181,7 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
           end: Alignment.bottomCenter,
           colors: [
             Colors.deepPurple.shade900.withValues(alpha: 0.8),
-            Colors.black,
-          ],
-        ),
-      ),
+            Colors.black])),
       child: Stack(
         children: [
           // Animated gradient overlay
@@ -215,18 +193,12 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                   gradient: RadialGradient(
                     center: Alignment(
                       math.sin(_backgroundAnimationController.value * 2 * math.pi) * 0.5,
-                      math.cos(_backgroundAnimationController.value * 2 * math.pi) * 0.5,
-                    ),
+                      math.cos(_backgroundAnimationController.value * 2 * math.pi) * 0.5),
                     radius: 1.5,
                     colors: [
                       Colors.deepPurple.shade600.withValues(alpha: 0.2),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+                      Colors.transparent])));
+            }),
           
           // Stars
           ...List.generate(30, (index) {
@@ -248,26 +220,18 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                     BoxShadow(
                       color: Colors.white.withValues(alpha: 0.5),
                       blurRadius: 3,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              )
+                      spreadRadius: 1)]))
                   .animate(
-                    onPlay: (controller) => controller.repeat(),
-                  )
+                    onPlay: (controller) => controller.repeat())
                   .scale(
                     duration: Duration(seconds: 3 + index % 3),
                     begin: const Offset(0.8, 0.8),
-                    end: const Offset(1.2, 1.2),
-                  )
+                    end: const Offset(1.2, 1.2))
                   .then()
                   .scale(
                     duration: Duration(seconds: 3 + index % 3),
                     begin: const Offset(1.2, 1.2),
-                    end: const Offset(0.8, 0.8),
-                  ),
-            );
+                    end: const Offset(0.8, 0.8)));
           }),
           
           // Floating particles
@@ -281,25 +245,17 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
                 height: size,
                 decoration: BoxDecoration(
                   color: Colors.deepPurple.shade300.withValues(alpha: 0.3),
-                  shape: BoxShape.circle,
-                ),
-              )
+                  shape: BoxShape.circle))
                   .animate(
-                    onPlay: (controller) => controller.repeat(),
-                  )
+                    onPlay: (controller) => controller.repeat())
                   .moveY(
                     duration: Duration(seconds: 10 + index * 2),
                     begin: 0,
-                    end: -MediaQuery.of(context).size.height - 100,
-                  )
+                    end: -MediaQuery.of(context).size.height - 100)
                   .fadeIn()
-                  .then(delay: Duration(seconds: index))
-                  .fadeOut(),
-            );
-          }),
-        ],
-      ),
-    );
+                  .then(delay: Duration(seconds: index),
+                  .fadeOut());
+          })]));
   }
   
   void _showExitConfirmDialog() {
@@ -317,17 +273,14 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
         backgroundColor: Colors.grey.shade900,
         title: const Text(
           '꿈 해몽을 중단하시겠습니까?',
-          style: TextStyle(color: Colors.white),
-        ),
+          style: TextStyle(color: Colors.white)),
         content: const Text(
           '대화 내용이 저장되지 않습니다.',
-          style: TextStyle(color: Colors.white70),
-        ),
+          style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('계속하기'),
-          ),
+            child: const Text('계속하기')),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -337,11 +290,6 @@ class _DreamFortuneChatPageState extends ConsumerState<DreamFortuneChatPage>
             },
             child: Text(
               '나가기',
-              style: TextStyle(color: Colors.red.shade400),
-            ),
-          ),
-        ],
-      ),
-    );
+              style: TextStyle(color: Colors.red.shade400)))]));
   }
 }

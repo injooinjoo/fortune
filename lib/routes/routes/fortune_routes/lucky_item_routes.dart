@@ -16,69 +16,58 @@ final luckyItemRoutes = [
   GoRoute(
     path: 'lucky-items',
     name: 'fortune-lucky-items',
-    builder: (context, state) => const fortune_pages.LuckyItemsUnifiedPage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyItemsUnifiedPage()),
   
   // Lucky Color
   GoRoute(
     path: 'lucky-color',
     name: 'fortune-lucky-color',
-    builder: (context, state) => const fortune_pages.LuckyColorFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyColorFortunePage()),
   
   // Lucky Number
   GoRoute(
     path: 'lucky-number',
     name: 'fortune-lucky-number',
-    builder: (context, state) => const fortune_pages.LuckyNumberFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyNumberFortunePage()),
   
   // Lucky Food
   GoRoute(
     path: 'lucky-food',
     name: 'fortune-lucky-food',
-    builder: (context, state) => const fortune_pages.LuckyFoodFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyFoodFortunePage()),
   
   // Lucky Place
   GoRoute(
     path: 'lucky-place',
     name: 'fortune-lucky-place',
-    builder: (context, state) => const fortune_pages.LuckyPlaceFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyPlaceFortunePage()),
   
   // Lucky Outfit
   GoRoute(
     path: 'lucky-outfit',
     name: 'fortune-lucky-outfit',
-    builder: (context, state) => const fortune_pages.LuckyOutfitFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckyOutfitFortunePage()),
   
   // Lucky Series
   GoRoute(
     path: 'lucky-series',
     name: 'fortune-lucky-series',
-    builder: (context, state) => const fortune_pages.LuckySeriesFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.LuckySeriesFortunePage()),
   
   // Birthstone
   GoRoute(
     path: 'birthstone',
     name: 'fortune-birthstone',
-    builder: (context, state) => const fortune_pages.BirthstoneFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.BirthstoneFortunePage()),
   
   // Talisman
   GoRoute(
     path: 'talisman',
     name: 'fortune-talisman',
-    builder: (context, state) => const TalismanEnhancedPage(),
-  ),
+    builder: (context, state) => const TalismanEnhancedPage()),
   
   // Five Blessings
   GoRoute(
     path: 'five-blessings',
     name: 'fortune-five-blessings',
-    builder: (context, state) => const fortune_pages.FiveBlessingsFortunePage(),
-  ),
-];
+    builder: (context, state) => const fortune_pages.FiveBlessingsFortunePage())];

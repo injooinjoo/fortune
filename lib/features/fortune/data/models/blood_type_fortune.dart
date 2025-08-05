@@ -18,8 +18,7 @@ class BloodTypeFortune {
     required this.workAdvice,
     required this.healthTip,
     required this.luckyColor,
-    required this.luckyNumber,
-  });
+    required this.luckyNumber});
 
   factory BloodTypeFortune.fromJson(Map<String, dynamic> json) {
     return BloodTypeFortune(
@@ -41,11 +40,11 @@ class BloodTypeFortune {
       'rhType': rhType,
       'personality': personality,
       'todaysFortune': todaysFortune)
-      'loveCompatibility': loveCompatibility,
+      , 'loveCompatibility': loveCompatibility,
       'workAdvice': workAdvice)
-      'healthTip': healthTip,
+      , 'healthTip': healthTip,
       'luckyColor': luckyColor)
-      'luckyNumber': luckyNumber)
+      , 'luckyNumber': luckyNumber)}
     };
   }
 }

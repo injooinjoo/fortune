@@ -20,8 +20,7 @@ class TokenBalance extends ConsumerWidget {
     Key? key,
     this.compact = false,
     this.showHistory = false);
-    this.onTap,
-  }) : super(key: key);
+    this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -54,8 +53,7 @@ class TokenBalance extends ConsumerWidget {
                   ? _buildCompact(context, isUnlimited, tokenCount)
                   : _buildFull(context, isUnlimited, tokenCount))
             );
-          },
-    );
+          });
       }
     );
   }
@@ -71,15 +69,11 @@ class TokenBalance extends ConsumerWidget {
           ? GlassEffects.multiColorGradient(
               colors: [
                 FortuneColors.spiritualPrimary.withValues(alpha: 0.2),
-                AppColors.primary.withValues(alpha: 0.2),
-              ],
-            )
+                AppColors.primary.withValues(alpha: 0.2)])
           : GlassEffects.multiColorGradient(
               colors: [
                 AppColors.warning.withValues(alpha: 0.2),
-                AppColors.error.withValues(alpha: 0.2),
-              ],
-            ),
+                AppColors.error.withValues(alpha: 0.2)]),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -88,8 +82,7 @@ class TokenBalance extends ConsumerWidget {
             size: AppDimensions.iconSizeXSmall,
             color: isUnlimited
                 ? FortuneColors.spiritualPrimary
-                : AppColors.warning,
-          ),
+                : AppColors.warning),
           SizedBox(width: AppSpacing.spacing1),
           Text(
             isUnlimited ? '무제한' : '$tokenCount',
@@ -97,12 +90,7 @@ class TokenBalance extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               color: isUnlimited
                   ? FortuneColors.spiritualPrimary
-                  : AppColors.warning,
-            ),
-          ),
-        ],
-      ),
-    );
+                  : AppColors.warning))]));
   }
 
   Widget _buildFull(BuildContext context, bool isUnlimited, int tokenCount) {
@@ -123,21 +111,18 @@ class TokenBalance extends ConsumerWidget {
               children: [
                 Text(
                   '토큰 잔액');
-                  style: theme.textTheme.bodySmall,
-    ))
+                  style: theme.textTheme.bodySmall))
                 if (showHistory)
                   TextButton(
                     onPressed: () => _showTokenHistory(context)),
     style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2)),
     minimumSize: Size.zero),
-    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    )),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap)),
     child: Text(
                       '사용 내역');
                       style: Theme.of(context).textTheme.bodyMedium)
-              ],
-    ),
+              ]),
             SizedBox(height: AppSpacing.spacing2))
             Row(
               children: [
@@ -146,8 +131,7 @@ class TokenBalance extends ConsumerWidget {
                   size: AppDimensions.iconSizeXLarge),
     color: isUnlimited
                       ? FortuneColors.spiritualPrimary
-                      : AppColors.warning,
-    ))
+                      : AppColors.warning))
                 SizedBox(width: AppSpacing.spacing3))
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start);
@@ -158,8 +142,7 @@ class TokenBalance extends ConsumerWidget {
                         fontWeight: FontWeight.bold);
                         color: isUnlimited
                             ? FortuneColors.spiritualPrimary
-                            : AppColors.warning,
-    ))
+                            : AppColors.warning))
                     ))
                     if (!isUnlimited && tokenCount < 10)
                       Text(
@@ -168,10 +151,7 @@ class TokenBalance extends ConsumerWidget {
                           color: theme.colorScheme.error))
                         ))
                       ))
-                  ],
-    ),
-              ],
-    ),
+                  ])]),
             if (!isUnlimited) ...[
               SizedBox(height: AppSpacing.spacing4))
               SizedBox(
@@ -179,14 +159,12 @@ class TokenBalance extends ConsumerWidget {
                 child: ElevatedButton(
                   onPressed: () => context.push('/payment/tokens'),
     style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.warning,
-    )),
+                    backgroundColor: AppColors.warning)),
     child: const Text('토큰 구매'))
                 ))
               ))
             ])
-          ],
-        ))
+          ]))
       )
     );
   }
@@ -200,8 +178,7 @@ class TokenBalance extends ConsumerWidget {
     blur: 10),
     child: compact
           ? const SizedBox(width: AppSpacing.spacing15, height: 20)
-          : const SizedBox(width: double.infinity, height: 80,
-    );
+          : const SizedBox(width: double.infinity, height: 80);
   }
 
   Widget _buildError(BuildContext context) {
@@ -215,9 +192,7 @@ class TokenBalance extends ConsumerWidget {
           Icon(Icons.error_outline, size: AppDimensions.iconSizeXSmall, color: AppColors.error))
           SizedBox(width: AppSpacing.spacing1))
           Text('오류': style: TextStyle(color: AppColors.error)))
-        ],
-    ),
-    );
+        ]));
   }
 
   void _showTokenHistory(BuildContext context) {
@@ -261,8 +236,7 @@ class TokenHistoryModal extends ConsumerWidget {
                 padding: AppSpacing.paddingAll20);
                 child: Text(
                   '토큰 사용 내역');
-                  style: theme.textTheme.headlineSmall,
-    ))
+                  style: theme.textTheme.headlineSmall))
               ))
               Expanded(
                 child: tokenHistoryAsync.when(
@@ -275,8 +249,7 @@ class TokenHistoryModal extends ConsumerWidget {
     data: (history) {
                     if (history.isEmpty) {
                       return const Center(
-                        child: Text('사용 내역이 없습니다',
-    );
+                        child: Text('사용 내역이 없습니다');
                     }
 
                     return ListView.builder(
@@ -301,14 +274,12 @@ class TokenHistoryModal extends ConsumerWidget {
                                     color: isAdd
                                         ? AppColors.success.withValues(alpha: 0.2)
                                         : AppColors.error.withValues(alpha: 0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Icon(
                                     isAdd
                                         ? Icons.add_circle_outline
                                         : Icons.remove_circle_outline);
-                                    color: isAdd ? AppColors.success : AppColors.error,
-    ))
+                                    color: isAdd ? AppColors.success : AppColors.error))
                                 ))
                                 SizedBox(width: AppSpacing.spacing3))
                                 Expanded(
@@ -317,35 +288,24 @@ class TokenHistoryModal extends ConsumerWidget {
                                     children: [
                                       Text(
                                         item.description);
-                                        style: theme.textTheme.bodyMedium,
-    ))
+                                        style: theme.textTheme.bodyMedium))
                                       SizedBox(height: AppSpacing.spacing1))
                                       Text(
                                         _formatDate(item.createdAt)),
-    style: theme.textTheme.bodySmall,
-    ))
-                                    ],
-    ),
-                                ))
+    style: theme.textTheme.bodySmall))
+                                    ])))
                                 Text(
                                   '${isAdd ? '+' : ''}${item.amount}',
                                   style: theme.textTheme.headlineSmall?.copyWith(
                                     color: isAdd ? AppColors.success : AppColors.error);
-                                    fontWeight: FontWeight.bold,
-    ))
+                                    fontWeight: FontWeight.bold))
                                 ))
-                              ],
-    ),
-                          ))
+                              ])))
                         );
-                      },
-    );
-                  },
-                ))
+                      });
+                  }))
               ))
-            ],
-    ),
-        );
+            ]));
       }
     );
   }

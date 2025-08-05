@@ -18,8 +18,7 @@ class TalismanCustomizationStep extends ConsumerStatefulWidget {
     super.key,
     required this.selectedType,
     required this.onNext,
-    required this.onBack,
-  });
+    required this.onBack});
 
   @override
   ConsumerState<TalismanCustomizationStep> createState() => _TalismanCustomizationStepState();
@@ -49,11 +48,10 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
   ];
   
   final Map<String, String> _symbolOptions = {
-    'classic': '전통 문양',
-    'modern': '현대적 디자인',
-    'minimal': '미니멀 스타일',
-    'ornate': '화려한 장식',
-  };
+    'classic', '전통 문양',
+    'modern', '현대적 디자인',
+    'minimal', '미니멀 스타일',
+    'ornate', '화려한 장식'};
 
   @override
   void initState() {
@@ -82,11 +80,10 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
   void _selectBirthDate() async {
     final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25)),
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 25),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      locale: const Locale('ko': 'KR',
-    );
+      locale: const Locale('ko', 'KR');
     
     if (date != null) {
       _birthDateController.text = '${date.year}년 ${date.month}월 ${date.day}일';
@@ -94,7 +91,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
   }
 
   void _handleNext() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate(), {
       HapticUtils.lightImpact();
       
       // Save customization data
@@ -134,37 +131,26 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                     height: 60,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: widget.selectedType.gradientColors,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
+                        colors: widget.selectedType.gradientColors),
+                      shape: BoxShape.circle),
                     child: Icon(
                       widget.selectedType.icon,
                       color: Colors.white,
-                      size: 32,
-                    ),
-                  ).animate()
+                      size: 32)).animate()
                     .fadeIn(duration: 600.ms)
-                    .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1)),
+                    .scale(begin: const Offset(0.5, 0.5), end: const Offset(1, 1),
                   const SizedBox(height: 16),
                   Text(
                     '${widget.selectedType.displayName} 만들기',
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ).animate()
+                      fontWeight: FontWeight.bold)).animate()
                   .fadeIn(duration: 600.ms, delay: 200.ms),
                   const SizedBox(height: 8),
                   Text(
                     '부적에 담을 정보를 입력해주세요',
                     style: theme.textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ).animate()
-                  .fadeIn(duration: 600.ms, delay: 400.ms),
-                ],
-              ),
-            ),
+                      color: AppColors.textSecondary)).animate()
+                  .fadeIn(duration: 600.ms, delay: 400.ms)])),
             const SizedBox(height: 32),
             
             // Preview
@@ -174,9 +160,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 primaryColor: _selectedPrimaryColor,
                 secondaryColor: _selectedSecondaryColor,
                 symbol: _selectedSymbol,
-                userName: _nameController.text.isNotEmpty ? _nameController.text : '홍길동',
-              ),
-            ).animate()
+                userName: _nameController.text.isNotEmpty ? _nameController.text : '홍길동')).animate()
                   .fadeIn(duration: 600.ms, delay: 600.ms),
             
             const SizedBox(height: 32),
@@ -192,16 +176,13 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 hintText: '부적에 새겨질 이름을 입력하세요',
                 prefixIcon: const Icon(Icons.person_outline),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '이름을 입력해주세요';
                 }
                 return null;
-              },
-            ).animate()
+              }).animate()
               .fadeIn(duration: 400.ms, delay: 800.ms)
               .slideX(begin: -0.1, end: 0),
             
@@ -217,16 +198,13 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 prefixIcon: const Icon(Icons.calendar_today_outlined),
                 suffixIcon: const Icon(Icons.arrow_drop_down),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '생년월일을 선택해주세요';
                 }
                 return null;
-              },
-            ).animate()
+              }).animate()
               .fadeIn(duration: 400.ms, delay: 900.ms)
               .slideX(begin: -0.1, end: 0),
             
@@ -244,14 +222,10 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 hintText: '부적에 담고 싶은 소원을 적어주세요',
                 prefixIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 60),
-                  child: Icon(Icons.edit_note),
-                ),
+                  child: Icon(Icons.edit_note)),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                counterText: '${_personalWishController.text.length}/50',
-              ),
-            ).animate()
+                  borderRadius: BorderRadius.circular(12)),
+                counterText: '${_personalWishController.text.length}/50')).animate()
               .fadeIn(duration: 400.ms, delay: 1000.ms)
               .slideX(begin: -0.1, end: 0),
             
@@ -282,12 +256,8 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('이전'),
-                  ),
-                ),
+                        borderRadius: BorderRadius.circular(12))),
+                    child: const Text('이전'))),
                 const SizedBox(width: 16),
                 Expanded(
                   flex: 2,
@@ -296,21 +266,11 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('다음'),
-                  ),
-                ),
-              ],
-            ).animate()
+                        borderRadius: BorderRadius.circular(12))),
+                    child: const Text('다음')))]).animate()
               .fadeIn(duration: 400.ms, delay: 1200.ms),
             
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
+            const SizedBox(height: 20)])));
   }
   
   Widget _buildSectionTitle(String title) {
@@ -318,9 +278,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
       title,
       style: const TextStyle(
         fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-    );
+        fontWeight: FontWeight.bold));
   }
   
   Widget _buildColorSelection() {
@@ -337,9 +295,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 '주 색상',
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                  fontWeight: FontWeight.w600)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -361,31 +317,20 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isSelected ? Colors.white : Colors.transparent,
-                          width: 3,
-                        ),
+                          width: 3),
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
                               color: color.withValues(alpha: 0.5),
                               blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                        ],
-                      ),
+                              spreadRadius: 2)]),
                       child: isSelected
                           ? const Icon(
                               Icons.check,
                               color: Colors.white,
-                              size: 20,
-                            )
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
+                              size: 20)
+                          : null));
+                }).toList())])),
         const SizedBox(height: 12),
         // Secondary color
         GlassContainer(
@@ -398,9 +343,7 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                 '보조 색상',
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+                  fontWeight: FontWeight.w600)),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -422,33 +365,20 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isSelected ? Colors.white : Colors.transparent,
-                          width: 3,
-                        ),
+                          width: 3),
                         boxShadow: [
                           if (isSelected)
                             BoxShadow(
                               color: color.withValues(alpha: 0.5),
                               blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                        ],
-                      ),
+                              spreadRadius: 2)]),
                       child: isSelected
                           ? const Icon(
                               Icons.check,
                               color: Colors.white,
-                              size: 20,
-                            )
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      ],
-    ).animate()
+                              size: 20)
+                          : null));
+                }).toList())]))]).animate()
         .fadeIn(duration: 400.ms, delay: 1100.ms);
   }
   
@@ -471,28 +401,19 @@ class _TalismanCustomizationStepState extends ConsumerState<TalismanCustomizatio
               color: isSelected ? AppColors.primary : Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? AppColors.primary : Colors.grey[300]!,
-              ),
+                color: isSelected ? AppColors.primary : Colors.grey[300]!),
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
                     color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-              ],
-            ),
+                    offset: const Offset(0, 2))]),
             child: Text(
               entry.value,
               style: TextStyle(
                 color: isSelected ? Colors.white : AppColors.textPrimary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    ).animate()
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
+      }).toList()).animate()
         .fadeIn(duration: 400.ms, delay: 1200.ms);
   }
 }

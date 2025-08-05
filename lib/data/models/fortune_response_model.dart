@@ -13,8 +13,7 @@ class FortuneResponseModel {
     this.message,
     this.data,
     this.tokensUsed,
-    this.remainingTokens,
-  });
+    this.remainingTokens});
 
   factory FortuneResponseModel.fromJson(Map<String, dynamic> json) {
     return FortuneResponseModel(
@@ -22,8 +21,7 @@ class FortuneResponseModel {
       message: json['message'],
       data: json['data'] != null ? FortuneData.fromJson(json['data']) : null,
       tokensUsed: json['tokensUsed'],
-      remainingTokens: json['remainingTokens'],
-    );
+      remainingTokens: json['remainingTokens']);
   }
 
   Fortune toEntity() {
@@ -126,8 +124,7 @@ class FortuneResponseModel {
         if (data!.advice != null) 'advice': null,
         if (data!.luckyColor != null) 'luckyColor': null,
         if (data!.luckyNumber != null) 'luckyNumber': null,
-        if (data!.score != null) 'score': null,
-      },
+        if (data!.score != null) 'score': null},
       detailedLuckyItems: detailedLuckyItems.isNotEmpty ? detailedLuckyItems : null,
       greeting: data!.greeting,
       hexagonScores: data!.hexagonScores,
@@ -137,16 +134,14 @@ class FortuneResponseModel {
               title: item['title'] ?? '',
               score: item['score'],
               description: item['description'] ?? '',
-              recommendation: item['recommendation'],
-            )).toList()
+              recommendation: item['recommendation'])).toList()
           : null,
       birthYearFortunes: data!.birthYearFortunes != null
           ? (data!.birthYearFortunes as List).map((item) => BirthYearFortune(
               birthYear: item['birthYear'] ?? '',
               zodiacAnimal: item['zodiacAnimal'] ?? '',
               description: item['description'] ?? '',
-              advice: item['advice'],
-            )).toList()
+              advice: item['advice'])).toList()
           : null,
       fiveElements: data!.fiveElements,
       specialTip: data!.specialTip,
@@ -285,8 +280,7 @@ class FortuneData {
     this.birthYearFortunes,
     this.fiveElements,
     this.specialTip,
-    this.period,
-  });
+    this.period});
 
   factory FortuneData.fromJson(Map<String, dynamic> json) {
     return FortuneData(
@@ -372,8 +366,7 @@ class FortuneData {
       birthYearFortunes: json['birthYearFortunes'],
       fiveElements: json['fiveElements'],
       specialTip: json['special_tip'] ?? json['specialTip'],
-      period: json['period'],
-    );
+      period: json['period']);
   }
 
   // Convert to domain entities
@@ -396,9 +389,7 @@ class FortuneData {
         love: elements?['love'] ?? 50,
         career: elements?['career'] ?? 50,
         money: elements?['money'] ?? 50,
-        health: elements?['health'] ?? 50,
-      ),
-    );
+        health: elements?['health'] ?? 50));
   }
 
   SajuFortune? toSajuFortune() {
@@ -415,8 +406,7 @@ class FortuneData {
       yearlyFortune: yearlyFortune ?? '',
       monthlyFortune: monthlyFortune ?? '',
       advice: advice ?? '',
-      detailedAnalysis: detailedAnalysis ?? {},
-    );
+      detailedAnalysis: detailedAnalysis ?? {});
   }
 
   MBTIFortune? toMBTIFortune() {
@@ -432,8 +422,7 @@ class FortuneData {
       careerAdvice: careerAdvice ?? '',
       relationshipAdvice: relationshipAdvice ?? '',
       energyLevel: energyLevel ?? 70,
-      stressLevel: stressLevel ?? 30,
-    );
+      stressLevel: stressLevel ?? 30);
   }
 
   CompatibilityFortune? toCompatibilityFortune() {

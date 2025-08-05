@@ -20,8 +20,7 @@ class UserStatistics {
     required this.averageScore,
     required this.categoryCount,
     required this.mostFrequentCategory,
-    required this.lastFortuneDate,
-  });
+    required this.lastFortuneDate});
 }
 
 class StatisticsDashboard extends StatelessWidget {
@@ -31,8 +30,7 @@ class StatisticsDashboard extends StatelessWidget {
   const StatisticsDashboard({
     Key? key,
     required this.statistics,
-    required this.fontScale,
-  }) : super(key: key);
+    required this.fontScale}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,18 +49,12 @@ class StatisticsDashboard extends StatelessWidget {
                 '나의 운세 통계',
                 style: TextStyle(
                   fontSize: 20 * fontScale,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               Text(
                 DateFormat('yyyy년 MM월').format(DateTime.now()),
                 style: TextStyle(
                   fontSize: 14 * fontScale,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                ),
-              ),
-            ],
-          ),
+                  color: theme.colorScheme.onSurface.withOpacity(0.6)))]),
           const SizedBox(height: 20),
           
           // Quick Stats Grid
@@ -80,34 +72,28 @@ class StatisticsDashboard extends StatelessWidget {
                 title: '총 운세 횟수',
                 value: '${statistics.totalCount}회',
                 color: AppColors.primary,
-                fontScale: fontScale,
-              ),
+                fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.calendar_month,
                 title: '이번 달',
                 value: '${statistics.monthlyCount}회',
                 color: AppColors.secondary,
-                fontScale: fontScale,
-              ),
+                fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.star,
                 title: '평균 점수',
                 value: '${statistics.averageScore.toStringAsFixed(1)}점',
                 color: AppColors.success,
-                fontScale: fontScale,
-              ),
+                fontScale: fontScale),
               _buildStatCard(
                 context: context,
                 icon: Icons.favorite,
                 title: '자주 본 운세',
                 value: statistics.mostFrequentCategory,
                 color: AppColors.error,
-                fontScale: fontScale,
-              ),
-            ],
-          ),
+                fontScale: fontScale)]),
           const SizedBox(height: 20),
           
           // Personalized Insight
@@ -116,9 +102,7 @@ class StatisticsDashboard extends StatelessWidget {
             gradient: LinearGradient(
               colors: [
                 theme.colorScheme.primary.withOpacity(0.1),
-                theme.colorScheme.secondary.withOpacity(0.1),
-              ],
-            ),
+                theme.colorScheme.secondary.withOpacity(0.1)]),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -127,32 +111,19 @@ class StatisticsDashboard extends StatelessWidget {
                     Icon(
                       Icons.insights,
                       size: 20,
-                      color: theme.colorScheme.primary,
-                    ),
+                      color: theme.colorScheme.primary),
                     const SizedBox(width: 8),
                     Text(
                       '오늘의 인사이트',
                       style: TextStyle(
                         fontSize: 16 * fontScale,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 8),
                 Text(
                   _getPersonalizedInsight(statistics),
                   style: TextStyle(
                     fontSize: 14 * fontScale,
-                    color: theme.colorScheme.onSurface.withOpacity(0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    color: theme.colorScheme.onSurface.withOpacity(0.8)))]))]));
   }
 
   Widget _buildStatCard({
@@ -161,8 +132,7 @@ class StatisticsDashboard extends StatelessWidget {
     required String title,
     required String value,
     required Color color,
-    required double fontScale,
-  }) {
+    required double fontScale}) {
     final theme = Theme.of(context);
     
     return GlassContainer(
@@ -174,36 +144,26 @@ class StatisticsDashboard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
+              shape: BoxShape.circle),
             child: Icon(
               icon,
               size: 24,
-              color: color,
-            ),
-          ),
+              color: color)),
           const SizedBox(height: 8),
           Text(
             title,
             style: TextStyle(
               fontSize: 12 * fontScale,
-              color: theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
-            textAlign: TextAlign.center,
-          ),
+              color: theme.colorScheme.onSurface.withOpacity(0.6)),
+            textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Text(
             value,
             style: TextStyle(
               fontSize: 16 * fontScale,
               fontWeight: FontWeight.bold,
-              color: color,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+              color: color),
+            textAlign: TextAlign.center)]));
   }
 
   String _getPersonalizedInsight(UserStatistics statistics) {

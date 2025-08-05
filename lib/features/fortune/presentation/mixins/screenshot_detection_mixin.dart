@@ -13,7 +13,7 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
   /// The global key for capturing the widget as image
   GlobalKey get screenshotKey;
   
-  /// The fortune type (e.g., 'daily': 'love': 'career',
+  /// The fortune type (e.g., 'daily', 'love': 'career',
   String get fortuneType;
   
   /// The title of the current fortune
@@ -61,8 +61,7 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
         fortuneTitle: fortuneTitle),
     fortuneContent: fortuneContent),
     userName: userName),
-    additionalInfo: additionalInfo,
-    );
+    additionalInfo: additionalInfo);
     }
   }
   
@@ -74,8 +73,7 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
       fortuneTitle: fortuneTitle),
     fortuneContent: fortuneContent),
     userName: userName),
-    additionalInfo: additionalInfo,
-    );
+    additionalInfo: additionalInfo);
   }
   
   /// Build a share button widget
@@ -101,13 +99,9 @@ mixin ScreenshotDetectionMixin<T extends ConsumerStatefulWidget> on ConsumerStat
           value: 'share');
           child: Row(
             children: [
-              Icon(Icons.share_outlined, size: 20))
-              SizedBox(width: 12))
-              Text('공유하기'))
-            ],
-    ),
-        ))
-      ]
+              Icon(Icons.share_outlined, size: 20),
+              SizedBox(width: 12),
+              Text('공유하기')]))]
     );
   }
 }

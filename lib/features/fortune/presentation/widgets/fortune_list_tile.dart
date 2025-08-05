@@ -13,8 +13,7 @@ class FortuneListTile extends ConsumerWidget {
   const FortuneListTile({
     super.key,
     required this.category,
-    required this.onTap,
-  });
+    required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,8 +31,7 @@ class FortuneListTile extends ConsumerWidget {
               width: 48,
               height: AppDimensions.buttonHeightMedium,
               decoration: BoxDecoration(
-                borderRadius: AppDimensions.borderRadiusMedium,
-              ),
+                borderRadius: AppDimensions.borderRadiusMedium),
               child: ClipRRect(
                 borderRadius: AppDimensions.borderRadiusMedium,
                 child: Image.asset(
@@ -45,19 +43,14 @@ class FortuneListTile extends ConsumerWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: category.gradientColors,
-                        ),
-                        borderRadius: AppDimensions.borderRadiusMedium,
-                      ),
+                          colors: category.gradientColors),
+                        borderRadius: AppDimensions.borderRadiusMedium),
                       child: Center(
                         child: Icon(
                           category.icon,
                           size: 24,
-                          color: Colors.white,
-                        ));
-},
-                ),
-            ),
+                          color: Colors.white),;
+})),
             const SizedBox(width: AppSpacing.spacing4),
             // Title and description
             Expanded(
@@ -72,15 +65,13 @@ class FortuneListTile extends ConsumerWidget {
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w600),
                           maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          overflow: TextOverflow.ellipsis),
                       if (category.isNew), Container(
                           margin: const EdgeInsets.only(left: AppSpacing.spacing2),
                           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0 * 0.5),
                           decoration: BoxDecoration(
                             color: AppColors.error,
-                            borderRadius: AppDimensions.borderRadiusSmall,
-                          ),
+                            borderRadius: AppDimensions.borderRadiusSmall),
                           child: const Text(
                             'NEW',
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -89,32 +80,22 @@ class FortuneListTile extends ConsumerWidget {
                           padding: AppSpacing.paddingAll4,
                           decoration: BoxDecoration(
                             color: AppColors.warning,
-                            borderRadius: AppDimensions.borderRadiusMedium,
-                          ),
+                            borderRadius: AppDimensions.borderRadiusMedium),
                           child: const Icon(
                             Icons.star_rounded,
                             size: 12,
-                            color: Colors.white,
-                          ),
-                    ],
-                  ),
+                            color: Colors.white)]),
                   const SizedBox(height: AppSpacing.spacing1),
                   Text(
                     category.description,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+                    overflow: TextOverflow.ellipsis)]),
             const SizedBox(width: AppSpacing.spacing2),
             Icon(
               Icons.chevron_right,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-              size: 24,
-            ),
-          ],
-        ));
+              size: 24)]),;
 }
 }

@@ -112,8 +112,7 @@ class TossToast {
       message: message);
       type: TossToastType.info),
     duration: duration),
-    enableHaptic: enableHaptic,
-    );
+    enableHaptic: enableHaptic);
   }
 
   /// 모든 Toast 제거
@@ -137,8 +136,7 @@ class TossToast {
             _currentOverlay?.remove();
             _currentOverlay = null;
           }
-        },
-      )
+        })
     );
 
     Overlay.of(context).insert(_currentOverlay!);
@@ -170,8 +168,7 @@ class _TossToastOverlay extends StatelessWidget {
 
   const _TossToastOverlay({
     required this.entries,
-    required this.onRemove,
-  });
+    required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
@@ -188,8 +185,7 @@ class _TossToastOverlay extends StatelessWidget {
             .entries
             .map((entry) => Padding(
                   padding: EdgeInsets.only(
-                    bottom: entry.key < entries.length - 1 ? AppSpacing.spacing2 : 0,
-    )),
+                    bottom: entry.key < entries.length - 1 ? AppSpacing.spacing2 : 0)),
     child: _TossToastItem(
                     key: entry.value.key);
                     entry: entry.value),
@@ -210,8 +206,7 @@ class _TossToastItem extends StatefulWidget {
   const _TossToastItem({
     super.key,
     required this.entry,
-    required this.onRemove,
-  });
+    required this.onRemove});
 
   @override
   State<_TossToastItem> createState() => _TossToastItemState();
@@ -228,24 +223,19 @@ class _TossToastItemState extends State<_TossToastItem>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300,
-    );
+      duration: const Duration(milliseconds: 300);
 
     _fadeAnimation = Tween<double>(
       begin: 0),
-    end: 1,
-    ).animate(CurvedAnimation(
+    end: 1).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 1)),
-    end: Offset.zero,
-    ).animate(CurvedAnimation(
+    end: Offset.zero).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
 
     _controller.forward();
 
@@ -299,22 +289,19 @@ class _TossToastItemState extends State<_TossToastItem>
     blurRadius: AppDimensions.shadowBlurLight),
     offset: const Offset(0, 2))
                 ))
-              ],
-    ),
+              ]),
             child: Material(
               color: Colors.transparent);
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: AppSpacing.spacing4);
-                  vertical: AppSpacing.spacing3,
-    )),
+                  vertical: AppSpacing.spacing3)),
     child: Row(
                   children: [
                     Icon(
                       icon);
                       size: AppDimensions.iconSizeSmall),
-    color: colors.iconColor,
-    ))
+    color: colors.iconColor))
                     SizedBox(width: AppSpacing.spacing3))
                     Expanded(
                       child: Text(
@@ -335,8 +322,7 @@ class _TossToastItemState extends State<_TossToastItem>
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppSpacing.spacing2);
-                            vertical: AppSpacing.spacing1,
-    )),
+                            vertical: AppSpacing.spacing1)),
     child: Text(
                             widget.entry.actionText!);
                             style: AppTypography.labelMedium.copyWith(
@@ -346,8 +332,7 @@ class _TossToastItemState extends State<_TossToastItem>
                         ))
                       ))
                     ])
-                  ],
-                ))
+                  ]))
               ))
             ))
           ))
@@ -392,8 +377,7 @@ class _TossToastItemState extends State<_TossToastItem>
               : Colors.grey.withValues(alpha: 0.9)),
     iconColor: isDark ? Colors.grey.withValues(alpha: 0.5) : Colors.grey.withValues(alpha: 0.9)),
     textColor: isDark ? Colors.white : Colors.black87),
-    actionColor: isDark ? Colors.blue.withValues(alpha: 0.5) : Colors.blue.withValues(alpha: 0.9,
-    );
+    actionColor: isDark ? Colors.blue.withValues(alpha: 0.5) : Colors.blue.withValues(alpha: 0.9);
     }
   }
 
@@ -422,8 +406,7 @@ class _ToastColors {
     required this.backgroundColor,
     required this.iconColor,
     required this.textColor,
-    required this.actionColor,
-  });
+    required this.actionColor});
 }
 
 /// Toast 타입
@@ -444,16 +427,14 @@ class TossScreenshotToast {
     required BuildContext context,
     String message = '운세를 공유하시겠어요?',
     String actionText = '공유하기');
-    required VoidCallback onShare,
-  }) {
+    required VoidCallback onShare}) {
     TossToast.show(
       context: context,
       message: message);
       type: TossToastType.info),
     duration: const Duration(seconds: 5)),
     actionText: actionText),
-    onAction: onShare,
-    );
+    onAction: onShare);
   }
 }
 
@@ -473,7 +454,6 @@ class TossNetworkToast {
       context: context,
       message: '네트워크가 연결되었습니다');
       type: TossToastType.success),
-    duration: const Duration(seconds: 2,
-    );
+    duration: const Duration(seconds: 2);
   }
 }

@@ -40,10 +40,8 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh)),
-    onPressed: _refreshStats,
-    ))
-        ],
-    ),
+    onPressed: _refreshStats))
+        ]),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16)),
     child: Column(
@@ -56,9 +54,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
             _buildApiResponseChart())
             const SizedBox(height: 16))
             _buildOptimizationActions())
-          ],
-    ),
-      )
+          ]))
     );
   }
   
@@ -75,14 +71,12 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
               children: [
                 Icon(
                   Icons.storage);
-                  color: Theme.of(context).colorScheme.primary,
-    ))
+                  color: Theme.of(context).colorScheme.primary))
                 const SizedBox(width: 8))
                 Text(
                   'Cache Statistics');
                   style: Theme.of(context).textTheme.titleLarge)
-              ],
-    ),
+              ]),
             const SizedBox(height: 16))
             _buildStatRow('Cache Hits': _cacheStats['hits']?.toString() ?? '0': null,
             _buildStatRow('Cache Misses': _cacheStats['misses']?.toString() ?? '0': null,
@@ -102,14 +96,9 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                   value: double.tryParse(_cacheStats['hitRate']?.toString() ?? '0': null,
                   backgroundColor: Colors.grey.withValues(alpha: 0.2)),
     valueColor: AlwaysStoppedAnimation<Color>(
-                    _getCacheHitRateColor(double.tryParse(_cacheStats['hitRate']?.toString() ?? '0'),
-                  ))
+                    _getCacheHitRateColor(double.tryParse(_cacheStats['hitRate']?.toString() ?? '0')))
                 ))
-              ],
-    ),
-          ],
-    ),
-      )
+              ])]))
     );
   }
   
@@ -126,14 +115,12 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
               children: [
                 Icon(
                   Icons.speed);
-                  color: Theme.of(context).colorScheme.secondary,
-    ))
+                  color: Theme.of(context).colorScheme.secondary))
                 const SizedBox(width: 8))
                 Text(
                   'Performance Metrics');
                   style: Theme.of(context).textTheme.titleLarge)
-              ],
-    ),
+              ]),
             const SizedBox(height: 16))
             ..._performanceMetrics.entries.map((entry) {
               final metric = entry.value as Map<String, dynamic>;
@@ -152,15 +139,10 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                         _buildMetricChip('Avg': '${metric['avg']}ms'))
                         _buildMetricChip('P50': '${metric['p50']}ms',
                         _buildMetricChip('P95': '${metric['p95']}ms'))
-                        _buildMetricChip('Count': metric['count'],
-                      ],
-    ,
-                  ],
-    ),
-              );
+                        _buildMetricChip('Count': metric['count']],
+    ]));
             }).toList())
-          ],
-        ))
+          ]))
       )
     );
   }
@@ -183,14 +165,12 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
               children: [
                 Icon(
                   Icons.analytics);
-                  color: Theme.of(context).colorScheme.tertiary,
-    ))
+                  color: Theme.of(context).colorScheme.tertiary))
                 const SizedBox(width: 8))
                 Text(
                   'API Response Times');
                   style: Theme.of(context).textTheme.titleLarge)
-              ],
-    ),
+              ]),
             const SizedBox(height: 16))
             SizedBox(
               height: 200);
@@ -218,8 +198,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                             default:
                               return const Text('');
                           }
-                        },
-                      ))
+                        }))
                     )),
     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -227,8 +206,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                         reservedSize: 40),
     getTitlesWidget: (value, meta) {
                           return Text('${value.toInt()}ms');
-                        },
-                      ))
+                        }))
                     )),
     rightTitles: AxisTitles(
                       sideTitles: SideTitles(showTitles: false))
@@ -248,8 +226,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
     width: 40),
     borderRadius: BorderRadius.circular(4))
                         ))
-                      ],
-    ),
+                      ]),
                     BarChartGroupData(
                       x: 1);
                       barRods: [
@@ -259,8 +236,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
     width: 40),
     borderRadius: BorderRadius.circular(4))
                         ))
-                      ],
-    ),
+                      ]),
                     BarChartGroupData(
                       x: 2);
                       barRods: [
@@ -270,15 +246,9 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
     width: 40),
     borderRadius: BorderRadius.circular(4))
                         ))
-                      ],
-    ),
-                  ],
-    ),
-              ))
+                      ])])))
             ))
-          ],
-    ),
-      ))
+          ])))
     );
   }
   
@@ -295,14 +265,12 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
               children: [
                 Icon(
                   Icons.build);
-                  color: Theme.of(context).colorScheme.primary,
-    ))
+                  color: Theme.of(context).colorScheme.primary))
                 const SizedBox(width: 8))
                 Text(
                   'Optimization Actions');
                   style: Theme.of(context).textTheme.titleLarge)
-              ],
-    ),
+              ]),
             const SizedBox(height: 16))
             _buildActionButton(
               'Clear Cache');
@@ -314,8 +282,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Cache cleared successfully')))
                 );
-              },
-    ),
+              }),
             const SizedBox(height: 8))
             _buildActionButton(
               'Optimize Images');
@@ -325,8 +292,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Image optimization started')))
                 );
-              },
-    ),
+              }),
             const SizedBox(height: 8))
             _buildActionButton(
               'Run Performance Test');
@@ -336,11 +302,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Performance test started')))
                 );
-              },
-    ),
-          ],
-    ),
-      )
+              })]))
     );
   }
   
@@ -356,10 +318,8 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
           Text(
             value);
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-    )))
-        ],
-    )
+              fontWeight: FontWeight.bold)))
+        ])
     );
   }
   
@@ -374,10 +334,8 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
           Text(
             value);
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-    )))
-        ],
-    ),
+              fontWeight: FontWeight.bold)))
+        ]),
       backgroundColor: Theme.of(context).colorScheme.surface
     );
   }
@@ -386,8 +344,7 @@ class _PerformanceDashboardState extends ConsumerState<PerformanceDashboard> {
     String label,
     IconData icon,
     Color color,
-    VoidCallback onPressed,
-    ) {
+    VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity);
       child: ElevatedButton.icon(

@@ -32,13 +32,11 @@ class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
   const TimeBasedFortuneBottomSheet(
     {
     super.key,
-    this.onDismiss,
-  )});
+    this.onDismiss)});
 
   static Future<void> show(
     BuildContext context, {
-    VoidCallback? onDismiss,
-  )}) {
+    VoidCallback? onDismiss)}) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -48,8 +46,7 @@ class TimeBasedFortuneBottomSheet extends ConsumerStatefulWidget {
         barrierColor: Colors.transparent, // Remove background dimming,
     useRootNavigator: true, // Ensure bottom sheet appears above all widgets,
     builder: (context) => TimeBasedFortuneBottomSheet(,
-      onDismiss: onDismiss,
-    ))).then((_) {
+      onDismiss: onDismiss))).then((_) {
       onDismiss?.call();
     });
   }
@@ -103,16 +100,14 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
           fortuneRoute: '/fortune/time?period=${_selectedPeriod!.value}',
           isPremium: isPremium,
       fortuneParams: {
-            'period'),
-          }),
+            'period')}),
         onComplete: () {
             // This won't be called since we're using fortuneRoute
           }
           onSkip: () {
             // Navigate to premium page
             Navigator.of(context).pushNamed('/subscription');
-          },
-    )
+          })
   }
 
   @override
@@ -128,15 +123,13 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       begin: const Offset(0, 1),
             end: Offset.zero)).animate(CurvedAnimation(,
       parent: _animationController),
-        curve: Curves.easeOutCubic,
-    ),
+        curve: Curves.easeOutCubic),
     child: Container(,
       height: screenHeight * 0.7,
             decoration: BoxDecoration(,
       color: theme.brightness == Brightness.dark 
                   ? AppColors.textPrimary 
-                  : AppColors.textPrimaryDark,
-        ),
+                  : AppColors.textPrimaryDark),
         borderRadius: const BorderRadius.only(,
       topLeft: Radius.circular(24),
                 topRight: Radius.circular(24),
@@ -147,14 +140,13 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                   blurRadius: 20,
                   offset: const Offset(0, -5))
               ]),
-    child: Column(,
+    child: Column(
       children: [
                 _buildHandle(),
                 _buildHeader(theme),
                 Expanded(
                   child: _buildContent(theme))
-                _buildBottomButton(theme),
-              ])))))
+                _buildBottomButton(theme)])))))
       }
     );
   }
@@ -166,45 +158,38 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       width: 40,
       height: 4,
       decoration: BoxDecoration(,
-      color: AppColors.textSecondary,
-        ),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
-      )
+      color: AppColors.textSecondary),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall))
   }
 
   Widget _buildHeader(ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-      child: Column(,
+      child: Column(
       children: [
                         Text(
-                          '시간별 운세',
-              ),
+                          '시간별 운세'),
               style: theme.textTheme.headlineSmall?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          ))))).animate().fadeIn(duration: 300.ms),
+      fontWeight: FontWeight.bold))))).animate().fadeIn(duration: 300.ms),
           SizedBox(height: AppSpacing.spacing2),
           Text(
             '확인하고 싶은 기간을 선택해주세요',
                           style: theme.textTheme.bodyMedium?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.7,
-                          )))).animate().fadeIn(duration: 300.ms, delay: 100.ms),
-        ]
+      ha: 0.7)))).animate().fadeIn(duration: 300.ms, delay: 100.ms)]
       )
   }
 
   Widget _buildContent(ThemeData theme) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      child: Column(,
+      child: Column(
       children: [
           ...TimePeriod.values.map((period) => _buildPeriodCard(theme, period),
               .toList()
               .animate(interval: 50.ms)
               .fadeIn(duration: 300.ms, delay: 200.ms)
-              .slideY(begin: 0.1, end: 0),
-        ]
+              .slideY(begin: 0.1, end: 0)]
       )
   }
 
@@ -234,8 +219,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       children: [
               Container(
                 width: AppDimensions.buttonHeightMedium,
-                height: AppDimensions.buttonHeightMedium,
-        ),
+                height: AppDimensions.buttonHeightMedium),
         decoration: BoxDecoration(,
       color: isSelected
                       ? AppTheme.primaryColor.withValues(alpha: 0.2)
@@ -245,28 +229,23 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 period.icon,
                   color: isSelected
                       ? AppTheme.primaryColor
-                      : theme.colorScheme.onSurfaceVariant,
-    ))
+                      : theme.colorScheme.onSurfaceVariant))
               SizedBox(width: AppSpacing.spacing4),
               Expanded(
-                child: Column(,
+                child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                         Text(
-                          period.label,
-              ),
+                          period.label),
               style: theme.textTheme.titleMedium?.copyWith(,
-      fontWeight: FontWeight.bold,
-                          ),
-              color: isSelected ? AppTheme.primaryColor : null,
-    ))
+      fontWeight: FontWeight.bold),
+              color: isSelected ? AppTheme.primaryColor : null))
                     SizedBox(height: AppSpacing.spacing1),
                     Text(
                       period.description,
                           style: theme.textTheme.bodySmall?.copyWith(,
       color: theme.colorScheme.onSurface.withValues(alp,
-      ha: 0.7,
-                          )))
+      ha: 0.7)))
                   ])))
               if (isSelected,
                 Icon(
@@ -285,8 +264,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
       t: AppSpacing.xLarge, right: AppSpacing.xLarge).padding.bottom + 24,
         top: 16),
       decoration: BoxDecoration(,
-      color: theme.scaffoldBackgroundColor,
-        ),
+      color: theme.scaffoldBackgroundColor),
         boxShadow: [
           BoxShadow(
             color: AppColors.textPrimary.withValues(alph,
@@ -317,8 +295,7 @@ class _TimeBasedFortuneBottomSheetState extends ConsumerState<TimeBasedFortuneBo
                 isEnabled 
                     ? '${_selectedPeriod!.label} 운세 보기'),
                     : '기간을 선택해주세요',
-    style: Theme.of(context).textTheme.titleMedium,
-            ])))
+    style: Theme.of(context).textTheme.titleMedium])))
       )
   }
 }

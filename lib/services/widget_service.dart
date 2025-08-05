@@ -26,8 +26,7 @@ class WidgetService {
     required String score,
     required String message,
     String? detailedFortune,
-    Map<String, dynamic>? additionalData,
-  }) async {
+    Map<String, dynamic>? additionalData}) async {
     try {
       final now = DateTime.now();
       final lastUpdated = '${now.hour}:${now.minute.toString().padLeft(2, '0')}';
@@ -49,16 +48,13 @@ class WidgetService {
           'message': message,
           'lastUpdated': lastUpdated,
           'detailedFortune': detailedFortune ?? '',
-          ...?additionalData,
-        },
-      );
+          ...?additionalData});
       
       // Reload widget
       await HomeWidget.updateWidget(
         name: dailyFortuneWidgetKey,
         iOSName: 'FortuneDailyWidget',
-        androidName: 'FortuneDailyWidget',
-      );
+        androidName: 'FortuneDailyWidget');
       
       Logger.info('Daily fortune widget updated');
     } catch (e) {
@@ -71,8 +67,7 @@ class WidgetService {
     required String compatibilityScore,
     required String partnerName,
     required String message,
-    Map<String, dynamic>? additionalData,
-  }) async {
+    Map<String, dynamic>? additionalData}) async {
     try {
       final now = DateTime.now();
       final lastUpdated = '${now.hour}:${now.minute.toString().padLeft(2, '0')}';
@@ -91,16 +86,13 @@ class WidgetService {
           'partnerName': partnerName,
           'message': message,
           'lastUpdated': lastUpdated,
-          ...?additionalData,
-        },
-      );
+          ...?additionalData});
       
       // Reload widget
       await HomeWidget.updateWidget(
         name: loveFortuneWidgetKey,
         iOSName: 'FortuneLoveWidget',
-        androidName: 'FortuneLoveWidget',
-      );
+        androidName: 'FortuneLoveWidget');
       
       Logger.info('Love fortune widget updated');
     } catch (e) {

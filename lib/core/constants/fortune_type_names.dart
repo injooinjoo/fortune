@@ -116,8 +116,7 @@ class FortuneTypeNames {
     'children': '자녀 운세',
     'parenting': '육아 운세',
     'pregnancy': '태교 운세',
-    'family-harmony': '가족 화합 운세',
-  };
+    'family-harmony': '가족 화합 운세'};
   
   /// Get the Korean name for a fortune type
   /// Returns the type itself if not found in the mapping
@@ -163,68 +162,57 @@ class FortuneTypeNames {
         return {
           'name': name,
           'icon': Icons.calendar_today,
-          'color': null,
-        };
+          'color': null};
       case '전통 운세':
         return {
           'name': name,
           'icon': Icons.auto_awesome,
-          'color': null,
-        };
+          'color': null};
       case '성격/캐릭터 운세':
         return {
           'name': name,
           'icon': Icons.psychology,
-          'color': null,
-        };
+          'color': null};
       case '연애/인연':
         return {
           'name': name,
           'icon': Icons.favorite,
-          'color': null,
-        };
+          'color': null};
       case '직업/사업':
         return {
           'name': name,
           'icon': Icons.work,
-          'color': null,
-        };
+          'color': null};
       case '재물/투자':
         return {
           'name': name,
           'icon': Icons.attach_money,
-          'color': null,
-        };
+          'color': null};
       case '건강/라이프':
         return {
           'name': name,
           'icon': Icons.favorite_border,
-          'color': null,
-        };
+          'color': null};
       case '스포츠/활동':
         return {
           'name': name,
           'icon': Icons.sports,
-          'color': null,
-        };
+          'color': null};
       case '행운의 아이템':
         return {
           'name': name,
           'icon': Icons.star,
-          'color': null,
-        };
+          'color': null};
       case '반려/육아':
         return {
           'name': name,
           'icon': Icons.family_restroom,
-          'color': null,
-        };
+          'color': null};
       default:
         return {
           'name': name,
           'icon': Icons.auto_awesome,
-          'color': null,
-        };
+          'color': null};
     }
   }
   
@@ -253,8 +241,7 @@ class FortuneTypeNames {
       'business': '/fortune/business',
       'wealth': '/fortune/wealth',
       'health': '/fortune/health',
-      'dream': '/fortune/dream',
-    };
+      'dream': '/fortune/dream'};
     
     return routeMap[fortuneType] ?? '/fortune';
   }

@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/utils/logger.dart';
 import '../../core/network/api_client.dart';
-// import '../../../firebase_options.dart'; // Firebase options not available
 
 // 백그라운드 메시지 핸들러 (반드시 톱레벨 함수여야 함)
 @pragma('vm:entry-point')
@@ -38,16 +37,14 @@ class NotificationSettings {
     this.dailyFortune = true,
     this.tokenAlert = true,
     this.promotion = true,
-    this.dailyFortuneTime = '07:00',
-  });
+    this.dailyFortuneTime = '07:00'});
 
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
     'dailyFortune': dailyFortune,
     'tokenAlert': tokenAlert,
     'promotion': promotion,
-    'dailyFortuneTime': null,
-  };
+    'dailyFortuneTime': null};
 
   factory NotificationSettings.fromJson(Map<String, dynamic> json) {
     return NotificationSettings(
@@ -55,8 +52,7 @@ class NotificationSettings {
       dailyFortune: json['dailyFortune'],
       tokenAlert: json['tokenAlert'],
       promotion: json['promotion'],
-        dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00',
-    );
+        dailyFortuneTime: json['dailyFortuneTime'] ?? '07:00');
   }
 }
 
@@ -242,8 +238,7 @@ class FCMService {
         'platform': kIsWeb ? 'web' : (!kIsWeb && Platform.isIOS ? 'ios' : 'android'),
         'deviceInfo': {
           'os': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystem : 'unknown'),
-          'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown'),
-        }
+          'version': kIsWeb ? 'web' : (!kIsWeb ? Platform.operatingSystemVersion : 'unknown')}
       });
       
       Logger.info('FCM 토큰 서버 전송 완료');
@@ -301,8 +296,7 @@ class FCMService {
     required String title,
     required String body,
     String? payload,
-    String channelId = NotificationChannels.system,
-  }) async {
+    String channelId = NotificationChannels.system}) async {
     final androidDetails = AndroidNotificationDetails(
       channelId,
       channelId,
@@ -475,12 +469,10 @@ class FCMService {
           NotificationChannels.dailyFortune,
           importance: Importance.high,
           priority: Priority.high),
-        iOS: const DarwinNotificationDetails(),
-      ),
+        iOS: const DarwinNotificationDetails()),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: jsonEncode({
-        'type': 'daily_fortune',
-      })
+        'type': 'daily_fortune'})
     );
   }
   

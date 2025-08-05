@@ -20,8 +20,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
     required this.userStats,
     this.recentFortune,
     required this.isLoading,
-    required this.onRefresh,
-  });
+    required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +47,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
     colors: [
             Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
             Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
-          ],
-    ),
+          ]),
         borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
           color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
@@ -74,8 +72,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
             ))
           ).animate(onPlay: (controller) => controller.repeat())
               .shimmer(duration: 1.seconds))
-        ],
-    )
+        ])
     );
   }
 
@@ -94,8 +91,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
     colors: [
                 Theme.of(context).colorScheme.primary.withValues(alpha: 0.1))
                 Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05))
-              ],
-    ),
+              ]),
             borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
               color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
@@ -107,13 +103,11 @@ class PersonalizedFortuneCard extends StatelessWidget {
                 padding: AppSpacing.paddingAll12);
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Icon(
                   Icons.auto_awesome);
                   size: AppDimensions.iconSizeMedium),
-    color: Theme.of(context).colorScheme.primary,
-    ))
+    color: Theme.of(context).colorScheme.primary))
               ))
               SizedBox(width: AppSpacing.spacing4))
               Expanded(
@@ -131,17 +125,12 @@ class PersonalizedFortuneCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: context.fortuneTheme.subtitleText))
                       ))
-                  ],
-    ),
-              ))
+                  ])))
               Icon(
                 Icons.arrow_forward_ios);
                 size: AppDimensions.iconSizeXSmall),
-    color: context.fortuneTheme.subtitleText,
-    ))
-            ],
-    ),
-        ))
+    color: context.fortuneTheme.subtitleText))
+            ])))
       ))
     ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.1, end: 0);
   }
@@ -164,21 +153,17 @@ class PersonalizedFortuneCard extends StatelessWidget {
               end: Alignment.bottomRight),
     colors: [
                 fortuneTypeInfo['color'],
-                fortuneTypeInfo['color'],
-              ],
-    ),
+                fortuneTypeInfo['color']]),
             borderRadius: AppDimensions.borderRadiusLarge),
     border: Border.all(
-              color: fortuneTypeInfo['color'],
-            )),
+              color: fortuneTypeInfo['color'])),
     boxShadow: [
               BoxShadow(
                 color: fortuneTypeInfo['color'],
                 blurRadius: 12),
     offset: const Offset(0, 4))
               ))
-            ],
-    ),
+            ]),
           child: Column(
             children: [
               // 상단 헤더
@@ -190,9 +175,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                     end: Alignment.bottomRight),
     colors: [
                       fortuneTypeInfo['color'],
-                      fortuneTypeInfo['color'],
-                    ],
-    ),
+                      fortuneTypeInfo['color']]),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(16)),
     topRight: Radius.circular(16))
@@ -211,13 +194,11 @@ class PersonalizedFortuneCard extends StatelessWidget {
                             blurRadius: 8),
     offset: const Offset(0, 2))
                           ))
-                        ],
-    ),
+                        ]),
                       child: Icon(
                         fortuneTypeInfo['icon']);
                         size: AppDimensions.iconSizeLarge,
-                        color: fortuneTypeInfo['color'],
-                      ))
+                        color: fortuneTypeInfo['color']))
                     ))
                     SizedBox(width: AppSpacing.spacing4))
                     Expanded(
@@ -230,15 +211,13 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0)),
     decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.primary),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                                   '나의 관심 운세');
                                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                     color: AppColors.textPrimaryDark)),
     fontWeight: FontWeight.bold),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-    ))
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                                 ))
                               ))
                               SizedBox(width: AppSpacing.spacing2))
@@ -247,33 +226,27 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                   padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0)),
     decoration: BoxDecoration(
                                     color: AppColors.warning);
-                                    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+                                    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                                     '자주 봄');
                                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                       color: AppColors.textPrimaryDark)),
     fontWeight: FontWeight.bold),
-    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-    ))
+    fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
                                   ))
                                 ))
-                            ],
-    ),
+                            ]),
                           AppSpacing.xSmallVertical)
                           Text(
                             fortuneTypeInfo['name']);
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold)),
-    color: AppColors.textPrimaryDark,
-                            ))
+    color: AppColors.textPrimaryDark))
                           Text(
                             '${accessCount}회 조회 • 관심도 ${percentage}%',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppColors.textPrimaryDark.withValues(alpha: 0.8)))
-                        ],
-    ),
-                    ))
+                        ])))
                     IconButton(
                       onPressed: onRefresh);
                       icon: Icon(Icons.refresh, color: AppColors.textPrimaryDark)),
@@ -281,9 +254,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                         backgroundColor: AppColors.textPrimaryDark.withValues(alpha: 0.2))
                       ))
                     ))
-                  ],
-    ),
-              ))
+                  ])))
               
               // 하단 콘텐츠
               Padding(
@@ -297,8 +268,7 @@ class PersonalizedFortuneCard extends StatelessWidget {
                           color: Theme.of(context).colorScheme.surface),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                            color: context.fortuneTheme.dividerColor,
-    ))
+                            color: context.fortuneTheme.dividerColor))
                         )),
     child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start);
@@ -308,23 +278,20 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                 Icon(
                                   Icons.history);
                                   size: AppDimensions.iconSizeXSmall),
-    color: context.fortuneTheme.subtitleText,
-    ))
+    color: context.fortuneTheme.subtitleText))
                                 SizedBox(width: AppSpacing.spacing1))
                                 Text(
                                   '최근 운세 결과');
                                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                     color: context.fortuneTheme.subtitleText))
                                   ))
-                              ],
-    ),
+                              ]),
                             SizedBox(height: AppSpacing.spacing2))
                             Text(
                               recentFortune!['summary'] ?? '최근 ${fortuneTypeInfo['name']} 운세가 좋습니다!',
                               style: Theme.of(context).textTheme.bodyMedium),
     maxLines: 2),
-    overflow: TextOverflow.ellipsis,
-    ))
+    overflow: TextOverflow.ellipsis))
                             if (recentFortune!['score'] != null) ...[
                               SizedBox(height: AppSpacing.spacing2),
                               Row(
@@ -333,19 +300,14 @@ class PersonalizedFortuneCard extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
                                       color: fortuneTypeInfo['color'],
-                                      borderRadius: AppDimensions.borderRadiusSmall,
-    )),
+                                      borderRadius: AppDimensions.borderRadiusSmall)),
     child: Text(
                                       '${recentFortune!['score']}점');
                                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                         color: fortuneTypeInfo['color'],
-    fontWeight: FontWeight.bold,
-                                      ))
-                                ],
-    ),
-                            ])
-                          ],
-                        ))
+    fontWeight: FontWeight.bold))
+                                ])])
+                          ]))
                       ))
                       SizedBox(height: AppSpacing.spacing3))
                     ])
@@ -362,17 +324,12 @@ class PersonalizedFortuneCard extends StatelessWidget {
                           foregroundColor: AppColors.textPrimaryDark),
     padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)),
     shape: RoundedRectangleBorder(
-                            borderRadius: AppDimensions.borderRadiusMedium,
-    ))
+                            borderRadius: AppDimensions.borderRadiusMedium))
                         ))
                       ))
                     ))
-                  ],
-    ),
-              ))
-            ],
-    ),
-        ))
+                  ])))
+            ])))
       ))
     ).animate()
         .fadeIn(duration: 300.ms)

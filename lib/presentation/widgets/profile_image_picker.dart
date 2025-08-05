@@ -17,8 +17,7 @@ class ProfileImagePicker extends StatefulWidget {
     super.key,
     this.currentImageUrl,
     required this.onImageSelected,
-    this.isLoading = false,
-  });
+    this.isLoading = false});
   
   @override
   State<ProfileImagePicker> createState() => _ProfileImagePickerState();
@@ -39,23 +38,17 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 Navigator.pop(context);
                 _pickImage(ImageSource.camera);
               },
-              child: const Text('카메라로 촬영'),
-            ),
+              child: const Text('카메라로 촬영')),
             CupertinoActionSheetAction(
               onPressed: () {
                 Navigator.pop(context);
                 _pickImage(ImageSource.gallery);
               },
-              child: const Text('갤러리에서 선택'),
-            ),
-          ],
+              child: const Text('갤러리에서 선택'))],
           cancelButton: CupertinoActionSheetAction(
             isDefaultAction: true,
             onPressed: () => Navigator.pop(context),
-            child: const Text('취소'),
-          ),
-        ),
-      );
+            child: const Text('취소'))));
     } else {
       showModalBottomSheet(
         context: context,
@@ -69,20 +62,14 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.camera);
-                },
-              ),
+                }),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        ),
-      );
+                })])));
     }
   }
   
@@ -105,9 +92,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('이미지 파일이 유효하지 않습니다. JPG, PNG, WEBP 형식만 가능합니다.'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       }
     }
   }
@@ -122,9 +107,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
           File(_selectedImage!.path),
           width: 120,
           height: 120,
-          fit: BoxFit.cover,
-        ),
-      );
+          fit: BoxFit.cover));
     }
     
     // If there's a current image URL, show it
@@ -144,18 +127,13 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 gradient: LinearGradient(
                   colors: [
                     AppColors.primary,
-                    AppColors.secondary,
-                  ],
+                    AppColors.secondary],
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
+                  end: Alignment.bottomRight)),
               child: const Icon(
                 Icons.person,
                 size: 60,
-                color: AppColors.textPrimaryDark,
-              ),
-            );
+                color: AppColors.textPrimaryDark));
           },
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
@@ -164,20 +142,14 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: theme.colorScheme.surfaceContainerHighest,
-              ),
+                color: theme.colorScheme.surfaceContainerHighest),
               child: Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
                       ? loadingProgress.cumulativeBytesLoaded /
                           loadingProgress.expectedTotalBytes!
-                      : null,
-                ),
-              ),
-            );
-          },
-        ),
-      );
+                      : null)));
+          }));
     }
     
     // Default profile icon
@@ -189,18 +161,13 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
         gradient: LinearGradient(
           colors: [
             AppColors.primary,
-            AppColors.secondary,
-          ],
+            AppColors.secondary],
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+          end: Alignment.bottomRight)),
       child: const Icon(
         Icons.person,
         size: 60,
-        color: AppColors.textPrimaryDark,
-      ),
-    );
+        color: AppColors.textPrimaryDark));
   }
   
   @override
@@ -222,9 +189,7 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: theme.colorScheme.surface,
-                  width: 2,
-                ),
-              ),
+                  width: 2)),
               child: IconButton(
                 icon: widget.isLoading
                     ? const SizedBox(
@@ -232,21 +197,12 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.textPrimaryDark,
-                        ),
-                      )
+                          color: AppColors.textPrimaryDark))
                     : const Icon(
                         Icons.camera_alt,
                         size: 18,
-                        color: AppColors.textPrimaryDark,
-                      ),
+                        color: AppColors.textPrimaryDark),
                 onPressed: widget.isLoading ? null : _showImageSourceDialog,
-                padding: EdgeInsets.zero,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                padding: EdgeInsets.zero)))]));
   }
 }

@@ -19,8 +19,7 @@ class CustomCard extends StatelessWidget {
     this.backgroundColor,
     this.elevation,
     this.borderRadius,
-    this.onTap,
-  })) : super(key: key);
+    this.onTap})) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +28,16 @@ class CustomCard extends StatelessWidget {
       elevation: elevation ?? 2,
       color: backgroundColor ?? Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
-        borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium,
-      ),
+        borderRadius: borderRadius ?? AppDimensions.borderRadiusMedium),
       child: Padding(
         padding: padding ?? AppSpacing.paddingAll16,
-        child: child,
-      ),
-    );
+        child: child));
 
     if (onTap != null) {
       return InkWell(
         onTap: onTap,
         borderRadius: (borderRadius ?? AppDimensions.borderRadiusMedium) as BorderRadius,
-        child: card,
-      );
+        child: card);
     }
 
     return card;

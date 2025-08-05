@@ -21,8 +21,7 @@ enum PersonalityType {
 
 class PersonalityFortuneUnifiedPage extends BaseFortunePage {
   const PersonalityFortuneUnifiedPage({
-    Key? key,
-  }) : super(
+    Key? key}) : super(
           key: key,
           title: '성격 운세',
           description: 'MBTI와 혈액형으로 보는 성격 기반 운세',
@@ -44,7 +43,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
 
   // MBTI types
   final List<String> _mbtiTypes = [
-    'INTJ': 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP': 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
     'ISTP', 'ISFP', 'ESTP', 'ESFP'
@@ -97,9 +96,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           Text(
             '성격 유형 선택',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           _buildTypeSelector(),
           const SizedBox(height: 24),
@@ -109,18 +106,14 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           const SizedBox(height: 24),
           
           // Generate Button
-          if (_fortuneCache[_selectedType] == null && _canGenerateFortune())
+          if (_fortuneCache[_selectedType] == null && _canGenerateFortune(),
             _buildGenerateButton(),
           
           // Fortune Result
           if (_fortuneCache[_selectedType] != null) ...[
             _buildFortuneResult(_fortuneCache[_selectedType]!),
             const SizedBox(height: 16),
-            _buildRefreshButton(),
-          ],
-        ],
-      ),
-    );
+            _buildRefreshButton()]]));
   }
 
   Widget _buildHeaderCard() {
@@ -133,43 +126,31 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           end: Alignment.bottomRight,
           colors: [
             Color(0xFF6366F1).withValues(alpha: 0.1),
-            Color(0xFFDC2626).withValues(alpha: 0.05),
-          ],
-        ),
+            Color(0xFFDC2626).withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Color(0xFF6366F1).withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         children: [
           Icon(
             Icons.psychology_rounded,
             size: 48,
-            color: Color(0xFF6366F1),
-          ),
+            color: Color(0xFF6366F1)),
           const SizedBox(height: 12),
           Text(
             '성격 운세',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF6366F1),
-            ),
-          ),
+              color: Color(0xFF6366F1))),
           const SizedBox(height: 8),
           Text(
             '당신의 성격 유형에 맞는 맞춤형 운세를 확인하세요',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textSecondaryColor,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+              color: AppTheme.textSecondaryColor),
+            textAlign: TextAlign.center)]));
   }
 
   Widget _buildTypeSelector() {
@@ -179,8 +160,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         return Expanded(
           child: Padding(
             padding: EdgeInsets.only(
-              right: type == PersonalityType.values.last ? 0 : 8,
-            ),
+              right: type == PersonalityType.values.last ? 0 : 8),
             child: InkWell(
               onTap: () {
                 setState(() {
@@ -198,55 +178,39 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     end: Alignment.bottomRight,
                     colors: isSelected
                         ? type.gradientColors
-                        : [Colors.grey[200]!, Colors.grey[300]!],
-                  ),
+                        : [Colors.grey[200]!, Colors.grey[300]!]),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
                             color: type.gradientColors[0].withValues(alpha: 0.4),
                             blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : [],
-                ),
+                            offset: const Offset(0, 4))]
+                      : []),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       type.icon,
                       size: 36,
-                      color: isSelected ? Colors.white : Colors.grey[600],
-                    ),
+                      color: isSelected ? Colors.white : Colors.grey[600]),
                     const SizedBox(height: 8),
                     Text(
                       type.label,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[600],
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
+                        fontSize: 16)),
                     const SizedBox(height: 4),
                     Text(
                       type.description,
                       style: TextStyle(
                         color: isSelected ? Colors.white.withValues(alpha: 0.8) : Colors.grey[500],
-                        fontSize: 11,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ).animate(,
+                        fontSize: 11),
+                      textAlign: TextAlign.center)]))).animate(,
               .fadeIn(duration: 300.ms,
-              .slideX(begin: type == PersonalityType.mbti ? -0.2 : 0.2, end: 0),
-          ),
-        );
-      }).toList(),
-    );
+              .slideX(begin: type == PersonalityType.mbti ? -0.2 : 0.2, end: 0)));
+      }).toList());
   }
 
   Widget _buildPersonalityTypeSelection() {
@@ -264,9 +228,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.dividerColor,
-        ),
-      ),
+          color: AppTheme.dividerColor)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -275,9 +237,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _selectedType.gradientColors[0],
-            ),
-          ),
+              color: _selectedType.gradientColors[0])),
           const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
@@ -286,8 +246,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               crossAxisCount: 4,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
-              childAspectRatio: 1.5,
-            ),
+              childAspectRatio: 1.5),
             itemCount: _mbtiTypes.length,
             itemBuilder: (context, index) {
               final mbti = _mbtiTypes[index];
@@ -306,52 +265,34 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                     color: isSelected
                         ? _selectedType.gradientColors[0]
                         : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                    borderRadius: BorderRadius.circular(8)),
                   child: Center(
                     child: Text(
                       mbti,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[700],
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+                        fontSize: 14)))));
+            }),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(8),
-            ),
+              borderRadius: BorderRadius.circular(8)),
             child: Row(
               children: [
                 Icon(
                   Icons.info_outline,
                   size: 18,
-                  color: _selectedType.gradientColors[0],
-                ),
+                  color: _selectedType.gradientColors[0]),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'MBTI를 모르시나요? 무료 성격유형 검사를 해보세요!',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppTheme.textSecondaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                      color: AppTheme.textSecondaryColor)))]))]));
   }
 
   Widget _buildBloodTypeSelection() {
@@ -361,9 +302,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppTheme.dividerColor,
-        ),
-      ),
+          color: AppTheme.dividerColor)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -372,9 +311,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _selectedType.gradientColors[0],
-            ),
-          ),
+              color: _selectedType.gradientColors[0])),
           const SizedBox(height: 16),
           Row(
             children: _bloodTypes.map((blood) {
@@ -382,8 +319,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: blood == _bloodTypes.last ? 0 : 8,
-                  ),
+                    right: blood == _bloodTypes.last ? 0 : 8),
                   child: InkWell(
                     onTap: () {
                       setState(() {
@@ -405,68 +341,46 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                                 BoxShadow(
                                   color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
                                   blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : [],
-                      ),
+                                  offset: const Offset(0, 2))]
+                            : []),
                       child: Center(
                         child: Text(
                           '$blood형',
                           style: TextStyle(
                             color: isSelected ? Colors.white : Colors.grey[700],
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
+                            fontSize: 18)))))));
+            }).toList()),
           const SizedBox(height: 16),
-          _buildBloodTypeDescription(),
-        ],
-      ),
-    );
+          _buildBloodTypeDescription()]));
   }
 
   Widget _buildBloodTypeDescription() {
     if (_bloodType == null) return const SizedBox.shrink();
     
     final descriptions = {
-      'A': '꼼꼼하고 신중한 성격의 A형',
-      'B': '자유롭고 창의적인 성격의 B형',
-      'O': '활발하고 사교적인 성격의 O형',
-      'AB': '이성적이고 독창적인 성격의 AB형',
-    };
+      'A', '꼼꼼하고 신중한 성격의 A형',
+      'B', '자유롭고 창의적인 성격의 B형',
+      'O', '활발하고 사교적인 성격의 O형',
+      'AB', '이성적이고 독창적인 성격의 AB형'};
     
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: _selectedType.gradientColors[0].withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(8),
-      ),
+        borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
           Icon(
             Icons.water_drop,
             size: 18,
-            color: _selectedType.gradientColors[0],
-          ),
+            color: _selectedType.gradientColors[0]),
           const SizedBox(width: 8),
           Text(
             descriptions[_bloodType] ?? '',
             style: TextStyle(
               fontSize: 14,
-              color: AppTheme.textColor,
-            ),
-          ),
-        ],
-      ),
-    );
+              color: AppTheme.textColor))]));
   }
 
   bool _canGenerateFortune() {
@@ -485,30 +399,21 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: _selectedType.gradientColors[0],
-        ),
+            borderRadius: BorderRadius.circular(12)),
+          backgroundColor: _selectedType.gradientColors[0]),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               _selectedType.icon,
-              color: Colors.white,
-            ),
+              color: Colors.white),
             const SizedBox(width: 8),
             Text(
               '${_selectedType.label} 운세 확인하기',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                color: Colors.white))])));
   }
 
   Widget _buildRefreshButton() {
@@ -518,15 +423,12 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         icon: const Icon(Icons.refresh),
         label: const Text('다시 보기'),
         style: TextButton.styleFrom(
-          foregroundColor: _selectedType.gradientColors[0],
-        ),
-      ),
-    );
+          foregroundColor: _selectedType.gradientColors[0])));
   }
 
   void _onGenerateFortune() {
     final profile = userProfile;
-    if (profile != null && _canGenerateFortune()) {
+    if (profile != null && _canGenerateFortune(), {
       setState(() {
         _fortuneCache[_selectedType] = null;
       });
@@ -534,8 +436,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null,
-      };
+        'gender': null};
       generateFortuneAction(params: params);
     }
   }
@@ -549,15 +450,11 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           end: Alignment.bottomRight,
           colors: [
             _selectedType.gradientColors[0].withValues(alpha: 0.1),
-            _selectedType.gradientColors[1].withValues(alpha: 0.05),
-          ],
-        ),
+            _selectedType.gradientColors[1].withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -566,8 +463,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               Icon(
                 _selectedType.icon,
                 color: _selectedType.gradientColors[0],
-                size: 28,
-              ),
+                size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -577,27 +473,18 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedType.gradientColors[0],
-                  ),
-                ),
-              ),
+                    color: _selectedType.gradientColors[0]))),
               if (fortune.score != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                    borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+                      fontWeight: FontWeight.bold)))]),
           const SizedBox(height: 20),
           
           // Main message
@@ -606,21 +493,17 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             style: TextStyle(
               fontSize: 16,
               height: 1.6,
-              color: AppTheme.textColor,
-            ),
-          ),
+              color: AppTheme.textColor)),
           
           // Personality traits
           if (fortune.additionalInfo?['personalityTraits'] != null) ...[
             const SizedBox(height: 20),
-            _buildPersonalityTraits(List<String>.from(fortune.additionalInfo!['personalityTraits'],
-          ],
+            _buildPersonalityTraits(List<String>.from(fortune.additionalInfo!['personalityTraits']],
           
           // Compatibility
           if (fortune.additionalInfo?['compatibility'] != null) ...[
             const SizedBox(height: 20),
-            _buildCompatibility(fortune.additionalInfo!['compatibility'],
-          ],
+            _buildCompatibility(fortune.additionalInfo!['compatibility']],
           
           // Advice
           if (fortune.advice != null) ...[
@@ -629,33 +512,21 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
+                borderRadius: BorderRadius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     color: Colors.amber,
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    ).animate(,
+                        color: AppTheme.textColor)))]))]])).animate(,
       .fadeIn(duration: 500.ms,
       .slideY(begin: 0.2, end: 0);
   }
@@ -669,9 +540,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: _selectedType.gradientColors[0],
-          ),
-        ),
+            color: _selectedType.gradientColors[0])),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -682,19 +551,12 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
               color: _selectedType.gradientColors[0].withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _selectedType.gradientColors[0].withValues(alpha: 0.3),
-              ),
-            ),
+                color: _selectedType.gradientColors[0].withValues(alpha: 0.3))),
             child: Text(
               trait,
               style: TextStyle(
                 fontSize: 13,
-                color: _selectedType.gradientColors[0],
-              ),
-            ),
-          )).toList(),
-        ),
-      ]
+                color: _selectedType.gradientColors[0]))).toList())]
     );
   }
 
@@ -707,9 +569,7 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: _selectedType.gradientColors[0],
-          ),
-        ),
+            color: _selectedType.gradientColors[0])),
         const SizedBox(height: 12),
         Container(
           padding: const EdgeInsets.all(12),
@@ -717,23 +577,17 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             gradient: LinearGradient(
               colors: [
                 _selectedType.gradientColors[0].withValues(alpha: 0.05),
-                _selectedType.gradientColors[1].withValues(alpha: 0.02),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(8),
-          ),
+                _selectedType.gradientColors[1].withValues(alpha: 0.02)]),
+            borderRadius: BorderRadius.circular(8)),
           child: Column(
             children: [
               if (compatibility['best'] != null);
                 _buildCompatibilityRow('최고의 궁합': compatibility['best'],
-              if (compatibility['good'] != null)
-                _buildCompatibilityRow('좋은 궁합': compatibility['good'],
+              if (compatibility['good'] != null),
+                  _buildCompatibilityRow('좋은 궁합': compatibility['good'],
               if (compatibility['caution'] != null)
-                _buildCompatibilityRow('주의할 궁합': compatibility['caution'],
-            ],
-          ,
-        ),
-      ]
+                _buildCompatibilityRow('주의할 궁합': compatibility['caution']],
+          )]
     );
   }
 
@@ -747,29 +601,20 @@ class _PersonalityFortuneUnifiedPageState extends BaseFortunePageState<Personali
             height: 6,
             decoration: BoxDecoration(
               color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
+              shape: BoxShape.circle)),
           const SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
               fontSize: 13,
-              color: AppTheme.textSecondaryColor,
-            ),
-          ),
+              color: AppTheme.textSecondaryColor)),
           const Spacer(),
           Text(
             value,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
+              color: color))]));
   }
 
   Color _getScoreColor(int score) {

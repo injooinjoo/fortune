@@ -19,8 +19,7 @@ final traditionalFortuneRoutes = [
   GoRoute(
     path: 'traditional',
     name: 'fortune-traditional',
-    builder: (context, state) => const fortune_pages.TraditionalFortuneUnifiedPage(),
-  ),
+    builder: (context, state) => const fortune_pages.TraditionalFortuneUnifiedPage()),
   
   // Traditional Fortune Unified (Alternative route)
   GoRoute(
@@ -30,34 +29,29 @@ final traditionalFortuneRoutes = [
       final extra = state.extra as Map<String, dynamic>?;
       if (extra != null && extra['fortuneData'] != null) {
         return fortune_pages.TraditionalFortuneResultPage(
-          fortuneData: extra['fortuneData'],
-        );
+          fortuneData: extra['fortuneData']);
       }
       // If no fortune data, navigate to input page
       return const fortune_pages.TraditionalFortuneEnhancedPage();
-    },
-  ),
+    }),
   
   // Tojeong
   GoRoute(
     path: 'tojeong',
     name: 'fortune-tojeong',
-    builder: (context, state) => const fortune_pages.TojeongFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.TojeongFortunePage()),
   
   // Traditional Saju
   GoRoute(
     path: 'traditional-saju',
     name: 'fortune-traditional-saju',
-    builder: (context, state) => const fortune_pages.TraditionalSajuFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.TraditionalSajuFortunePage()),
   
   // Palmistry
   GoRoute(
     path: 'palmistry',
     name: 'fortune-palmistry',
-    builder: (context, state) => const fortune_pages.PalmistryFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.PalmistryFortunePage()),
   
   // Physiognomy
   GoRoute(
@@ -68,8 +62,7 @@ final traditionalFortuneRoutes = [
       GoRoute(
         path: 'input',
         name: 'physiognomy-input',
-        builder: (context, state) => const PhysiognomyInputPage(),
-      ),
+        builder: (context, state) => const PhysiognomyInputPage()),
       GoRoute(
         path: 'result',
         name: 'physiognomy-result',
@@ -81,36 +74,28 @@ final traditionalFortuneRoutes = [
             return const PhysiognomyEnhancedPage();
           }
           return PhysiognomyResultPage(data: data);
-        },
-      ),
-    ],
-  ),
+        })]),
   
   // Physiognomy Old
   GoRoute(
     path: 'physiognomy-old',
     name: 'fortune-physiognomy-old',
-    builder: (context, state) => const fortune_pages.PhysiognomyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.PhysiognomyFortunePage()),
   
   // Salpuli
   GoRoute(
     path: 'salpuli',
     name: 'fortune-salpuli',
-    builder: (context, state) => const fortune_pages.SalpuliFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.SalpuliFortunePage()),
   
   // Saju Psychology
   GoRoute(
     path: 'saju-psychology',
     name: 'fortune-saju-psychology',
-    builder: (context, state) => const fortune_pages.SajuPsychologyFortunePage(),
-  ),
+    builder: (context, state) => const fortune_pages.SajuPsychologyFortunePage()),
   
   // Face Reading
   GoRoute(
     path: 'face-reading',
     name: 'fortune-face-reading',
-    builder: (context, state) => const fortune_pages.FaceReadingUnifiedPage(),
-  ),
-];
+    builder: (context, state) => const fortune_pages.FaceReadingUnifiedPage())];

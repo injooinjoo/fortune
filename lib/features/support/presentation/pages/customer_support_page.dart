@@ -28,16 +28,7 @@ class CustomerSupportPage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       _buildFAQSection(context),
                       const SizedBox(height: 16),
-                      _buildQuickActions(context),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      _buildQuickActions(context)])))]))));
   }
 
   Widget _buildContactCard(BuildContext context) {
@@ -45,11 +36,9 @@ class CustomerSupportPage extends ConsumerWidget {
       gradient: LinearGradient(
         colors: [
           Colors.purple.withValues(alpha: 0.3),
-          Colors.purple.withValues(alpha: 0.1),
-        ],
+          Colors.purple.withValues(alpha: 0.1)],
         begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
+        end: Alignment.bottomRight),
       borderRadius: BorderRadius.circular(20),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -57,25 +46,20 @@ class CustomerSupportPage extends ConsumerWidget {
           Icon(
             Icons.support_agent_rounded,
             size: 60,
-            color: Colors.purple.shade300,
-          ).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
+            color: Colors.purple.shade300).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
           const SizedBox(height: 16),
           const Text(
             '도움이 필요하신가요?',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+              color: Colors.white)),
           const SizedBox(height: 8),
           Text(
             '09:00 - 18:00  운영',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
+              color: Colors.white.withValues(alpha: 0.8))),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -84,28 +68,20 @@ class CustomerSupportPage extends ConsumerWidget {
                 icon: Icons.email_rounded,
                 label: '이메일',
                 onTap: () => _launchEmail(),
-                color: Colors.blue,
-              ),
+                color: Colors.blue),
               const SizedBox(width: 16),
               _buildContactButton(
                 icon: Icons.chat_bubble_rounded,
                 label: '카카오톡',
                 onTap: () => _launchKakaoTalk(),
-                color: Colors.yellow,
-              ),
-            ],
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
+                color: Colors.yellow)])])).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
   }
 
   Widget _buildContactButton({
     required IconData icon,
     required String label,
     required VoidCallback onTap,
-    required Color color,
-  }) {
+    required Color color}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -116,9 +92,7 @@ class CustomerSupportPage extends ConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: color.withValues(alpha: 0.3),
-            width: 1,
-          ),
-        ),
+            width: 1)),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20),
@@ -127,38 +101,26 @@ class CustomerSupportPage extends ConsumerWidget {
               label,
               style: TextStyle(
                 color: color,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                fontWeight: FontWeight.w600))])));
   }
 
   Widget _buildFAQSection(BuildContext context) {
     final faqs = [
       {
         'question': '토큰은 어떻게 구매하나요?',
-        'answer': '프로필 > 토큰 구매 메뉴에서 원하는 토큰 패키지를 선택하여 구매할 수 있습니다. 구독 회원은 무제한으로 운세를 볼 수 있습니다.',
-      },
+        'answer': '프로필 > 토큰 구매 메뉴에서 원하는 토큰 패키지를 선택하여 구매할 수 있습니다. 구독 회원은 무제한으로 운세를 볼 수 있습니다.'},
       {
         'question': '운세 결과가 맞지 않아요',
-        'answer': '운세는 재미로 보는 것이며, 실제 미래를 예측하는 것은 아닙니다. 긍정적인 마음으로 참고만 해주세요.',
-      },
+        'answer': '운세는 재미로 보는 것이며, 실제 미래를 예측하는 것은 아닙니다. 긍정적인 마음으로 참고만 해주세요.'},
       {
         'question': '구독을 취소하고 싶어요',
-        'answer': 'iOS: 설정 > Apple ID > 구독에서 취소\nAndroid: Play 스토어 > 결제 및 구독에서 취소',
-      },
+        'answer': 'iOS: 설정 > Apple ID > 구독에서 취소\nAndroid: Play 스토어 > 결제 및 구독에서 취소'},
       {
         'question': '개인정보는 안전한가요?',
-        'answer': '모든 개인정보는 암호화되어 안전하게 보호됩니다. 자세한 내용은 개인정보처리방침을 확인해주세요.',
-      },
+        'answer': '모든 개인정보는 암호화되어 안전하게 보호됩니다. 자세한 내용은 개인정보처리방침을 확인해주세요.'},
       {
         'question': '오프라인에서도 사용 가능한가요?',
-        'answer': '한 번 조회한 운세는 24시간 동안 오프라인에서도 확인 가능합니다.',
-      },
-    ];
+        'answer': '한 번 조회한 운세는 24시간 동안 오프라인에서도 확인 가능합니다.'}];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,29 +130,22 @@ class CustomerSupportPage extends ConsumerWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+            color: Colors.white)),
         const SizedBox(height: 16),
         ...faqs.asMap().entries.map((entry) {
           final index = entry.key;
           final faq = entry.value;
           return _buildFAQItem(
             question: faq['question'] ?? '',
-            answer: faq['answer'] ?? '',
-          ).animate().fadeIn(
+            answer: faq['answer'] ?? '').animate().fadeIn(
             delay: Duration(milliseconds: 100 * index),
-            duration: 500.ms,
-          ).slideX(begin: 0.1, end: 0);
-        }),
-      ],
-    );
+            duration: 500.ms).slideX(begin: 0.1, end: 0);
+        })]);
   }
 
   Widget _buildFAQItem({
     required String question,
-    required String answer,
-  }) {
+    required String answer}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       child: ExpansionTile(
@@ -200,9 +155,7 @@ class CustomerSupportPage extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [
               Colors.white.withValues(alpha: 0.1),
-              Colors.white.withValues(alpha: 0.05),
-            ],
-          ),
+              Colors.white.withValues(alpha: 0.05)]),
           borderRadius: BorderRadius.circular(16),
           padding: const EdgeInsets.all(16),
           child: Row(
@@ -210,21 +163,14 @@ class CustomerSupportPage extends ConsumerWidget {
               Icon(
                 Icons.help_outline_rounded,
                 color: Colors.blue.shade300,
-                size: 20,
-              ),
+                size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   question,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+                    fontWeight: FontWeight.w500)))])),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -232,13 +178,7 @@ class CustomerSupportPage extends ConsumerWidget {
               answer,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.8),
-                height: 1.5,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                height: 1.5)))]));
   }
 
   Widget _buildQuickActions(BuildContext context) {
@@ -250,9 +190,7 @@ class CustomerSupportPage extends ConsumerWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+            color: Colors.white)),
         const SizedBox(height: 16),
         GridView.count(
           crossAxisCount: 2,
@@ -267,33 +205,25 @@ class CustomerSupportPage extends ConsumerWidget {
               title: '사용 가이드',
               subtitle: '앱 사용법 알아보기',
               color: Colors.green,
-              onTap: () => _showGuide(context),
-            ),
+              onTap: () => _showGuide(context)),
             _buildActionCard(
               icon: Icons.bug_report_rounded,
               title: '버그 신고',
               subtitle: '문제 발견 시 알려주세요',
               color: Colors.red,
-              onTap: () => _reportBug(context),
-            ),
+              onTap: () => _reportBug(context)),
             _buildActionCard(
               icon: Icons.star_rounded,
               title: '평가하기',
               subtitle: '앱스토어 리뷰 남기기',
               color: Colors.orange,
-              onTap: () => _rateApp(),
-            ),
+              onTap: () => _rateApp()),
             _buildActionCard(
               icon: Icons.share_rounded,
               title: '앱 공유',
               subtitle: '친구에게 추천하기',
               color: Colors.purple,
-              onTap: () => _shareApp(context),
-            ),
-          ],
-        ),
-      ],
-    );
+              onTap: () => _shareApp(context))])]);
   }
 
   Widget _buildActionCard({
@@ -301,8 +231,7 @@ class CustomerSupportPage extends ConsumerWidget {
     required String title,
     required String subtitle,
     required Color color,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -310,11 +239,9 @@ class CustomerSupportPage extends ConsumerWidget {
         gradient: LinearGradient(
           colors: [
             color.withValues(alpha: 0.2),
-            color.withValues(alpha: 0.1),
-          ],
+            color.withValues(alpha: 0.1)],
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+          end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(16),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -326,21 +253,13 @@ class CustomerSupportPage extends ConsumerWidget {
               title,
               style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             Text(
               subtitle,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 12,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
+                fontSize: 12),
+              textAlign: TextAlign.center)])));
   }
 
   Future<void> _launchEmail() async {
@@ -348,9 +267,7 @@ class CustomerSupportPage extends ConsumerWidget {
       scheme: 'mailto',
       path: 'support@fortune-app.com',
       queryParameters: {
-        'subject': '[Fortune 앱 문의]',
-      },
-    );
+        'subject': '[Fortune 앱 문의]'});
     
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri);
@@ -373,23 +290,17 @@ class CustomerSupportPage extends ConsumerWidget {
         backgroundColor: Colors.grey[900],
         title: const Text(
           '사용 가이드',
-          style: TextStyle(color: Colors.white),
-        ),
+          style: TextStyle(color: Colors.white)),
         content: const Text(
           '1. 회원가입 후 프로필을 완성하세요\n'
           '2. 원하는 운세를 선택하여 조회하세요\n'
           '3. 토큰이 부족하면 구매하거나 구독하세요\n'
           '4. 매일 무료 토큰을 받을 수 있습니다',
-          style: TextStyle(color: Colors.white70),
-        ),
+          style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('확인'),
-          ),
-        ],
-      ),
-    );
+            child: const Text('확인'))]));
   }
 
   void _reportBug(BuildContext context) {

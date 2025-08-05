@@ -13,24 +13,21 @@ class AppTypography {
     fontSize: 48,
     fontWeight: FontWeight.w700,
     height: 1.2,
-    letterSpacing: -0.02,
-  );
+    letterSpacing: -0.02);
 
   static const TextStyle displayMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 36,
     fontWeight: FontWeight.w700,
     height: 1.25,
-    letterSpacing: -0.02,
-  );
+    letterSpacing: -0.02);
 
   static const TextStyle displaySmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 28,
     fontWeight: FontWeight.w600,
     height: 1.3,
-    letterSpacing: -0.01,
-  );
+    letterSpacing: -0.01);
 
   // Headline styles - for section headers
   static const TextStyle headlineLarge = TextStyle(
@@ -38,24 +35,21 @@ class AppTypography {
     fontSize: 24,
     fontWeight: FontWeight.w600,
     height: 1.35,
-    letterSpacing: -0.01,
-  );
+    letterSpacing: -0.01);
 
   static const TextStyle headlineMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1.4,
-    letterSpacing: -0.005,
-  );
+    letterSpacing: -0.005);
 
   static const TextStyle headlineSmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Title styles - for cards and list items
   static const TextStyle titleLarge = TextStyle(
@@ -63,24 +57,21 @@ class AppTypography {
     fontSize: 17,
     fontWeight: FontWeight.w600,
     height: 1.45,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle titleMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w500,
     height: 1.5,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle titleSmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 15,
     fontWeight: FontWeight.w500,
     height: 1.5,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Body styles - for main content
   static const TextStyle bodyLarge = TextStyle(
@@ -88,24 +79,21 @@ class AppTypography {
     fontSize: 16,
     fontWeight: FontWeight.w400,
     height: 1.6,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle bodyMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 15,
     fontWeight: FontWeight.w400,
     height: 1.6,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle bodySmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
     height: 1.55,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Label styles - for buttons and form fields
   static const TextStyle labelLarge = TextStyle(
@@ -113,24 +101,21 @@ class AppTypography {
     fontSize: 15,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle labelMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle labelSmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 13,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Caption styles - for helper text
   static const TextStyle captionLarge = TextStyle(
@@ -138,24 +123,21 @@ class AppTypography {
     fontSize: 13,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle captionMedium = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w400,
     height: 1.5,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle captionSmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 11,
     fontWeight: FontWeight.w400,
     height: 1.45,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Extra small label for tiny UI elements
   static const TextStyle labelXSmall = TextStyle(
@@ -163,8 +145,7 @@ class AppTypography {
     fontSize: 10,
     fontWeight: FontWeight.w500,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   // Special styles
   static const TextStyle button = TextStyle(
@@ -172,24 +153,21 @@ class AppTypography {
     fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle buttonSmall = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1.4,
-    letterSpacing: 0,
-  );
+    letterSpacing: 0);
 
   static const TextStyle overline = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.4,
-    letterSpacing: 0.04,
-  );
+    letterSpacing: 0.04);
 
   // Numeric styles - optimized for numbers
   static const TextStyle numberXLarge = TextStyle(
@@ -198,8 +176,7 @@ class AppTypography {
     fontWeight: FontWeight.w700,
     height: 1.2,
     letterSpacing: -0.5,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+    fontFeatures: [FontFeature.tabularFigures()]);
 
   static const TextStyle numberLarge = TextStyle(
     fontFamily: fontFamily,
@@ -207,8 +184,7 @@ class AppTypography {
     fontWeight: FontWeight.w700,
     height: 1.2,
     letterSpacing: -0.02,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+    fontFeatures: [FontFeature.tabularFigures()]);
 
   static const TextStyle numberMedium = TextStyle(
     fontFamily: fontFamily,
@@ -216,8 +192,7 @@ class AppTypography {
     fontWeight: FontWeight.w600,
     height: 1.3,
     letterSpacing: -0.01,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+    fontFeatures: [FontFeature.tabularFigures()]);
 
   static const TextStyle numberSmall = TextStyle(
     fontFamily: fontFamily,
@@ -225,8 +200,7 @@ class AppTypography {
     fontWeight: FontWeight.w600,
     height: 1.4,
     letterSpacing: 0,
-    fontFeatures: [FontFeature.tabularFigures()],
-  );
+    fontFeatures: [FontFeature.tabularFigures()]);
 
   // Get text theme for Material Theme
   static TextTheme getTextTheme({Color? color}) {
@@ -245,8 +219,7 @@ class AppTypography {
       bodySmall: bodySmall.copyWith(color: color),
       labelLarge: labelLarge.copyWith(color: color),
       labelMedium: labelMedium.copyWith(color: color),
-      labelSmall: labelSmall.copyWith(color: color),
-    );
+      labelSmall: labelSmall.copyWith(color: color));
   }
 
   // Responsive font size calculator

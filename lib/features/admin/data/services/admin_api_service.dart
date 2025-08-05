@@ -13,16 +13,13 @@ class AdminApiService {
 
   Future<AdminStatsModel> getAdminStats({
     DateTime? startDate,
-    DateTime? endDate,
-  }) async {
+    DateTime? endDate}) async {
     try {
       final response = await _apiClient.get(
         '/api/admin/token-stats',
         queryParameters: {
           if (startDate != null) 'startDate': null,
-          if (endDate != null) 'endDate': null,
-        },
-      );
+          if (endDate != null) 'endDate': null});
 
       return AdminStatsModel.fromJson(response.data);
     } on DioException catch (e) {
@@ -34,17 +31,14 @@ class AdminApiService {
   Future<TokenUsageDetailModel> getTokenUsageStats({
     DateTime? startDate,
     DateTime? endDate,
-    String period = '7d',
-  }) async {
+    String period = '7d'}) async {
     try {
       final response = await _apiClient.get(
         '/api/admin/token-usage',
         queryParameters: {
           if (startDate != null) 'startDate': null,
           if (endDate != null) 'endDate': endDate.toIso8601String(),
-          'period': null,
-        },
-      );
+          'period': null});
 
       return TokenUsageDetailModel.fromJson(response.data);
     } on DioException catch (e) {

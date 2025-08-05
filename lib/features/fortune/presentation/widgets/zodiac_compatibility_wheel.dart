@@ -12,8 +12,7 @@ class ZodiacCompatibilityWheel extends StatefulWidget {
     Key? key,
     required this.selectedZodiac,
     required this.onZodiacSelected,
-    this.showAnimation = true,
-  }) : super(key: key);
+    this.showAnimation = true}) : super(key: key);
 
   @override
   State<ZodiacCompatibilityWheel> createState() => _ZodiacCompatibilityWheelState();
@@ -31,24 +30,19 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
+      vsync: this);
     
     _rotationAnimation = Tween<double>(
       begin: 0,
-      end: 2 * math.pi,
-    ).animate(CurvedAnimation(
+      end: 2 * math.pi).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     _scaleAnimation = Tween<double>(
       begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
+      end: 1).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.elasticOut,
-    );
+      curve: Curves.elasticOut);
     
     if (widget.showAnimation) {
       _animationController.forward();
@@ -71,9 +65,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         const SizedBox(height: 20),
         _buildWheel(),
         const SizedBox(height: 20),
-        _buildLegend(),
-      ],
-    );
+        _buildLegend()]);
   }
 
   Widget _buildHeader() {
@@ -83,19 +75,14 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         Icon(
           Icons.stars,
           color: Colors.amber,
-          size: 24,
-        ),
+          size: 24),
         const SizedBox(width: 8),
         Text(
           '띠별 궁합 관계도',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
+            color: Colors.white))]);
   }
 
   Widget _buildWheel() {
@@ -114,9 +101,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                 size: const Size(310, 310),
                 painter: _ZodiacRelationshipPainter(
                   selectedZodiac: widget.selectedZodiac,
-                  animationValue: _animationController.value,
-                ),
-              ),
+                  animationValue: _animationController.value)),
               // 띠 아이콘들
               ...List.generate(12, (index) {
                 final angle = (index * 30 - 90) * math.pi / 180;
@@ -129,17 +114,11 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
                   offset: Offset(x, y),
                   child: Transform.scale(
                     scale: _scaleAnimation.value,
-                    child: _buildZodiacIcon(zodiac, index),
-                  ),
-                );
+                    child: _buildZodiacIcon(zodiac, index)));
               }),
               // 중앙 정보
-              _buildCenterInfo(),
-            ],
-          ),
-        );
-      },
-    );
+              _buildCenterInfo()]));
+      });
   }
 
   Widget _buildZodiacIcon(String zodiac, int index) {
@@ -147,8 +126,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
     final isHovered = _hoveredZodiac == zodiac;
     final compatibility = ZodiacCompatibilityService.calculateCompatibility(
       widget.selectedZodiac,
-      zodiac,
-    );
+      zodiac);
     
     return GestureDetector(
       onTap: () => widget.onZodiacSelected(zodiac),
@@ -166,38 +144,25 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               color: isSelected 
                   ? Colors.amber 
                   : _getCompatibilityColor(compatibility),
-              width: isSelected ? 3 : 2,
-            ),
+              width: isSelected ? 3 : 2),
             boxShadow: (isSelected || isHovered) ? [
               BoxShadow(
                 color: _getCompatibilityColor(compatibility).withValues(alpha: 0.5),
                 blurRadius: 20,
-                spreadRadius: 5,
-              ),
-            ] : [],
-          ),
+                spreadRadius: 5)] : []),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 _getZodiacEmoji(zodiac),
                 style: TextStyle(
-                  fontSize: isSelected ? 28 : 24,
-                ),
-              ),
+                  fontSize: isSelected ? 28 : 24)),
               Text(
                 zodiac,
                 style: TextStyle(
                   fontSize: isSelected ? 12 : 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                  color: Colors.white))]))));
   }
 
   Widget _buildCenterInfo() {
@@ -211,46 +176,32 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         gradient: RadialGradient(
           colors: [
             Colors.amber.withValues(alpha: 0.3),
-            Colors.amber.withValues(alpha: 0.1),
-          ],
-        ),
+            Colors.amber.withValues(alpha: 0.1)]),
         border: Border.all(
           color: Colors.amber.withValues(alpha: 0.5),
-          width: 2,
-        ),
-      ),
+          width: 2)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             _getZodiacEmoji(widget.selectedZodiac),
-            style: const TextStyle(fontSize: 32),
-          ),
+            style: const TextStyle(fontSize: 32)),
           Text(
             widget.selectedZodiac,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
+              color: Colors.white)),
           Text(
             info['hanja'],
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
+              color: Colors.white.withValues(alpha: 0.8))),
           Text(
             info['element'],
             style: TextStyle(
               fontSize: 12,
-              color: Colors.amber,
-            ),
-          ),
-        ],
-      ),
-    );
+              color: Colors.amber))]));
   }
 
   Widget _buildLegend() {
@@ -261,9 +212,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -274,10 +223,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           const SizedBox(width: 20),
           _buildLegendItem('육해': Colors.red, '주의 필요',
           const SizedBox(width: 20),
-          _buildLegendItem('보통': Colors.grey, '노력 필요',
-        ],
-      ),
-    );
+          _buildLegendItem('보통': Colors.grey, '노력 필요']));
   }
 
   Widget _buildLegendItem(String label, Color color, String description) {
@@ -288,9 +234,7 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
           height: 12,
           decoration: BoxDecoration(
             color: color,
-            shape: BoxShape.circle,
-          ),
-        ),
+            shape: BoxShape.circle)),
         const SizedBox(width: 4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,20 +244,12 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             Text(
               description,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.6),
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+                fontSize: 10))])]);
   }
 
   Color _getCompatibilityColor(double compatibility) {
@@ -326,19 +262,18 @@ class _ZodiacCompatibilityWheelState extends State<ZodiacCompatibilityWheel>
 
   String _getZodiacEmoji(String zodiac) {
     const emojiMap = {
-      '쥐': '🐭',
-      '소': '🐮',
-      '호랑이': '🐯',
-      '토끼': '🐰',
-      '용': '🐲',
-      '뱀': '🐍',
-      '말': '🐴',
-      '양': '🐑',
-      '원숭이': '🐵',
-      '닭': '🐓',
-      '개': '🐕',
-      '돼지': '🐷',
-    };
+      '쥐', '🐭',
+      '소', '🐮',
+      '호랑이', '🐯',
+      '토끼', '🐰',
+      '용', '🐲',
+      '뱀', '🐍',
+      '말', '🐴',
+      '양', '🐑',
+      '원숭이', '🐵',
+      '닭', '🐓',
+      '개', '🐕',
+      '돼지', '🐷'};
     return emojiMap[zodiac] ?? '🌟';
   }
 }
@@ -349,8 +284,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
 
   _ZodiacRelationshipPainter({
     required this.selectedZodiac,
-    required this.animationValue,
-  });
+    required this.animationValue});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -386,12 +320,10 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     
     final point1 = Offset(
       center.dx + radius * math.cos(angle1),
-      center.dy + radius * math.sin(angle1),
-    );
+      center.dy + radius * math.sin(angle1));
     final point2 = Offset(
       center.dx + radius * math.cos(angle2),
-      center.dy + radius * math.sin(angle2),
-    );
+      center.dy + radius * math.sin(angle2));
     
     canvas.drawLine(point1, point2, paint);
   }
@@ -400,7 +332,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final selectedIndex = ZodiacCompatibilityService.zodiacAnimals.indexOf(selectedZodiac);
     
     for (final group in ZodiacCompatibilityService.harmonyGroups) {
-      if (group.contains(selectedZodiac)) {
+      if (group.contains(selectedZodiac), {
         final paint = Paint()
           ..color = Colors.blue.withValues(alpha: 0.4 * animationValue)
           ..strokeWidth = 2
@@ -416,8 +348,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
           final angle = (index * 30 - 90) * math.pi / 180;
           final point = Offset(
             center.dx + radius * math.cos(angle),
-            center.dy + radius * math.sin(angle),
-          );
+            center.dy + radius * math.sin(angle));
           
           if (first) {
             path.moveTo(point.dx, point.dy);
@@ -455,12 +386,10 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     
     final point1 = Offset(
       center.dx + radius * math.cos(angle1),
-      center.dy + radius * math.sin(angle1),
-    );
+      center.dy + radius * math.sin(angle1));
     final point2 = Offset(
       center.dx + radius * math.cos(angle2),
-      center.dy + radius * math.sin(angle2),
-    );
+      center.dy + radius * math.sin(angle2));
     
     _drawDashedLine(canvas, point1, point2, paint);
   }
@@ -469,7 +398,7 @@ class _ZodiacRelationshipPainter extends CustomPainter {
     final distance = (p2 - p1).distance;
     final dashLength = 5.0;
     final dashSpace = 5.0;
-    final dashCount = (distance / (dashLength + dashSpace)).floor();
+    final dashCount = (distance / (dashLength + dashSpace),.floor();
     
     for (int i = 0; i < dashCount; i++) {
       final start = p1 + (p2 - p1) * (i * (dashLength + dashSpace) / distance);

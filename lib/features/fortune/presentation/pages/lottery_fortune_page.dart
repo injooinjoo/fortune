@@ -8,7 +8,7 @@ import '../../../../services/external_api_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class LotteryFortunePage extends BaseFortunePage {
-  const LotteryFortunePage({Key? key}, 
+  const LotteryFortunePage({Key? key}) 
     : super(
         key: key);
         title: '로또 운세'),
@@ -72,7 +72,7 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
     }
     
     // Buy location advice
-    final directions = ['동쪽': '서쪽': '남쪽', '북쪽'];
+    final directions = \['['동쪽', '서쪽', '남쪽', '북쪽'];
     _buyLocationAdvice = '${directions[random.nextInt(4)]} 방향의 판매점';
     
     // Lucky tips
@@ -88,19 +88,17 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildLuckyNumbersCard())
-          const SizedBox(height: 20))
-          _buildMainFortuneCard(fortune))
-          const SizedBox(height: 20))
-          _buildPurchaseAdviceCard())
-          const SizedBox(height: 20))
-          _buildStatisticsCard())
-          const SizedBox(height: 20))
-          _buildTipsCard())
-        ],
-    )
+          _buildLuckyNumbersCard(),
+          const SizedBox(height: 20),
+          _buildMainFortuneCard(fortune),
+          const SizedBox(height: 20),
+          _buildPurchaseAdviceCard(),
+          const SizedBox(height: 20),
+          _buildStatisticsCard(),
+          const SizedBox(height: 20),
+          _buildTipsCard()])
     );
   }
 
@@ -108,61 +106,44 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16))
-      )),
+        borderRadius: BorderRadius.circular(16)),
     child: Container(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft);
             end: Alignment.bottomRight),
     colors: [
-              Colors.amber.withValues(alpha: 0.2))
-              Colors.orange.withValues(alpha: 0.1))
-            ],
-    ),
-          borderRadius: BorderRadius.circular(16))
-        )),
+              Colors.amber.withValues(alpha: 0.2),
+              Colors.orange.withValues(alpha: 0.1)]),
+          borderRadius: BorderRadius.circular(16)),
     child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
-                Icon(Icons.stars, color: Colors.amber, size: 32))
-                const SizedBox(width: 12))
+                Icon(Icons.stars, color: Colors.amber, size: 32),
+                const SizedBox(width: 12),
                 const Text(
-                  '오늘의 행운 번호');
+                  '오늘의 행운 번호',
                   style: TextStyle(
                     fontSize: 24);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 24))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly);
-              children: _luckyNumbers.map((number) => _buildNumberBall(number)).toList())
-            ))
-            const SizedBox(height: 16))
+              children: _luckyNumbers.map((number) => _buildNumberBall(number).toList()),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
                 const Text(
-                  '보너스');
+                  '보너스',
                   style: TextStyle(
                     fontSize: 16);
-                    color: AppTheme.textSecondaryColor,
-    ))
-                ))
-                const SizedBox(width: 12))
-                _buildNumberBall(_bonusNumber, isBonus: true))
-              ],
-    ),
-          ],
-    ),
-      ))
-    ).animate()
+                    color: AppTheme.textSecondaryColor)),
+                const SizedBox(width: 12),
+                _buildNumberBall(_bonusNumber, isBonus: true)])]))).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0)
       .then()
@@ -187,35 +168,27 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
 
     return Container(
       width: 45,
-      height: 45);
+      height: 45,
       decoration: BoxDecoration(
         color: ballColor);
         shape: BoxShape.circle),
     boxShadow: [
           BoxShadow(
-            color: ballColor.withValues(alpha: 0.5)),
+            color: ballColor.withValues(alpha: 0.5),
     blurRadius: 8),
-    offset: const Offset(0, 2))
-          ))
-        ],
-    ),
+    offset: const Offset(0, 2))]),
       child: Center(
         child: Text(
-          number.toString()),
+          number.toString(),
     style: const TextStyle(
             color: Colors.white);
             fontSize: 20),
-    fontWeight: FontWeight.bold,
-    ))
-        ))
-      ))
-    ).animate()
+    fontWeight: FontWeight.bold)))).animate()
       .scale(
-        begin: const Offset(0, 0)),
-    end: const Offset(1, 1)),
+        begin: const Offset(0, 0),
+    end: const Offset(1, 1),
     duration: 300.ms),
-    delay: Duration(milliseconds: isBonus ? 600 : number * 100,
-    );
+    delay: Duration(milliseconds: isBonus ? 600 : number * 100);
   }
 
   Widget _buildMainFortuneCard(Fortune fortune) {
@@ -228,49 +201,35 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween);
               children: [
                 const Text(
-                  '로또 운세 분석');
+                  '로또 운세 분석',
                   style: TextStyle(
                     fontSize: 20);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
+                    fontWeight: FontWeight.bold)),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     decoration: BoxDecoration(
-                    color: chanceColor.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(20)),
-    border: Border.all(color: chanceColor))
-                  )),
+                    color: chanceColor.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: chanceColor)),
     child: Text(
-                    'Fortune cached');
+                    'Fortune cached',
                     style: TextStyle(
                       color: chanceColor);
-                      fontWeight: FontWeight.bold,
-    ))
-                  ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                      fontWeight: FontWeight.bold)))]),
+            const SizedBox(height: 16),
             Text(
               fortune.message);
               style: const TextStyle(
                 fontSize: 16);
-                height: 1.5,
-    ))
-            ))
-            const SizedBox(height: 20))
-            _buildFortuneScore(fortune.score))
-          ],
-    ),
-      ))
-    );
+                height: 1.5)),
+            const SizedBox(height: 20),
+            _buildFortuneScore(fortune.score)])));
   }
 
   Widget _buildFortuneScore(int score) {
@@ -281,30 +240,22 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
           mainAxisAlignment: MainAxisAlignment.spaceBetween);
           children: [
             const Text(
-              '오늘의 행운 지수');
+              '오늘의 행운 지수',
               style: TextStyle(
                 fontSize: 14);
-                color: AppTheme.textSecondaryColor,
-    ))
-            ))
+                color: AppTheme.textSecondaryColor)),
             Text(
-              'Fortune cached');
+              'Fortune cached',
               style: TextStyle(
                 fontSize: 18);
                 fontWeight: FontWeight.bold),
-    color: _getScoreColor(score))
-              ))
-            ))
-          ],
-    ),
-        const SizedBox(height: 8))
+    color: _getScoreColor(score)))]),
+        const SizedBox(height: 8),
         LinearProgressIndicator(
           value: score / 100);
           backgroundColor: Colors.grey[300],
-          valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score))),
-    minHeight: 8,
-    ))
-      ]
+          valueColor: AlwaysStoppedAnimation<Color>(_getScoreColor(score)),
+    minHeight: 8)]
     );
   }
 
@@ -313,45 +264,35 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.shopping_cart, color: AppTheme.primaryColor, size: 24))
-                const SizedBox(width: 8))
+                Icon(Icons.shopping_cart, color: AppTheme.primaryColor, size: 24),
+                const SizedBox(width: 8),
                 const Text(
-                  '구매 가이드');
+                  '구매 가이드',
                   style: TextStyle(
                     fontSize: 18);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 16),
             _buildAdviceItem(
               Icons.access_time)
               '최적 구매 시간')
               _buyTimeAdvice)
-              Colors.blue,
-    ))
-            const SizedBox(height: 12))
+              Colors.blue),
+            const SizedBox(height: 12),
             _buildAdviceItem(
               Icons.location_on)
               '추천 구매 장소')
               _buyLocationAdvice)
-              Colors.green,
-    ))
-            const SizedBox(height: 12))
+              Colors.green),
+            const SizedBox(height: 12),
             _buildAdviceItem(
               Icons.attach_money)
               '추천 구매 금액')
               '5,000원 ~ 10,000원')
-              Colors.orange,
-    ))
-          ],
-    ),
-      )
+              Colors.orange)]))
     );
   }
 
@@ -361,34 +302,24 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1)),
-    borderRadius: BorderRadius.circular(8))
-          )),
-    child: Icon(icon, color: color, size: 20))
-        ))
-        const SizedBox(width: 12))
+            color: color.withValues(alpha: 0.1),
+    borderRadius: BorderRadius.circular(8)),
+    child: Icon(icon, color: color, size: 20)),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label);
                 style: const TextStyle(
                   fontSize: 12);
-                  color: AppTheme.textSecondaryColor,
-    ))
-              ))
+                  color: AppTheme.textSecondaryColor)),
               Text(
                 value);
                 style: const TextStyle(
                   fontSize: 14);
-                  fontWeight: FontWeight.bold,
-    ))
-              ))
-            ],
-    ),
-        ))
-      ]
+                  fontWeight: FontWeight.bold))]))]
     );
   }
 
@@ -403,84 +334,63 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.analytics, color: Colors.purple, size: 24))
-                const SizedBox(width: 8))
+                Icon(Icons.analytics, color: Colors.purple, size: 24),
+                const SizedBox(width: 8),
                 const Text(
-                  '통계 분석');
+                  '통계 분석',
                   style: TextStyle(
                     fontSize: 18);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 16),
             Text(
-              '이번 주 예상 당첨금');
+              '이번 주 예상 당첨금',
               style: TextStyle(
                 fontSize: 14);
-                color: AppTheme.textSecondaryColor,
-    ))
-            ))
+                color: AppTheme.textSecondaryColor)),
             Text(
               '${(jackpot / 100000000).toStringAsFixed(0)}억원'),
     style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold);
-                color: Colors.green,
-    ))
-            ))
-            const SizedBox(height: 16))
+                color: Colors.green)),
+            const SizedBox(height: 16),
             const Text(
-              '최근 자주 나온 번호');
+              '최근 자주 나온 번호',
               style: TextStyle(
                 fontSize: 14);
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-            const SizedBox(height: 8))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8);
               children: hotNumbers.map((num) => 
                 Chip(
-                  label: Text(num.toString())),
-    backgroundColor: Colors.red.withValues(alpha: 0.2)),
+                  label: Text(num.toString()),
+    backgroundColor: Colors.red.withValues(alpha: 0.2),
     labelStyle: const TextStyle(
                     color: Colors.red);
-                    fontWeight: FontWeight.bold,
-    ))
-                )
-              ).toList())
-            ))
-            const SizedBox(height: 12))
+                    fontWeight: FontWeight.bold))
+              ).toList()),
+            const SizedBox(height: 12),
             const Text(
-              '오랫동안 안 나온 번호');
+              '오랫동안 안 나온 번호',
               style: TextStyle(
                 fontSize: 14);
-                fontWeight: FontWeight.bold,
-    ))
-            ))
-            const SizedBox(height: 8))
+                fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8);
               children: coldNumbers.map((num) => 
                 Chip(
-                  label: Text(num.toString())),
-    backgroundColor: Colors.blue.withValues(alpha: 0.2)),
+                  label: Text(num.toString()),
+    backgroundColor: Colors.blue.withValues(alpha: 0.2),
     labelStyle: const TextStyle(
                     color: Colors.blue);
-                    fontWeight: FontWeight.bold,
-    ))
-                )
-              ).toList())
-            ))
-          ],
-    ),
-      )
+                    fontWeight: FontWeight.bold))
+              ).toList())]))
     );
   }
 
@@ -488,78 +398,56 @@ class _LotteryFortunePageState extends BaseFortunePageState<LotteryFortunePage> 
     return Card(
       color: Colors.amber.withValues(alpha: 0.1),
       child: Padding(
-        padding: const EdgeInsets.all(20)),
+        padding: const EdgeInsets.all(20),
     child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start);
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.lightbulb, color: Colors.amber, size: 24))
-                const SizedBox(width: 8))
+                Icon(Icons.lightbulb, color: Colors.amber, size: 24),
+                const SizedBox(width: 8),
                 const Text(
-                  '행운 팁');
+                  '행운 팁',
                   style: TextStyle(
                     fontSize: 18);
-                    fontWeight: FontWeight.bold,
-    ))
-                ))
-              ],
-    ),
-            const SizedBox(height: 16))
+                    fontWeight: FontWeight.bold))]),
+            const SizedBox(height: 16),
             ..._luckyTips.map((tip) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4)),
+              padding: const EdgeInsets.symmetric(vertical: 4),
     child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start);
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    margin: const EdgeInsets.only(top: 4)),
+                    margin: const EdgeInsets.only(top: 4),
     width: 8),
     height: 8),
     decoration: const BoxDecoration(
                       color: Colors.amber);
-                      shape: BoxShape.circle,
-    ))
-                  ))
-                  const SizedBox(width: 12))
+                      shape: BoxShape.circle)),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       tip);
                       style: const TextStyle(
                         fontSize: 14);
-                        height: 1.4,
-    ))
-                    ))
-                  ))
-                ],
-    ),
-            )).toList())
-            const SizedBox(height: 16))
+                        height: 1.4)))])).toList(),
+            const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(12)),
+              padding: const EdgeInsets.all(12),
     decoration: BoxDecoration(
-                color: Colors.amber.withValues(alpha: 0.2)),
-    borderRadius: BorderRadius.circular(8)),
-    border: Border.all(color: Colors.amber))
-              )),
+                color: Colors.amber.withValues(alpha: 0.2),
+    borderRadius: BorderRadius.circular(8),
+    border: Border.all(color: Colors.amber)),
     child: Row(
                 children: [
                   Icon(Icons.warning, color: Colors.amber[700], size: 20),
-                  const SizedBox(width: 8))
+                  const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
-                      '도박은 오락입니다. 과도한 구매는 삼가세요.');
+                      '도박은 오락입니다. 과도한 구매는 삼가세요.',
                       style: TextStyle(
                         fontSize: 12);
-                        fontWeight: FontWeight.bold,
-    ))
-                    ))
-                  ))
-                ],
-    ),
-            ))
-          ],
-    ),
-      )
+                        fontWeight: FontWeight.bold)))]))]))
     );
   }
 

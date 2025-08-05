@@ -30,8 +30,7 @@ class PolicyPage extends ConsumerWidget {
                         title: '개인정보처리방침',
                         subtitle: '개인정보 수집 및 이용에 관한 안내',
                         color: Colors.blue,
-                        onTap: () => context.push('/policy/privacy'),
-                      ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0),
+                        onTap: () => context.push('/policy/privacy')).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 16),
                       _buildPolicyCard(
                         context: context,
@@ -39,19 +38,9 @@ class PolicyPage extends ConsumerWidget {
                         title: '이용약관',
                         subtitle: '서비스 이용에 관한 약관',
                         color: Colors.purple,
-                        onTap: () => context.push('/policy/terms'),
-                      ).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
+                        onTap: () => context.push('/policy/terms')).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.1, end: 0),
                       const SizedBox(height: 32),
-                      _buildInfoSection(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                      _buildInfoSection()])))]))));
   }
 
   Widget _buildPolicyCard({
@@ -60,8 +49,7 @@ class PolicyPage extends ConsumerWidget {
     required String title,
     required String subtitle,
     required Color color,
-    required VoidCallback onTap,
-  }) {
+    required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -69,11 +57,9 @@ class PolicyPage extends ConsumerWidget {
         gradient: LinearGradient(
           colors: [
             color.withValues(alpha: 0.3),
-            color.withValues(alpha: 0.1),
-          ],
+            color.withValues(alpha: 0.1)],
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+          end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(20),
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -82,14 +68,11 @@ class PolicyPage extends ConsumerWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                borderRadius: BorderRadius.circular(12)),
               child: Icon(
                 icon,
                 color: color,
-                size: 32,
-              ),
-            ),
+                size: 32)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -100,29 +83,17 @@ class PolicyPage extends ConsumerWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                      color: Colors.white)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withValues(alpha: 0.8),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      color: Colors.white.withValues(alpha: 0.8)))])),
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.white.withValues(alpha: 0.5),
-              size: 20,
-            ),
-          ],
-        ),
-      ),
-    );
+              size: 20)])));
   }
 
   Widget _buildInfoSection() {
@@ -130,9 +101,7 @@ class PolicyPage extends ConsumerWidget {
       gradient: LinearGradient(
         colors: [
           Colors.white.withValues(alpha: 0.1),
-          Colors.white.withValues(alpha: 0.05),
-        ],
-      ),
+          Colors.white.withValues(alpha: 0.05)]),
       borderRadius: BorderRadius.circular(16),
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -140,8 +109,7 @@ class PolicyPage extends ConsumerWidget {
           Icon(
             Icons.info_outline_rounded,
             color: Colors.white.withValues(alpha: 0.6),
-            size: 32,
-          ),
+            size: 32),
           const SizedBox(height: 12),
           Text(
             'Fortune은 이용자의 개인정보를 소중히 여기며,\n'
@@ -149,21 +117,14 @@ class PolicyPage extends ConsumerWidget {
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.8),
               fontSize: 14,
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
+              height: 1.5),
+            textAlign: TextAlign.center),
           const SizedBox(height: 16),
           Text(
             '문의사항이 있으시면 고객지원 페이지를 이용해주세요.',
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.6),
-              fontSize: 12,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    ).animate().fadeIn(delay: 400.ms, duration: 500.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
+              fontSize: 12),
+            textAlign: TextAlign.center)])).animate().fadeIn(delay: 400.ms, duration: 500.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
   }
 }

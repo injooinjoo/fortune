@@ -41,8 +41,7 @@ class TalismanDesign {
     required this.createdDate,
     this.userBirthInfo,
     this.userName,
-    this.customSymbols,
-  });
+    this.customSymbols});
 
   // JSON 변환을 위한 메서드
   Map<String, dynamic> toJson() {
@@ -55,8 +54,7 @@ class TalismanDesign {
       'createdDate': createdDate.toIso8601String(),
       'userBirthInfo': userBirthInfo,
       'userName': userName,
-      'customSymbols': null,
-    };
+      'customSymbols': null};
   }
 
   factory TalismanDesign.fromJson(Map<String, dynamic> json) {
@@ -93,8 +91,7 @@ class TalismanResult {
     required this.effectiveness,
     required this.precautions,
     this.shareableImageUrl,
-    this.additionalInfo,
-  });
+    this.additionalInfo});
 
   // JSON 변환을 위한 메서드
   Map<String, dynamic> toJson() {
@@ -106,8 +103,7 @@ class TalismanResult {
       'effectiveness': effectiveness,
       'precautions': precautions,
       'shareableImageUrl': shareableImageUrl,
-      'additionalInfo': null,
-    };
+      'additionalInfo': null};
   }
 
   factory TalismanResult.fromJson(Map<String, dynamic> json) {
@@ -137,8 +133,7 @@ class TalismanRequest {
     this.personalWish,
     this.birthDate,
     this.userName,
-    this.customization,
-  });
+    this.customization});
 
   Map<String, dynamic> toJson() {
     return {
@@ -146,8 +141,7 @@ class TalismanRequest {
       'personalWish': personalWish,
       'birthDate': birthDate,
       'userName': userName,
-      'customization': null,
-    };
+      'customization': null};
   }
 }
 
@@ -164,6 +158,5 @@ class TalismanHistory {
     required this.talisman,
     required this.createdAt,
     this.isShared = false,
-    this.shareCount = 0,
-  });
+    this.shareCount = 0});
 }

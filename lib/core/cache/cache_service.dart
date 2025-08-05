@@ -256,7 +256,6 @@ class CacheService {
       'cacheSize': cacheSize,
       'cacheSizeMB': (cacheSize / (1024 * 1024)).toStringAsFixed(2),
       'oldestEntryDate': oldestEntry?.createdAt.toIso8601String(),
-      'isOffline': null,
-    };
+      'isOffline': null};
   }
 }

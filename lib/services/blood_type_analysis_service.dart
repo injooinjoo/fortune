@@ -19,8 +19,7 @@ class BloodTypeAnalysisService {
       'element': '물',
       'compatibility_best': ['A', 'AB'],
       'compatibility_good': ['O'],
-      'compatibility_challenging': ['B'],
-    },
+      'compatibility_challenging': ['B']},
     'B': {
       'positive_traits': ['창의적', '자유로움', '열정적', '독창적', '유연함'],
       'negative_traits': ['변덕스러움', '자기중심적', '규칙 무시', '충동적', '무책임'],
@@ -33,8 +32,7 @@ class BloodTypeAnalysisService {
       'element': '불',
       'compatibility_best': ['B', 'AB'],
       'compatibility_good': ['O'],
-      'compatibility_challenging': ['A'],
-    },
+      'compatibility_challenging': ['A']},
     'O': {
       'positive_traits': ['리더십', '사교적', '낙천적', '도전적', '현실적'],
       'negative_traits': ['고집', '경쟁심', '단순함', '융통성 부족', '독선적'],
@@ -47,8 +45,7 @@ class BloodTypeAnalysisService {
       'element': '땅',
       'compatibility_best': ['O', 'A'],
       'compatibility_good': ['B', 'AB'],
-      'compatibility_challenging': null,
-    },
+      'compatibility_challenging': null},
     'AB': {
       'positive_traits': ['합리적', '분석적', '다재다능', '공정함', '독특함'],
       'negative_traits': ['이중적', '복잡함', '비판적', '거리감', '우유부단'],
@@ -61,24 +58,19 @@ class BloodTypeAnalysisService {
       'element': '공기',
       'compatibility_best': ['AB', 'A', 'B'],
       'compatibility_good': ['O'],
-      'compatibility_challenging': null,
-    },
-  };
+      'compatibility_challenging': null}};
   
   // Rh 인자별 특성
   static const Map<String, Map<String, dynamic>> rhCharacteristics = {
     '+': {
       'traits': ['적극적', '외향적', '활동적', '사교적'],
       'description': 'Rh+ 혈액형은 일반적으로 더 외향적이고 활동적인 성향을 보입니다.',
-      'energy_level': null,
-    },
+      'energy_level': null},
     '-': {
       'traits': ['신중함', '직관적', '민감함', '독립적'],
       'description': 'Rh- 혈액형은 더 신중하고 직관적이며 독립적인 성향을 보입니다.',
       'energy_level': 0.6,
-      'special_note': 'Rh- 혈액형은 전체 인구의 약 15%로 희귀한 편입니다.',
-    },
-  };
+      'special_note': 'Rh- 혈액형은 전체 인구의 약 15%로 희귀한 편입니다.'}};
   
   // 혈액형 궁합 점수 계산
   static double calculateCompatibility(String bloodType1, String rh1, String bloodType2, String rh2) {
@@ -120,34 +112,28 @@ class BloodTypeAnalysisService {
         'type': '완벽한 조화',
         'description': '서로를 깊이 이해하고 안정적인 관계를 유지합니다.',
         'strength': '상호 이해와 배려',
-        'challenge': '변화와 모험이 부족할 수 있음',
-      },
+        'challenge': '변화와 모험이 부족할 수 있음'},
       'A+-B+': {
         'type': '보완적 관계',
         'description': 'A형의 안정성과 B형의 창의성이 균형을 이룹니다.',
         'strength': '서로의 부족한 부분을 채워줌',
-        'challenge': '가치관 차이로 인한 갈등 가능',
-      },
+        'challenge': '가치관 차이로 인한 갈등 가능'},
       'O+-AB+': {
         'type': '흥미로운 조합',
         'description': 'O형의 추진력과 AB형의 전략이 시너지를 만듭니다.',
         'strength': '목표 달성에 효과적',
-        'challenge': '감정적 교류가 부족할 수 있음',
-      },
+        'challenge': '감정적 교류가 부족할 수 있음'},
       'B+-B-': {
         'type': '자유로운 영혼들',
         'description': '서로의 자유를 존중하며 창의적인 관계를 만듭니다.',
         'strength': '개성 존중과 창의성',
-        'challenge': '책임감이 부족할 수 있음',
-      },
-    };
+        'challenge': '책임감이 부족할 수 있음'}};
     
     return synergies[key] ?? synergies[reverseKey] ?? {
       'type': '일반적인 조합',
       'description': '서로를 이해하고 노력하면 좋은 관계를 만들 수 있습니다.',
       'strength': '노력하면 발전 가능',
-      'challenge': '서로의 차이를 인정하는 것이 중요',
-    };
+      'challenge': '서로의 차이를 인정하는 것이 중요'};
   }
   
   // 혈액형별 일일 바이오리듬 계산
@@ -172,8 +158,7 @@ class BloodTypeAnalysisService {
       '감정': emotional * baseEnergy * weights['emotional']!,
       '지성': intellectual * baseEnergy * weights['intellectual']!,
       '직관': (physical + emotional + intellectual) / 3 * baseEnergy * weights['intuition']!,
-      '사회성': (emotional * 0.6 + intellectual * 0.4) * baseEnergy * weights['social'],
-    };
+      '사회성': (emotional * 0.6 + intellectual * 0.4) * baseEnergy * weights['social']};
   }
   
   static Map<String, double> _getBloodTypeWeights(String bloodType) {
@@ -184,40 +169,35 @@ class BloodTypeAnalysisService {
           'emotional': 1.0,
           'intellectual': 0.9,
           'intuition': 0.7,
-          'social': null,
-        };
+          'social': null};
       case 'B':
         return {
           'physical': 0.9,
           'emotional': 0.8,
           'intellectual': 0.7,
           'intuition': 1.0,
-          'social': null,
-        };
+          'social': null};
       case 'O':
         return {
           'physical': 1.0,
           'emotional': 0.7,
           'intellectual': 0.8,
           'intuition': 0.8,
-          'social': null,
-        };
+          'social': null};
       case 'AB':
         return {
           'physical': 0.7,
           'emotional': 0.9,
           'intellectual': 1.0,
           'intuition': 0.9,
-          'social': null,
-        };
+          'social': null};
       default:
         return {
           'physical': 0.8,
           'emotional': 0.8,
           'intellectual': 0.8,
           'intuition': 0.8,
-          'social': null,
-        };
+          'social': null};
     }
   }
   
@@ -235,8 +215,7 @@ class BloodTypeAnalysisService {
       '공감능력': 0.5,
       '실행력': 0.5,
       '인내심': 0.5,
-      '적응력': null,
-    };
+      '적응력': null};
     
     // 혈액형별 강도 조정
     switch (bloodType) {
@@ -296,8 +275,7 @@ class BloodTypeAnalysisService {
       'communication': communication,
       'conflict_resolution': conflict,
       'growth_potential': growth,
-      'advice': null,
-    };
+      'advice': null};
   }
   
   static Map<String, dynamic> _analyzeCommunication(String type1, String type2) {
@@ -305,8 +283,7 @@ class BloodTypeAnalysisService {
       'A': {'style': '신중하고 배려깊은': 'speed': 0.6, 'depth': 0.9},
       'B': {'style': '자유롭고 창의적인': 'speed': 0.8, 'depth': 0.6},
       'O': {'style': '직설적이고 명확한', 'speed': 0.9, 'depth': 0.7},
-      'AB': {'style': '논리적이고 분석적인', 'speed': 0.7, 'depth': null,
-    };
+      'AB': {'style': '논리적이고 분석적인', 'speed': 0.7, 'depth': null};
     
     final style1 = communicationStyles[type1]!;
     final style2 = communicationStyles[type2]!;
@@ -320,8 +297,7 @@ class BloodTypeAnalysisService {
       'style2': style2['style'],
       'advice': speedDiff > 0.3 
         ? '소통 속도의 차이를 인정하고 서로 맞춰주는 노력이 필요합니다.'
-        : '소통 스타일이 잘 맞아 원활한 대화가 가능합니다.',
-    };
+        : '소통 스타일이 잘 맞아 원활한 대화가 가능합니다.'};
   }
   
   static Map<String, dynamic> _analyzeConflictStyle(String type1, String type2) {
@@ -329,14 +305,12 @@ class BloodTypeAnalysisService {
       'A': {'approach': '회피형': 'resolution': '타협'},
       'B': {'approach': '직면형': 'resolution': '창의적 해결'},
       'O': {'approach': '주도형': 'resolution': '빠른 해결'},
-      'AB': {'approach': '분석형', 'resolution': '논리적 해결',
-    };
+      'AB': {'approach': '분석형', 'resolution': '논리적 해결'};
     
     return {
       'type1_style': conflictStyles[type1],
       'type2_style': conflictStyles[type2],
-      'compatibility': null,
-    };
+      'compatibility': null};
   }
   
   static Map<String, dynamic> _analyzeGrowthPotential(String type1, String type2) {
@@ -345,8 +319,7 @@ class BloodTypeAnalysisService {
     
     return {
       'score': diversity,
-      'areas': null,
-    };
+      'areas': null};
   }
   
   static List<String> _getGrowthAreas(String type1, String type2) {

@@ -33,8 +33,7 @@ class BaseFortunePageV2 extends ConsumerStatefulWidget {
     required this.inputBuilder,
     required this.resultBuilder,
     this.showShareButton = true,
-    this.showFontSizeSelector = true,
-  }) : super(key: key);
+    this.showFontSizeSelector = true}) : super(key: key);
 
   @override
   ConsumerState<BaseFortunePageV2> createState() => _BaseFortunePageV2State();
@@ -53,15 +52,12 @@ class _BaseFortunePageV2State extends ConsumerState<BaseFortunePageV2>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800,
-    );
+      duration: const Duration(milliseconds: 800);
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn,
-    );
+      curve: Curves.easeIn);
   }
 
   @override
@@ -152,9 +148,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                 fortuneGenerationProvider(
                   FortuneGenerationParams(
                     fortuneType: widget.fortuneType,
-                    userInfo: params,
-                  ),
-                ).future
+                    userInfo: params)).future
               );
               generatedFortune = fortune;
               return fortune;
@@ -163,10 +157,8 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
               // Reward tokens for watching ad (free users only,
               await ref.read(tokenProvider.notifier).rewardTokensForAd(
                 fortuneType: widget.fortuneType,
-                rewardAmount: 1,
-              );
-            },
-          ),
+                rewardAmount: 1);
+            }),
           fullscreenDialog: true
         )
       );
@@ -184,7 +176,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
           sections: _extractSections(generatedFortune!),
           overallScore: generatedFortune!.overallScore,
           scoreBreakdown: generatedFortune!.scoreBreakdown?.map((key, value) => 
-            MapEntry(key, value is int ? value : (value as num).toInt())),
+            MapEntry(key, value is int ? value : (value as num).toInt()),
           luckyItems: generatedFortune!.luckyItems,
           recommendations: generatedFortune!.recommendations
         );
@@ -215,9 +207,9 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
       });
       
       // More specific error messages
-      if (e.toString().contains('network')) {
+      if (e.toString().contains('network'), {
         Toast.error(context, '네트워크 연결을 확인해주세요');
-      } else if (e.toString().contains('unauthorized')) {
+      } else if (e.toString().contains('unauthorized'), {
         Toast.error(context, '로그인이 필요합니다');
       } else {
         Toast.error(context, '운세 생성 중 오류가 발생했습니다');
@@ -240,10 +232,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                   end: Alignment.bottomRight,
                   colors: [
                     Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
-                  ],
-                ),
-              ),
+                    Theme.of(context).colorScheme.secondary])),
               child: AppHeader(
                 title: widget.title,
                 showShareButton: widget.showShareButton && _fortuneResult != null,
@@ -253,14 +242,12 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                   ref.read(fontSizeProvider.notifier).setFontSize(size);
                 },
                 backgroundColor: const Color(0x00000000), // transparent,
-    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
+    foregroundColor: Theme.of(context).colorScheme.onPrimary)),
             
             // Content
             Expanded(
               child: _isLoading
-                  ? const Center(child: FortuneResultSkeleton())
+                  ? const Center(child: FortuneResultSkeleton(),
                   : _error != null
                       ? _buildErrorState()
                       : _fortuneResult != null
@@ -271,20 +258,11 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                                 child: widget.resultBuilder(
                                   context, 
                                   _fortuneResult!,
-                                  _handleShare,
-                                ),
-                              ),
-                            )
+                                  _handleShare)))
                           : SingleChildScrollView(
                               padding: const EdgeInsets.all(16),
-                              child: widget.inputBuilder(context, _generateFortune),
-                            ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 1),
-    );
+                              child: widget.inputBuilder(context, _generateFortune)))])),
+      bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 1));
   }
 
   Widget _buildErrorState() {
@@ -300,19 +278,16 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
               Icon(
                 Icons.error_outline_rounded,
                 size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
+                color: Theme.of(context).colorScheme.error),
               const SizedBox(height: 16),
               Text(
                 '오류가 발생했습니다',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+                style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
                 _error ?? '알 수 없는 오류',
                 style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center,
-              ),
+                textAlign: TextAlign.center),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () {
@@ -321,11 +296,7 @@ Fortune 앱에서 더 많은 운세를 확인하세요!
                     _fortuneResult = null;
                   });
                 },
-                child: const Text('다시 시도'),
-              ),
-            ],
-          ),
-        )
+                child: const Text('다시 시도'))]))
       )
     );
   }

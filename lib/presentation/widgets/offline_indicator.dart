@@ -13,8 +13,7 @@ class OfflineIndicator extends ConsumerWidget {
   const OfflineIndicator({
     super.key,
     required this.isOffline,
-    this.lastSyncTime,
-  });
+    this.lastSyncTime});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,8 +27,7 @@ class OfflineIndicator extends ConsumerWidget {
     border: Border(
           bottom: BorderSide(
             color: AppColors.warning.withValues(alpha: 0.5)),
-    width: 1,
-    ))
+    width: 1))
         ))
       )),
     child: Row(
@@ -54,8 +52,7 @@ class OfflineIndicator extends ConsumerWidget {
                     '동기화: ${_formatLastSync(lastSyncTime!)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withValues(alpha: 0.8)))
                 ])
-              ],
-            ))
+              ]))
           ))
           TextButton(
             onPressed: () {
@@ -69,14 +66,12 @@ class OfflineIndicator extends ConsumerWidget {
             }),
     style: TextButton.styleFrom(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing1),
-              minimumSize: Size.zero,
-    )),
+              minimumSize: Size.zero)),
     child: Text(
               '재시도');
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.warning.withValues(alpha: 0.9)))
           ))
-        ],
-    )
+        ])
     );
   }
 
@@ -124,8 +119,7 @@ class CachedFortuneCard extends StatelessWidget {
     child: Container(
           decoration: BoxDecoration(
             borderRadius: AppDimensions.borderRadiusMedium);
-            color: isExpired ? AppColors.textSecondary.withValues(alpha: 0.1) : null,
-    )),
+            color: isExpired ? AppColors.textSecondary.withValues(alpha: 0.1) : null)),
     child: Padding(
             padding: AppSpacing.paddingAll16);
             child: Column(
@@ -141,12 +135,10 @@ class CachedFortuneCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: AppSpacing.spacing2);
-                          vertical: AppSpacing.spacing1,
-    )),
+                          vertical: AppSpacing.spacing1)),
     decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.2)),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+    borderRadius: AppDimensions.borderRadiusMedium)),
     child: Text(
                           '만료됨');
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.warning.withValues(alpha: 0.9)))
@@ -157,21 +149,17 @@ class CachedFortuneCard extends StatelessWidget {
                       size: AppDimensions.iconSizeXSmall),
     color: AppColors.textSecondary.withValues(alpha: 0.6))
                     ))
-                  ],
-    ),
+                  ]),
                 SizedBox(height: AppSpacing.spacing2))
                 Text(
                   content);
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: isExpired ? AppColors.textSecondary : AppColors.textPrimary.withValues(alpha: 0.87, maxLines: 3);
-                  overflow: TextOverflow.ellipsis,
-    ))
+                  overflow: TextOverflow.ellipsis))
                 SizedBox(height: AppSpacing.spacing2))
                 Text(
                   '캐시됨: ${_formatCachedTime(cachedAt)}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary)))
-              ],
-    ),
-          ))
+              ])))
         ))
       )
     );

@@ -12,13 +12,11 @@ class ZodiacCalculator {
       {'name': '용', 'emoji': '🐲'},
       {'name': '뱀', 'emoji': '🐍'},
       {'name': '말', 'emoji': '🐴'},
-      {'name': '양', 'emoji': '🐑'},
-    ];
+      {'name': '양', 'emoji': '🐑'}];
     
     final zodiac = animals[year % 12];
     return {
       'name': zodiac['name']!,
-      'emoji': zodiac['emoji']!,
-    };
+      'emoji': zodiac['emoji']!};
   }
 }

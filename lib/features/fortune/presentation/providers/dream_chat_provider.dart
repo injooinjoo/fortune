@@ -8,10 +8,7 @@ enum MessageType {
   fortuneTeller, // 해몽가 메시지
   user,         // 사용자 메시지
   loading,      // 로딩 메시지
-  result,       // 해몽 결과,
-  
-  
-}
+  result,       // 해몽 결과}
 
 // Chat message model
 class DreamChatMessage {
@@ -28,8 +25,7 @@ class DreamChatMessage {
     required this.type,
     required this.timestamp,
     this.isAnimating = false,
-    this.metadata,
-  });
+    this.metadata});
   
   DreamChatMessage copyWith({
     String? id,
@@ -37,8 +33,7 @@ class DreamChatMessage {
     MessageType? type,
     DateTime? timestamp,
     bool? isAnimating,
-    Map<String, dynamic>? metadata,
-  }) {
+    Map<String, dynamic>? metadata}) {
     return DreamChatMessage(
       id: id ?? this.id,
       content: content ?? this.content,
@@ -66,8 +61,7 @@ class DreamChatState {
     this.dreamContent = '',
     this.collectedInfo = const {},
     this.isAnalyzing = false,
-    this.error,
-  });
+    this.error});
   
   DreamChatState copyWith({
     List<DreamChatMessage>? messages,
@@ -76,8 +70,7 @@ class DreamChatState {
     String? dreamContent,
     Map<String, String>? collectedInfo,
     bool? isAnalyzing,
-    String? error,
-  }) {
+    String? error}) {
     return DreamChatState(
       messages: messages ?? this.messages,
       isTyping: isTyping ?? this.isTyping,
@@ -94,34 +87,29 @@ class FortuneTellerResponses {
   static const List<String> greetings = [
     "안녕하세요, 저는 당신의 꿈을 해석해드릴 해몽가입니다. 🌙\n어젯밤 꾸신 꿈이 궁금하신가요?\n편안하게 이야기해주세요.",
     "반갑습니다. 꿈의 세계로 안내해드릴 해몽가입니다. ✨\n어떤 꿈을 꾸셨는지 들려주시겠어요?",
-    "환영합니다. 당신의 무의식이 전하는 메시지를 함께 찾아보겠습니다. 🔮\n꿈 이야기를 들려주세요.",
-  ];
+    "환영합니다. 당신의 무의식이 전하는 메시지를 함께 찾아보겠습니다. 🔮\n꿈 이야기를 들려주세요."];
   
   static const List<String> empathyResponses = [
     "그런 꿈은 정말 {emotion}겠어요.",
     "{emotion} 꿈이었군요. 많은 분들이 비슷한 경험을 하시곤 합니다.",
-    "아, 그런 상황이었군요. {emotion} 마음이 전해집니다.",
-  ];
+    "아, 그런 상황이었군요. {emotion} 마음이 전해집니다."];
   
   static const List<String> followUpQuestions = [
     "그때 기분이 어떠셨나요?",
     "혹시 최근에 비슷한 상황이나 감정을 경험하신 적이 있나요?",
     "꿈에서 가장 인상 깊었던 부분은 무엇인가요?",
-    "꿈을 꾸고 일어났을 때 어떤 느낌이 드셨나요?",
-  ];
+    "꿈을 꾸고 일어났을 때 어떤 느낌이 드셨나요?"];
   
   static const List<String> analyzingMessages = [
     "당신의 무의식이 전하는 메시지를 듣고 있습니다... 🌟",
     "꿈의 상징들을 하나씩 풀어보고 있어요... ✨",
     "깊은 의미를 찾아가고 있습니다... 🔮",
-    "꿈속 이야기의 비밀을 해독하고 있어요... 🌙",
-  ];
+    "꿈속 이야기의 비밀을 해독하고 있어요... 🌙"];
   
   static const List<String> closingMessages = [
     "오늘 하루도 좋은 꿈 꾸세요. 🌙",
     "당신의 꿈이 행복한 메시지를 전하길 바라요. ✨",
-    "무의식이 전하는 지혜를 마음에 새기시길 바랍니다. 🌟",
-  ];
+    "무의식이 전하는 지혜를 마음에 새기시길 바랍니다. 🌟"];
 }
 
 // Chat provider
@@ -131,8 +119,7 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
   // Initialize chat with greeting
   void startChat() {
     final greeting = FortuneTellerResponses.greetings[
-      DateTime.now().millisecond % FortuneTellerResponses.greetings.length,
-];
+      DateTime.now().millisecond % FortuneTellerResponses.greetings.length];
     
     _addFortuneTellerMessage(greeting);
 }
@@ -195,26 +182,24 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
   Future<void> _showEmpathyAndAskFollowUp(String dreamContent) async {
     // Determine emotion from content
     String emotion = "신기하셨";
-    if (dreamContent.contains("무서") || dreamContent.contains("떨어") || dreamContent.contains("쫓")) {
+    if (dreamContent.contains("무서") || dreamContent.contains("떨어") || dreamContent.contains("쫓"), {
       emotion = "무서우셨";
-} else if (dreamContent.contains("슬") || dreamContent.contains("울")) {
+} else if (dreamContent.contains("슬") || dreamContent.contains("울"), {
       emotion = "슬프셨";
-} else if (dreamContent.contains("행복") || dreamContent.contains("기쁨") || dreamContent.contains("날")) {
+} else if (dreamContent.contains("행복") || dreamContent.contains("기쁨") || dreamContent.contains("날"), {
       emotion = "기쁘셨";
 }
     
     // Show empathy
     final empathyTemplate = FortuneTellerResponses.empathyResponses[
-      DateTime.now().millisecond % FortuneTellerResponses.empathyResponses.length,
-];
+      DateTime.now().millisecond % FortuneTellerResponses.empathyResponses.length];
     final empathyMessage = empathyTemplate.replaceAll('{emotion}': emotion);
     await _addFortuneTellerMessage(empathyMessage);
     
     // Ask follow-up question
     await Future.delayed(const Duration(milliseconds: 800);
     final followUp = FortuneTellerResponses.followUpQuestions[
-      DateTime.now().millisecond % FortuneTellerResponses.followUpQuestions.length,
-];
+      DateTime.now().millisecond % FortuneTellerResponses.followUpQuestions.length];
     await _addFortuneTellerMessage(followUp);
 }
   
@@ -229,8 +214,7 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
     state = state.copyWith(isAnalyzing: true);
     
     final analyzingMsg = FortuneTellerResponses.analyzingMessages[
-      DateTime.now().millisecond % FortuneTellerResponses.analyzingMessages.length,
-];
+      DateTime.now().millisecond % FortuneTellerResponses.analyzingMessages.length];
     
     final loadingMessage = DreamChatMessage(
       id: 'loading',
@@ -289,8 +273,7 @@ class DreamChatNotifier extends StateNotifier<DreamChatState> {
     // Add closing message
     await Future.delayed(const Duration(seconds: 2);
     final closing = FortuneTellerResponses.closingMessages[
-      DateTime.now().millisecond % FortuneTellerResponses.closingMessages.length,
-];
+      DateTime.now().millisecond % FortuneTellerResponses.closingMessages.length];
     await _addFortuneTellerMessage(closing);
 }
   

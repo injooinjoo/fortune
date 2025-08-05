@@ -79,8 +79,7 @@ class FortuneCardImages {
     'history': '${basePath}fortune_history_fortune.png',
 
     // Default fallback
-    'default': '${basePath}default_fortune.png',
-  };
+    'default': '${basePath}default_fortune.png'};
 
   /// Get image path for a fortune type
   static String getImagePath(String fortuneType) {
@@ -115,37 +114,28 @@ class FortuneCardImages {
   static Map<String, List<Color>> categoryGradients = {
     'love': [
       Color(0x99EC4899).withValues(alpha: 0.7),
-      Color(0x99F472B6).withValues(alpha: 0.4),
-    ],
+      Color(0x99F472B6).withValues(alpha: 0.4)],
     'career': [
       Color(0x996366F1).withValues(alpha: 0.7),
-      Color(0x998B5CF6).withValues(alpha: 0.4),
-    ],
+      Color(0x998B5CF6).withValues(alpha: 0.4)],
     'money': [
       Color(0x9910B981).withValues(alpha: 0.7),
-      Color(0x9984CC16).withValues(alpha: 0.4),
-    ],
+      Color(0x9984CC16).withValues(alpha: 0.4)],
     'health': [
       Color(0x99F59E0B).withValues(alpha: 0.7),
-      Color(0x99FBBF24).withValues(alpha: 0.4),
-    ],
+      Color(0x99FBBF24).withValues(alpha: 0.4)],
     'traditional': [
       Color(0x99DC2626).withValues(alpha: 0.7),
-      Color(0x99EF4444).withValues(alpha: 0.4),
-    ],
+      Color(0x99EF4444).withValues(alpha: 0.4)],
     'lifestyle': [
       Color(0x993B82F6).withValues(alpha: 0.7),
-      Color(0x9960A5FA).withValues(alpha: 0.4),
-    ],
+      Color(0x9960A5FA).withValues(alpha: 0.4)],
     'interactive': [
       Color(0x998B5CF6).withValues(alpha: 0.7),
-      Color(0x99A78BFA).withValues(alpha: 0.4),
-    ],
+      Color(0x99A78BFA).withValues(alpha: 0.4)],
     'default': [
       Color(0x99475569).withValues(alpha: 0.7),
-      Color(0x9964748B).withValues(alpha: 0.4),
-    ],
-  };
+      Color(0x9964748B).withValues(alpha: 0.4)]};
 
   /// Instagram-style text overlays
   static const Map<String, String> instagramCaptions = {
@@ -195,6 +185,5 @@ class FortuneCardImages {
     'lottery': '대박의 기운이 느껴진다!',
 
     // Default fallback
-    'default': '오늘 당신에게 필요한 메시지',
-  };
+    'default': '오늘 당신에게 필요한 메시지'};
 }

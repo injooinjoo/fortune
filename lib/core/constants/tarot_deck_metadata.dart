@@ -13,8 +13,7 @@ class TarotDeckMetadata {
         '직관적이고 상징적인 이미지',
         '초보자에게 적합한 명확한 상징',
         '모든 카드에 그림이 있어 해석이 용이',
-        '전통적인 타로 의미를 따름',
-      ],
+        '전통적인 타로 의미를 따름'],
       primaryColor: Color(0xFF4A5568),
       secondaryColor: Color(0xFFECC94B),
       artist: 'Pamela Colman Smith',
@@ -23,8 +22,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.beginner,
       recommendedFor: ['일반적인 질문', '사랑과 관계', '일상적인 조언', '초보자'],
       previewCards: ['00_fool', '01_magician', '17_star'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'thoth': TarotDeck(
       id: 'thoth',
       code: 'Thot',
@@ -35,8 +33,7 @@ class TarotDeckMetadata {
         '깊은 상징과 신비주의적 요소',
         '카발라와 점성술 통합',
         '추상적이고 복잡한 이미지',
-        '고급 사용자를 위한 깊이 있는 해석',
-      ],
+        '고급 사용자를 위한 깊이 있는 해석'],
       primaryColor: Color(0xFF553C9A),
       secondaryColor: Color(0xFFD69E2E),
       artist: 'Lady Frieda Harris',
@@ -45,8 +42,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.advanced,
       recommendedFor: ['영적 탐구', '심층 분석', '명상과 성찰', '숙련자'],
       previewCards: ['00_fool', '03_empress', '20_judgement'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'ancient_italian': TarotDeck(
       id: 'ancient_italian',
       code: 'AncI',
@@ -57,8 +53,7 @@ class TarotDeckMetadata {
         '전통적인 이탈리아 스타일',
         '역사적 디자인과 상징',
         '클래식한 색상과 패턴',
-        '유럽 타로의 원형',
-      ],
+        '유럽 타로의 원형'],
       primaryColor: Color(0xFF975A16),
       secondaryColor: Color(0xFFDC2626),
       artist: 'Cartiera Italiana',
@@ -67,8 +62,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.intermediate,
       recommendedFor: ['전통적 해석', '역사적 관심', '클래식 리딩'],
       previewCards: ['00_fool', '13_death', '21_world'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'before_tarot': TarotDeck(
       id: 'before_tarot',
       code: 'BefT',
@@ -79,8 +73,7 @@ class TarotDeckMetadata {
         '시간적 내러티브 강조',
         '원인과 결과 탐구',
         '스토리텔링에 적합',
-        '독특한 관점 제공',
-      ],
+        '독특한 관점 제공'],
       primaryColor: Color(0xFF065F46),
       secondaryColor: Color(0xFF7C2D12),
       artist: 'Eon Rossi & Simona Rossi',
@@ -89,8 +82,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.intermediate,
       recommendedFor: ['과거 탐구', '원인 분석', '스토리텔링', '창의적 해석'],
       previewCards: ['00_fool', '06_lovers', '16_tower'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'after_tarot': TarotDeck(
       id: 'after_tarot',
       code: 'AftT',
@@ -101,8 +93,7 @@ class TarotDeckMetadata {
         '결과와 영향 탐구',
         '시간의 흐름 표현',
         '깊이 있는 내러티브',
-        '확장된 의미 해석',
-      ],
+        '확장된 의미 해석'],
       primaryColor: Color(0xFF1E3A8A),
       secondaryColor: Color(0xFFF59E0B),
       artist: 'Giulia F. Massaglia',
@@ -111,8 +102,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.intermediate,
       recommendedFor: ['미래 예측', '결과 분석', '행동의 영향', '심층 리딩'],
       previewCards: ['00_fool', '10_wheel_of_fortune', '19_sun'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'golden_dawn_cicero': TarotDeck(
       id: 'golden_dawn_cicero',
       code: 'Cice',
@@ -123,8 +113,7 @@ class TarotDeckMetadata {
         '황금새벽회 전통',
         '카발라와 연금술 상징',
         '플래싱 컬러 사용',
-        '의식 마법에 적합',
-      ],
+        '의식 마법에 적합'],
       primaryColor: Color(0xFF7C3AED),
       secondaryColor: Color(0xFF0891B2),
       artist: 'Chic & Sandra Cicero',
@@ -133,8 +122,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.advanced,
       recommendedFor: ['의식 작업', '카발라 연구', '신비주의 탐구', '전문가'],
       previewCards: ['00_fool', '04_emperor', '14_temperance'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'golden_dawn_wang': TarotDeck(
       id: 'golden_dawn_wang',
       code: 'GDaw',
@@ -145,8 +133,7 @@ class TarotDeckMetadata {
         '비밀 구전 전통',
         '순수한 상징 체계',
         '교육적 목적',
-        '역사적 중요성',
-      ],
+        '역사적 중요성'],
       primaryColor: Color(0xFFB91C1C),
       secondaryColor: Color(0xFF059669),
       artist: 'Robert Wang',
@@ -155,8 +142,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.expert,
       recommendedFor: ['학술 연구', '전통 보존', '깊은 명상', '전문가'],
       previewCards: ['00_fool', '11_justice', '21_world'],
-      isAvailable: true,
-    ),
+      isAvailable: true),
     'grand_etteilla': TarotDeck(
       id: 'grand_etteilla',
       code: 'GrEt',
@@ -167,8 +153,7 @@ class TarotDeckMetadata {
         '최초의 점술 전용 타로',
         '카드에 의미가 직접 쓰여 있음',
         '정방향/역방향 의미 표시',
-        '창조의 6일을 묘사',
-      ],
+        '창조의 6일을 묘사'],
       primaryColor: Color(0xFF92400E),
       secondaryColor: Color(0xFF4C1D95),
       artist: 'Jean-Baptiste Alliette (Etteilla)',
@@ -177,9 +162,7 @@ class TarotDeckMetadata {
       difficulty: TarotDifficulty.unique,
       recommendedFor: ['역사적 관심', '전통 점술', '수집가', '연구자'],
       previewCards: ['00_fool', '01_magician', '17_star'],
-      isAvailable: true,
-    ),
-  };
+      isAvailable: true)};
 
   // 기본 덱
   static const String defaultDeckId = 'rider_waite';
@@ -239,8 +222,7 @@ class TarotDeck {
     required this.difficulty,
     required this.recommendedFor,
     required this.previewCards,
-    required this.isAvailable,
-  });
+    required this.isAvailable});
 
   String getCardImagePath(String cardFileName) {
     return 'assets/images/tarot/decks/$id/$cardFileName';

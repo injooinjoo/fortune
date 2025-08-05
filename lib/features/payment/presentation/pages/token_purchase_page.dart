@@ -37,8 +37,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     price: 1000),
     originalPrice: null),
     badge: null),
-    color: AppColors.primary,
-    ))
+    color: AppColors.primary))
     TokenPackage(
       id: 'token_50');
       name: '스탠다드': null,
@@ -46,8 +45,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     price: 4500),
     originalPrice: 5000),
     badge: '10% 할인'),
-    color: AppColors.secondary,
-    ))
+    color: AppColors.secondary))
     TokenPackage(
       id: 'token_100');
       name: '프리미엄': null,
@@ -55,8 +53,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     price: 8000),
     originalPrice: 10000),
     badge: '20% 할인'),
-    color: AppColors.accent,
-    ))
+    color: AppColors.accent))
     TokenPackage(
       id: 'subscription_monthly');
       name: '무제한 이용권'),
@@ -65,8 +62,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
     originalPrice: null),
     badge: '추천': null,
     color: AppColors.gradient1),
-    isSubscription: true,
-    ))
+    isSubscription: true))
   ];
 
   @override
@@ -80,9 +76,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             Expanded(
               child: _buildContent())
             ))
-          ],
-    ),
-      ))
+          ])))
     );
   }
 
@@ -101,8 +95,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           _buildPaymentMethods())
           const SizedBox(height: 16))
           _buildSecurityInfo())
-        ],
-    )
+        ])
     );
   }
 
@@ -114,8 +107,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       gradient: LinearGradient(
         colors: [AppColors.primary, AppColors.secondary],
         begin: Alignment.topLeft);
-        end: Alignment.bottomRight,
-    )),
+        end: Alignment.bottomRight)),
     child: Padding(
         padding: const EdgeInsets.all(20)),
     child: Row(
@@ -135,19 +127,15 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   'Fortune cached $3');
                   style: AppTextStyles.headlineLarge.copyWith(
                     color: Colors.white);
-                    fontWeight: FontWeight.bold,
-    ))
+                    fontWeight: FontWeight.bold))
                 ))
-              ],
-    ),
+              ]),
             Icon(
               Icons.account_balance_wallet);
               size: 48),
     color: Colors.white.withValues(alpha: 0.5))
             ))
-          ],
-    ),
-      ))
+          ])))
     ).animate().fadeIn().scale();
   }
 
@@ -187,12 +175,10 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           borderRadius: BorderRadius.circular(16)),
     border: Border.all(
             color: isSelected ? package.color : AppColors.surface);
-            width: isSelected ? 2 : 1,
-    )),
+            width: isSelected ? 2 : 1)),
     color: isSelected 
               ? package.color.withValues(alpha: 0.1) 
-              : AppColors.surface,
-    )),
+              : AppColors.surface)),
     child: Padding(
           padding: const EdgeInsets.all(16)),
     child: Row(
@@ -205,18 +191,14 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                   shape: BoxShape.circle);
                   border: Border.all(
                     color: isSelected ? package.color : AppColors.textSecondary);
-                    width: 2,
-    )),
-    color: isSelected ? package.color : Colors.transparent,
-    )),
+                    width: 2)),
+    color: isSelected ? package.color : Colors.transparent)),
     child: isSelected
                     ? const Icon(
                         Icons.check);
                         size: 16),
-    color: Colors.white,
-    )
-                    : null,
-    ))
+    color: Colors.white)
+                    : null))
               const SizedBox(width: 16))
               
               // 패키지 정보
@@ -237,8 +219,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8);
-                              vertical: 2,
-    )),
+                              vertical: 2)),
     decoration: BoxDecoration(
                               color: package.color);
                               borderRadius: BorderRadius.circular(12))
@@ -247,13 +228,11 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                               package.badge!);
                               style: AppTextStyles.caption.copyWith(
                                 color: Colors.white);
-                                fontWeight: FontWeight.bold,
-    ))
+                                fontWeight: FontWeight.bold))
                             ))
                           ))
                         ])
-                      ],
-                    ))
+                      ]))
                     const SizedBox(height: 4))
                     Text(
                       package.isSubscription
@@ -263,9 +242,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                         color: AppColors.textSecondary))
                       ))
                     ))
-                  ],
-    ),
-              ))
+                  ])))
               
               // 가격
               Column(
@@ -276,15 +253,13 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                       '₩${_formatPrice(package.originalPrice!)}'),
     style: AppTextStyles.caption.copyWith(
                         color: AppColors.textSecondary,
-                        decoration: TextDecoration.lineThrough,
-    ))
+                        decoration: TextDecoration.lineThrough))
                     ))
                   Text(
                     '₩${_formatPrice(package.price)}'),
     style: AppTextStyles.headlineSmall.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? package.color : AppColors.textPrimary,
-    ))
+                      color: isSelected ? package.color : AppColors.textPrimary))
                   ))
                   if (package.isSubscription)
                     Text(
@@ -293,11 +268,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
                         color: AppColors.textSecondary))
                       ))
                     ))
-                ],
-    ),
-            ],
-    ),
-        ))
+                ])])))
       ))
     ).animate(delay: (index * 100).ms).fadeIn().slideX();
   }
@@ -311,8 +282,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
       isLoading: _isProcessing),
     gradient: isEnabled
           ? LinearGradient(
-              colors: [AppColors.primary, AppColors.secondary],
-    )
+              colors: [AppColors.primary, AppColors.secondary])
           : null
     );
   }
@@ -335,9 +305,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
             _buildPaymentMethodIcon(Icons.apple, 'Apple'))
             const SizedBox(width: 12))
             _buildPaymentMethodIcon(Icons.g_mobiledata, 'Google'))
-          ],
-    ),
-      ]
+          ])]
     );
   }
 
@@ -358,8 +326,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           label);
           style: AppTextStyles.caption))
         ))
-      ],
-    );
+      ]);
   }
 
   Widget _buildSecurityInfo() {
@@ -374,8 +341,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           Icon(
             Icons.lock);
             color: AppColors.info),
-    size: 20,
-    ))
+    size: 20))
           const SizedBox(width: 12))
           Expanded(
             child: Text(
@@ -385,9 +351,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
               ))
             ))
           ))
-        ],
-    ),
-    );
+        ]));
   }
 
   Future<void> _processPurchase() async {
@@ -419,8 +383,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           metadata: {
             'userId': user.id,
             'packageId': package.id)
-          },
-    );
+          });
       } else {
         // 일반 결제 처리
         result = await _stripeService.processPayment(
@@ -466,8 +429,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
           message: package.isSubscription
               ? '무제한 구독이 시작되었습니다!\n모든 운세를 자유롭게 이용하세요.'
               : '${package.tokens}개의 토큰이 충전되었습니다!',
-          tokenAmount: package.isSubscription ? null : package.tokens,
-    ))
+          tokenAmount: package.isSubscription ? null : package.tokens))
       ))
     );
   }
@@ -483,8 +445,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
         builder: (context) => PaymentResultPage(
           isSuccess: false,
           message: message);
-          errorCode: errorCode,
-    ))
+          errorCode: errorCode))
       )
     );
   }
@@ -492,8 +453,7 @@ class _TokenPurchasePageState extends ConsumerState<TokenPurchasePage> {
   String _formatPrice(int price) {
     return price.toString().replaceAllMapped(
       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'))
-      (Match m) => '${m[1]},',
-    );
+      (Match m) => '${m[1]},');
   }
 }
 
@@ -516,6 +476,5 @@ class TokenPackage {
     this.originalPrice,
     this.badge,
     required this.color,
-    this.isSubscription = false,
-  });
+    this.isSubscription = false});
 }

@@ -22,15 +22,13 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
     super.key,
     required this.fortuneType,
     this.fortuneData,
-    this.onFortuneButtonPressed,
-  });
+    this.onFortuneButtonPressed});
 
   static Future<void> show(
     BuildContext context, {
     required String fortuneType,
     Map<String, dynamic>? fortuneData,
-    VoidCallback? onFortuneButtonPressed,
-  }) {
+    VoidCallback? onFortuneButtonPressed}) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -40,9 +38,7 @@ class FortuneExplanationBottomSheet extends ConsumerStatefulWidget {
       builder: (context) => FortuneExplanationBottomSheet(
         fortuneType: fortuneType,
         fortuneData: fortuneData,
-        onFortuneButtonPressed: onFortuneButtonPressed,
-      ),
-    );
+        onFortuneButtonPressed: onFortuneButtonPressed));
   }
 
   @override
@@ -67,8 +63,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: AppAnimations.durationMedium,
-    );
+      duration: AppAnimations.durationMedium);
     _animationController.forward();
     _loadUserProfile();
   }
@@ -93,7 +88,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           _selectedGender != null;
     });
   }
-
+  
   @override
   void dispose() {
     _animationController.dispose();
@@ -119,15 +114,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                   color: AppColors.textPrimaryDark,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
+                    topRight: Radius.circular(24)),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.textPrimary.withValues(alpha: 0.1),
+                      color: AppColors.textPrimary.withOpacity( 0.1),
                       blurRadius: 20,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
+                      offset: const Offset(0, -5)
+                    )
+                  ]
                 ),
                 child: Column(
                   children: [
@@ -141,30 +135,31 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildFortuneTypeSection(theme),
-                            SizedBox(height: AppSpacing.spacing6),
+                            const SizedBox(height: AppSpacing.spacing6),
                             _buildFortuneSettingsSection(theme),
-                            SizedBox(height: AppSpacing.spacing6),
+                            const SizedBox(height: AppSpacing.spacing6),
                             _buildCustomFortuneSection(theme),
-                            SizedBox(height: AppSpacing.spacing6),
+                            const SizedBox(height: AppSpacing.spacing6),
                             _buildScoreGuideSection(theme),
-                            SizedBox(height: AppSpacing.spacing6),
+                            const SizedBox(height: AppSpacing.spacing6),
                             _buildLuckyItemsSection(theme),
                             // Removed user info section as requested
                             // SizedBox(height: AppSpacing.spacing6),
                             // _buildRequiredInfoSection(theme),
-                            SizedBox(height: AppSpacing.spacing24 * 1.04),
-                          ],
-                        ).animate().fadeIn(duration: const Duration(milliseconds: 400), delay: const Duration(milliseconds: 100)),
-                      ),
-                    ),
-                  ],
-                ),
+                            const SizedBox(height: AppSpacing.spacing24 * 1.04)
+                          ]
+                        ).animate().fadeIn(duration: const Duration(milliseconds: 400), delay: const Duration(milliseconds: 100))
+                      )
+                    )
+                  ]
+                )
               ),
-            ],
-          ),
+              _buildBottomButton(context)
+            ]
+          )
         );
-        },
-      );
+      }
+    );
   }
 
   Widget _buildHandle() {
@@ -174,8 +169,8 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       height: 4,
       decoration: BoxDecoration(
         color: AppColors.textSecondary,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall),
-      ),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusXSmall)
+      )
     );
   }
 
@@ -186,9 +181,9 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 border: Border(
                   bottom: BorderSide(
                     color: AppColors.divider,
-                    width: 1,
-                  ),
-                ),
+                    width: 1
+                  )
+                )
               ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -196,19 +191,17 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           Text(
             '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
             style: IconButton.styleFrom(
               backgroundColor: AppColors.surface,
-              shape: const CircleBorder(),
-            ),
-          ),
-        ],
-      ),
+              shape: const CircleBorder()
+            )
+          )
+        ]
+      )
     );
   }
 
@@ -223,118 +216,115 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           Text(
             '정확한 운세를 위해 아래 정보를 입력해주세요.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-            ),
-          ),
+              color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Name input
           TextField(
-            controller: _nameController),
-        onChanged: (_) => _checkFormValidity(),
+            controller: _nameController,
+            onChanged: (_) => _checkFormValidity(),
             decoration: InputDecoration(
-      labelText: '이름',
-              hintText: '이름을 입력하세요'),
-        prefixIcon: const Icon(Icons.person),
+              labelText: '이름',
+              hintText: '이름을 입력하세요',
+              prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-      borderRadius: AppDimensions.borderRadiusMedium),
-      filled: true,
-              fillColor: AppColors.surface)))
+                borderRadius: AppDimensions.borderRadiusMedium),
+              filled: true,
+              fillColor: AppColors.surface)),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Birth date picker
           InkWell(
             onTap: () async {
               final picked = await showDatePicker(
-                context: context),
-        initialDate: _selectedDate ?? DateTime.now(),
+                context: context,
+                initialDate: _selectedDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now();
+                lastDate: DateTime.now());
               if (picked != null) {
                 setState(() {
                   _selectedDate = picked;
                   _checkFormValidity();
                 });
               }
-            }
-            child: InputDecorator(,
-      decoration: InputDecoration(
-      labelText: '생년월일'),
-        prefixIcon: const Icon(Icons.calendar_today),
+            },
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: '생년월일',
+                prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-      borderRadius: AppDimensions.borderRadiusMedium),
-      filled: true,
+                  borderRadius: AppDimensions.borderRadiusMedium),
+                filled: true,
                 fillColor: AppColors.surface),
-      child: Text(
+              child: Text(
                 _selectedDate != null
-                    ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'),
+                    ? '${_selectedDate!.year}년 ${_selectedDate!.month}월 ${_selectedDate!.day}일'
                     : '생년월일을 선택하세요',
-    style: TextStyle(,
-      color: _selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary))))))))
+                style: TextStyle(
+                  color: _selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary)))),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Gender selection
           Row(
             children: [
               Expanded(
-                child: _buildChoiceChip(,
-      label: '남성',
+                child: _buildChoiceChip(
+                  label: '남성',
                   icon: Icons.male,
-                  selected: _selectedGender == 'male'),
-        onSelected: (selected) {
+                  selected: _selectedGender == 'male',
+                  onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'male';
                         _checkFormValidity();
                       });
                     }
-                  })))
+                  })),
               SizedBox(width: AppSpacing.spacing3),
               Expanded(
-                child: _buildChoiceChip(,
-      label: '여성',
+                child: _buildChoiceChip(
+                  label: '여성',
                   icon: Icons.female,
-                  selected: _selectedGender == 'female'),
-        onSelected: (selected) {
+                  selected: _selectedGender == 'female',
+                  onSelected: (selected) {
                     if (selected) {
                       setState(() {
                         _selectedGender = 'female';
                         _checkFormValidity();
                       });
                     }
-                  })))
-            ])
+                  }))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           
-          // MBTI selection (optional,
+          // MBTI selection (optional)
           Text(
             '추가 정보 (선택사항)',
             style: theme.textTheme.titleSmall?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-          SizedBox(height: AppSpacing.spacing3),
+              fontWeight: FontWeight.bold)),
+          const SizedBox(height: AppSpacing.spacing3),
           
           // MBTI dropdown
           DropdownButtonFormField<String>(
             value: _selectedMbti,
             decoration: InputDecoration(
-      labelText: 'MBTI'),
-        prefixIcon: const Icon(Icons.psychology),
+              labelText: 'MBTI',
+              prefixIcon: const Icon(Icons.psychology),
               border: OutlineInputBorder(
-      borderRadius: AppDimensions.borderRadiusMedium),
-      filled: true,
+                borderRadius: AppDimensions.borderRadiusMedium),
+              filled: true,
               fillColor: AppColors.surface),
-      items: ['INTJ': 'INTP': 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
+            items: ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP',
                     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP']
                 .map((mbti) => DropdownMenuItem(
-                      value: mbti),
-        child: Text(mbti))
+                      value: mbti,
+                      child: Text(mbti)))
                 .toList(),
             onChanged: (value) {
               setState(() {
                 _selectedMbti = value;
               });
-            })
+            }),
           const SizedBox(height: AppSpacing.spacing4),
           
           // Blood type selection
@@ -342,13 +332,12 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             children: [
               Text(
                 '혈액형: ',
-                style: theme.textTheme.bodyMedium);
-              SizedBox(width: AppSpacing.spacing2),
-              ...['A': 'B': 'AB', 'O'].map((type) => Padding(
-                padding: const EdgeInsets.only(righ,
-      t: AppSpacing.xSmall),
-                child: ChoiceChip(,
-      label: Text(type),
+                style: theme.textTheme.bodyMedium),
+              const SizedBox(width: AppSpacing.spacing2),
+              ...['A', 'B', 'AB', 'O'].map((type) => Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.xSmall),
+                child: ChoiceChip(
+                  label: Text(type),
                   selected: _selectedBloodType == type,
                   onSelected: (selected) {
                     if (selected) {
@@ -356,18 +345,20 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         _selectedBloodType = type;
                       });
                     }
-                  }))))
-            ])
+                  })))
+              .toList()
+            ]
+          )
         ]
       )
+    );
   }
   
   Widget _buildChoiceChip({
     required String label,
     required IconData icon,
-    required bool selected);
-    required Function(bool) onSelected,
-  }) {
+    required bool selected,
+    required Function(bool) onSelected}) {
     final theme = Theme.of(context);
     return FilterChip(
       label: Row(
@@ -375,18 +366,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         children: [
           Icon(icon, size: 18),
           SizedBox(width: AppSpacing.spacing1),
-          Text(label),
-        ]),
-    selected: selected,
+          Text(label)]),
+      selected: selected,
       onSelected: onSelected,
       backgroundColor: AppColors.surface,
-      selectedColor: theme.colorScheme.primary.withValues(alph,
-      a: 0.2),
-      checkmarkColor: theme.colorScheme.primary)
+      selectedColor: theme.colorScheme.primary.withOpacity( 0.2),
+      checkmarkColor: theme.colorScheme.primary);
   }
 
   Widget _buildFortuneTypeSection(ThemeData theme) {
-    final explanation = FortuneExplanations.getExplanation(widget.fortuneType);
+    final explanation = FortuneExplanations.explanations[widget.fortuneType] ?? {};
     
     return _buildSection(
       title: '${explanation['title']} 안내',
@@ -397,26 +386,25 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         children: [
           Text(
             explanation['description'] ?? '',
-              ),
-              style: theme.textTheme.bodyLarge?.copyWith(
-      height: 1.6,
-                          ))))
+            style: theme.textTheme.bodyLarge?.copyWith(
+              height: 1.6)),
           const SizedBox(height: AppSpacing.spacing4),
           _buildInfoCard(
             theme,
-            title: '운세 특징'),
-        content: List<String>.from(explanation['features'] ?? []))
-          SizedBox(height: AppSpacing.spacing3),
+            title: '운세 특징',
+            content: List<String>.from(explanation['features'] ?? [])),
+          const SizedBox(height: AppSpacing.spacing3),
           _buildInfoCard(
             theme,
-            title: '활용 팁'),
-        content: List<String>.from(explanation['tips'] ?? []))
+            title: '활용 팁',
+            content: List<String>.from(explanation['tips'] ?? []))
         ]
       )
+    );
   }
 
   Widget _buildCustomFortuneSection(ThemeData theme) {
-    final explanation = FortuneExplanations.getExplanation(widget.fortuneType);
+    final explanation = FortuneExplanations.explanations[widget.fortuneType] ?? {};
     
     // Build visual data sections based on fortune type
     Widget? visualSection;
@@ -475,37 +463,30 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (visualSection != null) ...[
           visualSection,
-          SizedBox(height: AppSpacing.spacing6),
-        ]
+          const SizedBox(height: AppSpacing.spacing6)],
         if (hasSpecialNote)
           Container(
-            padding: AppSpacing.paddingAll16),
+            padding: AppSpacing.paddingAll16,
         decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alp,
-      ha: 0.05),
+                color: theme.colorScheme.primary.withOpacity( 0.05),
               borderRadius: AppDimensions.borderRadiusMedium,
-              border: Border.all(,
-      color: theme.colorScheme.primary.withValues(alp,
-      ha: 0.2))),
-      child: Row(
+              border: Border.all(
+      color: theme.colorScheme.primary.withOpacity( 0.2))),
+            child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
                   Icons.info,
                   color: theme.colorScheme.primary,
-                  size: AppDimensions.iconSizeMedium);
+                  size: AppDimensions.iconSizeMedium),
                 SizedBox(width: AppSpacing.spacing3),
                 Expanded(
                   child: Text(
                     specialNote,
-        ),
-        style: theme.textTheme.bodyMedium?.copyWith(
-      height: 1.5,
-                          ),
-              color: theme.colorScheme.primary,
-    ))))
-              ])))
-        if (hasSpecialNote && hasCustomSections) SizedBox(height: AppSpacing.spacing4),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      height: 1.5,
+                      color: theme.colorScheme.primary)))])),
+        if (hasSpecialNote && hasCustomSections) const SizedBox(height: AppSpacing.spacing4),
         if (hasCustomSections)
           Column(
             children: customSections!.entries.map((entry) {
@@ -516,94 +497,84 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 decoration: BoxDecoration(
                 gradient: LinearGradient(
                     colors: [
-                      theme.colorScheme.primary.withValues(alpha: 0.05),
-                      theme.colorScheme.primary.withValues(alpha: 0.02),
-                    ]
+                      theme.colorScheme.primary.withOpacity( 0.05),
+                      theme.colorScheme.primary.withOpacity( 0.02)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusMedium,
-                  border: Border.all(,
-      color: theme.colorScheme.primary.withValues(alp,
-      ha: 0.1))),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                         Text(
                           section['title'] ?? '',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ),
-              color: theme.colorScheme.primary,
-    ))
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary)),
                     SizedBox(height: AppSpacing.spacing2),
                     Text(
                       section['description'] ?? '',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-      height: 1.5,
-                          ))))
-                  ])))
-            }).toList())
-      ])
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        height: 1.5))
+                  ]),
+            );
+          }).toList())
+        ]);
   }
 
   Widget _buildScoreGuideSection(ThemeData theme) {
-    final scoreInterpretations = FortuneExplanations.getScoreInterpretations();
+    final scoreInterpretations = {
+      90: {'label': '최상', 'description': '오늘은 모든 일이 술술 풀리는 완벽한 날입니다!', 'color': Colors.green},
+      70: {'label': '상', 'description': '좋은 기운이 함께하는 날입니다. 적극적으로 행동하세요.', 'color': Colors.blue},
+      50: {'label': '중', 'description': '평온한 하루입니다. 차분하게 일상을 보내세요.', 'color': Colors.orange},
+      30: {'label': '하', 'description': '조심스럽게 행동하는 것이 좋습니다. 신중한 결정이 필요해요.', 'color': Colors.red},
+    };
     
     return _buildSection(
       title: '점수 해석 방법',
       icon: Icons.analytics,
-      color: context.fortuneTheme.scoreExcellent),
-        child: Column(,
-      children: scoreInterpretations.map((interpretation) {
-          final score = interpretation['range']!;
-          Color color;
-          if (score.startsWith('90')) {
-            color = context.fortuneTheme.scoreExcellent;
-          } else if (score.startsWith('70')) {
-            color = context.fortuneTheme.scoreGood;
-          } else if (score.startsWith('50')) {
-            color = context.fortuneTheme.scoreFair;
-          } else if (score.startsWith('30')) {
-            color = context.fortuneTheme.scoreFair;
-          } else {
-            color = context.fortuneTheme.scorePoor;
-          }
+      color: context.fortuneTheme.scoreExcellent,
+      child: Column(
+      children: scoreInterpretations.entries.map((entry) {
+          final score = entry.key;
+          final interpretation = entry.value as Map<String, dynamic>;
+          final color = interpretation['color'] as Color;
           
           return _buildExpandableScoreItem(
     theme,
-            interpretation['range'],
+            '$score점 이상',
             interpretation['label'],
             interpretation['description'],
-            interpretation['advice'],
-            color,
-  )}).toList(),
-      )
+            '이런 날에는 더욱 적극적으로 행동해보세요!',
+            color);
+        }).toList()
+      ));
   }
 
   Widget _buildLuckyItemsSection(ThemeData theme) {
-    final luckyItemExplanations = FortuneExplanations.getLuckyItemExplanations();
+    final luckyItemExplanations = {
+      '색상': {'icon': '🎨', 'description': '옷이나 액세서리에 활용하면 운이 상승합니다'},
+      '숫자': {'icon': '🔢', 'description': '중요한 선택이나 결정에 참고하세요'},
+      '방향': {'icon': '🧭', 'description': '외출이나 이동 시 참고하면 좋습니다'},
+      '음식': {'icon': '🍽️', 'description': '오늘의 에너지를 충전해주는 음식입니다'},
+    };
     
     return _buildSection(
       title: '행운 아이템 의미',
       icon: Icons.stars,
-      color: Colors.amber),
-        child: Column(,
+      color: Colors.amber,
+      child: Column(
       children: [
-          if (luckyItemExplanations.containsKey('color': null,
-            _buildEnhancedLuckyItem(theme, 'color': Icons.palette, luckyItemExplanations['color'],
-          if (luckyItemExplanations.containsKey('number': null,
-            _buildEnhancedLuckyItem(theme, 'number': Icons.looks_one, luckyItemExplanations['number'],
-          if (luckyItemExplanations.containsKey('direction': null,
-            _buildEnhancedLuckyItem(theme, 'direction': Icons.explore, luckyItemExplanations['direction'],
-          if (luckyItemExplanations.containsKey('time': null,
-            _buildEnhancedLuckyItem(theme, 'time': Icons.access_time, luckyItemExplanations['time'],
-          if (luckyItemExplanations.containsKey('food', null,
-            _buildEnhancedLuckyItem(theme, 'food', Icons.restaurant, luckyItemExplanations['food'],
-          if (luckyItemExplanations.containsKey('person',
-            _buildEnhancedLuckyItem(theme, 'person', Icons.person, luckyItemExplanations['person'],
-        ]
-      )
+          if (luckyItemExplanations.containsKey('색상'))
+            _buildEnhancedLuckyItem(theme, '색상', Icons.palette, luckyItemExplanations['색상'] as Map<String, String>),
+          if (luckyItemExplanations.containsKey('숫자'))
+            _buildEnhancedLuckyItem(theme, '숫자', Icons.looks_one, luckyItemExplanations['숫자'] as Map<String, String>),
+          if (luckyItemExplanations.containsKey('방향'))
+            _buildEnhancedLuckyItem(theme, '방향', Icons.explore, luckyItemExplanations['방향'] as Map<String, String>),
+          if (luckyItemExplanations.containsKey('음식'))
+            _buildEnhancedLuckyItem(theme, '음식', Icons.restaurant, luckyItemExplanations['음식'] as Map<String, String>)
+      ]));
   }
 
 
@@ -612,8 +583,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     required String title,
     required IconData icon,
     required Color color,
-    required Widget child,
-  )}) {
+    required Widget child}) {
     final theme = Theme.of(context);
     
     return Column(
@@ -622,22 +592,19 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         Row(
           children: [
             Container(
-              padding: AppSpacing.paddingAll8),
-        decoration: BoxDecoration(
-                color: color.withValues(alp,
-      ha: 0.1),
+              padding: AppSpacing.paddingAll8,
+              decoration: BoxDecoration(
+                color: color.withOpacity( 0.1),
                 borderRadius: AppDimensions.borderRadiusSmall),
-      child: Icon(icon, color: color, size: AppDimensions.iconSizeSmall))
+              child: Icon(icon, color: color, size: AppDimensions.iconSizeSmall)),
             SizedBox(width: AppSpacing.spacing3),
             Text(
               title,
-        ),
-        style: theme.textTheme.titleLarge?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-          ])
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold))
+          ]),
         SizedBox(height: AppSpacing.spacing4),
-        child,
+        child
       ]
     );
   }
@@ -645,42 +612,36 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
   Widget _buildInfoCard(
     ThemeData theme, {
     required String title,
-    required List<String> content,
-  )}) {
+    required List<String> content}) {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-                color: AppColors.surface,
+        color: AppColors.surface,
         borderRadius: AppDimensions.borderRadiusMedium,
-        ),
-        border: Border.all(col,
-      or: AppColors.divider),
+        border: Border.all(color: AppColors.divider)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-              ),
-              style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold)),
           SizedBox(height: AppSpacing.spacing2),
           ...content.map((item) => Padding(
-            padding: const EdgeInsets.only(botto,
-      m: AppSpacing.xxSmall),
+            padding: const EdgeInsets.only(bottom: AppSpacing.xxSmall),
             child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                 Text('• '),
-      r: theme.colorScheme.primary);
                 Expanded(
                   child: Text(
                     item,
-                    style: theme.textTheme.bodyMedium,
-    ))
-              ]))))
+                    style: theme.textTheme.bodyMedium))
+              ]))
+          ).toList(),
         ]
       )
+    );
   }
 
   Widget _buildExpandableScoreItem(
@@ -689,101 +650,85 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     String label,
     String description,
     String advice,
-    Color color,
-    ) {
+    Color color) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.small),
       decoration: BoxDecoration(
-                color: color.withValues(alp,
-      ha: 0.05),
+                color: color.withOpacity( 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: color.withValues(alp,
-      ha: 0.2)),
-      child: Theme(,
-      data: theme.copyWith(dividerColo,
-      r: Colors.transparent),
-        child: ExpansionTile(,
-      tilePadding: EdgeInsets.symmetric(horizont,
-      al: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
+        border: Border.all(color: color.withOpacity( 0.2))),
+      child: Theme(
+        data: theme.copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing4, vertical: AppSpacing.spacing2),
           childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           leading: Container(
             padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
-            ),
+              color: color.withOpacity( 0.2),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge)),
             child: Text(
               range,
-        ),
-        style: theme.textTheme.bodySmall?.copyWith(
-      color: color,
-                          ),
-        fontWeight: FontWeight.bold,
-    )))),
-    title: Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          )))),
-    subtitle: Text(
-          description,
-          style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-                          )))),
-    children: [
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.bold))),
+          title: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.bold)),
+          subtitle: Text(
+            description,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: AppColors.textSecondary)),
+          children: [
             Container(
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
                 color: AppColors.textPrimaryDark,
                 borderRadius: AppDimensions.borderRadiusSmall),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     size: AppDimensions.iconSizeSmall,
-                    color: color);
-                  SizedBox(width: AppSpacing.spacing2),
+                    color: color),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       advice,
-        ),
-        style: theme.textTheme.bodySmall?.copyWith(
-      height: 1.5,
-                          ))))))
-                ])))
-          ],
-    )
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        height: 1.5)))
+                ])
+            )
+          ])
+      )
+    );
   }
 
   Widget _buildEnhancedLuckyItem(
     ThemeData theme,
     String type,
     IconData icon,
-    Map<String, String> itemData,
-    ) {
+    Map<String, String> itemData) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.small),
       padding: AppSpacing.paddingAll12,
       decoration: BoxDecoration(
-                color: Colors.amber.withValues(alp,
-      ha: 0.05),
+                color: Colors.amber.withOpacity( 0.05),
         borderRadius: AppDimensions.borderRadiusMedium,
-        border: Border.all(color: Colors.amber.withValues(alp,
-      ha: 0.2)),
+        border: Border.all(color: Colors.amber.withOpacity( 0.2))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: AppDimensions.buttonHeightSmall,
             height: AppDimensions.buttonHeightSmall,
-        ),
-        decoration: BoxDecoration(
-                color: Colors.amber.withValues(alp,
-      ha: 0.2),
+            decoration: BoxDecoration(
+              color: Colors.amber.withOpacity( 0.2),
               shape: BoxShape.circle),
-      child: Icon(
-                icon, size: AppDimensions.iconSizeSmall, color: Colors.amber[700]))
+            child: Icon(
+              icon, size: AppDimensions.iconSizeSmall, color: Colors.amber[700])),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Column(
@@ -791,38 +736,33 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               children: [
                         Text(
                           itemData['title'] ?? '',
-              ),
               style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+                fontWeight: FontWeight.bold)),
                 SizedBox(height: AppSpacing.spacing1),
                 Text(
                   itemData['description'] ?? '',
                           style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textPrimary,
-                          ),
-        height: 1.4,
-    ))
+                            color: AppColors.textPrimary,
+                            height: 1.4)),
                 SizedBox(height: AppSpacing.spacing1),
                 Row(
                   children: [
                     Icon(
                       Icons.tips_and_updates,
                       size: 14,
-                      color: Colors.amber[600]);
+                      color: Colors.amber[600]),
                     SizedBox(width: AppSpacing.spacing1),
                     Expanded(
                       child: Text(
                         itemData['usage'] ?? '',
-              ),
-              style: theme.textTheme.bodySmall?.copyWith(
-      color: Colors.amber[800],
-                          ),
-                          fontStyle: FontStyle.italic)))))
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.amber[800],
+                          fontStyle: FontStyle.italic)))
                   ])
-              ])))
+              ]))
         ]
       )
+    );
   }
 
 
@@ -831,7 +771,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     final userInfo = _getUserProvidedInfo();
     
     // Check if any required info is missing
-    final missingRequiredInfo =,
+    final missingRequiredInfo = 
     requiredInfo['required']!.where((info) => 
       userInfo[info] == null || userInfo[info] == ''
     ).toList();
@@ -848,94 +788,83 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Expanded(
                 child: Text(
                   '운세 생성에 사용되는 내 정보입니다.',
-              ),
               style: theme.textTheme.bodyLarge?.copyWith(
-      height: 1.6,
-                          ))))))
+                height: 1.6))),
               if (missingRequiredInfo.isNotEmpty)
                 TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pop();
                     context.go('/profile');
-                  }
+                  },
                   icon: Icon(Icons.edit, size: AppDimensions.iconSizeXSmall),
                   label: Text('수정'),
                   style: TextButton.styleFrom(
-      foregroundColor: Colors.indigo))))
-            ])
+                    foregroundColor: Colors.indigo))
+            ]),
           if (missingRequiredInfo.isNotEmpty) ...[
             SizedBox(height: AppSpacing.spacing2),
             Container(
-              padding: EdgeInsets.symmetric(horizonta,
-      l: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
+              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing2),
               decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alp,
-      ha: 0.1),
+                color: AppColors.warning.withOpacity( 0.1),
                 borderRadius: AppDimensions.borderRadiusSmall,
-                border: Border.all(color: AppColors.warning.withValues(alp,
-      ha: 0.3)),
+                border: Border.all(color: AppColors.warning.withOpacity( 0.3))),
       child: Row(
                 children: [
                   Icon(Icons.warning_amber_rounded, 
                     color: AppColors.warning,
-        ),
-        size: AppDimensions.iconSizeSmall
-                  ),
-                  SizedBox(width: AppSpacing.spacing2),
+                    size: AppDimensions.iconSizeSmall),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
-                      '더 정확한 운세를 위해 추가 정보를 입력해주세요.'),
-        style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.warning,
-                          ))))))
-                ])))
-          ]
+                      '더 정확한 운세를 위해 추가 정보를 입력해주세요.',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.warning)))
+                ])
+            )
+          ],
           const SizedBox(height: AppSpacing.spacing4),
           Container(
             padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
                 color: Colors.indigo[50],
       borderRadius: AppDimensions.borderRadiusMedium,
-        ),
-        border: Border.all(col,
-      or: Colors.indigo[200]!),
+        border: Border.all(color: Colors.indigo[200]!)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                         Text(
                           '필수 정보',
-              ),
               style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold),
-        color: Colors.indigo[800],
-                          )))
+                fontWeight: FontWeight.bold,
+                color: Colors.indigo[800])),
                 SizedBox(height: AppSpacing.spacing3),
                 ...requiredInfo['required']!.map((info) => _buildInfoItem(
                   theme,
                   info,
                   userInfo[info] != null && userInfo[info] != '',
-                  userInfo[info],
-    );
+                  userInfo[info])).toList(),
                 if (requiredInfo['optional']!.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.spacing4),
                   Text(
                     '선택 정보',
-                          style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold),
-        color: Colors.indigo[600],
-                          )))
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo[600])),
                   SizedBox(height: AppSpacing.spacing3),
                   ...requiredInfo['optional']!.map((info) => _buildInfoItem(
                     theme,
                     info,
                     userInfo[info] != null && userInfo[info] != '',
-                    userInfo[info]
-                    isOptional: true,
-    )
+                    userInfo[info],
+                    isOptional: true)).toList()
                 ]
-              ])))
+              ]
+            )
+          )
         ]
       )
+    );
   }
 
   Widget _buildInfoItem(
@@ -943,8 +872,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     String infoType,
     bool hasInfo,
     dynamic infoValue, {
-    bool isOptional = false,
-  )}) {
+    bool isOptional = false}) {
     final labels = {
       'name': '이름',
       'birthDate': '생년월일',
@@ -956,17 +884,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       'chineseZodiac': '띠',
       'location': '지역',
       'partnerName': '상대방 이름',
-      'partnerBirthDate': '상대방 생년월일',
-    };
+      'partnerBirthDate': '상대방 생년월일'};
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.small),
       child: Row(
-      children: [
+        children: [
           Icon(
             hasInfo ? Icons.check_circle : (isOptional ? Icons.circle_outlined : Icons.warning_amber_rounded),
             size: AppDimensions.iconSizeSmall,
-            color: hasInfo ? AppColors.success : (isOptional ? AppColors.textSecondary : AppColors.warning))
+            color: hasInfo ? AppColors.success : (isOptional ? AppColors.textSecondary : AppColors.warning)),
           SizedBox(width: AppSpacing.spacing3),
           Expanded(
             child: Row(
@@ -975,49 +902,42 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         Text(
                           labels[infoType] ?? infoType,
                           style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.w500),
-        color: hasInfo ? null : AppColors.textSecondary,
-                          )))
+                          fontWeight: FontWeight.w500,
+                          color: hasInfo ? null : AppColors.textSecondary)),
                 if (hasInfo)
                   Container(
-                    constraints: BoxConstraints(maxWidt,
-      h: 180),
+                    constraints: BoxConstraints(maxWidth: 180),
                     child: Text(
                       _formatInfoValue(infoType, infoValue),
                       style: theme.textTheme.bodyMedium?.copyWith(
-      color: Colors.indigo[700],
-                          ),
-        fontWeight: FontWeight.w600),
-      textAlign: TextAlign.end,
-                      overflow: TextOverflow.ellipsis)
-                  ,
-                else
+                        color: Colors.indigo[700],
+                        fontWeight: FontWeight.w600),
+                      textAlign: TextAlign.end,
+                      overflow: TextOverflow.ellipsis)),
+                if (!hasInfo) ...[
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).pop();
                       context.go('/profile');
-                    }
+                    },
                     child: Container(
-      padding: EdgeInsets.symmetric(horizont,
-      al: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing3, vertical: AppSpacing.spacing1),
                       decoration: BoxDecoration(
-                color: isOptional ? AppColors.surface : AppColors.warning.withValues(alp,
-      ha: 0.1),
+                        color: isOptional ? AppColors.surface : AppColors.warning.withOpacity( 0.1),
                         borderRadius: AppDimensions.borderRadiusMedium,
-                        border: Border.all(,
-      color: isOptional ? AppColors.textSecondary! : AppColors.warning.withValues(alp,
-      ha: 0.5)!)),
-      child: Text(
+                        border: Border.all(
+                          color: isOptional ? AppColors.textSecondary! : AppColors.warning.withOpacity( 0.5)!)),
+                      child: Text(
                         '입력하기',
-        ),
-        style: theme.textTheme.bodySmall?.copyWith(
-      color: isOptional ? AppColors.textPrimary : AppColors.warning,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))))))
-              ])))
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: isOptional ? AppColors.textPrimary : AppColors.warning,
+                          fontWeight: FontWeight.bold))))
+              ],
+                ]
+          ))
         ]
       )
+    );
   }
 
   Map<String, List<String>> _getRequiredInfoForFortuneType(String fortuneType) {
@@ -1027,46 +947,46 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       case 'monthly':
       case 'yearly':
         return {
-          'required': ['name': 'birthDate']
-          'optional': ['birthTime': 'gender', 'mbti']
+          'required': ['name', 'birthDate'],
+          'optional': ['birthTime', 'gender', 'mbti']
         };
       case 'saju':
         return {
-          'required': ['name', 'birthDate', 'birthTime']
-          'optional': ['gender', 'location']
+          'required': ['name', 'birthDate', 'birthTime'],
+          'optional': ['gender', 'location'],
         };
       case 'mbti':
         return {
-          'required': ['name', 'mbti']
-          'optional': ['birthDate', 'gender']
+          'required': ['name', 'mbti'],
+          'optional': ['birthDate', 'gender'],
         };
       case 'zodiac':
         return {
-          'required': ['name', 'birthDate']
-          'optional': ['birthTime']
+          'required': ['name', 'birthDate'],
+          'optional': ['birthTime'],
         };
       case 'chemistry':
       case 'compatibility':
         return {
-          'required': ['name', 'birthDate', 'partnerName', 'partnerBirthDate']
-          'optional': ['gender', 'mbti']
+          'required': ['name', 'birthDate', 'partnerName', 'partnerBirthDate'],
+          'optional': ['gender', 'mbti'],
         };
       case 'love':
         return {
-          'required': ['name', 'birthDate']
-          'optional': ['gender', 'mbti', 'bloodType']
+          'required': ['name', 'birthDate'],
+          'optional': ['gender', 'mbti', 'bloodType'],
         };
       case 'career':
       case 'wealth':
       case 'business':
         return {
-          'required': ['name', 'birthDate']
-          'optional': ['mbti', 'location']
+          'required': ['name', 'birthDate'],
+          'optional': ['mbti', 'location'],
         };
       default:
         return {
-          'required': ['name', 'birthDate']
-          'optional': ['gender', 'mbti']
+          'required': ['name', 'birthDate'],
+          'optional': ['gender', 'mbti'],
         };
     }
   }
@@ -1080,21 +1000,21 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
           // Extract additional info from preferences if available
           final prefs = profile.preferences ?? {};
           return {
-            'name': profile.name ?? ''
+            'name': profile.name ?? '',
             'birthDate': profile.birthDate,
-            'birthTime': prefs['birthTime']
+            'birthTime': prefs['birthTime'],
             'gender': profile.gender,
             'mbti': profile.mbtiType,
-            'bloodType': prefs['bloodType']
+            'bloodType': prefs['bloodType'],
             'zodiacSign': profile.zodiacSign,
-            'chineseZodiac': prefs['chineseZodiac']
-            'location': prefs['location']
+            'chineseZodiac': prefs['chineseZodiac'],
+            'location': prefs['location'],
           };
         }
         return {};
-      }
+      },
       loading: () => {},
-      error: (_, __) => {}
+      error: (_, __) => {},
     );
   }
 
@@ -1125,15 +1045,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       left: 0,
       right: 0,
       bottom: 0,
-      height: 100 + bottomPadding, // Add explicit height,
+      height: 100 + bottomPadding, // Add explicit height
     child: Container(
       decoration: BoxDecoration(
-                color: AppColors.textPrimaryDark,
-        ),
+        color: AppColors.textPrimaryDark,
         boxShadow: [
             BoxShadow(
-              color: AppColors.textPrimary.withValues(alph,
-      a: 0.1),
+              color: AppColors.textPrimary.withOpacity( 0.1),
               blurRadius: 10,
               offset: const Offset(0, -2))
           ]),
@@ -1142,12 +1060,11 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       onPressed: _isFormValid ? () async {
             // Save form data and generate fortune
             final fortuneParams = {
-              'name': _nameController.text
+              'name': _nameController.text,
               'birthDate': _selectedDate?.toIso8601String(),
-              'gender': _selectedGender
+              'gender': _selectedGender,
               'mbti': _selectedMbti,
-              'bloodType': null,
-            };
+              'bloodType': null};
             
             Navigator.of(context).pop();
             
@@ -1156,46 +1073,46 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             final isPremium = false;
             
             await Navigator.push(
-              context);
+              context,
               MaterialPageRoute(
-                builder: (context) => AdLoadingScreen(,
-      fortuneType: widget.fortuneType),
-        fortuneTitle: FortuneTypeNames.getName(widget.fortuneType),
+                builder: (context) => AdLoadingScreen(
+                  fortuneType: widget.fortuneType,
+                  fortuneTitle: FortuneTypeNames.getName(widget.fortuneType),
                   isPremium: isPremium,
                   fortuneParams: fortuneParams,
                   onComplete: () {
                     // Fortune generation completed
-                  }
+                  },
                   onSkip: () {
                     // User skipped ad
-                  },
-    )
+                  })
+              )
+            );
           } : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: _isFormValid ? theme.colorScheme.primary : AppColors.textSecondary.withValues(alpha: 0.4),
+            backgroundColor: _isFormValid ? theme.colorScheme.primary : AppColors.textSecondary.withOpacity( 0.4),
             foregroundColor: AppColors.textPrimaryDark,
             minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: AppDimensions.borderRadiusLarge,
-            ),
-            elevation: _isFormValid ? 4 : 0,
-          ),
+              borderRadius: AppDimensions.borderRadiusLarge),
+            elevation: _isFormValid ? 4 : 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
               const Icon(Icons.auto_awesome, size: AppDimensions.iconSizeMedium),
-              SizedBox(width: AppSpacing.spacing2),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
-                _isFormValid ? '운세보기' : '정보를 입력해주세요'),
-        style: theme.textTheme.titleMedium?.copyWith(
-      color: AppColors.textPrimaryDark,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
-            ])))).animate()
-          .fadeIn(duration: const Duration(milliseconds: 300))
-          .slideY(begin: 0.2, end: 0, duration: const Duration(milliseconds: 300)),
+                _isFormValid ? '운세보기' : '정보를 입력해주세요',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: AppColors.textPrimaryDark,
+                  fontWeight: FontWeight.bold))
+            ]
+          )
+        )
       )
+    ).animate()
+      .fadeIn(duration: const Duration(milliseconds: 300))
+      .slideY(begin: 0.2, end: 0, duration: const Duration(milliseconds: 300));
   }
 
   // Visual component builders
@@ -1210,26 +1127,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (timeFlow != null) _buildTimeFlowChart(theme, timeFlow),
         if (timeFlow != null && categories != null) SizedBox(height: AppSpacing.spacing5),
-        if (categories != null) _buildCategoryScores(theme, categories),
+        if (categories != null) _buildCategoryScores(theme, categories)
       ]
     );
   }
 
   Widget _buildTimeFlowChart(ThemeData theme, List<dynamic> timeFlow) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
-                gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.primary.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight),
-      borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: theme.colorScheme.primary.withValues(alp,
-      ha: 0.1))),
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              theme.colorScheme.primary.withOpacity( 0.05),
+              AppColors.textPrimaryDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight),
+          borderRadius: AppDimensions.borderRadiusLarge,
+          border: Border.all(
+            color: theme.colorScheme.primary.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1238,15 +1153,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.access_time,
                 color: theme.colorScheme.primary,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '24시간 운세 흐름',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold)
+            )]),
           const SizedBox(height: AppSpacing.spacing4),
           ...timeFlow.map((item) {
             final data = item as Map<String, dynamic>;
@@ -1273,85 +1186,74 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                         width: 100,
                         child: Text(
                           data['time'] ?? '',
-              ),
-              style: theme.textTheme.bodySmall?.copyWith(
-      fontWeight: FontWeight.w500,
-                          ))))))
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w500))),
                       Expanded(
-                        child: Stack(,
-      children: [
+                        child: Stack(
+                          children: [
                             Container(
                               height: AppSpacing.spacing6,
                               decoration: BoxDecoration(
-                color: AppColors.divider,
-                                borderRadius: AppDimensions.borderRadiusMedium,
-    ))
+                                color: AppColors.divider,
+                                borderRadius: AppDimensions.borderRadiusMedium)),
                             FractionallySizedBox(
                               widthFactor: score / 100,
                               child: Container(
-      height: AppSpacing.spacing6,
+                                height: AppSpacing.spacing6,
                                 decoration: BoxDecoration(
-                gradient: LinearGradient(
+                                  gradient: LinearGradient(
                                     colors: [
-                                      barColor);
-                                      barColor.withValues(alpha: 0.8),
-                                    ]),
-    borderRadius: AppDimensions.borderRadiusMedium,
+                                      barColor,
+                                      barColor.withOpacity( 0.8)]),
+                                  borderRadius: AppDimensions.borderRadiusMedium,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: barColor.withValues(alph,
-      a: 0.3),
+                                      color: barColor.withOpacity( 0.3),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2))
-                                  ])))))
+                                  ]))),
                             Positioned.fill(
-    child: Center(,
-      child: Text(
-                                  '),
-  )}%',
+                              child: Center(
+                                child: Text(
+                                  '${score.toStringAsFixed(0)}%',
                                   style: theme.textTheme.labelSmall?.copyWith(
-      color: score >= 50 ? AppColors.textPrimaryDark : AppColors.textPrimary.withValues(alp,
-      ha: 0.87, fontWeight: FontWeight.bold,
-                          ))))))))
-                          ])))
-                      SizedBox(width: AppSpacing.spacing2),
+                                    color: score >= 50 ? AppColors.textPrimaryDark : AppColors.textPrimary.withOpacity( 0.87), 
+                                    fontWeight: FontWeight.bold))))
+                          ])),
+                      const SizedBox(width: AppSpacing.spacing2),
                       Text(
-                        data['icon'] ?? ''$1',
-        style: Theme.of(context).textTheme.headlineSmall,
-                    ])
+                        data['icon'] ?? '',
+                        style: Theme.of(context).textTheme.headlineSmall)
+                    ]),
                   if (data['label'] != null)
                     Padding(
-                      padding: const EdgeInsets.only(to,
-      p: AppSpacing.xxSmall, left: AppSpacing.spacing108).value),
+                      padding: const EdgeInsets.only(top: AppSpacing.xxSmall, left: AppSpacing.spacing8),
                       child: Text(
                         data['label'],
-        style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))))
-                ])))
-          }).toList(),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary)))
+                ]
+              ));
+          }).toList()
         ]
       )
+    );
   }
 
   Widget _buildCategoryScores(ThemeData theme, Map<String, dynamic> categories) {
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-                color: AppColors.surface,
+        color: AppColors.surface,
         borderRadius: AppDimensions.borderRadiusMedium,
-        ),
-        border: Border.all(col,
-      or: AppColors.divider),
+        border: Border.all(color: AppColors.divider)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '분야별 운세',
-              ),
-              style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold)),
           SizedBox(height: AppSpacing.spacing3),
           Row(
             children: categories.entries.map((entry) {
@@ -1369,36 +1271,34 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               
               return Expanded(
                 child: Container(
-      margin: EdgeInsets.symmetric(horizont,
-      al: AppSpacing.spacing1),
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1),
                   padding: AppSpacing.paddingAll12,
                   decoration: BoxDecoration(
-                color: scoreColor.withValues(alp,
-      ha: 0.1),
+                color: scoreColor.withOpacity( 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
-                    border: Border.all(,
-      color: scoreColor.withValues(alp,
-      ha: 0.3))),
-      child: Column(
+                    border: Border.all(
+                      color: scoreColor.withOpacity( 0.3))),
+                  child: Column(
                     children: [
                       Text(
                         entry.key,
-        ),
-        style: theme.textTheme.labelSmall?.copyWith(
-      fontWeight: FontWeight.w500,
-                          ))))
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.w500)),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        '${score}점'),
-        style: theme.textTheme.titleMedium?.copyWith(
-      color: scoreColor,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
-                    ])))))
-            }).toList())
+                        '${score}점',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: scoreColor,
+                          fontWeight: FontWeight.bold))
+                    ]
+                  )
+                )
+              );
+            }).toList()
+          )
         ]
       )
+    );
   }
 
   Widget _buildSajuVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1412,26 +1312,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (fourPillars != null) _buildFourPillarsChart(theme, fourPillars),
         if (fourPillars != null && fiveElements != null) SizedBox(height: AppSpacing.spacing5),
-        if (fiveElements != null) _buildFiveElementsChart(theme, fiveElements),
-      ]
+        if (fiveElements != null) _buildFiveElementsChart(theme, fiveElements)]
     );
   }
 
   Widget _buildFourPillarsChart(ThemeData theme, List<dynamic> pillars) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            Colors.deepPurple.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            Colors.deepPurple.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
-      borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.deepPurple.withValues(alp,
-      ha: 0.2))),
+        borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(
+          color: Colors.deepPurple.withOpacity( 0.2))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1440,70 +1337,60 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.view_column,
                 color: Colors.deepPurple,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
-                '사주의 구성',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+                '사주의 구성', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           Row(
             children: pillars.map((item) {
               final pillar = item as Map<String, dynamic>;
               return Expanded(
                 child: Container(
-      margin: EdgeInsets.symmetric(horizont,
-      al: AppSpacing.spacing1),
+      margin: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1),
                   padding: AppSpacing.paddingAll12,
                   decoration: BoxDecoration(
-                color: Colors.deepPurple.withValues(alp,
-      ha: 0.1),
+                color: Colors.deepPurple.withOpacity( 0.1),
                     borderRadius: AppDimensions.borderRadiusSmall,
-                    border: Border.all(,
-      color: Colors.deepPurple.withValues(alp,
-      ha: 0.3))),
-      child: Column(
+                    border: Border.all(
+                      color: Colors.deepPurple.withOpacity( 0.3))),
+                  child: Column(
                     children: [
                         Text(
                           pillar['pillar'] ?? '',
-        ),
-        style: theme.textTheme.titleSmall?.copyWith(
-      color: Colors.deepPurple,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold)),
                       SizedBox(height: AppSpacing.spacing2),
                       Container(
                         padding: AppSpacing.paddingAll8,
                         decoration: BoxDecoration(
-                color: AppColors.textPrimaryDark,
-        ),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
-      child: Text(
+                          color: AppColors.textPrimaryDark,
+                          borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall)),
+                        child: Text(
                           pillar['value'] ?? '',
-              ),
-              style: theme.textTheme.bodyLarge?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))))
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.bold))),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
                         pillar['label'] ?? '',
-                          style: theme.textTheme.labelSmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppColors.textSecondary)),
                       Text(
-                        pillar['description'] ?? ''$1',
-        style: theme.textTheme.labelSmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ),
-        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
-                    ])))))
-            }).toList())
+                        pillar['description'] ?? '',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
+                    ]
+                  )
+                )
+              );
+            }).toList()
+          )
         ]
       )
+    );
   }
 
   Widget _buildFiveElementsChart(ThemeData theme, Map<String, dynamic> elements) {
@@ -1512,26 +1399,21 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       '화': AppColors.error,
       '토': Colors.yellow[700]!,
       '금': AppColors.textSecondary,
-      '수': null,
-    };
+      '수': Colors.blue};
     
     return Container(
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-                color: AppColors.surface,
+        color: AppColors.surface,
         borderRadius: AppDimensions.borderRadiusMedium,
-        ),
-        border: Border.all(col,
-      or: AppColors.divider),
+        border: Border.all(color: AppColors.divider)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-                        Text(
-                          '오행의 균형',
-              ),
-              style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+          Text(
+            '오행의 균형',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           ...elements.entries.map((entry) {
             final element = entry.key;
@@ -1546,40 +1428,37 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     width: 30,
                     child: Text(
                       element,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold),
-        color: color,
-                          )))))
-                  SizedBox(width: AppSpacing.spacing2),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                          color: color))),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
-                    child: Stack(,
-      children: [
+                    child: Stack(
+                      children: [
                         Container(
                           height: AppSpacing.spacing5,
                           decoration: BoxDecoration(
-                color: AppColors.divider,
-        ),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))
+                            color: AppColors.divider,
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
                         FractionallySizedBox(
                           widthFactor: value / 100,
                           child: Container(
-      height: AppSpacing.spacing5,
+                            height: AppSpacing.spacing5,
                             decoration: BoxDecoration(
-                color: color,
-        ),
-        borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))))
-                      ])))
-                  SizedBox(width: AppSpacing.spacing2),
+                              color: color,
+                              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))))
+                      ])),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Text(
-    '),
-  )}%',
+                    '${value.toStringAsFixed(0)}%',
                     style: theme.textTheme.bodySmall?.copyWith(
-      fontWeight: FontWeight.w500,
-                          ))))
-                ])))
-          }).toList(),
+                      fontWeight: FontWeight.w500))
+                ]
+              ));
+          }).toList()
         ]
       )
+    );
   }
 
   Widget _buildMbtiVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1590,26 +1469,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (typeGroups != null) _buildMbtiTypeGroups(theme, typeGroups),
-      ]
+        if (typeGroups != null) _buildMbtiTypeGroups(theme, typeGroups)]
     );
   }
 
   Widget _buildMbtiTypeGroups(ThemeData theme, List<dynamic> groups) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            theme.colorScheme.secondary.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            theme.colorScheme.secondary.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
-      borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: theme.colorScheme.secondary.withValues(alp,
-      ha: 0.1))),
+        borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(
+          color: theme.colorScheme.secondary.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1618,19 +1494,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.groups,
                 color: theme.colorScheme.secondary,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 'MBTI 성격 유형 그룹',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           GridView.count(
             shrinkWrap: true,
-              ),
               physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
             childAspectRatio: 1.5,
@@ -1642,43 +1515,36 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               final types = group['types'] as List<dynamic>;
               
               return Container(
-                padding: AppSpacing.paddingAll12),
-        decoration: BoxDecoration(
-                color: color.withValues(alp,
-      ha: 0.1),
+                padding: AppSpacing.paddingAll12,
+                decoration: BoxDecoration(
+                  color: color.withOpacity( 0.1),
                   borderRadius: AppDimensions.borderRadiusMedium,
-                  border: Border.all(,
-      color: color.withValues(alp,
-      ha: 0.3))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+                  border: Border.all(
+                    color: color.withOpacity( 0.3))),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       group['group'] ?? '',
-        ),
-        style: theme.textTheme.titleSmall?.copyWith(
-      color: color,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
-                    SizedBox(height: AppSpacing.spacing1),
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.bold)),
+                    const SizedBox(height: AppSpacing.spacing1),
                     Text(
-                      types.join(': ',
+                      types.join(', '),
                       style: theme.textTheme.labelSmall?.copyWith(
-      fontWeight: FontWeight.w500,
-                          )))
+      fontWeight: FontWeight.w500)),
                     const Spacer(),
                     Text(
                       group['characteristics'] ?? '',
-              ),
-              style: theme.textTheme.labelSmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ),
-        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
-                  ])))
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))
+                  ]));
             }).toList())
         ]
       )
+    );
   }
 
   Widget _buildZodiacVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -1689,26 +1555,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (zodiacWheel != null) _buildZodiacWheel(theme, zodiacWheel),
+        if (zodiacWheel != null) _buildZodiacWheel(theme, zodiacWheel)
       ]
     );
   }
 
   Widget _buildZodiacWheel(ThemeData theme, List<dynamic> zodiacSigns) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
-                gradient: LinearGradient(
-          colors: [
-            Colors.purple.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight),
-      borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.purple.withValues(alp,
-      ha: 0.1))),
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.purple.withOpacity( 0.05),
+              AppColors.textPrimaryDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight),
+          borderRadius: AppDimensions.borderRadiusLarge,
+          border: Border.all(
+            color: Colors.purple.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1717,19 +1581,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.stars,
                 color: Colors.purple,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '12궁도 별자리',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           GridView.count(
             shrinkWrap: true,
-              ),
               physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 3,
             childAspectRatio: 1.2,
@@ -1741,61 +1602,53 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 '불': AppColors.error,
                 '흙': Colors.brown,
                 '공기': Colors.lightBlue,
-                '물': null,
-              };
+                '물': Colors.blue};
               final color = elementColors[sign['element']] ?? Colors.purple;
               
               return Container(
-                padding: AppSpacing.paddingAll8),
-        decoration: BoxDecoration(
-                color: color.withValues(alp,
-      ha: 0.1),
+                padding: AppSpacing.paddingAll8,
+                decoration: BoxDecoration(
+                  color: color.withOpacity( 0.1),
                   borderRadius: AppDimensions.borderRadiusSmall,
-                  border: Border.all(,
-      color: color.withValues(alp,
-      ha: 0.3))),
-      child: Column(,
-      mainAxisAlignment: MainAxisAlignment.center,
+                  border: Border.all(
+                    color: color.withOpacity( 0.3))),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                        Text(
-                          sign['symbol'] ?? '',
-        ),
-        style: Theme.of(context).textTheme.headlineMedium,
-                    SizedBox(height: AppSpacing.spacing1),
+                    Text(
+                      sign['symbol'] ?? '',
+                      style: Theme.of(context).textTheme.headlineMedium),
+                    const SizedBox(height: AppSpacing.spacing1),
                     Text(
                       sign['sign'] ?? '',
-              ),
-              style: theme.textTheme.labelSmall?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.bold)),
                     Text(
                       sign['period'] ?? '',
-                          style: theme.textTheme.labelSmall?.copyWith(
-      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                          ),
-                        color: AppColors.textSecondary)))
-                  ])))
-            }).toList())
-        ]
-      )
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
+                        color: AppColors.textSecondary)),
+                  ],
+              ));
+            }).toList()),
+        ],
+      ),
+      );
   }
-
   Widget _buildZodiacAnimalVisuals(ThemeData theme, Map<String, dynamic> explanation) {
     // Simple display for zodiac animals
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
-                gradient: LinearGradient(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
           colors: [
-            AppColors.warning.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            AppColors.warning.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
-      borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: AppColors.warning.withValues(alp,
-      ha: 0.1))),
+        borderRadius: AppDimensions.borderRadiusLarge,
+        border: Border.all(
+          color: AppColors.warning.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1804,26 +1657,21 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.pets,
                 color: AppColors.warning,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '12지신 동물 띠',
-        ),
         style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+      fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           Text(
             '띠별 상성 관계와 특성을 확인하세요',
-              ),
               style: theme.textTheme.bodyMedium?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
-        ]
-      )
-  }
-
+      color: AppColors.textSecondary)),
+        ])
+      );
+      }
   Widget _buildTarotVisuals(ThemeData theme, Map<String, dynamic> explanation) {
     final visualData = explanation['visualData'] as Map<String, dynamic>?;
     if (visualData == null) return const SizedBox();
@@ -1832,26 +1680,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (tarotCards != null) _buildTarotSpread(theme, tarotCards),
-      ]
+        if (tarotCards != null) _buildTarotSpread(theme, tarotCards)]
     );
   }
 
   Widget _buildTarotSpread(ThemeData theme, List<dynamic> cards) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            Colors.deepPurple.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            Colors.deepPurple.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.deepPurple.withValues(alp,
-      ha: 0.1))),
+        border: Border.all(
+      color: Colors.deepPurple.withOpacity(0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1860,90 +1705,80 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.style,
                 color: Colors.deepPurple,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '타로 카드 스프레드',
-        ),
         style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+      fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           Row(
-            children: cards.map((item) {
+            children: cards.map<Widget>((item) {
               final card = item as Map<String, dynamic>;
               return Expanded(
                 child: Container(
-      margin: EdgeInsets.symmetric(horizont,
-      al: AppSpacing.spacing1),
+                  margin: EdgeInsets.symmetric(horizontal: AppSpacing.spacing1),
                   padding: AppSpacing.paddingAll12,
                   decoration: BoxDecoration(
-                gradient: LinearGradient(
+                    gradient: LinearGradient(
                       colors: [
-                        Colors.deepPurple.withValues(alpha: 0.1),
-                        Colors.deepPurple.withValues(alpha: 0.05),
-                      ]
+                        Colors.deepPurple.withOpacity( 0.1),
+                        Colors.deepPurple.withOpacity( 0.05)],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter),
-      borderRadius: AppDimensions.borderRadiusMedium,
-                    border: Border.all(,
-      color: Colors.deepPurple.withValues(alp,
-      ha: 0.3),
-      boxShadow: [
+                    borderRadius: AppDimensions.borderRadiusMedium,
+                    border: Border.all(
+                      color: Colors.deepPurple.withOpacity( 0.3)),
+                    boxShadow: [
                       BoxShadow(
-                        color: Colors.deepPurple.withValues(alph,
-      a: 0.1),
+                        color: Colors.deepPurple.withOpacity( 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4))
                     ]),
-    child: Column(
-                children: [
-                        Text(
-                          card['position'] ?? '',
-        ),
-        style: theme.textTheme.labelSmall?.copyWith(
-      color: Colors.deepPurple,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
+                  child: Column(
+                    children: [
+                      Text(
+                        card['position'] ?? '',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: Colors.deepPurple,
+        fontWeight: FontWeight.bold)),
                       SizedBox(height: AppSpacing.spacing2),
                       Container(
                         width: 60,
                         height: AppSpacing.spacing20,
                         decoration: BoxDecoration(
                 color: AppColors.textPrimaryDark,
-        ),
         borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall),
-                          border: Border.all(,
-      color: Colors.deepPurple.withValues(alp,
-      ha: 0.2))),
+                          border: Border.all(
+      color: Colors.deepPurple.withOpacity( 0.2))),
       child: Center(
                           child: Text(
                             card['icon'] ?? '',
-              ),
-              style: Theme.of(context).textTheme.displaySmall)
+              style: Theme.of(context).textTheme.displaySmall))
+                      ),
                       SizedBox(height: AppSpacing.spacing2),
                       Text(
                         card['card'] ?? '',
                           style: theme.textTheme.labelMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          )),
-    textAlign: TextAlign.center)
+      fontWeight: FontWeight.bold),
+    textAlign: TextAlign.center),
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
-                        card['meaning'] ?? ''$1',
+                        card['meaning'] ?? '',
         style: theme.textTheme.labelSmall?.copyWith(
       color: AppColors.textSecondary,
-                          ),
         fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
       textAlign: TextAlign.center)
-                    ])))))
-            }).toList())
+                    ])
+                ));
+
+            }).toList()
+          )
         ]
       )
+    );
   }
-
   Widget _buildCompatibilityVisuals(ThemeData theme, Map<String, dynamic> explanation) {
     final visualData = explanation['visualData'] as Map<String, dynamic>?;
     if (visualData == null) return const SizedBox();
@@ -1952,26 +1787,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (radarData != null) _buildCompatibilityRadar(theme, radarData),
-      ]
+        if (radarData != null) _buildCompatibilityRadar(theme, radarData)]
     );
   }
 
   Widget _buildCompatibilityRadar(ThemeData theme, Map<String, dynamic> data) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            Colors.pink.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            Colors.pink.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.pink.withValues(alp,
-      ha: 0.1))),
+        border: Border.all(
+      color: Colors.pink.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1980,15 +1812,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.favorite,
                 color: Colors.pink,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '궁합 분석',
-        ),
         style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+      fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           ...data.entries.map((entry) {
             final score = (entry.value as num).toDouble();
@@ -2011,28 +1841,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     children: [
                       Text(
                         entry.key,
-              ),
               style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.w500,
-                          ))))
+      fontWeight: FontWeight.w500)),
                       Text(
-    '),
-  )}점',
+    '${score.toStringAsFixed(0)}점',
                         style: theme.textTheme.bodyMedium?.copyWith(
       color: barColor,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))
+        fontWeight: FontWeight.bold))
                     ])
-                  SizedBox(height: AppSpacing.spacing1),
+                  ,
+                  const SizedBox(height: AppSpacing.spacing1),
                   Stack(
                     children: [
                       Container(
                         height: AppSpacing.spacing2,
                         decoration: BoxDecoration(
                 color: AppColors.divider,
-        ),
-        borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))
+                          borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))),
                       FractionallySizedBox(
                         widthFactor: score / 100,
                         child: Container(
@@ -2040,17 +1865,22 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           decoration: BoxDecoration(
                 gradient: LinearGradient(
                               colors: [
-                                barColor);
-                                barColor.withValues(alpha: 0.7),
-                              ]),
-    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))))))
-                    ])
-                ])))
-          }).toList(),
+                                barColor,
+                                barColor.withOpacity( 0.7)]),
+    borderRadius: AppDimensions.borderRadius(AppDimensions.radiusXxSmall))
+                        )
+                      )
+                    ]
+                  )
+                ])
+              );
+            }).toList()
         ]
       )
-  }
+      );
 
+  }
+  
   Widget _buildLoveVisuals(ThemeData theme, Map<String, dynamic> explanation) {
     final visualData = explanation['visualData'] as Map<String, dynamic>?;
     if (visualData == null) return const SizedBox();
@@ -2062,35 +1892,30 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (singleRoadmap != null) _buildSingleRoadmap(theme, singleRoadmap),
         if (singleRoadmap != null && couplePhases != null) SizedBox(height: AppSpacing.spacing5),
-        if (couplePhases != null) _buildCouplePhases(theme, couplePhases),
-      ]
+        if (couplePhases != null) _buildCouplePhases(theme, couplePhases)]
     );
   }
 
   Widget _buildSingleRoadmap(ThemeData theme, List<dynamic> roadmap) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            Colors.pink.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            Colors.pink.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.pink.withValues(alp,
-      ha: 0.1))),
-      child: Column(
+      border: Border.all(
+        color: Colors.pink.withOpacity(0.1))),
+    child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '싱글을 위한 로드맵',
-        ),
-        style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           ...roadmap.map((item) {
             final step = item as Map<String, dynamic>;
@@ -2098,52 +1923,46 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
-                color: Colors.pink.withValues(alp,
-      ha: 0.05),
+                color: Colors.pink.withOpacity( 0.05),
                 borderRadius: AppDimensions.borderRadiusSmall,
-                border: Border.all(,
-      color: Colors.pink.withValues(alp,
-      ha: 0.2))),
+                border: Border.all(
+      color: Colors.pink.withOpacity(0.2))),
       child: Row(
                 children: [
                   Container(
                     width: AppDimensions.buttonHeightSmall,
                     height: AppDimensions.buttonHeightSmall,
-        ),
         decoration: BoxDecoration(
-                color: Colors.pink.withValues(alp,
-      ha: 0.2),
+                color: Colors.pink.withOpacity( 0.2),
                       shape: BoxShape.circle),
       child: Center(
                       child: Text(
                         step['icon'] ?? '',
-              ),
               style: Theme.of(context).textTheme.headlineSmall)
+                  )),
                   SizedBox(width: AppSpacing.spacing3),
-                  Expanded(
+Expanded(
                     child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${step['step']}단계: ${step['title']}'),
+                          '${step['step']}단계: ${step['title']}',
         style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+      fontWeight: FontWeight.bold)),
                         Text(
-                          step['description'] ?? ''$1',
+                          step['description'] ?? '',
         style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
-                      ])))
+      color: AppColors.textSecondary))
+                      ])),
                   Icon(
                     Icons.arrow_forward_ios,
-                    size: AppDimensions.iconSizeXSmall),
-        color: Colors.pink.withValues(alph,
-      a: 0.5))
-                ])))
-          }).toList(),
+                    size: AppDimensions.iconSizeXSmall,
+        color: Colors.pink.withOpacity(0.5))
+                ])
+              );
+          }).toList()
         ]
-      )
+      ));
   }
 
   Widget _buildCouplePhases(ThemeData theme, List<dynamic> phases) {
@@ -2152,18 +1971,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       decoration: BoxDecoration(
                 color: Colors.pink[50],
       borderRadius: AppDimensions.borderRadiusMedium,
-        ),
-        border: Border.all(col,
-      or: Colors.pink[100]!),
+        border: Border.all(color: Colors.pink[100]!)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
                         Text(
                           '커플을 위한 관계 발전 단계',
-              ),
               style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+      fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           Row(
             children: phases.map((item) {
@@ -2173,24 +1988,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                 children: [
                     Text(
                       phase['icon'] ?? '',
-              ),
-              style: Theme.of(context).textTheme.displaySmall,
+                      style: Theme.of(context).textTheme.displaySmall),
                     SizedBox(height: AppSpacing.spacing1),
                     Text(
                       phase['phase'] ?? '',
                           style: theme.textTheme.labelSmall?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+      fontWeight: FontWeight.bold)),
                     Text(
-                      phase['period'] ?? ''$1',
+                      phase['period'] ?? '',
         style: theme.textTheme.labelSmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ),
-        fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)))
-                  ])))
-            }).toList())
+                        color: AppColors.textSecondary))
+                  ]
+                )
+              );
+            }).toList()
+          )
         ]
       )
+    );
   }
 
   Widget _buildCareerVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2201,26 +2016,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (jobTypeScores != null) _buildJobTypeScores(theme, jobTypeScores),
-      ]
+        if (jobTypeScores != null) _buildJobTypeScores(theme, jobTypeScores)]
     );
-  }
+ }
 
   Widget _buildJobTypeScores(ThemeData theme, List<dynamic> scores) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            AppColors.primary.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            AppColors.primary.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: AppColors.primary.withValues(alp,
-      ha: 0.1))),
+        border: Border.all(
+      color: AppColors.primary.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2229,15 +2041,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.work,
                 color: AppColors.primary,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '직종별 운세 지수',
-        ),
         style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+      fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           ...scores.map((item) {
             final job = item as Map<String, dynamic>;
@@ -2249,15 +2059,12 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: AppDimensions.borderRadiusSmall,
-        ),
-        border: Border.all(col,
-      or: AppColors.divider),
+                border: Border.all(color: AppColors.divider)),
       child: Row(
                 children: [
                   Text(
                     job['icon'] ?? '',
-              ),
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.headlineMedium),
                   SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
@@ -2267,29 +2074,29 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           children: [
                             Text(
                               job['type'] ?? '',
-              ),
               style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-                            SizedBox(width: AppSpacing.spacing2),
+      fontWeight: FontWeight.bold)),
+                            const SizedBox(width: AppSpacing.spacing2),
                             ...List.generate(5, (index) {
                               return Icon(
                                 index < score ? Icons.star : Icons.star_border,
-    size: AppDimensions.iconSizeXSmall),
-        color: index < score ? Colors.amber : AppColors.textSecondary.withValues(alph,
-      a: 0.4))
-                            }),
-                          ])
+    size: AppDimensions.iconSizeXSmall,
+        color: index < score ? Colors.amber : AppColors.textSecondary.withOpacity( 0.4));
+                            })
+                          ]),
                         Text(
-                          job['activity'] ?? ''$1',
-        style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
-                      ])))
-                ])))
-          }).toList(),
+                          job['activity'] ?? '',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: AppColors.textSecondary))
+                      ])
+                    )
+                  ]
+                )
+              );
+          }).toList()
         ]
       )
+    );
   }
 
   Widget _buildWealthVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2300,26 +2107,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (investmentSignals != null) _buildInvestmentSignals(theme, investmentSignals),
-      ]
+        if (investmentSignals != null) _buildInvestmentSignals(theme, investmentSignals)]
     );
   }
 
   Widget _buildInvestmentSignals(ThemeData theme, List<dynamic> signals) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            AppColors.success.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            AppColors.success.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: AppColors.success.withValues(alp,
-      ha: 0.1))),
+        border: Border.all(
+      color: AppColors.success.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2328,15 +2132,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.trending_up,
                 color: AppColors.success,
-                size: AppDimensions.iconSizeMedium);
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '투자 적기 신호등',
-        ),
         style: theme.textTheme.titleMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
-            ])
+      fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           ...signals.map((item) {
             final signal = item as Map<String, dynamic>;
@@ -2366,18 +2168,16 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               margin: const EdgeInsets.only(bottom: AppSpacing.small),
               padding: AppSpacing.paddingAll12,
               decoration: BoxDecoration(
-                color: signalColor.withValues(alp,
-      ha: 0.05),
+                color: signalColor.withOpacity( 0.05),
                 borderRadius: AppDimensions.borderRadiusSmall,
-                border: Border.all(,
-      color: signalColor.withValues(alp,
-      ha: 0.2))),
+                border: Border.all(
+      color: signalColor.withOpacity( 0.2))),
       child: Row(
                 children: [
                   Icon(
                     signalIcon,
                     color: signalColor,
-                    size: AppDimensions.iconSizeMedium);
+                    size: AppDimensions.iconSizeMedium),
                   SizedBox(width: AppSpacing.spacing3),
                   Expanded(
                     child: Column(
@@ -2387,36 +2187,31 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           children: [
                             Text(
                               signal['type'] ?? '',
-        ),
         style: theme.textTheme.bodyMedium?.copyWith(
-      fontWeight: FontWeight.bold,
-                          ))))
+      fontWeight: FontWeight.bold)),
                             const Spacer(),
                             Container(
-                              padding: EdgeInsets.symmetric(horizonta,
-      l: AppSpacing.spacing2, vertical: AppSpacing.spacing0),
+                              padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing2, vertical: AppSpacing.spacing0),
                               decoration: BoxDecoration(
-                color: signalColor.withValues(alp,
-      ha: 0.2),
+                color: signalColor.withOpacity( 0.2),
                                 borderRadius: AppDimensions.borderRadiusMedium),
       child: Text(
-                                '${signal['percentage']}%'),
+                                '${signal['percentage']}%',
         style: theme.textTheme.labelSmall?.copyWith(
       color: signalColor,
-                          ),
-        fontWeight: FontWeight.bold,
-    ))))
-                          ])
+        fontWeight: FontWeight.bold))
+                            )
+                          ]),
                         Text(
-                          signal['note'] ?? ''$1',
+                          signal['note'] ?? '',
         style: theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-                          ))))
-                      ])))
-                ])))
-          }).toList(),
+      color: AppColors.textSecondary))
+                      ]))
+                ]));
+          }).toList()
         ]
       )
+    );
   }
 
   Widget _buildHealthVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2427,26 +2222,23 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
     
     return Column(
       children: [
-        if (healthChecklist != null) _buildHealthChecklist(theme, healthChecklist),
-      ]
+        if (healthChecklist != null) _buildHealthChecklist(theme, healthChecklist)]
     );
   }
 
   Widget _buildHealthChecklist(ThemeData theme, List<dynamic> checklist) {
     return Container(
-      padding: AppSpacing.paddingAll16),
-        decoration: BoxDecoration(
+      padding: AppSpacing.paddingAll16,
+      decoration: BoxDecoration(
                 gradient: LinearGradient(
           colors: [
-            Colors.teal.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ]
+            Colors.teal.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
       borderRadius: AppDimensions.borderRadiusLarge,
-        border: Border.all(,
-      color: Colors.teal.withValues(alp,
-      ha: 0.1))),
+        border: Border.all(
+      color: Colors.teal.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2455,16 +2247,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               Icon(
                 Icons.checklist,
                 color: Colors.teal,
-                size: AppDimensions.iconSizeMedium,
-              ),
-              SizedBox(width: AppSpacing.spacing2),
+                size: AppDimensions.iconSizeMedium),
+              const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '건강 관리 체크리스트',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+                  fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           ...checklist.map((item) {
             final task = item as Map<String, dynamic>;
@@ -2480,28 +2269,24 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: Colors.teal,
-                        width: AppSpacing.spacing0 * 0.5,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: AppSpacing.spacing3),
+                        width: AppSpacing.spacing0 * 0.5)),
+                    child: const SizedBox()),
+                  const SizedBox(width: AppSpacing.spacing3),
                   Text(
                     task['icon'] ?? '',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  SizedBox(width: AppSpacing.spacing2),
+                    style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(width: AppSpacing.spacing2),
                   Expanded(
                     child: Text(
                       task['item'] ?? '',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
+                      style: theme.textTheme.bodyMedium))
+                ]
+              )
             );
-          }).toList(),
+          }).toList()
         ]
       )
+    );
   }
 
   Widget _buildBusinessVisuals(ThemeData theme, Map<String, dynamic> explanation) {
@@ -2515,8 +2300,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       children: [
         if (timeline != null) _buildBusinessTimeline(theme, timeline),
         if (timeline != null && industryScores != null) const SizedBox(height: AppSpacing.spacing5),
-        if (industryScores != null) _buildIndustryScores(theme, industryScores),
-      ]
+        if (industryScores != null) _buildIndustryScores(theme, industryScores)]
     );
   }
 
@@ -2526,17 +2310,13 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.indigo.withValues(alpha: 0.05),
-            AppColors.textPrimaryDark,
-          ],
+            Colors.indigo.withOpacity( 0.05),
+            AppColors.textPrimaryDark],
           begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+          end: Alignment.bottomRight),
         borderRadius: AppDimensions.borderRadiusLarge,
         border: Border.all(
-          color: Colors.indigo.withValues(alpha: 0.1),
-        ),
-      ),
+          color: Colors.indigo.withOpacity( 0.1))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -2545,22 +2325,18 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
               const Icon(
                 Icons.timeline,
                 color: Colors.indigo,
-                size: AppDimensions.iconSizeMedium,
-              ),
+                size: AppDimensions.iconSizeMedium),
               const SizedBox(width: AppSpacing.spacing2),
               Text(
                 '사업 성공 타임라인',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))
+            ]),
           const SizedBox(height: AppSpacing.spacing4),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-      children: timeline.asMap().entries.map((entry) {
+      children: [...timeline.asMap().entries.map((entry) {
                 final index = entry.key;
                 final phase = entry.value as Map<String, dynamic>;
                 final isLast = index == timeline.length - 1;
@@ -2573,49 +2349,41 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           width: 60,
                           height: AppSpacing.spacing15,
                           decoration: BoxDecoration(
-                            color: Colors.indigo.withValues(alpha: 0.1),
+                            color: Colors.indigo.withOpacity( 0.1),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.indigo.withValues(alpha: 0.3),
-                              width: 2,
-                            ),
-                          ),
+                              color: Colors.indigo.withOpacity( 0.3),
+                              width: 2)),
                           child: Center(
                             child: Text(
                               phase['icon'] ?? '',
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
+                              style: Theme.of(context).textTheme.headlineMedium))
                           ),
-                        ),
                         const SizedBox(height: AppSpacing.spacing2),
                         Text(
                           phase['phase'] ?? '',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            fontWeight: FontWeight.bold)),
                         Text(
                           phase['duration'] ?? '',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: AppColors.textSecondary,
-                            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                          ),
-                        ),
-                      ],
-                    ),
+                            fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize))]),
                     if (!isLast)
                       Container(
                         width: 40,
                         height: AppSpacing.spacing0 * 0.5,
-                        color: Colors.indigo.withValues(alpha: 0.3),
-                        margin: const EdgeInsets.only(bottom: AppSpacing.xxxLarge),
-                      ),
-                  ];
-              }).toList(),
-            ),
-          ),
-        ],
-      );
+                        color: Colors.indigo.withOpacity( 0.3),
+                        margin: const EdgeInsets.only(bottom: AppSpacing.xxxLarge)),
+                  ]
+                );
+              }).toList()
+            ]
+            )
+          )
+        ]
+      )
+    );
   }
 
   Widget _buildIndustryScores(ThemeData theme, List<dynamic> scores) {
@@ -2625,18 +2393,14 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
         color: AppColors.surface,
         borderRadius: AppDimensions.borderRadiusMedium,
         border: Border.all(
-          color: AppColors.divider,
-        ),
-      ),
+          color: AppColors.divider)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             '업종별 추천 지수',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: AppSpacing.spacing4),
           ...scores.map((item) {
             final industry = item as Map<String, dynamic>;
@@ -2662,8 +2426,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
             
             return Container(
               margin: const EdgeInsets.only(
-                bottom: AppSpacing.xSmall,
-              ),
+                bottom: AppSpacing.xSmall),
               child: Row(
                 children: [
                   SizedBox(
@@ -2671,10 +2434,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                     child: Text(
                       industry['industry'] ?? '',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
+                        fontWeight: FontWeight.w500))),
                   Expanded(
                     child: Stack(
                       children: [
@@ -2682,9 +2442,7 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                           height: AppSpacing.spacing5,
                           decoration: BoxDecoration(
                             color: AppColors.divider,
-                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                          ),
-                        ),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
                         FractionallySizedBox(
                           widthFactor: score / 100,
                           child: Container(
@@ -2693,28 +2451,25 @@ class _FortuneExplanationBottomSheetState extends ConsumerState<FortuneExplanati
                               gradient: LinearGradient(
                                 colors: [
                                   Colors.indigo,
-                                  Colors.indigo.withValues(alpha: 0.7),
-                                ],
+                                  Colors.indigo.withOpacity( 0.7)]
                               ),
-                              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                            ),
-                          ),
+                              borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))
+                          )
                         ),
-                      ],
-                    ),
+                      ]
+                    )
                   ),
                   const SizedBox(width: AppSpacing.spacing2),
                   Icon(
                     trendIcon,
                     size: AppDimensions.iconSizeXSmall,
-                    color: trendColor,
-                  ),
-                ],
-              ),
+                    color: trendColor)
+                ]
+              )
             );
-          }).toList(),
-        ],
-      );
+          }).toList()
+        ]
+      )
+    );
   }
-
 }

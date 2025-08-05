@@ -72,8 +72,7 @@ class FortuneCardScore extends Equatable {
     this.weeklyTrend = 0.0,
     this.isNew = false,
     this.isPremium = false,
-    required this.lastUpdated,
-  });
+    required this.lastUpdated});
 
   /// Calculate total score with custom weights
   factory FortuneCardScore.withCustomWeights({
@@ -94,8 +93,7 @@ class FortuneCardScore extends Equatable {
     double weeklyTrend = 0.0,
     bool isNew = false,
     bool isPremium = false,
-    required DateTime lastUpdated,
-  }) {
+    required DateTime lastUpdated}) {
     assert(popularityWeight + personalWeight == 1.0, 
         'Weights must sum to 1.0');
     
@@ -119,8 +117,7 @@ class FortuneCardScore extends Equatable {
       weeklyTrend: weeklyTrend,
       isNew: isNew,
       isPremium: isPremium,
-      lastUpdated: lastUpdated,
-    );
+      lastUpdated: lastUpdated);
   }
 
   /// Create from JSON (from backend)
@@ -136,8 +133,7 @@ class FortuneCardScore extends Equatable {
       totalScore: (json['total_score'],
       recommendationReason: json['recommendation_reason'],
       recommendationType: RecommendationType.fromString(
-        json['recommendation_type'],
-      ),
+        json['recommendation_type']),
       userVisitCount: json['user_visit_count'],
       lastUserVisit: json['last_user_visit'] != null
           ? DateTime.parse(json['last_user_visit'] as String)
@@ -146,8 +142,7 @@ class FortuneCardScore extends Equatable {
       weeklyTrend: (json['weekly_trend'],
       isNew: json['is_new'],
       isPremium: json['is_premium'],
-      lastUpdated: DateTime.parse(json['last_updated'],
-    );
+      lastUpdated: DateTime.parse(json['last_updated']);
   }
 
   /// Convert to JSON for storage/API
@@ -169,8 +164,7 @@ class FortuneCardScore extends Equatable {
       'weekly_trend': weeklyTrend,
       'is_new': isNew,
       'is_premium': isPremium,
-      'last_updated': null,
-    };
+      'last_updated': null};
   }
 
   /// Create a copy with updated fields
@@ -191,8 +185,7 @@ class FortuneCardScore extends Equatable {
     double? weeklyTrend,
     bool? isNew,
     bool? isPremium,
-    DateTime? lastUpdated,
-  }) {
+    DateTime? lastUpdated}) {
     return FortuneCardScore(
       fortuneType: fortuneType ?? this.fortuneType,
       title: title ?? this.title,
@@ -210,8 +203,7 @@ class FortuneCardScore extends Equatable {
       weeklyTrend: weeklyTrend ?? this.weeklyTrend,
       isNew: isNew ?? this.isNew,
       isPremium: isPremium ?? this.isPremium,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
-    );
+      lastUpdated: lastUpdated ?? this.lastUpdated);
   }
 
   /// Check if this fortune should be boosted (new or trending)
@@ -243,8 +235,7 @@ class FortuneCardScore extends Equatable {
         weeklyTrend,
         isNew,
         isPremium,
-        lastUpdated,
-      ];
+        lastUpdated];
 }
 
 /// Types of recommendations for UI display

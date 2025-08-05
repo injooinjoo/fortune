@@ -44,8 +44,7 @@ class TokenUsageNotifier
       final stats = await _adminApiService.getTokenUsageStats(
         startDate: startDate,
         endDate: endDate,
-        period: period,
-      );
+        period: period);
 
       state = AsyncValue.data(stats);
     } catch (e, stackTrace) {
@@ -71,41 +70,35 @@ final tokenUsageProvider = StateNotifierProvider<TokenUsageNotifier,
 final tokenUsageSummaryProvider = Provider<TokenUsageSummary?>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.summary,
-        orElse: () => null,
-      );
+        orElse: () => null);
 });
 
 final dailyTokenUsageProvider = Provider<List<DailyTokenUsage>>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.dailyUsage,
-        orElse: () => [],
-      );
+        orElse: () => []);
 });
 
 final topUsersProvider = Provider<List<TopUserUsage>>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.topUsers,
-        orElse: () => [],
-      );
+        orElse: () => []);
 });
 
 final tokenUsageByTypeProvider = Provider<List<TokenUsageByType>>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.usageByType,
-        orElse: () => [],
-      );
+        orElse: () => []);
 });
 
 final packageEfficiencyProvider = Provider<PackageEfficiency?>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.packageEfficiency,
-        orElse: () => null,
-      );
+        orElse: () => null);
 });
 
 final tokenUsageTrendProvider = Provider<TokenUsageTrend?>((ref) {
   return ref.watch(tokenUsageProvider).maybeWhen(
         data: (stats) => stats.trend,
-        orElse: () => null,
-      );
+        orElse: () => null);
 });

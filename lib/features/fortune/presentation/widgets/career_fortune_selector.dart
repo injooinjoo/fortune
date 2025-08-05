@@ -26,8 +26,7 @@ class CareerFortuneType {
     required this.gradientColors,
     required this.route,
     required this.targetAudience,
-    this.isNew = false,
-  });
+    this.isNew = false});
 }
 
 class CareerFortuneSelector extends StatelessWidget {
@@ -42,7 +41,7 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.work_outline_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.career],
       route: '/fortune/career/seeker',
-      targetAudience: ['신입': '구직자': '이직 준비',
+      targetAudience: \['['신입', '구직자', '이직 준비',
     CareerFortuneType(
       id: 'change',
       title: '이직운',
@@ -51,7 +50,7 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.swap_horiz_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.careerDark],
       route: '/fortune/career/change',
-      targetAudience: ['경력직': '이직 고민': '커리어 체인지',
+      targetAudience: \['['경력직', '이직 고민', '커리어 체인지',
     CareerFortuneType(
       id: 'future',
       title: '직장 미래운',
@@ -60,8 +59,7 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.trending_up_rounded,
       gradientColors: [FortuneColors.career, FortuneColors.career],
       route: '/fortune/career/future',
-      targetAudience: ['재직자': '승진 대상', '연봉 협상',
-    ),
+      targetAudience: ['재직자', '승진 대상', '연봉 협상'),
     CareerFortuneType(
       id: 'freelance',
       title: '프리랜서운',
@@ -70,9 +68,8 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.laptop_mac_rounded,
       gradientColors: [FortuneColors.wealth, FortuneColors.wealthDark],
       route: '/fortune/career/freelance',
-      targetAudience: ['프리랜서': '1인 기업': 'N잡러',
-      isNew: true,
-    ),
+      targetAudience: \['['프리랜서', '1인 기업', 'N잡러',
+      isNew: true),
     CareerFortuneType(
       id: 'startup',
       title: '창업운',
@@ -81,8 +78,7 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.rocket_launch_rounded,
       gradientColors: [AppColors.negative, AppColors.negativeDark],
       route: '/fortune/career/startup',
-      targetAudience: ['예비 창업자': '스타트업': '사업가',
-    ),
+      targetAudience: \['['예비 창업자', '스타트업', '사업가'),
     CareerFortuneType(
       id: 'crisis',
       title: '위기극복운',
@@ -91,10 +87,8 @@ class CareerFortuneSelector extends StatelessWidget {
       icon: Icons.support_rounded,
       gradientColors: [FortuneColors.mystical, FortuneColors.mysticalLight],
       route: '/fortune/career/crisis',
-      targetAudience: ['번아웃': '구조조정': '커리어 전환',
-      isNew: true,
-    ),
-  ];
+      targetAudience: \['['번아웃', '구조조정', '커리어 전환',
+      isNew: true)];
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +99,7 @@ class CareerFortuneSelector extends StatelessWidget {
                   appBar: AppBar(
         title: const Text('커리어 운세'),
         backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+        elevation: 0),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -119,15 +112,12 @@ class CareerFortuneSelector extends StatelessWidget {
                     Text(
                       '당신의 커리어 상황은?'),
                   style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-    ),
+                        fontWeight: FontWeight.bold),
                     const SizedBox(height: AppSpacing.spacing2),
                     Text(
                       '현재 상황에 맞는 운세를 선택해주세요'),
                   style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-              ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.spacing5),
               sliver: SliverGrid(
@@ -141,12 +131,9 @@ class CareerFortuneSelector extends StatelessWidget {
                     final careerType = careerTypes[index];
                     return _CareerTypeCard(careerType: careerType);
 },
-                  childCount: careerTypes.length,
-                ),
-            ),
+                  childCount: careerTypes.length)),
             const SliverToBoxAdapter(
-              child: SizedBox(height: AppSpacing.spacing8),
-        ));
+              child: SizedBox(height: AppSpacing.spacing8)),;
 }
 }
 
@@ -155,8 +142,7 @@ class _CareerTypeCard extends StatelessWidget {
 
   const _CareerTypeCard({
     super.key,
-    required this.careerType),
-});
+    required this.careerType)});
 
   @override
   Widget build(BuildContext context) {
@@ -172,8 +158,7 @@ class _CareerTypeCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight),
                   colors: careerType.gradientColors.map((color) => 
-            color.withValues(alpha: 0.1,
-    ).toList(),
+            color.withValues(alpha: 0.1).toList(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,14 +169,11 @@ class _CareerTypeCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: careerType.gradientColors),
-                    borderRadius: AppDimensions.borderRadiusMedium,
-                  ),
+                    borderRadius: AppDimensions.borderRadiusMedium),
                   child: Icon(
                     careerType.icon,
                     color: Colors.white,
-                    size: 24,
-                  ),
-                ),
+                    size: 24)),
                 const Spacer(),
                 if (careerType.isNew), Container(
                     padding: const EdgeInsets.symmetric(
@@ -204,30 +186,25 @@ class _CareerTypeCard extends StatelessWidget {
                       'NEW'),
                   style: theme.textTheme.bodySmall?.copyWith(
                         color: Colors.white),
-                  fontWeight: FontWeight.bold,
-    ),
-                  ),
+                  fontWeight: FontWeight.bold)),
             const SizedBox(height: AppSpacing.spacing4),
             Text(
               careerType.title),
                   style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-    ),
+                fontWeight: FontWeight.bold),
             const SizedBox(height: AppSpacing.spacing1),
             Text(
               careerType.subtitle),
                   style: theme.textTheme.bodyMedium?.copyWith(
                 color: careerType.gradientColors.first),
-                  fontWeight: FontWeight.w600,
-    ),
+                  fontWeight: FontWeight.w600),
             const Spacer(),
             Text(
               careerType.description),
                   style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+              overflow: TextOverflow.ellipsis),
             const SizedBox(height: AppSpacing.spacing2),
             Wrap(
               spacing: 4,
@@ -236,22 +213,14 @@ class _CareerTypeCard extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.spacing2,
-                    vertical: AppSpacing.spacing0 * 0.5,
-                  ),
+                    vertical: AppSpacing.spacing0 * 0.5),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    borderRadius: AppDimensions.borderRadiusSmall,
-                  ),
+                    borderRadius: AppDimensions.borderRadiusSmall),
                   child: Text(
                     audience,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
+                      fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)));
+              }).toList())));
   }
 }

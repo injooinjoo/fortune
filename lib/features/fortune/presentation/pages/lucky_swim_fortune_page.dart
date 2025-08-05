@@ -19,11 +19,9 @@ class LuckySwimFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-      ),
+        colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
       inputBuilder: (context, onSubmit) => _SwimInputForm(onSubmit: onSubmit),
-      resultBuilder: (context, result, regenerate) => _SwimFortuneResult(result: result),
-    );
+      resultBuilder: (context, result, regenerate) => _SwimFortuneResult(result: result));
   }
 }
 
@@ -53,18 +51,14 @@ class _SwimInputFormState extends State<_SwimInputForm> {
           '오늘의 수영 운세를 확인하고\n물 속에서 행운을 만나보세요!',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-            height: 1.5,
-          ),
-        ),
+            height: 1.5)),
         const SizedBox(height: 24),
         
         // Pool Type
         Text(
           '수영장 환경',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildPoolType(theme),
         const SizedBox(height: 24),
@@ -73,9 +67,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
         Text(
           '주 영법',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildStrokeType(theme),
         const SizedBox(height: 24),
@@ -84,9 +76,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
         Text(
           '수영 실력',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSwimLevel(theme),
         const SizedBox(height: 24),
@@ -95,9 +85,7 @@ class _SwimInputFormState extends State<_SwimInputForm> {
         Text(
           '수영 목표',
           style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 12),
         _buildSwimGoal(theme),
         const SizedBox(height: 32),
@@ -112,37 +100,28 @@ class _SwimInputFormState extends State<_SwimInputForm> {
                 'poolType': _poolType,
                 'strokeType': _strokeType,
                 'swimLevel': _swimLevel,
-                'swimGoal': null,
-              });
+                'swimGoal': null});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF06B6D4),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
+                borderRadius: BorderRadius.circular(16)),
+              elevation: 0),
             child: const Text(
               '수영 운세 보기',
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-      ]
+                fontWeight: FontWeight.bold))))]
     );
   }
 
   Widget _buildPoolType(ThemeData theme) {
     final types = [
-      {'id': 'indoor': 'name': '실내': 'icon'},
-      {'id': 'outdoor': 'name': '야외': 'icon'},
-      {'id': 'ocean', 'name': '바다', 'icon'},
-      {'id': 'lake', 'name': '호수', 'icon'},
-    ];
+      {'id', 'indoor': 'name', '실내': 'icon'},
+      {'id', 'outdoor': 'name', '야외': 'icon'},
+      {'id', 'ocean', 'name', '바다', 'icon'},
+      {'id', 'lake', 'name', '호수', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -169,48 +148,37 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    ),
+                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   type['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   type['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
 
   Widget _buildStrokeType(ThemeData theme) {
     final strokes = [
-      {'id': 'freestyle': 'name': '자유형'},
-      {'id': 'backstroke': 'name': '배영'},
-      {'id': 'breaststroke': 'name': '평영'},
-      {'id': 'butterfly': 'name': '접영'},
-    ];
+      {'id', 'freestyle': 'name', '자유형'},
+      {'id', 'backstroke': 'name', '배영'},
+      {'id', 'breaststroke': 'name', '평영'},
+      {'id', 'butterfly': 'name', '접영'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -237,39 +205,30 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    ),
+                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Center(
               child: Text(
                 stroke['name'],
                 style: TextStyle(
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          ),
-        );
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))));
       }
     );
   }
 
   Widget _buildSwimLevel(ThemeData theme) {
     final levels = [
-      {'id': 'beginner': 'name': '초급'},
-      {'id': 'intermediate': 'name': '중급'},
-      {'id': 'advanced', 'name': '상급'},
-      {'id': 'master', 'name': '마스터'},
-    ];
+      {'id', 'beginner': 'name', '초급'},
+      {'id', 'intermediate': 'name', '중급'},
+      {'id', 'advanced', 'name', '상급'},
+      {'id', 'master', 'name', '마스터'}];
 
     return Row(
       children: levels.map((level) {
@@ -283,45 +242,33 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             },
             child: Container(
               margin: EdgeInsets.only(
-                right: level != levels.last ? 8 : 0,
-              ),
+                right: level != levels.last ? 8 : 0),
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                      ),
+                        colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
                     : null,
                 border: Border.all(
                   color: isSelected
                       ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(12)),
               child: Center(
                 child: Text(
                   level['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))))));
+      }).toList());
   }
 
   Widget _buildSwimGoal(ThemeData theme) {
     final goals = [
-      {'id': 'fitness': 'name': '체력향상': 'icon'},
-      {'id': 'technique': 'name': '기술향상': 'icon'},
-      {'id': 'competition', 'name': '대회준비', 'icon'},
-      {'id': 'recreation', 'name': '취미활동', 'icon'},
-    ];
+      {'id', 'fitness': 'name', '체력향상': 'icon'},
+      {'id', 'technique': 'name', '기술향상': 'icon'},
+      {'id', 'competition', 'name', '대회준비', 'icon'},
+      {'id', 'recreation', 'name', '취미활동', 'icon'}];
 
     return GridView.builder(
       shrinkWrap: true,
@@ -348,37 +295,27 @@ class _SwimInputFormState extends State<_SwimInputForm> {
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
-                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                    ),
+                      colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
                     : theme.colorScheme.outline.withValues(alpha: 0.3),
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
+                width: 2),
+              borderRadius: BorderRadius.circular(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   goal['icon'],
                   color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                  size: 20,
-                ),
+                  size: 20),
                 const SizedBox(width: 8),
                 Text(
                   goal['name'],
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])));
       }
     );
   }
@@ -412,16 +349,12 @@ class _SwimFortuneResult extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF06B6D4), Color(0xFF0891B2)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          colors: [Color(0xFF06B6D4), Color(0xFF0891B2)]),
+                        borderRadius: BorderRadius.circular(12)),
                       child: const Icon(
                         Icons.pool,
                         color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -430,31 +363,16 @@ class _SwimFortuneResult extends StatelessWidget {
                           Text(
                             '오늘의 수영 운세',
                             style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             result.date ?? '',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))]),
                 const SizedBox(height: 20),
                 Text(
                   result.mainFortune ?? '',
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+                    height: 1.6))]))),
         const SizedBox(height: 16),
 
         // Best Swimming Time
@@ -464,12 +382,9 @@ class _SwimFortuneResult extends StatelessWidget {
             title: '최적의 수영 시간',
             icon: Icons.schedule,
             gradient: const LinearGradient(
-              colors: [Color(0xFF10B981), Color(0xFF059669)],
-            ),
-            content: result.details!['bestTime'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF10B981), Color(0xFF059669)]),
+            content: result.details!['bestTime']),
+          const SizedBox(height: 16)],
 
         // Stroke Tips
         if (result.details?['strokeTips'] != null) ...[
@@ -478,12 +393,9 @@ class _SwimFortuneResult extends StatelessWidget {
             title: '영법별 운세',
             icon: Icons.waves,
             gradient: const LinearGradient(
-              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)],
-            ),
-            content: result.details!['strokeTips'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFF3B82F6), Color(0xFF1E40AF)]),
+            content: result.details!['strokeTips']),
+          const SizedBox(height: 16)],
 
         // Training Focus
         if (result.details?['training'] != null) ...[
@@ -492,12 +404,9 @@ class _SwimFortuneResult extends StatelessWidget {
             title: '오늘의 훈련 포인트',
             icon: Icons.fitness_center,
             gradient: const LinearGradient(
-              colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
-            ),
-            content: result.details!['training'],
-          ),
-          const SizedBox(height: 16),
-        ],
+              colors: [Color(0xFFF59E0B), Color(0xFFD97706)]),
+            content: result.details!['training']),
+          const SizedBox(height: 16)],
 
         // Pool Etiquette
         if (result.details?['etiquette'] != null) ...[
@@ -506,12 +415,8 @@ class _SwimFortuneResult extends StatelessWidget {
             title: '수영장 에티켓 운',
             icon: Icons.people,
             gradient: const LinearGradient(
-              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)],
-            ),
-            content: result.details!['etiquette'],
-          ),
-        ],
-      ]
+              colors: [Color(0xFF7C3AED), Color(0xFF6366F1)]),
+            content: result.details!['etiquette'])]]
     );
   }
 
@@ -520,8 +425,7 @@ class _SwimFortuneResult extends StatelessWidget {
     required String title,
     required IconData icon,
     required Gradient gradient,
-    required String content,
-  }) {
+    required String content}) {
     final theme = Theme.of(context);
 
     return GlassContainer(
@@ -536,32 +440,20 @@ class _SwimFortuneResult extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: gradient,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  borderRadius: BorderRadius.circular(8)),
                 child: Icon(
                   icon,
                   color: Colors.white,
-                  size: 20,
-                ),
-              ),
+                  size: 20)),
               const SizedBox(width: 12),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  fontWeight: FontWeight.bold))]),
           const SizedBox(height: 12),
           Text(
             content,
             style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
+              height: 1.5))]));
   }
 }

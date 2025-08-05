@@ -10,9 +10,7 @@ class FortuneDetailedMetadata {
         '메인 번호 6개 조합',
         '보너스 번호 추천',
         '연속 번호 피하기',
-        '홀짝 균형 맞추기',
-      ],
-    ),
+        '홀짝 균형 맞추기']),
     'time': LuckyNumberCategory(
       title: '행운의 시간대',
       icon: Icons.access_time,
@@ -21,9 +19,7 @@ class FortuneDetailedMetadata {
         '업무 시작 시간',
         '미팅 예약 시간',
         '운동하기 좋은 시간',
-        '휴식 시간',
-      ],
-    ),
+        '휴식 시간']),
     'floor': LuckyNumberCategory(
       title: '행운의 층수/호수',
       icon: Icons.apartment,
@@ -32,9 +28,7 @@ class FortuneDetailedMetadata {
         '엘리베이터 층수',
         '주차장 층수',
         '카페 좌석 번호',
-        '회의실 번호',
-      ],
-    ),
+        '회의실 번호']),
     'phone': LuckyNumberCategory(
       title: '연락하기 좋은 번호',
       icon: Icons.phone,
@@ -42,9 +36,7 @@ class FortuneDetailedMetadata {
       examples: [
         '끝자리 추천',
         '피해야 할 번호',
-        '행운의 시간대와 연계',
-      ],
-    ),
+        '행운의 시간대와 연계']),
     'vehicle': LuckyNumberCategory(
       title: '차량 번호',
       icon: Icons.directions_car,
@@ -52,9 +44,7 @@ class FortuneDetailedMetadata {
       examples: [
         '행운의 차량 번호',
         '주의해야 할 번호',
-        '주차 구역 번호',
-      ],
-    ),
+        '주차 구역 번호']),
     'payment': LuckyNumberCategory(
       title: '결제 금액',
       icon: Icons.payment,
@@ -62,9 +52,7 @@ class FortuneDetailedMetadata {
       examples: [
         '커피값 추천',
         '선물 금액대',
-        '기부 금액',
-      ],
-    ),
+        '기부 금액']),
     'exercise': LuckyNumberCategory(
       title: '운동 횟수',
       icon: Icons.fitness_center,
@@ -73,9 +61,7 @@ class FortuneDetailedMetadata {
         '세트 수',
         '반복 횟수',
         '조깅 거리(km)',
-        '휴식 시간(분)',
-      ],
-    ),
+        '휴식 시간(분)']),
     'seat': LuckyNumberCategory(
       title: '좌석 번호',
       icon: Icons.event_seat,
@@ -83,10 +69,7 @@ class FortuneDetailedMetadata {
       examples: [
         '영화관 좌석',
         '대중교통 좌석',
-        '식당 테이블',
-      ],
-    ),
-  };
+        '식당 테이블'])};
 
   static const Map<String, LuckyColorCategory> luckyColors = {
     'outfit': LuckyColorCategory(
@@ -97,9 +80,7 @@ class FortuneDetailedMetadata {
         '상의 메인 컬러',
         '하의 매칭 컬러',
         '액세서리 포인트',
-        '신발 색상',
-      ],
-    ),
+        '신발 색상']),
     'digital': LuckyColorCategory(
       title: '디지털 테마',
       icon: Icons.phone_android,
@@ -108,9 +89,7 @@ class FortuneDetailedMetadata {
         '폰 배경화면',
         '앱 테마 색상',
         '노트북 배경',
-        '스마트워치 페이스',
-      ],
-    ),
+        '스마트워치 페이스']),
     'beauty': LuckyColorCategory(
       title: '뷰티 컬러',
       icon: Icons.face_retouching_natural,
@@ -119,9 +98,7 @@ class FortuneDetailedMetadata {
         '립스틱 컬러',
         '아이섀도우',
         '네일 아트',
-        '헤어 액세서리',
-      ],
-    ),
+        '헤어 액세서리']),
     'stationery': LuckyColorCategory(
       title: '문구류 색상',
       icon: Icons.edit,
@@ -130,9 +107,7 @@ class FortuneDetailedMetadata {
         '펜 색상',
         '노트 커버',
         '포스트잇',
-        '하이라이터',
-      ],
-    ),
+        '하이라이터']),
     'interior': LuckyColorCategory(
       title: '인테리어 포인트',
       icon: Icons.home,
@@ -141,9 +116,7 @@ class FortuneDetailedMetadata {
         '쿠션 색상',
         '화분 색상',
         '조명 색온도',
-        '커튼 색상',
-      ],
-    ),
+        '커튼 색상']),
     'sns': LuckyColorCategory(
       title: 'SNS 테마',
       icon: Icons.photo_camera,
@@ -152,10 +125,7 @@ class FortuneDetailedMetadata {
         '프로필 배경',
         '포스팅 필터',
         '스토리 배경',
-        '하이라이트 커버',
-      ],
-    ),
-  };
+        '하이라이트 커버'])};
 
   static const Map<String, LuckyFoodCategory> luckyFoods = {
     'breakfast': LuckyFoodCategory(
@@ -166,9 +136,7 @@ class FortuneDetailedMetadata {
         '시리얼 종류',
         '빵 종류',
         '음료 추천',
-        '과일 조합',
-      ],
-    ),
+        '과일 조합']),
     'lunch': LuckyFoodCategory(
       title: '점심 추천',
       icon: Icons.lunch_dining,
@@ -177,9 +145,7 @@ class FortuneDetailedMetadata {
         '한식 메뉴',
         '중식 메뉴',
         '일식 메뉴',
-        '양식 메뉴',
-      ],
-    ),
+        '양식 메뉴']),
     'snack': LuckyFoodCategory(
       title: '간식 타임',
       icon: Icons.cookie,
@@ -188,9 +154,7 @@ class FortuneDetailedMetadata {
         '과자류',
         '과일',
         '디저트',
-        '음료',
-      ],
-    ),
+        '음료']),
     'dinner': LuckyFoodCategory(
       title: '저녁 메뉴',
       icon: Icons.dinner_dining,
@@ -199,9 +163,7 @@ class FortuneDetailedMetadata {
         '회식 메뉴',
         '데이트 메뉴',
         '가족 외식',
-        '혼밥 추천',
-      ],
-    ),
+        '혼밥 추천']),
     'delivery': LuckyFoodCategory(
       title: '배달 음식',
       icon: Icons.delivery_dining,
@@ -210,9 +172,7 @@ class FortuneDetailedMetadata {
         '치킨/피자',
         '중국집',
         '족발/보쌈',
-        '일식/초밥',
-      ],
-    ),
+        '일식/초밥']),
     'beverage': LuckyFoodCategory(
       title: '음료 추천',
       icon: Icons.local_cafe,
@@ -221,9 +181,7 @@ class FortuneDetailedMetadata {
         '커피 종류',
         '차 종류',
         '주스/스무디',
-        '알코올',
-      ],
-    ),
+        '알코올']),
     'convenience': LuckyFoodCategory(
       title: '편의점 꿀조합',
       icon: Icons.store,
@@ -232,10 +190,7 @@ class FortuneDetailedMetadata {
         '김밥 조합',
         '라면 토핑',
         '간단 요리',
-        '음료 믹스',
-      ],
-    ),
-  };
+        '음료 믹스'])};
 
   static const Map<String, LuckyItemCategory> luckyItems = {
     'work': LuckyItemCategory(
@@ -246,9 +201,7 @@ class FortuneDetailedMetadata {
         '명함 지갑',
         '고급 펜',
         '노트/다이어리',
-        'USB/보조배터리',
-      ],
-    ),
+        'USB/보조배터리']),
     'date': LuckyItemCategory(
       title: '데이트 아이템',
       icon: Icons.favorite,
@@ -257,9 +210,7 @@ class FortuneDetailedMetadata {
         '향수',
         '액세서리',
         '손수건',
-        '민트/껌',
-      ],
-    ),
+        '민트/껌']),
     'exercise': LuckyItemCategory(
       title: '운동 용품',
       icon: Icons.sports_handball,
@@ -268,9 +219,7 @@ class FortuneDetailedMetadata {
         '운동화',
         '이어폰',
         '수건',
-        '보충제',
-      ],
-    ),
+        '보충제']),
     'beauty': LuckyItemCategory(
       title: '뷰티 아이템',
       icon: Icons.face,
@@ -279,9 +228,7 @@ class FortuneDetailedMetadata {
         '손거울',
         '빗/브러시',
         '향수',
-        '핸드크림',
-      ],
-    ),
+        '핸드크림']),
     'digital': LuckyItemCategory(
       title: '디지털 액세서리',
       icon: Icons.devices,
@@ -290,9 +237,7 @@ class FortuneDetailedMetadata {
         '폰케이스',
         '에어팟 케이스',
         '스마트워치 밴드',
-        '노트북 파우치',
-      ],
-    ),
+        '노트북 파우치']),
     'fashion': LuckyItemCategory(
       title: '패션 소품',
       icon: Icons.watch,
@@ -301,9 +246,7 @@ class FortuneDetailedMetadata {
         '시계',
         '안경/선글라스',
         '모자',
-        '스카프',
-      ],
-    ),
+        '스카프']),
     'car': LuckyItemCategory(
       title: '차량 용품',
       icon: Icons.directions_car,
@@ -312,9 +255,7 @@ class FortuneDetailedMetadata {
         '방향제',
         '키링',
         '썬바이저',
-        '휴대폰 거치대',
-      ],
-    ),
+        '휴대폰 거치대']),
     'hobby': LuckyItemCategory(
       title: '취미 용품',
       icon: Icons.palette,
@@ -323,9 +264,7 @@ class FortuneDetailedMetadata {
         '책/만화',
         '게임 아이템',
         '악기 픽',
-        '스케치북',
-      ],
-    ),
+        '스케치북']),
     'sleep': LuckyItemCategory(
       title: '수면 용품',
       icon: Icons.bedtime,
@@ -334,9 +273,7 @@ class FortuneDetailedMetadata {
         '베개',
         '아로마 오일',
         '수면등',
-        '이어플러그',
-      ],
-    ),
+        '이어플러그']),
     'charm': LuckyItemCategory(
       title: '부적/장신구',
       icon: Icons.star,
@@ -345,10 +282,7 @@ class FortuneDetailedMetadata {
         '팔찌',
         '목걸이',
         '반지',
-        '키홀더',
-      ],
-    ),
-  };
+        '키홀더'])};
 }
 
 class LuckyNumberCategory {
@@ -361,8 +295,7 @@ class LuckyNumberCategory {
     required this.title,
     required this.icon,
     required this.description,
-    required this.examples,
-  });
+    required this.examples});
 }
 
 class LuckyColorCategory {
@@ -375,8 +308,7 @@ class LuckyColorCategory {
     required this.title,
     required this.icon,
     required this.description,
-    required this.examples,
-  });
+    required this.examples});
 }
 
 class LuckyFoodCategory {
@@ -389,8 +321,7 @@ class LuckyFoodCategory {
     required this.title,
     required this.icon,
     required this.description,
-    required this.examples,
-  });
+    required this.examples});
 }
 
 class LuckyItemCategory {
@@ -403,8 +334,7 @@ class LuckyItemCategory {
     required this.title,
     required this.icon,
     required this.description,
-    required this.examples,
-  });
+    required this.examples});
 }
 
 class DetailedLuckyItem {
@@ -421,8 +351,7 @@ class DetailedLuckyItem {
     required this.reason,
     this.timeRange,
     this.situation,
-    this.priority,
-  });
+    this.priority});
 
   factory DetailedLuckyItem.fromJson(Map<String, dynamic> json) {
     return DetailedLuckyItem(
@@ -431,8 +360,7 @@ class DetailedLuckyItem {
       reason: json['reason'],
       timeRange: json['time_range'],
       situation: json['situation'],
-      priority: json['priority'],
-    );
+      priority: json['priority']);
   }
 
   Map<String, dynamic> toJson() {
@@ -442,7 +370,6 @@ class DetailedLuckyItem {
       'reason': null,
       if (timeRange != null) 'time_range': null,
       if (situation != null) 'situation': null,
-      if (priority != null) 'priority': null,
-    };
+      if (priority != null) 'priority': null};
   }
 }

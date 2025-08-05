@@ -111,6 +111,5 @@ final fortuneTypeCountsProvider = Provider<Map<String, int>>((ref) {
   return statsAsync.when(
     data: (stats) => stats?.fortuneTypeCount ?? {},
     loading: () => {},
-    error: (_, __) => {},
-  );
+    error: (_, __) => {});
 });

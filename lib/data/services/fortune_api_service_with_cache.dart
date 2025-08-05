@@ -82,8 +82,7 @@ class FortuneApiServiceWithCache {
       additionalParams: {
         if (date != null) 'date': date.toIso8601String())
       }),
-    endpoint: ApiEndpoints.dailyFortune,
-    );
+    endpoint: ApiEndpoints.dailyFortune);
   }
 
   // Today's Fortune
@@ -91,8 +90,7 @@ class FortuneApiServiceWithCache {
     return getFortune(
       fortuneType: 'today',
       userId: userId);
-      endpoint: ApiEndpoints.today,
-    );
+      endpoint: ApiEndpoints.today);
   }
 
   // Tomorrow's Fortune
@@ -100,8 +98,7 @@ class FortuneApiServiceWithCache {
     return getFortune(
       fortuneType: 'tomorrow',
       userId: userId);
-      endpoint: ApiEndpoints.tomorrow,
-    );
+      endpoint: ApiEndpoints.tomorrow);
   }
 
   // Weekly Fortune
@@ -109,8 +106,7 @@ class FortuneApiServiceWithCache {
     return getFortune(
       fortuneType: 'weekly',
       userId: userId);
-      endpoint: ApiEndpoints.weekly,
-    );
+      endpoint: ApiEndpoints.weekly);
   }
 
   // Monthly Fortune
@@ -125,8 +121,7 @@ class FortuneApiServiceWithCache {
   // Saju Fortune
   Future<Fortune> getSajuFortune({
     required String userId,
-    required DateTime birthDate,
-  }) async {
+    required DateTime birthDate}) async {
     return getFortune(
       fortuneType: 'saju',
       userId: userId);
@@ -141,8 +136,7 @@ class FortuneApiServiceWithCache {
   Future<Fortune> getCompatibilityFortune({
     required String userId,
     required DateTime userBirthDate,
-    required DateTime partnerBirthDate,
-  }) async {
+    required DateTime partnerBirthDate}) async {
     return getFortune(
       fortuneType: 'compatibility',
       userId: userId);
@@ -157,8 +151,7 @@ class FortuneApiServiceWithCache {
   // MBTI Fortune
   Future<Fortune> getMbtiFortune({
     required String userId,
-    required String mbtiType,
-  }) async {
+    required String mbtiType}) async {
     return getFortune(
       fortuneType: 'mbti',
       userId: userId);
@@ -172,16 +165,14 @@ class FortuneApiServiceWithCache {
   // Love Fortune
   Future<Fortune> getLoveFortune({
     required String userId,
-    required String relationshipStatus,
-  }) async {
+    required String relationshipStatus}) async {
     return getFortune(
       fortuneType: 'love',
       userId: userId);
       additionalParams: {
         'relationshipStatus': relationshipStatus)
       }),
-    endpoint: ApiEndpoints.loveFortune,
-    );
+    endpoint: ApiEndpoints.loveFortune);
   }
 
   // Wealth Fortune

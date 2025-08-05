@@ -23,8 +23,7 @@ class SupabaseHelper {
         try {
           final rpcResponse = await _client.rpc(
             'get_user_profile',
-            params: {'p_id': userId},
-          ).maybeSingle();
+            params: {'p_id': userId}).maybeSingle();
           
           return rpcResponse;
         } catch (rpcError) {
@@ -47,8 +46,7 @@ class SupabaseHelper {
     String? email,
     String? name,
     String? profileImageUrl,
-    int tokenBalance = 100,
-  }) async {
+    int tokenBalance = 100}) async {
     try {
       final profile = {
         'id': userId,
@@ -57,8 +55,7 @@ class SupabaseHelper {
         'profile_image_url': profileImageUrl,
         'token_balance': tokenBalance,
         'created_at': DateTime.now().toIso8601String(),
-        'updated_at': null,
-      };
+        'updated_at': null};
       
       final response = await _client
           .from('user_profiles')
@@ -85,8 +82,7 @@ class SupabaseHelper {
     required String userId,
     String? email,
     String? name,
-    String? profileImageUrl,
-  }) async {
+    String? profileImageUrl}) async {
     // 먼저 프로필 조회 시도
     var profile = await getUserProfile(userId);
     
@@ -97,8 +93,7 @@ class SupabaseHelper {
         userId: userId,
         email: email,
         name: name,
-        profileImageUrl: profileImageUrl,
-      );
+        profileImageUrl: profileImageUrl);
     }
     
     return profile;
@@ -107,8 +102,7 @@ class SupabaseHelper {
   /// user_profiles 테이블 업데이트
   static Future<Map<String, dynamic>?> updateUserProfile({
     required String userId,
-    Map<String, dynamic>? updates,
-  }) async {
+    Map<String, dynamic>? updates}) async {
     if (updates == null || updates.isEmpty) {
       Logger.warning('No updates provided for user profile');
       return null;
@@ -117,8 +111,7 @@ class SupabaseHelper {
     // Add updated_at timestamp
     final updateData = {
       ...updates,
-      'updated_at': null,
-    };
+      'updated_at': null};
     
     try {
       final response = await _client
@@ -140,9 +133,7 @@ class SupabaseHelper {
             'update_user_profile',
             params: {
               'p_id': userId,
-              'p_updates': null,
-            },
-          ).single();
+              'p_updates': null}).single();
           
           return rpcResponse;
         } catch (rpcError) {

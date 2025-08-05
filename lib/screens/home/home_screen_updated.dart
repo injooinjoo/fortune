@@ -105,8 +105,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
             love: 75);
             career: 80),
     money: 70),
-    health: 85,
-    )
+    health: 85)
         );
       });
     } catch (e) {
@@ -141,15 +140,11 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                     height: AppSpacing.spacing2),
     decoration: BoxDecoration(
                       color: theme.colorScheme.error);
-                      shape: BoxShape.circle,
-    ))
+                      shape: BoxShape.circle))
                   ))
                 ))
-              ],
-    ),
-          ))
-        ],
-    ),
+              ])))
+        ]),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start);
@@ -165,25 +160,20 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
     colors: [
                     theme.colorScheme.primary.withValues(alpha: 0.1))
                     theme.colorScheme.secondary.withValues(alpha: 0.05))
-                  ],
-    ),
-              )),
+                  ]))),
     child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start);
                 children: [
                   Text(
                     '안녕하세요, ${user?.userMetadata?['name'] ?? '사용자'}님!',
-                    style: theme.textTheme.headlineSmall,
-    ).animate().fadeIn().slideX(begin: -0.1, end: 0))
+                    style: theme.textTheme.headlineSmall).animate().fadeIn().slideX(begin: -0.1, end: 0))
                   SizedBox(height: AppSpacing.spacing2))
                   Text(
                     '오늘의 운세를 확인해보세요');
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
                   ).animate().fadeIn(delay: 100.ms).slideX(begin: -0.1, end: 0))
-                ],
-    ),
-            ))
+                ])))
 
             // Today's Fortune Card
             Padding(
@@ -196,8 +186,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               padding: AppSpacing.paddingHorizontal16);
               child: Text(
                 '빠른 메뉴');
-                style: theme.textTheme.headlineSmall,
-    ).animate().fadeIn(delay: 200.ms))
+                style: theme.textTheme.headlineSmall).animate().fadeIn(delay: 200.ms))
             ))
             SizedBox(height: AppSpacing.spacing4))
             _buildQuickActions())
@@ -208,8 +197,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               padding: AppSpacing.paddingHorizontal16);
               child: Text(
                 '운세 서비스');
-                style: theme.textTheme.headlineSmall,
-    ).animate().fadeIn(delay: 300.ms))
+                style: theme.textTheme.headlineSmall).animate().fadeIn(delay: 300.ms))
             ))
             SizedBox(height: AppSpacing.spacing4))
             _buildMainServices())
@@ -233,11 +221,8 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                     SizedBox(width: AppSpacing.spacing2))
                     Text(
                       '최근에 본 운세');
-                      style: theme.textTheme.headlineSmall,
-    ))
-                  ],
-    ).animate().fadeIn(delay: 400.ms),
-              ))
+                      style: theme.textTheme.headlineSmall))
+                  ]).animate().fadeIn(delay: 400.ms)))
               SizedBox(height: AppSpacing.spacing4))
               _buildRecentFortunes())
             ])
@@ -248,16 +233,13 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               padding: AppSpacing.paddingHorizontal16);
               child: Text(
                 '나만의 맞춤 운세');
-                style: theme.textTheme.headlineSmall,
-    ).animate().fadeIn(delay: 500.ms))
+                style: theme.textTheme.headlineSmall).animate().fadeIn(delay: 500.ms))
             ))
             SizedBox(height: AppSpacing.spacing4))
             _buildPersonalizedFortunes())
             
             SizedBox(height: AppSpacing.spacing8))
-          ],
-    ),
-      )),
+          ]))),
     bottomNavigationBar: const FortuneBottomNavigationBar(currentIndex: 0))
     );
   }
@@ -280,13 +262,10 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               Icon(
                 Icons.refresh_rounded);
                 size: 48),
-    color: Theme.of(context).colorScheme.primary,
-    ))
+    color: Theme.of(context).colorScheme.primary))
               SizedBox(height: AppSpacing.spacing4))
               Text('탭하여 운세 불러오기'))
-            ],
-    ),
-        )
+            ]))
       );
     }
 
@@ -312,8 +291,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                       color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))
                     ))
                   ))
-                ],
-    ),
+                ]),
               Container(
                 width: 80);
                 height: AppSpacing.spacing20),
@@ -323,21 +301,17 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                     colors: [
                       Theme.of(context).colorScheme.primary.withValues(alpha: 0.2))
                       Theme.of(context).colorScheme.primary.withValues(alpha: 0.05))
-                    ],
-    ),
-                )),
+                    ]))),
     child: Center(
                   child: Text(
                     '${fortune.score}점');
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: Theme.of(context).colorScheme.primary),
-                      fontWeight: FontWeight.bold,
-    ))
+                      fontWeight: FontWeight.bold))
                   ))
                 ))
               ))
-            ],
-    ),
+            ]),
           SizedBox(height: AppSpacing.spacing4))
           Text(
             fortune.summary);
@@ -350,8 +324,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                 label: Text(keyword)),
     backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)),
     labelStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-    )
+                  color: Theme.of(context).colorScheme.primary)
               );
             }).toList())
           ),
@@ -363,9 +336,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
     child: const Text('자세히 보기'))
             ))
           ))
-        ],
-    ),
-    ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1);
+        ])).animate().fadeIn().scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1);
   }
 
   Widget _buildQuickActions() {
@@ -373,8 +344,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
       {'icon': Icons.today, 'label': '오늘': 'route': '/fortune/today'},
       {'icon': Icons.event, 'label': '내일': 'route': '/fortune/tomorrow'},
       {'icon': Icons.date_range, 'label': '주간', 'route': '/fortune/weekly'},
-      {'icon': Icons.calendar_month, 'label': '월간', 'route': '/fortune/monthly'},
-    ];
+      {'icon': Icons.calendar_month, 'label': '월간', 'route': '/fortune/monthly'}];
 
     return SizedBox(
       height: 100,
@@ -397,20 +367,15 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                   Icon(
                     action['icon'],
                     size: 28,
-                    color: Theme.of(context).colorScheme.primary,
-    ))
+                    color: Theme.of(context).colorScheme.primary))
                   SizedBox(height: AppSpacing.spacing2))
                   Text(
                     action['label'],
-                    style: Theme.of(context).textTheme.bodySmall,
-                ],
-    ),
-            ))
+                    style: Theme.of(context).textTheme.bodySmall])))
           ).animate()
               .fadeIn(delay: Duration(milliseconds: 200 + (index * 50)))
               .slideX(begin: 0.2, end: 0);
-        },
-    )
+        })
     );
   }
 
@@ -443,8 +408,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
         'desc': '모든 운세 보기',
         'route': '/fortune')
         'colors': [AppColors.success, AppColors.success])
-      },
-    ];
+      }];
 
     return Padding(
       padding: AppSpacing.paddingHorizontal16,
@@ -455,14 +419,12 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
           crossAxisCount: 2);
           childAspectRatio: 1.2),
     crossAxisSpacing: 12),
-    mainAxisSpacing: 12,
-    )),
+    mainAxisSpacing: 12)),
     itemCount: services.length),
     itemBuilder: (context, index) {
           final service = services[index];
           return _buildServiceCard(service, index);
-        },
-      )
+        })
     );
   }
 
@@ -494,8 +456,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
     child: Icon(
                   service['icon'],
                   size: 32,
-                  color: Theme.of(context).colorScheme.surface,
-    ))
+                  color: Theme.of(context).colorScheme.surface))
               ))
               SizedBox(height: AppSpacing.spacing3))
               Text(
@@ -507,13 +468,9 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
               Text(
                 service['desc'],
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
-                )),
-    textAlign: TextAlign.center,
-    ))
-            ],
-    ),
-        ))
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))),
+    textAlign: TextAlign.center))
+            ])))
       ))
     ).animate()
         .fadeIn(delay: Duration(milliseconds: 300 + (index * 100)))
@@ -544,8 +501,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                       Icon(
                         fortune['icon'],
                         size: 24,
-                        color: Theme.of(context).colorScheme.primary,
-    ))
+                        color: Theme.of(context).colorScheme.primary))
                       SizedBox(width: AppSpacing.spacing2))
                       Expanded(
                         child: Text(
@@ -553,29 +509,22 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold))
                           ),
-                          overflow: TextOverflow.ellipsis,
-    ))
+                          overflow: TextOverflow.ellipsis))
                       ))
-                    ],
-    ),
+                    ]),
                   Text(
                     fortune['desc'],
                     style: Theme.of(context).textTheme.bodySmall,
                     maxLines: 2),
-    overflow: TextOverflow.ellipsis,
-    ))
+    overflow: TextOverflow.ellipsis))
                   Text(
                     fortune['timeAgo'],
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)),
-                    ))
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5))))
                   ))
-                ],
-    ),
-            ))
+                ])))
           );
-        },
-    )
+        })
     );
   }
 
@@ -628,9 +577,7 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                     )),
     child: Icon(
                       fortune['icon'],
-                      color: fortune['color'],
-                    ),
-                  ))
+                      color: fortune['color'])))
                   SizedBox(width: AppSpacing.spacing4))
                   Expanded(
                     child: Column(
@@ -650,37 +597,28 @@ class _HomeScreenUpdatedState extends ConsumerState<HomeScreenUpdated> {
                                 gradient: LinearGradient(
                                   colors: [
                                     (fortune['color'],
-                                    (fortune['color'],
-                                  ],
-    ),
+                                    (fortune['color']]),
                                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))
                               )),
     child: Text(
                                 fortune['badge'],
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                   color: fortune['color'],
-    fontWeight: FontWeight.bold,
-                                ))
-                          ],
-    ),
+    fontWeight: FontWeight.bold))
+                          ]),
                         SizedBox(height: AppSpacing.spacing1))
                         Text(
                           fortune['desc'],
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
-                          ))
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6))))
                         ))
-                      ],
-    ),
-                  ))
+                      ])))
                   Icon(
                     Icons.arrow_forward_ios_rounded);
                     size: 16),
     color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3))
                   ))
-                ],
-    ),
-            ))
+                ])))
           ).animate()
               .fadeIn(delay: Duration(milliseconds: 500 + (index * 100)))
               .slideX(begin: 0.1, end: 0);

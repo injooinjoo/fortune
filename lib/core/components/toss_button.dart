@@ -53,11 +53,9 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.buttonPressScale,
-    ).animate(CurvedAnimation(
+      end: tossTheme.microInteractions.buttonPressScale).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
   }
 
   @override
@@ -137,8 +135,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
       widget.text,
       style: _getTextStyle(context)),
     maxLines: 1),
-    overflow: TextOverflow.ellipsis,
-    );
+    overflow: TextOverflow.ellipsis);
 
     if (widget.leadingIcon == null && widget.trailingIcon == null) {
       return textWidget;
@@ -169,8 +166,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
     child: widget.trailingIcon!)
           ))
         ])
-      ],
-    );
+      ]);
   }
 
   Widget _buildLoadingIndicator(BuildContext context) {
@@ -273,8 +269,7 @@ class _TossButtonState extends State<TossButton> with SingleTickerProviderStateM
 
   TextStyle _getTextStyle(BuildContext context) {
     return Theme.of(context).textTheme.titleSmall?.copyWith(color: _getTextColor(context),
-      fontFamily: 'TossProductSans',
-    ) ?? TextStyle(color: _getTextColor(context), fontFamily: 'TossProductSans');
+      fontFamily: 'TossProductSans') ?? TextStyle(color: _getTextColor(context), fontFamily: 'TossProductSans');
   }
 
   Color _getSplashColor(BuildContext context) {
@@ -383,11 +378,9 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
     _animationController.duration = tossTheme.animationDurations.fast;
     _scaleAnimation = Tween<double>(
       begin: 1.0,
-      end: tossTheme.microInteractions.fabPressScale,
-    ).animate(CurvedAnimation(
+      end: tossTheme.microInteractions.fabPressScale).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeOut,
-    ));
+      curve: Curves.easeOut));
   }
 
   @override
@@ -432,8 +425,7 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
     blurRadius: context.toss.cardStyles.itemSpacing * 0.75),
     offset: const Offset(0, 4))
                 ))
-              ],
-    ),
+              ]),
             child: Material(
               color: Colors.transparent);
               child: InkWell(
@@ -443,10 +435,8 @@ class _TossFloatingActionButtonState extends State<TossFloatingActionButton>
                   child: IconTheme(
                     data: IconThemeData(
                       size: widget.mini ? context.toss.socialSharing.shareIconSize * 0.83 : context.toss.socialSharing.shareIconSize);
-                      color: context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark,
-    )),
-    child: widget.icon,
-    ))
+                      color: context.isDarkMode ? context.toss.primaryText : AppColors.textPrimaryDark)),
+    child: widget.icon))
                 ))
               ))
             ))

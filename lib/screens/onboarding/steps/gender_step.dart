@@ -17,8 +17,7 @@ class GenderStep extends StatefulWidget {
     super.key,
     required this.onGenderChanged,
     required this.onNext,
-    required this.onBack,
-  });
+    required this.onBack});
 
   @override
   State<GenderStep> createState() => _GenderStepState();
@@ -43,8 +42,7 @@ class _GenderStepState extends State<GenderStep> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5,
-      ),
+        horizontal: context.fortuneTheme.formStyles.inputPadding.horizontal * 1.5),
       child: Column(
         children: [
           // Back button
@@ -53,9 +51,7 @@ class _GenderStepState extends State<GenderStep> {
             child: IconButton(
               onPressed: widget.onBack,
               icon: Icon(Icons.arrow_back, color: context.fortuneTheme.primaryText),
-              padding: EdgeInsets.zero,
-            ),
-          ),
+              padding: EdgeInsets.zero)),
           
           Expanded(
             child: Column(
@@ -67,29 +63,21 @@ class _GenderStepState extends State<GenderStep> {
                     fontSize: Theme.of(context).textTheme.headlineLarge!.fontSize,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
-                    color: context.fortuneTheme.primaryText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate().fadeIn(
-                  duration: 600.ms,
-                ).shimmer(
+                    color: context.fortuneTheme.primaryText),
+                  textAlign: TextAlign.center).animate().fadeIn(
+                  duration: 600.ms).shimmer(
                   duration: 1200.ms,
-                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3),
-                ),
+                  color: AppColors.textPrimaryDark.withValues(alpha: 0.3)),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal),
                 
                 Text(
                   '음양의 조화를 살펴볼게요',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: context.fortuneTheme.subtitleText,
-                  ),
-                  textAlign: TextAlign.center,
-                ).animate(
-                  delay: 300.ms,
-                ).fadeIn(
-                  duration: 600.ms,
-                ),
+                    color: context.fortuneTheme.subtitleText),
+                  textAlign: TextAlign.center).animate(
+                  delay: 300.ms).fadeIn(
+                  duration: 600.ms),
                 
                 SizedBox(height: context.fortuneTheme.formStyles.inputPadding.horizontal * 3),
                 
@@ -100,47 +88,30 @@ class _GenderStepState extends State<GenderStep> {
                     _buildGenderButton(
                       gender: Gender.female,
                       label: '여자',
-                      isSelected: _selectedGender == Gender.female,
-                    ).animate(
-                      delay: 500.ms,
-                    ).fadeIn(
-                      duration: 600.ms,
-                    ).scale(
+                      isSelected: _selectedGender == Gender.female).animate(
+                      delay: 500.ms).fadeIn(
+                      duration: 600.ms).scale(
                       begin: Offset(0.8, 0.8),
                       end: Offset(1, 1),
-                      curve: Curves.easeOutBack,
-                    ),
+                      curve: Curves.easeOutBack),
                     
                     SizedBox(width: context.fortuneTheme.formStyles.inputPadding.horizontal),
                     
                     _buildGenderButton(
                       gender: Gender.male,
                       label: '남자',
-                      isSelected: _selectedGender == Gender.male,
-                    ).animate(
-                      delay: 600.ms,
-                    ).fadeIn(
-                      duration: 600.ms,
-                    ).scale(
+                      isSelected: _selectedGender == Gender.male).animate(
+                      delay: 600.ms).fadeIn(
+                      duration: 600.ms).scale(
                       begin: Offset(0.8, 0.8),
                       end: Offset(1, 1),
-                      curve: Curves.easeOutBack,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                      curve: Curves.easeOutBack)])]))]));
   }
 
   Widget _buildGenderButton({
     required Gender gender,
     required String label,
-    required bool isSelected,
-  }) {
+    required bool isSelected}) {
     return InkWell(
       onTap: () => _selectGender(gender),
       borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 8),
@@ -152,28 +123,19 @@ class _GenderStepState extends State<GenderStep> {
           borderRadius: BorderRadius.circular(context.fortuneTheme.formStyles.inputBorderRadius + 8),
           border: Border.all(
             color: isSelected ? Theme.of(context).primaryColor : context.fortuneTheme.dividerColor,
-            width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth,
-          ),
-        ),
+            width: isSelected ? context.fortuneTheme.formStyles.focusBorderWidth : context.fortuneTheme.formStyles.inputBorderWidth)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               gender == Gender.female ? Icons.female : Icons.male,
               size: context.fortuneTheme.socialSharing.shareButtonSize - 8,
-              color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText,
-            ),
+              color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.subtitleText),
             SizedBox(height: context.fortuneTheme.formStyles.inputPadding.vertical * 0.5),
             Text(
               label,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.secondaryText,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                color: isSelected ? AppColors.textPrimaryDark : context.fortuneTheme.secondaryText))])));
   }
 }

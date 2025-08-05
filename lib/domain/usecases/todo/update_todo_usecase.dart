@@ -37,8 +37,7 @@ class UpdateTodoUseCase implements UseCase<Todo, UpdateTodoParams> {
       final dueDay = DateTime(
         params.dueDate!.year,
         params.dueDate!.month,
-        params.dueDate!.day,
-      );
+        params.dueDate!.day);
       
       if (dueDay.isBefore(today)) {
         return const Left(ValidationFailure('Due date cannot be in the past'));
@@ -53,8 +52,7 @@ class UpdateTodoUseCase implements UseCase<Todo, UpdateTodoParams> {
       priority: params.priority,
       status: params.status,
       dueDate: params.dueDate,
-      tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList(),
-    );
+      tags: params.tags?.where((tag) => tag.trim().isNotEmpty).toList());
   }
 }
 
@@ -76,8 +74,7 @@ class UpdateTodoParams extends Equatable {
     this.priority,
     this.status,
     this.dueDate,
-    this.tags,
-  });
+    this.tags});
 
   @override
   List<Object?> get props => [
@@ -88,6 +85,5 @@ class UpdateTodoParams extends Equatable {
         priority,
         status,
         dueDate,
-        tags,
-      ];
+        tags];
 }

@@ -16,8 +16,7 @@ class EmptyStateWidget extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.action,
-    this.iconSize = 80,
-  });
+    this.iconSize = 80});
 
   @override
   Widget build(BuildContext context) {
@@ -34,40 +33,27 @@ class EmptyStateWidget extends StatelessWidget {
               padding: AppSpacing.paddingAll24,
               decoration: BoxDecoration(
                 color: colorScheme.surfaceVariant.withValues(alpha: 0.3),
-                shape: BoxShape.circle,
-              ),
+                shape: BoxShape.circle),
               child: Icon(
                 icon,
                 size: iconSize,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-              ),
-            ),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6))),
             SizedBox(height: AppSpacing.spacing6),
             Text(
               title,
               style: theme.textTheme.titleLarge?.copyWith(
                 color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.center,
-            ),
+                fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center),
             if (subtitle != null) ...[
               SizedBox(height: AppSpacing.spacing2),
               Text(
                 subtitle!,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ]
+                  color: colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center)]
             if (action != null) ...[
               SizedBox(height: AppSpacing.spacing6),
-              action!,
-            ],
-          ],
-        ),
-      ),
-    );
+              action!]])));
   }
 }

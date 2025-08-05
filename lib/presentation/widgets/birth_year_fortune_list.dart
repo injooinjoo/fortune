@@ -15,8 +15,7 @@ class BirthYearFortuneList extends StatelessWidget {
     Key? key,
     required this.fortunes,
     this.title,
-    this.currentUserZodiac,
-  )}) : super(key: key);
+    this.currentUserZodiac)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +30,7 @@ class BirthYearFortuneList extends StatelessWidget {
       l: AppSpacing.spacing1, vertical: AppSpacing.spacing2),
             child: Text(
               title!),
-        style: Theme.of(context).textTheme.bodyMedium,
-        ]
+        style: Theme.of(context).textTheme.bodyMedium]
         Container(
           height: AppSpacing.spacing24 * 1.25),
               child: ListView.builder(,
@@ -44,8 +42,7 @@ class BirthYearFortuneList extends StatelessWidget {
               
               return BirthYearFortuneCard(
     fortune: fortune,
-                isHighlighted: isCurrentUser,
-  )})))
+                isHighlighted: isCurrentUser)})))
       ]
     );
   }
@@ -59,8 +56,7 @@ class BirthYearFortuneCard extends StatelessWidget {
     {
     Key? key,
     required this.fortune,
-    this.isHighlighted = false,
-  )}) : super(key: key);
+    this.isHighlighted = false)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +78,14 @@ class BirthYearFortuneCard extends StatelessWidget {
             gradient: isHighlighted
                 ? LinearGradient(
                     begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-        ),
+      end: Alignment.bottomRight),
         colors: [
                       AppTheme.primaryColor.withValues(alpha: 0.1),
-                      AppTheme.primaryColor.withValues(alpha: 0.05),
-                    ]
+                      AppTheme.primaryColor.withValues(alpha: 0.05)]
                   ,
                 : null),
-    child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
               Row(
                 children: [
@@ -108,8 +101,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                         if (isHighlighted)
                           Text(
                             '나의 띠'),
-        style: Theme.of(context).textTheme.bodyMedium,
-                      ])))
+        style: Theme.of(context).textTheme.bodyMedium])))
                 ])
               SizedBox(height: AppSpacing.spacing3),
               Expanded(
@@ -137,8 +129,7 @@ class BirthYearFortuneCard extends StatelessWidget {
                       SizedBox(width: AppSpacing.spacing1),
                       Expanded(
                         child: Text(
-                          fortune.advice!,
-        ),
+                          fortune.advice!),
         style: Theme.of(context).textTheme.bodyMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis)))
@@ -160,8 +151,7 @@ class BirthYearFortuneCard extends StatelessWidget {
       '원숭이': '🐵',
       '닭': '🐓',
       '개': '🐕',
-      '돼지': '🐖',
-    };
+      '돼지': '🐖'};
 
     return Container(
       width: AppDimensions.buttonHeightMedium,
@@ -172,8 +162,7 @@ class BirthYearFortuneCard extends StatelessWidget {
         shape: BoxShape.circle),
       child: Center(
         child: Text(
-          zodiacEmojis[zodiac] ?? '🔮',
-        ),
+          zodiacEmojis[zodiac] ?? '🔮'),
         style: Theme.of(context).textTheme.bodyMedium
     );
   }
@@ -186,8 +175,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
   const BirthYearFortuneDetailCard(
     {
     Key? key,
-    required this.fortune,
-  )}) : super(key: key);
+    required this.fortune)}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -197,9 +185,8 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       borderRadius: AppDimensions.borderRadiusLarge),
       child: Padding(,
       padding: AppSpacing.paddingAll20,
-        child: Column(,
-      crossAxisAlignment: CrossAxisAlignment.start,
-              ),
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start),
               children: [
             Row(
               children: [
@@ -215,8 +202,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                       SizedBox(height: AppSpacing.spacing1),
                       Text(
                         '특별 운세'),
-        style: Theme.of(context).textTheme.bodyMedium,
-                    ])))
+        style: Theme.of(context).textTheme.bodyMedium])))
               ])
             SizedBox(height: AppSpacing.spacing5),
             Text(
@@ -246,15 +232,12 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            '특별 조언',
-        ),
+                            '특별 조언'),
         style: Theme.of(context).textTheme.bodyMedium,
                           SizedBox(height: AppSpacing.spacing1),
                           Text(
-                            fortune.advice!,
-              ),
-              style: Theme.of(context).textTheme.bodyMedium,
-                        ])))
+                            fortune.advice!),
+              style: Theme.of(context).textTheme.bodyMedium])))
                   ])))
             ]
           ])))))
@@ -273,8 +256,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
       '원숭이': '🐵',
       '닭': '🐓',
       '개': '🐕',
-      '돼지': '🐖',
-    };
+      '돼지': '🐖'};
 
     return Container(
       width: AppDimensions.buttonHeightLarge,
@@ -285,8 +267,7 @@ class BirthYearFortuneDetailCard extends StatelessWidget {
         shape: BoxShape.circle),
       child: Center(
         child: Text(
-          zodiacEmojis[zodiac] ?? '🔮',
-        ),
+          zodiacEmojis[zodiac] ?? '🔮'),
         style: Theme.of(context).textTheme.bodyMedium
     );
   }

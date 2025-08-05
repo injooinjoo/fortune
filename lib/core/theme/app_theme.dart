@@ -57,9 +57,7 @@ class AppTheme {
           titleTextStyle: TextStyle(
             color: Color(0xFF1F2937),
             fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+            fontWeight: FontWeight.w600)),
         fontFamily: AppTypography.fontFamily,
         textTheme: AppTypography.getTextTheme(color: AppColors.textPrimary),
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -72,9 +70,7 @@ class AppTheme {
               borderRadius: BorderRadius.circular(
                   8), // Instagram uses less rounded corners
             ),
-            textStyle: AppTypography.button,
-          ),
-        ),
+            textStyle: AppTypography.button)),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.background,
@@ -82,32 +78,24 @@ class AppTheme {
               const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6), // Instagram style,
-            borderSide: const BorderSide(color: AppColors.divider, width: 1),
-          ),
+            borderSide: const BorderSide(color: AppColors.divider, width: 1)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: AppColors.divider, width: 1),
-          ),
+            borderSide: const BorderSide(color: AppColors.divider, width: 1)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: AppColors.textPrimary, width: 1),
-          ),
+            borderSide: BorderSide(color: AppColors.textPrimary, width: 1)),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: const BorderSide(color: AppColors.error, width: 1),
-          ),
+            borderSide: const BorderSide(color: AppColors.error, width: 1)),
           labelStyle: TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 14,
-          ),
+            fontSize: 14),
           hintStyle: TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 14,
-          ),
-        ),
+            fontSize: 14)),
         extensions: <ThemeExtension<dynamic>>[
-          FortuneThemeExtension.light,
-        ]);
+          FortuneThemeExtension.light]);
   }
 
   static ThemeData darkTheme() {
@@ -132,9 +120,7 @@ class AppTheme {
           titleTextStyle: TextStyle(
             color: AppColors.textPrimaryDark,
             fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+            fontWeight: FontWeight.w600)),
         fontFamily: AppTypography.fontFamily,
         textTheme: AppTypography.getTextTheme(color: AppColors.textPrimaryDark),
         elevatedButtonTheme: ElevatedButtonThemeData(
@@ -147,9 +133,7 @@ class AppTheme {
               borderRadius: BorderRadius.circular(
                   8), // Instagram uses less rounded corners
             ),
-            textStyle: AppTypography.button,
-          ),
-        ),
+            textStyle: AppTypography.button)),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.surfaceDark,
@@ -157,31 +141,23 @@ class AppTheme {
               const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: AppColors.dividerDark, width: 1),
-          ),
+            borderSide: BorderSide(color: AppColors.dividerDark, width: 1)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: AppColors.dividerDark, width: 1),
-          ),
+            borderSide: BorderSide(color: AppColors.dividerDark, width: 1)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: AppColors.textPrimaryDark, width: 1),
-          ),
+            borderSide: BorderSide(color: AppColors.textPrimaryDark, width: 1)),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),
-            borderSide: BorderSide(color: AppColors.errorDark, width: 1),
-          ),
+            borderSide: BorderSide(color: AppColors.errorDark, width: 1)),
           labelStyle: TextStyle(
             color: AppColors.textSecondaryDark,
-            fontSize: 14,
-          ),
+            fontSize: 14),
           hintStyle: TextStyle(
             color: AppColors.textSecondaryDark,
-            fontSize: 14,
-          ),
-        ),
+            fontSize: 14)),
         extensions: <ThemeExtension<dynamic>>[
-          FortuneThemeExtension.dark,
-        ]);
+          FortuneThemeExtension.dark]);
   }
 }

@@ -16,8 +16,7 @@ class ChartCard extends StatelessWidget {
     this.subtitle,
     this.action,
     this.height,
-    this.padding,
-  });
+    this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -38,32 +37,18 @@ class ChartCard extends StatelessWidget {
                     Text(
                       title,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     if (subtitle != null) ...[
                       const SizedBox(height: 4),
                       Text(
                         subtitle!,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              if (action != null) action!,
-            ],
-          ),
+                              .withValues(alpha: 0.6)))]])),
+              if (action != null) action!]),
           const SizedBox(height: 20),
           SizedBox(
             height: height ?? 300,
-            child: chart,
-          ),
-        ],
-      ),
-    );
+            child: chart)]));
   }
 }

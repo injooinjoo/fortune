@@ -74,8 +74,7 @@ final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
       email: user.email ?? 'unknown@example.com',
       name: user.userMetadata?['name'] as String? ?? 
             user.userMetadata?['full_name'],
-      profileImageUrl: user.userMetadata?['avatar_url'],
-    );
+      profileImageUrl: user.userMetadata?['avatar_url']);
     
     Logger.info('Profile data returned: ${profileData != null}');
     if (profileData != null) {
@@ -115,14 +114,12 @@ class AuthService {
   Future<AuthResponse> signUp({
     required String email,
     required String password,
-    Map<String, dynamic>? metadata,
-  }) async {
+    Map<String, dynamic>? metadata}) async {
     try {
       final response = await _client.auth.signUp(
         email: email,
         password: password,
-        data: metadata,
-      );
+        data: metadata);
       
       if (response.user != null) {
         Logger.securityCheckpoint('up: ${response.user!.id}');
@@ -137,13 +134,11 @@ class AuthService {
   
   Future<AuthResponse> signIn({
     required String email,
-    required String password,
-  }) async {
+    required String password}) async {
     try {
       final response = await _client.auth.signInWithPassword(
         email: email,
-        password: password,
-      );
+        password: password);
       
       if (response.user != null) {
         Logger.securityCheckpoint('in: ${response.user!.id}');
@@ -187,16 +182,13 @@ class AuthService {
   Future<UserResponse> updateUser({
     String? email,
     String? password,
-    Map<String, dynamic>? metadata,
-  }) async {
+    Map<String, dynamic>? metadata}) async {
     try {
       final response = await _client.auth.updateUser(
         UserAttributes(
           email: email,
           password: password,
-          data: metadata,
-        ),
-      );
+          data: metadata));
       
       Logger.info('User updated');
       return response;
@@ -217,8 +209,7 @@ class AuthService {
         email: user.email ?? 'unknown@example.com',
         name: user.userMetadata?['name'] as String? ?? 
               user.userMetadata?['full_name'],
-        profileImageUrl: user.userMetadata?['avatar_url'],
-      );
+        profileImageUrl: user.userMetadata?['avatar_url']);
       
       if (profileData != null) {
         return UserProfile.fromJson(profileData);

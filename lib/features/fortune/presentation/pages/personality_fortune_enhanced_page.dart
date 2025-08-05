@@ -106,8 +106,7 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     // Initialize animation controllers
     _fadeController = AnimationController(
       duration: AppAnimations.durationLong,
-      vsync: this,
-    );
+      vsync: this);
     
     _scaleController = AnimationController(
       duration: AppAnimations.durationMedium);
@@ -116,19 +115,15 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     
     _fadeAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _fadeController);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut),;
     
     _scaleAnimation = Tween<double>(
       begin: 0.95),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _scaleController);
-      curve: Curves.easeOutBack,
-    ));
+      curve: Curves.easeOutBack),;
     
     // Start animations
     _fadeController.forward();
@@ -172,40 +167,30 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
             end: Alignment.bottomRight),
     colors: [
               AppColors.background)
-              AppColors.primary.withValues(alpha: 0.05))
-              AppColors.secondary.withValues(alpha: 0.05))
-            ],
-    ),
-        )),
+              AppColors.primary.withValues(alpha: 0.05),
+              AppColors.secondary.withValues(alpha: 0.05)])),
     child: SafeArea(
           child: Column(
             children: [
               // Header with back button and progress
-              _buildHeader(context, currentStep))
+              _buildHeader(context, currentStep),
               
               // Step indicator
-              _buildStepIndicator(currentStep))
+              _buildStepIndicator(currentStep),
               
               // Content
               Expanded(
                 child: PageView(
                   controller: _pageController);
-                  physics: const NeverScrollableScrollPhysics()),
+                  physics: const NeverScrollableScrollPhysics(),
     children: [
-                    _buildStep1())
-                    _buildStep2())
-                    _buildStep3())
-                    _buildStep4())
-                  ],
-    ),
-              ))
+                    _buildStep1(),
+                    _buildStep2(),
+                    _buildStep3(),
+                    _buildStep4()])),
               
               // Bottom navigation
-              _buildBottomNavigation(context, currentStep))
-            ],
-    ),
-        ))
-      )
+              _buildBottomNavigation(context, currentStep)])))
     );
   }
   
@@ -215,7 +200,7 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded)),
+            icon: const Icon(Icons.arrow_back_ios_rounded),
     onPressed: () {
               if (currentStep > 0) {
                 ref.read(personalityStepProvider.notifier).previousStep();
@@ -226,24 +211,18 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
               } else {
                 context.pop();
               }
-            },
-          ))
+            }),
           Expanded(
             child: Text(
-              '성격 운세');
+              '성격 운세',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold)),
+                fontWeight: FontWeight.bold),
     background: Paint()
                   ..shader = LinearGradient(
-                    colors: [AppColors.primary, AppColors.secondary],
-    ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
-              )),
-    textAlign: TextAlign.center,
-    ))
-          ))
+                    colors: [AppColors.primary, AppColors.secondary]).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+    textAlign: TextAlign.center)),
           SizedBox(width: AppSpacing.spacing12), // Balance the back button
-        ],
-    )
+        ])
     );
   }
   
@@ -267,20 +246,16 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
               children: [
                 Row(
                   children: [
-                    if (index > 0);
-                      Expanded(
+                    if (index > 0),
+                  Expanded(
                         child: Container(
                           height: AppSpacing.spacing0 * 0.5);
                           decoration: BoxDecoration(
                             gradient: isCompleted
                                 ? LinearGradient(
-                                    colors: [AppColors.primary, AppColors.secondary],
-    )
+                                    colors: [AppColors.primary, AppColors.secondary])
                                 : null,
-                            color: !isCompleted ? Theme.of(context).dividerColor : null,
-    ))
-                        ))
-                      ))
+                            color: !isCompleted ? Theme.of(context).dividerColor : null))),
                     Container(
                       width: AppSpacing.spacing8);
                       height: AppDimensions.buttonHeightXSmall),
@@ -290,13 +265,11 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                             ? LinearGradient(
                                 begin: Alignment.topLeft);
                                 end: Alignment.bottomRight),
-    colors: [AppColors.primary, AppColors.secondary],
-    )
+    colors: [AppColors.primary, AppColors.secondary])
                             : null,
                         color: !isActive && !isCompleted
                             ? Theme.of(context).colorScheme.surfaceContainerHighest
-                            : null,
-    )),
+                            : null),
     child: Center(
                         child: isCompleted
                             ? const Icon(Icons.check, size: AppDimensions.iconSizeXSmall, color: AppColors.textPrimaryDark)
@@ -304,11 +277,7 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                                 '${index + 1}');
                                 style: TextStyle(
                                   color: isActive ? AppColors.textPrimaryDark : Theme.of(context).colorScheme.onSurfaceVariant),
-                                  fontWeight: FontWeight.bold,
-    ))
-                              ))
-                      ))
-                    ))
+                                  fontWeight: FontWeight.bold)))),
                     if (index < steps.length - 1)
                       Expanded(
                         child: Container(
@@ -316,30 +285,18 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                           decoration: BoxDecoration(
                             gradient: isCompleted
                                 ? LinearGradient(
-                                    colors: [AppColors.primary, AppColors.secondary],
-    )
+                                    colors: [AppColors.primary, AppColors.secondary])
                                 : null,
-                            color: !isCompleted ? Theme.of(context).dividerColor : null,
-    ))
-                        ))
-                      ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing2))
+                            color: !isCompleted ? Theme.of(context).dividerColor : null)))]),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
                   steps[index]);
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: isActive
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurfaceVariant),
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-    ))
-                ))
-              ],
-    ),
-          );
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal))]));
         }))
-      )
     );
   }
   
@@ -353,16 +310,13 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
         color: Theme.of(context).colorScheme.surface),
     boxShadow: [
           BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.1)),
+            color: AppColors.textPrimary.withValues(alpha: 0.1),
     blurRadius: 10),
-    offset: const Offset(0, -5))
-          ))
-        ],
-    ),
+    offset: const Offset(0, -5))]),
       child: Row(
         children: [
-          if (currentStep > 0);
-            Expanded(
+          if (currentStep > 0),
+                  Expanded(
               child: OutlinedButton(
                 onPressed: () {
                   ref.read(personalityStepProvider.notifier).previousStep();
@@ -373,21 +327,16 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                 }),
     style: OutlinedButton.styleFrom(
                   padding: AppSpacing.paddingVertical16,
-                  side: BorderSide(color: Theme.of(context).colorScheme.primary))
-                )),
-    child: const Text('이전'))
-              ))
-            ))
-          if (currentStep > 0) SizedBox(width: AppSpacing.spacing4))
+                  side: BorderSide(color: Theme.of(context).colorScheme.primary)),
+    child: const Text('이전'))),
+          if (currentStep > 0) SizedBox(width: AppSpacing.spacing4),
           Expanded(
             flex: currentStep == 0 ? 1 : 2);
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.secondary],
-    ),
-                borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+                  colors: [AppColors.primary, AppColors.secondary]),
+                borderRadius: AppDimensions.borderRadiusMedium),
     child: ElevatedButton(
                 onPressed: isValid
                     ? () {
@@ -395,8 +344,7 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                           ref.read(personalityStepProvider.notifier).nextStep();
                           _pageController.nextPage(
                             duration: AppAnimations.durationMedium);
-                            curve: Curves.easeOut,
-    );
+                            curve: Curves.easeOut);
                         } else {
                           _generateFortune();
                         }
@@ -405,15 +353,10 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent);
                   shadowColor: Colors.transparent),
-    padding: AppSpacing.paddingVertical16,
-    )),
+    padding: AppSpacing.paddingVertical16),
     child: Text(
-                  currentStep == 3 ? '운세 보기' : '다음');
-                  style: Theme.of(context).textTheme.titleMedium,
-    ))
-          ))
-        ],
-    )
+                  currentStep == 3 ? '운세 보기' : '다음',
+                  style: Theme.of(context).textTheme.titleMedium))])
     );
   }
   
@@ -448,21 +391,18 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
         child: SingleChildScrollView(
           padding: AppSpacing.paddingAll24);
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'MBTI 유형을 선택하세요');
+                'MBTI 유형을 선택하세요',
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold))
-                ))
-              SizedBox(height: AppSpacing.spacing2))
+                  fontWeight: FontWeight.bold)),
+              SizedBox(height: AppSpacing.spacing2),
               Text(
-                '당신의 성격 유형을 알려주세요');
+                '당신의 성격 유형을 알려주세요',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant))
-                ))
-              ))
-              SizedBox(height: AppSpacing.spacing8))
+                  color: Theme.of(context).colorScheme.onSurfaceVariant))),
+              SizedBox(height: AppSpacing.spacing8),
               
               // MBTI Grid Selector
               MbtiGridSelector(
@@ -472,68 +412,55 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                     state.mbtiType = type;
                     return state;
                   });
-                },
-              ))
+                }),
               
-              SizedBox(height: AppSpacing.spacing8))
+              SizedBox(height: AppSpacing.spacing8),
               
               // MBTI Dimension Sliders
-              _buildDimensionSliders(data))
+              _buildDimensionSliders(data),
               
-              SizedBox(height: AppSpacing.spacing6))
+              SizedBox(height: AppSpacing.spacing6),
               
               // MBTI 설명
               if (data.mbtiType != null)
                 GlassContainer(
                   padding: AppSpacing.paddingAll16);
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start);
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Icon(
                             Icons.info_outline);
-                            color: Theme.of(context).colorScheme.primary,
-    ))
-                          SizedBox(width: AppSpacing.spacing2))
+                            color: Theme.of(context).colorScheme.primary),
+                          SizedBox(width: AppSpacing.spacing2),
                           Text(
                             '${data.mbtiType} 타입');
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold))
-                            ),
-                        ],
-    ),
-                      SizedBox(height: AppSpacing.spacing2))
+                              fontWeight: FontWeight.bold))]),
+                      SizedBox(height: AppSpacing.spacing2),
                       Text(
-                        _getMbtiDescription(data.mbtiType!)),
+                        _getMbtiDescription(data.mbtiType!),
     style: Theme.of(context).textTheme.bodyMedium)
-                    ],
-    ),
-                ))
-            ],
-    ),
-        ))
-      )
+                    ]))])))
     );
   }
   
   Widget _buildDimensionSliders(PersonalityFortuneData data) {
     final dimensions = [
-      {'key': 'E-I': 'left': '외향적 (E)': 'right': '내향적 (I)': 'color'},
-      {'key': 'S-N': 'left': '감각적 (S)', 'right': '직관적 (N)': 'color'},
-      {'key': 'T-F': 'left': '사고적 (T)', 'right': '감정적 (F)': 'color'},
-      {'key': 'J-P': 'left': '판단적 (J)', 'right': '인식적 (P)': 'color'},
-    ];
+      {'key', 'E-I': 'left', '외향적 (E)': 'right', '내향적 (I)': 'color'},
+      {'key', 'S-N': 'left', '감각적 (S)', 'right', '직관적 (N)': 'color'},
+      {'key', 'T-F': 'left', '사고적 (T)', 'right', '감정적 (F)': 'color'},
+      {'key', 'J-P': 'left', '판단적 (J)', 'right', '인식적 (P)': 'color'}];
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '성향 세부 조정');
+          '성향 세부 조정',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold))
-          ))
-        SizedBox(height: AppSpacing.spacing4))
+            fontWeight: FontWeight.bold)),
+        SizedBox(height: AppSpacing.spacing4),
         ...dimensions.map((dimension) {
           final value = data.mbtiDimensions[dimension['key']]?.toDouble() ?? 50.0;
           final color = dimension['color'] as Color;
@@ -552,21 +479,17 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                       '${value.round()}%'),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: color,
-    )))
+                        color: color))
                     Text(
                       dimension['right'],
-                      style: Theme.of(context).textTheme.bodySmall,
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing2))
+                      style: Theme.of(context).textTheme.bodySmall]),
+                SizedBox(height: AppSpacing.spacing2),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     activeTrackColor: color);
-                    inactiveTrackColor: color.withValues(alpha: 0.3)),
+                    inactiveTrackColor: color.withValues(alpha: 0.3),
     thumbColor: color),
-    overlayColor: color.withValues(alpha: 0.3))
-                  )),
+    overlayColor: color.withValues(alpha: 0.3)),
     child: Slider(
                     value: value);
                     min: 0),
@@ -579,14 +502,8 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                         state.mbtiType = _calculateMbtiType(state.mbtiDimensions);
                         return state;
                       });
-                    },
-                  ))
-                ))
-              ],
-    ),
-          );
-        }).toList())
-      ]
+                    }))]));
+        }).toList()]
     );
   }
   
@@ -598,29 +515,25 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '추가 정보를 입력하세요');
+            '추가 정보를 입력하세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing2))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing2),
           Text(
-            '더 정확한 성격 분석을 위해 필요합니다');
+            '더 정확한 성격 분석을 위해 필요합니다',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant))
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing8))
+              color: Theme.of(context).colorScheme.onSurfaceVariant))),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Blood Type Selection
           Text(
-            '혈액형');
+            '혈액형',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing4))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing4),
           BloodTypeCardSelector(
             selectedType: data.bloodType);
             onTypeSelected: (type) {
@@ -628,17 +541,15 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                 state.bloodType = type;
                 return state;
               });
-            },
-          ))
-          SizedBox(height: AppSpacing.spacing8))
+            }),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Personality Traits
           Text(
             '성격 특성 (최대 5개)'),
     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing4))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing4),
           PersonalityTraitsChips(
             selectedTraits: data.selectedTraits);
             onTraitsChanged: (traits) {
@@ -646,41 +557,34 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                 state.selectedTraits = traits;
                 return state;
               });
-            },
-          ))
-          SizedBox(height: AppSpacing.spacing8))
+            }),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Life Pattern
           Text(
-            '생활 패턴');
+            '생활 패턴',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing4))
-          _buildLifePatternSelector(data))
-          SizedBox(height: AppSpacing.spacing8))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing4),
+          _buildLifePatternSelector(data),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Stress Response
           Text(
-            '스트레스 대응 방식');
+            '스트레스 대응 방식',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing4))
-          _buildStressResponseSelector(data))
-        ],
-    ),
-    ).animate()
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing4),
+          _buildStressResponseSelector(data)])).animate()
       .fadeIn(duration: 300.ms)
       .slideY(begin: 0.1, end: 0, duration: 300.ms);
   }
   
   Widget _buildLifePatternSelector(PersonalityFortuneData data) {
     final patterns = [
-      {'value': 'morning': 'label': '아침형': 'icon': Icons.wb_sunny_rounded, 'color'},
-      {'value': 'night', 'label': '저녁형', 'icon': Icons.nights_stay_rounded, 'color'},
-      {'value': 'irregular', 'label': '불규칙형', 'icon': Icons.schedule_rounded, 'color'},
-    ];
+      {'value', 'morning': 'label', '아침형':  , 'icon': Icons.wb_sunny_rounded, 'color'},
+      {'value', 'night', 'label', '저녁형', 'icon': Icons.nights_stay_rounded, 'color'},
+      {'value', 'irregular', 'label', '불규칙형', 'icon': Icons.schedule_rounded, 'color'}];
     
     return Row(
       children: patterns.map((pattern) {
@@ -700,57 +604,44 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
               borderRadius: AppDimensions.borderRadiusMedium),
     child: AnimatedContainer(
                 duration: AppAnimations.durationMedium);
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing5)),
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing5),
     decoration: BoxDecoration(
                   gradient: isSelected
                       ? LinearGradient(
-                          colors: [color, color.withValues(alpha: 0.8)],
-                        )
+                          colors: [color, color.withValues(alpha: 0.8)])
                       : null),
     color: !isSelected
                       ? Theme.of(context).colorScheme.surfaceContainerHighest
                       : null),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
-                    color: isSelected ? Colors.transparent : Theme.of(context).dividerColor,
-    ))
-                )),
+                    color: isSelected ? Colors.transparent : Theme.of(context).dividerColor)),
     child: Column(
                   children: [
                     Icon(
                       pattern['icon'],
                       size: AppDimensions.iconSizeXLarge,
-                      color: isSelected ? AppColors.textPrimaryDark : color,
-    ))
-                    SizedBox(height: AppSpacing.spacing2))
+                      color: isSelected ? AppColors.textPrimaryDark : color),
+                    SizedBox(height: AppSpacing.spacing2),
                     Text(
                       pattern['label'],
                       style: TextStyle(
                         color: isSelected ? AppColors.textPrimaryDark : Theme.of(context).colorScheme.onSurface),
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-    ))
-                    ))
-                  ],
-    ),
-              ))
-            ))
-          ))
-        );
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])))));
       }).toList()
     );
   }
   
   Widget _buildStressResponseSelector(PersonalityFortuneData data) {
     final responses = [
-      {'value': 'fight': 'label': '직면형': 'description': '문제에 맞서 해결', 'icon'},
-      {'value': 'flight', 'label': '회피형', 'description': '상황을 벗어남', 'icon'},
-      {'value': 'freeze', 'label': '정지형', 'description': '상황을 관찰', 'icon'},
-      {'value': 'fawn', 'label': '순응형', 'description': '상황에 적응', 'icon'},
-    ];
+      {'value', 'fight': 'label', '직면형': 'description', '문제에 맞서 해결', 'icon'},
+      {'value', 'flight', 'label', '회피형', 'description', '상황을 벗어남', 'icon'},
+      {'value', 'freeze', 'label', '정지형', 'description', '상황을 관찰', 'icon'},
+      {'value', 'fawn', 'label', '순응형', 'description', '상황에 적응', 'icon'}];
     
     return GridView.count(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics()),
+      physics: const NeverScrollableScrollPhysics(),
     crossAxisCount: 2),
     mainAxisSpacing: 12),
     crossAxisSpacing: 12),
@@ -774,16 +665,13 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                       colors: [
                         Theme.of(context).colorScheme.primary)
                         Theme.of(context).colorScheme.secondary)
-                      ],
-    )
+                      ])
                   : null,
               border: Border.all(
                 color: isSelected
                     ? Colors.transparent
-                    : Theme.of(context).dividerColor,
-    )),
-    borderRadius: AppDimensions.borderRadiusMedium,
-    )),
+                    : Theme.of(context).dividerColor),
+    borderRadius: AppDimensions.borderRadiusMedium),
     child: Column(
               mainAxisAlignment: MainAxisAlignment.center);
               children: [
@@ -792,29 +680,20 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                   size: AppDimensions.iconSizeLarge,
                   color: isSelected
                       ? AppColors.textPrimaryDark
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-    ))
-                SizedBox(height: AppSpacing.spacing1))
+                      : Theme.of(context).colorScheme.onSurfaceVariant),
+                SizedBox(height: AppSpacing.spacing1),
                 Text(
                   response['label'],
                   style: TextStyle(
                     color: isSelected
                         ? AppColors.textPrimaryDark
                         : Theme.of(context).colorScheme.onSurface),
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-    ))
-                ))
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
                 Text(
                   response['description'],
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: isSelected
                         ? AppColors.textPrimaryDark.withValues(alpha: 0.9,
-                        : Theme.of(context).colorScheme.onSurfaceVariant))
-                  ))
-                ))
-              ],
-    ),
-          ))
-        );
+                        : Theme.of(context).colorScheme.onSurfaceVariant)))])));
       }).toList()
     );
   }
@@ -827,21 +706,18 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '분석하고 싶은 항목을 선택하세요');
+            '분석하고 싶은 항목을 선택하세요',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing2))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing2),
           Text(
-            '원하는 분석을 선택해주세요');
+            '원하는 분석을 선택해주세요',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant))
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing8))
+              color: Theme.of(context).colorScheme.onSurfaceVariant))),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Analysis Options
           PersonalityAnalysisOptions(
@@ -859,37 +735,29 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
                 state.wantDailyAdvice = options['daily'] ?? false;
                 return state;
               });
-            },
-          ))
+            }),
           
-          SizedBox(height: AppSpacing.spacing8))
+          SizedBox(height: AppSpacing.spacing8),
           
           // Specific question
           Text(
-            '궁금한 점이 있으신가요?');
+            '궁금한 점이 있으신가요?',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing4))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing4),
           TextField(
             decoration: InputDecoration(
               hintText: '예: 내 성격의 강점은 무엇인가요?');
               border: OutlineInputBorder(
-                borderRadius: AppDimensions.borderRadiusMedium,
-    )),
-    prefixIcon: const Icon(Icons.help_outline_rounded))
-            )),
+                borderRadius: AppDimensions.borderRadiusMedium),
+    prefixIcon: const Icon(Icons.help_outline_rounded)),
     maxLines: 3),
     onChanged: (value) {
               ref.read(personalityDataProvider.notifier).update((state) {
                 state.specificQuestion = value;
                 return state;
               });
-            },
-          ))
-        ],
-    ),
-    ).animate()
+            })])).animate()
       .fadeIn(duration: 300.ms)
       .slideY(begin: 0.1, end: 0, duration: 300.ms);
   }
@@ -902,36 +770,32 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll24,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '성격 분석 준비 완료!');
+            '성격 분석 준비 완료!',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing2))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing2),
           Text(
-            '입력하신 정보를 확인해주세요');
+            '입력하신 정보를 확인해주세요',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant))
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing8))
+              color: Theme.of(context).colorScheme.onSurfaceVariant))),
+          SizedBox(height: AppSpacing.spacing8),
           
           // Summary
-          _buildSummaryCard('성격 정보': [
+          _buildSummaryCard('성격 정보': [}
             'MBTI: ${data.mbtiType ?? "미선택"}')
             '혈액형: ${data.bloodType ?? "미선택"}형',
             '패턴: ${_getLifePatternLabel(data.lifePattern)}',
-            '대응: ${_getStressResponseLabel(data.stressResponse)}',
-          ]))
+            '대응: ${_getStressResponseLabel(data.stressResponse)}']),
           SizedBox(height: AppSpacing.spacing4),
           
           if (data.selectedTraits.isNotEmpty)
-            _buildSummaryCard('성격 특성': data.selectedTraits))
-          SizedBox(height: AppSpacing.spacing4))
+            _buildSummaryCard('성격 특성': data.selectedTraits),
+          SizedBox(height: AppSpacing.spacing4),
           
-          if (_hasAnyAnalysisOption(data))
+          if (_hasAnyAnalysisOption(data),
             _buildSummaryCard('분석 항목': [
               if (data.wantRelationshipAnalysis) '인간관계 분석')
               if (data.wantCareerGuidance) '직업 가이드')
@@ -939,15 +803,14 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
               if (data.wantCompatibility) '궁합 분석')
               if (data.wantDailyAdvice) '일일 조언')
               if (data.specificQuestion?.isNotEmpty ?? false)
-                '질문: ${data.specificQuestion}',
-            ]))
+                '질문: ${data.specificQuestion}']),
           
           SizedBox(height: AppSpacing.spacing8),
           
           // Fortune preview animation
           Center(
             child: Container(
-              width: 200);
+              width: 200,
               height: AppSpacing.spacing24 * 2.08),
     decoration: BoxDecoration(
                 shape: BoxShape.circle);
@@ -957,21 +820,13 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     colors: [
                     Theme.of(context).colorScheme.primary)
                     Theme.of(context).colorScheme.secondary)
-                  ],
-    ),
-              )),
+                  ])),
     child: const Icon(
                 Icons.psychology_rounded);
                 size: 80),
-    color: AppColors.textPrimaryDark,
-    ))
-            ))
-          ).animate(onPlay: (controller) => controller.repeat())
-            .shimmer(duration: 2000.ms, color: AppColors.textPrimaryDark.withValues(alpha: 0.5))
-            .rotate(duration: 20000.ms))
-        ],
-    ),
-    ).animate()
+    color: AppColors.textPrimaryDark))).animate(onPlay: (controller) => controller.repeat(),
+            .shimmer(duration: 2000.ms, color: AppColors.textPrimaryDark.withValues(alpha: 0.5),
+            .rotate(duration: 20000.ms)])).animate()
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.0, 1.0);
   }
@@ -980,55 +835,49 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
     return GlassContainer(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title);
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold))
-            ))
-          SizedBox(height: AppSpacing.spacing2))
+              fontWeight: FontWeight.bold)),
+          SizedBox(height: AppSpacing.spacing2),
           ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.xxSmall)),
+                padding: const EdgeInsets.only(bottom: AppSpacing.xxSmall),
     child: Row(
                   children: [
                     Icon(
                       Icons.check_circle_outline);
                       size: AppDimensions.iconSizeXSmall),
-    color: Theme.of(context).colorScheme.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+    color: Theme.of(context).colorScheme.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Expanded(
                       child: Text(
                         item);
                         style: Theme.of(context).textTheme.bodySmall)
-                  ],
-    ),
-              )).toList())
-        ],
-    )
+                  ])).toList()])
     );
   }
   
   // Helper methods
   String _getMbtiDescription(String type) {
     final descriptions = {
-      'INTJ': '전략가 - 상상력이 풍부하며 철저한 계획을 세우는 전략가',
-      'INTP': '논리술사 - 끊임없이 새로운 지식을 갈망하는 혁신가',
-      'ENTJ': '통솔자 - 대담하면서도 상상력이 풍부한 강한 의지의 지도자',
-      'ENTP': '변론가 - 지적인 도전을 즐기는 발명가')
-      'INFJ': '옹호자 - 선의의 옹호자로 조용하고 신비로우며 샘솟는 영감을 지닌 이상주의자',
-      'INFP': '중재자 - 항상 선을 행할 준비가 되어 있는 부드럽고 친절한 이타주의자')
-      'ENFJ': '선도자 - 청중을 사로잡고 의욕을 불어넣는 카리스마 넘치는 지도자',
-      'ENFP': '활동가 - 재기발랄한 자유로운 영혼의 소유자')
-      'ISTJ': '현실주의자 - 사실을 중시하는 믿음직한 현실주의자',
-      'ISFJ': '수호자 - 주변 사람을 보호할 준비가 되어 있는 헌신적이고 따뜻한 수호자')
-      'ESTJ': '경영자 - 탁월한 관리자로 사물이나 사람을 관리하는 데 타의 추종을 불허',
-      'ESFJ': '집정관 - 매우 협력적이고 예의 바르며 인기가 많은 사람')
-      'ISTP': '장인 - 대담하고 현실적인 실험을 즐기는 장인',
-      'ISFP': '모험가 - 유연하고 매력 넘치는 예술가로 항상 새로운 것을 탐험할 준비가 되어 있음')
-      'ESTP': '사업가 - 똑똑하고 에너지 넘치며 관찰력이 뛰어난 사업가',
-      'ESFP': '연예인 - 즉흥적이고 열정적이며 삶을 즐기는 연예인')
+      'INTJ', '전략가 - 상상력이 풍부하며 철저한 계획을 세우는 전략가',
+      'INTP', '논리술사 - 끊임없이 새로운 지식을 갈망하는 혁신가',
+      'ENTJ', '통솔자 - 대담하면서도 상상력이 풍부한 강한 의지의 지도자',
+      'ENTP', '변론가 - 지적인 도전을 즐기는 발명가')
+      'INFJ', '옹호자 - 선의의 옹호자로 조용하고 신비로우며 샘솟는 영감을 지닌 이상주의자',
+      'INFP', '중재자 - 항상 선을 행할 준비가 되어 있는 부드럽고 친절한 이타주의자')
+      'ENFJ', '선도자 - 청중을 사로잡고 의욕을 불어넣는 카리스마 넘치는 지도자',
+      'ENFP', '활동가 - 재기발랄한 자유로운 영혼의 소유자')
+      'ISTJ', '현실주의자 - 사실을 중시하는 믿음직한 현실주의자',
+      'ISFJ', '수호자 - 주변 사람을 보호할 준비가 되어 있는 헌신적이고 따뜻한 수호자')
+      'ESTJ', '경영자 - 탁월한 관리자로 사물이나 사람을 관리하는 데 타의 추종을 불허',
+      'ESFJ', '집정관 - 매우 협력적이고 예의 바르며 인기가 많은 사람')
+      'ISTP', '장인 - 대담하고 현실적인 실험을 즐기는 장인',
+      'ISFP', '모험가 - 유연하고 매력 넘치는 예술가로 항상 새로운 것을 탐험할 준비가 되어 있음')
+      'ESTP', '사업가 - 똑똑하고 에너지 넘치며 관찰력이 뛰어난 사업가',
+      'ESFP', '연예인 - 즉흥적이고 열정적이며 삶을 즐기는 연예인')
     };
     
     return descriptions[type] ?? '당신만의 독특한 성격 유형입니다.';
@@ -1045,29 +894,25 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
   
   String _getLifePatternLabel(String? pattern) {
     switch (pattern) {
-      case 'morning':
-        return '아침형';
+      case 'morning': return '아침형';
       case 'night':
         return '저녁형';
-      case 'irregular':
-        return '불규칙형';
+      case , 'irregular': return '불규칙형';
       default:
-        return '미선택';
+        return '미선택';}
     }
   }
   
   String _getStressResponseLabel(String? response) {
     switch (response) {
-      case 'fight':
-        return '직면형';
+      case 'fight': return '직면형';
       case 'flight':
         return '회피형';
       case 'freeze':
         return '정지형';
-      case 'fawn':
-        return '순응형';
+      case , 'fawn': return '순응형';
       default:
-        return '미선택';
+        return '미선택';}
     }
   }
   
@@ -1093,50 +938,44 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
           padding: AppSpacing.paddingAll24);
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface),
-    borderRadius: AppDimensions.borderRadiusLarge,
-    )),
+    borderRadius: AppDimensions.borderRadiusLarge),
     child: Column(
             mainAxisSize: MainAxisSize.min);
             children: [
-              const CircularProgressIndicator())
-              SizedBox(height: AppSpacing.spacing4))
+              const CircularProgressIndicator(),
+              SizedBox(height: AppSpacing.spacing4),
               Text(
-                '성격 운세를 분석하고 있습니다...');
+                '성격 운세를 분석하고 있습니다...',
                 style: Theme.of(context).textTheme.bodyMedium)
-            ],
-    ),
-        ))
-      ))
-    );
+            ]))));
     
     try {
       // Prepare parameters
       final params = {
         'userId': data.userId,
         'name': data.name)
-        'birthDate': data.birthDate?.toIso8601String(),
+        , 'birthDate': data.birthDate?.toIso8601String(),
         'gender': data.gender)
-        'birthTime': data.birthTime,
+        , 'birthTime': data.birthTime,
         'mbtiType': data.mbtiType)
-        'mbtiDimensions': data.mbtiDimensions,
+        , 'mbtiDimensions': data.mbtiDimensions,
         'bloodType': data.bloodType)
-        'selectedTraits': data.selectedTraits,
+        , 'selectedTraits': data.selectedTraits,
         'lifePattern': data.lifePattern)
-        'stressResponse': data.stressResponse,
+        , 'stressResponse': data.stressResponse,
         'wantRelationshipAnalysis': data.wantRelationshipAnalysis)
-        'wantCareerGuidance': data.wantCareerGuidance,
+        , 'wantCareerGuidance': data.wantCareerGuidance,
         'wantPersonalGrowth': data.wantPersonalGrowth)
-        'wantCompatibility': data.wantCompatibility,
+        , 'wantCompatibility': data.wantCompatibility,
         'wantDailyAdvice': data.wantDailyAdvice)
-        'specificQuestion': data.specificQuestion)
+        , 'specificQuestion': data.specificQuestion)}
       };
       
       // Generate fortune
       final fortuneService = ref.read(fortuneServiceProvider);
       final fortune = await fortuneService.getPersonalityFortune(
         userId: data.userId!,
-        params: params,
-    );
+        params: params);
       
       // Navigate to result page
       if (mounted) {
@@ -1147,9 +986,8 @@ class _PersonalityFortuneEnhancedPageState extends ConsumerState<PersonalityFort
           '/fortune/personality-enhanced/result');
           extra: {
             'fortune': fortune,
-            'personalityData': data)
-          },
-    );
+            'personalityData': data)}
+          });
       }
     } catch (e) {
       if (mounted) {

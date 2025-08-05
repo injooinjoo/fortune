@@ -15,16 +15,14 @@ class BatchFortuneState {
     this.results,
     this.error,
     this.currentPackage,
-    this.tokenSavings,
-  });
+    this.tokenSavings});
 
   BatchFortuneState copyWith({
     bool? isLoading,
     List<BatchFortuneResult>? results,
     String? error,
     BatchPackageType? currentPackage,
-    double? tokenSavings,
-  }) {
+    double? tokenSavings}) {
     return BatchFortuneState(
       isLoading: isLoading ?? this.isLoading,
       results: results ?? this.results,
@@ -76,8 +74,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
         'name': profileAsync?.name ?? '',
         'birth_date': profileAsync?.birthDate?.toIso8601String() ?? '',
         'gender': profileAsync?.gender ?? '',
-        'mbti': profileAsync?.mbtiType ?? '',
-      };
+        'mbti': profileAsync?.mbtiType ?? ''};
 
       final results = await _service.generateOnboardingFortunes(
         userId: user.id,
@@ -115,8 +112,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
         'name': profileAsync.name ?? '',
         'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
         'gender': profileAsync.gender ?? '',
-        'mbti': profileAsync.mbtiType ?? '',
-      } : null;
+        'mbti': profileAsync.mbtiType ?? ''} : null;
 
       final results = await _service.refreshDailyFortunes(
         userId: user.id,
@@ -154,8 +150,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
         'name': profileAsync.name ?? '',
         'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
         'gender': profileAsync.gender ?? '',
-        'mbti': profileAsync.mbtiType ?? '',
-      } : null;
+        'mbti': profileAsync.mbtiType ?? ''} : null;
 
       final results = await _service.generateBatchFortunesByPackage(
         userId: user.id,
@@ -194,8 +189,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
         'name': profileAsync.name ?? '',
         'birth_date': profileAsync.birthDate?.toIso8601String() ?? '',
         'gender': profileAsync.gender ?? '',
-        'mbti': profileAsync.mbtiType ?? '',
-      } : null;
+        'mbti': profileAsync.mbtiType ?? ''} : null;
 
       final results = await _service.generateBatchFortunesByTypes(
         userId: user.id,
@@ -212,7 +206,7 @@ class BatchFortuneNotifier extends StateNotifier<BatchFortuneState> {
 } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString());
+        error: e.toString(),;
 }
   }
 

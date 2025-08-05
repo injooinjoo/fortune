@@ -52,8 +52,7 @@ class Celebrity {
     this.description,
     this.keywords,
     this.nationality = '한국',
-    this.additionalInfo,
-  });
+    this.additionalInfo});
 
   // Calculate age
   int get age {
@@ -106,8 +105,7 @@ class Celebrity {
     String? description,
     List<String>? keywords,
     String? nationality,
-    Map<String, dynamic>? additionalInfo,
-  }) {
+    Map<String, dynamic>? additionalInfo}) {
     return Celebrity(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -120,8 +118,7 @@ class Celebrity {
       description: description ?? this.description,
       keywords: keywords ?? this.keywords,
       nationality: nationality ?? this.nationality,
-      additionalInfo: additionalInfo ?? this.additionalInfo,
-    );
+      additionalInfo: additionalInfo ?? this.additionalInfo);
   }
 }
 
@@ -142,6 +139,5 @@ class CelebrityFilter {
     this.maxAge,
     this.searchQuery,
     this.zodiacSign,
-    this.chineseZodiac,
-  });
+    this.chineseZodiac});
 }

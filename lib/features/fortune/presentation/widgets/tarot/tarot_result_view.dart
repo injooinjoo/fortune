@@ -27,8 +27,7 @@ class TarotResultView extends ConsumerStatefulWidget {
     this.readingResult,
     this.isLoading = false,
     this.onNewReading,
-    this.onShare,
-  }) : super(key: key);
+    this.onShare}) : super(key: key);
 
   @override
   ConsumerState<TarotResultView> createState() => _TarotResultViewState();
@@ -45,12 +44,10 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     super.initState();
     _entranceController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+      vsync: this);
     _entranceAnimation = CurvedAnimation(
       parent: _entranceController,
-      curve: Curves.easeOutCubic,
-    );
+      curve: Curves.easeOutCubic);
     _entranceController.forward();
   }
 
@@ -62,7 +59,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
 
   void _flipCard(int index) {
     print('Fortune cached');
-    print('state: ${_flippedCards[index] ?? false}'));
+    print('state: ${_flippedCards[index] ?? false}'),;
     setState(() {
       _flippedCards[index] = !(_flippedCards[index] ?? false);
     });
@@ -83,14 +80,13 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
     if (widget.isLoading) {
       print('[TarotResult] Showing loading widget');
       return const LoadingStateWidget(
-        message: '타로 해석 중...',
-      );
+        message: '타로 해석 중...');
     }
 
     return AnimatedBuilder(
       animation: _entranceAnimation,
       builder: (context, child) {
-        print('value: ${_entranceAnimation.value}'));
+        print('value: ${_entranceAnimation.value}'),;
         final opacityValue = _entranceAnimation.value;
         print('Fortune cached');
         if (opacityValue < 0.0 || opacityValue > 1.0) {
@@ -99,7 +95,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
         return Opacity(
           opacity: opacityValue.clamp(0.0, 1.0),
           child: Transform.translate(
-            offset: Offset(0, 20 * (1 - _entranceAnimation.value)),
+            offset: Offset(0, 20 * (1 - _entranceAnimation.value),
             child: Column(
               children: [
                 // Header
@@ -113,17 +109,11 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 // Reading result
                 if (widget.readingResult != null)
                   Expanded(
-                    child: _buildReadingResult(theme, fontScale),
-                  ),
+                    child: _buildReadingResult(theme, fontScale)),
                 
                 // Action buttons
-                _buildActionButtons(theme, fontScale),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+                _buildActionButtons(theme, fontScale)])));
+      });
   }
 
   Widget _buildHeader(ThemeData theme, double fontScale) {
@@ -133,9 +123,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           '타로 리딩 결과',
           style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
-            fontSize: 24 * fontScale,
-          ),
-        ),
+            fontSize: 24 * fontScale)),
         if (widget.question != null && widget.question!.isNotEmpty) ...[
           const SizedBox(height: 8),
           Text(
@@ -143,13 +131,8 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 16 * fontScale,
-              fontStyle: FontStyle.italic,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ],
-    );
+              fontStyle: FontStyle.italic),
+            textAlign: TextAlign.center)]]);
   }
 
   Widget _buildCardsDisplay(ThemeData theme, double fontScale) {
@@ -165,8 +148,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
           return Padding(
             padding: EdgeInsets.only(
               left: index == 0 ? 16 : 8,
-              right: index == widget.selectedCards.length - 1 ? 16 : 8,
-            ),
+              right: index == widget.selectedCards.length - 1 ? 16 : 8),
             child: Column(
               children: [
                 TarotCardWidget(
@@ -175,22 +157,14 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                   width: 100,
                   height: 150,
                   showFront: isFlipped,
-                  onTap: () => _flipCard(index),
-                ),
+                  onTap: () => _flipCard(index)),
                 const SizedBox(height: 8),
                 Text(
                   _getPositionLabel(index),
                   style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12 * fontScale,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+                    fontSize: 12 * fontScale))]));
+        }));
   }
 
   Widget _buildReadingResult(ThemeData theme, double fontScale) {
@@ -213,31 +187,20 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       Icon(
                         Icons.auto_awesome,
                         color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
+                        size: 24),
                       const SizedBox(width: 8),
                       Text(
                         '전체 해석',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18 * fontScale,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontSize: 18 * fontScale))]),
                   const SizedBox(height: 16),
                   Text(
                     result['overallInterpretation'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16 * fontScale,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-          ],
+                      height: 1.5))])),
+            const SizedBox(height: 16)],
           
           // Individual card interpretations
           if (result['cardInterpretations'] != null) ...[
@@ -245,9 +208,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               '카드별 해석',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: 18 * fontScale,
-              ),
-            ),
+                fontSize: 18 * fontScale)),
             const SizedBox(height: 16),
             ...List.generate(widget.selectedCards.length, (index) {
               final interpretation = result['cardInterpretations'][index];
@@ -267,44 +228,27 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                             height: 32,
                             decoration: BoxDecoration(
                               color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                              shape: BoxShape.circle,
-                            ),
+                              shape: BoxShape.circle),
                             child: Center(
                               child: Text(
                                 '${index + 1}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
+                                  color: theme.colorScheme.primary)))),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               _getPositionLabel(index),
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16 * fontScale,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                                fontSize: 16 * fontScale)))]),
                       const SizedBox(height: 12),
                       Text(
                         interpretation['meaning'] ?? '',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontSize: 14 * fontScale,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ],
+                          height: 1.4))])));
+            })],
           
           // Advice
           if (result['advice'] != null) ...[
@@ -314,9 +258,7 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
               gradient: LinearGradient(
                 colors: [
                   theme.colorScheme.secondary.withValues(alpha: 0.1),
-                  theme.colorScheme.primary.withValues(alpha: 0.1),
-                ],
-              ),
+                  theme.colorScheme.primary.withValues(alpha: 0.1)]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -325,34 +267,20 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                       Icon(
                         Icons.lightbulb_outline,
                         color: theme.colorScheme.secondary,
-                        size: 24,
-                      ),
+                        size: 24),
                       const SizedBox(width: 8),
                       Text(
                         '조언',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18 * fontScale,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontSize: 18 * fontScale))]),
                   const SizedBox(height: 16),
                   Text(
                     result['advice'],
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16 * fontScale,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
+                      height: 1.5))]))],
+          const SizedBox(height: 24)]));
   }
 
   Widget _buildActionButtons(ThemeData theme, double fontScale) {
@@ -360,23 +288,18 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          if (widget.onNewReading != null);
-            Expanded(
+          if (widget.onNewReading != null),
+                  Expanded(
               child: OutlinedButton.icon(
                 onPressed: widget.onNewReading,
                 icon: const Icon(Icons.refresh),
                 label: Text(
                   '새로운 리딩',
-                  style: TextStyle(fontSize: 16 * fontScale),
-                ),
+                  style: TextStyle(fontSize: 16 * fontScale)),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
+                    borderRadius: BorderRadius.circular(12))))),
           if (widget.onShare != null) ...[
             const SizedBox(width: 16),
             Expanded(
@@ -385,28 +308,18 @@ class _TarotResultViewState extends ConsumerState<TarotResultView>
                 icon: const Icon(Icons.share),
                 label: Text(
                   '공유하기',
-                  style: TextStyle(fontSize: 16 * fontScale),
-                ),
+                  style: TextStyle(fontSize: 16 * fontScale)),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
+                    borderRadius: BorderRadius.circular(12)))))]]));
   }
 
   String _getPositionLabel(int index) {
     switch (widget.spreadType) {
       case 'three':
         return ['과거', '현재', '미래'][index];
-      case 'celtic':
-        return [
+      case 'celtic': return [}
           '현재 상황',
           '도전/십자가',
           '먼 과거',

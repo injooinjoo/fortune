@@ -93,7 +93,7 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
       'monthlyGoal': _monthlyGoalController.text,
       'freelanceType': _freelanceType,
       'experience': _experience)
-      'challenges': _selectedChallenges)
+      , 'challenges': _selectedChallenges)}
     };
   }
 
@@ -104,27 +104,23 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
     return SingleChildScrollView(
       padding: AppSpacing.paddingAll16,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(
                       Icons.laptop_mac);
-                      color: theme.colorScheme.primary,
-    ))
-                    SizedBox(width: AppSpacing.spacing2))
+                      color: theme.colorScheme.primary),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
-                      '프리랜서 정보');
-                      style: theme.textTheme.titleLarge,
-    ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing5))
+                      '프리랜서 정보',
+                      style: theme.textTheme.titleLarge)]),
+                SizedBox(height: AppSpacing.spacing5),
                 
                 // Main Skill
                 TextField(
@@ -132,13 +128,10 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                   decoration: InputDecoration(
                     labelText: '주요 스킬/전문 분야');
                     hintText: '예: 웹 개발, 그래픽 디자인, 콘텐츠 마케팅'),
-    prefixIcon: const Icon(Icons.build)),
+    prefixIcon: const Icon(Icons.build),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-                SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium))),
+                SizedBox(height: AppSpacing.spacing4),
                 
                 // Monthly Goal (Optional)
                 TextField(
@@ -147,60 +140,47 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
     decoration: InputDecoration(
                     labelText: '월 목표 수입 (선택사항)'),
     hintText: '예: 500만원'),
-    prefixIcon: const Icon(Icons.attach_money)),
+    prefixIcon: const Icon(Icons.attach_money),
     border: OutlineInputBorder(
-                      borderRadius: AppDimensions.borderRadiusMedium,
-    ))
-                  ))
-                ))
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      borderRadius: AppDimensions.borderRadiusMedium)))])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Freelance Type
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '프리랜서 분야');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '프리랜서 분야',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _freelanceTypes.map((type) {
                     final isSelected = _freelanceType == type;
                     return ChoiceChip(
-                      label: Text(type)),
+                      label: Text(type),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
                           _freelanceType = selected ? type : null;
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Experience Level
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '프리랜서 경력');
-                  style: theme.textTheme.titleMedium,
-    ))
-                SizedBox(height: AppSpacing.spacing3))
+                  '프리랜서 경력',
+                  style: theme.textTheme.titleMedium),
+                SizedBox(height: AppSpacing.spacing3),
                 ...(_experienceLevels.map((level) {
                   final isSelected = _experience == level;
                   return InkWell(
@@ -212,18 +192,16 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                     borderRadius: AppDimensions.borderRadiusMedium),
     child: Container(
                       padding: AppSpacing.paddingAll16);
-                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall)),
+                      margin: const EdgeInsets.only(bottom: AppSpacing.xSmall),
     decoration: BoxDecoration(
                         color: isSelected
                             ? theme.colorScheme.primary.withValues(alpha: 0.1)
-                            : theme.colorScheme.surface.withValues(alpha: 0.3)),
+                            : theme.colorScheme.surface.withValues(alpha: 0.3),
     borderRadius: AppDimensions.borderRadiusMedium),
     border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))
-                        ))
-                      )),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2))),
     child: Row(
                         children: [
                           Icon(
@@ -232,53 +210,43 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                                 : Icons.radio_button_unchecked);
                             color: isSelected
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withValues(alpha: 0.5))
-                          ))
-                          SizedBox(width: AppSpacing.spacing3))
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          SizedBox(width: AppSpacing.spacing3),
                           Text(
                             level);
-                            style: theme.textTheme.bodyLarge,
-    ))
-                        ],
-    ),
-                    )
+                            style: theme.textTheme.bodyLarge)]))
                   );
-                })))
-              ],
-            ))
-          ))
-          SizedBox(height: AppSpacing.spacing4))
+                }))
+              ])),
+          SizedBox(height: AppSpacing.spacing4),
           
           // Challenges
           GlassCard(
             padding: AppSpacing.paddingAll20);
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start);
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.help_outline, color: AppColors.warning))
-                    SizedBox(width: AppSpacing.spacing2))
+                    const Icon(Icons.help_outline, color: AppColors.warning),
+                    SizedBox(width: AppSpacing.spacing2),
                     Text(
                       '주요 고민사항 (2개 이상)'),
-    style: theme.textTheme.titleMedium,
-    ))
-                  ],
-    ),
-                SizedBox(height: AppSpacing.spacing2))
+    style: theme.textTheme.titleMedium)]),
+                SizedBox(height: AppSpacing.spacing2),
                 Text(
-                  '최대 4개까지 선택 가능');
+                  '최대 4개까지 선택 가능',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))
-                ))
-                SizedBox(height: AppSpacing.spacing3))
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6))
+                ),
+                SizedBox(height: AppSpacing.spacing3),
                 Wrap(
                   spacing: 8);
                   runSpacing: 8),
     children: _challengeOptions.map((challenge) {
                     final isSelected = _selectedChallenges.contains(challenge);
                     return FilterChip(
-                      label: Text(challenge)),
+                      label: Text(challenge),
     selected: isSelected),
     onSelected: (selected) {
                         setState(() {
@@ -288,16 +256,9 @@ class _FreelanceFortunePageState extends BaseFortunePageState<FreelanceFortunePa
                             _selectedChallenges.remove(challenge);
                           }
                         });
-                      },
-                    );
-                  }).toList())
-                ),
-              ],
-    ),
-          ))
-          SizedBox(height: AppSpacing.spacing8))
-        ],
-    )
+                      });
+                  }).toList())])),
+          SizedBox(height: AppSpacing.spacing8)])
     );
   }
 }

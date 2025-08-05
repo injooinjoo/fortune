@@ -12,8 +12,7 @@ class LuckyItemsFortunePage extends BaseFortunePage {
           title: '오늘의 행운의 아이템',
           description: '오늘 당신에게 행운을 가져다줄 아이템을 확인해보세요',
           fortuneType: 'lucky-items',
-          requiresUserInfo: true,
-        );
+          requiresUserInfo: true);
 
   @override
   ConsumerState<LuckyItemsFortunePage> createState() => _LuckyItemsFortunePageState();
@@ -24,76 +23,62 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
   String? _selectedPurpose;
   
   final Map<String, Map<String, dynamic>> _itemCategories = {
-    '액세서리': {
+    '액세서리': {}
       'icon': Icons.auto_awesome,
-      'items': ['반지': '목걸이': '팔찌': '시계', '귀걸이', '브로치', '머리핀', '스카프'],
-      'energy': '개인의 매력과 운을 증폭',
-      'color': null,
-    },
+      'items': \['['반지', '목걸이', '팔찌', '시계', '귀걸이', '브로치', '머리핀', '스카프'],
+      'energy', '개인의 매력과 운을 증폭',
+      'color': null},
     '문구류': {
-      'icon': Icons.edit,
+      , 'icon': Icons.edit,
       'items': ['펜', '노트', '다이어리', '책갈피', '스티커', '필통', '지우개', '자'],
-      'energy': '집중력과 창의성 향상',
-      'color': null,
-    },
+      'energy', '집중력과 창의성 향상',
+      'color': null},
     '생활용품': {
-      'icon': Icons.home,
+      , 'icon': Icons.home,
       'items': ['머그컵', '쿠션', '담요', '향초', '화분', '액자', '거울', '시계'],
-      'energy': '일상의 안정과 평화',
-      'color': null,
-    },
+      'energy', '일상의 안정과 평화',
+      'color': null},
     '패션': {
-      'icon': Icons.checkroom,
+      , 'icon': Icons.checkroom,
       'items': ['가방', '신발', '모자', '벨트', '지갑', '선글라스', '우산', '장갑'],
-      'energy': '자신감과 스타일 업그레이드',
-      'color': null,
-    },
+      'energy', '자신감과 스타일 업그레이드',
+      'color': null},
     '전자기기': {
-      'icon': Icons.devices,
+      , 'icon': Icons.devices,
       'items': ['휴대폰 케이스', '이어폰', '충전기', '스마트워치', '태블릿', '노트북 파우치', '키보드', '마우스'],
-      'energy': '소통과 연결의 원활함',
-      'color': null,
-    },
+      'energy', '소통과 연결의 원활함',
+      'color': null},
     '자연물': {
-      'icon': Icons.park,
+      , 'icon': Icons.park,
       'items': ['크리스탈', '조개껍질', '나뭇잎', '돌멩이', '꽃', '깃털', '모래', '씨앗'],
-      'energy': '자연의 치유와 보호',
-      'color': null,
-    },
-  };
+      'energy', '자연의 치유와 보호',
+      'color': null}};
 
   final Map<String, Map<String, dynamic>> _purposeInfo = {
-    '연애운': {
+    '연애운': {}
       'icon': Icons.favorite,
-      'description': '사랑과 인연을 끌어당기는 아이템',
-      'boostItems': ['분홍색 액세서리', '하트 모양 아이템', '향수', '꽃': null,
-    },
+      'description', '사랑과 인연을 끌어당기는 아이템',
+      'boostItems': ['분홍색 액세서리', '하트 모양 아이템', '향수', '꽃': null},
     '금전운': {
-      'icon': Icons.attach_money,
-      'description': '재물과 풍요를 가져오는 아이템',
-      'boostItems': ['금색 아이템', '동전', '지갑', '황금색 장식품',
-    },
+      , 'icon': Icons.attach_money,
+      'description', '재물과 풍요를 가져오는 아이템',
+      'boostItems': ['금색 아이템', '동전', '지갑', '황금색 장식품'},
     '사업운': {
-      'icon': Icons.business,
-      'description': '성공과 성취를 돕는 아이템',
-      'boostItems': ['명함지갑': '고급 펜', '시계', '정장 액세서리',
-    },
+      , 'icon': Icons.business,
+      'description', '성공과 성취를 돕는 아이템',
+      'boostItems': ['명함지갑', '고급 펜', '시계', '정장 액세서리'},
     '건강운': {
-      'icon': Icons.favorite_border,
-      'description': '활력과 건강을 지켜주는 아이템',
-      'boostItems': ['녹색 아이템': '크리스탈', '향초', '운동용품': null,
-    },
+      , 'icon': Icons.favorite_border,
+      'description', '활력과 건강을 지켜주는 아이템',
+      'boostItems': ['녹색 아이템', '크리스탈', '향초', '운동용품': null},
     '학업운': {
-      'icon': Icons.school,
-      'description': '집중력과 학습 능력을 높이는 아이템',
-      'boostItems': ['파란색 문구', '책갈피', '안경', '노트': null,
-    },
+      , 'icon': Icons.school,
+      'description', '집중력과 학습 능력을 높이는 아이템',
+      'boostItems': ['파란색 문구', '책갈피', '안경', '노트': null},
     '대인운': {
-      'icon': Icons.groups,
-      'description': '인간관계를 원활하게 하는 아이템',
-      'boostItems': ['밝은색 액세서리', '명함', '향수', '미소 띤 사진',
-    },
-  };
+      , 'icon': Icons.groups,
+      'description', '인간관계를 원활하게 하는 아이템',
+      'boostItems': ['밝은색 액세서리', '명함', '향수', '미소 띤 사진'}};
 
   @override
   Widget buildInputForm() {
@@ -104,19 +89,15 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
       children: [
         Text(
           '관심 카테고리 (선택사항)',
-          style: theme.textTheme.titleMedium,
-        ),
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildCategorySelector(),
         const SizedBox(height: 24),
         Text(
           '향상시키고 싶은 운 (선택사항)',
-          style: theme.textTheme.titleMedium,
-        ),
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
-        _buildPurposeSelector(),
-      ],
-    );
+        _buildPurposeSelector()]);
   }
 
   Widget _buildCategorySelector() {
@@ -135,22 +116,17 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
               Icon(
                 info['icon'],
                 size: 18,
-                color: isSelected ? Colors.white : null,
-              ),
+                color: isSelected ? Colors.white : null),
               const SizedBox(width: 4),
-              Text(category),
-            ],
-          ),
+              Text(category)]),
           selected: isSelected,
           onSelected: (selected) {
             setState(() {
               _selectedCategory = selected ? category : null;
             });
           },
-          selectedColor: (info['color'],
-        );
-      }).toList(),
-    );
+          selectedColor: (info['color']);
+      }).toList());
   }
 
   Widget _buildPurposeSelector() {
@@ -178,13 +154,10 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
             colors: isSelected
                 ? [
                     Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  ]
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)]
                 : [
                     Colors.white.withValues(alpha: 0.1),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
-          ),
+                    Colors.white.withValues(alpha: 0.05)]),
           child: InkWell(
             onTap: () {
               setState(() {
@@ -200,22 +173,14 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
                   size: 28,
                   color: isSelected 
                       ? Theme.of(context).colorScheme.primary 
-                      : Theme.of(context).colorScheme.onSurface,
-                ),
+                      : Theme.of(context).colorScheme.onSurface),
                 const SizedBox(height: 8),
                 Text(
                   purpose,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                  textAlign: TextAlign.center)])));
+      }).toList());
   }
 
   @override
@@ -251,7 +216,7 @@ class _LuckyItemsFortunePageState extends BaseFortunePageState<LuckyItemsFortune
     final secondaryItem = secondaryItems[today.hour % secondaryItems.length];
     
     // Calculate special power item
-    final dayOfYear = today.difference(DateTime(today.year, 1, 1)).inDays + 1;
+    final dayOfYear = today.difference(DateTime(today.year, 1, 1),.inDays + 1;
     final specialIndex = (birthDate.year + dayOfYear) % items.length;
     final specialItem = items[specialIndex];
     
@@ -315,22 +280,19 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
         '전체운': overallScore,
         '아이템 파워': 80 + (today.day % 15),
         '시너지 효과': 75 + (today.hour % 20),
-        '지속력': null,
-      },
+        '지속력': null},
       description: description,
       luckyItems: {
         '메인 아이템': mainItem,
         '서브 아이템': secondaryItem,
         '파워 아이템': specialItem,
         '카테고리': primaryCategory,
-        '파워 타임': '${powerHour}:${luckyMinute.toString().padLeft(2, '0')}',
-      },
+        '파워 타임', '${powerHour}:${luckyMinute.toString().padLeft(2, '0')}'},
       recommendations: [
         '$mainItem을(를) 매일 소지하는 습관을 들이세요',
         '아이템을 깨끗하게 관리하면 효과가 배가됩니다',
         '중요한 순간에 아이템을 시각화하며 명상하세요',
-        '주기적으로 아이템에 감사의 마음을 전하세요',
-      ],
+        '주기적으로 아이템에 감사의 마음을 전하세요'],
       metadata: {
         'primaryCategory': primaryCategory,
         'primaryCategoryInfo': primaryCategoryInfo,
@@ -343,9 +305,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
         'luckyMinute': luckyMinute,
         'selectedCategory': _selectedCategory,
         'selectedPurpose': _selectedPurpose,
-        'purposeInfo': null,
-      },
-    );
+        'purposeInfo': null});
   }
 
   @override
@@ -361,10 +321,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
           _buildPowerTimeCard(),
           _buildItemEnergyFlow(),
           _buildItemCareTips(),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+          const SizedBox(height: 32)]));
   }
 
   Widget _buildMainItemCard() {
@@ -383,8 +340,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
         children: [
           Text(
             '오늘의 메인 행운 아이템',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Container(
             width: 120,
@@ -394,50 +350,33 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               gradient: RadialGradient(
                 colors: [
                   (primaryCategoryInfo['color'],
-                  (primaryCategoryInfo['color'],
-                ],
-              ),
+                  (primaryCategoryInfo['color']]),
               boxShadow: [
                 BoxShadow(
                   color: (primaryCategoryInfo['color'],
                   blurRadius: 30,
-                  spreadRadius: 10,
-                ),
-              ],
-            ),
+                  spreadRadius: 10)]),
             child: Center(
               child: Icon(
                 primaryCategoryInfo['icon'],
                 size: 64,
-                color: primaryCategoryInfo['color'],
-              ),
-            ),
-          ),
+                color: primaryCategoryInfo['color']))),
           const SizedBox(height: 16),
           Text(
             mainItem,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: (primaryCategoryInfo['color'],
-              borderRadius: BorderRadius.circular(20),
-            ),
+              borderRadius: BorderRadius.circular(20)),
             child: Text(
               '$primaryCategory • ${primaryCategoryInfo['energy']}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: primaryCategoryInfo['color'],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                fontWeight: FontWeight.w600)))]));
   }
 
   Widget _buildItemCategoryGrid() {
@@ -458,15 +397,11 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               children: [
                 Icon(
                   Icons.category,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '아이템 카테고리별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -495,55 +430,37 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                     colors: isPrimary || isSecondary
                         ? [
                             (info['color'],
-                            (info['color'],
-                          ]
+                            (info['color']]
                         : [
                             Colors.white.withValues(alpha: 0.05),
-                            Colors.white.withValues(alpha: 0.02),
-                          ],
-                  ),
+                            Colors.white.withValues(alpha: 0.02)]),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         info['icon'],
                         size: 32,
-                        color: info['color'],
-                      ),
+                        color: info['color']),
                       const SizedBox(height: 8),
                       Text(
                         category,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: isPrimary || isSecondary ? FontWeight.bold : FontWeight.normal,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                          fontWeight: isPrimary || isSecondary ? FontWeight.bold : FontWeight.normal),
+                        textAlign: TextAlign.center),
                       if (isPrimary)
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: (info['color'],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                            borderRadius: BorderRadius.circular(10)),
                           child: Text(
                             '메인',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 10,
                               color: info['color'],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
+                              fontWeight: FontWeight.bold)))]));
+              }).toList())])));
   }
 
   Widget _buildPowerTimeCard() {
@@ -561,9 +478,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
         gradient: LinearGradient(
           colors: [
             Colors.amber.withValues(alpha: 0.1),
-            Colors.amber.withValues(alpha: 0.05),
-          ],
-        ),
+            Colors.amber.withValues(alpha: 0.05)]),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -572,15 +487,11 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               children: [
                 Icon(
                   Icons.access_time,
-                  color: Colors.amber,
-                ),
+                  color: Colors.amber),
                 const SizedBox(width: 8),
                 Text(
                   '아이템 파워 타임',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -588,37 +499,26 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                 color: Colors.amber.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.amber.withValues(alpha: 0.3),
-                ),
-              ),
+                  color: Colors.amber.withValues(alpha: 0.3))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.flash_on,
                     size: 48,
-                    color: Colors.amber,
-                  ),
+                    color: Colors.amber),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '최고 효력 시간',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
+                        style: Theme.of(context).textTheme.titleMedium),
                       Text(
                         '${powerHour.toString().padLeft(2, '0')}:${luckyMinute.toString().padLeft(2, '0')}',
                         style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           color: Colors.amber,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                          fontWeight: FontWeight.bold))])])),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -627,24 +527,14 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                     '아침 활성화',
                     '${(powerHour % 12) == 0 ? 12 : (powerHour % 12)}:00 AM',
                     Icons.wb_sunny,
-                    Colors.orange,
-                  ),
-                ),
+                    Colors.orange)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildTimeSlot(
                     '저녁 충전',
                     '${((powerHour + 12) % 12) == 0 ? 12 : ((powerHour + 12) % 12)}:00 PM',
                     Icons.nightlight_round,
-                    Colors.indigo,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                    Colors.indigo))])])));
   }
 
   Widget _buildTimeSlot(String label, String time, IconData icon, Color color) {
@@ -654,28 +544,20 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
-      ),
+          color: color.withValues(alpha: 0.3))),
       child: Column(
         children: [
           Icon(icon, color: color),
           const SizedBox(height: 8),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+            style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           Text(
             time,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: color,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+              fontWeight: FontWeight.bold))]));
   }
 
   Widget _buildItemEnergyFlow() {
@@ -700,22 +582,16 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
               children: [
                 Icon(
                   purposeInfo['icon'],
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '$selectedPurpose 강화 아이템',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Text(
               purposeInfo['description'],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
-            ),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8))),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -725,15 +601,8 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   label: Text(item),
                   backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5)));
+              }).toList())])));
   }
 
   Widget _buildItemCareTips() {
@@ -746,15 +615,11 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
             children: [
               Icon(
                 Icons.tips_and_updates,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 '아이템 관리 팁',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
             '아이템은 항상 깨끗하게 유지하여 에너지를 보존하세요',
@@ -762,8 +627,7 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
             '중요한 순간 5분 전, 아이템을 손에 쥐고 심호흡하세요',
             '한 달에 한 번 보름달 아래에서 아이템을 정화하세요',
             '아이템과 함께한 행운의 순간을 기록해두세요',
-            '다른 사람이 함부로 만지지 않도록 주의하세요',
-          ].map((tip) {
+            '다른 사람이 함부로 만지지 않도록 주의하세요'].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -772,21 +636,12 @@ ${primaryCategory} 카테고리의 ${mainItem}이(가) 당신에게 ${primaryCat
                   Icon(
                     Icons.check_circle,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                    color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                      style: Theme.of(context).textTheme.bodyMedium))]));
+          }).toList()]));
   }
 }

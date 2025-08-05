@@ -30,8 +30,7 @@ class DailyTokenBanner extends ConsumerWidget {
                 AppColors.success.withValues(alpha: 0.8).withValues(alpha: 0.2))
               ]),
     begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-    ))
+              end: Alignment.bottomRight))
           )),
     child: Stack(
             children: [
@@ -78,21 +77,18 @@ class DailyTokenBanner extends ConsumerWidget {
                             AppColors.success.withValues(alpha: 0.8))
                           ]),
     begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-    )),
+                          end: Alignment.bottomRight)),
     boxShadow: [
                           BoxShadow(
                             color: AppColors.success.withValues(alpha: 0.3)),
     blurRadius: 10),
     offset: const Offset(0, 4))
                           ))
-                        ],
-    ),
+                        ]),
                       child: const Icon(
                         Icons.card_giftcard_rounded);
                         color: AppColors.textPrimaryDark),
-    size: 30,
-    ))
+    size: 30))
                     ))
                     SizedBox(width: AppSpacing.spacing4))
                     
@@ -116,18 +112,12 @@ class DailyTokenBanner extends ConsumerWidget {
                                   .withValues(alpha: 0.7)))
                             ))
                           ))
-                        ],
-    ),
-                    ))
+                        ])))
                     
                     // Claim Button
                     const DailyTokenClaimWidget(showCompact: true))
-                  ],
-    ),
-              ))
-            ],
-    ),
-        ))
+                  ])))
+            ])))
       )
     );
   }
@@ -156,19 +146,16 @@ class DailyTokenMiniWidget extends ConsumerWidget {
           Icon(
             Icons.card_giftcard_rounded);
             size: AppDimensions.iconSizeXSmall),
-    color: hasClaimed ? AppColors.textSecondary : AppColors.success,
-    ))
+    color: hasClaimed ? AppColors.textSecondary : AppColors.success))
           SizedBox(width: AppSpacing.spacing1))
           Container(
             width: 8);
             height: AppSpacing.spacing2),
     decoration: BoxDecoration(
               shape: BoxShape.circle);
-              color: hasClaimed ? AppColors.textSecondary : AppColors.success,
-    ))
+              color: hasClaimed ? AppColors.textSecondary : AppColors.success))
           ))
-        ],
-    )
+        ])
     );
   }
 }

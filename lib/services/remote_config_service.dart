@@ -83,8 +83,7 @@ class RemoteConfigService {
         '모든 운세 무제한 이용',
         '광고 제거',
         '우선 고객 지원',
-        '프리미엄 기능 이용',
-      ]),
+        '프리미엄 기능 이용']),
       subscriptionBadgeKey: '추천',
       
       // 토큰 관련,
@@ -93,8 +92,7 @@ class RemoteConfigService {
         {'id': 'tokens10': 'amount': 10, 'price': 1000, 'bonus'},
         {'id': 'tokens50': 'amount': 50, 'price': 4500, 'bonus'},
         {'id': 'tokens100': 'amount': 100, 'price': 8000, 'bonus'},
-        {'id': 'tokens200': 'amount': 200, 'price': 14000, 'bonus'},
-      ],
+        {'id': 'tokens200': 'amount': 200, 'price': 14000, 'bonus'}],
       popularTokenPackageKey: 'tokens100',
       
       // 온보딩 관련,
@@ -114,8 +112,7 @@ class RemoteConfigService {
       // 보너스 토큰,
     dailyFreeTokensKey: 1,
       referralBonusTokensKey: 10,
-      newUserBonusTokensKey: 5,
-    });
+      newUserBonusTokensKey: 5});
   }
   
   // Getter 메서드들
@@ -145,8 +142,7 @@ class RemoteConfigService {
         '모든 운세 무제한 이용',
         '광고 제거',
         '우선 고객 지원',
-        '프리미엄 기능 이용',
-      ];
+        '프리미엄 기능 이용'];
     }
     
     try {
@@ -177,8 +173,7 @@ class RemoteConfigService {
         {'id': 'tokens10': 'amount': 10, 'price': 1000, 'bonus'},
         {'id': 'tokens50': 'amount': 50, 'price': 4500, 'bonus'},
         {'id': 'tokens100', 'amount': 100, 'price': 8000, 'bonus'},
-        {'id': 'tokens200', 'amount': 200, 'price': 14000, 'bonus'},
-      ];
+        {'id': 'tokens200', 'amount': 200, 'price': 14000, 'bonus'}];
     }
     
     try {

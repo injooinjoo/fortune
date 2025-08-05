@@ -10,7 +10,7 @@ import '../../../../shared/glassmorphism/glass_container.dart';
 import '../../../../shared/components/toast.dart';
 
 class MarriageFortunePage extends BaseFortunePage {
-  const MarriageFortunePage({Key? key},
+  const MarriageFortunePage({Key? key})
       : super(
           key: key,
           title: '결혼운',
@@ -34,29 +34,26 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
   String? _relationshipExperience;
 
   final Map<String, String> _statusOptions = {
-    'single': '미혼 (연애 안함)',
-    'dating': '연애 중',
-    'engaged': '약혼',
-    'divorced': '이혼',
-    'widowed': '사별',
-  };
+    'single', '미혼 (연애 안함)',
+    'dating', '연애 중',
+    'engaged', '약혼',
+    'divorced', '이혼',
+    'widowed', '사별'};
 
   final Map<String, String> _idealTypes = {
-    'caring': '다정다감한 사람',
-    'stable': '경제적 안정된 사람',
-    'humorous': '유머러스한 사람',
-    'mature': '성숙한 사람',
-    'passionate': '열정적인 사람',
-    'intellectual': '지적인 사람',
-  };
+    'caring', '다정다감한 사람',
+    'stable', '경제적 안정된 사람',
+    'humorous', '유머러스한 사람',
+    'mature', '성숙한 사람',
+    'passionate', '열정적인 사람',
+    'intellectual', '지적인 사람'};
 
   final Map<String, String> _priorityOptions = {
-    'love': '사랑이 최우선',
-    'stability': '안정성이 중요',
-    'family': '가정적인 면이 중요',
-    'growth': '함께 성장하는 관계',
-    'compatibility': '가치관 일치',
-  };
+    'love', '사랑이 최우선',
+    'stability', '안정성이 중요',
+    'family', '가정적인 면이 중요',
+    'growth', '함께 성장하는 관계',
+    'compatibility', '가치관 일치'};
 
   final List<String> _values = [
     '정직',
@@ -68,16 +65,14 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     '성장',
     '유머',
     '열정',
-    '안정',
-  ];
+    '안정'];
 
   final Map<String, String> _readinessLevels = {
-    'not_ready': '아직 준비 안됨',
-    'thinking': '고민 중',
-    'somewhat_ready': '어느 정도 준비됨',
-    'ready': '준비됨',
-    'very_ready': '매우 준비됨',
-  };
+    'not_ready', '아직 준비 안됨',
+    'thinking', '고민 중',
+    'somewhat_ready', '어느 정도 준비됨',
+    'ready', '준비됨',
+    'very_ready', '매우 준비됨'};
 
   // User info form state
   final _nameController = TextEditingController();
@@ -118,8 +113,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
       'name': _nameController.text,
       'birthDate': _birthDate!.toIso8601String(),
       'gender': _gender,
-      'mbti': null,
-    };
+      'mbti': null};
   }
 
   Widget buildUserInfoForm() {
@@ -132,8 +126,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
         children: [
           Text(
             '기본 정보',
-            style: theme.textTheme.headlineSmall,
-          ),
+            style: theme.textTheme.headlineSmall),
           const SizedBox(height: 16),
           
           // Name Input
@@ -144,10 +137,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               hintText: '이름을 입력하세요',
               prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
+                borderRadius: BorderRadius.circular(12)))),
           const SizedBox(height: 16),
           
           // Birth Date Picker
@@ -157,8 +147,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 context: context,
                 initialDate: _birthDate ?? DateTime.now(),
                 firstDate: DateTime(1900),
-                lastDate: DateTime.now(),
-              );
+                lastDate: DateTime.now());
               if (date != null) {
                 setState(() => _birthDate = date);
               }
@@ -168,9 +157,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 labelText: '생년월일',
                 prefixIcon: const Icon(Icons.calendar_today),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(12))),
               child: Text(
                 _birthDate != null
                     ? '${_birthDate!.year}년 ${_birthDate!.month}월 ${_birthDate!.day}일'
@@ -178,11 +165,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 style: TextStyle(
                   color: _birthDate != null
                       ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-          ),
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6))))),
           const SizedBox(height: 16),
           
           // Gender Selection
@@ -191,8 +174,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             children: [
               Text(
                 '성별',
-                style: theme.textTheme.bodyLarge,
-              ),
+                style: theme.textTheme.bodyLarge),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -202,25 +184,14 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       value: 'male',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
+                      contentPadding: EdgeInsets.zero)),
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Text('여성'),
                       value: 'female',
                       groupValue: _gender,
                       onChanged: (value) => setState(() => _gender = value),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+                      contentPadding: EdgeInsets.zero))])])]));
   }
 
   @override
@@ -255,8 +226,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
       'readinessLevel': _readinessLevel,
       'hasParentalPressure': _hasParentalPressure,
       'hasFinancialPreparation': _hasFinancialPreparation,
-      'relationshipExperience': null,
-    };
+      'relationshipExperience': null};
   }
 
   @override
@@ -277,8 +247,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             children: [
               Text(
                 '현재 상태',
-                style: theme.textTheme.headlineSmall,
-              ),
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               ...(_statusOptions.entries.map((entry) {
                 final isSelected = _currentStatus == entry.key;
@@ -295,8 +264,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     child: GlassContainer(
                       padding: const EdgeInsets.symmetric(
                         vertical: 12,
-                        horizontal: 16,
-                      ),
+                        horizontal: 16),
                       borderRadius: BorderRadius.circular(12),
                       blur: 10,
                       borderColor: isSelected
@@ -312,21 +280,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                               setState(() {
                                 _currentStatus = value;
                               });
-                            },
-                          ),
+                            }),
                           Text(
                             entry.value,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList()),
-            ],
-          ),
-        ),
+                            style: theme.textTheme.bodyLarge)]))));
+              }).toList()])),
         const SizedBox(height: 16),
         
         // Ideal Type & Priorities
@@ -337,75 +295,59 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             children: [
               Text(
                 '이상형과 우선순위',
-                style: theme.textTheme.headlineSmall,
-              ),
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               
               // Ideal Type
               Text(
                 '이상형',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _idealType,
                 decoration: InputDecoration(
                   hintText: '이상형을 선택하세요',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _idealTypes.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value),
-                  );
+                    child: Text(entry.value));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _idealType = value;
                   });
-                },
-              ),
+                }),
               const SizedBox(height: 16),
               
               // Priorities
               Text(
                 '결혼에서 중요한 것',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 value: _priorities,
                 decoration: InputDecoration(
                   hintText: '우선순위를 선택하세요',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   filled: true,
-                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-                ),
+                  fillColor: theme.colorScheme.surface.withValues(alpha: 0.5)),
                 items: _priorityOptions.entries.map((entry) {
                   return DropdownMenuItem(
                     value: entry.key,
-                    child: Text(entry.value,
-                  );
+                    child: Text(entry.value);
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _priorities = value;
                   });
-                },
-              ),
-            ],
-          ),
-        ),
+                })])),
         const SizedBox(height: 16),
         
         // Values
@@ -416,15 +358,12 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             children: [
               Text(
                 '중요하게 생각하는 가치관',
-                style: theme.textTheme.headlineSmall,
-              ),
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 8),
               Text(
                 '3개 이상 선택해주세요',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                ),
-              ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -451,19 +390,12 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       side: BorderSide(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                      ),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                       deleteIcon: isSelected
                           ? const Icon(Icons.check_circle, size: 18,
                           : null,
-                      onDeleted: isSelected ? () {} : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
+                      onDeleted: isSelected ? () {} : null));
+                }).toList())])),
         const SizedBox(height: 16),
         
         // Marriage Readiness
@@ -474,8 +406,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
             children: [
               Text(
                 '결혼 준비도',
-                style: theme.textTheme.headlineSmall,
-              ),
+                style: theme.textTheme.headlineSmall),
               const SizedBox(height: 16),
               ...(_readinessLevels.entries.map((entry) {
                 final isSelected = _readinessLevel == entry.key;
@@ -509,40 +440,23 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                               color: _getReadinessColor(index).withValues(alpha: 0.2),
                               border: Border.all(
                                 color: _getReadinessColor(index),
-                                width: 2,
-                              ),
-                            ),
+                                width: 2)),
                             child: Center(
                               child: Text(
                                 '${(index + 1) * 20}%',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: _getReadinessColor(index),
-                                ),
-                              ),
-                            ),
-                          ),
+                                  color: _getReadinessColor(index))))),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
                               entry.value,
-                              style: theme.textTheme.bodyLarge,
-                            ),
-                          ),
+                              style: theme.textTheme.bodyLarge)),
                           if (isSelected,
                             Icon(
                               Icons.check_circle,
-                              color: theme.colorScheme.primary,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }).toList()),
-            ],
-          ),
-        ),
+                              color: theme.colorScheme.primary)]))));
+              }).toList()])),
         const SizedBox(height: 16),
         
         // Additional Info
@@ -554,19 +468,13 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                 '부모님의 결혼 압박이 있나요?',
                 _hasParentalPressure,
                 (value) => setState(() => _hasParentalPressure = value),
-                Icons.family_restroom,
-              ),
+                Icons.family_restroom),
               const SizedBox(height: 12),
               _buildSwitchTile(
                 '경제적 준비가 되어 있나요?',
                 _hasFinancialPreparation,
                 (value) => setState(() => _hasFinancialPreparation = value),
-                Icons.account_balance_wallet,
-              ),
-            ],
-          ),
-        ),
-      ]
+                Icons.account_balance_wallet)]))]
     );
   }
 
@@ -576,8 +484,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
       Colors.orange,
       Colors.yellow,
       Colors.lightGreen,
-      Colors.green,
-    ];
+      Colors.green];
     return colors[index];
   }
 
@@ -591,15 +498,10 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
         Expanded(
           child: Text(
             title,
-            style: theme.textTheme.bodyLarge,
-          ),
-        ),
+            style: theme.textTheme.bodyLarge)),
         Switch(
           value: value,
-          onChanged: onChanged,
-        ),
-      ],
-    );
+          onChanged: onChanged)]);
   }
 
   @override
@@ -611,8 +513,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
         _buildCompatibilityAnalysis(),
         _buildIdealPartnerProfile(),
         _buildMarriageReadinessAssessment(),
-        _buildActionPlan(),
-      ]
+        _buildActionPlan()]
     );
   }
 
@@ -621,11 +522,10 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     
     // Mock data for timeline
     final timelineEvents = [
-      {'age': 28, 'event': '인연 만남': 'probability'},
-      {'age': 29, 'event': '연애 시작': 'probability'},
-      {'age': 31, 'event': '결혼 적기': 'probability'},
-      {'age': 33, 'event': '안정기': 'probability'},
-    ];
+      {'age': 28, 'event', '인연 만남': 'probability'},
+      {'age': 29, 'event', '연애 시작': 'probability'},
+      {'age': 31, 'event', '결혼 적기': 'probability'},
+      {'age': 33, 'event', '안정기': 'probability'}];
     
     return Padding(
       padding: const EdgeInsets.all(16,
@@ -638,15 +538,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               children: [
                 Icon(
                   Icons.timeline_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '결혼 타임라인',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 24),
             SizedBox(
               height: 200,
@@ -660,24 +556,20 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                        strokeWidth: 1,
-                      );
+                        strokeWidth: 1);
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         strokeWidth: 1
                       );
-                    },
-                  ),
+                    }),
                   titlesData: FlTitlesData(
                     show: true,
                     rightTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                      sideTitles: SideTitles(showTitles: false)),
                     topTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
+                      sideTitles: SideTitles(showTitles: false)),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -689,9 +581,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             '$age세',
                             style: theme.textTheme.bodySmall
                           );
-                        },
-                      ),
-                    ),
+                        })),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -700,18 +590,12 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         getTitlesWidget: (value, meta) {
                           return Text(
                             '${value.toInt()}%',
-                            style: theme.textTheme.bodySmall,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                            style: theme.textTheme.bodySmall);
+                        }))),
                   borderData: FlBorderData(
                     show: true,
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                    ),
-                  ),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.2))),
                   minX: 0,
                   maxX: timelineEvents.length - 1,
                   minY: 0,
@@ -721,16 +605,13 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       spots: timelineEvents.asMap().entries.map((entry) {
                         return FlSpot(
                           entry.key.toDouble(),
-                          (entry.value['probability'],
-                        );
+                          (entry.value['probability']);
                       }).toList(),
                       isCurved: true,
                       gradient: LinearGradient(
                         colors: [
                           theme.colorScheme.primary,
-                          theme.colorScheme.secondary,
-                        ],
-                      ),
+                          theme.colorScheme.secondary]),
                       barWidth: 3,
                       isStrokeCapRound: true,
                       dotData: FlDotData(
@@ -742,24 +623,15 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             strokeWidth: 2,
                             strokeColor: theme.colorScheme.primary
                           );
-                        },
-                      ),
+                        }),
                       belowBarData: BarAreaData(
                         show: true,
                         gradient: LinearGradient(
                           colors: [
                             theme.colorScheme.primary.withValues(alpha: 0.2),
-                            theme.colorScheme.secondary.withValues(alpha: 0.1),
-                          ],
+                            theme.colorScheme.secondary.withValues(alpha: 0.1)],
                           begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                          end: Alignment.bottomCenter)))]))),
             const SizedBox(height: 16),
             ...timelineEvents.map((event) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -770,47 +642,29 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     height: 8,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
+                      color: theme.colorScheme.primary)),
                   const SizedBox(width: 8),
                   Text(
                     '${event['age']}세',
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                      fontWeight: FontWeight.bold)),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       event['event'],
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  ),
+                      style: theme.textTheme.bodyMedium)),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
-                      vertical: 4,
-                    ),
+                      vertical: 4),
                     decoration: BoxDecoration(
                       color: _getProbabilityColor(event['probability'],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      borderRadius: BorderRadius.circular(12)),
                     child: Text(
                       '${event['probability']}%',
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: _getProbabilityColor(event['probability'],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-          ],
-        ),
-      ),
-    );
+                        fontWeight: FontWeight.bold)))])).toList()])));
   }
 
   Color _getProbabilityColor(int probability) {
@@ -823,12 +677,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     final theme = Theme.of(context);
     
     final compatibilityFactors = [
-      {'factor': '성격': 'score': 85, 'icon'},
-      {'factor': '가치관': 'score': 90, 'icon'},
-      {'factor': '생활습관': 'score': 75, 'icon'},
-      {'factor': '미래계획': 'score': 80, 'icon'},
-      {'factor': '가족관계', 'score': 70, 'icon'},
-    ];
+      {'factor', '성격':  , 'score': 85, 'icon'},
+      {'factor', '가치관':  , 'score': 90, 'icon'},
+      {'factor', '생활습관':  , 'score': 75, 'icon'},
+      {'factor', '미래계획':  , 'score': 80, 'icon'},
+      {'factor', '가족관계', 'score': 70, 'icon'}];
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16,
@@ -841,15 +694,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               children: [
                 Icon(
                   Icons.favorite_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '이상적 궁합 분석',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...compatibilityFactors.map((factor) {
               final score = factor['score'] as int;
@@ -864,24 +713,17 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         Icon(
                           factor['icon'],
                           size: 20,
-                          color: theme.colorScheme.primary,
-                        ),
+                          color: theme.colorScheme.primary),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             factor['factor'],
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
+                            style: theme.textTheme.bodyMedium)),
                         Text(
                           '$score%',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: _getProbabilityColor(score),
-                          ),
-                        ),
-                      ],
-                    ),
+                            color: _getProbabilityColor(score)))]),
                     const SizedBox(height: 4),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
@@ -890,31 +732,20 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         minHeight: 8,
                         backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          _getProbabilityColor(score),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                          _getProbabilityColor(score))))]));
+            }).toList()])));
   }
 
   Widget _buildIdealPartnerProfile() {
     final theme = Theme.of(context);
     
     final partnerTraits = [
-      {'trait': '나이': 'description': '당신보다 2-5살 연상/연하'},
-      {'trait': '성격': 'description': '차분하고 이해심 많은 성격'},
-      {'trait': '직업': 'description': '안정적인 직업 또는 전문직'},
-      {'trait': '취미': 'description': '문화생활을 즐기는 타입'},
-      {'trait': '가족관', 'description': '가족을 중시하는 가치관'},
-      {'trait': '생활', 'description': '규칙적이고 건강한 생활습관'},
-    ];
+      {'trait', '나이': 'description', '당신보다 2-5살 연상/연하'},
+      {'trait', '성격': 'description', '차분하고 이해심 많은 성격'},
+      {'trait', '직업': 'description', '안정적인 직업 또는 전문직'},
+      {'trait', '취미': 'description', '문화생활을 즐기는 타입'},
+      {'trait', '가족관', 'description', '가족을 중시하는 가치관'},
+      {'trait', '생활', 'description', '규칙적이고 건강한 생활습관'}];
     
     return Padding(
       padding: const EdgeInsets.all(16,
@@ -927,15 +758,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               children: [
                 Icon(
                   Icons.person_search_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '이상적인 배우자 프로필',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -945,11 +772,8 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                   end: Alignment.bottomRight,
                   colors: [
                     theme.colorScheme.primary.withValues(alpha: 0.1),
-                    theme.colorScheme.secondary.withValues(alpha: 0.1),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                    theme.colorScheme.secondary.withValues(alpha: 0.1)]),
+                borderRadius: BorderRadius.circular(12)),
               child: Column(
                 children: partnerTraits.map((trait) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -959,35 +783,19 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                       Container(
                         width: 4,
                         height: 20,
-                        color: theme.colorScheme.primary,
-                      ),
+                        color: theme.colorScheme.primary),
                       const SizedBox(width: 12),
                       SizedBox(
                         width: 60,
                         child: Text(
                           trait['trait'],
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                            fontWeight: FontWeight.bold))),
                       Expanded(
                         child: Text(
                           trait['description'],
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )).toList(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.8))))])).toList()))])));
   }
 
   Widget _buildMarriageReadinessAssessment() {
@@ -995,33 +803,26 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     
     final assessmentCategories = [
       {
-        'category': '정서적 준비',
-        'items': [
+        'category', '정서적 준비',
+        'items': [}
           '자신을 충분히 이해하고 있음',
           '타인과의 깊은 관계 형성 가능',
-          '갈등 해결 능력 보유',
-        ],
-        'score': null,
-      },
+          '갈등 해결 능력 보유'],
+        'score': null},
       {
-        'category': '경제적 준비',
-        'items': [
+        'category', '경제적 준비',
+        'items': [}
           '안정적인 수입원',
           '기본적인 저축',
-          '미래 계획 수립',
-        ],
-        'score': null,
-      },
+          '미래 계획 수립'],
+        'score': null},
       {
-        'category': '사회적 준비',
-        'items': [
+        'category', '사회적 준비',
+        'items': [}
           '독립적인 생활 가능',
           '가족과의 관계 정립',
-          '사회적 네트워크 구축',
-        ],
-        'score': null,
-      },
-    ];
+          '사회적 네트워크 구축'],
+        'score': null}];
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1034,15 +835,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               children: [
                 Icon(
                   Icons.checklist_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '결혼 준비도 평가',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...assessmentCategories.map((category) {
               final score = category['score'] as int;
@@ -1055,9 +852,7 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     color: theme.colorScheme.surface.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                    ),
-                  ),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.1))),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1067,29 +862,19 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             child: Text(
                               category['category'],
                               style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                                fontWeight: FontWeight.bold))),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
-                              vertical: 6,
-                            ),
+                              vertical: 6),
                             decoration: BoxDecoration(
                               color: _getProbabilityColor(score).withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                              borderRadius: BorderRadius.circular(16)),
                             child: Text(
                               '$score%',
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: _getProbabilityColor(score),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                                fontWeight: FontWeight.bold)))]),
                       const SizedBox(height: 12),
                       ...(category['items'] as List).map((item) => Padding(
                         padding: const EdgeInsets.only(bottom: 4),
@@ -1098,27 +883,13 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                             Icon(
                               Icons.check_circle_outline,
                               size: 16,
-                              color: theme.colorScheme.primary,
-                            ),
+                              color: theme.colorScheme.primary),
                             const SizedBox(width: 8),
                             Text(
                               item as String,
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )).toList(),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])).toList()])));
+            }).toList()])));
   }
 
   Widget _buildActionPlan() {
@@ -1126,33 +897,26 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
     
     final actionSteps = [
       {
-        'phase': '1단계 (1-3개월)',
-        'actions': [
+        'phase', '1단계 (1-3개월)',
+        'actions': [}
           '자기 자신에 대한 깊은 성찰',
           '이상적인 관계에 대한 명확한 정의',
-          '개인적 성장을 위한 노력',
-        ],
-        'icon': null,
-      },
+          '개인적 성장을 위한 노력'],
+        'icon': null},
       {
-        'phase': '2단계 (3-6개월)',
-        'actions': [
+        'phase', '2단계 (3-6개월)',
+        'actions': [}
           '적극적인 사회활동 참여',
           '새로운 사람들과의 네트워킹',
-          '취미나 관심사 기반 모임 참여',
-        ],
-        'icon': null,
-      },
+          '취미나 관심사 기반 모임 참여'],
+        'icon': null},
       {
-        'phase': '3단계 (6개월 이후)',
-        'actions': [
+        'phase', '3단계 (6개월 이후)',
+        'actions': [}
           '진지한 만남 시작',
           '서로를 깊이 알아가는 시간',
-          '미래 계획 논의',
-        ],
-        'icon': null,
-      },
-    ];
+          '미래 계획 논의'],
+        'icon': null}];
     
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
@@ -1165,15 +929,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
               children: [
                 Icon(
                   Icons.rocket_launch_rounded,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '행동 계획',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...actionSteps.map((step) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
@@ -1184,14 +944,10 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                     end: Alignment.bottomRight,
                     colors: [
                       theme.colorScheme.primary.withValues(alpha: 0.05),
-                      theme.colorScheme.secondary.withValues(alpha: 0.05),
-                    ],
-                  ),
+                      theme.colorScheme.secondary.withValues(alpha: 0.05)]),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                  ),
-                ),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1201,27 +957,19 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(11),
-                          topRight: Radius.circular(11),
-                        ),
-                      ),
+                          topRight: Radius.circular(11))),
                       child: Row(
                         children: [
                           Icon(
                             step['icon'],
                             size: 20,
-                            color: theme.colorScheme.primary,
-                          ),
+                            color: theme.colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
                             step['phase'],
                             style: theme.textTheme.bodyLarge?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                              color: theme.colorScheme.primary))])),
                     Padding(
                       padding: const EdgeInsets.all(12),
                       child: Column(
@@ -1236,28 +984,11 @@ class _MarriageFortunePageState extends BaseFortunePageState<MarriageFortunePage
                                 height: 6,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
+                                  color: theme.colorScheme.primary)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   action as String,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )).toList(),
-          ],
-        ),
-      ),
-    );
+                                  style: theme.textTheme.bodyMedium))])).toList()))]))).toList()])));
   }
 }

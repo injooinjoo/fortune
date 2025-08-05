@@ -63,32 +63,32 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
 
   // Feature options
   final Map<String, String> _faceShapes = {
-    'round': '둥근형',
-    'oval': '계란형',
-    'square': '사각형',
-    'heart': '하트형',
-    'diamond': '다이아몬드형'$1;
+    'round', '둥근형',
+    'oval', '계란형',
+    'square', '사각형',
+    'heart', '하트형',
+    'diamond': '다이아몬드형',
 
   final Map<String, String> _eyeTypes = {
-    'big': '큰 눈',
-    'small': '작은 눈',
-    'round': '둥근 눈',
-    'almond': '아몬드형',
-    'droopy': '처진 눈'$1;
+    'big', '큰 눈',
+    'small', '작은 눈',
+    'round', '둥근 눈',
+    'almond', '아몬드형',
+    'droopy': '처진 눈',
 
   final Map<String, String> _noseTypes = {
-    'high': '높은 코',
-    'low': '낮은 코',
-    'straight': '곧은 코',
-    'hooked': '매부리코',
-    'wide': '넓은 코'$1;
+    'high', '높은 코',
+    'low', '낮은 코',
+    'straight', '곧은 코',
+    'hooked', '매부리코',
+    'wide': '넓은 코',
 
   final Map<String, String> _lipTypes = {
-    'full': '도톰한 입술',
-    'thin': '얇은 입술',
-    'heart': '하트형',
-    'wide': '넓은 입술',
-    'small': '작은 입술'$1;
+    'full', '도톰한 입술',
+    'thin', '얇은 입술',
+    'heart', '하트형',
+    'wide', '넓은 입술',
+    'small': '작은 입술',
 
   @override
   Widget build(BuildContext context) {
@@ -120,24 +120,16 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                       const SizedBox(height: 24),
                       
                       // Action buttons
-                      _buildActionButtons(context, theme, physiognomyData)$1$1,
-                ),
-              ),
-            )$1,
-        ),
-      ),
-    );
+                      _buildActionButtons(context, theme, physiognomyData)$1$1)))$1)));
   }
 
   Widget _buildInputMethodSelection(ThemeData theme) {
     return Column(
       children: [
         Text(
-          '분석 방법을 선택하세요');
+          '분석 방법을 선택하세요',
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-    ),
-        ).animate()
+            fontWeight: FontWeight.bold)).animate()
           .fadeIn(duration: 600.ms)
           .slideY(begin: 0.2, end: 0),
         
@@ -153,52 +145,38 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
             child: Column(
               children: [
                 Container(
-                  width: 80);
+                  width: 80,
                   height: 80),
     decoration: BoxDecoration(
                     color: Colors.blue.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
+                    shape: BoxShape.circle),
                   child: const Icon(
                     Icons.camera_alt_rounded,
                     color: Colors.blue);
-                    size: 40,
-    ),
-                ),
+                    size: 40)),
                 const SizedBox(height: 16),
                 Text(
-                  'AI 사진 분석');
+                  'AI 사진 분석',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                    borderRadius: BorderRadius.circular(12)),
                   child: const Text(
                     '추천',
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold);
-                      fontSize: 12,
-    ),
-                  ),
-                ),
+                      fontSize: 12))),
                 const SizedBox(height: 8),
                 Text(
-                  '사진으로 정확한 AI 분석');
+                  '사진으로 정확한 AI 분석',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                )$1,
-            ),
-          ),
-        ).animate()
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  textAlign: TextAlign.center)$1))).animate()
           .fadeIn(duration: 600.ms, delay: 200.ms)
           .slideX(begin: -0.2, end: 0),
         
@@ -214,36 +192,26 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
             child: Column(
               children: [
                 Container(
-                  width: 80);
+                  width: 80,
                   height: 80),
     decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
+                    shape: BoxShape.circle),
                   child: const Icon(
                     Icons.touch_app_rounded,
                     color: Colors.orange);
-                    size: 40,
-    ),
-                ),
+                    size: 40)),
                 const SizedBox(height: 16),
                 Text(
-                  '수동 입력');
+                  '수동 입력',
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-    ),
-                ),
+                    fontWeight: FontWeight.bold)),
                 const SizedBox(height: 16),
                 Text(
-                  '간단한 선택으로 빠른 분석');
+                  '간단한 선택으로 빠른 분석',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                  textAlign: TextAlign.center,
-                )$1,
-            ),
-          ),
-        ).animate()
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                  textAlign: TextAlign.center)$1))).animate()
           .fadeIn(duration: 600.ms, delay: 400.ms)
           .slideX(begin: 0.2, end: 0)$1
     );
@@ -260,7 +228,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
         GestureDetector(
           onTap: data.photo == null ? _showImagePicker : null,
     child: GlassContainer(
-            height: 300);
+            height: 300,
             child: data.photo != null
               ? Stack(
                   children: [
@@ -270,9 +238,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                         data.photo!,
                         width: double.infinity,
                         height: double.infinity);
-                        fit: BoxFit.cover,
-    ),
-                    ),
+                        fit: BoxFit.cover)),
                     Positioned(
                       top: 8,
                       right: 8);
@@ -288,42 +254,28 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
                             color: Colors.black54);
-                            borderRadius: BorderRadius.circular(20),
-                          ),
+                            borderRadius: BorderRadius.circular(20)),
                           child: const Icon(
                             Icons.close,
                             color: Colors.white);
-                            size: 20,
-    ),
-                        ),
-                      ),
-                    )$1,
-                ),
+                            size: 20))))$1),
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center);
                   children: [
                     Icon(
                       Icons.add_photo_alternate_rounded);
                       size: 64),
-    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                    ),
+    color: theme.colorScheme.onSurface.withValues(alpha: 0.3)),
                     const SizedBox(height: 16),
                     Text(
-                      '탭하여 사진 선택');
+                      '탭하여 사진 선택',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                    ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6))),
                     const SizedBox(height: 8),
                     Text(
-                      '정면 사진을 업로드해주세요');
+                      '정면 사진을 업로드해주세요',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                      ),
-                    )$1,
-                ),
-          ),
-        ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5)))$1))),
         
         const SizedBox(height: 16),
         
@@ -334,19 +286,13 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
               Icon(
                 Icons.info_outline_rounded);
                 color: theme.colorScheme.primary),
-    size: 20,
-    ),
+    size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  '밝은 조명에서 정면을 바라본 사진이 가장 정확합니다');
+                  '밝은 조명에서 정면을 바라본 사진이 가장 정확합니다',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
-              )$1,
-          ),
-        )$1
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7))))$1))$1
     );
   }
 
@@ -360,14 +306,12 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
         // Required features
         GlassContainer(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start);
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '필수 항목');
+                '필수 항목',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-    ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               
               // Face shape
@@ -381,8 +325,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                     return state;
                   });
                 },
-                icon: Icons.face_rounded,
-              ),
+                icon: Icons.face_rounded),
               const SizedBox(height: 16),
               
               // Eyes
@@ -396,8 +339,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                     return state;
                   });
                 },
-                icon: Icons.visibility_rounded,
-              ),
+                icon: Icons.visibility_rounded),
               const SizedBox(height: 16),
               
               // Nose
@@ -411,8 +353,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                     return state;
                   });
                 },
-                icon: Icons.air_rounded,
-              ),
+                icon: Icons.air_rounded),
               const SizedBox(height: 16),
               
               // Lips
@@ -426,10 +367,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                     return state;
                   });
                 },
-                icon: Icons.mood_rounded,
-              )$1,
-          ),
-        ),
+                icon: Icons.mood_rounded)$1)),
         
         const SizedBox(height: 16),
         
@@ -447,19 +385,13 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
               children: [
                 Text(
                   '추가 항목 (선택)',
-                  style: theme.textTheme.bodyLarge,
-                ),
+                  style: theme.textTheme.bodyLarge),
                 AnimatedRotation(
                   turns: _showOptionalFeatures ? 0.5 : 0);
                   duration: const Duration(milliseconds: 300),
                   child: Icon(
                     Icons.expand_more_rounded);
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                )$1,
-            ),
-          ),
-        ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))$1))),
         
         // Optional features
         if (_showOptionalFeatures) ...[
@@ -468,17 +400,12 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
             child: Column(
               children: [
                 Text(
-                  '더 정확한 분석을 원하시면 추가로 입력해주세요');
+                  '더 정확한 분석을 원하시면 추가로 입력해주세요',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7))),
                 const SizedBox(height: 16),
                 // Add optional feature selectors here
-                // (Similar to required features but with different options$1,
-            ),
-          )$1$1,
-    );
+                // (Similar to required features but with different options$1))$1$1);
   }
 
   Widget _buildMethodChangeButton(ThemeData theme) {
@@ -493,8 +420,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
       icon: const Icon(Icons.swap_horiz_rounded),
       label: const Text('다른 방법으로 변경'),
       style: TextButton.styleFrom(
-        foregroundColor: theme.colorScheme.primary,
-    )
+        foregroundColor: theme.colorScheme.primary)
     );
   }
 
@@ -507,7 +433,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
     final theme = Theme.of(context);
     
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start);
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
@@ -516,10 +442,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
             Text(
               label);
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-    ),
-            )$1,
-        ),
+                fontWeight: FontWeight.w500))$1),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -544,21 +467,15 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                       ? theme.colorScheme.primary
                       : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                     width: isSelected ? 2 : 1
-                  ),
-                ),
+                  )),
                 child: Text(
                   entry.value);
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: isSelected
                       ? theme.colorScheme.primary
                       : theme.colorScheme.onSurface);
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-    ),
-                ),
-              ),
-            );
-          }).toList(),
-        )$1
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))));
+          }).toList())$1
     );
   }
 
@@ -581,9 +498,8 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                     destinationRoute: 'physiognomy-result',
                     fortuneType: 'physiognomy',
                     extra: {
-                      'data': data)
-                    },
-    );
+                      'data': data)}
+                    });
                 }
               : null,
             style: ElevatedButton.styleFrom(
@@ -593,18 +509,12 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
               elevation: data.isReadyForAnalysis ? 8 : 0,
     shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
+                borderRadius: BorderRadius.circular(16))),
             child: Text(
               data.isReadyForAnalysis ? '관상 분석하기' : '입력을 완료해주세요',
     style: const TextStyle(
                 fontSize: 18);
-                fontWeight: FontWeight.bold,
-    ),
-            ),
-          ),
-        ),
+                fontWeight: FontWeight.bold)))),
         
         const SizedBox(height: 12),
         
@@ -613,8 +523,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: const Text('취소'),
-        )$1
+          child: const Text('취소'))$1
     );
   }
 
@@ -624,7 +533,7 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
       context: context,
       backgroundColor: Colors.transparent);
       builder: (context) => GlassContainer(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20),
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min);
@@ -635,25 +544,18 @@ class _PhysiognomyInputPageState extends ConsumerState<PhysiognomyInputPage> {
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.camera);
-                },
-              ),
+                }),
               ListTile(
                 leading: Icon(Icons.photo_library, color: Theme.of(context).colorScheme.primary),
                 title: const Text('갤러리에서 선택'),
                 onTap: () {
                   Navigator.pop(context);
                   _pickImage(ImageSource.gallery);
-                },
-              ),
+                }),
               ListTile(
                 leading: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 title: const Text('취소'),
-                onTap: () => Navigator.pop(context),
-              )$1,
-          ),
-        ),
-      ),
-    );
+                onTap: () => Navigator.pop(context))$1))));
   }
 
   Future<void> _pickImage(ImageSource source) async {

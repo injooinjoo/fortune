@@ -196,8 +196,7 @@ class TarotDeckStatsNotifier extends StateNotifier<Map<String, int>> {
   Future<void> incrementUsage(String deckId) async {
     state = {
       ...state,
-      deckId: (state[deckId] ?? 0) + 1,
-    };
+      deckId: (state[deckId] ?? 0) + 1};
     
     final prefs = await SharedPreferences.getInstance();
     final statsString = state.entries

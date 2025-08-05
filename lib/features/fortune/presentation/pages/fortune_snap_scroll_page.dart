@@ -18,8 +18,7 @@ class FortuneSnapScrollPage extends BaseFortunePage {
     Key? key,
     required String title,
     required String description,
-    required this.fortuneTypes,
-  }) : super(
+    required this.fortuneTypes}) : super(
     key: key,
     title: title,
     description: description,
@@ -50,8 +49,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
       type: 'multi',
       userId: '',
       content: '',
-      createdAt: DateTime.now(),
-    );
+      createdAt: DateTime.now());
   }
 
   Future<void> _loadAllFortunes() async {
@@ -72,9 +70,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
           details: {
             'luckyColor': _getLuckyColorForType(fortuneType),
             'luckyNumber': widget.fortuneTypes.indexOf(fortuneType) + 1,
-            'advice': null,
-          },
-        );
+            'advice': null});
         
         _fortunes.add(fortuneData);
       }
@@ -93,8 +89,7 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
   Widget buildContent(BuildContext context) {
     if (_isLoadingAll) {
       return const Center(
-        child: CircularProgressIndicator(),
-      );
+        child: CircularProgressIndicator());
     }
 
     // Create snap cards from fortunes
@@ -104,16 +99,14 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
         title: fortune.title,
         description: widget.title,
         content: _buildFortuneContent(context, fortune),
-        imageHeight: 400,
-      );
+        imageHeight: 400);
     }).toList();
 
     return FortuneSnapScrollView(
       cards: snapCards,
       imageHeight: 400,
       snapDistance: 100,
-      velocityThreshold: 150,
-    );
+      velocityThreshold: 150);
   }
 
   Widget _buildFortuneContent(BuildContext context, FortuneData fortune) {
@@ -138,14 +131,10 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                   gradient: RadialGradient(
                     colors: [
                       scoreColor.withValues(alpha: 0.3),
-                      scoreColor.withValues(alpha: 0.1),
-                    ],
-                  ),
+                      scoreColor.withValues(alpha: 0.1)]),
                   border: Border.all(
                     color: scoreColor,
-                    width: 3,
-                  ),
-                ),
+                    width: 3)),
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -154,19 +143,11 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                         '${fortune.score}',
                         style: theme.textTheme.headlineMedium?.copyWith(
                           color: scoreColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                          fontWeight: FontWeight.bold)),
                       Text(
                         '점',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: scoreColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                          color: scoreColor))]))),
               const SizedBox(width: 20),
               Expanded(
                 child: Column(
@@ -175,22 +156,12 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                     Text(
                       fortune.title,
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       _getScoreMessage(fortune.score),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))]))])),
 
         const SizedBox(height: 16),
 
@@ -205,19 +176,12 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
               Text(
                 '상세 운세',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+                  fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Text(
                 fortune.description,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  height: 1.6,
-                ),
-              ),
-            ],
-          ),
-        ),
+                  height: 1.6))])),
 
         const SizedBox(height: 16),
 
@@ -236,22 +200,14 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                       height: 50,
                       decoration: BoxDecoration(
                         color: fortune.details['luckyColor'],
-                        shape: BoxShape.circle,
-                      ),
+                        shape: BoxShape.circle),
                       child: Icon(
                         Icons.palette,
-                        color: fortune.details['luckyColor'],
-                      ),
-                    ),
+                        color: fortune.details['luckyColor'])),
                     const SizedBox(height: 8),
                     Text(
                       '행운의 색',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                      style: theme.textTheme.bodySmall)]))),
             const SizedBox(width: 12),
             Expanded(
               child: GlassContainer(
@@ -265,29 +221,17 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
                       height: 50,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
+                        shape: BoxShape.circle),
                       child: Center(
                         child: Text(
                           '${fortune.details['luckyNumber']}',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                            fontWeight: FontWeight.bold)))),
                     const SizedBox(height: 8),
                     Text(
                       '행운의 숫자',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+                      style: theme.textTheme.bodySmall)])))]),
 
         const SizedBox(height: 16),
 
@@ -301,89 +245,73 @@ class _FortuneSnapScrollPageState extends BaseFortunePageState<FortuneSnapScroll
               children: [
                 Icon(
                   Icons.tips_and_updates,
-                  color: theme.colorScheme.primary,
-                ),
+                  color: theme.colorScheme.primary),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     fortune.details['advice'],
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                    style: theme.textTheme.bodyMedium))])),
 
-        const SizedBox(height: 24),
-      ],
-    );
+        const SizedBox(height: 24)]);
   }
 
   String _getTitleForType(String type) {
     switch (type) {
-      case 'daily':
-        return '오늘의 운세';
+      case 'daily': return '오늘의 운세';
       case 'love':
         return '연애운';
       case 'money':
         return '재물운';
       case 'health':
         return '건강운';
-      case 'career':
-        return '직업운';
+      case , 'career': return '직업운';
       default:
-        return type;
+        return type;}
     }
   }
 
   String _getDescriptionForType(String type) {
     switch (type) {
-      case 'daily':
-        return '오늘 하루 전반적인 운세가 좋습니다. 긍정적인 마음가짐으로 하루를 시작하세요.';
+      case 'daily': return '오늘 하루 전반적인 운세가 좋습니다. 긍정적인 마음가짐으로 하루를 시작하세요.';
       case 'love':
         return '사랑하는 사람과의 관계가 더욱 깊어지는 시기입니다. 솔직한 대화를 나누어보세요.';
       case 'money':
         return '재물운이 상승하고 있습니다. 투자보다는 저축에 집중하는 것이 좋겠습니다.';
       case 'health':
         return '건강 관리에 신경을 써야 할 때입니다. 충분한 휴식과 운동을 병행하세요.';
-      case 'career':
-        return '새로운 기회가 찾아올 수 있는 시기입니다. 적극적으로 도전해보세요.';
+      case , 'career': return '새로운 기회가 찾아올 수 있는 시기입니다. 적극적으로 도전해보세요.';
       default:
-        return '운세가 전반적으로 좋은 편입니다.';
+        return '운세가 전반적으로 좋은 편입니다.';}
     }
   }
 
   Color _getLuckyColorForType(String type) {
     switch (type) {
-      case 'daily':
-        return Colors.blue;
+      case 'daily': return Colors.blue;
       case 'love':
         return Colors.pink;
       case 'money':
         return Colors.green;
       case 'health':
         return Colors.teal;
-      case 'career':
-        return Colors.indigo;
+      case , 'career': return Colors.indigo;
       default:
-        return Colors.purple;
+        return Colors.purple;}
     }
   }
 
   String _getAdviceForType(String type) {
     switch (type) {
-      case 'daily':
-        return '오늘은 평소보다 일찍 일어나 하루를 시작해보세요.';
+      case 'daily': return '오늘은 평소보다 일찍 일어나 하루를 시작해보세요.';
       case 'love':
         return '상대방의 말에 귀 기울이고 공감해주세요.';
       case 'money':
         return '충동구매를 피하고 계획적인 소비를 하세요.';
       case 'health':
         return '물을 충분히 마시고 스트레칭을 자주 해주세요.';
-      case 'career':
-        return '동료들과의 협업을 통해 더 좋은 결과를 얻을 수 있습니다.';
+      case , 'career': return '동료들과의 협업을 통해 더 좋은 결과를 얻을 수 있습니다.';
       default:
-        return '긍정적인 마음가짐을 유지하세요.';
+        return '긍정적인 마음가짐을 유지하세요.';}
     }
   }
 
@@ -429,6 +357,5 @@ class FortuneData {
     required this.title,
     required this.score,
     required this.description,
-    required this.details,
-  });
+    required this.details});
 }

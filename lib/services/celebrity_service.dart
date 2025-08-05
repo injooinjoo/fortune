@@ -21,8 +21,7 @@ class CelebrityService {
   // Search celebrities with filters
   List<Celebrity> searchCelebrities({
     String? query,
-    CelebrityFilter? filter,
-  }) {
+    CelebrityFilter? filter}) {
     var celebrities = CelebrityDatabaseEnhanced.allCelebrities;
     
     // Apply search query
@@ -68,8 +67,7 @@ class CelebrityService {
   // Get random celebrities
   List<Celebrity> getRandomCelebrities({
     int count = 10,
-    CelebrityCategory? category,
-  }) {
+    CelebrityCategory? category}) {
     var celebrities = category != null
         ? getCelebritiesByCategory(category)
         : CelebrityDatabaseEnhanced.allCelebrities;
@@ -111,8 +109,7 @@ class CelebrityService {
   // Get popular celebrities by category
   List<Celebrity> getPopularCelebrities({
     CelebrityCategory? category,
-    int limit = 10,
-  }) {
+    int limit = 10}) {
     final celebrities = category != null 
         ? getCelebritiesByCategory(category)
         : getAllCelebrities();
@@ -195,8 +192,7 @@ class CelebrityService {
     stats['ageStats'] = {
       'min': ages.reduce((a, b) => a < b ? a : b),
       'max': ages.reduce((a, b) => a > b ? a : b),
-      'average': null,
-    };
+      'average': null};
     
     // Zodiac distribution
     stats['byZodiac'] = <String, int>{};

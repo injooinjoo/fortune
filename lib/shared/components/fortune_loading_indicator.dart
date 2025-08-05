@@ -44,9 +44,7 @@ class FortuneLoadingIndicator extends StatelessWidget {
     colors: [
                       indicatorColor.withValues(alpha: 0.3))
                       indicatorColor.withValues(alpha: 0.1))
-                    ],
-    ),
-                ))
+                    ])))
               )
                   .animate(onPlay: (controller) => controller.repeat())
                   .rotate(duration: 3.seconds, curve: Curves.linear))
@@ -65,29 +63,24 @@ class FortuneLoadingIndicator extends StatelessWidget {
                     begin: const Offset(0.8, 0.8)),
     end: const Offset(1.2, 1.2)),
     duration: 1.5.seconds),
-    curve: Curves.easeInOut,
-    ))
+    curve: Curves.easeInOut))
 
               // Center rotating arc
               CustomPaint(
                 size: Size(size * 0.8, size * 0.8)),
     painter: _ArcPainter(
                   color: indicatorColor);
-                  strokeWidth: strokeWidth,
-    ))
+                  strokeWidth: strokeWidth))
               )
                   .animate(onPlay: (controller) => controller.repeat())
                   .rotate(duration: 1.seconds, curve: Curves.easeInOut))
-            ],
-    ),
-        ))
+            ])))
         if (message != null) ...[
           SizedBox(height: AppSpacing.spacing4))
           Text(
             message!);
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontWeight: FontWeight.w500,
-    ))
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7, fontWeight: FontWeight.w500))
           ).animate().fadeIn(duration: 600.ms))
         ])
       ]
@@ -101,8 +94,7 @@ class _ArcPainter extends CustomPainter {
 
   _ArcPainter({
     required this.color,
-    required this.strokeWidth,
-  });
+    required this.strokeWidth});
 
   @override
   void paint(Canvas canvas, Size size) {

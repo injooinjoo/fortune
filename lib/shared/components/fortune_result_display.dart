@@ -21,8 +21,7 @@ class FortuneResultDisplay extends StatelessWidget {
     required this.fortune,
     this.headerWidget,
     this.additionalSections,
-    this.onShare,
-  }) : super(key: key);
+    this.onShare}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +55,7 @@ class FortuneResultDisplay extends StatelessWidget {
           // Share Button
           _buildShareButton(context),
 
-          SizedBox(height: AppSpacing.spacing8),
-        ],
-      ),
-    );
+          SizedBox(height: AppSpacing.spacing8)]));
   }
 
   Widget _buildMainContent(BuildContext context) {
@@ -79,26 +75,18 @@ class FortuneResultDisplay extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: _getScoreGradientColors(fortune.overallScore!),
-                  ),
+                    colors: _getScoreGradientColors(fortune.overallScore!)),
                   boxShadow: [
                     BoxShadow(
                       color: _getScoreGradientColors(fortune.overallScore!).first.withValues(alpha: 0.5),
                       blurRadius: 20,
-                      spreadRadius: 5,
-                    ),
-                  ],
-                ),
+                      spreadRadius: 5)]),
                 child: Center(
                   child: Text(
                     '${fortune.overallScore}점',
                     style: theme.textTheme.headlineMedium?.copyWith(
                       color: AppColors.textPrimaryDark,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ).animate()
+                      fontWeight: FontWeight.bold)))).animate()
                   .scale(duration: 600.ms, curve: Curves.elasticOut)
                   .fade(),
 
@@ -111,17 +99,12 @@ class FortuneResultDisplay extends StatelessWidget {
                 color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXLarge),
                 border: Border.all(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                ),
-              ),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3))),
               child: Text(
                 _getCategoryDisplayName(fortune.category ?? fortune.type),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+                  fontWeight: FontWeight.bold))),
 
             SizedBox(height: AppSpacing.spacing4),
 
@@ -129,10 +112,8 @@ class FortuneResultDisplay extends StatelessWidget {
             Text(
               fortune.content,
               style: theme.textTheme.bodyLarge?.copyWith(
-                height: 1.6,
-              ),
-              textAlign: TextAlign.center,
-            ),
+                height: 1.6),
+              textAlign: TextAlign.center),
 
             // Description (if different from content)
             if (fortune.description != null && fortune.description != fortune.content) ...[
@@ -141,17 +122,12 @@ class FortuneResultDisplay extends StatelessWidget {
                 padding: AppSpacing.paddingAll16,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
-                  borderRadius: AppDimensions.borderRadiusMedium,
-                ),
+                  borderRadius: AppDimensions.borderRadiusMedium),
                 child: Text(
                   fortune.description!,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                    height: 1.5,
-                  ),
-                ),
-              ),
-            ],
+                    height: 1.5)))],
 
             SizedBox(height: AppSpacing.spacing4),
 
@@ -159,12 +135,7 @@ class FortuneResultDisplay extends StatelessWidget {
             Text(
               '생성일: ${_formatDate(fortune.createdAt)}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-            ),
-          ],
-        ),
-      ),
-    ).animate()
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))]))).animate()
         .fadeIn(duration: 500.ms)
         .slideY(begin: 0.1, end: 0);
   }
@@ -186,23 +157,16 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8),],
-                    ),
-                    borderRadius: AppDimensions.borderRadiusMedium,
-                  ),
+                      colors: [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8)]),
+                    borderRadius: AppDimensions.borderRadiusMedium),
                   child: const Icon(
                     Icons.analytics_rounded,
                     color: AppColors.textPrimaryDark,
-                    size: AppDimensions.iconSizeMedium,
-                  ),
-                ),
+                    size: AppDimensions.iconSizeMedium)),
                 SizedBox(width: AppSpacing.spacing3),
                 Text(
                   '상세 점수',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             SizedBox(height: AppSpacing.spacing4),
             ...scores.entries.map((entry) {
               final score = entry.value is int ? entry.value as,
@@ -215,9 +179,7 @@ class FortuneResultDisplay extends StatelessWidget {
                       flex: 3,
                       child: Text(
                         entry.key,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
+                        style: theme.textTheme.bodyMedium)),
                     Expanded(
                       flex: 7,
                       child: Row(
@@ -229,42 +191,22 @@ class FortuneResultDisplay extends StatelessWidget {
                                   height: AppSpacing.spacing5,
                                   decoration: BoxDecoration(
                                     color: AppColors.textSecondary.withValues(alpha: 0.3),
-                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                                  ),
-                                ),
+                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium))),
                                 AnimatedContainer(
                                   duration: AppAnimations.durationLong * 2,
                                   height: AppSpacing.spacing5,
                                   width: MediaQuery.of(context).size.width * 0.4 * score / 100,
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
-                                      colors: _getScoreGradientColors(score),
-                                    ),
-                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                      colors: _getScoreGradientColors(score)),
+                                    borderRadius: BorderRadius.circular(AppDimensions.radiusMedium)))])),
                           SizedBox(width: AppSpacing.spacing3),
                           Text(
                             '$score점',
                             style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: _getScoreColor(score),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    ).animate()
+                              color: _getScoreColor(score)))]))]));
+            }).toList()]))).animate()
         .fadeIn(duration: 500.ms, delay: 200.ms)
         .slideX(begin: 0.1, end: 0);
   }
@@ -289,23 +231,16 @@ class FortuneResultDisplay extends StatelessWidget {
                     padding: AppSpacing.paddingAll8,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.amber.withValues(alpha: 0.6), Colors.amber.withValues(alpha: 0.8),],
-                      ),
-                      borderRadius: AppDimensions.borderRadiusMedium,
-                    ),
+                        colors: [Colors.amber.withValues(alpha: 0.6), Colors.amber.withValues(alpha: 0.8)]),
+                      borderRadius: AppDimensions.borderRadiusMedium),
                     child: const Icon(
                       Icons.auto_awesome_rounded,
                       color: AppColors.textPrimaryDark,
-                      size: AppDimensions.iconSizeMedium,
-                    ),
-                  ),
+                      size: AppDimensions.iconSizeMedium)),
                   SizedBox(width: AppSpacing.spacing3),
                   Text(
                     '행운 아이템',
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ],
-              ),
+                    style: theme.textTheme.headlineSmall)]),
               SizedBox(height: AppSpacing.spacing5),
               GridView.count(
                 shrinkWrap: true,
@@ -330,21 +265,16 @@ class FortuneResultDisplay extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           theme.colorScheme.primary.withValues(alpha: 0.1),
-                          theme.colorScheme.primary.withValues(alpha: 0.05),
-                        ],
-                      ),
+                          theme.colorScheme.primary.withValues(alpha: 0.05)]),
                       borderRadius: AppDimensions.borderRadiusMedium,
                       border: Border.all(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
-                      ),
-                    ),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3))),
                     child: Row(
                       children: [
                         Icon(
                           _getLuckyItemIcon(entry.key),
                           color: theme.colorScheme.primary,
-                          size: AppDimensions.iconSizeSmall,
-                        ),
+                          size: AppDimensions.iconSizeSmall),
                         SizedBox(width: AppSpacing.spacing2),
                         Expanded(
                           child: Column(
@@ -354,31 +284,15 @@ class FortuneResultDisplay extends StatelessWidget {
                               Text(
                                 entry.key,
                                 style: theme.textTheme.bodySmall?.copyWith(
-                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                                ),
-                              ),
+                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize)),
                               Text(
                                 displayValue,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize,
-                                ),
+                                  fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize),
                                 maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate()
+                                overflow: TextOverflow.ellipsis)]))]));
+                }).toList())])))).animate()
         .fadeIn(duration: 500.ms, delay: 400.ms)
         .slideX(begin: -0.1, end: 0);
   }
@@ -400,23 +314,16 @@ class FortuneResultDisplay extends StatelessWidget {
                   padding: AppSpacing.paddingAll8,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8),],
-                    ),
-                    borderRadius: AppDimensions.borderRadiusMedium,
-                  ),
+                      colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)]),
+                    borderRadius: AppDimensions.borderRadiusMedium),
                   child: const Icon(
                     Icons.tips_and_updates_rounded,
                     color: AppColors.textPrimaryDark,
-                    size: AppDimensions.iconSizeMedium,
-                  ),
-                ),
+                    size: AppDimensions.iconSizeMedium)),
                 SizedBox(width: AppSpacing.spacing3),
                 Text(
                   '추천 사항',
-                  style: theme.textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: theme.textTheme.headlineSmall)]),
             SizedBox(height: AppSpacing.spacing4),
             ...recommendations.asMap().entries.map((entry) {
               final index = entry.key;
@@ -432,32 +339,19 @@ class FortuneResultDisplay extends StatelessWidget {
                       height: AppSpacing.spacing6,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
-                      ),
+                        shape: BoxShape.circle),
                       child: Center(
                         child: Text(
                           '${index + 1}',
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      ),
-                    ),
+                          style: Theme.of(context).textTheme.labelSmall))),
                     SizedBox(width: AppSpacing.spacing3),
                     Expanded(
                       child: Text(
                         recommendation,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate()
+                        style: theme.textTheme.bodyMedium))])).animate()
                   .fadeIn(delay: Duration(milliseconds: 600 + index * 100))
                   .slideX(begin: 0.1, end: 0);
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+            }).toList()])));
   }
 
   Widget _buildShareButton(BuildContext context) {
@@ -469,8 +363,7 @@ class FortuneResultDisplay extends StatelessWidget {
         onPressed: onShare ?? () {
           // Default share implementation
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('공유 기능이 곧 추가됩니다!'),
-          );
+            const SnackBar(content: Text('공유 기능이 곧 추가됩니다!'));
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: AppSpacing.spacing6, vertical: AppSpacing.spacing4),
@@ -482,27 +375,20 @@ class FortuneResultDisplay extends StatelessWidget {
               Text(
                 '운세 공유하기',
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate()
+                  fontWeight: FontWeight.bold))])))).animate()
         .fadeIn(duration: 500.ms, delay: 800.ms)
         .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1));
   }
 
   List<Color> _getScoreGradientColors(int score) {
     if (score >= 80) {
-      return [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8),];
+      return [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)];
     } else if (score >= 60) {
-      return [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8),];
+      return [AppColors.primary.withValues(alpha: 0.6), AppColors.primary.withValues(alpha: 0.8)];
     } else if (score >= 40) {
-      return [AppColors.warning.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.8),];
+      return [AppColors.warning.withValues(alpha: 0.6), AppColors.warning.withValues(alpha: 0.8)];
     } else {
-      return [AppColors.error.withValues(alpha: 0.6), AppColors.error.withValues(alpha: 0.8),];
+      return [AppColors.error.withValues(alpha: 0.6), AppColors.error.withValues(alpha: 0.8)];
     }
   }
 
@@ -536,8 +422,7 @@ class FortuneResultDisplay extends StatelessWidget {
       'compatibility': '궁합',
       'mbti': 'MBTI 운세',
       'zodiac': '별자리 운세',
-      'tarot': '타로 카드',
-    };
+      'tarot': '타로 카드'};
     return categoryMap[category] ?? category;
   }
 
@@ -556,8 +441,7 @@ class GlassButton extends StatelessWidget {
     Key? key,
     required this.child,
     required this.onPressed,
-    this.padding,
-  }) : super(key: key);
+    this.padding}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -570,9 +454,6 @@ class GlassButton extends StatelessWidget {
           padding: padding ?? AppSpacing.paddingAll16,
           borderRadius: AppDimensions.borderRadiusLarge,
           blur: 10,
-          child: child,
-        ),
-      ),
-    );
+          child: child)));
   }
 }

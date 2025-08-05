@@ -87,8 +87,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     required this.dialogStyles,
     required this.dataVisualization,
     required this.socialSharing,
-    this.ctaButtonStyle,
-  });
+    this.ctaButtonStyle});
 
   /// Light theme extension
   static final light = FortuneThemeExtension(
@@ -128,10 +127,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     ctaButtonStyle: ElevatedButton.styleFrom(
       padding: EdgeInsets.symmetric(vertical: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
+        borderRadius: BorderRadius.circular(12))));
 
   /// Dark theme extension
   static final dark = FortuneThemeExtension(
@@ -171,10 +167,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     ctaButtonStyle: ElevatedButton.styleFrom(
       padding: EdgeInsets.symmetric(vertical: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-    ),
-  );
+        borderRadius: BorderRadius.circular(12))));
 
   @override
   FortuneThemeExtension copyWith({
@@ -210,8 +203,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
     DialogStyles? dialogStyles,
     DataVisualization? dataVisualization,
     SocialSharingStyles? socialSharing,
-    ButtonStyle? ctaButtonStyle,
-  }) {
+    ButtonStyle? ctaButtonStyle}) {
     return FortuneThemeExtension(
       scoreExcellent: scoreExcellent ?? this.scoreExcellent,
       scoreGood: scoreGood ?? this.scoreGood,
@@ -245,8 +237,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       dialogStyles: dialogStyles ?? this.dialogStyles,
       dataVisualization: dataVisualization ?? this.dataVisualization,
       socialSharing: socialSharing ?? this.socialSharing,
-      ctaButtonStyle: ctaButtonStyle ?? this.ctaButtonStyle,
-    );
+      ctaButtonStyle: ctaButtonStyle ?? this.ctaButtonStyle);
   }
 
   @override
@@ -287,8 +278,7 @@ class FortuneThemeExtension extends ThemeExtension<FortuneThemeExtension> {
       dialogStyles: DialogStyles.lerp(dialogStyles, other.dialogStyles, t),
       dataVisualization: DataVisualization.lerp(dataVisualization, other.dataVisualization, t),
       socialSharing: SocialSharingStyles.lerp(socialSharing, other.socialSharing, t),
-      ctaButtonStyle: ButtonStyle.lerp(ctaButtonStyle, other.ctaButtonStyle, t),
-    );
+      ctaButtonStyle: ButtonStyle.lerp(ctaButtonStyle, other.ctaButtonStyle, t));
   }
 }
 
@@ -327,8 +317,7 @@ class MicroInteractions {
     required this.checkboxScale,
     required this.fabPressScale,
     required this.iconButtonScale,
-    required this.chipPressScale,
-  });
+    required this.chipPressScale});
 
   factory MicroInteractions.light() => const MicroInteractions(
         buttonPressScale: 0.98,
@@ -338,8 +327,7 @@ class MicroInteractions {
         checkboxScale: 1.15,
         fabPressScale: 0.96,
         iconButtonScale: 0.95,
-        chipPressScale: 0.97,
-      );
+        chipPressScale: 0.97);
 
   factory MicroInteractions.dark() => const MicroInteractions(
         buttonPressScale: 0.97,
@@ -349,8 +337,7 @@ class MicroInteractions {
         checkboxScale: 1.2,
         fabPressScale: 0.95,
         iconButtonScale: 0.94,
-        chipPressScale: 0.96,
-      );
+        chipPressScale: 0.96);
 
   static MicroInteractions lerp(MicroInteractions a, MicroInteractions b, double t) {
     return MicroInteractions(
@@ -361,8 +348,7 @@ class MicroInteractions {
       checkboxScale: lerpDouble(a.checkboxScale, b.checkboxScale, t)!,
       fabPressScale: lerpDouble(a.fabPressScale, b.fabPressScale, t)!,
       iconButtonScale: lerpDouble(a.iconButtonScale, b.iconButtonScale, t)!,
-      chipPressScale: lerpDouble(a.chipPressScale, b.chipPressScale, t)!,
-    );
+      chipPressScale: lerpDouble(a.chipPressScale, b.chipPressScale, t)!);
   }
 }
 
@@ -386,8 +372,7 @@ class AnimationDurations {
     required this.long,
     required this.veryLong,
     required this.pageTransition,
-    required this.complexAnimation,
-  });
+    required this.complexAnimation});
 
   factory AnimationDurations.standard() => const AnimationDurations(
         instant: Duration(milliseconds: 50),
@@ -397,8 +382,7 @@ class AnimationDurations {
         long: Duration(milliseconds: 500),
         veryLong: Duration(milliseconds: 800),
         pageTransition: Duration(milliseconds: 300),
-        complexAnimation: Duration(milliseconds: 1000),
-      );
+        complexAnimation: Duration(milliseconds: 1000));
 
   static AnimationDurations lerp(AnimationDurations a, AnimationDurations b, double t) {
     return AnimationDurations(
@@ -409,8 +393,7 @@ class AnimationDurations {
       long: Duration(milliseconds: lerpDouble(a.long.inMilliseconds, b.long.inMilliseconds, t)!.round()),
       veryLong: Duration(milliseconds: lerpDouble(a.veryLong.inMilliseconds, b.veryLong.inMilliseconds, t)!.round()),
       pageTransition: Duration(milliseconds: lerpDouble(a.pageTransition.inMilliseconds, b.pageTransition.inMilliseconds, t)!.round()),
-      complexAnimation: Duration(milliseconds: lerpDouble(a.complexAnimation.inMilliseconds, b.complexAnimation.inMilliseconds, t)!.round()),
-    );
+      complexAnimation: Duration(milliseconds: lerpDouble(a.complexAnimation.inMilliseconds, b.complexAnimation.inMilliseconds, t)!.round()));
   }
 }
 
@@ -428,16 +411,14 @@ class AnimationCurves {
     required this.decelerate,
     required this.standard,
     required this.accelerate,
-    required this.bounce,
-  });
+    required this.bounce});
 
   factory AnimationCurves.toss() => const AnimationCurves(
         emphasize: Curves.easeOutBack,
         decelerate: Curves.decelerate,
         standard: Curves.easeInOutCubic,
         accelerate: Curves.easeIn,
-        bounce: Curves.elasticOut,
-      );
+        bounce: Curves.elasticOut);
 
   static AnimationCurves lerp(AnimationCurves a, AnimationCurves b, double t) {
     // Curves don't interpolate, return a or b based on t
@@ -465,8 +446,7 @@ class LoadingStates {
     required this.skeletonOpacity,
     required this.shimmerDuration,
     required this.progressStrokeWidth,
-    required this.progressBarRadius,
-  });
+    required this.progressBarRadius});
 
   factory LoadingStates.light() => const LoadingStates(
         skeletonBase: Color(0xFFE5E7EB),
@@ -474,8 +454,7 @@ class LoadingStates {
         skeletonOpacity: 0.12,
         shimmerDuration: Duration(milliseconds: 1500),
         progressStrokeWidth: 2.0,
-        progressBarRadius: 4.0,
-      );
+        progressBarRadius: 4.0);
 
   factory LoadingStates.dark() => const LoadingStates(
         skeletonBase: Color(0xFF2D2D2D),
@@ -483,8 +462,7 @@ class LoadingStates {
         skeletonOpacity: 0.08,
         shimmerDuration: Duration(milliseconds: 1500),
         progressStrokeWidth: 2.0,
-        progressBarRadius: 4.0,
-      );
+        progressBarRadius: 4.0);
 
   static LoadingStates lerp(LoadingStates a, LoadingStates b, double t) {
     return LoadingStates(
@@ -493,8 +471,7 @@ class LoadingStates {
       skeletonOpacity: lerpDouble(a.skeletonOpacity, b.skeletonOpacity, t)!,
       shimmerDuration: Duration(milliseconds: lerpDouble(a.shimmerDuration.inMilliseconds, b.shimmerDuration.inMilliseconds, t)!.round()),
       progressStrokeWidth: lerpDouble(a.progressStrokeWidth, b.progressStrokeWidth, t)!,
-      progressBarRadius: lerpDouble(a.progressBarRadius, b.progressBarRadius, t)!,
-    );
+      progressBarRadius: lerpDouble(a.progressBarRadius, b.progressBarRadius, t)!);
   }
 }
 
@@ -512,24 +489,21 @@ class ErrorStates {
     required this.errorBorder,
     required this.errorIcon,
     required this.errorIconSize,
-    required this.errorAnimationDuration,
-  });
+    required this.errorAnimationDuration});
 
   factory ErrorStates.light() => const ErrorStates(
         errorBackground: Color(0xFFFEE2E2),
         errorBorder: Color(0xFFFCA5A5),
         errorIcon: Icons.error_outline,
         errorIconSize: 48.0,
-        errorAnimationDuration: Duration(milliseconds: 300),
-      );
+        errorAnimationDuration: Duration(milliseconds: 300));
 
   factory ErrorStates.dark() => const ErrorStates(
         errorBackground: Color(0xFF2D1B1B),
         errorBorder: Color(0xFF991B1B),
         errorIcon: Icons.error_outline,
         errorIconSize: 48.0,
-        errorAnimationDuration: Duration(milliseconds: 300),
-      );
+        errorAnimationDuration: Duration(milliseconds: 300));
 
   static ErrorStates lerp(ErrorStates a, ErrorStates b, double t) {
     return ErrorStates(
@@ -537,8 +511,7 @@ class ErrorStates {
       errorBorder: Color.lerp(a.errorBorder, b.errorBorder, t)!,
       errorIcon: t < 0.5 ? a.errorIcon : b.errorIcon,
       errorIconSize: lerpDouble(a.errorIconSize, b.errorIconSize, t)!,
-      errorAnimationDuration: Duration(milliseconds: lerpDouble(a.errorAnimationDuration.inMilliseconds, b.errorAnimationDuration.inMilliseconds, t)!.round()),
-    );
+      errorAnimationDuration: Duration(milliseconds: lerpDouble(a.errorAnimationDuration.inMilliseconds, b.errorAnimationDuration.inMilliseconds, t)!.round()));
   }
 }
 
@@ -556,16 +529,14 @@ class HapticPatterns {
     required this.success,
     required this.warning,
     required this.error,
-    required this.selection,
-  });
+    required this.selection});
 
   factory HapticPatterns.standard() => const HapticPatterns(
         buttonTap: HapticType.light,
         success: HapticType.medium,
         warning: HapticType.medium,
         error: HapticType.heavy,
-        selection: HapticType.selection,
-      );
+        selection: HapticType.selection);
 
   static HapticPatterns lerp(HapticPatterns a, HapticPatterns b, double t) {
     return t < 0.5 ? a : b;
@@ -595,10 +566,7 @@ enum HapticType {
   light,
   medium,
   heavy,
-  selection,
-  
-  
-}
+  selection}
 
 /// Form styles
 @immutable
@@ -624,8 +592,7 @@ class FormStyles {
     required this.borderColor,
     required this.focusedBorderColor,
     required this.errorBorderColor,
-    required this.focusBorderWidth,
-  });
+    required this.focusBorderWidth});
 
   factory FormStyles.light() => const FormStyles(
         inputHeight: 56.0,
@@ -637,8 +604,7 @@ class FormStyles {
         borderColor: Color(0xFFE5E7EB),
         focusedBorderColor: Color(0xFF000000),
         errorBorderColor: Color(0xFFEF4444),
-        focusBorderWidth: 2.0,
-      );
+        focusBorderWidth: 2.0);
 
   factory FormStyles.dark() => const FormStyles(
         inputHeight: 56.0,
@@ -650,8 +616,7 @@ class FormStyles {
         borderColor: Color(0xFF2D2D2D),
         focusedBorderColor: Color(0xFFFFFFFF),
         errorBorderColor: Color(0xFFF87171),
-        focusBorderWidth: 2.0,
-      );
+        focusBorderWidth: 2.0);
 
   static FormStyles lerp(FormStyles a, FormStyles b, double t) {
     return FormStyles(
@@ -664,8 +629,7 @@ class FormStyles {
       borderColor: Color.lerp(a.borderColor, b.borderColor, t)!,
       focusedBorderColor: Color.lerp(a.focusedBorderColor, b.focusedBorderColor, t)!,
       errorBorderColor: Color.lerp(a.errorBorderColor, b.errorBorderColor, t)!,
-      focusBorderWidth: lerpDouble(a.focusBorderWidth, b.focusBorderWidth, t)!,
-    );
+      focusBorderWidth: lerpDouble(a.focusBorderWidth, b.focusBorderWidth, t)!);
   }
 }
 
@@ -713,8 +677,7 @@ class BottomSheetStyles {
     required this.buttonBorderRadius,
     required this.barrierOpacity,
     required this.slideAnimationDuration,
-    required this.fadeAnimationDuration,
-  });
+    required this.fadeAnimationDuration});
 
   factory BottomSheetStyles.light() => const BottomSheetStyles(
         handleWidth: 40.0,
@@ -736,8 +699,7 @@ class BottomSheetStyles {
         buttonBorderRadius: 12.0,
         barrierOpacity: 0.5,
         slideAnimationDuration: Duration(milliseconds: 350),
-        fadeAnimationDuration: Duration(milliseconds: 300),
-      );
+        fadeAnimationDuration: Duration(milliseconds: 300));
 
   factory BottomSheetStyles.dark() => const BottomSheetStyles(
         handleWidth: 40.0,
@@ -759,8 +721,7 @@ class BottomSheetStyles {
         buttonBorderRadius: 12.0,
         barrierOpacity: 0.5,
         slideAnimationDuration: Duration(milliseconds: 350),
-        fadeAnimationDuration: Duration(milliseconds: 300),
-      );
+        fadeAnimationDuration: Duration(milliseconds: 300));
 
   static BottomSheetStyles lerp(BottomSheetStyles a, BottomSheetStyles b, double t) {
     return BottomSheetStyles(
@@ -783,8 +744,7 @@ class BottomSheetStyles {
       buttonBorderRadius: lerpDouble(a.buttonBorderRadius, b.buttonBorderRadius, t)!,
       barrierOpacity: lerpDouble(a.barrierOpacity, b.barrierOpacity, t)!,
       slideAnimationDuration: Duration(milliseconds: lerpDouble(a.slideAnimationDuration.inMilliseconds, b.slideAnimationDuration.inMilliseconds, t)!.round()),
-      fadeAnimationDuration: Duration(milliseconds: lerpDouble(a.fadeAnimationDuration.inMilliseconds, b.fadeAnimationDuration.inMilliseconds, t)!.round()),
-    );
+      fadeAnimationDuration: Duration(milliseconds: lerpDouble(a.fadeAnimationDuration.inMilliseconds, b.fadeAnimationDuration.inMilliseconds, t)!.round()));
   }
 }
 
@@ -824,8 +784,7 @@ class DialogStyles {
     required this.scaleAnimationDuration,
     required this.fadeAnimationDuration,
     required this.shakeAnimationDuration,
-    required this.shimmerDuration,
-  });
+    required this.shimmerDuration});
 
   factory DialogStyles.light() => const DialogStyles(
         contentPadding: EdgeInsets.all(24),
@@ -843,8 +802,7 @@ class DialogStyles {
         scaleAnimationDuration: Duration(milliseconds: 200),
         fadeAnimationDuration: Duration(milliseconds: 150),
         shakeAnimationDuration: Duration(milliseconds: 300),
-        shimmerDuration: Duration(milliseconds: 1500),
-      );
+        shimmerDuration: Duration(milliseconds: 1500));
 
   factory DialogStyles.dark() => const DialogStyles(
         contentPadding: EdgeInsets.all(24),
@@ -862,8 +820,7 @@ class DialogStyles {
         scaleAnimationDuration: Duration(milliseconds: 200),
         fadeAnimationDuration: Duration(milliseconds: 150),
         shakeAnimationDuration: Duration(milliseconds: 300),
-        shimmerDuration: Duration(milliseconds: 1500),
-      );
+        shimmerDuration: Duration(milliseconds: 1500));
 
   static DialogStyles lerp(DialogStyles a, DialogStyles b, double t) {
     return DialogStyles(
@@ -882,8 +839,7 @@ class DialogStyles {
       scaleAnimationDuration: Duration(milliseconds: lerpDouble(a.scaleAnimationDuration.inMilliseconds, b.scaleAnimationDuration.inMilliseconds, t)!.round()),
       fadeAnimationDuration: Duration(milliseconds: lerpDouble(a.fadeAnimationDuration.inMilliseconds, b.fadeAnimationDuration.inMilliseconds, t)!.round()),
       shakeAnimationDuration: Duration(milliseconds: lerpDouble(a.shakeAnimationDuration.inMilliseconds, b.shakeAnimationDuration.inMilliseconds, t)!.round()),
-      shimmerDuration: Duration(milliseconds: lerpDouble(a.shimmerDuration.inMilliseconds, b.shimmerDuration.inMilliseconds, t)!.round()),
-    );
+      shimmerDuration: Duration(milliseconds: lerpDouble(a.shimmerDuration.inMilliseconds, b.shimmerDuration.inMilliseconds, t)!.round()));
   }
 }
 
@@ -921,8 +877,7 @@ class CardStyles {
     required this.itemSpacing,
     required this.sectionSpacing,
     required this.pressScale,
-    required this.pressAnimationDuration,
-  });
+    required this.pressAnimationDuration});
 
   factory CardStyles.light() => const CardStyles(
         defaultPadding: EdgeInsets.all(16),
@@ -939,8 +894,7 @@ class CardStyles {
         itemSpacing: 16.0,
         sectionSpacing: 4.0,
         pressScale: 0.98,
-        pressAnimationDuration: Duration(milliseconds: 100),
-      );
+        pressAnimationDuration: Duration(milliseconds: 100));
 
   factory CardStyles.dark() => const CardStyles(
         defaultPadding: EdgeInsets.all(16),
@@ -957,8 +911,7 @@ class CardStyles {
         itemSpacing: 16.0,
         sectionSpacing: 4.0,
         pressScale: 0.98,
-        pressAnimationDuration: Duration(milliseconds: 100),
-      );
+        pressAnimationDuration: Duration(milliseconds: 100));
 
   static CardStyles lerp(CardStyles a, CardStyles b, double t) {
     return CardStyles(
@@ -976,8 +929,7 @@ class CardStyles {
       itemSpacing: lerpDouble(a.itemSpacing, b.itemSpacing, t)!,
       sectionSpacing: lerpDouble(a.sectionSpacing, b.sectionSpacing, t)!,
       pressScale: lerpDouble(a.pressScale, b.pressScale, t)!,
-      pressAnimationDuration: Duration(milliseconds: lerpDouble(a.pressAnimationDuration.inMilliseconds, b.pressAnimationDuration.inMilliseconds, t)!.round()),
-    );
+      pressAnimationDuration: Duration(milliseconds: lerpDouble(a.pressAnimationDuration.inMilliseconds, b.pressAnimationDuration.inMilliseconds, t)!.round()));
   }
 }
 
@@ -995,8 +947,7 @@ class DataVisualization {
     required this.chartLineWidth,
     required this.chartPointSize,
     required this.chartShowGrid,
-    required this.chartAnimationDuration,
-  });
+    required this.chartAnimationDuration});
 
   factory DataVisualization.light() => const DataVisualization(
         chartColors: [
@@ -1004,13 +955,11 @@ class DataVisualization {
           Color(0xFF10B981),
           Color(0xFFF59E0B),
           Color(0xFFEF4444),
-          Color(0xFF8B5CF6),
-        ],
+          Color(0xFF8B5CF6)],
         chartLineWidth: 2.0,
         chartPointSize: 4.0,
         chartShowGrid: true,
-        chartAnimationDuration: Duration(milliseconds: 1000),
-      );
+        chartAnimationDuration: Duration(milliseconds: 1000));
 
   factory DataVisualization.dark() => const DataVisualization(
         chartColors: [
@@ -1018,25 +967,21 @@ class DataVisualization {
           Color(0xFF34D399),
           Color(0xFFFBBF24),
           Color(0xFFF87171),
-          Color(0xFFA78BFA),
-        ],
+          Color(0xFFA78BFA)],
         chartLineWidth: 2.0,
         chartPointSize: 4.0,
         chartShowGrid: true,
-        chartAnimationDuration: Duration(milliseconds: 1000),
-      );
+        chartAnimationDuration: Duration(milliseconds: 1000));
 
   static DataVisualization lerp(DataVisualization a, DataVisualization b, double t) {
     return DataVisualization(
       chartColors: List.generate(
         a.chartColors.length,
-        (i) => Color.lerp(a.chartColors[i], b.chartColors[i], t)!,
-      ),
+        (i) => Color.lerp(a.chartColors[i], b.chartColors[i], t)!),
       chartLineWidth: lerpDouble(a.chartLineWidth, b.chartLineWidth, t)!,
       chartPointSize: lerpDouble(a.chartPointSize, b.chartPointSize, t)!,
       chartShowGrid: t < 0.5 ? a.chartShowGrid : b.chartShowGrid,
-      chartAnimationDuration: Duration(milliseconds: lerpDouble(a.chartAnimationDuration.inMilliseconds, b.chartAnimationDuration.inMilliseconds, t)!.round()),
-    );
+      chartAnimationDuration: Duration(milliseconds: lerpDouble(a.chartAnimationDuration.inMilliseconds, b.chartAnimationDuration.inMilliseconds, t)!.round()));
   }
 }
 
@@ -1052,30 +997,26 @@ class SocialSharingStyles {
     required this.shareButtonSize,
     required this.shareIconSize,
     required this.sharePadding,
-    required this.shareAnimationDuration,
-  });
+    required this.shareAnimationDuration});
 
   factory SocialSharingStyles.light() => const SocialSharingStyles(
         shareButtonSize: 56.0,
         shareIconSize: 24.0,
         sharePadding: EdgeInsets.all(16),
-        shareAnimationDuration: Duration(milliseconds: 200),
-      );
+        shareAnimationDuration: Duration(milliseconds: 200));
 
   factory SocialSharingStyles.dark() => const SocialSharingStyles(
         shareButtonSize: 56.0,
         shareIconSize: 24.0,
         sharePadding: EdgeInsets.all(16),
-        shareAnimationDuration: Duration(milliseconds: 200),
-      );
+        shareAnimationDuration: Duration(milliseconds: 200));
 
   static SocialSharingStyles lerp(SocialSharingStyles a, SocialSharingStyles b, double t) {
     return SocialSharingStyles(
       shareButtonSize: lerpDouble(a.shareButtonSize, b.shareButtonSize, t)!,
       shareIconSize: lerpDouble(a.shareIconSize, b.shareIconSize, t)!,
       sharePadding: EdgeInsets.lerp(a.sharePadding, b.sharePadding, t)!,
-      shareAnimationDuration: Duration(milliseconds: lerpDouble(a.shareAnimationDuration.inMilliseconds, b.shareAnimationDuration.inMilliseconds, t)!.round()),
-    );
+      shareAnimationDuration: Duration(milliseconds: lerpDouble(a.shareAnimationDuration.inMilliseconds, b.shareAnimationDuration.inMilliseconds, t)!.round()));
   }
 }
 

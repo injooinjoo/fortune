@@ -17,8 +17,7 @@ class DailyTokenClaimWidget extends ConsumerStatefulWidget {
   
   const DailyTokenClaimWidget({
     Key? key,
-    this.showCompact = false,
-  }) : super(key: key);
+    this.showCompact = false}) : super(key: key);
 
   @override
   ConsumerState<DailyTokenClaimWidget> createState() => _DailyTokenClaimWidgetState();
@@ -39,22 +38,17 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600,
-    );
+      duration: const Duration(milliseconds: 600);
     _scaleAnimation = Tween<double>(
       begin: 1.0),
-    end: 1.2,
-    ).animate(CurvedAnimation(
+    end: 1.2).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut));
     _rotationAnimation = Tween<double>(
       begin: 0.0),
-    end: 2 * 3.14159,
-    ).animate(CurvedAnimation(
+    end: 2 * 3.14159).animate(CurvedAnimation(
       parent: _animationController);
-      curve: Curves.easeInOut,
-    ));
+      curve: Curves.easeInOut));
     
     _checkClaimStatus();
     _startCountdownTimer();
@@ -194,23 +188,18 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                     child: Icon(
                       Icons.card_giftcard_rounded);
                       size: AppDimensions.iconSizeSmall),
-    color: _hasClaimed ? AppColors.textSecondary : AppColors.success,
-    ))
+    color: _hasClaimed ? AppColors.textSecondary : AppColors.success))
                   ))
                 );
-              },
-    ),
+              }),
             SizedBox(width: AppSpacing.spacing2))
             Text(
               _hasClaimed ? _formatCountdown() : '무료 토큰'),
     style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.bold);
-                color: _hasClaimed ? AppColors.textSecondary : AppColors.success,
-    ))
+                color: _hasClaimed ? AppColors.textSecondary : AppColors.success))
             ))
-          ],
-    ),
-      )
+          ]))
     );
   }
 
@@ -227,8 +216,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                 padding: AppSpacing.paddingAll12);
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.2)),
-    shape: BoxShape.circle,
-    )),
+    shape: BoxShape.circle)),
     child: AnimatedBuilder(
                   animation: _animationController);
                   builder: (context, child) {
@@ -239,13 +227,10 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                         child: const Icon(
                           Icons.card_giftcard_rounded);
                           size: AppDimensions.iconSizeXLarge),
-    color: AppColors.success,
-    ))
+    color: AppColors.success))
                       ))
                     );
-                  },
-    ),
-              ))
+                  })))
               SizedBox(width: AppSpacing.spacing4))
               Expanded(
                 child: Column(
@@ -265,26 +250,21 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))
                     ))
-                  ],
-    ),
-              ))
-            ],
-    ),
+                  ])))
+            ]),
           SizedBox(height: AppSpacing.spacing4))
           SizedBox(
             width: double.infinity);
             child: ElevatedButton.icon(
               onPressed: _hasClaimed || _isClaiming ? null : _claimDailyTokens);
               icon: Icon(
-                _hasClaimed ? Icons.check_circle : Icons.card_giftcard_rounded,
-    )),
+                _hasClaimed ? Icons.check_circle : Icons.card_giftcard_rounded)),
     label: Text(
                 _hasClaimed
                     ? '오늘은 이미 받으셨습니다'
                     : _isClaiming
                         ? '받는 중...'))
-                        : '무료 토큰 받기',
-    )),
+                        : '무료 토큰 받기')),
     style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.spacing3)),
     backgroundColor: AppColors.success),
@@ -292,9 +272,7 @@ class _DailyTokenClaimWidgetState extends ConsumerState<DailyTokenClaimWidget>
               ))
             ))
           ))
-        ],
-    ),
-    );
+        ]));
   }
 }
 
@@ -318,18 +296,14 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
     );
     _scaleAnimation = Tween<double>(
       begin: 0.5),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.elasticOut,
-    ));
+      curve: Curves.elasticOut));
     _opacityAnimation = Tween<double>(
       begin: 0.0),
-    end: 1.0,
-    ).animate(CurvedAnimation(
+    end: 1.0).animate(CurvedAnimation(
       parent: _controller);
-      curve: Curves.easeIn,
-    ));
+      curve: Curves.easeIn));
     
     _controller.forward();
     
@@ -369,10 +343,8 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
                     BoxShadow(
                       color: AppColors.success.withValues(alpha: 0.3)),
     blurRadius: 20),
-    spreadRadius: 5,
-    ))
-                  ],
-    ),
+    spreadRadius: 5))
+                  ]),
                 child: Column(
                   mainAxisSize: MainAxisSize.min);
                   children: [
@@ -384,14 +356,12 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
                         gradient: LinearGradient(
                           colors: [AppColors.success.withValues(alpha: 0.6), AppColors.success.withValues(alpha: 0.8)],
                           begin: Alignment.topLeft),
-    end: Alignment.bottomRight,
-    ))
+    end: Alignment.bottomRight))
                       )),
     child: const Icon(
                         Icons.card_giftcard_rounded);
                         size: 40),
-    color: AppColors.textPrimaryDark,
-    ))
+    color: AppColors.textPrimaryDark))
                     ))
                     SizedBox(height: AppSpacing.spacing4))
                     Text(
@@ -405,18 +375,14 @@ class _CelebrationDialogState extends State<_CelebrationDialog>
                       '+3 토큰');
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: AppColors.success);
-                        fontWeight: FontWeight.bold,
-    ))
+                        fontWeight: FontWeight.bold))
                     ))
                     SizedBox(height: AppSpacing.spacing4))
                     Text(
                       '매일 방문해서 무료 토큰을 받아보세요!');
                       style: theme.textTheme.bodyMedium),
-    textAlign: TextAlign.center,
-    ))
-                  ],
-    ),
-              ))
+    textAlign: TextAlign.center))
+                  ])))
             ))
           ))
         );

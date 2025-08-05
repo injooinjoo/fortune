@@ -150,8 +150,7 @@ class Logger {
         'secret',
         'cardNumber',
         'cvv',
-        'pin',
-      ];
+        'pin'];
       
       for (final key in sensitiveKeys) {
         if (sanitized.containsKey(key)) {
@@ -204,8 +203,7 @@ class Logger {
     int? apiTimeMs,
     int? cacheTimeMs,
     int? overallScore,
-    String? errorMessage,
-  }) {
+    String? errorMessage}) {
     if (!kDebugMode) return;
     
     final color = success ? _green : _red;

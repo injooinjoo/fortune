@@ -7,8 +7,7 @@ abstract class AppException implements Exception {
   const AppException({
     required this.message,
     this.code,
-    this.data,
-  });
+    this.data});
 
   @override
   String toString() =>
@@ -23,8 +22,7 @@ class ServerException extends AppException {
     required String message,
     this.statusCode,
     String? code,
-    dynamic data,
-  }) : super(message: message, code: code, data: data);
+    dynamic data}) : super(message: message, code: code, data: data);
 
   @override
   String toString() => 'ServerException: $message (${statusCode ?? 'Unknown'})';
@@ -53,8 +51,7 @@ class TokenException implements Exception {
 
   TokenException({
     required this.message,
-    this.remainingTokens,
-  });
+    this.remainingTokens});
 
   @override
   String toString() => 'TokenException: $message';
@@ -66,8 +63,7 @@ class AuthException implements Exception {
 
   AuthException({
     required this.message,
-    this.code,
-  });
+    this.code});
 
   @override
   String toString() => 'AuthException: $message';
@@ -79,8 +75,7 @@ class ValidationException extends AppException {
   const ValidationException({
     required String message,
     this.errors,
-    String? code,
-  }) : super(message: message, code: code);
+    String? code}) : super(message: message, code: code);
 
   @override
   String toString() => 'ValidationException: $message';

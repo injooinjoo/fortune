@@ -36,14 +36,12 @@ class SportItem {
     required this.gradientColors,
     required this.category,
     this.teams,
-    this.hasWeatherInfo = true,
-  });
+    this.hasWeatherInfo = true});
 }
 
 class EnhancedSportsFortunePage extends BaseFortunePage {
   const EnhancedSportsFortunePage({
-    Key? key,
-  }) : super(
+    Key? key}) : super(
           key: key,
           title: '스포츠 운세',
           description: '오늘의 스포츠 운세를 확인하고 최고의 경기력을 발휘하세요',
@@ -122,15 +120,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       id: 'tennis',
       icon: Icons.sports_tennis,
       gradientColors: [Color(0xFFF56565), Color(0xFFE53E3E)],
-      category: SportCategory.ballGames,
-    ),
+      category: SportCategory.ballGames),
     SportItem(
       name: '골프',
       id: 'golf',
       icon: Icons.golf_course,
       gradientColors: [Color(0xFF48BB78), Color(0xFF38A169)],
-      category: SportCategory.ballGames,
-    ),
+      category: SportCategory.ballGames),
     
     // Leisure Sports
     SportItem(
@@ -138,45 +134,39 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       id: 'fishing',
       icon: Icons.phishing,
       gradientColors: [Color(0xFF4299E1), Color(0xFF3182CE)],
-      category: SportCategory.leisure,
-    ),
+      category: SportCategory.leisure),
     SportItem(
       name: '자전거',
       id: 'cycling',
       icon: Icons.directions_bike,
       gradientColors: [Color(0xFFED8936), Color(0xFFDD6B20)],
-      category: SportCategory.leisure,
-    ),
+      category: SportCategory.leisure),
     SportItem(
       name: '등산',
       id: 'hiking',
       icon: Icons.terrain,
       gradientColors: [Color(0xFF38B2AC), Color(0xFF319795)],
-      category: SportCategory.leisure,
-    ),
+      category: SportCategory.leisure),
     SportItem(
       name: '수영',
       id: 'swimming',
       icon: Icons.pool,
       gradientColors: [Color(0xFF63B3ED), Color(0xFF4299E1)],
       category: SportCategory.leisure,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '요가',
       id: 'yoga',
       icon: Icons.self_improvement,
       gradientColors: [Color(0xFF9F7AEA), Color(0xFF805AD5)],
       category: SportCategory.leisure,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '러닝',
       id: 'running',
       icon: Icons.directions_run,
       gradientColors: [Color(0xFFF687B3), Color(0xFFED64A6)],
-      category: SportCategory.leisure,
-    ),
+      category: SportCategory.leisure),
     
     // Indoor Sports
     SportItem(
@@ -185,32 +175,28 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.fitness_center,
       gradientColors: [Color(0xFFFC8181), Color(0xFFF56565)],
       category: SportCategory.indoor,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '배드민턴',
       id: 'badminton',
       icon: Icons.sports_tennis,
       gradientColors: [Color(0xFF4FD1C5), Color(0xFF38B2AC)],
       category: SportCategory.indoor,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '탁구',
       id: 'table_tennis',
       icon: Icons.sports_tennis,
       gradientColors: [Color(0xFFFBB6CE), Color(0xFFF687B3)],
       category: SportCategory.indoor,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '볼링',
       id: 'bowling',
       icon: Icons.sports,
       gradientColors: [Color(0xFFB794F4), Color(0xFF9F7AEA)],
       category: SportCategory.indoor,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     
     // E-Sports
     SportItem(
@@ -219,33 +205,28 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
       icon: Icons.sports_esports,
       gradientColors: [Color(0xFF667EEA), Color(0xFF5A67D8)],
       category: SportCategory.eSports,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '오버워치',
       id: 'overwatch',
       icon: Icons.sports_esports,
       gradientColors: [Color(0xFFF6AD55), Color(0xFFED8936)],
       category: SportCategory.eSports,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '배틀그라운드',
       id: 'pubg',
       icon: Icons.sports_esports,
       gradientColors: [Color(0xFF68D391), Color(0xFF48BB78)],
       category: SportCategory.eSports,
-      hasWeatherInfo: false,
-    ),
+      hasWeatherInfo: false),
     SportItem(
       name: '발로란트',
       id: 'valorant',
       icon: Icons.sports_esports,
       gradientColors: [Color(0xFFFC8181), Color(0xFFF56565)],
       category: SportCategory.eSports,
-      hasWeatherInfo: false,
-    ),
-  ];
+      hasWeatherInfo: false)];
 
   SportCategory _selectedCategory = SportCategory.ballGames;
   SportItem? _selectedSport;
@@ -313,10 +294,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withValues(alpha: 0.7),
-              ],
-            ),
-          ),
+                Theme.of(context).primaryColor.withValues(alpha: 0.7)])),
           child: Column(
             children: [
               // Category tabs
@@ -332,11 +310,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                     icon: Icon(category.icon),
                     text: category.label
                   );
-                }).toList(),
-              ),
-            ],
-          ),
-        ),
+                }).toList())])),
         
         // Content
         Expanded(
@@ -358,21 +332,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 // Selected sport details
                 if (_selectedSport != null) ...[
                   const SizedBox(height: 24),
-                  _buildSelectedSportSection(),
-                ],
+                  _buildSelectedSportSection()],
                 
                 // Fortune result
                 if (_fortuneCache.isNotEmpty && 
                     _fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}'] != null) ...[
                   const SizedBox(height: 24),
-                  _buildFortuneResult(_fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}'),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+                  _buildFortuneResult(_fortuneCache['${_selectedSport?.id}_${_selectedTeam ?? 'personal'}')]])))]);
   }
 
   Widget _buildCategoryDescription() {
@@ -399,16 +365,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Row(
         children: [
           Icon(
             _selectedCategory.icon,
             color: Theme.of(context).primaryColor,
-            size: 28,
-          ),
+            size: 28),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -419,23 +382,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
+                    color: Theme.of(context).primaryColor)),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    color: AppTheme.textSecondaryColor))]))]));
   }
 
   Widget _buildSportsGrid() {
@@ -446,8 +399,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.3,
-      ),
+        childAspectRatio: 1.3),
       itemCount: filteredSports.length,
       itemBuilder: (context, index) {
         final sport = filteredSports[index];
@@ -475,38 +427,31 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             end: Alignment.bottomRight,
             colors: isSelected
                 ? sport.gradientColors
-                : [Colors.grey[200]!, Colors.grey[300]!],
-          ),
+                : [Colors.grey[200]!, Colors.grey[300]!]),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isSelected
               ? [
                   BoxShadow(
                     color: sport.gradientColors[0].withValues(alpha: 0.4),
                     blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
+                    offset: const Offset(0, 8))]
               : [],
           border: Border.all(
             color: isSelected
                 ? sport.gradientColors[0]
                 : Colors.grey[400]!,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
+            width: isSelected ? 2 : 1)),
         child: Stack(
           children: [
             // Background pattern
-            if (isSelected);
-              Positioned(
+            if (isSelected),
+                  Positioned(
                 right: -20,
                 bottom: -20,
                 child: Icon(
                   sport.icon,
                   size: 80,
-                  color: Colors.white.withValues(alpha: 0.2),
-                ),
-              ),
+                  color: Colors.white.withValues(alpha: 0.2))),
             
             // Content
             Padding(
@@ -517,18 +462,15 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   Icon(
                     sport.icon,
                     size: 36,
-                    color: isSelected ? Colors.white : Colors.grey[600],
-                  ),
+                    color: isSelected ? Colors.white : Colors.grey[600]),
                   const SizedBox(height: 8),
                   Text(
                     sport.name,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.white : Colors.grey[700],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                      color: isSelected ? Colors.white : Colors.grey[700]),
+                    textAlign: TextAlign.center),
                   if (sport.teams != null) ...[
                     const SizedBox(height: 4),
                     Text(
@@ -537,17 +479,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                         fontSize: 12,
                         color: isSelected
                             ? Colors.white.withValues(alpha: 0.8)
-                            : Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ).animate(delay: (50 * index).ms)
+                            : Colors.grey[500]))]]))]))).animate(delay: (50 * index).ms)
       .fadeIn(duration: 300.ms)
       .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.0, 1.0));
   }
@@ -561,15 +493,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           end: Alignment.bottomRight,
           colors: [
             _selectedSport!.gradientColors[0].withValues(alpha: 0.1),
-            _selectedSport!.gradientColors[1].withValues(alpha: 0.05),
-          ],
-        ),
+            _selectedSport!.gradientColors[1].withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedSport!.gradientColors[0].withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -578,19 +506,14 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               Icon(
                 _selectedSport!.icon,
                 color: _selectedSport!.gradientColors[0],
-                size: 32,
-              ),
+                size: 32),
               const SizedBox(width: 12),
               Text(
                 _selectedSport!.name,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: _selectedSport!.gradientColors[0],
-                ),
-              ),
-            ],
-          ),
+                  color: _selectedSport!.gradientColors[0]))]),
           
           // Team selection for ball games
           if (_selectedSport!.teams != null) ...[
@@ -600,12 +523,9 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textColor,
-              ),
-            ),
+                color: AppTheme.textColor)),
             const SizedBox(height: 12),
-            _buildTeamSelection(),
-          ],
+            _buildTeamSelection()],
           
           const SizedBox(height: 20),
           
@@ -617,17 +537,14 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: _selectedSport!.gradientColors[0],
-              ),
+                  borderRadius: BorderRadius.circular(12)),
+                backgroundColor: _selectedSport!.gradientColors[0]),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
                     _selectedSport!.icon,
-                    color: Colors.white,
-                  ),
+                    color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
                     _selectedTeam != null
@@ -636,16 +553,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate()
+                      color: Colors.white))])))])).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -658,8 +566,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         // Personal fortune option
         _buildTeamChip('개인'),
         // Team options
-        ..._selectedSport!.teams!.map((team) => _buildTeamChip(team)),
-      ]
+        ..._selectedSport!.teams!.map((team) => _buildTeamChip(team)]
     );
   }
 
@@ -685,19 +592,13 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             color: isSelected
                 ? _selectedSport!.gradientColors[0]
                 : Colors.grey[400]!,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
+            width: isSelected ? 2 : 1)),
         child: Text(
           team,
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : Colors.grey[700],
-          ),
-        ),
-      ),
-    );
+            color: isSelected ? Colors.white : Colors.grey[700]))));
   }
 
   Widget _buildFortuneResult(Fortune fortune) {
@@ -711,15 +612,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
           end: Alignment.bottomRight,
           colors: [
             _selectedSport!.gradientColors[0].withValues(alpha: 0.1),
-            _selectedSport!.gradientColors[1].withValues(alpha: 0.05),
-          ],
-        ),
+            _selectedSport!.gradientColors[1].withValues(alpha: 0.05)]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: _selectedSport!.gradientColors[0].withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
+          width: 1)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -728,8 +625,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               Icon(
                 _selectedSport!.icon,
                 color: _selectedSport!.gradientColors[0],
-                size: 28,
-              ),
+                size: 28),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -739,27 +635,18 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: _selectedSport!.gradientColors[0],
-                  ),
-                ),
-              ),
+                    color: _selectedSport!.gradientColors[0]))),
               if (fortune.score != null)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _getScoreColor(fortune.score!),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                    borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     '${fortune.score}점',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+                      fontWeight: FontWeight.bold)))]),
           const SizedBox(height: 20),
           
           // Main message
@@ -768,21 +655,17 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             style: TextStyle(
               fontSize: 16,
               height: 1.6,
-              color: AppTheme.textColor,
-            ),
-          ),
+              color: AppTheme.textColor)),
           
           // Team-specific content
           if (isTeamFortune && fortune.additionalInfo != null) ...[
             const SizedBox(height: 20),
-            _buildTeamFortuneDetails(fortune.additionalInfo!),
-          ],
+            _buildTeamFortuneDetails(fortune.additionalInfo!)],
           
           // Personal sport fortune content
           if (!isTeamFortune && fortune.additionalInfo != null) ...[
             const SizedBox(height: 20),
-            _buildPersonalSportDetails(fortune.additionalInfo!),
-          ],
+            _buildPersonalSportDetails(fortune.additionalInfo!)],
           
           // Advice
           if (fortune.advice != null) ...[
@@ -791,33 +674,21 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
+                borderRadius: BorderRadius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.lightbulb_outline,
                     color: Colors.amber,
-                    size: 20,
-                  ),
+                    size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       fortune.advice!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textColor,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    ).animate()
+                        color: AppTheme.textColor)))]))]])).animate()
       .fadeIn(duration: 500.ms)
       .slideY(begin: 0.2, end: 0);
   }
@@ -832,17 +703,15 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '승리 확률',
             '${details['winProbability']}%',
             Icons.emoji_events,
-            Colors.amber,
-          ),
+            Colors.amber),
         
         // Key players
         if (details['keyPlayers'] != null)
           _buildDetailItem(
             '주목할 선수',
-            details['keyPlayers'].join(': ',
+            details['keyPlayers'].join(', ',
             Icons.star,
-            Colors.orange,
-          ),
+            Colors.orange),
         
         // Lucky inning/time
         if (details['luckyTime'] != null)
@@ -850,8 +719,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '행운의 시간',
             details['luckyTime'],
             Icons.access_time,
-            Colors.blue,
-          ),
+            Colors.blue),
         
         // Strategy
         if (details['strategy'] != null)
@@ -859,9 +727,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '추천 전략',
             details['strategy'],
             Icons.psychology,
-            Colors.purple,
-          ),
-      ]
+            Colors.purple)]
     );
   }
 
@@ -875,8 +741,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '최적 시간',
             details['bestTime'],
             Icons.access_time,
-            Colors.blue,
-          ),
+            Colors.blue),
         
         // Condition
         if (details['condition'] != null)
@@ -884,8 +749,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '컨디션',
             details['condition'],
             Icons.favorite,
-            Colors.red,
-          ),
+            Colors.red),
         
         // Weather advice
         if (details['weatherAdvice'] != null && _selectedSport!.hasWeatherInfo)
@@ -893,8 +757,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             '날씨 조언',
             details['weatherAdvice'],
             Icons.wb_sunny,
-            Colors.orange,
-          ),
+            Colors.orange),
         
         // Performance tips
         if (details['tips'] != null) ...[
@@ -904,9 +767,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: _selectedSport!.gradientColors[0],
-            ),
-          ),
+              color: _selectedSport!.gradientColors[0])),
           const SizedBox(height: 8),
           ...List<String>.from(details['tips']).map((tip) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -916,20 +777,12 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                 Icon(
                   Icons.check_circle,
                   size: 18,
-                  color: _selectedSport!.gradientColors[0],
-                ),
+                  color: _selectedSport!.gradientColors[0]),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     tip,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          )).toList(),
-        ],
-      ]
+                    style: const TextStyle(fontSize: 14)))])).toList()]]
     );
   }
 
@@ -942,14 +795,11 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+              borderRadius: BorderRadius.circular(8)),
             child: Icon(
               icon,
               color: color,
-              size: 20,
-            ),
-          ),
+              size: 20)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -959,22 +809,12 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
                   label,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                ),
+                    color: AppTheme.textSecondaryColor)),
                 Text(
                   value,
                   style: const TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    fontWeight: FontWeight.bold))]))]));
   }
 
   void _onGenerateFortune() {
@@ -989,8 +829,7 @@ class _EnhancedSportsFortunePageState extends BaseFortunePageState<EnhancedSport
         'userId': profile.id,
         'name': profile.name,
         'birthDate': profile.birthDate?.toIso8601String(),
-        'gender': null,
-      };
+        'gender': null};
       generateFortuneAction(params: params);
     }
   }

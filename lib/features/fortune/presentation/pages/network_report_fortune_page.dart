@@ -18,14 +18,11 @@ class NetworkReportFortunePage extends ConsumerWidget {
       headerGradient: const LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-        colors: [Color(0xFF4FACFE), Color(0xFF00F2FE)],
-      ),
+        colors: [Color(0xFF4FACFE), Color(0xFF00F2FE)]),
       inputBuilder: (context, onSubmit) => _NetworkReportInputForm(onSubmit: onSubmit),
       resultBuilder: (context, result, onShare) => _NetworkReportFortuneResult(
         result: result,
-        onShare: onShare,
-      ),
-    );
+        onShare: onShare));
   }
 }
 
@@ -47,11 +44,10 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
   final List<String> _selectedInterests = [];
   
   final List<String> _mbtiTypes = [
-    'INTJ': 'INTP': 'ENTJ', 'ENTP',
+    'INTJ', 'INTP': 'ENTJ', 'ENTP',
     'INFJ', 'INFP', 'ENFJ', 'ENFP',
     'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ',
-    'ISTP', 'ISFP', 'ESTP', 'ESFP',
-  ];
+    'ISTP', 'ISFP', 'ESTP', 'ESFP'];
   
   final List<String> _networkingStyles = [
     '적극적 네트워커',
@@ -59,8 +55,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     '자연스러운 만남 선호',
     '온라인 네트워킹 선호',
     '소규모 모임 선호',
-    '대규모 행사 선호',
-  ];
+    '대규모 행사 선호'];
   
   final List<String> _interests = [
     '비즈니스',
@@ -72,8 +67,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
     '투자/재테크',
     '봉사/사회공헌',
     '음식/요리',
-    '패션/뷰티',
-  ];
+    '패션/뷰티'];
 
   @override
   void dispose() {
@@ -92,11 +86,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-              primary: const Color(0xFF4FACFE),
-            ),
-          ),
-          child: child!,
-        );
+              primary: const Color(0xFF4FACFE))),
+          child: child!);
       }
     );
     if (picked != null && picked != _birthDate) {
@@ -118,18 +109,14 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
             '당신의 인맥 운세를 분석하고\n네트워킹 전략을 제시해드립니다.',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-              height: 1.5,
-            ),
-          ),
+              height: 1.5)),
           const SizedBox(height: 24),
           
           // Name Input
           Text(
             '이름',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -138,23 +125,17 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.person_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
-              ),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
-              ),
-            ),
-          ),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))),
           const SizedBox(height: 20),
           
           // Birth Date Selection
           Text(
             '생년월일',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           InkWell(
             onTap: _selectDate,
@@ -162,8 +143,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
                 border: Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
+                borderRadius: BorderRadius.circular(12)),
               child: Row(
                 children: [
                   Icon(Icons.calendar_today, color: theme.colorScheme.primary.withValues(alpha: 0.7),
@@ -175,22 +155,14 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: _birthDate != null 
                           ? theme.colorScheme.onSurface 
-                          : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.5)))]))),
           const SizedBox(height: 20),
           
           // Job Input
           Text(
             '직업/직무',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           TextField(
             controller: _jobController,
@@ -199,23 +171,17 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               prefixIcon: const Icon(Icons.work_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
-              ),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3),
-              ),
-            ),
-          ),
+                borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)))),
           const SizedBox(height: 20),
           
           // MBTI Selection
           Text(
             'MBTI 유형',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Container(
             height: 120,
@@ -225,8 +191,7 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                 crossAxisCount: 4,
                 childAspectRatio: 2.5,
                 crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
+                mainAxisSpacing: 8),
               itemCount: _mbtiTypes.length,
               itemBuilder: (context, index) {
                 final mbti = _mbtiTypes[index];
@@ -245,10 +210,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                            : theme.colorScheme.outline.withValues(alpha: 0.3)),
+                      borderRadius: BorderRadius.circular(8)),
                     child: Center(
                       child: Text(
                         mbti,
@@ -256,24 +219,15 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                           color: isSelected
                               ? theme.colorScheme.primary
                               : theme.colorScheme.onSurface,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)))));
+              })),
           const SizedBox(height: 20),
           
           // Networking Style Selection
           Text(
             '네트워킹 스타일',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -290,20 +244,15 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                 },
                 selectedColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-                ),
-              );
-            }).toList(),
-          ),
+                  color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface));
+            }).toList()),
           const SizedBox(height: 20),
           
           // Interests Selection
           Text(
             '관심 분야 (복수 선택 가능)',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -324,11 +273,8 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                 },
                 selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
                 labelStyle: TextStyle(
-                  color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface,
-                ),
-              );
-            }).toList(),
-          ),
+                  color: isSelected ? theme.colorScheme.secondary : theme.colorScheme.onSurface));
+            }).toList()),
           const SizedBox(height: 32),
           
           // Submit Button
@@ -338,20 +284,17 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
               onPressed: () {
                 if (_nameController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('이름을 입력해주세요'),
-                  );
+                    const SnackBar(content: Text('이름을 입력해주세요'));
                   return;
                 }
                 if (_birthDate == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('생년월일을 선택해주세요'),
-                  );
+                    const SnackBar(content: Text('생년월일을 선택해주세요'));
                   return;
                 }
                 if (_jobController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('직업을 입력해주세요'),
-                  );
+                    const SnackBar(content: Text('직업을 입력해주세요'));
                   return;
                 }
                 
@@ -361,28 +304,18 @@ class _NetworkReportInputFormState extends State<_NetworkReportInputForm> {
                   'job': _jobController.text,
                   'mbti': _selectedMbti ?? 'INFP',
                   'networkingStyle': _selectedNetworkingStyle ?? '자연스러운 만남 선호',
-                  'interests': _selectedInterests.isEmpty ? ['비즈니스'],
-                });
+                  'interests': _selectedInterests.isEmpty ? ['비즈니스']});
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                backgroundColor: theme.colorScheme.primary,
-              ),
+                  borderRadius: BorderRadius.circular(12)),
+                backgroundColor: theme.colorScheme.primary),
               child: Text(
                 '인맥 리포트 확인하기',
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                  fontWeight: FontWeight.bold))))]));
   }
 }
 
@@ -402,8 +335,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
 
   const _NetworkReportFortuneResult({
     required this.result,
-    required this.onShare,
-  });
+    required this.onShare});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -434,14 +366,11 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                        borderRadius: BorderRadius.circular(12)),
                       child: Icon(
                         Icons.people_alt,
                         color: theme.colorScheme.primary,
-                        size: 28,
-                      ),
-                    ),
+                        size: 28)),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -450,9 +379,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                           Text(
                             '인맥 운세 점수',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -461,33 +388,17 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                 style: theme.textTheme.headlineSmall?.copyWith(
                                   color: _getScoreColor(networkScore),
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 24 + fontSize,
-                                ),
-                              ),
+                                  fontSize: 24 + fontSize)),
                               const SizedBox(width: 8),
                               Text(
                                 _getScoreMessage(networkScore),
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)))])]))]),
                 const SizedBox(height: 20),
                 // Network Score Gauge
                 SizedBox(
                   height: 180,
-                  child: _buildNetworkGauge(networkScore, theme),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  child: _buildNetworkGauge(networkScore, theme))]))),
         const SizedBox(height: 20),
         
         // Network Types Analysis
@@ -502,22 +413,16 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                     Icon(
                       Icons.pie_chart,
                       color: Colors.purple,
-                      size: 24,
-                    ),
+                      size: 24),
                     const SizedBox(width: 12),
                     Text(
                       '인맥 유형 분석',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                        fontWeight: FontWeight.bold))]),
                 const SizedBox(height: 20),
                 SizedBox(
                   height: 200,
-                  child: _buildNetworkTypesChart(networkTypes, theme),
-                ),
+                  child: _buildNetworkTypesChart(networkTypes, theme)),
                 const SizedBox(height: 16),
                 // Legend
                 Wrap(
@@ -533,22 +438,13 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                           height: 12,
                           decoration: BoxDecoration(
                             color: color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
+                            shape: BoxShape.circle)),
                         const SizedBox(width: 4),
                         Text(
                           '${entry.key}: ${entry.value}%',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ]
+                          style: theme.textTheme.bodySmall)]
                     );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-        ),
+                  }).toList())]))),
         const SizedBox(height: 20),
         
         // Key People to Meet
@@ -564,17 +460,12 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       Icon(
                         Icons.star_outline,
                         color: Colors.amber,
-                        size: 24,
-                      ),
+                        size: 24),
                       const SizedBox(width: 12),
                       Text(
                         '주목해야 할 인맥',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...keyPeople.map((person) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -584,9 +475,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                         color: theme.colorScheme.surface,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-                        ),
-                      ),
+                          color: theme.colorScheme.outline.withValues(alpha: 0.2))),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -595,10 +484,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                               person['initial'] ?? '?',
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                                fontWeight: FontWeight.bold))),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
@@ -608,30 +494,14 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                                   person['type'] ?? '',
                                   style: theme.textTheme.bodyLarge?.copyWith(
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14 + fontSize,
-                                  ),
-                                ),
+                                    fontSize: 14 + fontSize)),
                                 if (person['description'] != null)
                                   Text(
                                     person['description'],
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                      fontSize: 12 + fontSize,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                                      fontSize: 12 + fontSize))]))]))).toList()]))),
+          const SizedBox(height: 20)],
         
         // Monthly Networking Forecast
         if (monthlyForecast.isNotEmpty) ...[
@@ -646,28 +516,17 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       Icon(
                         Icons.timeline,
                         color: Colors.blue,
-                        size: 24,
-                      ),
+                        size: 24),
                       const SizedBox(width: 12),
                       Text(
                         '월별 인맥 운세',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 20),
                   SizedBox(
                     height: 200,
-                    child: _buildMonthlyChart(monthlyForecast, theme),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                    child: _buildMonthlyChart(monthlyForecast, theme))]))),
+          const SizedBox(height: 20)],
         
         // Networking Tips
         if (networkingTips.isNotEmpty) ...[
@@ -682,17 +541,12 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                       Icon(
                         Icons.lightbulb_outline,
                         color: Colors.green,
-                        size: 24,
-                      ),
+                        size: 24),
                       const SizedBox(width: 12),
                       Text(
                         '네트워킹 전략',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
+                          fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 16),
                   ...networkingTips.map((tip) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
@@ -705,28 +559,15 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                           margin: const EdgeInsets.only(top: 8),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
+                            shape: BoxShape.circle)),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             tip,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               height: 1.5,
-                              fontSize: 14 + fontSize,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )).toList(),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+                              fontSize: 14 + fontSize)))])).toList()]))),
+          const SizedBox(height: 20)],
         
         // Share Button
         Center(
@@ -737,12 +578,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-            ),
-          ),
-        ),
-      ]
+                borderRadius: BorderRadius.circular(25)))))]
     );
   }
   
@@ -756,17 +592,12 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
             value: score.toDouble(),
             color: _getScoreColor(score),
             radius: 20,
-            showTitle: false,
-          ),
+            showTitle: false),
           PieChartSectionData(
             value: (100 - score).toDouble(),
             color: theme.colorScheme.outline.withValues(alpha: 0.1),
             radius: 20,
-            showTitle: false,
-          ),
-        ],
-      ),
-    );
+            showTitle: false)]));
   }
   
   Widget _buildNetworkTypesChart(Map<String, dynamic> types, ThemeData theme) {
@@ -783,10 +614,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
           titleStyle: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      );
+            color: Colors.white)));
       index++;
     });
     
@@ -794,9 +622,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
       PieChartData(
         sectionsSpace: 2,
         centerSpaceRadius: 40,
-        sections: sections,
-      ),
-    );
+        sections: sections));
   }
   
   Widget _buildMonthlyChart(Map<String, dynamic> forecast, ThemeData theme) {
@@ -812,11 +638,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
               toY: (score as num).toDouble(),
               color: theme.colorScheme.primary,
               width: 16,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-            ),
-          ],
-        ),
-      );
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(4))]));
       index++;
     });
     
@@ -834,8 +656,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
               color: theme.colorScheme.outline.withValues(alpha: 0.1),
               strokeWidth: 1
             );
-          },
-        ),
+          }),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
@@ -844,11 +665,8 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
               getTitlesWidget: (value, meta) {
                 return Text(
                   '${value.toInt()}',
-                  style: const TextStyle(fontSize: 10,
-                );
-              },
-            ),
-          ),
+                  style: const TextStyle(fontSize: 10);
+              })),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -857,23 +675,15 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
                 if (value.toInt() < months.length) {
                   return Text(
                     months[value.toInt()],
-                    style: const TextStyle(fontSize: 10),
-                  );
+                    style: const TextStyle(fontSize: 10));
                 }
                 return const Text('');
-              },
-            ),
-          ),
+              })),
           rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
+            sideTitles: SideTitles(showTitles: false)),
           topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-        ),
-        borderData: FlBorderData(show: false),
-      ),
-    );
+            sideTitles: SideTitles(showTitles: false))),
+        borderData: FlBorderData(show: false)));
   }
   
   Color _getScoreColor(int score) {
@@ -899,8 +709,7 @@ class _NetworkReportFortuneResult extends ConsumerWidget {
       Colors.pink,
       Colors.teal,
       Colors.amber,
-      Colors.indigo,
-    ];
+      Colors.indigo];
     
     final index = type.hashCode % colors.length;
     return colors[index];

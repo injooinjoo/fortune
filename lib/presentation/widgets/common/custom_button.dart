@@ -9,10 +9,7 @@ enum ButtonVariant {
   
   primary,
   secondary,
-  outline,
-  
-  
-}
+  outline}
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -37,8 +34,7 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.padding,
     this.variant = ButtonVariant.primary,
-    this.gradient,
-  })) : super(key: key);
+    this.gradient})) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +67,9 @@ class CustomButton extends StatelessWidget {
         backgroundColor: gradient != null ? Colors.transparent : bgColor,
         padding: padding ?? EdgeInsets.symmetric(
           horizontal: AppSpacing.spacing6,
-          vertical: AppSpacing.spacing3,
-        ),
+          vertical: AppSpacing.spacing3),
         side: borderSide,
-        shadowColor: Colors.transparent,
-      ),
+        shadowColor: Colors.transparent),
       child: isLoading
           ? SizedBox(
               width: 20,
@@ -83,15 +77,10 @@ class CustomButton extends StatelessWidget {
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  variant == ButtonVariant.primary ? AppColors.textPrimaryDark : theme.primaryColor,
-                ),
-              ),
-            )
+                  variant == ButtonVariant.primary ? AppColors.textPrimaryDark : theme.primaryColor)))
           : Text(
               text,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-    );
+              style: Theme.of(context).textTheme.titleMedium));
     
     return SizedBox(
       width: width,
@@ -100,11 +89,8 @@ class CustomButton extends StatelessWidget {
           ? Container(
               decoration: BoxDecoration(
                 gradient: gradient,
-                borderRadius: AppDimensions.borderRadiusSmall,
-              ),
-              child: button,
-            )
-          : button,
-    );
+                borderRadius: AppDimensions.borderRadiusSmall),
+              child: button)
+          : button);
   }
 }

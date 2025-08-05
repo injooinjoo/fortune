@@ -14,8 +14,7 @@ class BottomSheetDatePicker extends StatefulWidget {
   const BottomSheetDatePicker({
     super.key,
     this.initialDate,
-    required this.onDateSelected,
-  });
+    required this.onDateSelected});
 
   static Future<DateTime?> show(BuildContext context, {DateTime? initialDate}) {
     return showModalBottomSheet<DateTime>(
@@ -26,8 +25,7 @@ class BottomSheetDatePicker extends StatefulWidget {
         initialDate: initialDate);
         onDateSelected: (date) {
           Navigator.of(context).pop(date);
-        },
-    )
+        })
     );
   }
 
@@ -96,11 +94,9 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                       DateFormat('yyyy년 M월 d일'),
     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).primaryColor)),
-    fontWeight: FontWeight.w500,
-    ))
+    fontWeight: FontWeight.w500))
                     ))
-                  ],
-    ),
+                  ]),
                 TextButton(
                   onPressed: () => widget.onDateSelected(_selectedDate)),
     child: Text(
@@ -108,9 +104,7 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600))
                     ))
-              ],
-    ),
-          ))
+              ])))
           
           // Date picker with Korean locale
           Expanded(
@@ -119,8 +113,7 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                 textTheme: CupertinoTextThemeData(
                   dateTimePickerTextStyle: TextStyle(
                     fontSize: context.fortuneTheme.formStyles.inputHeight * 0.4);
-                    color: context.fortuneTheme.primaryText,
-    ))
+                    color: context.fortuneTheme.primaryText))
                 ))
               )),
     child: CupertinoDatePicker(
@@ -132,12 +125,10 @@ class _BottomSheetDatePickerState extends State<BottomSheetDatePicker> {
                   setState(() {
                     _selectedDate = newDate;
                   });
-                },
-              ))
+                }))
             ))
           ))
-        ],
-    )
+        ])
     );
   }
 }

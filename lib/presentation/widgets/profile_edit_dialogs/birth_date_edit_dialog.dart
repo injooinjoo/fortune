@@ -14,8 +14,7 @@ class BirthDateEditDialog extends StatefulWidget {
   const BirthDateEditDialog({
     super.key,
     this.initialDate,
-    required this.onSave,
-  });
+    required this.onSave});
 
   @override
   State<BirthDateEditDialog> createState() => _BirthDateEditDialogState();
@@ -44,9 +43,7 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('오류가 발생했습니다: ${e.toString()}'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+            backgroundColor: AppColors.error));
       }
     } finally {
       if (mounted) {
@@ -70,25 +67,18 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
               color: AppColors.background,
               borderRadius: AppDimensions.borderRadiusMedium,
           border: Border.all(
-            color: AppColors.divider,
-          ),
-        ),
+            color: AppColors.divider)),
         child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   Icons.cake,
                   color: AppColors.primary,
-                  size: AppDimensions.iconSizeSmall,
-                ),
+                  size: AppDimensions.iconSizeSmall),
                 SizedBox(width: AppSpacing.spacing2),
                 Text(
                   DateFormat('yyyy년 MM월 dd일').format(_selectedDate),
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ],
-            ),
-          ),
+                  style: Theme.of(context).textTheme.titleMedium)])),
           SizedBox(height: AppSpacing.spacing4),
           SizedBox(
             height: 300,
@@ -100,11 +90,6 @@ class _BirthDateEditDialogState extends State<BirthDateEditDialog> {
                 setState(() {
                   _selectedDate = date;
                 });
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+              }))]));
   }
 }

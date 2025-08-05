@@ -14,8 +14,7 @@ class AdminStatsModel with _$AdminStatsModel {
     required int totalRevenue,
     required Map<String, int> fortuneTypeStats,
     required List<DailyStatModel> dailyStats,
-    required List<TokenUsageModel> tokenUsageStats,
-  }) = _AdminStatsModel;
+    required List<TokenUsageModel> tokenUsageStats}) = _AdminStatsModel;
 
   factory AdminStatsModel.fromJson(Map<String, dynamic> json) =>
       _$AdminStatsModelFromJson(json);
@@ -28,8 +27,7 @@ class DailyStatModel with _$DailyStatModel {
     required int fortunes,
     required int users,
     required int tokens,
-    required int revenue,
-  }) = _DailyStatModel;
+    required int revenue}) = _DailyStatModel;
 
   factory DailyStatModel.fromJson(Map<String, dynamic> json) =>
       _$DailyStatModelFromJson(json);
@@ -43,8 +41,7 @@ class TokenUsageModel with _$TokenUsageModel {
     required int tokensUsed,
     required int fortuneCount,
     required DateTime lastActivity,
-    required bool isSubscribed,
-  }) = _TokenUsageModel;
+    required bool isSubscribed}) = _TokenUsageModel;
 
   factory TokenUsageModel.fromJson(Map<String, dynamic> json) =>
       _$TokenUsageModelFromJson(json);

@@ -43,9 +43,7 @@ class WidgetDataManager {
           'luckyColor': luckyColor,
           'luckyNumber': luckyNumber,
           'fortuneType': fortune.data?.type ?? 'daily',
-          'createdAt': DateTime.now().toIso8601String(),
-        },
-      );
+          'createdAt': DateTime.now().toIso8601String()});
       
       // Update live activity if iOS
       if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -53,8 +51,7 @@ class WidgetDataManager {
           score: score.toString(),
           message: fortune.data?.content ?? '',
           luckyColor: luckyColor,
-      luckyNumber: luckyNumber,
-        );
+      luckyNumber: luckyNumber);
       }
       
       // Save to local storage
@@ -71,15 +68,13 @@ class WidgetDataManager {
     required String partnerName,
     required int compatibilityScore,
     required String message,
-    Map<String, dynamic>? additionalData,
-  }) async {
+    Map<String, dynamic>? additionalData}) async {
     try {
       await WidgetService.updateLoveFortuneWidget(
         compatibilityScore: compatibilityScore.toString(),
         partnerName: partnerName,
         message: message,
-        additionalData: additionalData,
-      );
+        additionalData: additionalData);
       
       // Save to local storage
       final prefs = await SharedPreferences.getInstance();
@@ -88,8 +83,7 @@ class WidgetDataManager {
         'compatibilityScore': compatibilityScore,
         'message': message,
         'additionalData': additionalData,
-        'updatedAt': null,
-      }));
+        'updatedAt': null}));
       
       Logger.info('Love fortune widget updated');
     } catch (e) {
@@ -155,8 +149,7 @@ class WidgetDataManager {
           partnerName: loveData['partnerName'],
           compatibilityScore: loveData['compatibilityScore'],
           message: loveData['message'],
-          additionalData: loveData['additionalData'],
-        );
+          additionalData: loveData['additionalData']);
       }
       
       // Update last update time
@@ -179,9 +172,7 @@ class WidgetDataManager {
           'createdAt': fortune.data!.createdAt?.toIso8601String(),
           'luckyColor': fortune.data!.luckyColor,
           'luckyNumber': fortune.data!.luckyNumber,
-          'summary': null,
-        } : null,
-      }));
+          'summary': null} : null}));
       await prefs.setString(_lastUpdateKey, DateTime.now().toIso8601String());
     } catch (e) {
       Logger.error('Failed to save fortune data', e);

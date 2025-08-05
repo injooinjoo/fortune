@@ -16,8 +16,7 @@ class SoulConsumeAnimation {
     required BuildContext context,
     required int soulAmount,
     Offset? startPosition,
-    Offset? endPosition,
-  }) {
+    Offset? endPosition}) {
     // Remove any existing overlay
     _currentOverlay?.remove();
     _currentOverlay = null;
@@ -36,9 +35,7 @@ class SoulConsumeAnimation {
         onComplete: () {
           _currentOverlay?.remove();
           _currentOverlay = null;
-        },
-      ),
-    );
+        }));
 
     // Insert overlay
     Overlay.of(context).insert(_currentOverlay!);
@@ -63,8 +60,7 @@ class _SoulConsumeAnimationWidget extends StatefulWidget {
     required this.soulAmount,
     required this.startPosition,
     required this.endPosition,
-    required this.onComplete,
-  });
+    required this.onComplete});
 
   @override
   State<_SoulConsumeAnimationWidget> createState() => _SoulConsumeAnimationWidgetState();
@@ -87,8 +83,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
     // Main animation controller
     _mainController = AnimationController(
       duration: AppAnimations.durationShimmer,
-      vsync: this,
-    );
+      vsync: this);
     
     // Particle animation controller
     _particleController = AnimationController(
@@ -100,38 +95,29 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.0),
-        weight: 20,
-      ),
+        weight: 20),
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.3).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 30,
-      ),
+        weight: 30),
       TweenSequenceItem(
         tween: Tween(begin: 1.3, end: 0.0).chain(CurveTween(curve: Curves.easeIn)),
-        weight: 50,
-      ),
-    ]).animate(_mainController);
+        weight: 50)]).animate(_mainController);
     
     // Fade animation
     _fadeAnimation = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 1.0),
-        weight: 50,
-      ),
+        weight: 50),
       TweenSequenceItem(
         tween: Tween(begin: 1.0, end: 0.0),
-        weight: 50,
-      ),
-    ]).animate(_mainController);
+        weight: 50)]).animate(_mainController);
     
     // Position animation with curve
     _positionAnimation = Tween<Offset>(
       begin: widget.startPosition,
-      end: widget.endPosition,
-    ).animate(CurvedAnimation(
+      end: widget.endPosition).animate(CurvedAnimation(
       parent: _mainController,
-      curve: Curves.easeInBack,
-    );
+      curve: Curves.easeInBack);
     
     // Generate particles
     _generateParticles();
@@ -155,8 +141,7 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
         angle: (i * math.pi / 3) + (random.nextDouble() * math.pi / 6),
         distance: 30.0 + random.nextDouble() * 20,
         delay: Duration(milliseconds: random.nextInt(150)),
-        size: 3.0 + random.nextDouble() * 3,
-      ));
+        size: 3.0 + random.nextDouble() * 3));
     }
   }
   
@@ -183,20 +168,16 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
               child: FadeTransition(
                 opacity: Tween<double>(
                   begin: 1.0,
-                  end: 0.0,
-                ).animate(CurvedAnimation(
+                  end: 0.0).animate(CurvedAnimation(
                   parent: _particleController,
                   curve: const Interval(
                     0.4,
                     1.0,
-                    curve: Curves.easeOut,
-                  ),
-                )),
+                    curve: Curves.easeOut))),
                 child: Transform.translate(
                   offset: Offset(
                     math.cos(particle.angle) * particle.distance * (1 - _particleController.value),
-                    math.sin(particle.angle) * particle.distance * (1 - _particleController.value),
-                  ),
+                    math.sin(particle.angle) * particle.distance * (1 - _particleController.value)),
                   child: Container(
                     width: particle.size,
                     height: particle.size,
@@ -207,15 +188,8 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                         BoxShadow(
                           color: AppColors.warning.withValues(alpha: 0.4),
                           blurRadius: 3,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ).animate(delay: particle.delay)
-                  .fadeIn(duration: 200.ms),
-              ),
-            )),
+                          spreadRadius: 1)]))).animate(delay: particle.delay)
+                  .fadeIn(duration: 200.ms)))),
             
             // Main soul animation
             Positioned(
@@ -238,25 +212,14 @@ class _SoulConsumeAnimationWidgetState extends State<_SoulConsumeAnimationWidget
                         Icon(
                           Icons.auto_awesome_rounded,
                           color: AppColors.warning,
-                          size: AppDimensions.iconSizeMedium,
-                        ).animate(onPlay: (controller) => controller.repeat())
+                          size: AppDimensions.iconSizeMedium).animate(onPlay: (controller) => controller.repeat())
                           .rotate(duration: 1500.ms, end: -2 * math.pi),
                         SizedBox(width: AppSpacing.spacing2),
                         Text(
                           '-${widget.soulAmount}',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: AppColors.warning,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
+                            fontWeight: FontWeight.bold))])))))]);
       }
     );
   }
@@ -272,6 +235,5 @@ class _Particle {
     required this.angle,
     required this.distance,
     required this.delay,
-    required this.size,
-  });
+    required this.size});
 }

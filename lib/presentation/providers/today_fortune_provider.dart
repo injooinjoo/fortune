@@ -14,21 +14,18 @@ class TodayFortuneState {
     this.fortune,
     this.isLoading = false,
     this.error,
-    this.lastGeneratedAt,
-  });
+    this.lastGeneratedAt});
 
   TodayFortuneState copyWith({
     Fortune? fortune,
     bool? isLoading,
     String? error,
-    DateTime? lastGeneratedAt,
-  }) {
+    DateTime? lastGeneratedAt}) {
     return TodayFortuneState(
       fortune: fortune ?? this.fortune,
       isLoading: isLoading ?? this.isLoading,
       error: error,
-      lastGeneratedAt: lastGeneratedAt ?? this.lastGeneratedAt,
-    );
+      lastGeneratedAt: lastGeneratedAt ?? this.lastGeneratedAt);
   }
 }
 
@@ -50,8 +47,7 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
       if (userProfile == null) {
         state = state.copyWith(
           isLoading: false,
-          error: '프로필 정보가 필요합니다',
-        );
+          error: '프로필 정보가 필요합니다');
         return;
       }
 
@@ -68,18 +64,15 @@ class TodayFortuneNotifier extends StateNotifier<TodayFortuneState> {
 
       final fortune = await _apiService.generateDailyFortune(
         userId: userProfile.userId,
-        date: DateTime.now(),
-      );
+        date: DateTime.now());
       state = state.copyWith(
         fortune: fortune,
         isLoading: false,
-        lastGeneratedAt: DateTime.now(),
-      );
+        lastGeneratedAt: DateTime.now());
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
-      );
+        error: e.toString());
     }
   }
 

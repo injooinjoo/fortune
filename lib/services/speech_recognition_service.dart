@@ -45,8 +45,7 @@ class SpeechRecognitionService {
           statusNotifier.value = '오류: ${error.errorMsg}';
           debugPrint('error: ${error.errorMsg}');
           stopListening();
-        },
-      );
+        });
       
       if (!_isInitialized) {
         statusNotifier.value = '음성 인식을 초기화할 수 없습니다';
@@ -63,8 +62,7 @@ class SpeechRecognitionService {
   Future<void> startListening({
     required Function(String) onResult,
     Function(String)? onPartialResult,
-    String locale = 'ko-KR',
-  }) async {
+    String locale = 'ko-KR'}) async {
     if (!_isInitialized) {
       final initialized = await initialize();
       if (!initialized) return;

@@ -43,8 +43,7 @@ abstract class BaseFortunePage extends ConsumerStatefulWidget {
     this.requiresUserInfo = true,
     this.showShareButton = true,
     this.showFontSizeSelector = false,
-    this.initialParams,
-  }) : super(key: key);
+    this.initialParams}) : super(key: key);
 }
 
 abstract class BaseFortunePageState<T extends BaseFortunePage>
@@ -67,31 +66,25 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
   @override
   void initState() {
     super.initState();
-    Logger.info('🎯 [BaseFortunePage] Initializing fortune page': {
+    Logger.info('🎯 [BaseFortunePage] Initializing fortune page': {}
       'fortuneType': widget.fortuneType,
       'title': widget.title,
       'requiresUserInfo': widget.requiresUserInfo,
-      'hasInitialParams': null,
-    });
+      'hasInitialParams': null});
     
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800,
-    );
+      duration: const Duration(milliseconds: 800);
     _fadeAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeIn,
-    );
+      curve: Curves.easeIn);
     _scaleAnimation = Tween<double>(
       begin: 0.9,
-      end: 1.0,
-    ).animate(CurvedAnimation(
+      end: 1.0).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Curves.easeOutBack,
-    );
+      curve: Curves.easeOutBack);
     
     // Load user profile if authenticated
     _loadUserProfile();
@@ -102,11 +95,10 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     
     // If autoGenerate flag is set or initial params with fortuneParams are provided, generate fortune immediately
     if (autoGenerate || fortuneParams != null) {
-      Logger.debug('🚀 [BaseFortunePage] Auto-generating fortune': {
+      Logger.debug('🚀 [BaseFortunePage] Auto-generating fortune': {}
         'autoGenerate': autoGenerate,
         'hasFortuneParams': fortuneParams != null,
-        'initialParams': null,
-      });
+        'initialParams': null})
       WidgetsBinding.instance.addPostFrameCallback((_) {
         generateFortuneAction(params: fortuneParams ?? widget.initialParams);
       });
@@ -120,10 +112,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       userProfileAsync.when(
         data: (profile) {
           if (mounted) {
-            Logger.debug('✅ [BaseFortunePage] User profile loaded': {
+            Logger.debug('✅ [BaseFortunePage] User profile loaded': {}
               'hasProfile': profile != null,
-              'userName': null,
-            });
+              'userName': null});
             setState(() {
               _userProfile = profile;
             });
@@ -131,7 +122,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         },
         error: (error, stackTrace) {
           Logger.warning('⚠️ [BaseFortunePage] Failed to load user profile': error);
-          // Silently handle error - user profile is optional
+          // Silently handle error - user profile is optional}
         },
         loading: () {
           Logger.debug('⏳ [BaseFortunePage] User profile is loading');
@@ -159,10 +150,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     final stopwatch = Logger.startTimer('Fortune Generation - ${widget.fortuneType}');
     
     Logger.info('🎲 [BaseFortunePage] Starting fortune generation': {
-      'fortuneType': widget.fortuneType,
+      , 'fortuneType': widget.fortuneType,
       'hasParams': params != null,
-      'timestamp': null,
-    });
+      'timestamp': null});
     
     // Check if user has unlimited access (premium,
     final tokenState = ref.read(tokenProvider);
@@ -170,27 +160,24 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     final isPremium = tokenState.hasUnlimitedAccess;
     
     Logger.debug('💎 [BaseFortunePage] User premium status': {
-      'isPremium': isPremium,
-      'currentSouls': null,
-    });
+      , 'isPremium': isPremium,
+      'currentSouls': null});
     
     // 프리미엄 운세인 경우 영혼 확인
-    if (!isPremium && SoulRates.isPremiumFortune(widget.fortuneType)) {
+    if (!isPremium && SoulRates.isPremiumFortune(widget.fortuneType), {
       final canAccess = tokenNotifier.canAccessFortune(widget.fortuneType);
       final requiredSouls = -SoulRates.getSoulAmount(widget.fortuneType);
       
-      Logger.debug('💰 [BaseFortunePage] Soul check for premium fortune': {
+      Logger.debug('💰 [BaseFortunePage] Soul check for premium fortune': {}
         'fortuneType': widget.fortuneType,
         'requiredSouls': requiredSouls,
-        'canAccess': null,
-      });
+        'canAccess': null});
       
       if (!canAccess) {
-        Logger.warning('⛔ [BaseFortunePage] Insufficient souls for fortune': {
+        Logger.warning('⛔ [BaseFortunePage] Insufficient souls for fortune': {}
           'fortuneType': widget.fortuneType,
           'requiredSouls': requiredSouls,
-          'currentSouls': null,
-        });
+          'currentSouls': null});
         
         // 영혼 부족 모달 표시
         HapticUtils.warning();
@@ -214,9 +201,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       final fortuneParams = params ?? await getFortuneParams() ?? {};
       
       Logger.debug('📝 [BaseFortunePage] Fortune parameters prepared': {
-        'fortuneType': widget.fortuneType,
-        'paramKeys': null,
-      });
+        , 'fortuneType': widget.fortuneType,
+        'paramKeys': null});
       
       // Store user params for visualization
       _userParams = fortuneParams;
@@ -230,12 +216,11 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       
       Logger.endTimer('API Call - ${widget.fortuneType}': fortuneStopwatch);
       Logger.info('✨ [BaseFortunePage] Fortune generated successfully': {
-        'fortuneType': widget.fortuneType,
+        , 'fortuneType': widget.fortuneType,
         'fortuneId': fortune.id,
         'overallScore': fortune.overallScore,
         'hasDescription': fortune.description?.isNotEmpty ?? false,
-        'luckyItemsCount': null,
-      });
+        'luckyItemsCount': null});
       
       setState(() {
         _fortune = fortune;
@@ -256,15 +241,13 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         // Also add to recent fortunes
         ref.read(recentFortunesProvider.notifier).addFortune(
           widget.fortuneType,
-          widget.title,
-        );
+          widget.title);
         
         // Add to storage service for offline access
         final storageService = ref.read(storageServiceProvider);
         await storageService.addRecentFortune(
           widget.fortuneType,
-          widget.title,
-        );
+          widget.title);
         Logger.debug('💾 [BaseFortunePage] Fortune saved to recent history');
       }
       
@@ -277,27 +260,26 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         );
         
         final soulAmount = SoulRates.getSoulAmount(widget.fortuneType);
-        Logger.debug('💫 [BaseFortunePage] Soul transaction result': {
+        Logger.debug('💫 [BaseFortunePage] Soul transaction result': {}
           'success': result,
           'soulAmount': soulAmount,
-          'fortuneType': null,
-        });
+          'fortuneType': null});
         
         // 애니메이션 표시
         if (result && mounted) {
           // 약간의 딜레이 후 애니메이션 표시
-          await Future.delayed(const Duration(milliseconds: 500));
+          await Future.delayed(const Duration(milliseconds: 500),;
           
           if (mounted) {
             if (soulAmount > 0) {
-              Logger.debug('🎁 [BaseFortunePage] Showing soul earn animation': {'amount': soulAmount});
+              Logger.debug('🎁 [BaseFortunePage] Showing soul earn animation': {, 'amount': soulAmount});
               // 영혼 획득 애니메이션 (무료 운세,
               SoulEarnAnimation.show(
                 context: context,
                 soulAmount: soulAmount
               );
             } else if (soulAmount < 0) {
-              Logger.debug('💸 [BaseFortunePage] Showing soul consume animation': {'amount': -soulAmount});
+              Logger.debug('💸 [BaseFortunePage] Showing soul consume animation': {, 'amount': -soulAmount});
               // 영혼 소비 애니메이션 (프리미엄 운세,
               SoulConsumeAnimation.show(
                 context: context,
@@ -318,16 +300,15 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
       
       Logger.endTimer('Fortune Generation - ${widget.fortuneType}': stopwatch);
       Logger.info('🎉 [BaseFortunePage] Fortune generation completed successfully': {
-        'fortuneType': widget.fortuneType,
-        'totalTime': '${stopwatch.elapsedMilliseconds}ms',
-      });
+        , 'fortuneType': widget.fortuneType,
+        'totalTime', '${stopwatch.elapsedMilliseconds}ms'});
     } catch (e, stackTrace) {
       Logger.error('❌ [BaseFortunePage] Fortune generation failed', e, stackTrace);
       Logger.endTimer('Fortune Generation - ${widget.fortuneType}': stopwatch);
       
       setState(() {
         _error = e.toString();
-        _isLoading = false;
+        _isLoading = false;}
       });
       HapticUtils.error();
       Toast.error(context, '운세 생성 중 오류가 발생했습니다');
@@ -354,10 +335,9 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     }
 
     Logger.debug('🏗️ [BaseFortunePage] Building fortune result UI': {
-      'fortuneType': widget.fortuneType,
+      , 'fortuneType': widget.fortuneType,
       'fortuneId': _fortune?.id,
-      'hasUserParams': null,
-    });
+      'hasUserParams': null});
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -371,10 +351,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               if (_userParams != null && _userParams!.isNotEmpty) ...[
                 UserInfoVisualization(
                   userInfo: _userParams!,
-                  fortuneType: widget.fortuneType,
-                ),
-                const SizedBox(height: 20),
-              ],
+                  fortuneType: widget.fortuneType),
+                const SizedBox(height: 20)],
               _buildOverallScore(),
               const SizedBox(height: 16),
               _buildScoreBreakdown(),
@@ -384,12 +362,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               _buildDescription(),
               const SizedBox(height: 16),
               _buildRecommendations(),
-              const SizedBox(height: 32),
-            ],
-          ),
-        ),
-      ),
-    );
+              const SizedBox(height: 32)]))));
   }
 
   Widget _buildOverallScore() {
@@ -411,38 +384,28 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   gradient: RadialGradient(
                     colors: [
                       scoreColor.withValues(alpha: 0.2),
-                      scoreColor.withValues(alpha: 0.05),
-                    ],
-                  ),
+                      scoreColor.withValues(alpha: 0.05)]),
                   border: Border.all(
                     color: scoreColor.withValues(alpha: 0.3),
-                    width: 3,
-                  ),
-                ),
+                    width: 3)),
                 child: Center(
                   child: Text(
                     '$score점',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
                           color: scoreColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-              ),
+                          fontWeight: FontWeight.bold)))),
               Positioned(
                 top: -8,
                 right: -8,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                  ),
+                    shape: BoxShape.circle),
                   child: IconButton(
                     icon: const Icon(
                       Icons.help_outline,
                       color: Colors.white,
-                      size: 20,
-                    ),
+                      size: 20),
                     onPressed: () {
                       HapticUtils.lightImpact();
                       FortuneExplanationBottomSheet.show(
@@ -451,37 +414,23 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                         fortuneData: {
                           'score': score,
                           'luckyItems': _fortune?.luckyItems,
-                          'recommendations': null,
-                        },
-                      );
+                          'recommendations': null});
                     },
                     tooltip: '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
                     constraints: const BoxConstraints(
                       minWidth: 32,
-                      minHeight: 32,
-                    ),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-            ],
-          ),
+                      minHeight: 32),
+                    padding: EdgeInsets.zero)))]),
           const SizedBox(height: 16),
           Text(
             _getScoreMessage(score),
             style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          ),
+            textAlign: TextAlign.center),
           const SizedBox(height: 8),
           Text(
             _fortune?.category ?? widget.fortuneType,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-          ),
-        ],
-      ),
-    );
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)))]));
   }
 
   Widget _buildScoreBreakdown() {
@@ -495,8 +444,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         children: [
           Text(
             '세부 점수',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
           ...breakdown.entries.map((entry) {
             final score = entry.value as int;
@@ -512,31 +460,19 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                     children: [
                       Text(
                         entry.key,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                        style: Theme.of(context).textTheme.bodyMedium),
                       Text(
                         '$score점',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: color,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
+                              fontWeight: FontWeight.bold))]),
                   const SizedBox(height: 4),
                   LinearProgressIndicator(
                     value: score / 100,
                     backgroundColor: color.withValues(alpha: 0.2),
                     valueColor: AlwaysStoppedAnimation<Color>(color),
-                    minHeight: 6,
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                    minHeight: 6)]));
+          }).toList()]));
   }
 
   Widget _buildLuckyItems() {
@@ -550,8 +486,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         children: [
           Text(
             '행운의 아이템',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
           GridView.count(
             shrinkWrap: true,
@@ -575,16 +510,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       style: Theme.of(context).textTheme.bodySmall,
                       textAlign: TextAlign.center,
                       maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+                      overflow: TextOverflow.ellipsis)]));
+            }).toList())]));
   }
 
   Widget _buildDescription() {
@@ -603,13 +530,11 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             children: [
               Text(
                 '상세 운세',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+                style: Theme.of(context).textTheme.headlineSmall),
               IconButton(
                 icon: Icon(
                   Icons.help_outline,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 onPressed: () {
                   HapticUtils.lightImpact();
                   FortuneExplanationBottomSheet.show(
@@ -618,25 +543,15 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                     fortuneData: {
                       'score': _fortune?.overallScore,
                       'luckyItems': _fortune?.luckyItems,
-                      'recommendations': null,
-                    },
-                  );
+                      'recommendations': null});
                 },
-                tooltip: '${FortuneTypeNames.getName(widget.fortuneType)} 가이드',
-              ),
-            ],
-          ),
+                tooltip: '${FortuneTypeNames.getName(widget.fortuneType)} 가이드')]),
           const SizedBox(height: 16),
           Text(
             description,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontSize: _getFontSize(fontSize),
-                  height: 1.6,
-                ),
-          ),
-        ],
-      ),
-    );
+                  height: 1.6))]));
   }
 
   Widget _buildRecommendations() {
@@ -650,8 +565,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         children: [
           Text(
             '추천 사항',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
           ...recommendations.map((rec) {
             return Padding(
@@ -662,20 +576,13 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                   Icon(
                     Icons.check_circle_rounded,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                    color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       rec,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ]
+                      style: Theme.of(context).textTheme.bodyMedium))]));
+          }).toList()]
       )
     );
   }
@@ -704,9 +611,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     final colorScheme = Theme.of(context).colorScheme;
     final fortuneTheme = context.fortuneTheme;
 
-    switch (type.toLowerCase()) {
-      case 'color':
-      case '색깔':
+    switch (type.toLowerCase(), {
+      case 'color': case '색깔':
         iconData = Icons.palette_rounded;
         color = colorScheme.primary;
         break;
@@ -731,13 +637,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         color = colorScheme.error;
         break;
       case 'person':
-      case '사람':
-        iconData = Icons.person_rounded;
+      case , '사람': iconData = Icons.person_rounded;
         color = colorScheme.tertiary;
         break;
       default:
         iconData = Icons.star_rounded;
-        color = colorScheme.primary;
+        color = colorScheme.primary;}
     }
 
     return Icon(iconData, size: 32, color: color);
@@ -769,8 +674,7 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
         onBackPressed: _fortune != null ? () {
           // When fortune result is displayed, navigate to fortune list
           GoRouter.of(context).go('/fortune');
-        } : null,
-      ),
+        } : null),
       body: SafeArea(
         child: Column(
           children: [
@@ -781,11 +685,8 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                       ? _buildErrorState()
                       : _fortune != null
                           ? buildFortuneResult()
-                          : _buildInitialState(),
-            ),
-            if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton(),
-          ],
-        )
+                          : _buildInitialState()),
+            if (_fortune == null && !_isLoading && _error == null) _buildGenerateButton()])
       )
     );
   }
@@ -815,21 +716,12 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                           end: Alignment.bottomRight,
                           colors: [
                             Theme.of(context).colorScheme.primary.withValues(alpha: 0.8),
-                            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8),
-                          ],
-                        ),
-                      ),
+                            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.8)])),
                       child: Icon(
                         Icons.auto_awesome_rounded,
                         size: 64,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
+                        color: Colors.white.withValues(alpha: 0.8)));
+                  })))),
           const SizedBox(height: 16),
           GlassCard(
             padding: const EdgeInsets.all(24),
@@ -838,29 +730,18 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.headlineMedium,
-                  textAlign: TextAlign.center,
-                ),
+                  textAlign: TextAlign.center),
                 const SizedBox(height: 8),
                 Text(
                   widget.description,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                      ),
-                  textAlign: TextAlign.center,
-                ),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                  textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 Text(
                   '아래 버튼을 눌러 운세를 확인해보세요',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)))]))]));
   }
 
   Widget _buildErrorState() {
@@ -873,26 +754,20 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: Theme.of(context).colorScheme.error,
-            ),
+              color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
             Text(
               '오류가 발생했습니다',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
+              style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               _error ?? '알 수 없는 오류',
               style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
+              textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: generateFortuneAction,
-              child: const Text('다시 시도'),
-            ),
-          ],
-        )
+              child: const Text('다시 시도'))])
       )
     );
   }
@@ -901,23 +776,20 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        boxShadow: GlassEffects.glassShadow(elevation: 10),
-      ),
+        boxShadow: GlassEffects.glassShadow(elevation: 10)),
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
           onPressed: () {
-            Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button': {
+            Logger.info('🖱️ [BaseFortunePage] User clicked generate fortune button': {}
               'fortuneType': widget.fortuneType,
               'title': widget.title,
               'hasUserProfile': _userProfile != null,
               'requiresUserInfo': widget.requiresUserInfo,
-              'timestamp': null,
-            });
+              'timestamp': null});
             
             Logger.debug('📋 [BaseFortunePage] Opening fortune explanation bottom sheet': {
-              'fortuneType',
-            });
+              'fortuneType'});
             
             // Show bottom sheet for fortune settings
             FortuneExplanationBottomSheet.show(
@@ -925,22 +797,18 @@ abstract class BaseFortunePageState<T extends BaseFortunePage>
               fortuneType: widget.fortuneType,
               fortuneData: null,
               onFortuneButtonPressed: () {
-                Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed': {
+                Logger.debug('📋 [BaseFortunePage] Bottom sheet fortune button pressed': {}
                   'fortuneType': widget.fortuneType,
-                  'timestamp': null,
-                });
+                  'timestamp': null});
                 // This will be handled by the bottom sheet
               }
             );
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
+            padding: const EdgeInsets.symmetric(vertical: 16)),
           child: const Text(
             '운세 보기',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        )
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)))
       )
     );
   }

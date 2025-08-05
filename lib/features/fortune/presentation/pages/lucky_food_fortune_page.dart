@@ -24,66 +24,54 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
   String? _selectedMealTime;
   
   final Map<String, Map<String, dynamic>> _foodCategories = {
-    '한식': {
-      'icon': '🍚',
-      'foods': ['김치찌개': '비빔밥': '삼겹살', '김밥', '떡볶이', '잡채', '갈비탕', '냉면'],
-      'energy': '따뜻한 정과 활력',
-      'color': null,
-    },
+    '한식': {}
+      'icon', '🍚',
+      'foods': \['['김치찌개', '비빔밥', '삼겹살', '김밥', '떡볶이', '잡채', '갈비탕', '냉면'],
+      'energy', '따뜻한 정과 활력',
+      'color': null},
     '중식': {
-      'icon': '🥟',
+      'icon', '🥟',
       'foods': ['짜장면', '짬뽕', '탕수육', '마파두부', '깐풍기', '볶음밥', '양장피', '팔보채'],
-      'energy': '풍요와 번영',
-      'color': null,
-    },
+      'energy', '풍요와 번영',
+      'color': null},
     '일식': {
-      'icon': '🍱',
+      'icon', '🍱',
       'foods': ['초밥', '라멘', '돈카츠', '우동', '덴푸라', '야키토리', '오코노미야키', '카레'],
-      'energy': '섬세함과 균형',
-      'color': null,
-    },
+      'energy', '섬세함과 균형',
+      'color': null},
     '양식': {
-      'icon': '🍝',
+      'icon', '🍝',
       'foods': ['파스타', '피자', '스테이크', '리조또', '샐러드', '햄버거', '샌드위치', '수프'],
-      'energy': '자유와 창의성',
-      'color': null,
-    },
+      'energy', '자유와 창의성',
+      'color': null},
     '디저트': {
-      'icon': '🍰',
+      'icon', '🍰',
       'foods': ['케이크', '마카롱', '티라미수', '푸딩', '아이스크림', '와플', '팬케이크', '초콜릿'],
-      'energy': '달콤한 행복',
-      'color': null,
-    },
+      'energy', '달콤한 행복',
+      'color': null},
     '음료': {
-      'icon': '☕',
+      'icon', '☕',
       'foods': ['커피', '녹차', '과일주스', '스무디', '에이드', '차', '코코아', '탄산음료'],
-      'energy': '상쾌한 활력',
-      'color': null,
-    },
-  };
+      'energy', '상쾌한 활력',
+      'color': null}};
 
   final Map<String, Map<String, dynamic>> _nutritionInfo = {
-    '단백질': {
+    '단백질': {}
       'icon': Icons.fitness_center,
-      'benefit': '체력과 집중력 향상',
-      'foods': ['닭가슴살', '계란', '두부', '연어': null,
-    },
+      'benefit', '체력과 집중력 향상',
+      'foods': ['닭가슴살', '계란', '두부', '연어': null},
     '비타민': {
-      'icon': Icons.wb_sunny,
-      'benefit': '면역력과 활력 증진',
-      'foods': ['과일', '샐러드', '녹색 채소', '견과류': null,
-    },
+      , 'icon': Icons.wb_sunny,
+      'benefit', '면역력과 활력 증진',
+      'foods': ['과일', '샐러드', '녹색 채소', '견과류': null},
     '탄수화물': {
-      'icon': Icons.battery_charging_full,
-      'benefit': '즉각적인 에너지 공급',
-      'foods': ['밥', '빵', '파스타', '감자': null,
-    },
+      , 'icon': Icons.battery_charging_full,
+      'benefit', '즉각적인 에너지 공급',
+      'foods': ['밥', '빵', '파스타', '감자': null},
     '오메가3': {
-      'icon': Icons.favorite,
-      'benefit': '두뇌 활동과 심장 건강',
-      'foods': ['연어', '참치', '호두', '아보카도': null,
-    },
-  };
+      , 'icon': Icons.favorite,
+      'benefit', '두뇌 활동과 심장 건강',
+      'foods': ['연어', '참치', '호두', '아보카도': null}};
 
   @override
   Widget buildInputForm() {
@@ -94,30 +82,26 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
       children: [
         Text(
           '음식 선호도 (선택사항)',
-          style: theme.textTheme.titleMedium,
-        ),
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
         _buildPreferenceSelector(),
         const SizedBox(height: 24),
         Text(
           '식사 시간대 (선택사항)',
-          style: theme.textTheme.titleMedium,
-        ),
+          style: theme.textTheme.titleMedium),
         const SizedBox(height: 16),
-        _buildMealTimeSelector(),
-      ]
+        _buildMealTimeSelector()]
     );
   }
 
   Widget _buildPreferenceSelector() {
     final preferences = [
-      {'id': 'spicy': 'label': '매운맛': 'icon': '🌶️'},
-      {'id': 'sweet', 'label': '단맛', 'icon': '🍯'},
-      {'id': 'sour', 'label': '신맛', 'icon': '🍋'},
-      {'id': 'salty', 'label': '짠맛', 'icon': '🧂'},
-      {'id': 'light', 'label': '담백한맛', 'icon': '🥗'},
-      {'id': 'rich', 'label': '진한맛', 'icon': '🍖'},
-    ];
+      {'id', 'spicy': 'label', '매운맛': 'icon', '🌶️'},
+      {'id', 'sweet', 'label', '단맛', 'icon', '🍯'},
+      {'id', 'sour', 'label', '신맛', 'icon', '🍋'},
+      {'id', 'salty', 'label', '짠맛', 'icon', '🧂'},
+      {'id', 'light', 'label', '담백한맛', 'icon', '🥗'},
+      {'id', 'rich', 'label', '진한맛', 'icon', '🍖'}];
 
     return Wrap(
       spacing: 12,
@@ -131,9 +115,7 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
             children: [
               Text(pref['icon'],
               const SizedBox(width: 4),
-              Text(pref['label'],
-            ],
-          ),
+              Text(pref['label']]),
           selected: isSelected,
           onSelected: (selected) {
             setState(() {
@@ -141,19 +123,16 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
     String : null;
             });
           },
-          selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-        );
-      }).toList(),
-    );
+          selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2));
+      }).toList());
   }
 
   Widget _buildMealTimeSelector() {
     final mealTimes = [
-      {'id': 'breakfast': 'label': '아침': 'icon'},
-      {'id': 'lunch', 'label': '점심', 'icon'},
-      {'id': 'dinner', 'label': '저녁', 'icon'},
-      {'id': 'snack', 'label': '간식', 'icon'},
-    ];
+      {'id', 'breakfast': 'label', '아침': 'icon'},
+      {'id', 'lunch', 'label', '점심', 'icon'},
+      {'id', 'dinner', 'label', '저녁', 'icon'},
+      {'id', 'snack', 'label', '간식', 'icon'}];
 
     return Row(
       children: mealTimes.map((time) {
@@ -174,13 +153,10 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
                 colors: isSelected
                     ? [
                         Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      ]
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1)]
                     : [
                         Colors.white.withOpacity(0.1),
-                        Colors.white.withOpacity(0.05),
-                      ],
-              ),
+                        Colors.white.withOpacity(0.05)]),
               child: InkWell(
                 onTap: () {
                   setState(() {
@@ -196,23 +172,13 @@ class _LuckyFoodFortunePageState extends BaseFortunePageState<LuckyFoodFortunePa
                       size: 28,
                       color: isSelected 
                           ? Theme.of(context).colorScheme.primary 
-                          : Theme.of(context).colorScheme.onSurface,
-                    ),
+                          : Theme.of(context).colorScheme.onSurface),
                     const SizedBox(height: 8),
                     Text(
                       time['label'],
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal))])))));
+      }).toList());
   }
 
   @override
@@ -277,7 +243,7 @@ ${primaryCategory} 요리가 오늘 당신에게 ${primaryCategoryInfo['energy']
 
 💪 오늘 필요한,
     영양소: $recommendedNutrition
-${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<String>).join(': ')} 등을 섭취하세요.
+${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<String>).join(', ')} 등을 섭취하세요.
 
 🌟 음식,
     에너지:
@@ -304,22 +270,19 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
         '전체운': overallScore,
         '건강운': 80 + (today.day % 15),
         '활력지수': 75 + (today.hour % 20),
-        '소화운': null,
-      },
+        '소화운': null},
       description: description,
       luckyItems: {
         '메인 음식': mainFood,
         '서브 음식': secondaryFood,
         '카테고리': primaryCategory,
         '영양소': recommendedNutrition,
-        '최적 시간': '${(birthDate.day % 12 + 11)}시-${(birthDate.day % 12 + 13)}시',
-      },
+        '최적 시간', '${(birthDate.day % 12 + 11)}시-${(birthDate.day % 12 + 13)}시'},
       recommendations: [
         '$mainFood을(를) 천천히 음미하며 드세요',
         '음식의 색과 향을 충분히 느껴보세요',
         '감사한 마음으로 식사를 즐기세요',
-        '식후 가벼운 산책을 하면 더욱 좋습니다',
-      ],
+        '식후 가벼운 산책을 하면 더욱 좋습니다'],
       metadata: {
         'primaryCategory': primaryCategory,
         'primaryCategoryInfo': primaryCategoryInfo,
@@ -331,30 +294,26 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
         'nutritionData': nutritionData,
         'allFoodCategories': _foodCategories,
         'selectedPreference': _selectedPreference,
-        'selectedMealTime': null,
-      },
-    );
+        'selectedMealTime': null});
   }
 
   String _getPreferenceLabel(String preference) {
     final labels = {
-      'spicy': '매운맛',
-      'sweet': '단맛',
-      'sour': '신맛',
-      'salty': '짠맛',
-      'light': '담백한맛',
-      'rich': '진한맛',
-    };
+      'spicy', '매운맛',
+      'sweet', '단맛',
+      'sour', '신맛',
+      'salty', '짠맛',
+      'light', '담백한맛',
+      'rich', '진한맛'};
     return labels[preference] ?? preference;
   }
 
   String _getMealTimeLabel(String mealTime) {
     final labels = {
-      'breakfast': '아침',
-      'lunch': '점심',
-      'dinner': '저녁',
-      'snack': '간식 시간',
-    };
+      'breakfast', '아침',
+      'lunch', '점심',
+      'dinner', '저녁',
+      'snack', '간식 시간'};
     return labels[mealTime] ?? mealTime;
   }
 
@@ -381,10 +340,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
           _buildNutritionInfo(),
           _buildFoodEnergyChart(),
           _buildEatingTips(),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+          const SizedBox(height: 32)]));
   }
 
   Widget _buildMainFoodCard() {
@@ -403,8 +359,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
         children: [
           Text(
             '오늘의 메인 행운 음식',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
+            style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Container(
             width: 120,
@@ -414,49 +369,32 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               gradient: RadialGradient(
                 colors: [
                   (primaryCategoryInfo['color'],
-                  (primaryCategoryInfo['color'],
-                ],
-              ),
+                  (primaryCategoryInfo['color']]),
               boxShadow: [
                 BoxShadow(
                   color: (primaryCategoryInfo['color'],
                   blurRadius: 30,
-                  spreadRadius: 10,
-                ),
-              ],
-            ),
+                  spreadRadius: 10)]),
             child: Center(
               child: Text(
                 primaryCategoryInfo['icon'],
-                style: const TextStyle(fontSize: 64),
-              ),
-            ),
-          ),
+                style: const TextStyle(fontSize: 64)))),
           const SizedBox(height: 16),
           Text(
             mainFood,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+              fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: (primaryCategoryInfo['color'],
-              borderRadius: BorderRadius.circular(20),
-            ),
+              borderRadius: BorderRadius.circular(20)),
             child: Text(
               '$primaryCategory • ${primaryCategoryInfo['energy']}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: primaryCategoryInfo['color'],
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+                fontWeight: FontWeight.w600)))]));
   }
 
   Widget _buildFoodCategoryGrid() {
@@ -477,15 +415,11 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               children: [
                 Icon(
                   Icons.restaurant_menu,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '음식 카테고리별 운세',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             GridView.count(
               shrinkWrap: true,
@@ -514,54 +448,36 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                     colors: isPrimary || isSecondary
                         ? [
                             (info['color'],
-                            (info['color'],
-                          ]
+                            (info['color']]
                         : [
                             Colors.white.withOpacity(0.05),
-                            Colors.white.withOpacity(0.02),
-                          ],
-                  ),
+                            Colors.white.withOpacity(0.02)]),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         info['icon'],
-                        style: const TextStyle(fontSize: 32),
-                      ),
+                        style: const TextStyle(fontSize: 32)),
                       const SizedBox(height: 8),
                       Text(
                         category,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: isPrimary || isSecondary ? FontWeight.bold : FontWeight.normal,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                          fontWeight: isPrimary || isSecondary ? FontWeight.bold : FontWeight.normal),
+                        textAlign: TextAlign.center),
                       if (isPrimary)
                         Container(
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: (info['color'],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                            borderRadius: BorderRadius.circular(10)),
                           child: Text(
                             '메인',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontSize: 10,
                               color: info['color'],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
+                              fontWeight: FontWeight.bold)))]));
+              }).toList())])));
   }
 
   Widget _buildNutritionInfo() {
@@ -579,9 +495,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
         gradient: LinearGradient(
           colors: [
             Colors.green.withOpacity(0.1),
-            Colors.green.withOpacity(0.05),
-          ],
-        ),
+            Colors.green.withOpacity(0.05)]),
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -590,15 +504,11 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               children: [
                 Icon(
                   Icons.local_hospital,
-                  color: Colors.green,
-                ),
+                  color: Colors.green),
                 const SizedBox(width: 8),
                 Text(
                   '오늘의 영양 포인트',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
@@ -606,16 +516,13 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                 color: Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.3),
-                ),
-              ),
+                  color: Colors.green.withOpacity(0.3))),
               child: Row(
                 children: [
                   Icon(
                     nutritionData['icon'],
                     size: 48,
-                    color: Colors.green,
-                  ),
+                    color: Colors.green),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -624,27 +531,16 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                         Text(
                           recommendedNutrition,
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
                         Text(
                           nutritionData['benefit'],
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                          style: Theme.of(context).textTheme.bodyMedium)]))])),
             const SizedBox(height: 16),
             Text(
               '추천 음식',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+                fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -654,15 +550,8 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                   label: Text(food),
                   backgroundColor: Colors.green.withOpacity(0.2),
                   side: BorderSide(
-                    color: Colors.green.withOpacity(0.5),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-          ),
-        ),
-      );
+                    color: Colors.green.withOpacity(0.5)));
+              }).toList())])));
   }
 
   Widget _buildFoodEnergyChart() {
@@ -683,15 +572,11 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
               children: [
                 Icon(
                   Icons.flash_on,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                  color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text(
                   '음식별 에너지',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
+                  style: Theme.of(context).textTheme.headlineSmall)]),
             const SizedBox(height: 16),
             ...allCategories.entries.take(4).map((entry) {
               final category = entry.key;
@@ -708,15 +593,11 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                       height: 40,
                       decoration: BoxDecoration(
                         color: color.withOpacity(0.2),
-                        shape: BoxShape.circle,
-                      ),
+                        shape: BoxShape.circle),
                       child: Center(
                         child: Text(
                           info['icon'],
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ),
-                    ),
+                          style: const TextStyle(fontSize: 20)))),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -725,26 +606,12 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                           Text(
                             category,
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                              fontWeight: FontWeight.bold)),
                           Text(
                             energy,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)))]))]));
+            }).toList()])));
   }
 
   Widget _buildEatingTips() {
@@ -757,15 +624,11 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             children: [
               Icon(
                 Icons.tips_and_updates,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 8),
               Text(
                 '음식 섭취 팁',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ],
-          ),
+                style: Theme.of(context).textTheme.headlineSmall)]),
           const SizedBox(height: 16),
           ...[
             '음식을 먹기 전 잠시 감사의 마음을 가져보세요',
@@ -773,8 +636,7 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
             '식사 중 스마트폰 사용을 자제하고 음식에 집중하세요',
             '식후 5-10분 정도 가벼운 산책을 해보세요',
             '충분한 물을 함께 섭취하여 소화를 도와주세요',
-            '행운의 음식과 함께 긍정적인 생각을 떠올려보세요',
-          ].map((tip) {
+            '행운의 음식과 함께 긍정적인 생각을 떠올려보세요'].map((tip) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Row(
@@ -783,21 +645,12 @@ ${nutritionData['benefit']}을(를) 위해 ${(nutritionData['foods'] as List<Str
                   Icon(
                     Icons.check_circle,
                     size: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
+                    color: Theme.of(context).colorScheme.primary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       tip,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
+                      style: Theme.of(context).textTheme.bodyMedium))]));
+          }).toList()]));
   }
 }

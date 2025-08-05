@@ -39,8 +39,7 @@ final physiognomyResultProvider = FutureProvider.family<Fortune, PhysiognomyData
   return await fortuneService.getFortune(
     fortuneType: 'physiognomy',
     userId: user?.id ?? 'anonymous',
-    params: params,
-  );
+    params: params);
 });
 
 class PhysiognomyResultPage extends ConsumerStatefulWidget {
@@ -65,8 +64,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
     super.initState();
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+      vsync: this);
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this
@@ -86,7 +84,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fortuneAsync = ref.watch(physiognomyResultProvider(widget.data));
+    final fortuneAsync = ref.watch(physiognomyResultProvider(widget.data),;
     
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -98,21 +96,12 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               actions: [
                 IconButton(
                   icon: const Icon(Icons.share_rounded),
-                  onPressed: _shareResult,
-                ),
-              ],
-            ),
+                  onPressed: _shareResult)]),
             Expanded(
               child: fortuneAsync.when(
                 data: (fortune) => _buildResultContent(theme, fortune),
                 loading: () => _buildLoadingState(theme),
-                error: (error, stack) => '',
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+                error: (error, stack) => ''))])));
   }
 
   Widget _buildLoadingState(ThemeData theme) {
@@ -128,37 +117,25 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               gradient: LinearGradient(
                 colors: [
                   theme.colorScheme.primary,
-                  theme.colorScheme.secondary,
-                ],
-              ),
-            ),
+                  theme.colorScheme.secondary])),
             child: const Icon(
               Icons.auto_awesome_rounded,
               color: Colors.white,
-              size: 60,
-            ),
-          ).animate(
-            onPlay: (controller) => controller.repeat(),
-          ).rotate(duration: 2000.ms),
+              size: 60)).animate(
+            onPlay: (controller) => controller.repeat()).rotate(duration: 2000.ms),
           
           const SizedBox(height: 24),
           
           Text(
             'AI가 관상을 분석하고 있습니다...',
-            style: theme.textTheme.titleLarge,
-          ),
+            style: theme.textTheme.titleLarge),
           
           const SizedBox(height: 8),
           
           Text(
             '잠시만 기다려주세요',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
-            ),
-          ),
-        ],
-      ),
-    );
+              color: theme.colorScheme.onSurface.withOpacity(0.7)))]));
   }
 
   Widget _buildErrorState(ThemeData theme) {
@@ -171,32 +148,23 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
             Icon(
               Icons.error_outline_rounded,
               size: 64,
-              color: theme.colorScheme.error,
-            ),
+              color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text(
               '분석 중 오류가 발생했습니다',
-              style: theme.textTheme.titleLarge,
-            ),
+              style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
               '다시 시도해주세요',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
+                color: theme.colorScheme.onSurface.withOpacity(0.7))),
             const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('다시 시도'),
-              ),
-            ],
-          ),
-      ),
-    );
+                label: const Text('다시 시도'))])));
   }
 
   Widget _buildResultContent(ThemeData theme, Fortune fortune) {
@@ -230,10 +198,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           
           // Action Buttons
           _buildActionButtons(theme),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
+          const SizedBox(height: 32)]));
   }
 
   Widget _buildOverallScore(ThemeData theme, int score) {
@@ -242,8 +207,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
         children: [
           Text(
             '종합 관상 점수',
-            style: theme.textTheme.titleLarge,
-          ),
+            style: theme.textTheme.titleLarge),
           const SizedBox(height: 16),
           
           // Animated score circle
@@ -259,10 +223,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-                      width: 4,
-                    ),
-                  ),
-                ),
+                      width: 4))),
                 
                 // Progress circle
                 TweenAnimationBuilder<double>(
@@ -275,11 +236,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                       painter: CircularProgressPainter(
                         progress: value,
                         color: _getScoreColor(score),
-                        strokeWidth: 8,
-                      ),
-                    );
-                  },
-                ),
+                        strokeWidth: 8));
+                  }),
                 
                 // Score text
                 Column(
@@ -294,27 +252,17 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                           '$value',
                           style: theme.textTheme.displayMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: _getScoreColor(score),
-                          ),
-                        );
-                      },
-                    ),
+                            color: _getScoreColor(score)));
+                      }),
                     Text(
                       _getScoreDescription(score),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      ),
-                    ),
-                  ],
-                ),
-            ),
-          ).animate()
+                        color: theme.colorScheme.onSurface.withOpacity(0.7)))]))).animate()
             .scale(
               begin: const Offset(0.8, 0.8),
               end: const Offset(1, 1),
               duration: 800.ms,
-              curve: Curves.easeOutBack,
-            ),
+              curve: Curves.easeOutBack),
           
           const SizedBox(height: 16),
           
@@ -322,28 +270,21 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: _getScoreColor(score).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
+              borderRadius: BorderRadius.circular(12)),
             child: Text(
               _getScoreAdvice(score),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: _getScoreColor(score),
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
-    );
+                fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center))]));
   }
 
   Widget _buildCategoryScores(ThemeData theme, Map<String, int> scores) {
     final categories = [
-      {'name': '재물운': 'score': scores['wealth'] ?? 80, 'icon': Icons.attach_money_rounded}
-      {'name': '연애운': 'score': scores['love'] ?? 75, 'icon': Icons.favorite_rounded}
-      {'name': '건강운', 'score': scores['health'] ?? 85, 'icon': Icons.health_and_safety_rounded}
-      {'name': '사업운', 'score': scores['business'] ?? 70, 'icon': Icons.business_rounded}
+      {'name', '재물운':  , 'score': scores['wealth'] ?? 80, 'icon': Icons.attach_money_rounded}
+      {'name', '연애운':  , 'score': scores['love'] ?? 75, 'icon': Icons.favorite_rounded}
+      {'name', '건강운', 'score': scores['health'] ?? 85, 'icon': Icons.health_and_safety_rounded}
+      {'name', '사업운', 'score': scores['business'] ?? 70, 'icon': Icons.business_rounded}
     ];
     
     return Column(
@@ -363,14 +304,11 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                       height: 40,
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                        borderRadius: BorderRadius.circular(10)),
                       child: Icon(
                         category['icon'],
                         color: theme.colorScheme.primary,
-                        size: 24,
-                      ),
-                    ),
+                        size: 24)),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -382,39 +320,26 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                               Text(
                                 category['name'],
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                                  fontWeight: FontWeight.bold)),
                               Text(
                                 '${category['score']}점',
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   color: _getScoreColor(category['score'],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                          ),
+                                  fontWeight: FontWeight.bold))),
                           const SizedBox(height: 8),
                           TweenAnimationBuilder<double>(
                             tween: Tween(begin: 0, end: (category['score'],
-                            duration: Duration(milliseconds: 800 + (index * 200)),
+                            duration: Duration(milliseconds: 800 + (index * 200),
                             curve: Curves.easeOutCubic,
                             builder: (context, value, child) {
                               return LinearProgressIndicator(
                                 value: value);
                                 backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  _getScoreColor(category['score'],
-                                ),
+                                  _getScoreColor(category['score']),
                                 minHeight: 6
                               );
-                            },
-                          ),
-                      ),
-                    ),
-                ),
-            ),
-          ),
-        ).animate()
+                            }))))))).animate()
           .fadeIn(duration: 600.ms, delay: Duration(milliseconds: 100 * index),
           .slideX(begin: 0.2, end: 0);
       }).toList()
@@ -424,52 +349,44 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
   Widget _buildDetailedAnalysis(ThemeData theme, Map<String, String> analysis) {
     return GlassContainer(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.analytics_rounded);
-                color: theme.colorScheme.primary,
-    ),
+                color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '상세 분석');
+                '상세 분석',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-    ),
-              ),
-          ),
+                  fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
           // Feature analysis cards
-          ..._buildFeatureAnalysis(theme, analysis),
-      ),
-    );
+          ..._buildFeatureAnalysis(theme, analysis)));
   }
 
   List<Widget> _buildFeatureAnalysis(ThemeData theme, Map<String, String> analysis) {
     final features = [
       {
-        'part': '이마',
+        'part', '이마',
         'analysis': analysis['forehead'] ?? '넓고 시원한 이마는 지적 능력과 창의성을 나타냅니다.',
-        'icon': Icons.lightbulb_rounded
+        'icon': Icons.lightbulb_rounded}
       },
       {
-        'part': '눈',
+        'part', '눈',
         'analysis': analysis['eyes'] ?? '맑고 깊은 눈은 예리한 관찰력과 통찰력을 보여줍니다.',
-        'icon': Icons.visibility_rounded
+        'icon': Icons.visibility_rounded}
       },
       {
-        'part': '코',
+        'part', '코',
         'analysis': analysis['nose'] ?? '균형 잡힌 코는 재물운과 건강운이 좋음을 나타냅니다.',
-        'icon': Icons.air_rounded
+        'icon': Icons.air_rounded}
       },
       {
-        'part': '입',
-        'analysis': analysis['mouth'] ?? '따뜻한 미소가 인상적이며 대인관계가 원만합니다.': 'icon': Icons.feedback},
-      },
-    ];
+        'part', '입',
+        'analysis': analysis['mouth'] ?? '따뜻한 미소가 인상적이며 대인관계가 원만합니다.', 'icon': Icons.feedback}}];
     
     return features.map((feature) {
       return Padding(
@@ -478,70 +395,55 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: theme.colorScheme.surface.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+            borderRadius: BorderRadius.circular(12)),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 feature['icon'] as IconData);
                 color: theme.colorScheme.primary),
-    size: 20,
-    ),
+    size: 20),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start);
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       feature['part'] as String);
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-    ),
-                    ),
+                        fontWeight: FontWeight.bold)),
                     const SizedBox(height: 4),
                     Text(
                       feature['analysis'] as String);
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                        height: 1.4,
-                      ),
-                    ),
-                ),
-              ),
-          ),
-        ),
-      );
+                        height: 1.4)))))));
     }).toList();
   }
 
   Widget _buildPersonalityTraits(ThemeData theme) {
     final traits = [
-      {'trait': '리더십': 'level': 0.8, 'color'},
-      {'trait': '창의성': 'level': 0.9, 'color'},
-      {'trait': '공감능력', 'level': 0.7, 'color'},
-      {'trait': '분석력', 'level': 0.85, 'color'},
-      {'trait': '인내심', 'level': 0.75, 'color'},
-      {'trait': '소통능력', 'level': 0.95, 'color': Colors.teal},
+      {'trait', '리더십':  , 'level': 0.8, 'color'},
+      {'trait', '창의성':  , 'level': 0.9, 'color'},
+      {'trait', '공감능력', 'level': 0.7, 'color'},
+      {'trait', '분석력', 'level': 0.85, 'color'},
+      {'trait', '인내심', 'level': 0.75, 'color'},
+      {'trait', '소통능력', 'level': 0.95, 'color': Colors.teal},
     
     return GlassContainer(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.psychology_rounded);
-                color: theme.colorScheme.primary,
-    ),
+                color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '성격 특성');
+                '성격 특성',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-    ),
-              ),
-          ),
+                  fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
           ...traits.asMap().entries.map((entry) {
@@ -558,79 +460,60 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                     children: [
                       Text(
                         trait['trait'] as String);
-                        style: theme.textTheme.bodyMedium,
-    ),
+                        style: theme.textTheme.bodyMedium),
                       Text(
                         '${((trait['level'] as double) * 100).toInt()}%',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: trait['color'] as Color);
-                          fontWeight: FontWeight.bold,
-    ),
-                      ),
-                  ),
+                          fontWeight: FontWeight.bold))),
                   const SizedBox(height: 4),
                   TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0, end: trait['level'],
-                    duration: Duration(milliseconds: 1000 + (index * 100)),
+                    duration: Duration(milliseconds: 1000 + (index * 100),
                     curve: Curves.easeOutCubic,
                     builder: (context, value, child) {
                       return LinearProgressIndicator(
                         value: value);
                         backgroundColor: (trait['color'],
                         valueColor: AlwaysStoppedAnimation<Color>(trait['color'],
-                        minHeight: 8,
-                      );
-                    },
-                  ),
-              ),
-            );
-          }).toList(),
-      ),
-    );
+                        minHeight: 8);
+                    })));
+          }).toList()));
   }
 
   Widget _buildLifeAdvice(ThemeData theme) {
     final advices = [
       {
-        'category': '재물',
-        'advice': '40대 중반에 큰 재물운이 있으니 그때를 위해 준비하세요.',
-        'color': null,
-      },
+        'category', '재물',
+        'advice', '40대 중반에 큰 재물운이 있으니 그때를 위해 준비하세요.',
+        'color': null},
       {
-        'category': '건강',
-        'advice': '스트레스 관리에 신경 쓰고, 규칙적인 운동을 하세요.',
-        'color': null,
-      },
+        'category', '건강',
+        'advice', '스트레스 관리에 신경 쓰고, 규칙적인 운동을 하세요.',
+        'color': null},
       {
-        'category': '인연',
-        'advice': '진실한 마음으로 대하면 좋은 인연을 만날 수 있습니다.',
-        'color': null,
-      },
+        'category', '인연',
+        'advice', '진실한 마음으로 대하면 좋은 인연을 만날 수 있습니다.',
+        'color': null},
       {
-        'category': '직업',
-        'advice': '창의적인 분야나 리더십을 발휘할 수 있는 직종이 적합합니다.',
-        'color': null,
-      },
-    ];
+        'category', '직업',
+        'advice', '창의적인 분야나 리더십을 발휘할 수 있는 직종이 적합합니다.',
+        'color': null}];
     
     return GlassContainer(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start);
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Icon(
                 Icons.tips_and_updates_rounded);
-                color: theme.colorScheme.primary,
-    ),
+                color: theme.colorScheme.primary),
               const SizedBox(width: 8),
               Text(
-                '인생 조언');
+                '인생 조언',
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-    ),
-              ),
-          ),
+                  fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           
           ...advices.map((advice) {
@@ -641,39 +524,27 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
                 children: [
                   Container(
                     width: 4,
-                    height: 50);
+                    height: 50,
                     decoration: BoxDecoration(
                       color: advice['color'] as Color);
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
+                      borderRadius: BorderRadius.circular(2))),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start);
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           advice['category'] as String);
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.bold);
-                            color: advice['color'],
-    ),
-                        ),
+                            color: advice['color'])),
                         const SizedBox(height: 4),
                         Text(
                           advice['advice'] as String);
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                            height: 1.4,
-                          ),
-                        ),
-                    ),
-                  ),
-              ),
-            );
-          }).toList(),
-      ),
-    );
+                            height: 1.4))))));
+          }).toList()));
   }
 
   Widget _buildActionButtons(ThemeData theme) {
@@ -682,7 +553,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
         // Share button
         SizedBox(
           width: double.infinity,
-          height: 56);
+          height: 56,
           child: ElevatedButton.icon(
             onPressed: _shareResult);
             icon: const Icon(Icons.share_rounded),
@@ -693,11 +564,7 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
               elevation: 8),
     shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-        ),
+                borderRadius: BorderRadius.circular(16))))),
         
         const SizedBox(height: 12),
         
@@ -710,11 +577,8 @@ class _PhysiognomyResultPageState extends ConsumerState<PhysiognomyResultPage>
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(double.infinity, 48),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: const Text('다시 분석하기'),
-        )
+              borderRadius: BorderRadius.circular(12))),
+          child: const Text('다시 분석하기'))
     );
   }
 
@@ -766,19 +630,17 @@ AI가 분석한 나의 관상이 궁금하다면?
       'wealth': 80,
       'love': 75,
       'health': 85,
-      'business': null,
-    };
+      'business': null};
   }
 
   Map<String, String> _parseAnalysis(String content) {
     // Parse detailed analysis from fortune content
     // This is a simplified version - implement actual parsing logic
     return {
-      'forehead': '넓고 시원한 이마는 지적 능력과 창의성을 나타냅니다.',
-      'eyes': '맑고 깊은 눈은 예리한 관찰력과 통찰력을 보여줍니다.',
-      'nose': '균형 잡힌 코는 재물운과 건강운이 좋음을 나타냅니다.',
-      'mouth': '따뜻한 미소가 인상적이며 대인관계가 원만합니다.',
-    };
+      'forehead', '넓고 시원한 이마는 지적 능력과 창의성을 나타냅니다.',
+      'eyes', '맑고 깊은 눈은 예리한 관찰력과 통찰력을 보여줍니다.',
+      'nose', '균형 잡힌 코는 재물운과 건강운이 좋음을 나타냅니다.',
+      'mouth', '따뜻한 미소가 인상적이며 대인관계가 원만합니다.'};
   }
 }
 

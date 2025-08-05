@@ -13,8 +13,7 @@ class MysticalBackground extends StatefulWidget {
     super.key,
     required this.child,
     this.showShootingStars = true,
-    this.showNebula = true,
-  });
+    this.showNebula = true});
 
   @override
   State<MysticalBackground> createState() => _MysticalBackgroundState();
@@ -36,18 +35,15 @@ class _MysticalBackgroundState extends State<MysticalBackground>
     
     _starController = AnimationController(
       duration: const Duration(seconds: 30),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _nebulaeController = AnimationController(
       duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _shootingStarController = AnimationController(
       duration: const Duration(seconds: 10),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     // Generate stars with layers
     // Background stars (small, dim,
@@ -59,7 +55,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
         twinkleSpeed: _random.nextDouble() * 2 + 1,
         twinkleOffset: _random.nextDouble() * math.pi * 2,
         opacity: _random.nextDouble() * 0.4 + 0.1,
-        color: _getStarColor()));
+        color: _getStarColor());
 }
     
     // Foreground stars (larger, brighter,
@@ -71,7 +67,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
         twinkleSpeed: _random.nextDouble() * 3 + 0.5,
         twinkleOffset: _random.nextDouble() * math.pi * 2,
         opacity: _random.nextDouble() * 0.6 + 0.4,
-        color: _getStarColor()));
+        color: _getStarColor());
 }
     
     if (widget.showShootingStars) {
@@ -84,8 +80,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
       Colors.white,
       Colors.blue.withValues(alpha: 0.9),
       Colors.purple.withValues(alpha: 0.9),
-      AppColors.background, // Warm white,
-];
+      AppColors.background, // Warm white];
     return colors[_random.nextInt(colors.length)];
 }
   
@@ -103,8 +98,7 @@ class _MysticalBackgroundState extends State<MysticalBackground>
           endX: _random.nextDouble() * 0.8 + 0.2,
           endY: _random.nextDouble() * 0.3 + 0.4,
           startTime: currentTime,
-          duration: _random.nextDouble() * 0.5 + 0.5,
-        ));
+          duration: _random.nextDouble() * 0.5 + 0.5),;
         
         // Remove old shooting stars
         _shootingStars.removeWhere((star) => 
@@ -138,11 +132,8 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               colors: [
                 FortuneColors.tarotDarkest, // Deep purple
                 FortuneColors.tarotDarkest, // Darker purple
-                Colors.black,
-              ],
-              stops: const [0.0, 0.7, 1.0],
-            ),
-        ),
+                Colors.black],
+              stops: const [0.0, 0.7, 1.0])),
         
         // Animated nebulae
         if (widget.showNebula), AnimatedBuilder(
@@ -150,11 +141,9 @@ class _MysticalBackgroundState extends State<MysticalBackground>
             builder: (context, child) {
               return CustomPaint(
                 painter: _NebulaePainter(
-                  animation: _nebulaeController.value,
-                ),
+                  animation: _nebulaeController.value),
                 child: Container();
-},
-          ),
+}),
         
         // Twinkling stars
         AnimatedBuilder(
@@ -163,11 +152,9 @@ class _MysticalBackgroundState extends State<MysticalBackground>
             return CustomPaint(
               painter: _StarFieldPainter(
                 stars: _stars,
-                animation: _starController.value,
-              ),
+                animation: _starController.value),
               child: Container();
-},
-        ),
+}),
         
         // Shooting stars
         if (widget.showShootingStars), AnimatedBuilder(
@@ -176,11 +163,9 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               return CustomPaint(
                 painter: _ShootingStarPainter(
                   shootingStars: _shootingStars,
-                  currentTime: _shootingStarController.value * 10,
-                ),
-                child: Container());
-},
-          ),
+                  currentTime: _shootingStarController.value * 10),
+                child: Container(),;
+}),
         
         // Subtle overlay gradient
         Container(
@@ -190,14 +175,10 @@ class _MysticalBackgroundState extends State<MysticalBackground>
               radius: 1.5,
               colors: [
                 Colors.transparent,
-                Colors.black.withValues(alpha: 0.3),
-              ],
-            ),
-        ),
+                Colors.black.withValues(alpha: 0.3)])),
         
         // Child widget
-        widget.child,
-      ]
+        widget.child]
     );
 }
 }
@@ -218,8 +199,7 @@ class Star {
     required this.twinkleSpeed,
     required this.twinkleOffset,
     required this.opacity,
-    required this.color,
-  });
+    required this.color});
 }
 
 class ShootingStar {
@@ -236,8 +216,7 @@ class ShootingStar {
     required this.endX,
     required this.endY,
     required this.startTime,
-    required this.duration,
-  });
+    required this.duration});
 }
 
 class _StarFieldPainter extends CustomPainter {
@@ -246,8 +225,7 @@ class _StarFieldPainter extends CustomPainter {
 
   _StarFieldPainter({
     required this.stars,
-    required this.animation,
-  });
+    required this.animation});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -296,8 +274,7 @@ class _NebulaePainter extends CustomPainter {
     // Purple nebula with rotation
     final purpleCenter = Offset(
       size.width * (0.3 + math.sin(animation * math.pi * 2) * 0.05),
-      size.height * (0.2 + math.cos(animation * math.pi * 2) * 0.05,
-    );
+      size.height * (0.2 + math.cos(animation * math.pi * 2) * 0.05);
     
     final purplePaint = Paint()
       ..style = PaintingStyle.fill
@@ -312,8 +289,7 @@ class _NebulaePainter extends CustomPainter {
         [
           FortuneColors.mystical.withValues(alpha: 0.3),
           FortuneColors.mystical.withValues(alpha: 0.1),
-          Colors.transparent,
-        ],
+          Colors.transparent],
         [0.0, 0.6, 1.0],
         TileMode.clamp,
         Matrix4.rotationZ(animation * 0.5).storage
@@ -324,8 +300,7 @@ class _NebulaePainter extends CustomPainter {
     // Indigo nebula with counter-rotation
     final indigoCenter = Offset(
       size.width * (0.7 + math.cos(animation * math.pi * 2 * 0.8) * 0.05),
-      size.height * (0.8 + math.sin(animation * math.pi * 2 * 0.8) * 0.05,
-    );
+      size.height * (0.8 + math.sin(animation * math.pi * 2 * 0.8) * 0.05);
     
     final indigoPaint = Paint()
       ..style = PaintingStyle.fill
@@ -340,8 +315,7 @@ class _NebulaePainter extends CustomPainter {
         [
           FortuneColors.mystical.withValues(alpha: 0.25),
           FortuneColors.mystical.withValues(alpha: 0.1),
-          Colors.transparent,
-        ],
+          Colors.transparent],
         [0.0, 0.7, 1.0],
         TileMode.clamp,
         Matrix4.rotationZ(-animation * 0.3).storage
@@ -360,8 +334,7 @@ class _ShootingStarPainter extends CustomPainter {
   
   _ShootingStarPainter({
     required this.shootingStars,
-    required this.currentTime,
-  });
+    required this.currentTime});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -384,8 +357,7 @@ class _ShootingStarPainter extends CustomPainter {
           [
             Colors.white.withValues(alpha: fadeProgress * 0.8),
             FortuneColors.mystical.withValues(alpha: fadeProgress * 0.4),
-            Colors.transparent,
-          ],
+            Colors.transparent],
           [0.0, 0.5, 1.0],
         ,
         ..strokeWidth = 2

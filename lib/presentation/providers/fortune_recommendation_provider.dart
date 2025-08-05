@@ -39,7 +39,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
           options.headers['Authorization'] = 'Bearer $token';
         }
         handler.next(options);
-      },));
+      }));
 
     // Fetch recommendations on initialization
     fetchRecommendations();
@@ -87,8 +87,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
           parameters: {
             'count': recommendations.length,
             'top_type': recommendations.firstOrNull?.fortuneType,
-            'top_score': null,
-          });
+            'top_score': null});
   } else {
         throw Exception('$1',
     recommendations: ${response.statusCode}');
@@ -125,13 +124,11 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       if (userProfile?.fortunePreferences != null) {
         final updatedPreferences = userProfile!.fortunePreferences!.recordVisit(
           fortuneType,
-          category,
-        );
+          category);
 
         // Update user profile with new preferences
         final updatedProfile = userProfile.copyWith(
-          fortunePreferences: updatedPreferences,
-        );
+          fortunePreferences: updatedPreferences);
 
         // Update the provider
         ref.read(profile_notifier.userProfileNotifierProvider.notifier).updateProfile(updatedProfile);
@@ -143,8 +140,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
         parameters: {
           'fortune_type': fortuneType,
           'category': category,
-          'source': 'recommendation',
-        });
+          'source': 'recommendation'});
 
       // Optionally refresh recommendations after visit
       // This helps to update personal scores based on new visit data
@@ -162,8 +158,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
       final userProfile = ref.read(userProfileProvider).value;
       if (userProfile?.fortunePreferences != null) {
         final currentFavorites = List<String>.from(
-          userProfile!.fortunePreferences!.favorites,
-        );
+          userProfile!.fortunePreferences!.favorites);
 
         if (currentFavorites.contains(fortuneType)) {
           currentFavorites.remove(fortuneType);
@@ -172,12 +167,10 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
         }
 
         final updatedPreferences = userProfile.fortunePreferences!.copyWith(
-          favorites: currentFavorites,
-        );
+          favorites: currentFavorites);
 
         final updatedProfile = userProfile.copyWith(
-          fortunePreferences: updatedPreferences,
-        );
+          fortunePreferences: updatedPreferences);
 
         ref.read(profile_notifier.userProfileNotifierProvider.notifier).updateProfile(updatedProfile);
 
@@ -197,7 +190,7 @@ class FortuneRecommendationNotifier extends StateNotifier<AsyncValue<List<Fortun
 }
 
 /// Main provider for fortune recommendations
-final fortuneRecommendationProvider = StateNotifierProvider((ref) => FortuneRecommendationNotifier(ref));
+final fortuneRecommendationProvider = StateNotifierProvider<FortuneRecommendationNotifier, AsyncValue<List<FortuneCardScore>>>((ref) => FortuneRecommendationNotifier(ref));
 
 /// Provider for getting recommendations by category
 final fortuneRecommendationsByCategoryProvider = Provider.family<List<FortuneCardScore>, String>(
@@ -205,10 +198,8 @@ final fortuneRecommendationsByCategoryProvider = Provider.family<List<FortuneCar
     final recommendations = ref.watch(fortuneRecommendationProvider);
     return recommendations.maybeWhen(
       data: (scores) => scores.filterByCategory(category),
-      orElse: () => [],
-    );
-  },
-);
+      orElse: () => []);
+  });
 
 /// Provider for getting top recommendations
 final topFortuneRecommendationsProvider = Provider.family<List<FortuneCardScore>, int>(
@@ -216,10 +207,8 @@ final topFortuneRecommendationsProvider = Provider.family<List<FortuneCardScore>
     final recommendations = ref.watch(fortuneRecommendationProvider);
     return recommendations.maybeWhen(
       data: (scores) => scores.getTopRecommendations(count),
-      orElse: () => [],
-    );
-  },
-);
+      orElse: () => []);
+  });
 
 /// Provider to convert FortuneCardScore to FortuneCategory
 final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, FortuneCardScore>(
@@ -233,8 +222,7 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       'traditional': [const Color(0xFFEF4444), const Color(0xFFDC2626)],
       'lifestyle': [const Color(0xFF06B6D4), const Color(0xFF0891B2)],
       'interactive': [const Color(0xFF9333EA), const Color(0xFF7C3AED)],
-      'petFamily': null,
-    };
+      'petFamily': null};
 
     // Map category to icons
     final categoryIcons = {
@@ -245,8 +233,7 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       'traditional': Icons.auto_awesome_rounded,
       'lifestyle': Icons.calendar_today_rounded,
       'interactive': Icons.touch_app_rounded,
-      'petFamily': null,
-    };
+      'petFamily': null};
 
     final gradients = categoryGradients[score.category] ?? 
         [const Color(0xFF7C3AED), const Color(0xFF3B82F6)];
@@ -262,10 +249,8 @@ final fortuneCategoryFromScoreProvider = Provider.family<FortuneCategory?, Fortu
       description: score.description,
       category: score.category,
       isNew: score.isNew,
-      isPremium: score.isPremium,
-    );
-  },
-);
+      isPremium: score.isPremium);
+  });
 
 /// Provider for checking if recommendations are ready
 final recommendationsReadyProvider = Provider<bool>((ref) {

@@ -96,20 +96,17 @@ class AppSpacing {
   static const EdgeInsets cardPaddingAll = EdgeInsets.all(cardPadding);
   static const EdgeInsets buttonPadding = EdgeInsets.symmetric(
     horizontal: buttonPaddingHorizontal,
-    vertical: buttonPaddingVertical,
-  );
+    vertical: buttonPaddingVertical);
   static const EdgeInsets inputPadding = EdgeInsets.symmetric(
     horizontal: inputPaddingHorizontal,
-    vertical: inputPaddingVertical,
-  );
+    vertical: inputPaddingVertical);
 
   // Responsive spacing helper
   static double getResponsiveSpacing(
     BuildContext context, {
     required double mobile,
     double? tablet,
-    double? desktop,
-  }) {
+    double? desktop}) {
     final width = MediaQuery.of(context).size.width;
     if (width >= 1024 && desktop != null) return desktop;
     if (width >= 600 && tablet != null) return tablet;

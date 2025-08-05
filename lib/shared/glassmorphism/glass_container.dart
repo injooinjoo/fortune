@@ -36,8 +36,7 @@ class GlassContainer extends StatelessWidget {
     this.border,
     this.gradient,
     this.boxShadow,
-    this.alignment,
-  }) : super(key: key);
+    this.alignment}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,12 +50,10 @@ class GlassContainer extends StatelessWidget {
       colors: isDark
           ? [
               glassColors.background,
-              glassColors.background.withValues(alpha: 0.5),
-            ]
+              glassColors.background.withValues(alpha: 0.5)]
           : [
               AppColors.textPrimaryDark.withValues(alpha: 0.6),
-              AppColors.textPrimaryDark.withValues(alpha: 0.3),
-            ]
+              AppColors.textPrimaryDark.withValues(alpha: 0.3)]
     );
 
     final defaultBorderColor = borderColor ?? glassColors.border;
@@ -65,9 +62,7 @@ class GlassContainer extends StatelessWidget {
       BoxShadow(
         color: fortuneTheme.shadowColor.withValues(alpha: 0.15),
         blurRadius: 20,
-        offset: const Offset(0, 10),
-      ),
-    ];
+        offset: const Offset(0, 10))];
 
     return Container(
       width: width,
@@ -84,16 +79,10 @@ class GlassContainer extends StatelessWidget {
               borderRadius: borderRadius ?? BorderRadius.circular(AppDimensions.radiusXLarge),
               border: border ?? Border.all(
                 color: borderColor ?? defaultBorderColor,
-                width: borderWidth,
-              ),
-              boxShadow: boxShadow ?? defaultShadow,
-            ),
+                width: borderWidth),
+              boxShadow: boxShadow ?? defaultShadow),
             padding: padding,
-            child: child,
-          ),
-        ),
-      ),
-    );
+            child: child))));
   }
 }
 
@@ -120,8 +109,7 @@ class GlassButton extends StatelessWidget {
     this.blur = 10,
     this.splashColor,
     this.gradient,
-    this.border,
-  }) : super(key: key);
+    this.border}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,10 +127,7 @@ class GlassButton extends StatelessWidget {
           blur: blur,
           gradient: gradient,
           border: border,
-          child: child,
-        ),
-      ),
-    );
+          child: child)));
   }
 }
 
@@ -165,8 +150,7 @@ class GlassCard extends StatelessWidget {
     this.margin,
     this.onTap,
     this.elevation = 8,
-    this.gradient,
-  }) : super(key: key);
+    this.gradient}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -182,11 +166,8 @@ class GlassCard extends StatelessWidget {
         BoxShadow(
           color: AppColors.textPrimary.withValues(alpha: 0.1),
           blurRadius: elevation * 2,
-          offset: Offset(0, elevation),
-        ),
-      ],
-      child: child,
-    );
+          offset: Offset(0, elevation))],
+      child: child);
 
     if (onTap != null) {
       return Material(
@@ -194,9 +175,7 @@ class GlassCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(AppDimensions.radiusXxLarge),
-          child: card,
-        ),
-      );
+          child: card));
     }
 
     return card;

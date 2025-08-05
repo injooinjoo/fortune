@@ -87,8 +87,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
           try {
             await _phoneAuthService.sendOTP(
               phoneNumber: _phoneNumber,
-              countryCode: _countryCode,
-            );
+              countryCode: _countryCode);
             setState(() {
               _showPhoneInput = false;
               _showVerification = true;
@@ -97,12 +96,9 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
-              ),
-            );
+                backgroundColor: Colors.red));
           }
-        },
-      );
+        });
     }
     
     if (_showVerification) {
@@ -114,8 +110,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             await _phoneAuthService.verifyOTP(
               phoneNumber: _phoneNumber,
               countryCode: _countryCode,
-              otpCode: otpCode,
-            );
+              otpCode: otpCode);
             
             // Update profile with new phone
             final user = supabase.auth.currentUser;
@@ -123,8 +118,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               await _phoneAuthService.updateProfilePhone(
                 userId: user.id,
                 phoneNumber: _phoneNumber,
-                countryCode: _countryCode,
-              );
+                countryCode: _countryCode);
             }
             
             setState(() {
@@ -135,39 +129,30 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('전화번호가 성공적으로 변경되었습니다'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+                  backgroundColor: Colors.green));
               context.pop();
             }
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
-              ),
-            );
+                backgroundColor: Colors.red));
           }
         },
         onResend: () async {
           try {
             await _phoneAuthService.sendOTP(
               phoneNumber: _phoneNumber,
-              countryCode: _countryCode,
-            );
+              countryCode: _countryCode);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('인증번호가 재발송되었습니다'),
-                backgroundColor: Colors.green,
-              ),
-            );
+                backgroundColor: Colors.green));
           } catch (e) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString().replaceAll('Exception: ', '')),
-                backgroundColor: Colors.red,
-              ),
-            );
+                backgroundColor: Colors.red));
           }
         },
         onBack: () {
@@ -175,8 +160,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             _showVerification = false;
             _showPhoneInput = true;
           });
-        },
-      );
+        });
     }
     
     return Scaffold(
@@ -186,17 +170,13 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
+          onPressed: () => context.pop()),
         title: const Text(
           '전화번호 관리',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
+            fontWeight: FontWeight.w600))),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -209,15 +189,13 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                      borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       children: [
                         Icon(
                           Icons.info_outline,
                           color: AppColors.primary,
-                          size: 24,
-                        ),
+                          size: 24),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -225,13 +203,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 14,
-                              height: 1.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                              height: 1.5)))])),
                   
                   // Current phone number
                   Container(
@@ -240,8 +212,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.divider),
-                    ),
+                      border: Border.all(color: AppColors.divider)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -250,8 +221,7 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                             Icon(
                               Icons.phone_outlined,
                               color: AppColors.textSecondary,
-                              size: 24,
-                            ),
+                              size: 24),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
@@ -261,52 +231,35 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                                     '등록된 전화번호',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                      fontSize: 16)),
                                   const SizedBox(height: 4),
                                   Text(
                                     _formatDisplayPhone(userProfile?['phone']),
                                     style: TextStyle(
                                       color: AppColors.textSecondary,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                                      fontSize: 14))])),
                             if (userProfile?['phone_verified'] == true)
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
-                                  vertical: 4,
-                                ),
+                                  vertical: 4),
                                 decoration: BoxDecoration(
                                   color: Colors.green.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                                  borderRadius: BorderRadius.circular(12)),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
                                       Icons.verified,
                                       color: Colors.green,
-                                      size: 16,
-                                    ),
+                                      size: 16),
                                     SizedBox(width: 4),
                                     Text(
                                       '인증됨',
                                       style: TextStyle(
                                         color: Colors.green,
                                         fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
+                                        fontWeight: FontWeight.w600))]))]),
                         const SizedBox(height: 16),
                         SizedBox(
                           width: double.infinity,
@@ -321,21 +274,12 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(8))),
                             child: Text(
                               hasPhone ? '전화번호 변경' : '전화번호 등록',
                               style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                                fontWeight: FontWeight.w600))))])),
                   
                   // Benefits
                   const SizedBox(height: 32),
@@ -347,46 +291,32 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                         Text(
                           '전화번호 등록 혜택',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                            fontWeight: FontWeight.bold)),
                         const SizedBox(height: 16),
                         _buildBenefitItem(
                           icon: Icons.security,
                           title: '계정 보안 강화',
-                          subtitle: '2단계 인증으로 계정을 안전하게 보호',
-                        ),
+                          subtitle: '2단계 인증으로 계정을 안전하게 보호'),
                         _buildBenefitItem(
                           icon: Icons.link,
                           title: '쉬운 계정 연동',
-                          subtitle: '여러 소셜 계정을 하나로 통합 관리',
-                        ),
+                          subtitle: '여러 소셜 계정을 하나로 통합 관리'),
                         _buildBenefitItem(
                           icon: Icons.restore,
                           title: '계정 복구',
-                          subtitle: '비밀번호를 잊어도 쉽게 계정 복구',
-                        ),
+                          subtitle: '비밀번호를 잊어도 쉽게 계정 복구'),
                         _buildBenefitItem(
                           icon: Icons.notifications_active,
                           title: '중요 알림',
-                          subtitle: '운세 알림과 이벤트 소식 받기',
-                        ),
-                      ],
-                    ),
-                  ),
+                          subtitle: '운세 알림과 이벤트 소식 받기')])),
                   
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
-    );
+                  const SizedBox(height: 32)])));
   }
   
   Widget _buildBenefitItem({
     required IconData icon,
     required String title,
-    required String subtitle,
-  }) {
+    required String subtitle}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -397,14 +327,11 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
             height: 40,
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
+              borderRadius: BorderRadius.circular(20)),
             child: Icon(
               icon,
               color: AppColors.primary,
-              size: 20,
-            ),
-          ),
+              size: 20)),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -414,23 +341,13 @@ class _PhoneManagementScreenState extends ConsumerState<PhoneManagementScreen> {
                   title,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
+                    fontSize: 15)),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+                    height: 1.4))]))]));
   }
 }

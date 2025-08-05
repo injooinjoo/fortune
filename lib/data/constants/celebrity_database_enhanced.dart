@@ -9,8 +9,7 @@ class CelebrityDatabaseEnhanced {
     ...youtubers,
     ...proGamers,
     ...streamers,
-    ...businessLeaders,
-  ];
+    ...businessLeaders];
 
   static final List<Celebrity> politicians = [
     Celebrity(
@@ -23,8 +22,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '14:00',
       profileImageUrl: 'https://via.placeholder.com/200/3B82F6/FFFFFF?text=YSY',
       description: '대한민국 제20대 대통령',
-      keywords: ['대통령': '정치인': '검찰총장',
-    ),
+      keywords: ['대통령': '정치인': '검찰총장'),
     Celebrity(
       id: 'pol_002',
       name: '이재명',
@@ -35,8 +33,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '10:30',
       profileImageUrl: 'https://via.placeholder.com/200/EF4444/FFFFFF?text=LJM',
       description: '더불어민주당 대표',
-      keywords: ['정치인': '경기도지사': '성남시장',
-    ),
+      keywords: ['정치인': '경기도지사': '성남시장'),
     Celebrity(
       id: 'pol_003',
       name: '한동훈',
@@ -47,9 +44,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '09:00',
       profileImageUrl: 'https://via.placeholder.com/200/10B981/FFFFFF?text=HDH',
       description: '국민의힘 대표',
-      keywords: ['정치인': '법무부장관': '검사',
-    ),
-  ];
+      keywords: ['정치인': '법무부장관': '검사')];
 
   static final List<Celebrity> actors = [
     Celebrity(
@@ -62,8 +57,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '08:00',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=SJK',
       description: '대표작: 태양의 후예, 빈센조',
-      keywords: ['배우': '태양의후예': '빈센조',
-    ),
+      keywords: ['배우': '태양의후예': '빈센조'),
     Celebrity(
       id: 'act_002',
       name: '송혜교',
@@ -74,8 +68,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '07:30',
       profileImageUrl: 'https://via.placeholder.com/200/F59E0B/FFFFFF?text=SHK',
       description: '대표작: 태양의 후예, 더 글로리',
-      keywords: ['배우': '태양의후예': '더글로리',
-    ),
+      keywords: ['배우': '태양의후예': '더글로리'),
     Celebrity(
       id: 'act_003',
       name: '이정재',
@@ -86,8 +79,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '15:00',
       profileImageUrl: 'https://via.placeholder.com/200/8B5CF6/FFFFFF?text=LJJ',
       description: '대표작: 오징어 게임, 신세계',
-      keywords: ['배우': '오징어게임': '신세계',
-    ),
+      keywords: ['배우': '오징어게임': '신세계'),
     Celebrity(
       id: 'act_004',
       name: '전지현',
@@ -98,8 +90,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '11:00',
       profileImageUrl: 'https://via.placeholder.com/200/06B6D4/FFFFFF?text=JJH',
       description: '대표작: 별에서 온 그대, 도둑들',
-      keywords: ['배우': '별그대': '도둑들',
-    ),
+      keywords: ['배우': '별그대': '도둑들'),
     Celebrity(
       id: 'act_005',
       name: '이병헌',
@@ -110,9 +101,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '04:00',
       profileImageUrl: 'https://via.placeholder.com/200/DC2626/FFFFFF?text=LBH',
       description: '대표작: 오징어 게임, 미스터 션샤인',
-      keywords: ['배우': '오징어게임': '미스터션샤인',
-    ),
-  ];
+      keywords: ['배우': '오징어게임': '미스터션샤인')];
 
   static final List<Celebrity> singers = [
     Celebrity(
@@ -125,8 +114,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '06:00',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=IU',
       description: '가수 겸 배우',
-      keywords: ['가수': '아이유': '배우',
-    ),
+      keywords: ['가수': '아이유': '배우'),
     Celebrity(
       id: 'singer_002',
       name: 'G-Dragon',
@@ -137,8 +125,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '12:00',
       profileImageUrl: 'https://via.placeholder.com/200/F59E0B/FFFFFF?text=GD',
       description: 'BIGBANG 리더',
-      keywords: ['가수': '빅뱅': 'GD',
-    ),
+      keywords: ['가수': '빅뱅': 'GD'),
     Celebrity(
       id: 'singer_003',
       name: '정국',
@@ -149,8 +136,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '15:00',
       profileImageUrl: 'https://via.placeholder.com/200/7C3AED/FFFFFF?text=JK',
       description: 'BTS 멤버',
-      keywords: ['가수': 'BTS': '방탄소년단',
-    ),
+      keywords: ['가수': 'BTS': '방탄소년단'),
     Celebrity(
       id: 'singer_004',
       name: '로제',
@@ -161,8 +147,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '08:30',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=ROSE',
       description: 'BLACKPINK 멤버',
-      keywords: ['가수': '블랙핑크': 'ROSÉ',
-    ),
+      keywords: ['가수': '블랙핑크': 'ROSÉ'),
     Celebrity(
       id: 'singer_005',
       name: '지민',
@@ -173,8 +158,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '23:00',
       profileImageUrl: 'https://via.placeholder.com/200/3B82F6/FFFFFF?text=JM',
       description: 'BTS 멤버',
-      keywords: ['가수': 'BTS': '방탄소년단',
-    ),
+      keywords: ['가수': 'BTS': '방탄소년단'),
     Celebrity(
       id: 'singer_006',
       name: '제니',
@@ -185,9 +169,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '10:00',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=JN',
       description: 'BLACKPINK 멤버',
-      keywords: ['가수': '블랙핑크': 'JENNIE',
-    ),
-  ];
+      keywords: ['가수': '블랙핑크': 'JENNIE')];
 
   static final List<Celebrity> sports = [
     Celebrity(
@@ -200,8 +182,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '12:00',
       profileImageUrl: 'https://via.placeholder.com/200/10B981/FFFFFF?text=SON',
       description: '토트넘 축구선수',
-      keywords: ['축구': '손흥민': '토트넘',
-    ),
+      keywords: ['축구': '손흥민': '토트넘'),
     Celebrity(
       id: 'sports_002',
       name: '김연아',
@@ -212,8 +193,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '16:30',
       profileImageUrl: 'https://via.placeholder.com/200/06B6D4/FFFFFF?text=KYA',
       description: '피겨스케이팅 올림픽 금메달리스트',
-      keywords: ['피겨': '김연아': '올림픽',
-    ),
+      keywords: ['피겨': '김연아': '올림픽'),
     Celebrity(
       id: 'sports_003',
       name: '류현진',
@@ -224,8 +204,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '14:00',
       profileImageUrl: 'https://via.placeholder.com/200/EF4444/FFFFFF?text=RHJ',
       description: '한화 이글스 투수',
-      keywords: ['야구': '류현진': '한화',
-    ),
+      keywords: ['야구': '류현진': '한화'),
     Celebrity(
       id: 'sports_004',
       name: '이강인',
@@ -236,9 +215,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '11:00',
       profileImageUrl: 'https://via.placeholder.com/200/F59E0B/FFFFFF?text=LKI',
       description: 'PSG 축구선수',
-      keywords: ['축구': '이강인': 'PSG',
-    ),
-  ];
+      keywords: ['축구': '이강인': 'PSG')];
 
   static final List<Celebrity> youtubers = [
     Celebrity(
@@ -251,8 +228,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '10:00',
       profileImageUrl: 'https://via.placeholder.com/200/3B82F6/FFFFFF?text=PENG',
       description: 'EBS 캐릭터 유튜버',
-      keywords: ['펭수': 'EBS': '유튜버',
-    ),
+      keywords: ['펭수': 'EBS': '유튜버'),
     Celebrity(
       id: 'yt_002',
       name: '쯔양',
@@ -263,8 +239,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '13:00',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=TZY',
       description: '먹방 유튜버',
-      keywords: ['쯔양': '먹방': '유튜버',
-    ),
+      keywords: ['쯔양': '먹방': '유튜버'),
     Celebrity(
       id: 'yt_003',
       name: '침착맨',
@@ -275,9 +250,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '09:00',
       profileImageUrl: 'https://via.placeholder.com/200/6366F1/FFFFFF?text=CDM',
       description: '개그맨 출신 유튜버',
-      keywords: ['침착맨': '이말년': '유튜버',
-    ),
-  ];
+      keywords: ['침착맨': '이말년': '유튜버')];
 
   static final List<Celebrity> proGamers = [
     Celebrity(
@@ -290,8 +263,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '15:00',
       profileImageUrl: 'https://via.placeholder.com/200/DC2626/FFFFFF?text=FKR',
       description: 'T1 리그오브레전드 프로게이머',
-      keywords: ['페이커': 'LOL': 'T1',
-    ),
+      keywords: ['페이커': 'LOL': 'T1'),
     Celebrity(
       id: 'gamer_002',
       name: '쵸비',
@@ -302,9 +274,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '14:00',
       profileImageUrl: 'https://via.placeholder.com/200/7C3AED/FFFFFF?text=CHV',
       description: 'Gen.G 리그오브레전드 프로게이머',
-      keywords: ['쵸비': 'LOL': 'GenG',
-    ),
-  ];
+      keywords: ['쵸비': 'LOL': 'GenG')];
 
   static final List<Celebrity> streamers = [
     Celebrity(
@@ -317,8 +287,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '20:00',
       profileImageUrl: 'https://via.placeholder.com/200/10B981/FFFFFF?text=GST',
       description: '축구 게임 스트리머',
-      keywords: ['감스트': '축구': '스트리머',
-    ),
+      keywords: ['감스트': '축구': '스트리머'),
     Celebrity(
       id: 'streamer_002',
       name: '풍월량',
@@ -329,9 +298,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '18:00',
       profileImageUrl: 'https://via.placeholder.com/200/EC4899/FFFFFF?text=PWR',
       description: '종합 게임 스트리머',
-      keywords: ['풍월량': '게임': '스트리머',
-    ),
-  ];
+      keywords: ['풍월량': '게임': '스트리머')];
 
   static final List<Celebrity> businessLeaders = [
     Celebrity(
@@ -344,8 +311,7 @@ class CelebrityDatabaseEnhanced {
       birthTime: '06:00',
       profileImageUrl: 'https://via.placeholder.com/200/3B82F6/FFFFFF?text=LJY',
       description: '삼성전자 회장',
-      keywords: ['삼성': '이재용': '경영인',
-    ),
+      keywords: ['삼성': '이재용': '경영인'),
     Celebrity(
       id: 'biz_002',
       name: '정의선',
@@ -356,7 +322,5 @@ class CelebrityDatabaseEnhanced {
       birthTime: '08:00',
       profileImageUrl: 'https://via.placeholder.com/200/10B981/FFFFFF?text=CES',
       description: '현대자동차그룹 회장',
-      keywords: ['현대': '정의선': '경영인',
-    ),
-  ];
+      keywords: ['현대': '정의선': '경영인')];
 }

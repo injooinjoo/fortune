@@ -11,8 +11,7 @@ class OnboardingStepTwo extends StatelessWidget {
     super.key,
     this.mbti,
     required this.onMbtiChanged,
-    required this.onNext,
-  });
+    required this.onNext});
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +21,12 @@ class OnboardingStepTwo extends StatelessWidget {
         Text(
           'MBTI 선택 (선택사항)',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+            fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
         Text(
           '더 정확한 성격 분석을 제공해드릴 수 있어요.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: context.fortuneTheme.subtitleText,
-          ),
-        ),
+            color: context.fortuneTheme.subtitleText)),
         const SizedBox(height: 24),
         
         // MBTI Grid
@@ -42,8 +37,7 @@ class OnboardingStepTwo extends StatelessWidget {
             crossAxisCount: 4,
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
-            childAspectRatio: 1.5,
-          ),
+            childAspectRatio: 1.5),
           itemCount: mbtiTypes.length,
           itemBuilder: (context, index) {
             final type = mbtiTypes[index];
@@ -61,9 +55,7 @@ class OnboardingStepTwo extends StatelessWidget {
                   border: Border.all(
                     color: isSelected 
                         ? Theme.of(context).colorScheme.primary 
-                        : context.fortuneTheme.dividerColor,
-                  ),
-                ),
+                        : context.fortuneTheme.dividerColor)),
                 child: Center(
                   child: Text(
                     type,
@@ -71,14 +63,8 @@ class OnboardingStepTwo extends StatelessWidget {
                       color: isSelected 
                           ? Theme.of(context).colorScheme.onPrimary
                           : null,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
+                      fontWeight: FontWeight.w600)))));
+          }),
         
         const SizedBox(height: 32),
         
@@ -86,9 +72,6 @@ class OnboardingStepTwo extends StatelessWidget {
         ElevatedButton(
           onPressed: onNext,
           style: context.fortuneTheme.ctaButtonStyle,
-          child: const Text('다음'),
-        ),
-      ],
-    );
+          child: const Text('다음'))]);
   }
 }

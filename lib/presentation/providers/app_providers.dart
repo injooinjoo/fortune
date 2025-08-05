@@ -10,6 +10,5 @@ Future<List<Override>> initializeProviders() async {
   
   return [
     // Override the sharedPreferencesProvider with actual instance
-    sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-  ];
+    sharedPreferencesProvider.overrideWithValue(sharedPreferences)];
 }

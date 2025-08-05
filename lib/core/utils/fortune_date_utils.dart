@@ -26,7 +26,6 @@ class FortuneDateUtils {
       {'value': 'shen', 'label': '신시 (15:00 - 17:00)'},
       {'value': 'you', 'label': '유시 (17:00 - 19:00)'},
       {'value': 'xu', 'label': '술시 (19:00 - 21:00)'},
-      {'value': 'hai', 'label': '해시 (21:00 - 23:00)'},
-    ];
+      {'value': 'hai', 'label': '해시 (21:00 - 23:00)'}];
   }
 }

@@ -17,8 +17,7 @@ class AdSenseWidget extends StatelessWidget {
     this.width,
     this.height,
     this.fullWidthResponsive = true,
-    this.padding = AppSpacing.paddingVertical8,
-  });
+    this.padding = AppSpacing.paddingVertical8});
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +44,7 @@ class AdSenseBanner extends StatelessWidget {
   const AdSenseBanner({
     super.key,
     this.size = AdSenseBannerSize.responsive,
-    this.padding = AppSpacing.paddingVertical8,
-  });
+    this.padding = AppSpacing.paddingVertical8});
 
   @override
   Widget build(BuildContext context) {

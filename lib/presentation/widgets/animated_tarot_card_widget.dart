@@ -10,8 +10,7 @@ class AnimatedTarotCardWidget extends StatefulWidget {
   const AnimatedTarotCardWidget({
     super.key,
     this.width = double.infinity,
-    this.height = double.infinity,
-  }));
+    this.height = double.infinity}));
 
   @override
   State<AnimatedTarotCardWidget> createState() => _AnimatedTarotCardWidgetState();
@@ -33,26 +32,21 @@ class _AnimatedTarotCardWidgetState extends State<AnimatedTarotCardWidget>
     
     _sparkleController = AnimationController(
       duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat();
+      vsync: this)..repeat();
     
     _floatController = AnimationController(
       duration: const Duration(seconds: 4),
-      vsync: this,
-    )..repeat(reverse: true);
+      vsync: this)..repeat(reverse: true);
     
     _sparkleAnimation = Tween<double>(
       begin: 0.0,
-      end: 1.0,
-    ).animate(_sparkleController);
+      end: 1.0).animate(_sparkleController);
     
     _floatAnimation = Tween<double>(
       begin: -10.0,
-      end: 10.0,
-    ).animate(CurvedAnimation(
+      end: 10.0).animate(CurvedAnimation(
       parent: _floatController,
-      curve: Curves.easeInOut,
-    );
+      curve: Curves.easeInOut);
     
     // Generate sparkles
     for (int i = 0; i < 15; i++) {
@@ -61,8 +55,7 @@ class _AnimatedTarotCardWidgetState extends State<AnimatedTarotCardWidget>
         y: _random.nextDouble(),
         size: _random.nextDouble() * 4 + 2,
         speed: _random.nextDouble() * 0.5 + 0.5,
-        delay: _random.nextDouble(),
-      ));
+        delay: _random.nextDouble()));
     }
   }
 
@@ -83,11 +76,8 @@ class _AnimatedTarotCardWidgetState extends State<AnimatedTarotCardWidget>
           painter: _TarotCardPainter(
             sparkles: _sparkles,
             sparkleProgress: _sparkleAnimation.value,
-            floatOffset: _floatAnimation.value,
-          ),
-        );
-      },
-    );
+            floatOffset: _floatAnimation.value));
+      });
   }
 }
 
@@ -103,8 +93,7 @@ class _Sparkle {
     required this.y,
     required this.size,
     required this.speed,
-    required this.delay,
-  }));
+    required this.delay}));
 }
 
 class _TarotCardPainter extends CustomPainter {
@@ -115,8 +104,7 @@ class _TarotCardPainter extends CustomPainter {
   _TarotCardPainter({
     required this.sparkles,
     required this.sparkleProgress,
-    required this.floatOffset,
-  }));
+    required this.floatOffset}));
   
   @override
   void paint(Canvas canvas, Size size) {
@@ -146,16 +134,14 @@ class _TarotCardPainter extends CustomPainter {
       canvas.drawLine(
         Offset(startX, startY),
         Offset(endX, endY),
-        symbolPaint,
-      );
+        symbolPaint);
     }
     
     // Draw central circle
     canvas.drawCircle(
       Offset(centerX, centerY),
       35,
-      symbolPaint,
-    );
+      symbolPaint);
     
     // Draw moon crescent
     final moonPath = Path();
@@ -163,11 +149,9 @@ class _TarotCardPainter extends CustomPainter {
       Rect.fromCenter(
         center: Offset(centerX - 10, centerY),
         width: 50,
-        height: 50,
-      ),
+        height: 50),
       -math.pi / 3,
-      4 * math.pi / 3,
-    );
+      4 * math.pi / 3);
     canvas.drawPath(moonPath, symbolPaint);
     
     // Draw decorative elements
@@ -201,8 +185,7 @@ class _TarotCardPainter extends CustomPainter {
       Offset(size.width * 0.2, size.height * 0.3),
       Offset(size.width * 0.8, size.height * 0.2),
       Offset(size.width * 0.15, size.height * 0.7),
-      Offset(size.width * 0.85, size.height * 0.75),
-    ];
+      Offset(size.width * 0.85, size.height * 0.75)];
     
     for (final pos in starPositions) {
       _drawStar(canvas, pos.translate(0, floatOffset * 0.3), 8, paint);
@@ -231,28 +214,24 @@ class _TarotCardPainter extends CustomPainter {
     canvas.drawLine(
       Offset(center.dx - size, center.dy),
       Offset(center.dx + size, center.dy),
-      paint,
-    );
+      paint);
     
     // Vertical line
     canvas.drawLine(
       Offset(center.dx, center.dy - size),
       Offset(center.dx, center.dy + size),
-      paint,
-    );
+      paint);
     
     // Diagonal lines
     final diagonalSize = size * 0.7;
     canvas.drawLine(
       Offset(center.dx - diagonalSize, center.dy - diagonalSize),
       Offset(center.dx + diagonalSize, center.dy + diagonalSize),
-      paint,
-    );
+      paint);
     canvas.drawLine(
       Offset(center.dx + diagonalSize, center.dy - diagonalSize),
       Offset(center.dx - diagonalSize, center.dy + diagonalSize),
-      paint,
-    );
+      paint);
   }
   
   @override
